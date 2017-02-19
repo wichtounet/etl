@@ -459,7 +459,7 @@ auto max_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t 
  */
 template <size_t C1, size_t C2, typename E>
 auto upsample_2d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_2d_expr<value_t<E>, C1, C2>>{value};
+    return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_2d_expr<value_t<E>, decay_traits<E>::dimensions(), C1, C2>>{value};
 }
 
 /*!
@@ -471,7 +471,7 @@ auto upsample_2d(E&& value) {
  */
 template <typename E>
 auto upsample_2d(E&& value, size_t c1, size_t c2) {
-    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_upsample_2d_expr<value_t<E>>>{{c1, c2}, value};
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_upsample_2d_expr<value_t<E>, decay_traits<E>::dimensions()>>{{c1, c2}, value};
 }
 
 /* Upsample 3D */
@@ -486,7 +486,7 @@ auto upsample_2d(E&& value, size_t c1, size_t c2) {
  */
 template <size_t C1, size_t C2, size_t C3, typename E>
 auto upsample_3d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_3d_expr<value_t<E>, C1, C2, C3>>{value};
+    return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_3d_expr<value_t<E>, decay_traits<E>::dimensions(), C1, C2, C3>>{value};
 }
 
 /*!
@@ -499,7 +499,7 @@ auto upsample_3d(E&& value) {
  */
 template <typename E>
 auto upsample_3d(E&& value, size_t c1, size_t c2, size_t c3) {
-    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_upsample_3d_expr<value_t<E>>>{{c1, c2, c3}, value};
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_upsample_3d_expr<value_t<E>, decay_traits<E>::dimensions()>>{{c1, c2, c3}, value};
 }
 
 /* Probabilistic Max Pooling (hidden) */

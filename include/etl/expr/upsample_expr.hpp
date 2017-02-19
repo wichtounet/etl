@@ -15,12 +15,12 @@ namespace etl {
 /*!
  * \brief Upsample configurable expression, in two dimensions
  */
-template <typename T, std::size_t C1, std::size_t C2, typename Impl>
-struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl>, T> {
+template <typename T, size_t D, std::size_t C1, std::size_t C2, typename Impl>
+struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, D, C1, C2, Impl>, T> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
 
-    using this_type  = basic_upsample_2d_expr<T, C1, C2, Impl>; ///< The type of expression
+    using this_type  = basic_upsample_2d_expr<T, D, C1, C2, Impl>; ///< The type of expression
     using value_type = T;                                       ///< The value type
 
     /*!
@@ -40,7 +40,7 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
         static_assert(all_etl_expr<A, C>::value, "upsample_2d only supported for ETL expressions");
-        static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "upsample_2d needs 2D matrices");
+        static_assert(decay_traits<A>::dimensions() == decay_traits<C>::dimensions(), "upsample_2d needs 2D matrices");
 
         Impl::template apply<C1, C2>(
             make_temporary(std::forward<A>(a)),
@@ -63,8 +63,9 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
      */
     template <typename A, std::size_t DD>
     static constexpr std::size_t dim() {
-        return DD == 0 ? decay_traits<A>::template dim<0>() * C1
-                       : decay_traits<A>::template dim<1>() * C2;
+        return DD == D - 2 ? decay_traits<A>::template dim<DD>() * C1
+             : DD == D - 1 ? decay_traits<A>::template dim<DD>() * C2
+                           : decay_traits<A>::template dim<DD>();
     }
 
     /*!
@@ -75,10 +76,12 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
      */
     template <typename A>
     static std::size_t dim(const A& a, std::size_t d) {
-        if (d == 0) {
-            return etl::dim<0>(a) * C1;
+        if (d == D - 2) {
+            return etl::dim(a, d) * C1;
+        } else if (d == D - 1) {
+            return etl::dim(a, d) * C2;
         } else {
-            return etl::dim<1>(a) * C2;
+            return etl::dim(a, d);
         }
     }
 
@@ -115,26 +118,26 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
      * \return the number of dimensions of the expression
      */
     static constexpr std::size_t dimensions() {
-        return 2;
+        return D;
     }
 };
 
 /*!
  * \brief Default Upsample 2D expression
  */
-template <typename T, std::size_t C1, std::size_t C2>
-using upsample_2d_expr = basic_upsample_2d_expr<T, C1, C2, impl::upsample_2d>;
+template <typename T, size_t D, std::size_t C1, std::size_t C2>
+using upsample_2d_expr = basic_upsample_2d_expr<T, D, C1, C2, impl::upsample_2d>;
 
 /*!
  * \brief Upsample configurable expression, in three dimensions
  */
-template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, typename Impl>
-struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, Impl>, T> {
+template <typename T, size_t D, std::size_t C1, std::size_t C2, std::size_t C3, typename Impl>
+struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, D, C1, C2, C3, Impl>, T> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(C3 > 0, "C3 must be greater than 0");
 
-    using this_type  = basic_upsample_3d_expr<T, C1, C2, C3, Impl>; ///< The type of expression
+    using this_type  = basic_upsample_3d_expr<T, D, C1, C2, C3, Impl>; ///< The type of expression
     using value_type = T;                                           ///< The value type
 
     /*!
@@ -154,7 +157,7 @@ struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, 
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
         static_assert(all_etl_expr<A, C>::value, "upsample_3d only supported for ETL expressions");
-        static_assert(decay_traits<A>::dimensions() == 3 && decay_traits<C>::dimensions() == 3, "upsample_3d needs 3D matrices");
+        static_assert(decay_traits<A>::dimensions() && decay_traits<C>::dimensions(), "upsample_3d needs 3D matrices");
 
         Impl::template apply<C1, C2, C3>(
             make_temporary(std::forward<A>(a)),
@@ -177,9 +180,10 @@ struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, 
      */
     template <typename A, std::size_t DD>
     static constexpr std::size_t dim() {
-        return DD == 0 ? decay_traits<A>::template dim<0>() * C1
-                       : DD == 1 ? decay_traits<A>::template dim<1>() * C2
-                                 : decay_traits<A>::template dim<2>() * C3;
+        return DD == D - 3 ? decay_traits<A>::template dim<DD>() * C1
+             : DD == D - 2 ? decay_traits<A>::template dim<DD>() * C2
+             : DD == D - 1 ? decay_traits<A>::template dim<DD>() * C3
+                           : decay_traits<A>::template dim<DD>();
     }
 
     /*!
@@ -190,12 +194,14 @@ struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, 
      */
     template <typename A>
     static std::size_t dim(const A& a, std::size_t d) {
-        if (d == 0) {
-            return etl::dim<0>(a) * C1;
-        } else if (d == 1) {
-            return etl::dim<1>(a) * C2;
+        if (d == D - 3) {
+            return etl::dim(a, d) * C1;
+        } else if (d == D - 2) {
+            return etl::dim(a, d) * C2;
+        } else if (d == D - 1) {
+            return etl::dim(a, d) * C3;
         } else {
-            return etl::dim<2>(a) * C3;
+            return etl::dim(a, d);
         }
     }
 
@@ -232,22 +238,22 @@ struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, 
      * \return the number of dimensions of the expression
      */
     static constexpr std::size_t dimensions() {
-        return 3;
+        return D;
     }
 };
 
 /*!
  * \brief Default Upsample dD expression
  */
-template <typename T, std::size_t C1, std::size_t C2, std::size_t C3>
-using upsample_3d_expr = basic_upsample_3d_expr<T, C1, C2, C3, impl::upsample_3d>;
+template <typename T, size_t D, std::size_t C1, std::size_t C2, std::size_t C3>
+using upsample_3d_expr = basic_upsample_3d_expr<T, D, C1, C2, C3, impl::upsample_3d>;
 
 /*!
  * \brief Upsample configurable expression, in two dimensions
  */
-template <typename T, typename Impl>
-struct basic_dyn_upsample_2d_expr : dyn_impl_expr<basic_dyn_upsample_2d_expr<T, Impl>, T> {
-    using this_type  = basic_dyn_upsample_2d_expr<T, Impl>; ///< The type of expression
+template <typename T, size_t D, typename Impl>
+struct basic_dyn_upsample_2d_expr : dyn_impl_expr<basic_dyn_upsample_2d_expr<T, D, Impl>, T> {
+    using this_type  = basic_dyn_upsample_2d_expr<T, D, Impl>; ///< The type of expression
     using value_type = T;                                       ///< The value type
 
     /*!
@@ -279,7 +285,7 @@ struct basic_dyn_upsample_2d_expr : dyn_impl_expr<basic_dyn_upsample_2d_expr<T, 
     template <typename A, typename C>
     void apply(A&& a, C&& c) const {
         static_assert(all_etl_expr<A, C>::value, "upsample_2d only supported for ETL expressions");
-        static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "upsample_2d needs 2D matrices");
+        static_assert(decay_traits<A>::dimensions() == decay_traits<C>::dimensions(), "upsample_2d needs 2D matrices");
 
         Impl::template apply(
             make_temporary(std::forward<A>(a)),
@@ -303,10 +309,12 @@ struct basic_dyn_upsample_2d_expr : dyn_impl_expr<basic_dyn_upsample_2d_expr<T, 
      */
     template <typename A>
     std::size_t dim(const A& a, std::size_t d) const {
-        if (d == 0) {
-            return etl::dim<0>(a) * c1;
+        if (d == D - 3) {
+            return etl::dim(a, d) * c1;
+        } else if (d == D - 2) {
+            return etl::dim(a, d) * c2;
         } else {
-            return etl::dim<1>(a) * c2;
+            return etl::dim(a, d);
         }
     }
 
@@ -317,7 +325,7 @@ struct basic_dyn_upsample_2d_expr : dyn_impl_expr<basic_dyn_upsample_2d_expr<T, 
      */
     template <typename A>
     std::size_t size(const A& a) const {
-        return (etl::dim<0>(a) * c1) * (etl::dim<1>(a) * c2);
+        return etl::size(a) * (c1 * c2);
     }
 
     /*!
@@ -334,22 +342,22 @@ struct basic_dyn_upsample_2d_expr : dyn_impl_expr<basic_dyn_upsample_2d_expr<T, 
      * \return the number of dimensions of the expression
      */
     static constexpr std::size_t dimensions() {
-        return 2;
+        return D;
     }
 };
 
 /*!
  * \brief Default Upsample 2D expression
  */
-template <typename T>
-using dyn_upsample_2d_expr = basic_dyn_upsample_2d_expr<T, impl::upsample_2d>;
+template <typename T, size_t D>
+using dyn_upsample_2d_expr = basic_dyn_upsample_2d_expr<T, D, impl::upsample_2d>;
 
 /*!
  * \brief Upsample configurable expression, in three dimensions
  */
-template <typename T, typename Impl>
-struct basic_dyn_upsample_3d_expr : dyn_impl_expr<basic_dyn_upsample_3d_expr<T, Impl>, T> {
-    using this_type  = basic_dyn_upsample_3d_expr<T, Impl>; ///< The type of expression
+template <typename T, size_t D, typename Impl>
+struct basic_dyn_upsample_3d_expr : dyn_impl_expr<basic_dyn_upsample_3d_expr<T, D, Impl>, T> {
+    using this_type  = basic_dyn_upsample_3d_expr<T, D, Impl>; ///< The type of expression
     using value_type = T;                                           ///< The value type
 
     /*!
@@ -383,7 +391,7 @@ struct basic_dyn_upsample_3d_expr : dyn_impl_expr<basic_dyn_upsample_3d_expr<T, 
     template <typename A, typename C>
     void apply(A&& a, C&& c) const {
         static_assert(all_etl_expr<A, C>::value, "upsample_3d only supported for ETL expressions");
-        static_assert(decay_traits<A>::dimensions() == 3 && decay_traits<C>::dimensions() == 3, "upsample_3d needs 3D matrices");
+        static_assert(decay_traits<A>::dimensions() == decay_traits<C>::dimensions(), "upsample_3d needs 3D matrices");
 
         Impl::template apply(
             make_temporary(std::forward<A>(a)),
@@ -407,12 +415,14 @@ struct basic_dyn_upsample_3d_expr : dyn_impl_expr<basic_dyn_upsample_3d_expr<T, 
      */
     template <typename A>
     std::size_t dim(const A& a, std::size_t d) const {
-        if (d == 0) {
-            return etl::dim<0>(a) * c1;
-        } else if (d == 1) {
-            return etl::dim<1>(a) * c2;
+        if (d == D - 3) {
+            return etl::dim(a, d) * c1;
+        } else if (d == D - 2) {
+            return etl::dim(a, d) * c2;
+        } else if (d == D - 1) {
+            return etl::dim(a, d) * c3;
         } else {
-            return etl::dim<2>(a) * c3;
+            return etl::dim(a, d);
         }
     }
 
@@ -423,7 +433,7 @@ struct basic_dyn_upsample_3d_expr : dyn_impl_expr<basic_dyn_upsample_3d_expr<T, 
      */
     template <typename A>
     std::size_t size(const A& a) const {
-        return (etl::dim<0>(a) * c1) * (etl::dim<1>(a) * c2) * (etl::dim<2>(a) * c3);
+        return etl::size(a) * (c1 * c2 * c3);
     }
 
     /*!
@@ -440,14 +450,14 @@ struct basic_dyn_upsample_3d_expr : dyn_impl_expr<basic_dyn_upsample_3d_expr<T, 
      * \return the number of dimensions of the expression
      */
     static constexpr std::size_t dimensions() {
-        return 3;
+        return D;
     }
 };
 
 /*!
  * \brief Default Upsample 3D expression
  */
-template <typename T>
-using dyn_upsample_3d_expr = basic_dyn_upsample_3d_expr<T, impl::upsample_3d>;
+template <typename T, size_t D>
+using dyn_upsample_3d_expr = basic_dyn_upsample_3d_expr<T, D, impl::upsample_3d>;
 
 } //end of namespace etl
