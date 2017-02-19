@@ -157,33 +157,7 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
         static_assert(all_etl_expr<A, C>::value, "pool_2d only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == D && decay_traits<C>::dimensions() == D, "pool_2d needs 2D matrices");
 
-        decltype(auto) a_t = make_temporary(a);
-
-        apply_impl(a_t, c);
-    }
-
-    /*!
-     * \brief Apply the expression on a and store the result in c
-     * \param a The input expression
-     * \param c The output expression
-     */
-    template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() == 3))>
-    static void apply_impl(const A& a, C&& c) {
-        for(size_t i = 0; i < etl::dim<0>(a); ++i){
-            Impl::template apply<C1, C2, S1, S2, P1, P2>(a(i), c(i));
-        }
-    }
-
-    /*!
-     * \brief Apply the expression on a and store the result in c
-     * \param a The input expression
-     * \param c The output expression
-     */
-    template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() > 3))>
-    static void apply_impl(const A& a, C&& c) {
-        for(size_t i = 0; i < etl::dim<0>(a); ++i){
-            apply_impl(a(i), c(i));
-        }
+        Impl::template apply<C1, C2, S1, S2, P1, P2>(make_temporary(a), c);
     }
 
     /*!
@@ -430,33 +404,7 @@ struct basic_pool_deep_3d_expr : impl_expr<basic_pool_deep_3d_expr<T, C1, C2, C3
         static_assert(all_etl_expr<A, C>::value, "pool_2d only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == D && decay_traits<C>::dimensions() == D, "pool_2d needs 2D matrices");
 
-        decltype(auto) a_t = make_temporary(a);
-
-        apply_impl(a_t, c);
-    }
-
-    /*!
-     * \brief Apply the expression on a and store the result in c
-     * \param a The input expression
-     * \param c The output expression
-     */
-    template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() == 4))>
-    static void apply_impl(const A& a, C&& c) {
-        for(size_t i = 0; i < etl::dim<0>(a); ++i){
-            Impl::template apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(a(i), c(i));
-        }
-    }
-
-    /*!
-     * \brief Apply the expression on a and store the result in c
-     * \param a The input expression
-     * \param c The output expression
-     */
-    template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() > 4))>
-    static void apply_impl(const A& a, C&& c) {
-        for(size_t i = 0; i < etl::dim<0>(a); ++i){
-            apply_impl(a(i), c(i));
-        }
+        Impl::template apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(make_temporary(a), c);
     }
 
     /*!
@@ -710,33 +658,7 @@ struct basic_dyn_deep_pool_2d_expr : dyn_impl_expr<basic_dyn_deep_pool_2d_expr<T
         static_assert(all_etl_expr<A, C>::value, "pool_2d only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == D && decay_traits<C>::dimensions() == D, "pool_2d needs 2D matrices");
 
-        decltype(auto) a_t = make_temporary(a);
-
-        apply_impl(a_t, c);
-    }
-
-    /*!
-     * \brief Apply the expression on a and store the result in c
-     * \param a The input expression
-     * \param c The output expression
-     */
-    template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() == 3))>
-    void apply_impl(const A& a, C&& c) const {
-        for(size_t i = 0; i < etl::dim<0>(a); ++i){
-            Impl::apply(a(i), c(i), c1, c2, s1, s2, p1, p2);
-        }
-    }
-
-    /*!
-     * \brief Apply the expression on a and store the result in c
-     * \param a The input expression
-     * \param c The output expression
-     */
-    template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() > 3))>
-    void apply_impl(const A& a, C&& c) const {
-        for(size_t i = 0; i < etl::dim<0>(a); ++i){
-            apply_impl(a(i), c(i));
-        }
+        Impl::apply(make_temporary(a), c, c1, c2, s1, s2, p1, p2);
     }
 
     /*!
@@ -959,33 +881,7 @@ struct basic_dyn_deep_pool_3d_expr : dyn_impl_expr<basic_dyn_deep_pool_3d_expr<T
         static_assert(all_etl_expr<A, C>::value, "pool_3d only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == D && decay_traits<C>::dimensions() == D, "pool_3d needs 3D matrices");
 
-        decltype(auto) a_t = make_temporary(a);
-
-        apply_impl(a_t, c);
-    }
-
-    /*!
-     * \brief Apply the expression on a and store the result in c
-     * \param a The input expression
-     * \param c The output expression
-     */
-    template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() == 4))>
-    void apply_impl(const A& a, C&& c) const {
-        for(size_t i = 0; i < etl::dim<0>(a); ++i){
-            Impl::apply(a(i), c(i), c1, c2, c3, s1, s2, s3, p1, p2, p3);
-        }
-    }
-
-    /*!
-     * \brief Apply the expression on a and store the result in c
-     * \param a The input expression
-     * \param c The output expression
-     */
-    template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() > 4))>
-    void apply_impl(const A& a, C&& c) const {
-        for(size_t i = 0; i < etl::dim<0>(a); ++i){
-            apply_impl(a(i), c(i));
-        }
+        Impl::apply(make_temporary(a), c, c1, c2, c3, s1, s2, s3, p1, p2, p3);
     }
 
     /*!
