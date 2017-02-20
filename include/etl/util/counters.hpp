@@ -11,10 +11,17 @@
 
 namespace etl {
 
+/*!
+ * \brief Dump all counters values to the console.
+ */
 inline void dump_counters() {
     //No counters
 }
 
+/*!
+ * \brief Increase the given counter
+ * \param name The name of the counter to increase
+ */
 inline void inc_counter(const char* name){
     cpp_unused(name);
 }
@@ -111,6 +118,10 @@ inline void dump_counters() {
     }
 }
 
+/*!
+ * \brief Increase the given counter
+ * \param name The name of the counter to increase
+ */
 inline void inc_counter(const char* name) {
     decltype(auto) counters = get_counters();
 
