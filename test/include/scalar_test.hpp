@@ -5,28 +5,28 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#define SCALAR_FUNCTOR(name, ...)                     \
-    struct name {                                     \
-        template <typename A, typename B, typename C> \
-        static void apply(A&& a, B&& b, C&& c) {      \
-            __VA_ARGS__;                              \
-        }                                             \
+#define SCALAR_FUNCTOR(name, ...)         \
+    struct name {                         \
+        template <typename A, typename C> \
+        static void apply(C&& c, A&& a) { \
+            __VA_ARGS__;                  \
+        }                                 \
     };
 
-SCALAR_FUNCTOR(default_scalar_add, c = a + b)
-SCALAR_FUNCTOR(default_scalar_sub, c = a - b)
-SCALAR_FUNCTOR(default_scalar_mul, c = a * b)
-SCALAR_FUNCTOR(default_scalar_div, c = a / b)
+SCALAR_FUNCTOR(default_scalar_add, c += a)
+SCALAR_FUNCTOR(default_scalar_sub, c -= a)
+SCALAR_FUNCTOR(default_scalar_mul, c *= a)
+SCALAR_FUNCTOR(default_scalar_div, c /= a)
 
 #define SCALAR_ADD_TEST_CASE_SECTION_DEFAULT SCALAR_TEST_CASE_SECTIONS(default_scalar_add)
 #define SCALAR_SUB_TEST_CASE_SECTION_DEFAULT SCALAR_TEST_CASE_SECTIONS(default_scalar_sub)
 #define SCALAR_MUL_TEST_CASE_SECTION_DEFAULT SCALAR_TEST_CASE_SECTIONS(default_scalar_mul)
 #define SCALAR_DIV_TEST_CASE_SECTION_DEFAULT SCALAR_TEST_CASE_SECTIONS(default_scalar_div)
 
-SCALAR_FUNCTOR(std_scalar_add, c = selected_helper(etl::scalar_impl::STD, a + b))
-SCALAR_FUNCTOR(std_scalar_sub, c = selected_helper(etl::scalar_impl::STD, a - b))
-SCALAR_FUNCTOR(std_scalar_mul, c = selected_helper(etl::scalar_impl::STD, a * b))
-SCALAR_FUNCTOR(std_scalar_div, c = selected_helper(etl::scalar_impl::STD, a / b))
+SCALAR_FUNCTOR(std_scalar_add, SELECTED_SECTION(etl::scalar_impl::STD) { c += a;})
+SCALAR_FUNCTOR(std_scalar_sub, SELECTED_SECTION(etl::scalar_impl::STD) { c -= a;})
+SCALAR_FUNCTOR(std_scalar_mul, SELECTED_SECTION(etl::scalar_impl::STD) { c *= a;})
+SCALAR_FUNCTOR(std_scalar_div, SELECTED_SECTION(etl::scalar_impl::STD) { c /= a;})
 
 #define SCALAR_ADD_TEST_CASE_SECTION_STD SCALAR_TEST_CASE_SECTIONS(std_scalar_add)
 #define SCALAR_SUB_TEST_CASE_SECTION_STD SCALAR_TEST_CASE_SECTIONS(std_scalar_sub)
@@ -34,10 +34,10 @@ SCALAR_FUNCTOR(std_scalar_div, c = selected_helper(etl::scalar_impl::STD, a / b)
 #define SCALAR_DIV_TEST_CASE_SECTION_STD SCALAR_TEST_CASE_SECTIONS(std_scalar_div)
 
 #ifdef ETL_BLAS_MODE
-SCALAR_FUNCTOR(blas_scalar_add, c = selected_helper(etl::scalar_impl::BLAS, a + b))
-SCALAR_FUNCTOR(blas_scalar_sub, c = selected_helper(etl::scalar_impl::BLAS, a - b))
-SCALAR_FUNCTOR(blas_scalar_mul, c = selected_helper(etl::scalar_impl::BLAS, a * b))
-SCALAR_FUNCTOR(blas_scalar_div, c = selected_helper(etl::scalar_impl::BLAS, a / b))
+SCALAR_FUNCTOR(blas_scalar_add, SELECTED_SECTION(etl::scalar_impl::BLAS) { c += a;})
+SCALAR_FUNCTOR(blas_scalar_sub, SELECTED_SECTION(etl::scalar_impl::BLAS) { c -= a;})
+SCALAR_FUNCTOR(blas_scalar_mul, SELECTED_SECTION(etl::scalar_impl::BLAS) { c *= a;})
+SCALAR_FUNCTOR(blas_scalar_div, SELECTED_SECTION(etl::scalar_impl::BLAS) { c /= a;})
 
 #define SCALAR_ADD_TEST_CASE_SECTION_BLAS SCALAR_TEST_CASE_SECTIONS(blas_scalar_add)
 #define SCALAR_SUB_TEST_CASE_SECTION_BLAS SCALAR_TEST_CASE_SECTIONS(blas_scalar_sub)

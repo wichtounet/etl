@@ -10,10 +10,9 @@
 #include "scalar_test.hpp"
 
 SCALAR_ADD_TEST_CASE("scalar/add/0", "[scalar]") {
-    etl::fast_matrix<T, 8> a{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
-    etl::fast_matrix<T, 8> c;
+    etl::fast_matrix<T, 8> c{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
 
-    Impl::apply(a, 1.0, c);
+    Impl::apply(c, 1.0);
 
     REQUIRE_EQUALS(c(0), T(2.0));
     REQUIRE_EQUALS(c(1), T(3.0));
@@ -26,10 +25,9 @@ SCALAR_ADD_TEST_CASE("scalar/add/0", "[scalar]") {
 }
 
 SCALAR_ADD_TEST_CASE("scalar/add/1", "[scalar]") {
-    etl::fast_matrix<T, 8> a{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
-    etl::fast_matrix<T, 8> c;
+    etl::fast_matrix<T, 8> c{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
 
-    Impl::apply(a, -1.0, c);
+    Impl::apply(c, -1.0);
 
     REQUIRE_EQUALS(c(0), T(0.0));
     REQUIRE_EQUALS(c(1), T(1.0));
@@ -42,10 +40,9 @@ SCALAR_ADD_TEST_CASE("scalar/add/1", "[scalar]") {
 }
 
 SCALAR_SUB_TEST_CASE("scalar/sub/0", "[scalar]") {
-    etl::fast_matrix<T, 8> a{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
-    etl::fast_matrix<T, 8> c;
+    etl::fast_matrix<T, 8> c{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
 
-    Impl::apply(a, 1.0, c);
+    Impl::apply(c, 1.0);
 
     REQUIRE_EQUALS(c(0), T(0.0));
     REQUIRE_EQUALS(c(1), T(1.0));
@@ -58,10 +55,9 @@ SCALAR_SUB_TEST_CASE("scalar/sub/0", "[scalar]") {
 }
 
 SCALAR_SUB_TEST_CASE("scalar/sub/1", "[scalar]") {
-    etl::fast_matrix<T, 8> a{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
-    etl::fast_matrix<T, 8> c;
+    etl::fast_matrix<T, 8> c{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
 
-    Impl::apply(a, -1.0, c);
+    Impl::apply(c, -1.0);
 
     REQUIRE_EQUALS(c(0), T(2.0));
     REQUIRE_EQUALS(c(1), T(3.0));
@@ -74,10 +70,9 @@ SCALAR_SUB_TEST_CASE("scalar/sub/1", "[scalar]") {
 }
 
 SCALAR_MUL_TEST_CASE("scalar/mul/0", "[scalar]") {
-    etl::fast_matrix<T, 8> a{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
-    etl::fast_matrix<T, 8> c;
+    etl::fast_matrix<T, 8> c{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
 
-    Impl::apply(a, 2.0, c);
+    Impl::apply(c, 2.0);
 
     REQUIRE_EQUALS(c(0), T(2.0));
     REQUIRE_EQUALS(c(1), T(4.0));
@@ -90,10 +85,9 @@ SCALAR_MUL_TEST_CASE("scalar/mul/0", "[scalar]") {
 }
 
 SCALAR_DIV_TEST_CASE("scalar/div/0", "[scalar]") {
-    etl::fast_matrix<T, 8> a{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
-    etl::fast_matrix<T, 8> c;
+    etl::fast_matrix<T, 8> c{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
 
-    Impl::apply(a, 0.5, c);
+    Impl::apply(c, 0.5);
 
     REQUIRE_EQUALS(c(0), T(2.0));
     REQUIRE_EQUALS(c(1), T(4.0));
