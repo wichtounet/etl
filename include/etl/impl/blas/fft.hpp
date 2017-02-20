@@ -1055,7 +1055,7 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
         kernel.ensure_cpu_up_to_date();
 
         const auto k_s = etl::dim<1>(kernel) * etl::dim<2>(kernel);
-        const auto c_s = conv.dim(1) * conv.dim(2);
+        const auto c_s = etl::dim<1>(conv) * etl::dim<2>(conv);
 
         const auto m1 = etl::dim<0>(input);
         const auto m2 = etl::dim<1>(input);
@@ -1145,8 +1145,8 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
-        auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
-        auto conv_c_inc = conv.dim(2) * conv.dim(3);
+        auto conv_i_inc = etl::dim<1>(conv) * etl::dim<2>(conv) * etl::dim<3>(conv);
+        auto conv_c_inc = etl::dim<2>(conv) * etl::dim<3>(conv);
 
         auto kernel_k_inc = etl::dim<1>(kernel) * etl::dim<2>(kernel) * etl::dim<3>(kernel);
         auto kernel_c_inc = etl::dim<2>(kernel) * etl::dim<3>(kernel);
