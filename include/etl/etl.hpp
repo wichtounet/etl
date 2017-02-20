@@ -127,6 +127,7 @@
 #include "etl/adapters/diagonal.hpp"
 #include "etl/adapters/lower.hpp"
 #include "etl/adapters/strictly_lower.hpp"
+#include "etl/adapters/uni_lower.hpp"
 #include "etl/adapters/upper.hpp"
 #include "etl/adapters/strictly_upper.hpp"
 
