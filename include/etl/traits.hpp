@@ -150,6 +150,13 @@ template <typename T>
 using is_strictly_lower_matrix = cpp::is_specialization_of<etl::strictly_lower_matrix, std::decay_t<T>>;
 
 /*!
+ * \brief Traits indicating if the given ETL type is a strictly upper triangular matrix
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_strictly_upper_matrix = cpp::is_specialization_of<etl::strictly_upper_matrix, std::decay_t<T>>;
+
+/*!
  * \brief Traits indicating if the given ETL type is a unary expression.
  * \tparam T The type to test
  */
