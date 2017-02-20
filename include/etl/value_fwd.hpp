@@ -122,6 +122,13 @@ template <typename Matrix>
 struct strictly_lower_matrix;
 
 /*!
+ * \brief Uni lower triangular matrix adapter
+ * \tparam Matrix The adapted matrix
+ */
+template <typename Matrix>
+struct uni_lower_matrix;
+
+/*!
  * \brief A static matrix with fixed dimensions, in row-major order
  */
 template <typename T, std::size_t... Dims>
