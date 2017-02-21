@@ -1271,10 +1271,10 @@ auto fflip(const E& value) -> detail::stable_transform_helper<E, fflip_transform
  * \return The transpose of the given expression.
  */
 template <typename E>
-auto transpose(const E& value) -> transpose_expr<value_t<E>, E> {
+auto transpose(const E& value) -> transpose_expr<value_t<E>, detail::build_type<E>> {
     static_assert(is_etl_expr<E>::value, "etl::transpose can only be used on ETL expressions");
     static_assert(decay_traits<E>::dimensions() <= 2, "Transpose not defined for matrix > 2D");
-    return transpose_expr<value_t<E>, E>{value};
+    return transpose_expr<value_t<E>, detail::build_type<E>>{value};
 }
 
 /*!
