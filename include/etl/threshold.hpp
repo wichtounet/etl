@@ -23,7 +23,7 @@ constexpr std::size_t gemm_cublas_min = 180 * 180; ///< The minimum number or el
 constexpr std::size_t gevm_small_threshold = 1000; ///< The number of elements of b after which we use BLAS-like kernel
 constexpr std::size_t gemv_small_threshold = 1000; ///< The number of elements of A after which we use BLAS-like kernel
 
-constexpr std::size_t parallel_threshold = 12 * 1024; ///< The minimum number of elements before considering parallel implementation
+constexpr std::size_t parallel_threshold = 6 * 1024; ///< The minimum number of elements before considering parallel implementation
 
 constexpr std::size_t sum_parallel_threshold = 1024 * 2; ///< The minimum number of elements before considering parallel acc implementation
 
