@@ -108,6 +108,13 @@ template <typename Matrix>
 struct strictly_upper_matrix;
 
 /*!
+ * \brief Uni upper triangular matrix adapter
+ * \tparam Matrix The adapted matrix
+ */
+template <typename Matrix>
+struct uni_upper_matrix;
+
+/*!
  * \brief Lower triangular matrix adapter
  * \tparam Matrix The adapted matrix
  */
