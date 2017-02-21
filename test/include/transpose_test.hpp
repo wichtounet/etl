@@ -35,16 +35,24 @@ INPLACE_TRANSPOSE_FUNCTOR(std_inplace_trans, SELECTED_SECTION(etl::transpose_imp
 
 #ifdef ETL_MKL_MODE
 TRANSPOSE_FUNCTOR(blas_transpose, c = selected_helper(etl::transpose_impl::MKL, transpose(a)))
+INPLACE_TRANSPOSE_FUNCTOR(blas_inplace_trans, SELECTED_SECTION(etl::transpose_impl::MKL) { a.transpose_inplace(); })
+
 #define TRANSPOSE_TEST_CASE_SECTION_BLAS TRANSPOSE_TEST_CASE_SECTIONS(blas_transpose, blas_transpose)
+#define INPLACE_TRANSPOSE_TEST_CASE_SECTION_BLAS TRANSPOSE_TEST_CASE_SECTIONS(blas_inplace_trans, blas_inplace_trans)
 #else
 #define TRANSPOSE_TEST_CASE_SECTION_BLAS
+#define INPLACE_TRANSPOSE_TEST_CASE_SECTION_BLAS
 #endif
 
 #ifdef ETL_CUBLAS_MODE
 TRANSPOSE_FUNCTOR(cublas_transpose, c = selected_helper(etl::transpose_impl::CUBLAS, transpose(a)))
+INPLACE_TRANSPOSE_FUNCTOR(cublas_inplace_trans, SELECTED_SECTION(etl::transpose_impl::CUBLAS) { a.transpose_inplace(); })
+
 #define TRANSPOSE_TEST_CASE_SECTION_CUBLAS TRANSPOSE_TEST_CASE_SECTIONS(cublas_transpose, cublas_transpose)
+#define INPLACE_TRANSPOSE_TEST_CASE_SECTION_CUBLAS TRANSPOSE_TEST_CASE_SECTIONS(cublas_inplace_trans, cublas_inplace_trans)
 #else
 #define TRANSPOSE_TEST_CASE_SECTION_CUBLAS
+#define INPLACE_TRANSPOSE_TEST_CASE_SECTION_CUBLAS
 #endif
 
 #define TRANSPOSE_TEST_CASE_DECL(name, description)                            \
@@ -78,5 +86,7 @@ TRANSPOSE_FUNCTOR(cublas_transpose, c = selected_helper(etl::transpose_impl::CUB
     TRANSPOSE_TEST_CASE_DECL(name, description) {      \
         INPLACE_TRANSPOSE_TEST_CASE_SECTION_DEFAULT    \
         INPLACE_TRANSPOSE_TEST_CASE_SECTION_STD        \
+        INPLACE_TRANSPOSE_TEST_CASE_SECTION_BLAS       \
+        INPLACE_TRANSPOSE_TEST_CASE_SECTION_CUBLAS     \
     }                                                  \
     TRANSPOSE_TEST_CASE_DEFN
