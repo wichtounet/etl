@@ -9,6 +9,28 @@
 
 #include <vector>
 
+TEMPLATE_TEST_CASE_2("upsample/2d/0", "[upsample]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> a({1.0, 2.0, 3.0, 4.0});
+    etl::fast_matrix<Z, 1, 2, 2> b({1.0, 2.0, 3.0, 4.0});
+
+    auto expr2 = etl::upsample_2d<2, 2>(a);
+    using expr2_type = decltype(expr2);
+
+    REQUIRE_EQUALS(etl::decay_traits<expr2_type>::dimensions(), 2UL);
+    REQUIRE_EQUALS(etl::decay_traits<expr2_type>::template dim<0>(), 4UL);
+    REQUIRE_EQUALS(etl::decay_traits<expr2_type>::template dim<1>(), 4UL);
+    REQUIRE_EQUALS(etl::decay_traits<expr2_type>::size(), 16UL);
+
+    auto expr3 = etl::upsample_2d<2, 2>(b);
+    using expr3_type = decltype(expr3);
+
+    REQUIRE_EQUALS(etl::decay_traits<expr3_type>::dimensions(), 3UL);
+    REQUIRE_EQUALS(etl::decay_traits<expr3_type>::template dim<0>(), 1UL);
+    REQUIRE_EQUALS(etl::decay_traits<expr3_type>::template dim<1>(), 4UL);
+    REQUIRE_EQUALS(etl::decay_traits<expr3_type>::template dim<2>(), 4UL);
+    REQUIRE_EQUALS(etl::decay_traits<expr3_type>::size(), 16UL);
+}
+
 TEMPLATE_TEST_CASE_2("upsample/2d/1", "[pooling]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a({1.0, 2.0, 3.0, 4.0});
     etl::fast_matrix<Z, 4, 4> c(etl::upsample_2d<2, 2>(a));

@@ -9,6 +9,28 @@
 
 #include <vector>
 
+TEMPLATE_TEST_CASE_2("dyn_upsample/2d/0", "[upsample]", Z, float, double) {
+    etl::dyn_matrix<Z, 2> a(2, 2, etl::values(1.0, 2.0, 3.0, 4.0));
+    etl::dyn_matrix<Z, 3> b(1, 2, 2, etl::values(1.0, 2.0, 3.0, 4.0));
+
+    auto expr2 = etl::upsample_2d(a, 2, 2);
+    using expr2_type = decltype(expr2);
+
+    REQUIRE_EQUALS(etl::decay_traits<expr2_type>::dimensions(), 2UL);
+    REQUIRE_EQUALS(etl::decay_traits<expr2_type>::dim(expr2, 0), 4UL);
+    REQUIRE_EQUALS(etl::decay_traits<expr2_type>::dim(expr2, 1), 4UL);
+    REQUIRE_EQUALS(etl::decay_traits<expr2_type>::size(expr2), 16UL);
+
+    auto expr3 = etl::upsample_2d(b, 2, 2);
+    using expr3_type = decltype(expr3);
+
+    REQUIRE_EQUALS(etl::decay_traits<expr3_type>::dimensions(), 3UL);
+    REQUIRE_EQUALS(etl::decay_traits<expr3_type>::dim(expr3, 0), 1UL);
+    REQUIRE_EQUALS(etl::decay_traits<expr3_type>::dim(expr3, 1), 4UL);
+    REQUIRE_EQUALS(etl::decay_traits<expr3_type>::dim(expr3, 2), 4UL);
+    REQUIRE_EQUALS(etl::decay_traits<expr3_type>::size(expr3), 16UL);
+}
+
 TEMPLATE_TEST_CASE_2("dyn_upsample/2d/1", "[pooling]", Z, float, double) {
     etl::dyn_matrix<Z, 2> a(2, 2, etl::values(1.0, 2.0, 3.0, 4.0));
     etl::dyn_matrix<Z, 2> c(4, 4);
