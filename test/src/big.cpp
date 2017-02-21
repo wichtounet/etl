@@ -12,9 +12,9 @@
 // to make sure thresholds are reached
 
 TEMPLATE_TEST_CASE_2("big/add", "[big][add]", Z, double, float) {
-    etl::dyn_matrix<Z> a(etl::parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> b(etl::parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> c(etl::parallel_threshold, 2UL);
+    etl::dyn_matrix<Z> a(etl::parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> b(etl::parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> c(etl::parallel_threshold + 100, 1UL);
 
     a = etl::uniform_generator(-1000.0, 5000.0);
     b = etl::uniform_generator(-1000.0, 5000.0);
@@ -27,9 +27,9 @@ TEMPLATE_TEST_CASE_2("big/add", "[big][add]", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("big/sub", "[big][sub]", Z, double, float) {
-    etl::dyn_matrix<Z> a(etl::parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> b(etl::parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> c(etl::parallel_threshold, 2UL);
+    etl::dyn_matrix<Z> a(etl::parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> b(etl::parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> c(etl::parallel_threshold + 100, 1UL);
 
     a = etl::uniform_generator(-1000.0, 5000.0);
     b = etl::uniform_generator(-1000.0, 5000.0);
@@ -42,9 +42,9 @@ TEMPLATE_TEST_CASE_2("big/sub", "[big][sub]", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("big/mul", "[big][sub]", Z, double, float) {
-    etl::dyn_matrix<Z> a(etl::parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> b(etl::parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> c(etl::parallel_threshold, 2UL);
+    etl::dyn_matrix<Z> a(etl::parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> b(etl::parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> c(etl::parallel_threshold + 100, 1UL);
 
     a = etl::uniform_generator(-1000.0, 5000.0);
     b = etl::uniform_generator(-1000.0, 5000.0);
@@ -57,9 +57,9 @@ TEMPLATE_TEST_CASE_2("big/mul", "[big][sub]", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("big/compound/add", "[big][add]", Z, double, float) {
-    etl::dyn_matrix<Z> a(etl::parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> b(etl::parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> c(etl::parallel_threshold, 2UL);
+    etl::dyn_matrix<Z> a(etl::parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> b(etl::parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> c(etl::parallel_threshold + 100, 1UL);
 
     a = etl::uniform_generator(-1000.0, 5000.0);
     b = etl::uniform_generator(-1000.0, 5000.0);
@@ -73,9 +73,9 @@ TEMPLATE_TEST_CASE_2("big/compound/add", "[big][add]", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("big/compound/sub", "[big][add]", Z, double, float) {
-    etl::dyn_matrix<Z> a(etl::parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> b(etl::parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> c(etl::parallel_threshold, 2UL);
+    etl::dyn_matrix<Z> a(etl::parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> b(etl::parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> c(etl::parallel_threshold + 100, 1UL);
 
     a = etl::uniform_generator(-1000.0, 5000.0);
     b = etl::uniform_generator(-1000.0, 5000.0);
@@ -89,9 +89,9 @@ TEMPLATE_TEST_CASE_2("big/compound/sub", "[big][add]", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("big/compound/mul", "[big][add]", Z, double, float) {
-    etl::dyn_matrix<Z> a(etl::parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> b(etl::parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> c(etl::parallel_threshold, 2UL);
+    etl::dyn_matrix<Z> a(etl::parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> b(etl::parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> c(etl::parallel_threshold + 100, 1UL);
 
     a = etl::uniform_generator(-1000.0, 5000.0);
     b = etl::uniform_generator(-1000.0, 5000.0);
@@ -105,9 +105,9 @@ TEMPLATE_TEST_CASE_2("big/compound/mul", "[big][add]", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("big/compound/div", "[big][add]", Z, double, float) {
-    etl::dyn_matrix<Z> a(etl::parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> b(etl::parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> c(etl::parallel_threshold, 2UL);
+    etl::dyn_matrix<Z> a(etl::parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> b(etl::parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> c(etl::parallel_threshold + 100, 1UL);
 
     a = etl::uniform_generator(1000.0, 5000.0);
     b = etl::uniform_generator(1000.0, 5000.0);
@@ -121,14 +121,14 @@ TEMPLATE_TEST_CASE_2("big/compound/div", "[big][add]", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("big/sum/div", "[big][add]", Z, double, float) {
-    etl::dyn_matrix<Z> a(etl::sum_parallel_threshold, 2UL);
-    etl::dyn_matrix<Z> b(etl::sum_parallel_threshold, 2UL);
+    etl::dyn_matrix<Z> a(etl::sum_parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> b(etl::sum_parallel_threshold + 100, 1UL);
 
     a = 1.0;
     b = 2.5;
 
-    REQUIRE_EQUALS(etl::sum(a), 1.0 * etl::sum_parallel_threshold * 2.0);
-    REQUIRE_EQUALS(etl::sum(b), 2.5 * etl::sum_parallel_threshold * 2.0);
+    REQUIRE_EQUALS(etl::sum(a), 1.0 * (etl::sum_parallel_threshold + 100));
+    REQUIRE_EQUALS(etl::sum(b), 2.5 * (etl::sum_parallel_threshold + 100));
 }
 
 TEMPLATE_TEST_CASE_2("big/exp", "[big][exp]", Z, double, float) {
