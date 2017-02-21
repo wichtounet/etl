@@ -309,9 +309,9 @@ struct basic_dyn_upsample_2d_expr : dyn_impl_expr<basic_dyn_upsample_2d_expr<T, 
      */
     template <typename A>
     std::size_t dim(const A& a, std::size_t d) const {
-        if (d == D - 3) {
+        if (d == D - 2) {
             return etl::dim(a, d) * c1;
-        } else if (d == D - 2) {
+        } else if (d == D - 1) {
             return etl::dim(a, d) * c2;
         } else {
             return etl::dim(a, d);
