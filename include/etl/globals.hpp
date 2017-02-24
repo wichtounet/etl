@@ -511,4 +511,28 @@ bool lu(const AT& A, LT& L, UT& U, PT& P) {
     return true;
 }
 
+/*!
+ * \brief Decomposition the matrix so that A = Q * R
+ * \param A The A matrix (mxn)
+ * \param Q The Q matrix (Orthogonal mxm)
+ * \param R The R matrix (Upper Triangular mxn)
+ * \return true if the decomposition suceeded, false otherwise
+ */
+template <typename AT, typename QT, typename RT>
+bool qr(const AT& A, QT& Q, RT& R) {
+    // A and R have the same dimensions
+    if (etl::dim(A, 0) != etl::dim(R, 0) || etl::dim(A, 1) != etl::dim(R, 1)) {
+        return false;
+    }
+
+    // A and Q have corresponding first dimensions and Q is square
+    if (etl::dim(A, 0) != etl::dim(Q, 0) || etl::dim(A, 0) != etl::dim(Q, 1)) {
+        return false;
+    }
+
+    detail::qr_impl::apply(A, Q, R);
+
+    return true;
+}
+
 } //end of namespace etl

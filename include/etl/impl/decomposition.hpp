@@ -36,6 +36,22 @@ struct lu_impl {
     }
 };
 
+/*!
+ * \brief Functor for QR decomposition
+ */
+struct qr_impl {
+    /*!
+     * \brief Apply the functor to A,Q,R
+     * \param A The input matrix
+     * \param Q The Q decomposition (output)
+     * \param R The R decomposition (output)
+     */
+    template <typename AT, typename QT, typename RT>
+    static void apply(const AT& A, QT& Q, RT& R) {
+        etl::impl::standard::qr(A, Q, R);
+    }
+};
+
 } //end of namespace detail
 
 } //end of namespace etl
