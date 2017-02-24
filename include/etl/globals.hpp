@@ -451,6 +451,41 @@ bool is_hermitian(E&& expr){
 }
 
 /*!
+ * \brief Test if two ETL expression are approximately equals
+ * \param lhs The left hand-side
+ * \param rhs The right hand-side
+ * \param eps The epsilon for comparison
+ * \return true if the two expression are aproximately equals, false othwerise
+ */
+template <typename L, typename E>
+bool approx_equals(L&& lhs, E&& rhs, value_t<L> eps){
+    // Both expressions must have the same number of dimensions
+    if (etl::dimensions(lhs) != etl::dimensions(rhs)) {
+        return false;
+    }
+
+    // The dimensions must be the same
+    for(size_t i = 0; i < etl::dimensions(rhs); ++i){
+        if(etl::dim(lhs, i) != etl::dim(rhs, i)){
+            return false;
+        }
+    }
+
+    // At this point, the values are necessary for the comparison
+    force(lhs);
+    force(rhs);
+
+    for(size_t i = 0; i < etl::size(lhs); ++i){
+        using std::fabs;
+        if(fabs(lhs[i] - rhs[i]) > eps * (1.0 + std::max(fabs(lhs[i]), fabs(rhs[i])))){
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/*!
  * \brief Returns the trace of the given square matrix.
  *
  * If the given expression does not represent a square matrix, this function will fail
