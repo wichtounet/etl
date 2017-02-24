@@ -24,7 +24,7 @@ namespace etl {
  * This is only a prototype.
  */
 template <typename Matrix>
-struct lower_matrix final : adapter<Matrix>, comparable<lower_matrix<Matrix>>, iterable<const lower_matrix<Matrix>> {
+struct lower_matrix final : adapter<Matrix>, iterable<const lower_matrix<Matrix>> {
     using matrix_t = Matrix;   ///< The adapted matrix type
     using expr_t   = matrix_t; ///< The wrapped expression type
 

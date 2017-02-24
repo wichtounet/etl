@@ -439,6 +439,46 @@ bool is_hermitian(E&& expr){
     return true;
 }
 
+template <typename L, typename R, cpp_enable_if(all_etl_expr<L, R>::value)>
+bool operator==(L&& lhs, R&& rhs){
+    // Both expressions must have the same number of dimensions
+    if (etl::dimensions(lhs) != etl::dimensions(rhs)) {
+        return false;
+    }
+
+    // The dimensions must be the same
+    for(size_t i = 0; i < etl::dimensions(rhs); ++i){
+        if(etl::dim(lhs, i) != etl::dim(rhs, i)){
+            return false;
+        }
+    }
+
+    // At this point, the values are necessary for the comparison
+    force(lhs);
+    force(rhs);
+
+    // Note: Ideally, we should use std::equal, but this is significantly
+    // faster to compile
+
+    for(size_t i = 0; i < etl::size(lhs); ++i){
+        if(lhs[i] != rhs[i]){
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/*!
+ * \brief Compare the expression with another expression for inequality.
+ *
+ * \return false if the expressions contains the same sequence of values, true othwerise.
+ */
+template <typename L, typename R, cpp_enable_if(all_etl_expr<L, R>::value)>
+bool operator!=(L&& lhs, R&& rhs){
+    return !(lhs == rhs);
+}
+
 /*!
  * \brief Indicates if the given expression represents an hermitian matrix
  * \param expr The expression to test

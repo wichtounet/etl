@@ -38,7 +38,7 @@ struct symmetric_exception : std::exception {
  * This is only a prototype.
  */
 template <typename Matrix>
-struct symmetric_matrix final : adapter<Matrix>, comparable<symmetric_matrix<Matrix>>, iterable<const symmetric_matrix<Matrix>> {
+struct symmetric_matrix final : adapter<Matrix>, iterable<const symmetric_matrix<Matrix>> {
     using matrix_t = Matrix;   ///< The adapted matrix type
     using expr_t   = matrix_t; ///< The wrapped expression type
 

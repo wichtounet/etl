@@ -64,7 +64,7 @@ using expr_result_t = typename expr_result<E, all_fast<E>::value, Subs...>::type
  * A temporary expression computes the expression directly and stores it into a temporary.
  */
 template <typename D>
-struct base_temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, iterable<const D, true> {
+struct base_temporary_expr : value_testable<D>, dim_testable<D>, iterable<const D, true> {
     using derived_t         = D;                                    ///< The derived type
     using value_type        = typename decay_traits<D>::value_type; ///< The value type
     using result_type       = temporary_detail::expr_result_t<D>;   ///< The result type

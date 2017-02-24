@@ -80,7 +80,6 @@ struct stateful_op {
  */
 template <typename T, typename Expr, typename UnaryOp>
 struct unary_expr final :
-        comparable<unary_expr<T, Expr, UnaryOp>>,
         value_testable<unary_expr<T, Expr, UnaryOp>>,
         dim_testable<unary_expr<T, Expr, UnaryOp>>,
         iterable<unary_expr<T, Expr, UnaryOp>>
@@ -242,7 +241,6 @@ template <typename T, typename Expr>
 struct unary_expr<T, Expr, identity_op> :
         inplace_assignable<unary_expr<T, Expr, identity_op>>,
         assignable<unary_expr<T, Expr, identity_op>, T>,
-        comparable<unary_expr<T, Expr, identity_op>>,
         value_testable<unary_expr<T, Expr, identity_op>>,
         dim_testable<unary_expr<T, Expr, identity_op>>,
         iterable<unary_expr<T, Expr, identity_op>, has_direct_access<Expr>::value>
@@ -722,7 +720,6 @@ private:
  */
 template <typename T, typename Expr>
 struct unary_expr<T, Expr, transform_op> :
-        comparable<unary_expr<T, Expr, transform_op>>,
         value_testable<unary_expr<T, Expr, transform_op>>,
         dim_testable<unary_expr<T, Expr, transform_op>>,
         iterable<unary_expr<T, Expr, transform_op>>
@@ -860,7 +857,6 @@ public:
  */
 template <typename T, typename Expr, typename Op>
 struct unary_expr<T, Expr, stateful_op<Op>> :
-        comparable<unary_expr<T, Expr, stateful_op<Op>>>,
         value_testable<unary_expr<T, Expr, stateful_op<Op>>>,
         dim_testable<unary_expr<T, Expr, stateful_op<Op>>>,
         iterable<unary_expr<T, Expr, stateful_op<Op>>>

@@ -25,7 +25,6 @@ template <typename T, typename ST, order SO, std::size_t... Dims>
 struct custom_fast_matrix_impl final :
         fast_matrix_base<custom_fast_matrix_impl<T, ST, SO, Dims...>, T, ST, SO, Dims...>,
         inplace_assignable<custom_fast_matrix_impl<T, ST, SO, Dims...>>,
-        comparable<custom_fast_matrix_impl<T, ST, SO, Dims...>>,
         expression_able<custom_fast_matrix_impl<T, ST, SO, Dims...>>,
         value_testable<custom_fast_matrix_impl<T, ST, SO, Dims...>>,
         iterable<custom_fast_matrix_impl<T, ST, SO, Dims...>, SO == order::RowMajor>,

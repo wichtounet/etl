@@ -38,7 +38,7 @@ struct hermitian_exception : std::exception {
  * This is only a prototype.
  */
 template <typename Matrix>
-struct hermitian_matrix final : adapter<Matrix>, comparable<hermitian_matrix<Matrix>>, iterable<const hermitian_matrix<Matrix>> {
+struct hermitian_matrix final : adapter<Matrix>, iterable<const hermitian_matrix<Matrix>> {
     using matrix_t = Matrix;   ///< The adapted matrix type
     using expr_t   = matrix_t; ///< The wrapped expression type
 

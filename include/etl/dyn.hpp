@@ -24,7 +24,6 @@ namespace etl {
 template <typename T, order SO, std::size_t D>
 struct dyn_matrix_impl final : dense_dyn_base<dyn_matrix_impl<T, SO, D>, T, SO, D>,
                                inplace_assignable<dyn_matrix_impl<T, SO, D>>,
-                               comparable<dyn_matrix_impl<T, SO, D>>,
                                expression_able<dyn_matrix_impl<T, SO, D>>,
                                value_testable<dyn_matrix_impl<T, SO, D>>,
                                iterable<dyn_matrix_impl<T, SO, D>, SO == order::RowMajor>,

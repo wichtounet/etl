@@ -16,7 +16,6 @@ namespace etl {
  */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 struct binary_expr final :
-        comparable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>,
         dim_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>,
         value_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>,
         iterable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>

@@ -19,7 +19,7 @@ namespace etl {
  * A temporary expression computes the expression directly and stores it into a temporary.
  */
 template <typename D, typename V, typename R>
-struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, iterable<const D, true> {
+struct temporary_expr : value_testable<D>, dim_testable<D>, iterable<const D, true> {
     using derived_t         = D;                               ///< The derived type
     using value_type        = V;                               ///< The value type
     using result_type       = R;                               ///< The result type
