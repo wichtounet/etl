@@ -1349,53 +1349,30 @@ void conv2_valid_flipped_micro_kernel_5x8(const T* in, size_t n1, size_t n2, con
 #pragma GCC diagnostic pop
 #endif
 
-template <typename V, typename I, typename K, typename C>
-void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
-    using T        = value_t<I>;
+template <typename V, typename T>
+void conv2_valid_flipped_inner_kernel(const T* in, size_t n1, size_t n2, const T* kkk, size_t m1, size_t m2, T* out, size_t s1, size_t s2, size_t p1, size_t p2, T beta) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-    const auto n1 = etl::dim<0>(input);
-    const auto n2 = etl::dim<1>(input);
-
-    const auto m1 = etl::dim<0>(kernel);
-    const auto m2 = etl::dim<1>(kernel);
-
     const size_t c1 = (n1 - m1 + 2 * p1) / s1 + 1;
     const size_t c2 = (n2 - m2 + 2 * p2) / s2 + 1;
-
-    input.ensure_cpu_up_to_date();
-    kernel.ensure_cpu_up_to_date();
-
-    if (beta != T(0)) {
-        conv.ensure_cpu_up_to_date();
-    }
-
-    auto* kkk = kernel.memory_start();
-    auto* in  = input.memory_start();
-    auto* out = conv.memory_start();
 
     if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
         if (vec_size == 4 && m1 == 3 && m2 == 4) {
             conv2_valid_flipped_micro_kernel_3x4<V>(in, n1, n2, kkk, out, beta);
-            conv.invalidate_gpu();
             return;
         } else if (vec_size == 8 && m1 == 5 && m2 == 8) {
             conv2_valid_flipped_micro_kernel_5x8<V>(in, n1, n2, kkk, out, beta);
-            conv.invalidate_gpu();
             return;
         } else if (vec_size == 8 && m1 == 8 && m2 == 8) {
             conv2_valid_flipped_micro_kernel_8x8<V>(in, n1, n2, kkk, out, beta);
-            conv.invalidate_gpu();
             return;
         } else if (vec_size == 8 && m2 == 8) {
             conv2_valid_flipped_micro_kernel_nx8<V>(in, n1, n2, kkk, m1, out, beta);
-            conv.invalidate_gpu();
             return;
         } else if (vec_size == 8 && m2 == 16) {
             conv2_valid_flipped_micro_kernel_nx16<V>(in, n1, n2, kkk, m1, out, beta);
-            conv.invalidate_gpu();
             return;
         }
     }
@@ -1578,27 +1555,54 @@ void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv,
         }
     }
 
-    conv.invalidate_gpu();
-
     if (!padding_impl && m2 % vec_size != 0) {
         auto rem = m2 % vec_size;
-        for (std::size_t i = p1; i < c1 - p1; ++i) {
-            for (std::size_t j = p2; j < c2 - p2; ++j) {
+        for (size_t i = p1; i < c1 - p1; ++i) {
+            for (size_t j = p2; j < c2 - p2; ++j) {
                 T temp = 0.0;
 
                 const auto i_i = i * s1 - p1;
                 const auto i_j = j * s2 - p2;
 
-                for (std::size_t k = 0; k < m1; ++k) {
-                    for (std::size_t l = m2 - rem; l < m2; ++l) {
-                        temp += input(i_i + k, i_j + l) * kernel(k, l);
+                for (size_t k = 0; k < m1; ++k) {
+                    for (size_t l = m2 - rem; l < m2; ++l) {
+                        temp += in[i_i + k * n2 + i_j + l] * kkk[k * m2 + l];
                     }
                 }
 
-                conv(i, j) += temp;
+                out[i * c2 + j] += temp;
             }
         }
     }
+}
+
+template <typename V, typename I, typename K, typename C>
+void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
+    using T        = value_t<I>;
+
+    const auto n1 = etl::dim<0>(input);
+    const auto n2 = etl::dim<1>(input);
+
+    const auto m1 = etl::dim<0>(kernel);
+    const auto m2 = etl::dim<1>(kernel);
+
+    const size_t c1 = (n1 - m1 + 2 * p1) / s1 + 1;
+    const size_t c2 = (n2 - m2 + 2 * p2) / s2 + 1;
+
+    input.ensure_cpu_up_to_date();
+    kernel.ensure_cpu_up_to_date();
+
+    if (beta != T(0)) {
+        conv.ensure_cpu_up_to_date();
+    }
+
+    auto* kkk = kernel.memory_start();
+    auto* in  = input.memory_start();
+    auto* out = conv.memory_start();
+
+    conv2_valid_flipped_inner_kernel<V>(in, n1, n2, kkk, m1, m2, out, s1, s2, p1, p2, beta);
+
+    conv.invalidate_gpu();
 
     if (cpp_unlikely(p1 || p2)) {
         for (std::size_t i = 0; i < p1; ++i) {
