@@ -42,7 +42,7 @@ void pad_2d_input(const I& in, C& out, size_t p1, size_t p2) {
     auto in_m  = in.memory_start();
     auto out_m = out.memory_start();
 
-    for (std::size_t i = 0; i < etl::dim<0>(in); ++i) {
+    for (size_t i = 0; i < etl::dim<0>(in); ++i) {
         direct_copy_n(in_m + i * etl::dim<1>(in), out_m + (i + p1) * etl::dim<1>(out) + p2, etl::dim<1>(in));
     }
 
@@ -50,19 +50,19 @@ void pad_2d_input(const I& in, C& out, size_t p1, size_t p2) {
 }
 
 template <typename I, typename K, typename C>
-inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv, std::size_t i, std::size_t j, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
+inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv, size_t i, size_t j, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
     using T = value_t<I>;
 
-    const auto n1 = etl::dim<0>(input);
-    const auto n2 = etl::dim<1>(input);
+    const size_t n1 = etl::dim<0>(input);
+    const size_t n2 = etl::dim<1>(input);
 
-    const auto m1 = etl::dim<0>(kernel);
-    const auto m2 = etl::dim<1>(kernel);
+    const size_t m1 = etl::dim<0>(kernel);
+    const size_t m2 = etl::dim<1>(kernel);
 
     T temp = T(0);
 
-    const auto s_i = i * s1;
-    const auto s_j = j * s2;
+    const size_t s_i = i * s1;
+    const size_t s_j = j * s2;
 
     for (size_t k = 0; k < m1; ++k) {
         for (size_t l = 0; l < m2; ++l) {
@@ -92,8 +92,8 @@ template <typename V, typename T>
 void conv2_valid_flipped_micro_kernel_3x4(const T* in, size_t n1, size_t n2, const T* kkk, T* out, T beta) {
     using vec_type = V;
 
-    const auto m1 = 3;
-    const auto m2 = 4;
+    const size_t m1 = 3;
+    const size_t m2 = 4;
 
     const size_t c1 = n1 - m1 + 1;
     const size_t c2 = n2 - m2 + 1;
@@ -474,7 +474,7 @@ void conv2_valid_flipped_micro_kernel_8x8(const T* in, size_t n1, size_t n2, con
             if (j < c2) {
                 auto r1 = vec_type::template zero<T>();
 
-                for (std::size_t k = 0; k < m1; ++k) {
+                for (size_t k = 0; k < m1; ++k) {
                     auto k1 = vec_type::loadu(kkk + k * m2);
                     auto i1 = vec_type::loadu(in + (i + k) * n2 + j + 0);
                     r1      = vec_type::fmadd(i1, k1, r1);
@@ -560,7 +560,7 @@ void conv2_valid_flipped_micro_kernel_8x8(const T* in, size_t n1, size_t n2, con
             if (j < c2) {
                 auto r1 = vec_type::template zero<T>();
 
-                for (std::size_t k = 0; k < m1; ++k) {
+                for (size_t k = 0; k < m1; ++k) {
                     auto k1 = vec_type::loadu(kkk + k * m2);
                     auto i1 = vec_type::loadu(in + (i + k) * n2 + j + 0);
                     r1      = vec_type::fmadd(i1, k1, r1);
@@ -576,7 +576,7 @@ template <typename V, typename T>
 void conv2_valid_flipped_micro_kernel_nx8(const T* in, size_t n1, size_t n2, const T* kkk, size_t m1, T* out, T beta) {
     using vec_type = V;
 
-    const auto m2 = 8;
+    const size_t m2 = 8;
 
     const size_t c1 = n1 - m1 + 1;
     const size_t c2 = n2 - m2 + 1;
@@ -648,7 +648,7 @@ void conv2_valid_flipped_micro_kernel_nx8(const T* in, size_t n1, size_t n2, con
             if (j < c2 - 0) {
                 auto r1 = vec_type::template zero<T>();
 
-                for (std::size_t k = 0; k < m1; ++k) {
+                for (size_t k = 0; k < m1; ++k) {
                     auto k1 = vec_type::loadu(kkk + k * m2 + 0);
                     auto i1 = vec_type::loadu(in + (i + k) * n2 + j + 0 + 0);
                     r1      = vec_type::fmadd(i1, k1, r1);
@@ -724,7 +724,7 @@ void conv2_valid_flipped_micro_kernel_nx8(const T* in, size_t n1, size_t n2, con
             if (j < c2 - 0) {
                 auto r1 = vec_type::template zero<T>();
 
-                for (std::size_t k = 0; k < m1; ++k) {
+                for (size_t k = 0; k < m1; ++k) {
                     auto k1 = vec_type::loadu(kkk + k * m2 + 0);
                     auto i1 = vec_type::loadu(in + (i + k) * n2 + j + 0 + 0);
                     r1      = vec_type::fmadd(i1, k1, r1);
@@ -742,7 +742,7 @@ void conv2_valid_flipped_micro_kernel_nx16(const T* in, size_t n1, size_t n2, co
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-    const auto m2 = 16;
+    const size_t m2 = 16;
 
     const size_t c1 = n1 - m1 + 1;
     const size_t c2 = n2 - m2 + 1;
@@ -927,7 +927,7 @@ void conv2_valid_flipped_micro_kernel_nx16(const T* in, size_t n1, size_t n2, co
             if (j < c2) {
                 auto r1 = vec_type::template zero<T>();
 
-                for (std::size_t k = 0; k < m1; ++k) {
+                for (size_t k = 0; k < m1; ++k) {
                     auto k1 = vec_type::loadu(kkk + k * m2 + 0 * vec_size);
                     auto k2 = vec_type::loadu(kkk + k * m2 + 1 * vec_size);
 
@@ -1121,7 +1121,7 @@ void conv2_valid_flipped_micro_kernel_nx16(const T* in, size_t n1, size_t n2, co
             if (j < c2) {
                 auto r1 = vec_type::template zero<T>();
 
-                for (std::size_t k = 0; k < m1; ++k) {
+                for (size_t k = 0; k < m1; ++k) {
                     auto k1 = vec_type::loadu(kkk + k * m2 + 0 * vec_size);
                     auto k2 = vec_type::loadu(kkk + k * m2 + 1 * vec_size);
 
@@ -1142,8 +1142,8 @@ template <typename V, typename T>
 void conv2_valid_flipped_micro_kernel_5x8(const T* in, size_t n1, size_t n2, const T* kkk, T* out, T beta) {
     using vec_type = V;
 
-    const auto m1 = 5;
-    const auto m2 = 8;
+    const size_t m1 = 5;
+    const size_t m2 = 8;
 
     const size_t c1 = n1 - m1 + 1;
     const size_t c2 = n2 - m2 + 1;
@@ -1236,7 +1236,7 @@ void conv2_valid_flipped_micro_kernel_5x8(const T* in, size_t n1, size_t n2, con
             if (j < c2 - 0) {
                 auto r1 = vec_type::template zero<T>();
 
-                for (std::size_t k = 0; k < m1; ++k) {
+                for (size_t k = 0; k < m1; ++k) {
                     auto k1 = vec_type::loadu(kkk + k * m2 + 0);
                     auto i1 = vec_type::loadu(in + (i + k) * n2 + j + 0 + 0);
                     r1      = vec_type::fmadd(i1, k1, r1);
@@ -1333,7 +1333,7 @@ void conv2_valid_flipped_micro_kernel_5x8(const T* in, size_t n1, size_t n2, con
             if (j < c2 - 0) {
                 auto r1 = vec_type::template zero<T>();
 
-                for (std::size_t k = 0; k < m1; ++k) {
+                for (size_t k = 0; k < m1; ++k) {
                     auto k1 = vec_type::loadu(kkk + k * m2 + 0);
                     auto i1 = vec_type::loadu(in + (i + k) * n2 + j + 0 + 0);
                     r1      = vec_type::fmadd(i1, k1, r1);
@@ -1454,8 +1454,8 @@ void conv2_valid_flipped_inner_kernel(const T* in, size_t n1, size_t n2, const T
 
                 const size_t i_i = i * s1 - p1;
 
-                for (std::size_t k = 0; k < m1; ++k) {
-                    for (std::size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
+                for (size_t k = 0; k < m1; ++k) {
+                    for (size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
                         auto k1 = vec_type::loadu(kkk + k * m2 + l);
                         auto i1 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 0) * s2 - p2) + l);
                         r1      = vec_type::fmadd(i1, k1, r1);
@@ -1542,8 +1542,8 @@ void conv2_valid_flipped_inner_kernel(const T* in, size_t n1, size_t n2, const T
 
                 const size_t i_i = i * s1 - p1;
 
-                for (std::size_t k = 0; k < m1; ++k) {
-                    for (std::size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
+                for (size_t k = 0; k < m1; ++k) {
+                    for (size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
                         auto k1 = vec_type::loadu(kkk + k * m2 + l);
                         auto i1 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 0) * s2 - p2) + l);
                         r1      = vec_type::fmadd(i1, k1, r1);
@@ -1556,13 +1556,13 @@ void conv2_valid_flipped_inner_kernel(const T* in, size_t n1, size_t n2, const T
     }
 
     if (!padding_impl && m2 % vec_size != 0) {
-        auto rem = m2 % vec_size;
+        size_t rem = m2 % vec_size;
         for (size_t i = p1; i < c1 - p1; ++i) {
             for (size_t j = p2; j < c2 - p2; ++j) {
                 T temp = 0.0;
 
-                const auto i_i = i * s1 - p1;
-                const auto i_j = j * s2 - p2;
+                const size_t i_i = i * s1 - p1;
+                const size_t i_j = j * s2 - p2;
 
                 for (size_t k = 0; k < m1; ++k) {
                     for (size_t l = m2 - rem; l < m2; ++l) {
@@ -1580,11 +1580,11 @@ template <typename V, typename I, typename K, typename C>
 void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
     using T        = value_t<I>;
 
-    const auto n1 = etl::dim<0>(input);
-    const auto n2 = etl::dim<1>(input);
+    const size_t n1 = etl::dim<0>(input);
+    const size_t n2 = etl::dim<1>(input);
 
-    const auto m1 = etl::dim<0>(kernel);
-    const auto m2 = etl::dim<1>(kernel);
+    const size_t m1 = etl::dim<0>(kernel);
+    const size_t m2 = etl::dim<1>(kernel);
 
     const size_t c1 = (n1 - m1 + 2 * p1) / s1 + 1;
     const size_t c2 = (n2 - m2 + 2 * p2) / s2 + 1;
@@ -1605,26 +1605,26 @@ void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv,
     conv.invalidate_gpu();
 
     if (cpp_unlikely(p1 || p2)) {
-        for (std::size_t i = 0; i < p1; ++i) {
-            for (std::size_t j = 0; j < c2; ++j) {
+        for (size_t i = 0; i < p1; ++i) {
+            for (size_t j = 0; j < c2; ++j) {
                 conv2_valid_flipped_border(input, kernel, conv, i, j, s1, s2, p1, p2, beta);
             }
         }
 
-        for (std::size_t i = c1 - p1; i < c1; ++i) {
-            for (std::size_t j = 0; j < c2; ++j) {
+        for (size_t i = c1 - p1; i < c1; ++i) {
+            for (size_t j = 0; j < c2; ++j) {
                 conv2_valid_flipped_border(input, kernel, conv, i, j, s1, s2, p1, p2, beta);
             }
         }
 
-        for (std::size_t j = 0; j < p2; ++j) {
-            for (std::size_t i = p1; i < c1 - p1; ++i) {
+        for (size_t j = 0; j < p2; ++j) {
+            for (size_t i = p1; i < c1 - p1; ++i) {
                 conv2_valid_flipped_border(input, kernel, conv, i, j, s1, s2, p1, p2, beta);
             }
         }
 
-        for (std::size_t j = c2 - p2; j < c2; ++j) {
-            for (std::size_t i = p1; i < c1 - p1; ++i) {
+        for (size_t j = c2 - p2; j < c2; ++j) {
+            for (size_t i = p1; i < c1 - p1; ++i) {
                 conv2_valid_flipped_border(input, kernel, conv, i, j, s1, s2, p1, p2, beta);
             }
         }
@@ -1667,14 +1667,14 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
 
     using T = value_t<I>;
 
-    const auto k2 = etl::dim<1>(kernel);
+    const size_t k2 = etl::dim<1>(kernel);
 
     if (cpp_unlikely(p1 || p2)) {
-        const auto n1 = etl::dim<0>(input);
-        const auto n2 = etl::dim<1>(input);
+        const size_t n1 = etl::dim<0>(input);
+        const size_t n2 = etl::dim<1>(input);
 
-        const auto o1 = n1 + 2 * p1;
-        const auto o2 = n2 + 2 * p2;
+        const size_t o1 = n1 + 2 * p1;
+        const size_t o2 = n2 + 2 * p2;
 
         if (o1 * o2 * sizeof(T) < max_workspace) {
             etl::dyn_matrix<T, 2> padded_matrix(o1, o2, T(0));
@@ -1688,22 +1688,22 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
     }
 
     if (cpp_unlikely(s1 > 1 || s2 > 1)) {
-        const auto n1 = etl::dim<0>(input);
-        const auto n2 = etl::dim<1>(input);
+        const size_t n1 = etl::dim<0>(input);
+        const size_t n2 = etl::dim<1>(input);
 
-        const auto c1 = etl::dim<0>(conv);
-        const auto c2 = etl::dim<1>(conv);
+        const size_t c1 = etl::dim<0>(conv);
+        const size_t c2 = etl::dim<1>(conv);
 
-        const auto k1 = etl::dim<0>(kernel);
-        const auto k2 = etl::dim<1>(kernel);
+        const size_t k1 = etl::dim<0>(kernel);
+        const size_t k2 = etl::dim<1>(kernel);
 
         etl::dyn_matrix<T> tmp_result(n1 - k1 + 1, n2 - k2 + 1);
 
         conv2_valid_flipped(input, kernel, tmp_result, 1, 1, 0, 0);
 
         // Strided copy of the large result into the small result
-        for (std::size_t i = 0; i < c1; ++i) {
-            for (std::size_t j = 0; j < c2; ++j) {
+        for (size_t i = 0; i < c1; ++i) {
+            for (size_t j = 0; j < c2; ++j) {
                 conv(i, j) = tmp_result(i * s1, j * s2);
             }
         }
@@ -1716,7 +1716,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
         constexpr size_t SS = AS / 2;
 
         if (k2 < SS || k2 % AS > 0) {
-            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+            const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
             auto padded_input  = common::pad_right(input, pad);
             auto padded_kernel = common::pad_right(kernel, pad);
@@ -1751,14 +1751,14 @@ void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
 
     using T = value_t<I>;
 
-    const auto k2 = etl::dim<1>(kernel);
+    const size_t k2 = etl::dim<1>(kernel);
 
     if (cpp_unlikely(p1 || p2)) {
-        const auto n1 = etl::dim<0>(input);
-        const auto n2 = etl::dim<1>(input);
+        const size_t n1 = etl::dim<0>(input);
+        const size_t n2 = etl::dim<1>(input);
 
-        const auto o1 = n1 + 2 * p1;
-        const auto o2 = n2 + 2 * p2;
+        const size_t o1 = n1 + 2 * p1;
+        const size_t o2 = n2 + 2 * p2;
 
         if (o1 * o2 * sizeof(T) < max_workspace) {
             etl::dyn_matrix<T, 2> padded_matrix(o1, o2, T(0));
@@ -1772,21 +1772,21 @@ void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
     }
 
     if (cpp_unlikely(s1 > 1 || s2 > 1)) {
-        const auto n1 = etl::dim<0>(input);
-        const auto n2 = etl::dim<1>(input);
+        const size_t n1 = etl::dim<0>(input);
+        const size_t n2 = etl::dim<1>(input);
 
-        const auto c1 = etl::dim<0>(conv);
-        const auto c2 = etl::dim<1>(conv);
+        const size_t c1 = etl::dim<0>(conv);
+        const size_t c2 = etl::dim<1>(conv);
 
-        const auto k1 = etl::dim<0>(kernel);
+        const size_t k1 = etl::dim<0>(kernel);
 
         etl::dyn_matrix<T> tmp_result(n1 - k1 + 1, n2 - k2 + 1);
 
         conv2_valid(input, kernel, tmp_result, 1, 1, 0, 0);
 
         // Strided copy of the large result into the small result
-        for (std::size_t i = 0; i < c1; ++i) {
-            for (std::size_t j = 0; j < c2; ++j) {
+        for (size_t i = 0; i < c1; ++i) {
+            for (size_t j = 0; j < c2; ++j) {
                 conv(i, j) = tmp_result(i * s1, j * s2);
             }
         }
@@ -1799,7 +1799,7 @@ void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
         constexpr size_t SS = AS / 2;
 
         if (k2 < SS || k2 % AS > 0) {
-            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+            const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
             auto padded_input  = common::pad_right(input, pad);
             auto padded_kernel = common::pad_right_flip(kernel, pad);
@@ -1830,7 +1830,7 @@ void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
  * \param last The index where to stop in the output matrix
  */
 template <typename V, typename I, typename K, typename C>
-void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
+void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
@@ -2144,7 +2144,7 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
  * \param last The index where to stop in the output matrix
  */
 template <typename I, typename K, typename C>
-void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
+void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
@@ -2160,11 +2160,11 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
  * \param last The index where to stop in the output matrix
  */
 template <typename I, typename K, typename C>
-void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
+void conv1_full(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    std::size_t left = size(kernel) - 1;
+    size_t left = size(kernel) - 1;
 
     input.ensure_cpu_up_to_date();
     kernel.ensure_cpu_up_to_date();
@@ -2189,11 +2189,11 @@ void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, st
  * \param last The index where to stop in the output matrix
  */
 template <typename I, typename K, typename C>
-void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
+void conv1_same(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    std::size_t left = (size(kernel) - 1) / 2;
+    size_t left = (size(kernel) - 1) / 2;
 
     input.ensure_cpu_up_to_date();
     kernel.ensure_cpu_up_to_date();
@@ -2225,14 +2225,14 @@ void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-    const auto n1 = etl::dim<0>(input);
-    const auto n2 = etl::dim<1>(input);
+    const size_t n1 = etl::dim<0>(input);
+    const size_t n2 = etl::dim<1>(input);
 
-    const auto k1 = etl::dim<0>(kernel);
-    const auto k2 = etl::dim<1>(kernel);
+    const size_t k1 = etl::dim<0>(kernel);
+    const size_t k2 = etl::dim<1>(kernel);
 
-    const auto c1 = etl::dim<0>(conv);
-    const auto c2 = etl::dim<1>(conv);
+    const size_t c1 = etl::dim<0>(conv);
+    const size_t c2 = etl::dim<1>(conv);
 
     input.ensure_cpu_up_to_date();
     kernel.ensure_cpu_up_to_date();
@@ -2330,8 +2330,8 @@ void conv2_same(const I& input, const K& kernel, C&& conv) {
     input.ensure_cpu_up_to_date();
     kernel.ensure_cpu_up_to_date();
 
-    const auto k1 = etl::dim<0>(kernel);
-    const auto k2 = etl::dim<1>(kernel);
+    const size_t k1 = etl::dim<0>(kernel);
+    const size_t k2 = etl::dim<1>(kernel);
 
     etl::dyn_matrix<T, 2> kernel_reverse(k1, k2);
 
@@ -2368,10 +2368,10 @@ void conv2_same_multi(const I& input, const K& kernel, C&& conv) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    const auto Kn = etl::dim<0>(kernel);
+    const size_t Kn = etl::dim<0>(kernel);
 
     auto batch_fun_k = [&input, &kernel, &conv](const size_t first, const size_t last) {
-        for (std::size_t k = first; k < last; ++k) {
+        for (size_t k = first; k < last; ++k) {
             conv2_same<default_vec>(input, kernel(k), conv(k));
         }
     };
@@ -2391,10 +2391,10 @@ void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    const auto Kn = etl::dim<0>(kernel);
+    const size_t Kn = etl::dim<0>(kernel);
 
     auto batch_fun_k = [&input, &kernel, &conv](const size_t first, const size_t last) {
-        for (std::size_t k = first; k < last; ++k) {
+        for (size_t k = first; k < last; ++k) {
             conv2_same_flipped<default_vec>(input, kernel(k), conv(k));
         }
     };
@@ -2420,14 +2420,14 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv, value_t<I> be
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-    const auto n1 = etl::dim<0>(input);
-    const auto n2 = etl::dim<1>(input);
+    const size_t n1 = etl::dim<0>(input);
+    const size_t n2 = etl::dim<1>(input);
 
-    const auto m1 = etl::dim<0>(kernel);
-    const auto m2 = etl::dim<1>(kernel);
+    const size_t m1 = etl::dim<0>(kernel);
+    const size_t m2 = etl::dim<1>(kernel);
 
-    const auto c1 = etl::dim<0>(conv);
-    const auto c2 = etl::dim<1>(conv);
+    const size_t c1 = etl::dim<0>(conv);
+    const size_t c2 = etl::dim<1>(conv);
 
     input.ensure_cpu_up_to_date();
     kernel.ensure_cpu_up_to_date();
@@ -2522,8 +2522,8 @@ void conv2_full(const I& input, const K& kernel, C&& conv, value_t<I> beta) {
 
     using T = value_t<I>;
 
-    const auto k1 = etl::dim<0>(kernel);
-    const auto k2 = etl::dim<1>(kernel);
+    const size_t k1 = etl::dim<0>(kernel);
+    const size_t k2 = etl::dim<1>(kernel);
 
     etl::dyn_matrix<T, 2> kernel_reverse(k1, k2);
 
@@ -2576,10 +2576,10 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
 
     using T = value_t<I>;
 
-    const auto KK = etl::dim<0>(kernel);
+    const size_t KK = etl::dim<0>(kernel);
 
     auto batch_fun_k = [&input, &kernel, &conv](const size_t first, const size_t last) {
-        for (std::size_t k = first; k < last; ++k) {
+        for (size_t k = first; k < last; ++k) {
             conv2_full<default_vec>(input, kernel(k), conv(k), T(0));
         }
     };
@@ -2600,10 +2600,10 @@ void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
 
     using T = value_t<I>;
 
-    const auto KK = etl::dim<0>(kernel);
+    const size_t KK = etl::dim<0>(kernel);
 
     auto batch_fun_k = [&input, &kernel, &conv](const size_t first, const size_t last) {
-        for (std::size_t k = first; k < last; ++k) {
+        for (size_t k = first; k < last; ++k) {
             conv2_full_flipped<default_vec>(input, kernel(k), conv(k), T(0));
         }
     };
@@ -2624,12 +2624,12 @@ void conv4_full(const I& input, const KK& kernel, CC&& conv) {
 
     using T = value_t<I>;
 
-    const auto N = etl::dim<0>(input);
-    const auto K = etl::dim<0>(kernel);
-    const auto C = etl::dim<1>(kernel);
+    const size_t N = etl::dim<0>(input);
+    const size_t K = etl::dim<0>(kernel);
+    const size_t C = etl::dim<1>(kernel);
 
-    const auto k1 = etl::dim<2>(kernel);
-    const auto k2 = etl::dim<3>(kernel);
+    const size_t k1 = etl::dim<2>(kernel);
+    const size_t k2 = etl::dim<3>(kernel);
 
     input.ensure_cpu_up_to_date();
     kernel.ensure_cpu_up_to_date();
@@ -2642,16 +2642,16 @@ void conv4_full(const I& input, const KK& kernel, CC&& conv) {
         prepared_k.deep_fflip_inplace();
 
         if (N > C) {
-            auto batch_fun_n = [&](const std::size_t first, const std::size_t last) {
+            auto batch_fun_n = [&](const size_t first, const size_t last) {
                 if (last - first) {
-                    for (std::size_t i = first; i < last; ++i) {
+                    for (size_t i = first; i < last; ++i) {
                         // k = 0
-                        for (std::size_t c = 0; c < C; ++c) {
+                        for (size_t c = 0; c < C; ++c) {
                             conv2_full_flipped<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
                         }
 
-                        for (std::size_t k = 1; k < K; ++k) {
-                            for (std::size_t c = 0; c < C; ++c) {
+                        for (size_t k = 1; k < K; ++k) {
+                            for (size_t c = 0; c < C; ++c) {
                                 conv2_full_flipped<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
                             }
                         }
@@ -2661,16 +2661,16 @@ void conv4_full(const I& input, const KK& kernel, CC&& conv) {
 
             dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
         } else {
-            auto batch_fun_c = [&](const std::size_t first, const std::size_t last) {
+            auto batch_fun_c = [&](const size_t first, const size_t last) {
                 if (last - first) {
-                    for (std::size_t i = 0; i < N; ++i) {
+                    for (size_t i = 0; i < N; ++i) {
                         // k = 0
-                        for (std::size_t c = first; c < last; ++c) {
+                        for (size_t c = first; c < last; ++c) {
                             conv2_full_flipped<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
                         }
 
-                        for (std::size_t k = 1; k < K; ++k) {
-                            for (std::size_t c = first; c < last; ++c) {
+                        for (size_t k = 1; k < K; ++k) {
+                            for (size_t c = first; c < last; ++c) {
                                 conv2_full_flipped<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
                             }
                         }
@@ -2697,7 +2697,7 @@ void conv4_full(const I& input, const K& kernel, C&& conv) {
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
     if(avx_enabled && sse3_enabled){
-        const auto k2 = etl::dim<3>(kernel);
+        const size_t k2 = etl::dim<3>(kernel);
 
         if (detail::prefer_sse<value_t<I>>(k2)) {
             return conv4_full<detail::safe_avx_vec>(input, kernel, conv);
@@ -2722,25 +2722,25 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
 
     using T = value_t<I>;
 
-    const auto N = etl::dim<0>(input);
-    const auto K = etl::dim<0>(kernel);
-    const auto C = etl::dim<1>(kernel);
+    const size_t N = etl::dim<0>(input);
+    const size_t K = etl::dim<0>(kernel);
+    const size_t C = etl::dim<1>(kernel);
 
     input.ensure_cpu_up_to_date();
     kernel.ensure_cpu_up_to_date();
 
     if (C > 0) {
         if (N > C) {
-            auto batch_fun_n = [&](const std::size_t first, const std::size_t last) {
+            auto batch_fun_n = [&](const size_t first, const size_t last) {
                 if (last - first) {
-                    for (std::size_t i = first; i < last; ++i) {
+                    for (size_t i = first; i < last; ++i) {
                         // k = 0
-                        for (std::size_t c = 0; c < C; ++c) {
+                        for (size_t c = 0; c < C; ++c) {
                             conv2_full_flipped<V>(input(i)(0), kernel(0)(c), conv(i)(c), T(0));
                         }
 
-                        for (std::size_t k = 1; k < K; ++k) {
-                            for (std::size_t c = 0; c < C; ++c) {
+                        for (size_t k = 1; k < K; ++k) {
+                            for (size_t c = 0; c < C; ++c) {
                                 conv2_full_flipped<V>(input(i)(k), kernel(k)(c), conv(i)(c), T(1));
                             }
                         }
@@ -2750,16 +2750,16 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
 
             dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
         } else {
-            auto batch_fun_c = [&](const std::size_t first, const std::size_t last) {
+            auto batch_fun_c = [&](const size_t first, const size_t last) {
                 if (last - first) {
-                    for (std::size_t i = 0; i < N; ++i) {
+                    for (size_t i = 0; i < N; ++i) {
                         // k = 0
-                        for (std::size_t c = first; c < last; ++c) {
+                        for (size_t c = first; c < last; ++c) {
                             conv2_full_flipped<V>(input(i)(0), kernel(0)(c), conv(i)(c), T(0));
                         }
 
-                        for (std::size_t k = 1; k < K; ++k) {
-                            for (std::size_t c = first; c < last; ++c) {
+                        for (size_t k = 1; k < K; ++k) {
+                            for (size_t c = first; c < last; ++c) {
                                 conv2_full_flipped<V>(input(i)(k), kernel(k)(c), conv(i)(c), T(1));
                             }
                         }
@@ -2786,7 +2786,7 @@ void conv4_full_flipped(const I& input, const K& kernel, C&& conv) {
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
     if(avx_enabled && sse3_enabled){
-        const auto k2 = etl::dim<3>(kernel);
+        const size_t k2 = etl::dim<3>(kernel);
 
         if (detail::prefer_sse<value_t<I>>(k2)) {
             return conv4_full_flipped<detail::safe_avx_vec>(input, kernel, conv);
@@ -2815,8 +2815,8 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
 
     using T = value_t<I>;
 
-    const auto K  = etl::dim<0>(kernel);
-    const auto k2 = etl::dim<2>(kernel);
+    const size_t K  = etl::dim<0>(kernel);
+    const size_t k2 = etl::dim<2>(kernel);
 
     input.ensure_cpu_up_to_date();
     kernel.ensure_cpu_up_to_date();
@@ -2826,7 +2826,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
         static constexpr size_t SS = AS / 2;
 
         if (k2 < SS || k2 % AS > 0) {
-            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+            const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
             auto padded_input  = common::pad_right(input, pad);
             auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
@@ -2835,7 +2835,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
 
             if (detail::prefer_sse<T>(k2 + pad)) {
                 auto fun_k = [&](const size_t first, const size_t last) {
-                    for (std::size_t k = first; k < last; ++k) {
+                    for (size_t k = first; k < last; ++k) {
                         detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, 0.0);
                     }
                 };
@@ -2843,7 +2843,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
                 dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
             } else {
                 auto fun_k = [&](const size_t first, const size_t last) {
-                    for (std::size_t k = first; k < last; ++k) {
+                    for (size_t k = first; k < last; ++k) {
                         detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, 0.0);
                     }
                 };
@@ -2857,7 +2857,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
 
     if (detail::prefer_sse<T>(kernel.dim(2))) {
         auto fun_k = [&](const size_t first, const size_t last) {
-            for (std::size_t k = first; k < last; ++k) {
+            for (size_t k = first; k < last; ++k) {
                 detail::conv2_valid_micro_kernel<detail::safe_sse_vec>(input, kernel(k), conv(k), s1, s2, p1, p2, 0.0);
             }
         };
@@ -2865,7 +2865,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
         dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
     } else {
         auto fun_k = [&](const size_t first, const size_t last) {
-            for (std::size_t k = first; k < last; ++k) {
+            for (size_t k = first; k < last; ++k) {
                 detail::conv2_valid_micro_kernel<detail::safe_avx_vec>(input, kernel(k), conv(k), s1, s2, p1, p2, 0.0);
             }
         };
@@ -2893,8 +2893,8 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
 
     using T = value_t<I>;
 
-    const auto K  = etl::dim<0>(kernel);
-    const auto k2 = etl::dim<2>(kernel);
+    const size_t K  = etl::dim<0>(kernel);
+    const size_t k2 = etl::dim<2>(kernel);
 
     input.ensure_cpu_up_to_date();
     kernel.ensure_cpu_up_to_date();
@@ -2904,7 +2904,7 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
         constexpr size_t SS = AS / 2;
 
         if (k2 < SS || k2 % AS > 0) {
-            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+            const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
             auto padded_input  = common::pad_right(input, pad);
             auto padded_kernel = common::pad_right_multi(kernel, pad);
@@ -2913,7 +2913,7 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
 
             if (detail::prefer_sse<T>(k2 + pad)) {
                 auto fun_k = [&](const size_t first, const size_t last) {
-                    for (std::size_t k = first; k < last; ++k) {
+                    for (size_t k = first; k < last; ++k) {
                         detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, T(0));
                     }
                 };
@@ -2921,7 +2921,7 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
                 dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
             } else {
                 auto fun_k = [&](const size_t first, const size_t last) {
-                    for (std::size_t k = first; k < last; ++k) {
+                    for (size_t k = first; k < last; ++k) {
                         detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, T(0));
                     }
                 };
@@ -2971,10 +2971,10 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
 
     using T = value_t<I>;
 
-    const auto k2 = etl::dim<2>(kernel);
-    const auto K  = etl::dim<0>(kernel);
-    const auto N  = etl::dim<0>(input);
-    const auto KN = K * N;
+    const size_t k2 = etl::dim<2>(kernel);
+    const size_t K  = etl::dim<0>(kernel);
+    const size_t N  = etl::dim<0>(input);
+    const size_t KN = K * N;
 
     input.ensure_cpu_up_to_date();
     kernel.ensure_cpu_up_to_date();
@@ -2984,16 +2984,16 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
         static constexpr size_t SS = AS / 2;
 
         if (k2 < SS || k2 % AS > 0) {
-            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+            const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
             auto padded_input  = common::pad_right_multi(input, pad);
             auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
 
             if (detail::prefer_sse<T>(k2 + pad)) {
                 auto fun_kn = [&](const size_t first, const size_t last) {
-                    for (std::size_t kn = first; kn < last; ++kn) {
-                        auto k = kn / N;
-                        auto n = kn % N;
+                    for (size_t kn = first; kn < last; ++kn) {
+                        size_t k = kn / N;
+                        size_t n = kn % N;
 
                         detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(n), padded_kernel(k), conv(k)(n), s1, s2, p1, p2, T(0));
                     }
@@ -3002,9 +3002,9 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
                 dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
             } else {
                 auto fun_kn = [&](const size_t first, const size_t last) {
-                    for (std::size_t kn = first; kn < last; ++kn) {
-                        auto k = kn / N;
-                        auto n = kn % N;
+                    for (size_t kn = first; kn < last; ++kn) {
+                        size_t k = kn / N;
+                        size_t n = kn % N;
 
                         detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(n), padded_kernel(k), conv(k)(n), s1, s2, p1, p2, T(0));
                     }
@@ -3019,9 +3019,9 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
 
     if (detail::prefer_sse<T>(kernel.dim(2))) {
         auto fun_kn = [&](const size_t first, const size_t last) {
-            for (std::size_t kn = first; kn < last; ++kn) {
-                auto k = kn / N;
-                auto n = kn % N;
+            for (size_t kn = first; kn < last; ++kn) {
+                size_t k = kn / N;
+                size_t n = kn % N;
 
                 detail::conv2_valid_micro_kernel<detail::safe_sse_vec>(input(n), kernel(k), conv(k)(n), s1, s2, p1, p2, T(0));
             }
@@ -3030,9 +3030,9 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
         dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
     } else {
         auto fun_kn = [&](const size_t first, const size_t last) {
-            for (std::size_t kn = first; kn < last; ++kn) {
-                auto k = kn / N;
-                auto n = kn % N;
+            for (size_t kn = first; kn < last; ++kn) {
+                size_t k = kn / N;
+                size_t n = kn % N;
 
                 detail::conv2_valid_micro_kernel<detail::safe_avx_vec>(input(n), kernel(k), conv(k)(n), s1, s2, p1, p2, T(0));
             }
@@ -3061,10 +3061,10 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
 
     using T = value_t<I>;
 
-    const auto k2 = etl::dim<2>(kernel);
-    const auto K  = etl::dim<0>(kernel);
-    const auto N  = etl::dim<0>(input);
-    const auto KN = K * N;
+    const size_t k2 = etl::dim<2>(kernel);
+    const size_t K  = etl::dim<0>(kernel);
+    const size_t N  = etl::dim<0>(input);
+    const size_t KN = K * N;
 
     input.ensure_cpu_up_to_date();
     kernel.ensure_cpu_up_to_date();
@@ -3074,7 +3074,7 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
         constexpr size_t SS = AS / 2;
 
         if (k2 < SS || k2 % AS > 0) {
-            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+            const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
             auto padded_input  = common::pad_right_multi(input, pad);
             auto padded_kernel = common::pad_right_multi(kernel, pad);
@@ -3083,9 +3083,9 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
 
             if (detail::prefer_sse<T>(k2 + pad)) {
                 auto fun_kn = [&](const size_t first, const size_t last) {
-                    for (std::size_t kn = first; kn < last; ++kn) {
-                        auto k = kn / N;
-                        auto n = kn % N;
+                    for (size_t kn = first; kn < last; ++kn) {
+                        size_t k = kn / N;
+                        size_t n = kn % N;
 
                         detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(n), padded_kernel(k), conv(k)(n), s1, s2, p1, p2, T(0));
                     }
@@ -3094,9 +3094,9 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
                 dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
             } else {
                 auto fun_kn = [&](const size_t first, const size_t last) {
-                    for (std::size_t kn = first; kn < last; ++kn) {
-                        auto k = kn / N;
-                        auto n = kn % N;
+                    for (size_t kn = first; kn < last; ++kn) {
+                        size_t k = kn / N;
+                        size_t n = kn % N;
 
                         detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(n), padded_kernel(k), conv(k)(n), s1, s2, p1, p2, T(0));
                     }
@@ -3111,9 +3111,9 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
 
     if (detail::prefer_sse<T>(kernel.dim(2))) {
         auto fun_kn = [&](const size_t first, const size_t last) {
-            for (std::size_t kn = first; kn < last; ++kn) {
-                auto k = kn / N;
-                auto n = kn % N;
+            for (size_t kn = first; kn < last; ++kn) {
+                size_t k = kn / N;
+                size_t n = kn % N;
 
                 detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(input(n), kernel(k), conv(k)(n), s1, s2, p1, p2, T(0));
             }
@@ -3122,9 +3122,9 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
         dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
     } else {
         auto fun_kn = [&](const size_t first, const size_t last) {
-            for (std::size_t kn = first; kn < last; ++kn) {
-                auto k = kn / N;
-                auto n = kn % N;
+            for (size_t kn = first; kn < last; ++kn) {
+                size_t k = kn / N;
+                size_t n = kn % N;
 
                 detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(input(n), kernel(k), conv(k)(n), s1, s2, p1, p2, T(0));
             }
@@ -3150,11 +3150,11 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
     using T = value_t<I>;
 
     if (etl::dim<1>(kernel) > 0) {
-        const auto N = etl::dim<0>(input);  // The number of images
-        const auto K = etl::dim<0>(kernel); // The number of kernels
-        const auto C = etl::dim<1>(input);  // The number of channels
+        const size_t N = etl::dim<0>(input);  // The number of images
+        const size_t K = etl::dim<0>(kernel); // The number of kernels
+        const size_t C = etl::dim<1>(input);  // The number of channels
 
-        const auto k2 = etl::dim<3>(kernel);
+        const size_t k2 = etl::dim<3>(kernel);
 
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
@@ -3166,16 +3166,16 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
             static constexpr size_t SS = AS / 2;
 
             if (k2 < SS || k2 % AS > 0) {
-                const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+                const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
                 auto padded_input  = common::pad_right_multi(input, pad);
                 auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
 
                 if (detail::prefer_sse<T>(k2 + pad)) {
                     auto fun_nk = [&](const size_t first, const size_t last) {
-                        for (std::size_t nk = first; nk < last; ++nk) {
-                            const auto i = nk / K;
-                            const auto k = nk % K;
+                        for (size_t nk = first; nk < last; ++nk) {
+                            const size_t i = nk / K;
+                            const size_t k = nk % K;
 
                             detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
 
@@ -3188,9 +3188,9 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
                     dispatch_1d_any(select_parallel(K * N, 4), fun_nk, 0, K * N);
                 } else {
                     auto fun_nk = [&](const size_t first, const size_t last) {
-                        for (std::size_t nk = first; nk < last; ++nk) {
-                            const auto i = nk / K;
-                            const auto k = nk % K;
+                        for (size_t nk = first; nk < last; ++nk) {
+                            const size_t i = nk / K;
+                            const size_t k = nk % K;
 
                             detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
 
@@ -3209,9 +3209,9 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
 
         if (detail::prefer_sse<T>(k2)) {
             auto fun_nk = [&](const size_t first, const size_t last) {
-                for (std::size_t nk = first; nk < last; ++nk) {
-                    const auto i = nk / K;
-                    const auto k = nk % K;
+                for (size_t nk = first; nk < last; ++nk) {
+                    const size_t i = nk / K;
+                    const size_t k = nk % K;
 
                     detail::conv2_valid_micro_kernel<detail::safe_sse_vec>(input(i)(0), kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
 
@@ -3224,9 +3224,9 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
             dispatch_1d_any(select_parallel(K * N, 4), fun_nk, 0, K * N);
         } else {
             auto fun_nk = [&](const size_t first, const size_t last) {
-                for (std::size_t nk = first; nk < last; ++nk) {
-                    const auto i = nk / K;
-                    const auto k = nk % K;
+                for (size_t nk = first; nk < last; ++nk) {
+                    const size_t i = nk / K;
+                    const size_t k = nk % K;
 
                     detail::conv2_valid_micro_kernel<detail::safe_avx_vec>(input(i)(0), kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
 
@@ -3257,11 +3257,11 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
     using T = value_t<I>;
 
     if (etl::dim<0>(kernel) > 0) {
-        const auto N = etl::dim<0>(input);  // The number of images
-        const auto K = etl::dim<0>(kernel); // The number of kernels
-        const auto C = etl::dim<1>(input);  // The number of channels
+        const size_t N = etl::dim<0>(input);  // The number of images
+        const size_t K = etl::dim<0>(kernel); // The number of kernels
+        const size_t C = etl::dim<1>(input);  // The number of channels
 
-        const auto k2 = etl::dim<3>(kernel);
+        const size_t k2 = etl::dim<3>(kernel);
 
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
@@ -3271,16 +3271,16 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
             static constexpr size_t SS = AS / 2;
 
             if (k2 < SS || k2 % AS > 0) {
-                const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+                const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
                 auto padded_input  = common::pad_right_multi(input, pad);
                 auto padded_kernel = common::pad_right_multi(kernel, pad);
 
                 if (detail::prefer_sse<T>(k2 + pad)) {
                     auto fun_nk = [&](const size_t first, const size_t last) {
-                        for (std::size_t nk = first; nk < last; ++nk) {
-                            const auto i = nk / K;
-                            const auto k = nk % K;
+                        for (size_t nk = first; nk < last; ++nk) {
+                            const size_t i = nk / K;
+                            const size_t k = nk % K;
 
                             detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
 
@@ -3293,9 +3293,9 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
                     dispatch_1d_any(select_parallel(K * N, 4), fun_nk, 0, K * N);
                 } else {
                     auto fun_nk = [&](const size_t first, const size_t last) {
-                        for (std::size_t nk = first; nk < last; ++nk) {
-                            const auto i = nk / K;
-                            const auto k = nk % K;
+                        for (size_t nk = first; nk < last; ++nk) {
+                            const size_t i = nk / K;
+                            const size_t k = nk % K;
 
                             detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
 
@@ -3314,9 +3314,9 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
 
         if (detail::prefer_sse<T>(k2)) {
             auto fun_nk = [&](const size_t first, const size_t last) {
-                for (std::size_t nk = first; nk < last; ++nk) {
-                    const auto i = nk / K;
-                    const auto k = nk % K;
+                for (size_t nk = first; nk < last; ++nk) {
+                    const size_t i = nk / K;
+                    const size_t k = nk % K;
 
                     detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(input(i)(0), kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
 
@@ -3329,9 +3329,9 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
             dispatch_1d_any(select_parallel(K * N, 4), fun_nk, 0, K * N);
         } else {
             auto fun_nk = [&](const size_t first, const size_t last) {
-                for (std::size_t nk = first; nk < last; ++nk) {
-                    const auto i = nk / K;
-                    const auto k = nk % K;
+                for (size_t nk = first; nk < last; ++nk) {
+                    const size_t i = nk / K;
+                    const size_t k = nk % K;
 
                     detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(input(i)(0), kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
 
@@ -3363,11 +3363,11 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
     using T = value_t<I>;
 
     if (input.dim(0) > 0) {
-        const auto N = input.dim(0);  // The number of images
-        const auto C = input.dim(1);  // The number of channels
-        const auto K = kernel.dim(1); // The number of kernels
+        const size_t N = input.dim(0);  // The number of images
+        const size_t C = input.dim(1);  // The number of channels
+        const size_t K = kernel.dim(1); // The number of kernels
 
-        const auto k2 = kernel.dim(3);
+        const size_t k2 = kernel.dim(3);
 
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
@@ -3377,7 +3377,7 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
             static constexpr size_t SS = AS / 2;
 
             if (k2 < SS || k2 % AS > 0) {
-                const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+                const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
                 auto padded_input  = common::pad_right_multi(input, pad);
                 auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
@@ -3385,17 +3385,17 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
                 if (detail::prefer_sse<T>(k2 + pad)) {
                     auto fun_kc = [&](const size_t first, const size_t last) {
                         //i = 0
-                        for (std::size_t kc = first; kc < last; ++kc) {
-                            const auto k = kc / C;
-                            const auto c = kc % C;
+                        for (size_t kc = first; kc < last; ++kc) {
+                            const size_t k = kc / C;
+                            const size_t c = kc % C;
 
                             detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                         }
 
-                        for (std::size_t i = 1; i < N; ++i) {
-                            for (std::size_t kc = first; kc < last; ++kc) {
-                                const auto k = kc / C;
-                                const auto c = kc % C;
+                        for (size_t i = 1; i < N; ++i) {
+                            for (size_t kc = first; kc < last; ++kc) {
+                                const size_t k = kc / C;
+                                const size_t c = kc % C;
 
                                 detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                             }
@@ -3406,17 +3406,17 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
                 } else {
                     auto fun_kc = [&](const size_t first, const size_t last) {
                         //i = 0
-                        for (std::size_t kc = first; kc < last; ++kc) {
-                            const auto k = kc / C;
-                            const auto c = kc % C;
+                        for (size_t kc = first; kc < last; ++kc) {
+                            const size_t k = kc / C;
+                            const size_t c = kc % C;
 
                             detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                         }
 
-                        for (std::size_t i = 1; i < N; ++i) {
-                            for (std::size_t kc = first; kc < last; ++kc) {
-                                const auto k = kc / C;
-                                const auto c = kc % C;
+                        for (size_t i = 1; i < N; ++i) {
+                            for (size_t kc = first; kc < last; ++kc) {
+                                const size_t k = kc / C;
+                                const size_t c = kc % C;
 
                                 detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                             }
@@ -3433,17 +3433,17 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
         if (detail::prefer_sse<T>(k2)) {
             auto fun_kc = [&](const size_t first, const size_t last) {
                 //i = 0
-                for (std::size_t kc = first; kc < last; ++kc) {
-                    const auto k = kc / C;
-                    const auto c = kc % C;
+                for (size_t kc = first; kc < last; ++kc) {
+                    const size_t k = kc / C;
+                    const size_t c = kc % C;
 
                     detail::conv2_valid_micro_kernel<detail::safe_sse_vec>(input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                 }
 
-                for (std::size_t i = 1; i < N; ++i) {
-                    for (std::size_t kc = first; kc < last; ++kc) {
-                        const auto k = kc / C;
-                        const auto c = kc % C;
+                for (size_t i = 1; i < N; ++i) {
+                    for (size_t kc = first; kc < last; ++kc) {
+                        const size_t k = kc / C;
+                        const size_t c = kc % C;
 
                         detail::conv2_valid_micro_kernel<detail::safe_sse_vec>(input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                     }
@@ -3454,17 +3454,17 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
         } else {
             auto fun_kc = [&](const size_t first, const size_t last) {
                 //i = 0
-                for (std::size_t kc = first; kc < last; ++kc) {
-                    const auto k = kc / C;
-                    const auto c = kc % C;
+                for (size_t kc = first; kc < last; ++kc) {
+                    const size_t k = kc / C;
+                    const size_t c = kc % C;
 
                     detail::conv2_valid_micro_kernel<detail::safe_avx_vec>(input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                 }
 
-                for (std::size_t i = 1; i < N; ++i) {
-                    for (std::size_t kc = first; kc < last; ++kc) {
-                        const auto k = kc / C;
-                        const auto c = kc % C;
+                for (size_t i = 1; i < N; ++i) {
+                    for (size_t kc = first; kc < last; ++kc) {
+                        const size_t k = kc / C;
+                        const size_t c = kc % C;
 
                         detail::conv2_valid_micro_kernel<detail::safe_avx_vec>(input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                     }
@@ -3494,11 +3494,11 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
     using T = value_t<I>;
 
     if (input.dim(0) > 0) {
-        const auto N = input.dim(0);  // The number of images
-        const auto C = input.dim(1);  // The number of channels
-        const auto K = kernel.dim(1); // The number of kernels
+        const size_t N = input.dim(0);  // The number of images
+        const size_t C = input.dim(1);  // The number of channels
+        const size_t K = kernel.dim(1); // The number of kernels
 
-        const auto k2 = kernel.dim(3);
+        const size_t k2 = kernel.dim(3);
 
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
@@ -3508,7 +3508,7 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
             constexpr size_t SS = AS / 2;
 
             if (k2 < SS || k2 % AS > 0) {
-                const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+                const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
                 auto padded_input  = common::pad_right_multi(input, pad);
                 auto padded_kernel = common::pad_right_multi(kernel, pad);
@@ -3516,17 +3516,17 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                 if (detail::prefer_sse<T>(k2 + pad)) {
                     auto fun_kc = [&](const size_t first, const size_t last) {
                         //i = 0
-                        for (std::size_t kc = first; kc < last; ++kc) {
-                            const auto k = kc / C;
-                            const auto c = kc % C;
+                        for (size_t kc = first; kc < last; ++kc) {
+                            const size_t k = kc / C;
+                            const size_t c = kc % C;
 
                             detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                         }
 
-                        for (std::size_t i = 1; i < N; ++i) {
-                            for (std::size_t kc = first; kc < last; ++kc) {
-                                const auto k = kc / C;
-                                const auto c = kc % C;
+                        for (size_t i = 1; i < N; ++i) {
+                            for (size_t kc = first; kc < last; ++kc) {
+                                const size_t k = kc / C;
+                                const size_t c = kc % C;
 
                                 detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                             }
@@ -3537,17 +3537,17 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                 } else {
                     auto fun_kc = [&](const size_t first, const size_t last) {
                         //i = 0
-                        for (std::size_t kc = first; kc < last; ++kc) {
-                            const auto k = kc / C;
-                            const auto c = kc % C;
+                        for (size_t kc = first; kc < last; ++kc) {
+                            const size_t k = kc / C;
+                            const size_t c = kc % C;
 
                             detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                         }
 
-                        for (std::size_t i = 1; i < N; ++i) {
-                            for (std::size_t kc = first; kc < last; ++kc) {
-                                const auto k = kc / C;
-                                const auto c = kc % C;
+                        for (size_t i = 1; i < N; ++i) {
+                            for (size_t kc = first; kc < last; ++kc) {
+                                const size_t k = kc / C;
+                                const size_t c = kc % C;
 
                                 detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                             }
@@ -3564,17 +3564,17 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
         if (detail::prefer_sse<T>(k2)) {
             auto fun_kc = [&](const size_t first, const size_t last) {
                 //i = 0
-                for (std::size_t kc = first; kc < last; ++kc) {
-                    const auto k = kc / C;
-                    const auto c = kc % C;
+                for (size_t kc = first; kc < last; ++kc) {
+                    const size_t k = kc / C;
+                    const size_t c = kc % C;
 
                     detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                 }
 
-                for (std::size_t i = 1; i < N; ++i) {
-                    for (std::size_t kc = first; kc < last; ++kc) {
-                        const auto k = kc / C;
-                        const auto c = kc % C;
+                for (size_t i = 1; i < N; ++i) {
+                    for (size_t kc = first; kc < last; ++kc) {
+                        const size_t k = kc / C;
+                        const size_t c = kc % C;
 
                         detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                     }
@@ -3585,17 +3585,17 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
         } else {
             auto fun_kc = [&](const size_t first, const size_t last) {
                 //i = 0
-                for (std::size_t kc = first; kc < last; ++kc) {
-                    const auto k = kc / C;
-                    const auto c = kc % C;
+                for (size_t kc = first; kc < last; ++kc) {
+                    const size_t k = kc / C;
+                    const size_t c = kc % C;
 
                     detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                 }
 
-                for (std::size_t i = 1; i < N; ++i) {
-                    for (std::size_t kc = first; kc < last; ++kc) {
-                        const auto k = kc / C;
-                        const auto c = kc % C;
+                for (size_t i = 1; i < N; ++i) {
+                    for (size_t kc = first; kc < last; ++kc) {
+                        const size_t k = kc / C;
+                        const size_t c = kc % C;
 
                         detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                     }
