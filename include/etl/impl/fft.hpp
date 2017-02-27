@@ -477,12 +477,15 @@ struct fft1_many_impl {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        const std::size_t transforms = etl::dim<0>(c);
-        const std::size_t n          = etl::dim<1>(c);
+        const size_t transforms = etl::dim<0>(c);
+
+        const auto impl = select_fft1_many_impl(transforms, etl::dim<1>(c));
+
+//CPP17: if constexpr
+#ifdef ETL_PARALLEL_SUPPORT
+        const size_t n = etl::dim<1>(c);
 
         bool parallel_dispatch = select_parallel_2d(transforms, fft1_many_threshold_transforms, n, fft1_many_threshold_n);
-
-        fft_impl impl = select_fft1_many_impl(transforms, etl::dim<1>(c));
 
         thread_local cpp::default_thread_pool<> pool(threads - 1);
 
@@ -505,6 +508,15 @@ struct fft1_many_impl {
         } else if (impl == fft_impl::CUFFT) {
             etl::impl::cufft::fft1_many(a, c);
         }
+#else
+        if (impl == fft_impl::STD) {
+            etl::impl::standard::fft1_many(a, c);
+        } else if (impl == fft_impl::MKL) {
+            etl::impl::blas::fft1_many(a, c);
+        } else if (impl == fft_impl::CUFFT) {
+            etl::impl::cufft::fft1_many(a, c);
+        }
+#endif
     }
 };
 
@@ -519,12 +531,14 @@ struct fft2_many_impl {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        const std::size_t transforms = etl::dim<0>(c);
+        const auto impl = select_fft2_many_impl(etl::dim<0>(c), etl::dim<1>(c), etl::dim<2>(c));
+
+//CPP17: if constexpr
+#ifdef ETL_PARALLEL_SUPPORT
+        const std::size_t transforms = size(c) / ( etl::dim<;
         const std::size_t n          = etl::size(c) / transforms;
 
         bool parallel_dispatch = select_parallel_2d(transforms, fft2_many_threshold_transforms, n, fft2_many_threshold_n);
-
-        fft_impl impl = select_fft2_many_impl(etl::dim<0>(c), etl::dim<1>(c), etl::dim<2>(c));
 
         thread_local cpp::default_thread_pool<> pool(threads - 1);
 
@@ -541,6 +555,15 @@ struct fft2_many_impl {
         } else if (impl == fft_impl::CUFFT) {
             etl::impl::cufft::fft2_many(a, c);
         }
+#else
+        if (impl == fft_impl::STD) {
+            etl::impl::standard::fft2_many(a, c);
+        } else if (impl == fft_impl::MKL) {
+            etl::impl::blas::fft2_many(a, c);
+        } else if (impl == fft_impl::CUFFT) {
+            etl::impl::cufft::fft2_many(a, c);
+        }
+#endif
     }
 };
 

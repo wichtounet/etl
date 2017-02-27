@@ -115,6 +115,8 @@ inline bool select_parallel(const E& e) {
  * \brief Sum operation implementation
  */
 struct sum_impl {
+    //CPP17: if constexpr
+#ifdef ETL_PARALLEL_SUPPORT
     /*!
      * \brief Apply the functor to e
      */
@@ -148,6 +150,25 @@ struct sum_impl {
 
         return acc;
     }
+#else
+    /*!
+     * \brief Apply the functor to e
+     */
+    template <typename E>
+    static value_t<E> apply(const E& e) {
+        const auto impl = select_sum_impl<E>();
+
+        if (impl == etl::sum_impl::VEC) {
+            return impl::vec::sum(e, 0, size(e));
+        } else if(impl == etl::sum_impl::BLAS){
+            return impl::blas::sum(e);
+        } else if(impl == etl::sum_impl::CUBLAS){
+            return impl::cublas::sum(e);
+        } else {
+            return impl::standard::sum(e, 0, size(e));
+        }
+    }
+#endif
 };
 
 } //end of namespace detail

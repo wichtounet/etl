@@ -28,7 +28,10 @@ struct conv1_full_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        etl::conv_impl impl    = select_conv1_impl_new<conv_type::FULL, I, K, C>();
+        const auto impl = select_conv1_impl_new<conv_type::FULL, I, K, C>();
+
+//CPP17: if constexpr
+#ifdef ETL_PARALLEL_SUPPORT
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::VEC) {
@@ -48,6 +51,21 @@ struct conv1_full_impl {
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
+#else
+        if (impl == etl::conv_impl::VEC) {
+            impl::vec::conv1_full(input, kernel, conv, 0, size(conv));
+        } else if (impl == etl::conv_impl::STD) {
+            impl::standard::conv1_full(input, kernel, conv, 0, size(conv));
+        } else if (impl == etl::conv_impl::FFT_STD) {
+            impl::standard::conv1_full_fft(input, kernel, conv);
+        } else if (impl == etl::conv_impl::FFT_MKL) {
+            impl::blas::conv1_full(input, kernel, conv);
+        } else if (impl == etl::conv_impl::FFT_CUFFT) {
+            impl::cufft::conv1_full(input, kernel, conv);
+        } else {
+            cpp_unreachable("Invalid conv implementation selection");
+        }
+#endif
     }
 
     /*!
@@ -120,7 +138,10 @@ struct conv1_same_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        etl::conv_impl impl    = select_conv1_impl_new<conv_type::SAME, I, K, C>();
+        const auto impl = select_conv1_impl_new<conv_type::SAME, I, K, C>();
+
+//CPP17: if constexpr
+#ifdef ETL_PARALLEL_SUPPORT
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::VEC) {
@@ -134,6 +155,15 @@ struct conv1_same_impl {
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
+#else
+        if (impl == etl::conv_impl::VEC) {
+            impl::vec::conv1_same(input, kernel, conv, 0, size(conv));
+        } else if (impl == etl::conv_impl::STD) {
+            impl::standard::conv1_same(input, kernel, conv, 0, size(conv));
+        } else {
+            cpp_unreachable("Invalid conv implementation selection");
+        }
+#endif
     }
 
     /*!
@@ -207,7 +237,10 @@ struct conv1_valid_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        etl::conv_impl impl    = select_conv1_impl_new<conv_type::VALID, I, K, C>();
+        const auto impl = select_conv1_impl_new<conv_type::VALID, I, K, C>();
+
+//CPP17: if constexpr
+#ifdef ETL_PARALLEL_SUPPORT
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::VEC) {
@@ -221,6 +254,15 @@ struct conv1_valid_impl {
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
+#else
+        if (impl == etl::conv_impl::VEC) {
+            impl::vec::conv1_valid(input, kernel, conv, 0, size(conv));
+        } else if (impl == etl::conv_impl::STD) {
+            impl::standard::conv1_valid(input, kernel, conv, 0, size(conv));
+        } else {
+            cpp_unreachable("Invalid conv implementation selection");
+        }
+#endif
     }
 
     /*!
