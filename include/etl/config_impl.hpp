@@ -51,6 +51,13 @@ static_assert(false, "ETL_CUDA should never be set directly");
 
 #endif
 
+// ETL_PARALLEL defines ETL_PARALLEL_SUPPORT
+#ifdef ETL_PARALLEL
+#ifndef ETL_PARALLEL_SUPPORT
+#define ETL_PARALLEL_SUPPORT
+#endif
+#endif
+
 // Convert all the defines to booleans
 
 #ifdef ETL_VECTORIZE_EXPR
@@ -69,6 +76,12 @@ static_assert(false, "ETL_CUDA should never be set directly");
 #define ETL_CONV_VALID_FFT_BOOL true
 #else
 #define ETL_CONV_VALID_FFT_BOOL false
+#endif
+
+#ifdef ETL_PARALLEL_SUPPORT
+#define ETL_PARALLEL_SUPPORT_BOOL true
+#else
+#define ETL_PARALLEL_SUPPORT_BOOL false
 #endif
 
 #ifdef ETL_PARALLEL

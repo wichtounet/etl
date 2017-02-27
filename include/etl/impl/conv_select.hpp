@@ -825,7 +825,7 @@ inline etl::conv_multi_impl select_conv_same_multi_impl() {
  */
 template <typename I, typename K, typename C>
 inline bool select_parallel(const I& /*input*/, const K& kernel, C&& conv) {
-    if ((is_parallel && !local_context().serial) || local_context().parallel) {
+    if ((is_parallel && !local_context().serial) || (parallel_support && local_context().parallel)) {
         return size(conv) >= conv1_parallel_threshold_conv && size(kernel) >= conv1_parallel_threshold_kernel;
     } else {
         return false;

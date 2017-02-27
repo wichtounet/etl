@@ -40,6 +40,12 @@ constexpr bool conv_valid_fft = ETL_CONV_VALID_FFT_BOOL;
 const std::size_t threads = ETL_PARALLEL_THREADS;
 
 /*!
+ * \brief Indicates if support for parallelization is integrated
+ * into the framework
+ */
+constexpr bool parallel_support = ETL_PARALLEL_SUPPORT_BOOL;
+
+/*!
  * \brief Indicates if the expressions and implementations can
  * be automaticallly parallelized.
  *
@@ -188,5 +194,9 @@ constexpr bool intel_compiler = ETL_INTEL_COMPILER_BOOL;
  */
 constexpr bool conv4_prefer_blas = ETL_CONV4_PREFER_BLAS_BOOL;
 //TODO: Once there is a good selection for conv4_valid, this should be removed
+
+/* Checks for parameters */
+
+static_assert(!is_parallel || parallel_support, "is_parallel can only work with parallel_support");
 
 } //end of namespace etl
