@@ -22,7 +22,7 @@ TEMPLATE_TEST_CASE_2("globals/lu/1", "[globals][LU]", Z, float, double) {
     PA = P * A;
     LU = L * U;
 
-    REQUIRE_DIRECT(approx_equals(PA, LU, base_eps));
+    REQUIRE_DIRECT(approx_equals(PA, LU, base_eps * 10.0));
 }
 
 TEMPLATE_TEST_CASE_2("globals/lu/2", "[globals][LU]", Z, float, double) {
@@ -38,7 +38,7 @@ TEMPLATE_TEST_CASE_2("globals/lu/2", "[globals][LU]", Z, float, double) {
     PA = P * A;
     LU = L * U;
 
-    REQUIRE_DIRECT(approx_equals(PA, LU, base_eps));
+    REQUIRE_DIRECT(approx_equals(PA, LU, base_eps * 10.0));
 }
 
 /* QR */
@@ -53,5 +53,5 @@ TEMPLATE_TEST_CASE_2("globals/qr/1", "[globals][QR]", Z, float, double) {
 
     QR = Q * R;
 
-    REQUIRE_DIRECT(approx_equals(QR, A, base_eps));
+    REQUIRE_DIRECT(approx_equals(QR, A, base_eps * 10.0));
 }
