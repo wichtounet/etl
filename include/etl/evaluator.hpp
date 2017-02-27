@@ -97,6 +97,8 @@ namespace standard_evaluator {
 
     //Parallel assign version
 
+// CPP17: if constexpr here
+#ifdef ETL_PARALLEL_SUPPORT
     /*!
      * \brief Assign the result of the expression expression to the result with the given Functor, using parallel non-vectorized implementation
      * \param expr The right hand side expression
@@ -123,7 +125,20 @@ namespace standard_evaluator {
 
         pool.wait();
     }
+#else
+    /*!
+     * \brief Assign the result of the expression expression to the result with the given Functor, using parallel non-vectorized implementation
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
+    template <template <typename, typename> class Fun, typename E, typename R>
+    void par_linear(E&& expr, R&& result) {
+        Fun<R, E>(result, expr)();
+    }
+#endif
 
+// CPP17: if constexpr here
+#ifdef ETL_PARALLEL_SUPPORT
     /*!
      * \brief Assign the result of the expression expression to the result with the given Functor, using parallel vectorized implementation
      * \param expr The right hand side expression
@@ -150,6 +165,17 @@ namespace standard_evaluator {
 
         pool.wait();
     }
+#else
+    /*!
+     * \brief Assign the result of the expression expression to the result with the given Functor, using parallel vectorized implementation
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
+    template <template <vector_mode_t, typename, typename> class Fun, vector_mode_t V, typename E, typename R>
+    void par_vec(E&& expr, R&& result) {
+        Fun<V, R&, E&>(result, expr)();
+    }
+#endif
 
     /*!
      * \copydoc assign_evaluate_impl
