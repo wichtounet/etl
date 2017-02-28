@@ -163,10 +163,8 @@ public:
                                               (sizeof...(S) == D),
                                               std::is_convertible<std::size_t, S1>::value, //The first type must be convertible to size_t
                                               cpp::is_sub_homogeneous<S1, S...>::value,                                          //The first N-1 types must homegeneous
-                                              (std::is_arithmetic<typename cpp::last_type<S1, S...>::type>::value
-                                                   ? std::is_convertible<value_type, typename cpp::last_type<S1, S...>::type>::value //The last type must be convertible to value_type
-                                                   : std::is_same<value_type, typename cpp::last_type<S1, S...>::type>::value        //The last type must be exactly value_type
-                                               ))>
+                                              !cpp::is_specialization_of<values_t, typename cpp::last_type<std::size_t, S1, S...>::type>::value
+                                              )>
     explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept : base_type(
                                                                dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)
@@ -178,55 +176,12 @@ public:
     }
 
     /*!
-     * \brief Construct a matrix with the given dimensions and a generator expression
-     * \param sizes The dimensions of the matrix followed by a values
-     *
-     * The generator expression will be used to initialize the
-     * elements of the matrix, in order.
-     */
-    template <typename S1, typename... S, cpp_enable_if(
-                                              (sizeof...(S) == D),
-                                              std::is_convertible<std::size_t, S1>::value,                                              //The first type must be convertible to size_t
-                                              cpp::is_sub_homogeneous<S1, S...>::value,                                                 //The first N-1 types must homegeneous
-                                              cpp::is_specialization_of<generator_expr, typename cpp::last_type<S1, S...>::type>::value //The last type must be a generator expr
-                                              )>
-    explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
-                                                                     dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
-        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
-
-        intel_decltype_auto e = cpp::last_value(sizes...);
-
-        assign_evaluate(e, *this);
-    }
-
-    /*!
-     * \brief Construct a matrix with the given dimensions and a generator expression
-     * \param sizes The dimensions of the matrix followed by an init_flag and a value
-     *
-     * Every element of the matrix will be set to this value.
-     *
-     * This constructor is necessary when the type of the matrix is
-     * std::size_t
-     */
-    template <typename... S, cpp_enable_if(dyn_detail::is_init_constructor<S...>::value)>
-    explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...),
-                                                              dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...)) {
-        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
-
-        static_assert(sizeof...(S) == D + 2, "Invalid number of dimensions");
-
-        std::fill(begin(), end(), cpp::last_value(sizes...));
-    }
-
-    /*!
      * \brief Construct a vector from a Container
      * \param container A STL container
      *
      * Only possible for 1D matrices
      */
-    template <typename Container, cpp_enable_if(
-                                      cpp::not_c<is_etl_expr<Container>>::value,
-                                      std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_if(std::is_convertible<typename Container::value_type, value_type>::value)>
     explicit dyn_matrix_impl(const Container& container)
             : base_type(container.size(), {{container.size()}}){
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
