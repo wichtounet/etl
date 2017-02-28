@@ -1284,7 +1284,7 @@ void gemm(A&& a, B&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
 
-    if(etl::size(b) <= 10000){
+    if(etl::size(b) <= gemm_small_threshold){
         gemm_small_kernel<default_vec>(a, b, c);
     } else {
         gemm_large_kernel<default_vec>(a, b, c);
