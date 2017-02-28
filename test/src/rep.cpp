@@ -106,7 +106,8 @@ TEMPLATE_TEST_CASE_2("rep/fast_matrix_6", "rep", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("rep/dyn_matrix_1", "rep", Z, float, double) {
     etl::dyn_vector<Z> a(3, etl::values(1.0, -2.0, 3.0));
-    etl::dyn_matrix<Z> b(etl::rep<3>(a));
+    etl::dyn_matrix<Z> b;
+    b = etl::rep<3>(a);
 
     REQUIRE_EQUALS(b(0, 0), 1.0);
     REQUIRE_EQUALS(b(0, 1), 1.0);
@@ -251,7 +252,8 @@ TEMPLATE_TEST_CASE_2("rep_l/fast_matrix_6", "rep", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("rep_l/dyn_matrix_1", "rep", Z, float, double) {
     etl::dyn_vector<Z> a(3, etl::values(1.0, -2.0, 3.0));
-    etl::dyn_matrix<Z> b(etl::rep_l<3>(a));
+    etl::dyn_matrix<Z> b;
+    b = etl::rep_l<3>(a);
 
     REQUIRE_EQUALS(b(0, 0), 1.0);
     REQUIRE_EQUALS(b(0, 1), -2.0);

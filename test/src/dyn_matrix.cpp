@@ -183,7 +183,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/add_1", "dyn_matrix::operator+", Z, double, flo
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 5.0, 1.0}));
     etl::dyn_matrix<Z> b(2, 2, std::initializer_list<Z>({2.5, 3.0, 4.0, 1.0}));
 
-    etl::dyn_matrix<Z> c(a + b);
+    etl::dyn_matrix<Z> c;
+    c = a + b;
 
     REQUIRE_EQUALS(c[0], 1.5);
     REQUIRE_EQUALS(c[1], 5.0);
@@ -235,7 +236,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/sub_1", "dyn_matrix::operator-", Z, double, flo
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 5.0, 1.0}));
     etl::dyn_matrix<Z> b(2, 2, std::initializer_list<Z>({2.5, 3.0, 4.0, 1.0}));
 
-    etl::dyn_matrix<Z> c(a - b);
+    etl::dyn_matrix<Z> c;
+    c = a - b;
 
     REQUIRE_EQUALS(c[0], -3.5);
     REQUIRE_EQUALS(c[1], -1.0);
@@ -287,7 +289,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/mul_1", "dyn_matrix::operator*", Z, double, flo
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 5.0, 1.0}));
     etl::dyn_matrix<Z> b(2, 2, std::initializer_list<Z>({2.5, 3.0, 4.0, 1.0}));
 
-    etl::dyn_matrix<Z> c(scale(a, b));
+    etl::dyn_matrix<Z> c;
+    c = scale(a, b);
 
     REQUIRE_EQUALS(c[0], -2.5);
     REQUIRE_EQUALS(c[1], 6.0);
@@ -309,7 +312,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/mul_3", "dyn_matrix::operator*", Z, double, flo
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 5.0, 1.0}));
     etl::dyn_matrix<Z> b(2, 2, std::initializer_list<Z>({2.5, 3.0, 4.0, 1.0}));
 
-    etl::dyn_matrix<Z> c(a.scale(b));
+    etl::dyn_matrix<Z> c;
+    c = a.scale(b);
 
     REQUIRE_EQUALS(c[0], -2.5);
     REQUIRE_EQUALS(c[1], 6.0);
@@ -350,7 +354,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/div_1", "dyn_matrix::operator/", Z, double, flo
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 5.0, 1.0}));
     etl::dyn_matrix<Z> b(2, 2, std::initializer_list<Z>({2.5, 3.0, 4.0, 1.0}));
 
-    etl::dyn_matrix<Z> c(a / b);
+    etl::dyn_matrix<Z> c;
+    c = a / b;
 
     REQUIRE_EQUALS_APPROX(c[0], -1.0 / 2.5);
     REQUIRE_EQUALS_APPROX(c[1], 2.0 / 3.0);
@@ -402,7 +407,8 @@ ETL_TEST_CASE("dyn_matrix/mod_1", "dyn_matrix::operator%") {
     etl::dyn_matrix<int> a(2, 2, std::initializer_list<int>({-1, 2, 5, 1}));
     etl::dyn_matrix<int> b(2, 2, std::initializer_list<int>({2, 3, 4, 1}));
 
-    etl::dyn_matrix<int> c(a % b);
+    etl::dyn_matrix<int> c;
+    c = a % b;
 
     REQUIRE_EQUALS(c[0], -1 % 2);
     REQUIRE_EQUALS(c[1], 2 % 3);
@@ -425,7 +431,8 @@ ETL_TEST_CASE("dyn_matrix/mod_2", "dyn_matrix::operator%=") {
 TEMPLATE_TEST_CASE_2("dyn_matrix/log", "dyn_matrix::abs", Z, double, float) {
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 5.0, 1.0}));
 
-    etl::dyn_matrix<Z> d(log(a));
+    etl::dyn_matrix<Z> d;
+    d = log(a);
 
     REQUIRE_DIRECT(std::isnan(d[0]));
     REQUIRE_EQUALS_APPROX(d[1], std::log(2.0));
@@ -435,7 +442,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/log", "dyn_matrix::abs", Z, double, float) {
 TEMPLATE_TEST_CASE_2("dyn_matrix/abs", "dyn_matrix::abs", Z, double, float) {
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 0.0, 1.0}));
 
-    etl::dyn_matrix<Z> d(abs(a));
+    etl::dyn_matrix<Z> d;
+    d = abs(a);
 
     REQUIRE_EQUALS(d[0], Z(1.0));
     REQUIRE_EQUALS(d[1], Z(2.0));
@@ -445,7 +453,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/abs", "dyn_matrix::abs", Z, double, float) {
 TEMPLATE_TEST_CASE_2("dyn_matrix/sign", "dyn_matrix::abs", Z, double, float) {
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 0.0, 1.0}));
 
-    etl::dyn_matrix<Z> d(sign(a));
+    etl::dyn_matrix<Z> d;
+    d = sign(a);
 
     REQUIRE_EQUALS(d[0], -1.0);
     REQUIRE_EQUALS(d[1], 1.0);
@@ -455,7 +464,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/sign", "dyn_matrix::abs", Z, double, float) {
 TEMPLATE_TEST_CASE_2("dyn_matrix/unary_unary", "dyn_matrix::abs", Z, double, float) {
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 0.0, 3.0}));
 
-    etl::dyn_matrix<Z> d(abs(sign(a)));
+    etl::dyn_matrix<Z> d;
+    d = abs(sign(a));
 
     REQUIRE_EQUALS(d[0], 1.0);
     REQUIRE_EQUALS(d[1], 1.0);
@@ -465,7 +475,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/unary_unary", "dyn_matrix::abs", Z, double, flo
 TEMPLATE_TEST_CASE_2("dyn_matrix/unary_binary_1", "dyn_matrix::abs", Z, double, float) {
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 0.0, 1.0}));
 
-    etl::dyn_matrix<Z> d(abs(a + a));
+    etl::dyn_matrix<Z> d;
+    d = abs(a + a);
 
     REQUIRE_EQUALS(d[0], 2.0);
     REQUIRE_EQUALS(d[1], 4.0);
@@ -475,7 +486,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/unary_binary_1", "dyn_matrix::abs", Z, double, 
 TEMPLATE_TEST_CASE_2("dyn_matrix/unary_binary_2", "dyn_matrix::abs", Z, double, float) {
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 0.0, 1.0}));
 
-    etl::dyn_matrix<Z> d(abs(a) + a);
+    etl::dyn_matrix<Z> d;
+    d = abs(a) + a;
 
     REQUIRE_EQUALS(d[0], 0.0);
     REQUIRE_EQUALS(d[1], 4.0);
@@ -485,7 +497,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/unary_binary_2", "dyn_matrix::abs", Z, double, 
 TEMPLATE_TEST_CASE_2("dyn_matrix/sigmoid", "dyn_matrix::sigmoid", Z, double, float) {
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 0.0, 1.0}));
 
-    etl::dyn_matrix<Z> d(etl::sigmoid(a));
+    etl::dyn_matrix<Z> d;
+    d = etl::sigmoid(a);
 
     REQUIRE_EQUALS_APPROX(d[0], etl::math::logistic_sigmoid(Z(-1.0)));
     REQUIRE_EQUALS_APPROX(d[1], etl::math::logistic_sigmoid(Z(2.0)));
@@ -496,7 +509,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/sigmoid", "dyn_matrix::sigmoid", Z, double, flo
 TEMPLATE_TEST_CASE_2("dyn_matrix/softplus", "dyn_matrix::softplus", Z, double, float) {
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 0.0, 1.0}));
 
-    etl::dyn_matrix<Z> d(etl::softplus(a));
+    etl::dyn_matrix<Z> d;
+    d = etl::softplus(a);
 
     REQUIRE_EQUALS_APPROX(d[0], etl::math::softplus(Z(-1.0)));
     REQUIRE_EQUALS_APPROX(d[1], etl::math::softplus(Z(2.0)));
@@ -507,7 +521,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/softplus", "dyn_matrix::softplus", Z, double, f
 TEMPLATE_TEST_CASE_2("dyn_matrix/exp", "dyn_matrix::exp", Z, double, float) {
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 0.0, 1.0}));
 
-    etl::dyn_matrix<Z> d(etl::exp(a));
+    etl::dyn_matrix<Z> d;
+    d = etl::exp(a);
 
     REQUIRE_EQUALS_APPROX(d[0], std::exp(Z(-1.0)));
     REQUIRE_EQUALS_APPROX(d[1], std::exp(Z(2.0)));
@@ -518,7 +533,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/exp", "dyn_matrix::exp", Z, double, float) {
 TEMPLATE_TEST_CASE_2("dyn_matrix/max", "dyn_matrix::max", Z, double, float) {
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 0.0, 1.0}));
 
-    etl::dyn_matrix<Z> d(etl::max(a, 1.0));
+    etl::dyn_matrix<Z> d;
+    d = etl::max(a, 1.0);
 
     REQUIRE_EQUALS(d[0], 1.0);
     REQUIRE_EQUALS(d[1], 2.0);
@@ -529,7 +545,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/max", "dyn_matrix::max", Z, double, float) {
 TEMPLATE_TEST_CASE_2("dyn_matrix/min", "dyn_matrix::min", Z, double, float) {
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 0.0, 1.0}));
 
-    etl::dyn_matrix<Z> d(etl::min(a, 1.0));
+    etl::dyn_matrix<Z> d;
+    d = etl::min(a, 1.0);
 
     REQUIRE_EQUALS(d[0], -1.0);
     REQUIRE_EQUALS(d[1], 1.0);
@@ -544,7 +561,8 @@ constexpr bool binary(double a) {
 TEMPLATE_TEST_CASE_2("dyn_matrix/bernoulli", "dyn_matrix::bernoulli", Z, double, float) {
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 0.0, 1.0}));
 
-    etl::dyn_matrix<Z> d(etl::bernoulli(a));
+    etl::dyn_matrix<Z> d;
+    d = etl::bernoulli(a);
 
     REQUIRE_DIRECT(binary(d[0]));
     REQUIRE_DIRECT(binary(d[1]));
@@ -559,7 +577,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/complex", "dyn_matrix::complex", Z, double, flo
     etl::dyn_matrix<Z> b(2, 2, std::initializer_list<Z>({2.5, 3.0, 4.0, 1.0}));
     etl::dyn_matrix<Z> c(2, 2, std::initializer_list<Z>({1.2, -3.0, 3.5, 1.0}));
 
-    etl::dyn_matrix<Z> d(2.5 * ((scale(a, b)) / (a + c)) / (1.5 * (a >> b) / c));
+    etl::dyn_matrix<Z> d;
+    d = 2.5 * ((scale(a, b)) / (a + c)) / (1.5 * (a >> b) / c);
 
     REQUIRE_EQUALS_APPROX(d[0], 10.0);
     REQUIRE_EQUALS_APPROX(d[1], 5.0);
@@ -571,7 +590,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/complex_2", "dyn_matrix::complex", Z, double, f
     etl::dyn_matrix<Z> b(2, 2, std::initializer_list<Z>({2.5, -3.0, 4.0, 1.0}));
     etl::dyn_matrix<Z> c(2, 2, std::initializer_list<Z>({2.2, 3.0, 3.5, 1.0}));
 
-    etl::dyn_matrix<Z> d(2.5 * ((a >> b) / (log(a) >> abs(c))) / (1.5 * scale(a, sign(b)) / c) + 2.111 / log(c));
+    etl::dyn_matrix<Z> d;
+    d = 2.5 * ((a >> b) / (log(a) >> abs(c))) / (1.5 * scale(a, sign(b)) / c) + 2.111 / log(c);
 
     REQUIRE_EQUALS_APPROX(d[0], 46.39429);
     REQUIRE_EQUALS_APPROX(d[1], 9.13499);
@@ -583,7 +603,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/complex_3", "dyn_matrix::complex", Z, double, f
     etl::dyn_matrix<Z> b(2, 2, std::initializer_list<Z>({2.5, 3.0, 4.0, 1.0}));
     etl::dyn_matrix<Z> c(2, 2, std::initializer_list<Z>({1.2, -3.0, 3.5, 1.0}));
 
-    etl::dyn_matrix<Z> d(2.5 / (a >> b));
+    etl::dyn_matrix<Z> d;
+    d = 2.5 / (a >> b);
 
     REQUIRE_EQUALS_APPROX(d[0], -1.0);
     REQUIRE_EQUALS_APPROX(d[1], 0.416666);

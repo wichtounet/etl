@@ -137,7 +137,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/add_1", "dyn_vector::operator+", Z, double, flo
     etl::dyn_vector<Z> a = {-1.0, 2.0, 5.0};
     etl::dyn_vector<Z> b = {2.5, 3.0, 4.0};
 
-    etl::dyn_vector<Z> c(a + b);
+    etl::dyn_vector<Z> c;
+    c = a + b;
 
     REQUIRE_EQUALS(c[0], 1.5);
     REQUIRE_EQUALS(c[1], 5.0);
@@ -189,7 +190,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/sub_1", "dyn_vector::operator-", Z, double, flo
     etl::dyn_vector<Z> a = {-1.0, 2.0, 5.0};
     etl::dyn_vector<Z> b = {2.5, 3.0, 4.0};
 
-    etl::dyn_vector<Z> c(a - b);
+    etl::dyn_vector<Z> c;
+    c = a - b;
 
     REQUIRE_EQUALS(c[0], -3.5);
     REQUIRE_EQUALS(c[1], -1.0);
@@ -241,7 +243,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/mul_1", "dyn_vector::operator*", Z, double, flo
     etl::dyn_vector<Z> a = {-1.0, 2.0, 5.0};
     etl::dyn_vector<Z> b = {2.5, 3.0, 4.0};
 
-    etl::dyn_vector<Z> c(a >> b);
+    etl::dyn_vector<Z> c;
+    c = a >> b;
 
     REQUIRE_EQUALS(c[0], -2.5);
     REQUIRE_EQUALS(c[1], 6.0);
@@ -293,7 +296,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/div_1", "dyn_vector::operator/", Z, double, flo
     etl::dyn_vector<Z> a = {-1.0, 2.0, 5.0};
     etl::dyn_vector<Z> b = {2.5, 3.0, 4.0};
 
-    etl::dyn_vector<Z> c(a / b);
+    etl::dyn_vector<Z> c;
+    c = a / b;
 
     REQUIRE_EQUALS(c[0], Z(-1.0 / 2.5));
     REQUIRE_EQUALS(c[1], Z(2.0 / 3.0));
@@ -345,7 +349,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/mod_1", "dyn_vector::operator%", Z, double, flo
     etl::dyn_vector<int> a = {-1, 2, 5};
     etl::dyn_vector<int> b = {2, 3, 4};
 
-    etl::dyn_vector<int> c(a % b);
+    etl::dyn_vector<int> c;
+    c = a % b;
 
     REQUIRE_EQUALS(c[0], -1 % 2);
     REQUIRE_EQUALS(c[1], 2 % 3);
@@ -368,7 +373,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/mod_2", "dyn_vector::operator%", Z, double, flo
 TEMPLATE_TEST_CASE_2("dyn_vector/log", "dyn_vector::abs", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 5.0};
 
-    etl::dyn_vector<Z> d(log(a));
+    etl::dyn_vector<Z> d;
+    d = log(a);
 
     REQUIRE_DIRECT(std::isnan(d[0]));
     REQUIRE_EQUALS(d[1], std::log(Z(2.0)));
@@ -378,7 +384,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/log", "dyn_vector::abs", Z, double, float) {
 TEMPLATE_TEST_CASE_2("dyn_vector/abs", "dyn_vector::abs", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 0.0};
 
-    etl::dyn_vector<Z> d(abs(a));
+    etl::dyn_vector<Z> d;
+    d = abs(a);
 
     REQUIRE_EQUALS(d[0], 1.0);
     REQUIRE_EQUALS(d[1], 2.0);
@@ -388,7 +395,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/abs", "dyn_vector::abs", Z, double, float) {
 TEMPLATE_TEST_CASE_2("dyn_vector/sign", "dyn_vector::abs", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 0.0};
 
-    etl::dyn_vector<Z> d(sign(a));
+    etl::dyn_vector<Z> d;
+    d = sign(a);
 
     REQUIRE_EQUALS(d[0], -1.0);
     REQUIRE_EQUALS(d[1], 1.0);
@@ -398,7 +406,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/sign", "dyn_vector::abs", Z, double, float) {
 TEMPLATE_TEST_CASE_2("dyn_vector/unary_unary", "dyn_vector::abs", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 0.0};
 
-    etl::dyn_vector<Z> d(abs(sign(a)));
+    etl::dyn_vector<Z> d;
+    d = abs(sign(a));
 
     REQUIRE_EQUALS(d[0], 1.0);
     REQUIRE_EQUALS(d[1], 1.0);
@@ -408,7 +417,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/unary_unary", "dyn_vector::abs", Z, double, flo
 TEMPLATE_TEST_CASE_2("dyn_vector/unary_binary_1", "dyn_vector::abs", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 0.0};
 
-    etl::dyn_vector<Z> d(abs(a + a));
+    etl::dyn_vector<Z> d;
+    d = abs(a + a);
 
     REQUIRE_EQUALS(d[0], 2.0);
     REQUIRE_EQUALS(d[1], 4.0);
@@ -418,7 +428,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/unary_binary_1", "dyn_vector::abs", Z, double, 
 TEMPLATE_TEST_CASE_2("dyn_vector/unary_binary_2", "dyn_vector::abs", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 0.0};
 
-    etl::dyn_vector<Z> d(abs(a) + a);
+    etl::dyn_vector<Z> d;
+    d = abs(a) + a;
 
     REQUIRE_EQUALS(d[0], 0.0);
     REQUIRE_EQUALS(d[1], 4.0);
@@ -428,7 +439,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/unary_binary_2", "dyn_vector::abs", Z, double, 
 TEMPLATE_TEST_CASE_2("dyn_vector/sigmoid", "dyn_vector::sigmoid", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 0.0};
 
-    etl::dyn_vector<Z> d(etl::sigmoid(a));
+    etl::dyn_vector<Z> d;
+    d = etl::sigmoid(a);
 
     REQUIRE_EQUALS_APPROX(d[0], etl::math::logistic_sigmoid(Z(-1.0)));
     REQUIRE_EQUALS_APPROX(d[1], etl::math::logistic_sigmoid(Z(2.0)));
@@ -438,7 +450,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/sigmoid", "dyn_vector::sigmoid", Z, double, flo
 TEMPLATE_TEST_CASE_2("dyn_vector/softplus", "dyn_vector::softplus", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 0.0};
 
-    etl::dyn_vector<Z> d(etl::softplus(a));
+    etl::dyn_vector<Z> d;
+    d = etl::softplus(a);
 
     REQUIRE_EQUALS_APPROX(d[0], etl::math::softplus(Z(-1.0)));
     REQUIRE_EQUALS_APPROX(d[1], etl::math::softplus(Z(2.0)));
@@ -448,7 +461,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/softplus", "dyn_vector::softplus", Z, double, f
 TEMPLATE_TEST_CASE_2("dyn_vector/exp/1", "dyn_vector::exp", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 0.0};
 
-    etl::dyn_vector<Z> d(etl::exp(a));
+    etl::dyn_vector<Z> d;
+    d = etl::exp(a);
 
     REQUIRE_EQUALS_APPROX(d[0], std::exp(Z(-1.0)));
     REQUIRE_EQUALS_APPROX(d[1], std::exp(Z(2.0)));
@@ -458,7 +472,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/exp/1", "dyn_vector::exp", Z, double, float) {
 TEMPLATE_TEST_CASE_2("dyn_vector/exp/2", "dyn_vector::exp", Z, double, float) {
     etl::dyn_vector<Z> a(1033);
     a = 0.01 * etl::sequence_generator(1.0);
-    etl::dyn_vector<Z> c(etl::exp(a));
+    etl::dyn_vector<Z> c;
+    c = etl::exp(a);
 
     for(size_t i = 0; i < etl::size(a); ++i){
         REQUIRE_EQUALS_APPROX(c[i], std::exp(a[i]));
@@ -468,7 +483,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/exp/2", "dyn_vector::exp", Z, double, float) {
 TEMPLATE_TEST_CASE_2("dyn_vector/max", "dyn_vector::max", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 0.0};
 
-    etl::dyn_vector<Z> d(etl::max(a, 1.0));
+    etl::dyn_vector<Z> d;
+    d = etl::max(a, 1.0);
 
     REQUIRE_EQUALS(d[0], 1.0);
     REQUIRE_EQUALS(d[1], 2.0);
@@ -478,7 +494,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/max", "dyn_vector::max", Z, double, float) {
 TEMPLATE_TEST_CASE_2("dyn_vector/min", "dyn_vector::min", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 0.0};
 
-    etl::dyn_vector<Z> d(etl::min(a, 1.0));
+    etl::dyn_vector<Z> d;
+    d = etl::min(a, 1.0);
 
     REQUIRE_EQUALS(d[0], -1.0);
     REQUIRE_EQUALS(d[1], 1.0);
@@ -492,7 +509,8 @@ constexpr bool binary(double a) {
 TEMPLATE_TEST_CASE_2("dyn_vector/bernoulli", "dyn_vector::bernoulli", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 0.0};
 
-    etl::dyn_vector<Z> d(etl::bernoulli(a));
+    etl::dyn_vector<Z> d;
+    d = etl::bernoulli(a);
 
     REQUIRE_DIRECT(binary(d[0]));
     REQUIRE_DIRECT(binary(d[1]));
@@ -543,7 +561,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/complex", "dyn_vector::complex", Z, double, flo
     etl::dyn_vector<Z> b = {2.5, 3.0, 4.0};
     etl::dyn_vector<Z> c = {1.2, -3.0, 3.5};
 
-    etl::dyn_vector<Z> d(2.5 * ((a >> b) / (a + c)) / (1.5 * scale(a, b) / c));
+    etl::dyn_vector<Z> d;
+    d = 2.5 * ((a >> b) / (a + c)) / (1.5 * scale(a, b) / c);
 
     REQUIRE_EQUALS_APPROX(d[0], 10.0);
     REQUIRE_EQUALS_APPROX(d[1], 5.0);
@@ -555,7 +574,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/complex_2", "dyn_vector::complex", Z, double, f
     etl::dyn_vector<Z> b = {2.5, -3.0, 4.0};
     etl::dyn_vector<Z> c = {2.2, 3.0, 3.5};
 
-    etl::dyn_vector<Z> d(2.5 * ((a >> b) / (log(a) >> abs(c))) / (1.5 * scale(a, sign(b)) / c) + 2.111 / log(c));
+    etl::dyn_vector<Z> d;
+    d = 2.5 * ((a >> b) / (log(a) >> abs(c))) / (1.5 * scale(a, sign(b)) / c) + 2.111 / log(c);
 
     REQUIRE_EQUALS_APPROX(d[0], 46.39429);
     REQUIRE_EQUALS_APPROX(d[1], 9.13499);
@@ -567,7 +587,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/complex_3", "dyn_vector::complex", Z, double, f
     etl::dyn_vector<Z> b = {2.5, 3.0, 4.0};
     etl::dyn_vector<Z> c = {1.2, -3.0, 3.5};
 
-    etl::dyn_vector<Z> d(2.5 / (a >> b));
+    etl::dyn_vector<Z> d;
+    d = 2.5 / (a >> b);
 
     REQUIRE_EQUALS_APPROX(d[0], -1.0);
     REQUIRE_EQUALS_APPROX(d[1], 0.416666);
