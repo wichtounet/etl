@@ -97,29 +97,6 @@ public:
     }
 
     /*!
-     * \brief Copy construct a matrix
-     * \param rhs The matrix to copy
-     */
-    template <typename T2, order SO2, std::size_t D2, cpp_enable_if(SO2 == SO)>
-    explicit dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs){
-        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
-
-        direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
-    }
-
-    /*!
-     * \brief Copy construct a matrix
-     * \param rhs The matrix to copy
-     */
-    template <typename T2, order SO2, std::size_t D2, cpp_disable_if(SO2 == SO)>
-    explicit dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs){
-        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
-
-        //The type is different, so we must use assign
-        assign_evaluate(rhs, *this);
-    }
-
-    /*!
      * \brief Construct a matrix from an expression
      * \param e The expression to initialize the matrix with
      */
