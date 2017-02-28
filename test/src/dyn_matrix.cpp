@@ -776,8 +776,10 @@ ETL_TEST_CASE("dyn_matrix/assign_two_types", "") {
     a = b;
     b = a;
 
-    etl::dyn_matrix<double> aaa(b);
-    etl::dyn_matrix<float> bbb(a);
+    etl::dyn_matrix<double> aaa;
+    aaa = b;
+    etl::dyn_matrix<float> bbb;
+    bbb = a;
 }
 
 //Make sure dyn matrix can inherit from expression
