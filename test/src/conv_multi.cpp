@@ -69,8 +69,10 @@ CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/3", "[conv][conv2][conv_multi]"
 }
 
 CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/4", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 5, 5> I(etl::magic<T>(5));
+    etl::fast_matrix<T, 5, 5> I;
     etl::fast_matrix<T, 3, 2, 2> K = {2.0, 0.0, 0.5, 0.5, 1.0, 0.5, 0.7, 0.1, 0.0, -1.0, 1.0, 1.0};
+
+    I = etl::magic<T>(5);
 
     etl::fast_matrix<T, 3, 4, 4> c_1;
     etl::fast_matrix<T, 3, 4, 4> c_2;
@@ -90,8 +92,10 @@ CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/4", "[conv][conv2][conv_multi]"
 }
 
 CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/5", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 5, 5> I(etl::magic<T>(5));
+    etl::fast_matrix<T, 5, 5> I;
     etl::fast_matrix<T, 3, 3, 3> K;
+
+    I = etl::magic<T>(5);
 
     K(0) = etl::magic<T>(3);
     K(1) = etl::magic<T>(3) * 2.0;
@@ -114,8 +118,10 @@ CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/5", "[conv][conv2][conv_multi]"
 }
 
 CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/6", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 7, 7> I(etl::magic<T>(7));
+    etl::fast_matrix<T, 7, 7> I;
     etl::fast_matrix<T, 3, 5, 3> K;
+
+    I = etl::magic<T>(7);
 
     K(0) = 1.5 * etl::sequence_generator(10.0);
     K(1) = -2.5 * etl::sequence_generator(5.0);
@@ -138,8 +144,10 @@ CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/6", "[conv][conv2][conv_multi]"
 }
 
 CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/7", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 9, 7> I;
     etl::fast_matrix<T, 3, 5, 5> K;
+
+    I = 0.5 * etl::sequence_generator(42.0);
 
     K(0) = 1.5 * etl::sequence_generator(10.0);
     K(1) = -2.5 * etl::sequence_generator(5.0);
@@ -162,8 +170,10 @@ CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/7", "[conv][conv2][conv_multi]"
 }
 
 CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/8", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 9, 7> I;
     etl::fast_matrix<T, 3, 3, 5> K;
+
+    I = 0.5 * etl::sequence_generator(42.0);
 
     K(0) = 1.5 * etl::sequence_generator(10.0);
     K(1) = -1.5 * etl::sequence_generator(5.0);
@@ -187,8 +197,10 @@ CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/8", "[conv][conv2][conv_multi]"
 }
 
 CONV2_VALID_MULTI_FLIPPED_TEST_CASE("conv_2d/valid/multi_flipped/1", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 9, 7> I;
     etl::fast_matrix<T, 3, 3, 5> K;
+
+    I = 0.5 * etl::sequence_generator(42.0);
 
     K(0) = 1.5 * etl::sequence_generator(10.0);
     K(1) = -1.5 * etl::sequence_generator(5.0);
@@ -213,8 +225,10 @@ CONV2_VALID_MULTI_FLIPPED_TEST_CASE("conv_2d/valid/multi_flipped/1", "[conv][con
 }
 
 CONV2_VALID_MULTI_FLIPPED_TEST_CASE("conv_2d/valid/multi_flipped/2", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 9, 7> I;
     etl::fast_matrix<T, 4, 3, 5> K;
+
+    I = 0.5 * etl::sequence_generator(42.0);
 
     K(0) = 0.5 * etl::sequence_generator(100.0);
     K(1) = -1.3 * etl::sequence_generator(40.0);
@@ -243,8 +257,10 @@ CONV2_VALID_MULTI_FLIPPED_TEST_CASE("conv_2d/valid/multi_flipped/2", "[conv][con
 //conv_2d_full_multi
 
 CONV2_FULL_MULTI_TEST_CASE("conv_2d/full/multi/1", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 9, 7> I;
     etl::fast_matrix<T, 3, 5, 5> K;
+
+    I = 0.5 * etl::sequence_generator(42.0);
 
     K(0) = 1.5 * etl::sequence_generator(10.0);
     K(1) = -2.5 * etl::sequence_generator(5.0);
@@ -267,8 +283,10 @@ CONV2_FULL_MULTI_TEST_CASE("conv_2d/full/multi/1", "[conv][conv2][conv_multi]") 
 }
 
 CONV2_FULL_MULTI_TEST_CASE("conv_2d/full/multi/2", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 9, 7> I;
     etl::fast_matrix<T, 3, 3, 5> K;
+
+    I = 0.5 * etl::sequence_generator(42.0);
 
     K(0) = 1.5 * etl::sequence_generator(10.0);
     K(1) = -1.5 * etl::sequence_generator(5.0);
@@ -291,8 +309,10 @@ CONV2_FULL_MULTI_TEST_CASE("conv_2d/full/multi/2", "[conv][conv2][conv_multi]") 
 }
 
 CONV2_FULL_MULTI_FLIPPED_TEST_CASE("conv_2d/full/multi_flipped/1", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 9, 7> I;
     etl::fast_matrix<T, 3, 3, 5> K;
+
+    I = 0.5 * etl::sequence_generator(42.0);
 
     K(0) = 1.5 * etl::sequence_generator(10.0);
     K(1) = -1.5 * etl::sequence_generator(5.0);
@@ -317,8 +337,10 @@ CONV2_FULL_MULTI_FLIPPED_TEST_CASE("conv_2d/full/multi_flipped/1", "[conv][conv2
 }
 
 CONV2_FULL_MULTI_FLIPPED_TEST_CASE("conv_2d/full/multi_flipped/2", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 9, 7> I;
     etl::fast_matrix<T, 4, 3, 5> K;
+
+    I = 0.5 * etl::sequence_generator(42.0);
 
     K(0) = 0.5 * etl::sequence_generator(100.0);
     K(1) = -1.3 * etl::sequence_generator(40.0);
@@ -405,8 +427,11 @@ CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/3", "[conv][conv2][conv_multi]") 
 }
 
 CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/4", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 5, 5> I(etl::magic<T>(5));
+    etl::fast_matrix<T, 5, 5> I;
     etl::fast_matrix<T, 3, 5, 5> K;
+
+    I = etl::magic<T>(5);
+
     K(0) = 2.0 * etl::magic<T>(5);
     K(1) = 3.0 * etl::magic<T>(5);
     K(2) = 4.0 * etl::magic<T>(5);
@@ -429,8 +454,10 @@ CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/4", "[conv][conv2][conv_multi]") 
 }
 
 CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/5", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 3, 3> I(etl::magic<T>(3));
+    etl::fast_matrix<T, 3, 3> I;
     etl::fast_matrix<T, 3, 3, 3> K;
+
+    I = etl::magic<T>(3);
 
     K(0) = etl::magic<T>(3);
     K(1) = etl::magic<T>(3) * 2.0;
@@ -453,8 +480,10 @@ CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/5", "[conv][conv2][conv_multi]") 
 }
 
 CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/6", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 7, 7> I(etl::magic<T>(7));
+    etl::fast_matrix<T, 7, 7> I;
     etl::fast_matrix<T, 3, 5, 3> K;
+
+    I = etl::magic<T>(7);
 
     K(0) = 1.5 * etl::sequence_generator(10.0);
     K(1) = -2.5 * etl::sequence_generator(5.0);
@@ -477,8 +506,10 @@ CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/6", "[conv][conv2][conv_multi]") 
 }
 
 CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/7", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 9, 7> I;
     etl::fast_matrix<T, 3, 5, 5> K;
+
+    I = 0.5 * etl::sequence_generator(42.0);
 
     K(0) = 1.5 * etl::sequence_generator(10.0);
     K(1) = -2.5 * etl::sequence_generator(5.0);
@@ -501,8 +532,10 @@ CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/7", "[conv][conv2][conv_multi]") 
 }
 
 CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/8", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 9, 7> I;
     etl::fast_matrix<T, 3, 3, 5> K;
+
+    I = 0.5 * etl::sequence_generator(42.0);
 
     K(0) = 1.5 * etl::sequence_generator(10.0);
     K(1) = -1.5 * etl::sequence_generator(5.0);
@@ -526,8 +559,10 @@ CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/8", "[conv][conv2][conv_multi]") 
 }
 
 CONV2_SAME_MULTI_FLIPPED_TEST_CASE("conv_2d/same/multi_flipped/1", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 9, 7> I;
     etl::fast_matrix<T, 3, 3, 5> K;
+
+    I = 0.5 * etl::sequence_generator(42.0);
 
     K(0) = 1.5 * etl::sequence_generator(10.0);
     K(1) = -1.5 * etl::sequence_generator(5.0);
@@ -552,8 +587,10 @@ CONV2_SAME_MULTI_FLIPPED_TEST_CASE("conv_2d/same/multi_flipped/1", "[conv][conv2
 }
 
 CONV2_SAME_MULTI_FLIPPED_TEST_CASE("conv_2d/same/multi_flipped/2", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 9, 7> I;
     etl::fast_matrix<T, 4, 3, 5> K;
+
+    I = 0.5 * etl::sequence_generator(42.0);
 
     K(0) = 0.5 * etl::sequence_generator(100.0);
     K(1) = -1.3 * etl::sequence_generator(40.0);

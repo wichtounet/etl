@@ -17,7 +17,8 @@ TEMPLATE_TEST_CASE_2("pooling/deep/max2/1", "[pooling]", Z, float, double) {
     a(0) = aa;
     a(1) = aa;
 
-    etl::fast_matrix<Z, 2, 2, 2> b(etl::max_pool_2d<2, 2>(a));
+    etl::fast_matrix<Z, 2, 2, 2> b;
+    b = etl::max_pool_2d<2, 2>(a);
 
     REQUIRE_EQUALS(b(0, 0, 0), 6.0);
     REQUIRE_EQUALS(b(0, 0, 1), 8.0);
@@ -38,7 +39,8 @@ TEMPLATE_TEST_CASE_2("pooling/deep/max2/2", "[pooling]", Z, float, double) {
     a(1)(0) = aa;
     a(1)(1) = aa;
 
-    etl::fast_matrix<Z, 2, 2, 2, 2> b(etl::max_pool_2d<2, 2>(a));
+    etl::fast_matrix<Z, 2, 2, 2, 2> b;
+    b = etl::max_pool_2d<2, 2>(a);
 
     REQUIRE_EQUALS(b(0, 0, 0, 0), 6.0);
     REQUIRE_EQUALS(b(0, 0, 0, 1), 8.0);
@@ -67,7 +69,8 @@ TEMPLATE_TEST_CASE_2("pooling/deep/avg2/1", "[pooling]", Z, float, double) {
     a(0) = aa;
     a(1) = aa;
 
-    etl::fast_matrix<Z, 2, 2, 2> b(etl::avg_pool_2d<2, 2>(a));
+    etl::fast_matrix<Z, 2, 2, 2> b;
+    b = etl::avg_pool_2d<2, 2>(a);
 
     REQUIRE_EQUALS(b(0, 0, 0), 3.5);
     REQUIRE_EQUALS(b(0, 0, 1), 5.5);
@@ -88,7 +91,8 @@ TEMPLATE_TEST_CASE_2("pooling/deep/avg2/2", "[pooling]", Z, float, double) {
     a(1)(0) = aa;
     a(1)(1) = aa;
 
-    etl::fast_matrix<Z, 2, 2, 2, 2> b(etl::avg_pool_2d<2, 2>(a));
+    etl::fast_matrix<Z, 2, 2, 2, 2> b;
+    b = etl::avg_pool_2d<2, 2>(a);
 
     REQUIRE_EQUALS(b(0, 0, 0, 0), 3.5);
     REQUIRE_EQUALS(b(0, 0, 0, 1), 5.5);
@@ -113,7 +117,9 @@ TEMPLATE_TEST_CASE_2("pooling/deep/avg2/2", "[pooling]", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("pooling/deep/max3/1", "[pooling]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 2, 2> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0});
-    etl::fast_matrix<Z, 2, 2, 2, 2> b(etl::max_pool_3d<2, 2, 2,  2, 2, 2,  1, 1, 1>(a));
+    etl::fast_matrix<Z, 2, 2, 2, 2> b;
+
+    b = etl::max_pool_3d<2, 2, 2,  2, 2, 2,  1, 1, 1>(a);
 
     REQUIRE_EQUALS(b(0, 0, 0, 0), 1.0);
     REQUIRE_EQUALS(b(0, 0, 0, 1), 2.0);
@@ -138,7 +144,9 @@ TEMPLATE_TEST_CASE_2("pooling/deep/max3/1", "[pooling]", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("pooling/deep/max3/2", "[pooling]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 2, 2> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0});
-    etl::fast_matrix<Z, 2, 2, 1, 1> b(etl::max_pool_3d<1, 2, 2>(a));
+    etl::fast_matrix<Z, 2, 2, 1, 1> b;
+
+    b = etl::max_pool_3d<1, 2, 2>(a);
 
     REQUIRE_EQUALS(b(0, 0, 0, 0), 4.0);
     REQUIRE_EQUALS(b(0, 1, 0, 0), 8.0);
@@ -167,7 +175,9 @@ TEMPLATE_TEST_CASE_2("pooling/deep/max3/4", "[pooling]", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("pooling/deep/avg3/1", "[pooling]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 2, 2> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0});
-    etl::fast_matrix<Z, 2, 2, 2, 2> b(etl::avg_pool_3d<2, 2, 2,  2, 2, 2,  1, 1, 1>(a));
+    etl::fast_matrix<Z, 2, 2, 2, 2> b;
+
+    b = etl::avg_pool_3d<2, 2, 2,  2, 2, 2,  1, 1, 1>(a);
 
     REQUIRE_EQUALS(b(0, 0, 0, 0), 0.5 * 0.25);
     REQUIRE_EQUALS(b(0, 0, 0, 1), 0.5 * 0.5);

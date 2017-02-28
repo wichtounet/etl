@@ -95,7 +95,8 @@ TEMPLATE_TEST_CASE_2("fast_dyn_matrix/add_1", "fast_dyn_matrix::operator+", Z, f
     etl::fast_dyn_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
     etl::fast_dyn_matrix<Z, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
 
-    etl::fast_dyn_matrix<Z, 2, 2> c(a + b);
+    etl::fast_dyn_matrix<Z, 2, 2> c;
+    c = a + b;
 
     REQUIRE_EQUALS(c[0], 1.5);
     REQUIRE_EQUALS(c[1], 5.0);
@@ -118,7 +119,8 @@ TEMPLATE_TEST_CASE_2("fast_dyn_matrix/add_2", "fast_dyn_matrix::operator+=", Z, 
 TEMPLATE_TEST_CASE_2("fast_dyn_matrix/log_1", "fast_dyn_matrix::log", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
-    etl::fast_dyn_matrix<Z, 2, 2> d(log(a));
+    etl::fast_dyn_matrix<Z, 2, 2> d;
+    d = log(a);
 
     REQUIRE_DIRECT(std::isnan(d[0]));
     REQUIRE_EQUALS(d[1], std::log(Z(2.0)));
@@ -128,7 +130,8 @@ TEMPLATE_TEST_CASE_2("fast_dyn_matrix/log_1", "fast_dyn_matrix::log", Z, float, 
 TEMPLATE_TEST_CASE_2("fast_dyn_matrix/log_2", "fast_dyn_matrix::log", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
 
-    etl::fast_dyn_matrix<Z, 2, 2, 1> d(log(a));
+    etl::fast_dyn_matrix<Z, 2, 2, 1> d;
+    d = log(a);
 
     REQUIRE_DIRECT(std::isnan(d[0]));
     REQUIRE_EQUALS(d[1], std::log(Z(2.0)));
@@ -138,7 +141,8 @@ TEMPLATE_TEST_CASE_2("fast_dyn_matrix/log_2", "fast_dyn_matrix::log", Z, float, 
 TEMPLATE_TEST_CASE_2("fast_dyn_matrix/unary_unary", "fast_dyn_matrix::abs", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 3.0};
 
-    etl::fast_dyn_matrix<Z, 2, 2> d(abs(sign(a)));
+    etl::fast_dyn_matrix<Z, 2, 2> d;
+    d = abs(sign(a));
 
     REQUIRE_EQUALS(d[0], 1.0);
     REQUIRE_EQUALS(d[1], 1.0);
@@ -148,7 +152,8 @@ TEMPLATE_TEST_CASE_2("fast_dyn_matrix/unary_unary", "fast_dyn_matrix::abs", Z, f
 TEMPLATE_TEST_CASE_2("fast_dyn_matrix/unary_binary_1", "fast_dyn_matrix::abs", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
 
-    etl::fast_dyn_matrix<Z, 2, 2> d(abs(a + a));
+    etl::fast_dyn_matrix<Z, 2, 2> d;
+    d = abs(a + a);
 
     REQUIRE_EQUALS(d[0], 2.0);
     REQUIRE_EQUALS(d[1], 4.0);
@@ -158,7 +163,8 @@ TEMPLATE_TEST_CASE_2("fast_dyn_matrix/unary_binary_1", "fast_dyn_matrix::abs", Z
 TEMPLATE_TEST_CASE_2("fast_dyn_matrix/min", "fast_dyn_matrix::min", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
 
-    etl::fast_dyn_matrix<Z, 2, 2> d(min(a, 1.0));
+    etl::fast_dyn_matrix<Z, 2, 2> d;
+    d = min(a, 1.0);
 
     REQUIRE_EQUALS(d[0], -1.0);
     REQUIRE_EQUALS(d[1], 1.0);
@@ -173,7 +179,8 @@ TEMPLATE_TEST_CASE_2("fast_dyn_matrix/complex", "fast_dyn_matrix::complex", Z, f
     etl::fast_dyn_matrix<Z, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
     etl::fast_dyn_matrix<Z, 2, 2> c = {1.2, -3.0, 3.5, 1.0};
 
-    etl::fast_dyn_matrix<Z, 2, 2> d(2.5 * ((a >> b) / (a + c)) / (1.5 * scale(a, b) / c));
+    etl::fast_dyn_matrix<Z, 2, 2> d;
+    d = 2.5 * ((a >> b) / (a + c)) / (1.5 * scale(a, b) / c);
 
     REQUIRE_EQUALS_APPROX(d[0], 10.0);
     REQUIRE_EQUALS_APPROX(d[1], 5.0);

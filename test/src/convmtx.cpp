@@ -113,10 +113,13 @@ TEMPLATE_TEST_CASE_2("convmtx/convmtx_3", "convmtx", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_1", "convmtx conv", Z, double, float) {
-    etl::fast_matrix<Z, 3, 3> I(etl::magic<Z>(3));
-    etl::fast_matrix<Z, 1, 1> K(etl::magic<Z>(1));
+    etl::fast_matrix<Z, 3, 3> I;
+    etl::fast_matrix<Z, 1, 1> K;
     etl::fast_matrix<Z, 3 * 3, 1> C1;
     etl::fast_matrix<Z, 3 * 3, 1> C2;
+
+    I = etl::magic<Z>(3);
+    K = etl::magic<Z>(1);
 
     C1 = etl::convmtx2(I, 1, 1);
     C2 = etl::convmtx2_direct<1, 1>(I);
@@ -137,10 +140,13 @@ TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_1", "convmtx conv", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_2", "convmtx conv", Z, double, float) {
-    etl::fast_matrix<Z, 3, 3> I(etl::magic<Z>(3));
-    etl::fast_matrix<Z, 2, 2> K(etl::magic<Z>(2));
+    etl::fast_matrix<Z, 3, 3> I;
+    etl::fast_matrix<Z, 2, 2> K;
     etl::fast_matrix<Z, 4 * 4, 4> C1;
     etl::fast_matrix<Z, 4 * 4, 4> C2;
+
+    I = etl::magic<Z>(3);
+    K = etl::magic<Z>(2);
 
     C1 = etl::convmtx2(I, 2, 2);
     C2 = etl::convmtx2_direct<2, 2>(I);
@@ -181,19 +187,33 @@ TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_2", "convmtx conv", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_3", "convmtx conv", Z, double, float) {
-    etl::fast_matrix<Z, 3, 3> I(etl::magic<Z>(3));
-    etl::fast_matrix<Z, 2, 2> K(etl::magic<Z>(2));
+    etl::fast_matrix<Z, 3, 3> I;
+    etl::fast_matrix<Z, 2, 2> K;
 
-    etl::fast_matrix<Z, 4 * 4, 4> C1(etl::convmtx2(I, 2, 2));
-    etl::fast_matrix<Z, 4 * 4, 4> C2(etl::convmtx2_direct<2, 2>(I));
+    etl::fast_matrix<Z, 4 * 4, 4> C1;
+    etl::fast_matrix<Z, 4 * 4, 4> C2;
 
-    etl::fast_matrix<Z, 16, 1> a1(etl::mul(C1, etl::reshape<4, 1>(etl::transpose(K))));
-    etl::fast_matrix<Z, 4, 4> b1(etl::transpose(etl::reshape<4, 4>(a1)));
+    etl::fast_matrix<Z, 16, 1> a1;
+    etl::fast_matrix<Z, 4, 4> b1;
 
-    etl::fast_matrix<Z, 16, 1> a2(etl::mul(C2, etl::reshape<4, 1>(etl::transpose(K))));
-    etl::fast_matrix<Z, 4, 4> b2(etl::transpose(etl::reshape<4, 4>(a2)));
+    etl::fast_matrix<Z, 16, 1> a2;
+    etl::fast_matrix<Z, 4, 4> b2;
 
-    etl::fast_matrix<Z, 4, 4> ref(etl::conv_2d_full(I, K));
+    etl::fast_matrix<Z, 4, 4> ref;
+
+    I = etl::magic<Z>(3);
+    K = etl::magic<Z>(2);
+
+    C1 = etl::convmtx2(I, 2, 2);
+    C2 = etl::convmtx2_direct<2, 2>(I);
+
+    a1 = etl::mul(C1, etl::reshape<4, 1>(etl::transpose(K)));
+    b1 = etl::transpose(etl::reshape<4, 4>(a1));
+
+    a2 = etl::mul(C2, etl::reshape<4, 1>(etl::transpose(K)));
+    b2 = etl::transpose(etl::reshape<4, 4>(a2));
+
+    ref = etl::conv_2d_full(I, K);
 
     for(size_t i = 0; i < ref.size(); ++i){
         REQUIRE_EQUALS_APPROX_E(ref[i], b1[i], base_eps / 10);
@@ -202,19 +222,32 @@ TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_3", "convmtx conv", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_4", "convmtx conv", Z, double, float) {
-    etl::dyn_matrix<Z> I(etl::magic<Z>(7));
-    etl::dyn_matrix<Z> K(etl::magic<Z>(5));
+    etl::dyn_matrix<Z> I;
+    etl::dyn_matrix<Z> K;
 
-    etl::dyn_matrix<Z> C1(etl::convmtx2(I, 5, 5));
-    etl::dyn_matrix<Z> C2(etl::convmtx2_direct<5, 5>(I));
+    etl::dyn_matrix<Z> C1;
+    etl::dyn_matrix<Z> C2;
 
-    etl::dyn_matrix<Z> a1(etl::mul(C1, etl::reshape<25, 1>(etl::transpose(K))));
-    etl::dyn_matrix<Z> b1(etl::transpose(etl::reshape(a1, 11, 11)));
+    etl::dyn_matrix<Z> a1;
+    etl::dyn_matrix<Z> b1;
 
-    etl::dyn_matrix<Z> a2(etl::mul(C2, etl::reshape<25, 1>(etl::transpose(K))));
-    etl::dyn_matrix<Z> b2(etl::transpose(etl::reshape(a2, 11, 11)));
+    etl::dyn_matrix<Z> a2;
+    etl::dyn_matrix<Z> b2;
 
-    etl::dyn_matrix<Z> ref(etl::conv_2d_full(I, K));
+    I = etl::magic<Z>(7);
+    K = etl::magic<Z>(5);
+
+    C1 = etl::convmtx2(I, 5, 5);
+    C2 = etl::convmtx2_direct<5, 5>(I);
+
+    a1 = etl::mul(C1, etl::reshape<25, 1>(etl::transpose(K)));
+    b1 = etl::transpose(etl::reshape(a1, 11, 11));
+
+    a2 = etl::mul(C2, etl::reshape<25, 1>(etl::transpose(K)));
+    b2 = etl::transpose(etl::reshape(a2, 11, 11));
+
+    etl::dyn_matrix<Z> ref;
+    ref = etl::conv_2d_full(I, K);
 
     for(size_t i = 0; i < ref.size(); ++i){
         REQUIRE_EQUALS_APPROX_E(ref[i], b1[i], base_eps);

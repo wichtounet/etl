@@ -33,7 +33,9 @@ TEMPLATE_TEST_CASE_2("upsample/2d/0", "[upsample]", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("upsample/2d/1", "[pooling]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a({1.0, 2.0, 3.0, 4.0});
-    etl::fast_matrix<Z, 4, 4> c(etl::upsample_2d<2, 2>(a));
+    etl::fast_matrix<Z, 4, 4> c;
+
+    c = etl::upsample_2d<2, 2>(a);
 
     REQUIRE_EQUALS(c(0, 0), 1.0);
     REQUIRE_EQUALS(c(0, 1), 1.0);
@@ -58,7 +60,9 @@ TEMPLATE_TEST_CASE_2("upsample/2d/1", "[pooling]", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("upsample/3d/1", "[pooling]", Z, float, double) {
     etl::fast_matrix<Z, 1, 2, 2> a({1.0, 2.0, 3.0, 4.0});
-    etl::fast_matrix<Z, 1, 4, 4> c(etl::upsample_3d<1, 2, 2>(a));
+    etl::fast_matrix<Z, 1, 4, 4> c;
+
+    c = etl::upsample_3d<1, 2, 2>(a);
 
     REQUIRE_EQUALS(c(0, 0, 0), 1.0);
     REQUIRE_EQUALS(c(0, 0, 1), 1.0);
@@ -83,7 +87,9 @@ TEMPLATE_TEST_CASE_2("upsample/3d/1", "[pooling]", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("upsample/deep/2d/1", "[pooling]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 2> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0});
-    etl::fast_matrix<Z, 2, 4, 4> c(etl::upsample_2d<2, 2>(a));
+    etl::fast_matrix<Z, 2, 4, 4> c;
+
+    c = etl::upsample_2d<2, 2>(a);
 
     REQUIRE_EQUALS(c(0, 0, 0), 1.0);
     REQUIRE_EQUALS(c(0, 0, 1), 1.0);
@@ -128,7 +134,9 @@ TEMPLATE_TEST_CASE_2("upsample/deep/2d/1", "[pooling]", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("upsample/deep/3d/1", "[pooling]", Z, float, double) {
     etl::fast_matrix<Z, 2, 1, 2, 2> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0});
-    etl::fast_matrix<Z, 2, 1, 4, 4> c(etl::upsample_3d<1, 2, 2>(a));
+    etl::fast_matrix<Z, 2, 1, 4, 4> c;
+
+    c = etl::upsample_3d<1, 2, 2>(a);
 
     REQUIRE_EQUALS(c(0, 0, 0, 0), 1.0);
     REQUIRE_EQUALS(c(0, 0, 0, 1), 1.0);

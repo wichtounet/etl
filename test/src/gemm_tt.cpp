@@ -110,9 +110,12 @@ GEMM_TT_TEST_CASE("gemm_tt/5", "[gemm]") {
 }
 
 GEMM_TT_TEST_CASE("gemm_tt/6", "[gemm]") {
-    etl::fast_matrix<T, 19, 19> a(etl::magic(19));
-    etl::fast_matrix<T, 19, 19> b(etl::magic(19));
+    etl::fast_matrix<T, 19, 19> a;
+    etl::fast_matrix<T, 19, 19> b;
     etl::fast_matrix<T, 19, 19> c;
+
+    a = etl::magic(19);
+    b = etl::magic(19);
 
     a = transpose(a);
     b = transpose(b);

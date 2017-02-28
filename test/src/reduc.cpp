@@ -9,15 +9,6 @@
 
 // Tests for sum_r
 
-TEMPLATE_TEST_CASE_2("sum_r/fast_matrix_1", "sum_r", Z, float, double) {
-    etl::fast_matrix<Z, 3, 4> a({1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7});
-    etl::fast_matrix<Z, 3> b(etl::sum_r(a));
-
-    REQUIRE_EQUALS(b(0), 10);
-    REQUIRE_EQUALS(b(1), 2);
-    REQUIRE_EQUALS(b(2), 22);
-}
-
 TEMPLATE_TEST_CASE_2("sum_r/fast_matrix_2", "sum_r", Z, float, double) {
     etl::fast_matrix<Z, 3, 4> a({1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7});
     etl::fast_matrix<Z, 3> b;
@@ -52,15 +43,6 @@ TEMPLATE_TEST_CASE_2("sum_r/fast_matrix_4", "sum_r", Z, float, double) {
 }
 
 // Tests for mean_r
-
-TEMPLATE_TEST_CASE_2("mean_r/fast_matrix_1", "mean_r", Z, float, double) {
-    etl::fast_matrix<Z, 3, 4> a({1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7});
-    etl::fast_matrix<Z, 3> b(etl::mean_r(a));
-
-    REQUIRE_EQUALS(b(0), 2.5);
-    REQUIRE_EQUALS(b(1), 0.5);
-    REQUIRE_EQUALS(b(2), 5.5);
-}
 
 TEMPLATE_TEST_CASE_2("mean_r/fast_matrix_2", "mean_r", Z, float, double) {
     etl::fast_matrix<Z, 3, 4> a({1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7});
@@ -117,15 +99,6 @@ TEMPLATE_TEST_CASE_2("mean_r/fast_matrix_6", "mean_r", Z, float, double) {
     REQUIRE_EQUALS(b(2), 5.5);
 }
 
-TEMPLATE_TEST_CASE_2("mean_r/dyn_matrix_1", "mean_r", Z, float, double) {
-    etl::dyn_matrix<Z> a(3, 4, etl::values(1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7));
-    etl::dyn_vector<Z> b(etl::mean_r(a));
-
-    REQUIRE_EQUALS(b(0), 2.5);
-    REQUIRE_EQUALS(b(1), 0.5);
-    REQUIRE_EQUALS(b(2), 5.5);
-}
-
 TEMPLATE_TEST_CASE_2("mean_r/dyn_matrix_2", "mean_r", Z, float, double) {
     etl::dyn_matrix<Z> a(3, 4, etl::values(1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7));
     etl::dyn_vector<Z> b(3);
@@ -138,15 +111,6 @@ TEMPLATE_TEST_CASE_2("mean_r/dyn_matrix_2", "mean_r", Z, float, double) {
 }
 
 // Tests for mean_l
-
-TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_1", "mean_l", Z, float, double) {
-    etl::fast_matrix<Z, 3, 4> a({1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7});
-    etl::fast_matrix<Z, 4> b(etl::mean_l(a));
-
-    REQUIRE_EQUALS_APPROX(b(0), 1.666666);
-    REQUIRE_EQUALS_APPROX(b(1), 2.333333);
-    REQUIRE_EQUALS_APPROX(b(2), 3.333333);
-}
 
 TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_2", "mean_l", Z, float, double) {
     etl::fast_matrix<Z, 3, 4> a({1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7});
@@ -208,15 +172,6 @@ TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_6", "mean_l", Z, float, double) {
     REQUIRE_EQUALS_APPROX(b(3, 1), 16.0);
 }
 
-TEMPLATE_TEST_CASE_2("mean_l/dyn_matrix_1", "mean_l", Z, float, double) {
-    etl::dyn_matrix<Z> a(3, 4, etl::values(1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7));
-    etl::dyn_vector<Z> b(etl::mean_l(a));
-
-    REQUIRE_EQUALS_APPROX(b(0), 1.666666);
-    REQUIRE_EQUALS_APPROX(b(1), 2.333333);
-    REQUIRE_EQUALS_APPROX(b(2), 3.333333);
-}
-
 TEMPLATE_TEST_CASE_2("mean_l/dyn_matrix_2", "mean_l", Z, float, double) {
     etl::dyn_matrix<Z> a(3, 4, etl::values(1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7));
     etl::dyn_vector<Z> b(4);
@@ -244,7 +199,8 @@ TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_7", "mean_l/mean_r", Z, float, double) 
 
 TEMPLATE_TEST_CASE_2("sum_l/fast_matrix_1", "sum_l", Z, float, double) {
     etl::fast_matrix<Z, 3, 4> a({1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7});
-    etl::fast_matrix<Z, 4> b(etl::sum_l(a));
+    etl::fast_matrix<Z, 4> b;
+    b = etl::sum_l(a);
 
     REQUIRE_EQUALS_APPROX(b(0), 5.0);
     REQUIRE_EQUALS_APPROX(b(1), 7.0);

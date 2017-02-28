@@ -92,9 +92,12 @@ GEMM_TEST_CASE("gemm/5", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/6", "[gemm]") {
-    etl::fast_matrix<T, 19, 19> a(etl::magic(19));
-    etl::fast_matrix<T, 19, 19> b(etl::magic(19));
+    etl::fast_matrix<T, 19, 19> a;
+    etl::fast_matrix<T, 19, 19> b;
     etl::fast_matrix<T, 19, 19> c;
+
+    a = etl::magic(19);
+    b = etl::magic(19);
 
     Impl::apply(a, b, c);
 
@@ -106,9 +109,12 @@ GEMM_TEST_CASE("gemm/6", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/7", "[gemm]") {
-    etl::fast_matrix<T, 19, 19> a(etl::magic(19));
-    etl::fast_matrix<T, 19, 19> b(etl::magic(19));
+    etl::fast_matrix<T, 19, 19> a;
+    etl::fast_matrix<T, 19, 19> b;
     etl::fast_matrix<T, 19, 19> c;
+
+    a = etl::magic(19);
+    b = etl::magic(19);
 
     Impl::apply(reshape(a, 19, 19), reshape(b, 19, 19), c);
 
@@ -120,9 +126,12 @@ GEMM_TEST_CASE("gemm/7", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/8", "[gemm]") {
-    etl::fast_matrix<T, 19, 19> a(etl::magic(19));
-    etl::fast_matrix<T, 19, 19> b(etl::magic(19));
+    etl::fast_matrix<T, 19, 19> a;
+    etl::fast_matrix<T, 19, 19> b;
     etl::fast_matrix<T, 19, 19> c;
+
+    a = etl::magic(19);
+    b = etl::magic(19);
 
     Impl::apply(etl::reshape<19, 19>(a), etl::reshape<19, 19>(b), c);
 

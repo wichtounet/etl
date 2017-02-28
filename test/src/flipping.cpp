@@ -11,7 +11,8 @@
 
 TEMPLATE_TEST_CASE_2("hflip/fast_vector", "hflip", Z, float, double) {
     etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
-    etl::fast_vector<Z, 3> b(hflip(a));
+    etl::fast_vector<Z, 3> b;
+    b = hflip(a);
 
     REQUIRE_EQUALS(b[0], 3.0);
     REQUIRE_EQUALS(b[1], -2.0);
@@ -20,7 +21,8 @@ TEMPLATE_TEST_CASE_2("hflip/fast_vector", "hflip", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("hflip/dyn_vector", "hflip", Z, float, double) {
     etl::dyn_vector<Z> a({1.0, -2.0, 3.0});
-    etl::dyn_vector<Z> b(hflip(a));
+    etl::dyn_vector<Z> b;
+    b = hflip(a);
 
     REQUIRE_EQUALS(b[0], 3.0);
     REQUIRE_EQUALS(b[1], -2.0);
@@ -29,7 +31,8 @@ TEMPLATE_TEST_CASE_2("hflip/dyn_vector", "hflip", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("hflip/fast_matrix", "hflip", Z, float, double) {
     etl::fast_matrix<Z, 3, 2> a({1.0, -2.0, 3.0, 0.5, 0.0, -1});
-    etl::fast_matrix<Z, 3, 2> b(hflip(a));
+    etl::fast_matrix<Z, 3, 2> b;
+    b = hflip(a);
 
     REQUIRE_EQUALS(b(0, 0), -2.0);
     REQUIRE_EQUALS(b(0, 1), 1.0);
@@ -41,7 +44,8 @@ TEMPLATE_TEST_CASE_2("hflip/fast_matrix", "hflip", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("hflip/dyn_matrix", "hflip", Z, float, double) {
     etl::dyn_matrix<Z> a(3, 2, std::initializer_list<Z>({1.0, -2.0, 3.0, 0.5, 0.0, -1}));
-    etl::dyn_matrix<Z> b(hflip(a));
+    etl::dyn_matrix<Z> b;
+    b = hflip(a);
 
     REQUIRE_EQUALS(b(0, 0), -2.0);
     REQUIRE_EQUALS(b(0, 1), 1.0);
@@ -55,7 +59,9 @@ TEMPLATE_TEST_CASE_2("hflip/dyn_matrix", "hflip", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("vflip/fast_vector", "vflip", Z, float, double) {
     etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
-    etl::fast_vector<Z, 3> b(vflip(a));
+    etl::fast_vector<Z, 3> b;
+
+    b = vflip(a);
 
     REQUIRE_EQUALS(b[0], 1.0);
     REQUIRE_EQUALS(b[1], -2.0);
@@ -64,7 +70,8 @@ TEMPLATE_TEST_CASE_2("vflip/fast_vector", "vflip", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("vflip/dyn_vector", "vflip", Z, float, double) {
     etl::dyn_vector<Z> a({1.0, -2.0, 3.0});
-    etl::dyn_vector<Z> b(vflip(a));
+    etl::dyn_vector<Z> b;
+    b = vflip(a);
 
     REQUIRE_EQUALS(b[0], 1.0);
     REQUIRE_EQUALS(b[1], -2.0);
@@ -73,7 +80,8 @@ TEMPLATE_TEST_CASE_2("vflip/dyn_vector", "vflip", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("vflip/fast_matrix", "vflip", Z, float, double) {
     etl::fast_matrix<Z, 3, 2> a({1.0, -2.0, 3.0, 0.5, 0.0, -1});
-    etl::fast_matrix<Z, 3, 2> b(vflip(a));
+    etl::fast_matrix<Z, 3, 2> b;
+    b = vflip(a);
 
     REQUIRE_EQUALS(b(0, 0), 0.0);
     REQUIRE_EQUALS(b(0, 1), -1.0);
@@ -85,7 +93,8 @@ TEMPLATE_TEST_CASE_2("vflip/fast_matrix", "vflip", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("vflip/dyn_matrix", "vflip", Z, float, double) {
     etl::dyn_matrix<Z> a(3, 2, std::initializer_list<Z>({1.0, -2.0, 3.0, 0.5, 0.0, -1}));
-    etl::dyn_matrix<Z> b(vflip(a));
+    etl::dyn_matrix<Z> b;
+    b = vflip(a);
 
     REQUIRE_EQUALS(b(0, 0), 0.0);
     REQUIRE_EQUALS(b(0, 1), -1.0);
@@ -99,7 +108,8 @@ TEMPLATE_TEST_CASE_2("vflip/dyn_matrix", "vflip", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("fflip/fast_vector", "fflip", Z, float, double) {
     etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
-    etl::fast_vector<Z, 3> b(fflip(a));
+    etl::fast_vector<Z, 3> b;
+    b = fflip(a);
 
     REQUIRE_EQUALS(b[0], 1.0);
     REQUIRE_EQUALS(b[1], -2.0);
@@ -108,7 +118,8 @@ TEMPLATE_TEST_CASE_2("fflip/fast_vector", "fflip", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("fflip/dyn_vector", "fflip", Z, float, double) {
     etl::dyn_vector<Z> a({1.0, -2.0, 3.0});
-    etl::dyn_vector<Z> b(fflip(a));
+    etl::dyn_vector<Z> b;
+    b = fflip(a);
 
     REQUIRE_EQUALS(b[0], 1.0);
     REQUIRE_EQUALS(b[1], -2.0);
@@ -117,7 +128,8 @@ TEMPLATE_TEST_CASE_2("fflip/dyn_vector", "fflip", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("fflip/fast_matrix", "fflip", Z, float, double) {
     etl::fast_matrix<Z, 3, 2> a({1.0, -2.0, 3.0, 0.5, 0.0, -1});
-    etl::fast_matrix<Z, 3, 2> b(fflip(a));
+    etl::fast_matrix<Z, 3, 2> b;
+    b = fflip(a);
 
     REQUIRE_EQUALS(b(0, 0), -1.0);
     REQUIRE_EQUALS(b(0, 1), 0.0);
@@ -129,7 +141,8 @@ TEMPLATE_TEST_CASE_2("fflip/fast_matrix", "fflip", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("fflip/dyn_matrix", "fflip", Z, float, double) {
     etl::dyn_matrix<Z> a(3, 2, std::initializer_list<Z>({1.0, -2.0, 3.0, 0.5, 0.0, -1}));
-    etl::dyn_matrix<Z> b(fflip(a));
+    etl::dyn_matrix<Z> b;
+    b = fflip(a);
 
     REQUIRE_EQUALS(b(0, 0), -1.0);
     REQUIRE_EQUALS(b(0, 1), 0.0);
@@ -208,8 +221,11 @@ TEMPLATE_TEST_CASE_2("fflip_inplace/5", "[fflip][sub][fast][matrix][inplace]", Z
 }
 
 TEMPLATE_TEST_CASE_2("fflip_inplace/6", "[fflip][fast][matrix][inplace]", Z, float, double) {
-    etl::fast_matrix<Z, 31, 31> a(etl::magic<Z>(31));
-    etl::fast_matrix<Z, 31, 31> b(etl::fflip(a));
+    etl::fast_matrix<Z, 31, 31> a;
+    etl::fast_matrix<Z, 31, 31> b;
+
+    a = etl::magic<Z>(31);
+    b = etl::fflip(a);
 
     a.fflip_inplace();
 

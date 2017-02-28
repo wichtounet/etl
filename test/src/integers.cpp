@@ -111,7 +111,8 @@ TEMPLATE_TEST_CASE_4("integers/add_1", "[integers]", Z, int8_t, int16_t, int32_t
     etl::fast_vector<Z, 3> a = {-1, 2, 5};
     etl::fast_vector<Z, 3> b = {2, 3, 4};
 
-    etl::fast_vector<Z, 3> c(a + b);
+    etl::fast_vector<Z, 3> c;
+    c = a + b;
 
     REQUIRE_EQUALS(c[0], 1);
     REQUIRE_EQUALS(c[1], 5);
@@ -177,7 +178,8 @@ TEMPLATE_TEST_CASE_4("integers/sub_1", "[integers]", Z, int8_t, int16_t, int32_t
     etl::fast_vector<Z, 3> a = {-1, 2, 5};
     etl::fast_vector<Z, 3> b = {2, 3, 4};
 
-    etl::fast_vector<Z, 3> c(a - b);
+    etl::fast_vector<Z, 3> c;
+    c = a - b;
 
     REQUIRE_EQUALS(c[0], -3);
     REQUIRE_EQUALS(c[1], -1);
@@ -243,7 +245,8 @@ TEMPLATE_TEST_CASE_4("integers/mul_1", "[integers]", Z, int8_t, int16_t, int32_t
     etl::fast_vector<Z, 3> a = {-1, 2, 5};
     etl::fast_vector<Z, 3> b = {2, 3, 4};
 
-    etl::fast_vector<Z, 3> c(a >> b);
+    etl::fast_vector<Z, 3> c;
+    c = a >> b;
 
     REQUIRE_EQUALS(c[0], -2);
     REQUIRE_EQUALS(c[1], 6);
@@ -265,7 +268,8 @@ TEMPLATE_TEST_CASE_4("integers/mul_3", "[integers]", Z, int8_t, int16_t, int32_t
     etl::fast_vector<Z, 3> a = {-1, 2, 5};
     etl::fast_vector<Z, 3> b = {2, 3, 4};
 
-    etl::fast_vector<Z, 3> c(a >> b);
+    etl::fast_vector<Z, 3> c;
+    c = a >> b;
 
     REQUIRE_EQUALS(c[0], -2);
     REQUIRE_EQUALS(c[1], 6);
@@ -320,7 +324,8 @@ TEMPLATE_TEST_CASE_4("integers/div_1", "[integers]", Z, int8_t, int16_t, int32_t
     etl::fast_vector<Z, 3> a = {-1, 2, 5};
     etl::fast_vector<Z, 3> b = {2, 3, 4};
 
-    etl::fast_vector<Z, 3> c(a / b);
+    etl::fast_vector<Z, 3> c;
+    c = a / b;
 
     REQUIRE_EQUALS(c[0], 0);
     REQUIRE_EQUALS(c[1], 0);

@@ -13,8 +13,11 @@
 
 TEMPLATE_TEST_CASE_2("dim/fast_matrix_1", "dim<1>", Z, float, double) {
     etl::fast_matrix<Z, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
-    etl::fast_vector<Z, 3> b(etl::dim<1>(a, 0));
-    etl::fast_vector<Z, 3> c(etl::dim<1>(a, 1));
+    etl::fast_vector<Z, 3> b;
+    etl::fast_vector<Z, 3> c;
+
+    b = etl::dim<1>(a, 0);
+    c = etl::dim<1>(a, 1);
 
     REQUIRE_DIRECT(etl::etl_traits<decltype(etl::dim<1>(a, 0))>::is_fast);
     REQUIRE_DIRECT(etl::etl_traits<decltype(etl::dim<1>(a, 1))>::is_fast);
@@ -30,9 +33,13 @@ TEMPLATE_TEST_CASE_2("dim/fast_matrix_1", "dim<1>", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("dim/fast_matrix_2", "dim<2>", Z, float, double) {
     etl::fast_matrix<Z, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
-    etl::fast_vector<Z, 2> b(etl::dim<2>(a, 0));
-    etl::fast_vector<Z, 2> c(etl::dim<2>(a, 1));
-    etl::fast_vector<Z, 2> d(etl::dim<2>(a, 2));
+    etl::fast_vector<Z, 2> b;
+    etl::fast_vector<Z, 2> c;
+    etl::fast_vector<Z, 2> d;
+
+    b = etl::dim<2>(a, 0);
+    c = etl::dim<2>(a, 1);
+    d = etl::dim<2>(a, 2);
 
     REQUIRE_DIRECT(etl::etl_traits<decltype(etl::dim<2>(a, 0))>::is_fast);
     REQUIRE_DIRECT(etl::etl_traits<decltype(etl::dim<2>(a, 1))>::is_fast);
@@ -50,8 +57,11 @@ TEMPLATE_TEST_CASE_2("dim/fast_matrix_2", "dim<2>", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("dim/fast_matrix_3", "row", Z, float, double) {
     etl::fast_matrix<Z, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
-    etl::fast_vector<Z, 3> b(etl::row(a, 0));
-    etl::fast_vector<Z, 3> c(etl::row(a, 1));
+    etl::fast_vector<Z, 3> b;
+    etl::fast_vector<Z, 3> c;
+
+    b = etl::row(a, 0);
+    c = etl::row(a, 1);
 
     REQUIRE_DIRECT(etl::etl_traits<decltype(etl::row(a, 0))>::is_fast);
     REQUIRE_DIRECT(etl::etl_traits<decltype(etl::row(a, 1))>::is_fast);
@@ -67,9 +77,13 @@ TEMPLATE_TEST_CASE_2("dim/fast_matrix_3", "row", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("dim/fast_matrix_4", "col", Z, float, double) {
     etl::fast_matrix<Z, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
-    etl::fast_vector<Z, 2> b(etl::col(a, 0));
-    etl::fast_vector<Z, 2> c(etl::col(a, 1));
-    etl::fast_vector<Z, 2> d(etl::col(a, 2));
+    etl::fast_vector<Z, 2> b;
+    etl::fast_vector<Z, 2> c;
+    etl::fast_vector<Z, 2> d;
+
+    b = etl::col(a, 0);
+    c = etl::col(a, 1);
+    d = etl::col(a, 2);
 
     REQUIRE_DIRECT(etl::etl_traits<decltype(etl::col(a, 0))>::is_fast);
     REQUIRE_DIRECT(etl::etl_traits<decltype(etl::col(a, 1))>::is_fast);
@@ -87,8 +101,11 @@ TEMPLATE_TEST_CASE_2("dim/fast_matrix_4", "col", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("dim/dyn_matrix_1", "dim<1>", Z, float, double) {
     etl::dyn_matrix<Z> a(2, 3, std::initializer_list<Z>({1.0, -2.0, 4.0, 3.0, 0.5, -0.1}));
-    etl::dyn_vector<Z> b(etl::dim<1>(a, 0));
-    etl::dyn_vector<Z> c(etl::dim<1>(a, 1));
+    etl::dyn_vector<Z> b;
+    etl::dyn_vector<Z> c;
+
+    b = etl::dim<1>(a, 0);
+    c = etl::dim<1>(a, 1);
 
     REQUIRE_DIRECT(!etl::etl_traits<decltype(etl::dim<1>(a, 0))>::is_fast);
     REQUIRE_DIRECT(!etl::etl_traits<decltype(etl::dim<1>(a, 1))>::is_fast);
@@ -104,9 +121,13 @@ TEMPLATE_TEST_CASE_2("dim/dyn_matrix_1", "dim<1>", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("dim/dyn_matrix_2", "dim<2>", Z, float, double) {
     etl::dyn_matrix<Z> a(2, 3, std::initializer_list<Z>({1.0, -2.0, 4.0, 3.0, 0.5, -0.1}));
-    etl::dyn_vector<Z> b(etl::dim<2>(a, 0));
-    etl::dyn_vector<Z> c(etl::dim<2>(a, 1));
-    etl::dyn_vector<Z> d(etl::dim<2>(a, 2));
+    etl::dyn_vector<Z> b;
+    etl::dyn_vector<Z> c;
+    etl::dyn_vector<Z> d;
+
+    b = etl::dim<2>(a, 0);
+    c = etl::dim<2>(a, 1);
+    d = etl::dim<2>(a, 2);
 
     REQUIRE_DIRECT(!etl::etl_traits<decltype(etl::dim<2>(a, 0))>::is_fast);
     REQUIRE_DIRECT(!etl::etl_traits<decltype(etl::dim<2>(a, 1))>::is_fast);
@@ -125,7 +146,9 @@ TEMPLATE_TEST_CASE_2("dim/dyn_matrix_2", "dim<2>", Z, float, double) {
 TEMPLATE_TEST_CASE_2("dim/mix", "dim", Z, float, double) {
     etl::fast_matrix<Z, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
     etl::fast_vector<Z, 3> b({0.1, 0.2, 0.3});
-    etl::fast_vector<Z, 3> c(b >> row(a, 1));
+    etl::fast_vector<Z, 3> c;
+
+    c = b >> row(a, 1);
 
     REQUIRE_EQUALS_APPROX(c[0], 0.3);
     REQUIRE_EQUALS_APPROX(c[1], 0.1);
@@ -136,7 +159,8 @@ TEMPLATE_TEST_CASE_2("dim/mix", "dim", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("reshape/fast_vector_1", "reshape<2,2>", Z, float, double) {
     etl::fast_vector<Z, 4> a({1, 2, 3, 4});
-    etl::fast_matrix<Z, 2, 2> b(etl::reshape<2, 2>(a));
+    etl::fast_matrix<Z, 2, 2> b;
+    b = etl::reshape<2, 2>(a);
 
     REQUIRE_EQUALS(b(0, 0), 1.0);
     REQUIRE_EQUALS(b(0, 1), 2.0);
@@ -147,7 +171,8 @@ TEMPLATE_TEST_CASE_2("reshape/fast_vector_1", "reshape<2,2>", Z, float, double) 
 
 TEMPLATE_TEST_CASE_2("reshape/fast_vector_2", "reshape<2,3>", Z, float, double) {
     etl::fast_vector<Z, 6> a({1, 2, 3, 4, 5, 6});
-    etl::fast_matrix<Z, 2, 3> b(etl::reshape<2, 3>(a));
+    etl::fast_matrix<Z, 2, 3> b;
+    b = etl::reshape<2, 3>(a);
 
     REQUIRE_EQUALS(b(0, 0), 1.0);
     REQUIRE_EQUALS(b(0, 1), 2.0);
@@ -160,7 +185,8 @@ TEMPLATE_TEST_CASE_2("reshape/fast_vector_2", "reshape<2,3>", Z, float, double) 
 
 TEMPLATE_TEST_CASE_2("reshape/fast_vector_3", "reshape<2,2>", Z, float, double) {
     etl::fast_vector<Z, 4> a({1, 2, 3, 4});
-    etl::fast_matrix<Z, 1, 2, 2> b(etl::reshape<1, 2, 2>(a));
+    etl::fast_matrix<Z, 1, 2, 2> b;
+    b = etl::reshape<1, 2, 2>(a);
 
     REQUIRE_EQUALS(b(0, 0, 0), 1.0);
     REQUIRE_EQUALS(b(0, 0, 1), 2.0);
@@ -171,7 +197,8 @@ TEMPLATE_TEST_CASE_2("reshape/fast_vector_3", "reshape<2,2>", Z, float, double) 
 
 TEMPLATE_TEST_CASE_2("reshape/fast_vector_4", "reshape<2,2>", Z, float, double) {
     etl::fast_vector<Z, 4> a({1, 2, 3, 4});
-    etl::fast_matrix<Z, 1, 2, 2, 1> b(etl::reshape<1, 2, 2, 1>(a));
+    etl::fast_matrix<Z, 1, 2, 2, 1> b;
+    b = etl::reshape<1, 2, 2, 1>(a);
 
     REQUIRE_EQUALS(b(0, 0, 0, 0), 1.0);
     REQUIRE_EQUALS(b(0, 0, 1, 0), 2.0);
@@ -212,7 +239,8 @@ TEMPLATE_TEST_CASE_2("reshape/traits", "traits<reshape<2,3>>", Z, float, double)
 
 TEMPLATE_TEST_CASE_2("reshape/dyn_vector_1", "reshape(2,2)", Z, float, double) {
     etl::dyn_vector<Z> a({1, 2, 3, 4});
-    etl::dyn_matrix<Z> b(etl::reshape(a, 2, 2));
+    etl::dyn_matrix<Z> b;
+    b = etl::reshape(a, 2, 2);
 
     REQUIRE_EQUALS(b(0, 0), 1.0);
     REQUIRE_EQUALS(b(0, 1), 2.0);
@@ -223,7 +251,8 @@ TEMPLATE_TEST_CASE_2("reshape/dyn_vector_1", "reshape(2,2)", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("reshape/dyn_vector_2", "reshape(2,3)", Z, float, double) {
     etl::dyn_vector<Z> a({1, 2, 3, 4, 5, 6});
-    etl::dyn_matrix<Z> b(etl::reshape(a, 2, 3));
+    etl::dyn_matrix<Z> b;
+    b = etl::reshape(a, 2, 3);
 
     REQUIRE_EQUALS(b(0, 0), 1.0);
     REQUIRE_EQUALS(b(0, 1), 2.0);
@@ -240,7 +269,8 @@ TEMPLATE_TEST_CASE_2("reshape/dyn_vector_2", "reshape(2,3)", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("reshape/dyn_vector_3", "reshape(6)", Z, float, double) {
     etl::dyn_matrix<Z> a(2, 3, etl::values<Z>(1, 2, 3, 4, 5, 6));
-    etl::dyn_vector<Z> b(etl::reshape(a, 6));
+    etl::dyn_vector<Z> b;
+    b = etl::reshape(a, 6);
 
     REQUIRE_EQUALS(b(0), 1.0);
     REQUIRE_EQUALS(b(1), 2.0);
@@ -256,7 +286,8 @@ TEMPLATE_TEST_CASE_2("reshape/dyn_vector_3", "reshape(6)", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("reshape/dyn/1", "", Z, float, double) {
     etl::dyn_matrix<Z> a(4, 4, etl::values<Z>(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16));
-    etl::dyn_matrix<Z, 4> b(etl::reshape(a, 2, 2, 2, 2));
+    etl::dyn_matrix<Z, 4> b;
+    b = etl::reshape(a, 2, 2, 2, 2);
 
     REQUIRE_EQUALS(b(0, 0, 0, 0), 1);
     REQUIRE_EQUALS(b(0, 0, 0, 1), 2);
@@ -313,7 +344,8 @@ TEMPLATE_TEST_CASE_2("reshape/expr", "reshape(a+b)", Z, float, double) {
     etl::dyn_vector<Z> a({1, 2, 3, 4, 5, 6});
     etl::dyn_vector<Z> b({1, 2, 3, 4, 5, 6});
 
-    etl::dyn_matrix<Z> c(etl::reshape(a + b, 2, 3));
+    etl::dyn_matrix<Z> c;
+    c = etl::reshape(a + b, 2, 3);
 
     REQUIRE_EQUALS(c(0, 0), 2.0);
     REQUIRE_EQUALS(c(0, 1), 4.0);
@@ -349,7 +381,8 @@ TEMPLATE_TEST_CASE_2("fast_matrix/sub_view_1_2", "fast_matrix::sub", Z, float, d
 TEMPLATE_TEST_CASE_2("fast_matrix/sub_view_1_3", "fast_matrix::sub", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
 
-    etl::fast_matrix<Z, 2, 2> b(a(1));
+    etl::fast_matrix<Z, 2, 2> b;
+    b = a(1);
 
     REQUIRE_EQUALS(b(0, 0), Z(1.1));
     REQUIRE_EQUALS(b(0, 1), 2.0);
@@ -379,7 +412,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/sub_view_1_2", "dyn_matrix::sub", Z, float, dou
 TEMPLATE_TEST_CASE_2("dyn_matrix/sub_view_1_3", "dyn_matrix::sub", Z, float, double) {
     etl::dyn_matrix<Z, 3> a(2, 2, 2, etl::values(1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0));
 
-    etl::dyn_matrix<Z> b(a(1));
+    etl::dyn_matrix<Z> b;
+    b = a(1);
 
     REQUIRE_EQUALS(b(0, 0), Z(1.1));
     REQUIRE_EQUALS(b(0, 1), 2.0);
@@ -408,7 +442,8 @@ TEMPLATE_TEST_CASE_2("fast_matrix/sub_view_2", "fast_matrix::sub", Z, float, dou
 TEMPLATE_TEST_CASE_2("fast_matrix/sub_view_3", "fast_matrix::sub", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
 
-    etl::fast_matrix<Z, 2, 2> b(etl::sub(a, 1));
+    etl::fast_matrix<Z, 2, 2> b;
+    b = etl::sub(a, 1);
 
     REQUIRE_EQUALS(b(0, 0), Z(1.1));
     REQUIRE_EQUALS(b(0, 1), 2.0);
@@ -417,7 +452,8 @@ TEMPLATE_TEST_CASE_2("fast_matrix/sub_view_3", "fast_matrix::sub", Z, float, dou
 TEMPLATE_TEST_CASE_2("fast_matrix/sub_view_4", "fast_matrix::sub", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
 
-    etl::fast_vector<Z, 2> b(etl::sub(etl::sub(a, 1), 0));
+    etl::fast_vector<Z, 2> b;
+    b = etl::sub(etl::sub(a, 1), 0);
 
     REQUIRE_EQUALS(b(0), Z(1.1));
     REQUIRE_EQUALS(b(1), 2.0);
@@ -426,7 +462,8 @@ TEMPLATE_TEST_CASE_2("fast_matrix/sub_view_4", "fast_matrix::sub", Z, float, dou
 TEMPLATE_TEST_CASE_2("fast_matrix/sub_view_5", "fast_matrix::sub", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
 
-    etl::fast_vector<Z, 2> b(2.0 * etl::sub(2.0 * etl::sub(a, 1), 0));
+    etl::fast_vector<Z, 2> b;
+    b = 2.0 * etl::sub(2.0 * etl::sub(a, 1), 0);
 
     REQUIRE_EQUALS(b(0), Z(4.4));
     REQUIRE_EQUALS(b(1), 8.0);
@@ -501,7 +538,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/sub_view_2", "dyn_matrix::sub", Z, float, doubl
 TEMPLATE_TEST_CASE_2("dyn_matrix/sub_view_3", "dyn_matrix::sub", Z, float, double) {
     etl::dyn_matrix<Z, 3> a(2, 2, 2, etl::values(1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0));
 
-    etl::dyn_matrix<Z> b(etl::sub(a, 1));
+    etl::dyn_matrix<Z> b;
+    b = etl::sub(a, 1);
 
     REQUIRE_EQUALS(b(0, 0), Z(1.1));
     REQUIRE_EQUALS(b(0, 1), 2.0);
@@ -510,7 +548,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/sub_view_3", "dyn_matrix::sub", Z, float, doubl
 TEMPLATE_TEST_CASE_2("dyn_matrix/sub_view_4", "dyn_matrix::sub", Z, float, double) {
     etl::dyn_matrix<Z, 3> a(2, 2, 2, etl::values(1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0));
 
-    etl::dyn_vector<Z> b(etl::sub(etl::sub(a, 1), 0));
+    etl::dyn_vector<Z> b;
+    b = etl::sub(etl::sub(a, 1), 0);
 
     REQUIRE_EQUALS(b(0), Z(1.1));
     REQUIRE_EQUALS(b(1), 2.0);
@@ -519,7 +558,8 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/sub_view_4", "dyn_matrix::sub", Z, float, doubl
 TEMPLATE_TEST_CASE_2("dyn_matrix/sub_view_5", "dyn_matrix::sub", Z, float, double) {
     etl::dyn_matrix<Z, 3> a(2, 2, 2, etl::values(1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0));
 
-    etl::dyn_vector<Z> b(2.0 * etl::sub(2.0 * etl::sub(a, 1), 0));
+    etl::dyn_vector<Z> b;
+    b = 2.0 * etl::sub(2.0 * etl::sub(a, 1), 0);
 
     REQUIRE_EQUALS(b(0), Z(4.4));
     REQUIRE_EQUALS(b(1), 8.0);

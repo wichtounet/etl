@@ -30,7 +30,9 @@ TEMPLATE_TEST_CASE_2("sequence/fast_vector_2", "generator", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("sequence/fast_vector_3", "generator", Z, float, double) {
-    etl::fast_vector<Z, 3> b(etl::sequence_generator(99));
+    etl::fast_vector<Z, 3> b;
+
+    b = etl::sequence_generator(99);
 
     REQUIRE_EQUALS(b[0], 99.0);
     REQUIRE_EQUALS(b[1], 100.0);
@@ -38,7 +40,9 @@ TEMPLATE_TEST_CASE_2("sequence/fast_vector_3", "generator", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("sequence/fast_vector_4", "generator", Z, float, double) {
-    etl::fast_vector<Z, 3> b(0.5 * etl::sequence_generator(99.0));
+    etl::fast_vector<Z, 3> b;
+
+    b = 0.5 * etl::sequence_generator(99.0);
 
     REQUIRE_EQUALS(b[0], 49.5);
     REQUIRE_EQUALS(b[1], 50.0);
@@ -97,7 +101,9 @@ TEMPLATE_TEST_CASE_2("sequence/dyn_vector_1", "generator", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("sequence/dyn_vector_2", "generator", Z, float, double) {
-    etl::dyn_vector<Z> b(3, etl::sequence_generator());
+    etl::dyn_vector<Z> b(3);
+
+    b = etl::sequence_generator();
 
     REQUIRE_EQUALS(b[0], 0.0);
     REQUIRE_EQUALS(b[1], 1.0);

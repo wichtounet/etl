@@ -44,9 +44,12 @@ CONV1_FULL_TEST_CASE("convolution_1d/full_2", "convolution_1d_full") {
 }
 
 CONV1_FULL_TEST_CASE("convolution_1d/full_3", "convolution_1d_full") {
-    etl::fast_vector<T, 9> a(etl::magic<T>(3));
-    etl::fast_vector<T, 4> b(etl::magic<T>(2));
+    etl::fast_vector<T, 9> a;
+    etl::fast_vector<T, 4> b;
     etl::fast_vector<T, 12> c;
+
+    a = etl::magic<T>(3);
+    b = etl::magic<T>(2);
 
     Impl::apply(a, b, c);
 
@@ -65,9 +68,12 @@ CONV1_FULL_TEST_CASE("convolution_1d/full_3", "convolution_1d_full") {
 }
 
 CONV1_FULL_TEST_CASE("convolution_1d/full_4", "convolution_1d_full") {
-    etl::fast_vector<T, 25> a(etl::magic(5));
-    etl::fast_vector<T, 9> b(etl::magic(3));
+    etl::fast_vector<T, 25> a;
+    etl::fast_vector<T, 9> b;
     etl::fast_vector<T, 33> c;
+
+    a = etl::magic<T>(5);
+    b = etl::magic<T>(3);
 
     Impl::apply(a, b, c);
 
@@ -91,9 +97,12 @@ CONV1_FULL_TEST_CASE("convolution_1d/full_4", "convolution_1d_full") {
 }
 
 CONV1_FULL_TEST_CASE("convolution_1d/full_5", "convolution_1d_full") {
-    etl::fast_vector<T, 17 * 17> a(etl::magic(17));
-    etl::fast_vector<T, 3 * 3> b(etl::magic(3));
+    etl::fast_vector<T, 17 * 17> a;
+    etl::fast_vector<T, 3 * 3> b;
     etl::fast_vector<T, 17 * 17 + 9 - 1> c;
+
+    a = etl::magic<T>(17);
+    b = etl::magic<T>(3);
 
     Impl::apply(a, b, c);
 
@@ -190,9 +199,12 @@ CONV1_SAME_TEST_CASE("convolution_1d/same_2", "convolution_1d_same") {
 }
 
 CONV1_SAME_TEST_CASE("convolution_1d/same_3", "convolution_1d_same") {
-    etl::fast_vector<T, 9> a(etl::magic(3));
-    etl::fast_vector<T, 4> b(etl::magic(2));
+    etl::fast_vector<T, 9> a;
+    etl::fast_vector<T, 4> b;
     etl::fast_vector<T, 9> c;
+
+    a = etl::magic<T>(3);
+    b = etl::magic<T>(2);
 
     Impl::apply(a, b, c);
 
@@ -208,9 +220,12 @@ CONV1_SAME_TEST_CASE("convolution_1d/same_3", "convolution_1d_same") {
 }
 
 CONV1_SAME_TEST_CASE("convolution_1d/same_4", "convolution_1d_same") {
-    etl::fast_vector<T, 25> a(etl::magic(5));
-    etl::fast_vector<T, 9> b(etl::magic(3));
+    etl::fast_vector<T, 25> a;
+    etl::fast_vector<T, 9> b;
     etl::fast_vector<T, 25> c;
+
+    a = etl::magic<T>(5);
+    b = etl::magic<T>(3);
 
     Impl::apply(a, b, c);
 
@@ -232,9 +247,12 @@ CONV1_SAME_TEST_CASE("convolution_1d/same_4", "convolution_1d_same") {
 }
 
 CONV1_SAME_TEST_CASE("convolution_1d/same_5", "convolution_1d_same") {
-    etl::fast_vector<T, 17 * 17> a(etl::magic(17));
-    etl::fast_vector<T, 3 * 3> b(etl::magic(3));
+    etl::fast_vector<T, 17 * 17> a;
+    etl::fast_vector<T, 3 * 3> b;
     etl::fast_vector<T, 17 * 17> c;
+
+    a = etl::magic<T>(17);
+    b = etl::magic<T>(3);
 
     Impl::apply(a, b, c);
 
@@ -278,9 +296,12 @@ CONV1_VALID_TEST_CASE("convolution_1d/valid_2", "convolution_1d_valid") {
 }
 
 CONV1_VALID_TEST_CASE("convolution_1d/valid_3", "convolution_1d_valid") {
-    etl::fast_vector<T, 9> a(etl::magic(3));
-    etl::fast_vector<T, 4> b(etl::magic(2));
+    etl::fast_vector<T, 9> a;
+    etl::fast_vector<T, 4> b;
     etl::fast_vector<T, 6> c;
+
+    a = etl::magic<T>(3);
+    b = etl::magic<T>(2);
 
     Impl::apply(a, b, c);
 
@@ -293,9 +314,12 @@ CONV1_VALID_TEST_CASE("convolution_1d/valid_3", "convolution_1d_valid") {
 }
 
 CONV1_VALID_TEST_CASE("convolution_1d/valid_4", "convolution_1d_valid") {
-    etl::fast_vector<T, 25> a(etl::magic(5));
-    etl::fast_vector<T, 9> b(etl::magic(3));
+    etl::fast_vector<T, 25> a;
+    etl::fast_vector<T, 9> b;
     etl::fast_vector<T, 17> c;
+
+    a = etl::magic<T>(5);
+    b = etl::magic<T>(3);
 
     Impl::apply(a, b, c);
 
@@ -319,9 +343,12 @@ CONV1_VALID_TEST_CASE("convolution_1d/valid_4", "convolution_1d_valid") {
 }
 
 CONV1_VALID_TEST_CASE("convolution_1d/valid_5", "convolution_1d_valid") {
-    etl::fast_vector<T, 17 * 17> a(etl::magic(17));
-    etl::fast_vector<T, 3 * 3> b(etl::magic(3));
+    etl::fast_vector<T, 17 * 17> a;
+    etl::fast_vector<T, 3 * 3> b;
     etl::fast_vector<T, 17 * 17 - 9 + 1> c;
+
+    a = etl::magic<T>(17);
+    b = etl::magic<T>(3);
 
     Impl::apply(a, b, c);
 

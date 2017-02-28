@@ -85,9 +85,12 @@ CONV2_FULL_TEST_CASE("convolution_2d/full_3", "convolution_2d_full") {
 }
 
 CONV2_FULL_TEST_CASE("convolution_2d/full_4", "convolution_2d_full") {
-    etl::fast_matrix<T, 3, 3> a(etl::magic(3));
-    etl::fast_matrix<T, 2, 2> b(etl::magic(2));
+    etl::fast_matrix<T, 3, 3> a;
+    etl::fast_matrix<T, 2, 2> b;
     etl::fast_matrix<T, 4, 4> c;
+
+    a = etl::magic(3);
+    b = etl::magic(2);
 
     Impl::apply(a, b, c);
 
@@ -113,9 +116,12 @@ CONV2_FULL_TEST_CASE("convolution_2d/full_4", "convolution_2d_full") {
 }
 
 CONV2_FULL_TEST_CASE("convolution_2d/full_5", "convolution_2d_full") {
-    etl::fast_matrix<T, 5, 5> a(etl::magic(5));
-    etl::fast_matrix<T, 3, 3> b(etl::magic(3));
+    etl::fast_matrix<T, 5, 5> a;
+    etl::fast_matrix<T, 3, 3> b;
     etl::fast_matrix<T, 7, 7> c;
+
+    a = etl::magic(5);
+    b = etl::magic(3);
 
     Impl::apply(a, b, c);
 
@@ -141,9 +147,12 @@ CONV2_FULL_TEST_CASE("convolution_2d/full_5", "convolution_2d_full") {
 }
 
 CONV2_FULL_TEST_CASE("convolution_2d/full_6", "convolution_2d_full") {
-    etl::fast_matrix<T, 17, 17> a(etl::magic(17));
-    etl::fast_matrix<T, 3, 3> b(etl::magic(3));
+    etl::fast_matrix<T, 17, 17> a;
+    etl::fast_matrix<T, 3, 3> b;
     etl::fast_matrix<T, 19, 19> c;
+
+    a = etl::magic(17);
+    b = etl::magic(3);
 
     Impl::apply(a, b, c);
 
@@ -201,9 +210,12 @@ CONV2_FULL_TEST_CASE("convolution_2d/full_7", "convolution_2d_full") {
 }
 
 CONV2_FULL_TEST_CASE("convolution_2d/full_8", "convolution_2d_full") {
-    etl::fast_matrix<T, 33, 33> a(etl::magic(33));
-    etl::fast_matrix<T, 9, 9> b(etl::magic(9));
+    etl::fast_matrix<T, 33, 33> a;
+    etl::fast_matrix<T, 9, 9> b;
     etl::fast_matrix<T, 41, 41> c;
+
+    a = etl::magic(33);
+    b = etl::magic(9);
 
     Impl::apply(a, b, c);
 
@@ -282,9 +294,12 @@ CONV2_SAME_TEST_CASE("convolution_2d/same_3", "convolution_2d_same") {
 }
 
 CONV2_SAME_TEST_CASE("convolution_2d/same_4", "convolution_2d_same") {
-    etl::fast_matrix<T, 3, 3> a(etl::magic(3));
-    etl::fast_matrix<T, 2, 2> b(etl::magic(2));
+    etl::fast_matrix<T, 3, 3> a;
+    etl::fast_matrix<T, 2, 2> b;
     etl::fast_matrix<T, 3, 3> c;
+
+    a = etl::magic(3);
+    b = etl::magic(2);
 
     Impl::apply(a, b, c);
 
@@ -302,9 +317,12 @@ CONV2_SAME_TEST_CASE("convolution_2d/same_4", "convolution_2d_same") {
 }
 
 CONV2_SAME_TEST_CASE("convolution_2d/same_5", "convolution_2d_same") {
-    etl::fast_matrix<T, 5, 5> a(etl::magic(5));
-    etl::fast_matrix<T, 3, 3> b(etl::magic(3));
+    etl::fast_matrix<T, 5, 5> a;
+    etl::fast_matrix<T, 3, 3> b;
     etl::fast_matrix<T, 5, 5> c;
+
+    a = etl::magic(5);
+    b = etl::magic(3);
 
     Impl::apply(a, b, c);
 
@@ -330,9 +348,12 @@ CONV2_SAME_TEST_CASE("convolution_2d/same_5", "convolution_2d_same") {
 }
 
 CONV2_SAME_TEST_CASE("convolution_2d/same_6", "convolution_2d_same") {
-    etl::fast_matrix<T, 17, 17> a(etl::magic(17));
-    etl::fast_matrix<T, 3, 3> b(etl::magic(3));
+    etl::fast_matrix<T, 17, 17> a;
+    etl::fast_matrix<T, 3, 3> b;
     etl::fast_matrix<T, 17, 17> c;
+
+    a = etl::magic(17);
+    b = etl::magic(3);
 
     Impl::apply(a, b, c);
 
@@ -380,9 +401,12 @@ CONV2_SAME_TEST_CASE("convolution_2d/same_7", "convolution_2d_same") {
 }
 
 CONV2_SAME_TEST_CASE("convolution_2d/same_8", "convolution_2d_same") {
-    etl::fast_matrix<T, 33, 33> a(etl::magic(33));
-    etl::fast_matrix<T, 9, 9> b(etl::magic(9));
+    etl::fast_matrix<T, 33, 33> a;
+    etl::fast_matrix<T, 9, 9> b;
     etl::fast_matrix<T, 33, 33> c;
+
+    a = etl::magic(33);
+    b = etl::magic(9);
 
     Impl::apply(a, b, c);
 
@@ -432,9 +456,12 @@ CONV2_SAME_FLIPPED_TEST_CASE("convolution_2d_flipped/same_1", "convolution_2d_sa
 }
 
 CONV2_SAME_FLIPPED_TEST_CASE("convolution_2d_flipped/same_2", "convolution_2d_same") {
-    etl::fast_matrix<T, 33, 33> a(etl::magic(33));
-    etl::fast_matrix<T, 9, 9> b(fflip(etl::magic(9)));
+    etl::fast_matrix<T, 33, 33> a;
+    etl::fast_matrix<T, 9, 9> b;
     etl::fast_matrix<T, 33, 33> c;
+
+    a = etl::magic(33);
+    b = fflip(etl::magic(9));
 
     Impl::apply(a, b, c);
 
@@ -497,9 +524,12 @@ CONV2_VALID_TEST_CASE("convolution_2d/valid_3", "convolution_2d_valid") {
 }
 
 CONV2_VALID_TEST_CASE("convolution_2d/valid_4", "convolution_2d_valid") {
-    etl::fast_matrix<T, 3, 3> a(etl::magic(3));
-    etl::fast_matrix<T, 2, 2> b(etl::magic(2));
+    etl::fast_matrix<T, 3, 3> a;
+    etl::fast_matrix<T, 2, 2> b;
     etl::fast_matrix<T, 2, 2> c;
+
+    a = etl::magic(3);
+    b = etl::magic(2);
 
     Impl::apply(a, b, c);
 
@@ -511,9 +541,12 @@ CONV2_VALID_TEST_CASE("convolution_2d/valid_4", "convolution_2d_valid") {
 }
 
 CONV2_VALID_TEST_CASE("convolution_2d/valid_5", "convolution_2d_valid") {
-    etl::fast_matrix<T, 5, 5> a(etl::magic(5));
-    etl::fast_matrix<T, 3, 3> b(etl::magic(3));
+    etl::fast_matrix<T, 5, 5> a;
+    etl::fast_matrix<T, 3, 3> b;
     etl::fast_matrix<T, 3, 3> c;
+
+    a = etl::magic(5);
+    b = etl::magic(3);
 
     Impl::apply(a, b, c);
 
@@ -531,9 +564,12 @@ CONV2_VALID_TEST_CASE("convolution_2d/valid_5", "convolution_2d_valid") {
 }
 
 CONV2_VALID_TEST_CASE("convolution_2d/valid_6", "convolution_2d_valid") {
-    etl::fast_matrix<T, 17, 17> a(etl::magic(17));
-    etl::fast_matrix<T, 3, 3> b(etl::magic(3));
+    etl::fast_matrix<T, 17, 17> a;
+    etl::fast_matrix<T, 3, 3> b;
     etl::fast_matrix<T, 15, 15> c;
+
+    a = etl::magic(17);
+    b = etl::magic(3);
 
     Impl::apply(a, b, c);
 
@@ -573,9 +609,12 @@ CONV2_VALID_TEST_CASE("convolution_2d/valid_7", "convolution_2d_valid") {
 }
 
 CONV2_VALID_TEST_CASE("convolution_2d/valid_8", "convolution_2d_valid") {
-    etl::fast_matrix<T, 33, 33> a(etl::magic(33));
-    etl::fast_matrix<T, 9, 9> b(etl::magic(9));
+    etl::fast_matrix<T, 33, 33> a;
+    etl::fast_matrix<T, 9, 9> b;
     etl::fast_matrix<T, 25, 25> c;
+
+    a = etl::magic(33);
+    b = etl::magic(9);
 
     Impl::apply(a, b, c);
 
@@ -776,9 +815,12 @@ CONV2_VALID_FLIPPED_TEST_CASE("conv/2d/flipped/valid/1", "[conv][conv2][valid]")
 }
 
 CONV2_VALID_FLIPPED_TEST_CASE("conv/2d/flipped/valid/2", "[conv][conv2][valid]") {
-    etl::fast_matrix<T, 17, 17> a(etl::magic(17));
-    etl::fast_matrix<T, 3, 3> b(fflip(etl::magic(3)));
+    etl::fast_matrix<T, 17, 17> a;
+    etl::fast_matrix<T, 3, 3> b;
     etl::fast_matrix<T, 15, 15> c;
+
+    a = etl::magic(17);
+    b = fflip(etl::magic(3));
 
     Impl::apply(a, b, c);
 
@@ -858,9 +900,12 @@ CONV2_FULL_FLIPPED_TEST_CASE("conv/2d/full/flipped/2", "[conv][conv2][full]") {
 }
 
 CONV2_FULL_FLIPPED_TEST_CASE("conv/2d/full/flipped/3", "convolution_2d_full") {
-    etl::fast_matrix<T, 33, 33> a(etl::magic(33));
-    etl::fast_matrix<T, 9, 9> b(fflip(etl::magic(9)));
+    etl::fast_matrix<T, 33, 33> a;
+    etl::fast_matrix<T, 9, 9> b;
     etl::fast_matrix<T, 41, 41> c;
+
+    a = etl::magic(33);
+    b = fflip(etl::magic(9));
 
     Impl::apply(a, b, c);
 

@@ -11,7 +11,8 @@
 
 TEMPLATE_TEST_CASE_2("dyn_rep/fast_matrix_1", "dyn_rep", Z, float, double) {
     etl::fast_matrix<Z, 3> a({1.0, -2.0, 3.0});
-    etl::fast_matrix<Z, 3, 3> b(etl::rep(a, 3));
+    etl::fast_matrix<Z, 3, 3> b;
+    b = etl::rep(a, 3);
 
     REQUIRE_EQUALS(b(0, 0), 1.0);
     REQUIRE_EQUALS(b(0, 1), 1.0);
@@ -152,7 +153,8 @@ TEMPLATE_TEST_CASE_2("dyn_rep/dyn_matrix_5", "dyn_rep", Z, float, double) {
     a = 1.0;
     a(1, 2) = 3.0;
 
-    etl::dyn_matrix<Z, 6> b(etl::rep(a, 3, 2, 5, 7));
+    etl::dyn_matrix<Z, 6> b;
+    b = etl::rep(a, 3, 2, 5, 7);
 
     REQUIRE_EQUALS(b.dim(0), 2UL);
     REQUIRE_EQUALS(b.dim(1), 3UL);
@@ -179,7 +181,9 @@ TEMPLATE_TEST_CASE_2("dyn_rep/dyn_matrix_5", "dyn_rep", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("dyn_rep_l/fast_matrix_1", "dyn_rep", Z, float, double) {
     etl::fast_matrix<Z, 3> a({1.0, -2.0, 3.0});
-    etl::fast_matrix<Z, 3, 3> b(etl::rep_l(a, 3));
+    etl::fast_matrix<Z, 3, 3> b;
+
+    b = etl::rep_l(a, 3);
 
     REQUIRE_EQUALS(b(0, 0), 1.0);
     REQUIRE_EQUALS(b(0, 1), -2.0);
@@ -248,7 +252,9 @@ TEMPLATE_TEST_CASE_2("dyn_rep_l/fast_matrix_4", "dyn_rep", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("dyn_rep_l/dyn_matrix_1", "dyn_rep", Z, float, double) {
     etl::dyn_vector<Z> a(3, etl::values(1.0, -2.0, 3.0));
-    etl::dyn_matrix<Z> b(etl::rep_l(a, 3));
+    etl::dyn_matrix<Z> b;
+
+    b = etl::rep_l(a, 3);
 
     REQUIRE_EQUALS(b(0, 0), 1.0);
     REQUIRE_EQUALS(b(0, 1), -2.0);
@@ -306,7 +312,9 @@ TEMPLATE_TEST_CASE_2("dyn_rep_l/dyn_matrix_3", "dyn_rep", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("dyn_rep_l/dyn_matrix_4", "dyn_rep", Z, float, double) {
     etl::dyn_vector<Z> a(1, 1.0);
-    etl::dyn_matrix<Z, 5> b(etl::rep_l(a, 3, 2, 5, 7));
+    etl::dyn_matrix<Z, 5> b;
+
+    b = etl::rep_l(a, 3, 2, 5, 7);
 
     for (auto v : b) {
         REQUIRE_EQUALS(v, 1.0);
@@ -319,7 +327,8 @@ TEMPLATE_TEST_CASE_2("dyn_rep_l/dyn_matrix_5", "dyn_rep", Z, float, double) {
 
     a(1, 1) = 1.0;
 
-    etl::dyn_matrix<Z, 6> b(etl::rep_l(a, 1, 2, 3, 4));
+    etl::dyn_matrix<Z, 6> b;
+    b = etl::rep_l(a, 1, 2, 3, 4);
 
     REQUIRE_EQUALS(b.dim(0), 1UL);
     REQUIRE_EQUALS(b.dim(1), 2UL);

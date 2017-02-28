@@ -127,7 +127,8 @@ TEMPLATE_TEST_CASE_2("column_major/4", "[dyn][cm]", Z, int, long) {
 }
 
 TEMPLATE_TEST_CASE_2("column_major/transpose/1", "[fast][cm]", Z, int, long) {
-    etl::fast_matrix_cm<Z, 2, 3> a(etl::sequence_generator(1));
+    etl::fast_matrix_cm<Z, 2, 3> a;
+    a = etl::sequence_generator(1);
 
     REQUIRE_EQUALS(a(0, 0), 1);
     REQUIRE_EQUALS(a(0, 1), 3);
@@ -136,7 +137,8 @@ TEMPLATE_TEST_CASE_2("column_major/transpose/1", "[fast][cm]", Z, int, long) {
     REQUIRE_EQUALS(a(1, 1), 4);
     REQUIRE_EQUALS(a(1, 2), 6);
 
-    etl::fast_matrix_cm<Z, 3, 2> b(etl::transpose(a));
+    etl::fast_matrix_cm<Z, 3, 2> b;
+    b = etl::transpose(a);
 
     REQUIRE_EQUALS(b(0, 0), 1);
     REQUIRE_EQUALS(b(1, 0), 3);
@@ -147,7 +149,8 @@ TEMPLATE_TEST_CASE_2("column_major/transpose/1", "[fast][cm]", Z, int, long) {
 }
 
 TEMPLATE_TEST_CASE_2("column_major/tranpose/2", "[fast][cm]", Z, int, long) {
-    etl::fast_matrix_cm<Z, 3, 2> a(etl::sequence_generator(1));
+    etl::fast_matrix_cm<Z, 3, 2> a;
+    a = etl::sequence_generator(1);
 
     REQUIRE_EQUALS(a(0, 0), 1);
     REQUIRE_EQUALS(a(0, 1), 4);
@@ -156,7 +159,8 @@ TEMPLATE_TEST_CASE_2("column_major/tranpose/2", "[fast][cm]", Z, int, long) {
     REQUIRE_EQUALS(a(2, 0), 3);
     REQUIRE_EQUALS(a(2, 1), 6);
 
-    etl::fast_matrix_cm<Z, 2, 3> b(etl::transpose(a));
+    etl::fast_matrix_cm<Z, 2, 3> b;
+    b = etl::transpose(a);
 
     REQUIRE_EQUALS(b(0, 0), 1);
     REQUIRE_EQUALS(b(0, 1), 2);
@@ -167,8 +171,11 @@ TEMPLATE_TEST_CASE_2("column_major/tranpose/2", "[fast][cm]", Z, int, long) {
 }
 
 TEMPLATE_TEST_CASE_2("column_major/binary/1", "[fast][cm]", Z, int, long) {
-    etl::fast_matrix_cm<Z, 3, 2> a(etl::sequence_generator(1));
-    etl::fast_matrix_cm<Z, 3, 2> b(a + a - a + a);
+    etl::fast_matrix_cm<Z, 3, 2> a;
+    etl::fast_matrix_cm<Z, 3, 2> b;
+
+    a = etl::sequence_generator(1);
+    b = a + a - a + a;
 
     REQUIRE_EQUALS(a(0, 0), 1);
     REQUIRE_EQUALS(a(0, 1), 4);
@@ -185,7 +192,8 @@ TEMPLATE_TEST_CASE_2("column_major/sub/1", "[fast][cm]", Z, int, long) {
     a(1) = etl::sequence_generator(7);
     a(2) = etl::sequence_generator(13);
 
-    etl::fast_matrix_cm<Z, 3, 2> b(a(1));
+    etl::fast_matrix_cm<Z, 3, 2> b;
+    b = a(1);
 
     REQUIRE_EQUALS(a(0)(0, 0), 1);
     REQUIRE_EQUALS(a(0)(0, 1), 4);
@@ -285,9 +293,12 @@ CONV2_FULL_TEST_CASE_CM("column_major/conv2/full_1", "[cm][conv2]") {
 }
 
 CONV2_FULL_TEST_CASE_CM("column_major/conv2/full_2", "[cm][conv2]") {
-    etl::fast_matrix_cm<T, 3, 3> a(etl::magic<T>(3));
-    etl::fast_matrix_cm<T, 2, 2> b(etl::magic<T>(2));
+    etl::fast_matrix_cm<T, 3, 3> a;
+    etl::fast_matrix_cm<T, 2, 2> b;
     etl::fast_matrix_cm<T, 4, 4> c;
+
+    a = etl::magic<T>(3);
+    b = etl::magic<T>(2);
 
     Impl::apply(a, b, c);
 

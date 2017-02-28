@@ -39,7 +39,8 @@ TEMPLATE_TEST_CASE_2("direct_access/traits", "has_direct_access", Z, double, flo
 }
 
 TEMPLATE_TEST_CASE_2("direct_access/fast_matrix", "direct_access", Z, double, float) {
-    etl::fast_matrix<Z, 5, 5> test_matrix{etl::magic<5>()};
+    etl::fast_matrix<Z, 5, 5> test_matrix;
+    test_matrix = etl::magic<5>();
 
     REQUIRE_EQUALS(test_matrix.size(), 25UL);
 
@@ -59,7 +60,8 @@ TEMPLATE_TEST_CASE_2("direct_access/fast_matrix", "direct_access", Z, double, fl
 }
 
 TEMPLATE_TEST_CASE_2("direct_access/dyn_matrix", "direct_access", Z, double, float) {
-    etl::dyn_matrix<Z, 2> test_matrix{etl::magic(5)};
+    etl::dyn_matrix<Z, 2> test_matrix;
+    test_matrix = etl::magic(5);
 
     REQUIRE_EQUALS(test_matrix.size(), 25UL);
 
@@ -79,7 +81,8 @@ TEMPLATE_TEST_CASE_2("direct_access/dyn_matrix", "direct_access", Z, double, flo
 }
 
 TEMPLATE_TEST_CASE_2("direct_access/sub_view", "direct_access", Z, double, float) {
-    etl::dyn_matrix<Z, 2> test_matrix{etl::magic(5)};
+    etl::dyn_matrix<Z, 2> test_matrix;
+    test_matrix = etl::magic(5);
 
     auto v = test_matrix(1);
 
@@ -99,7 +102,8 @@ TEMPLATE_TEST_CASE_2("direct_access/sub_view", "direct_access", Z, double, float
 }
 
 TEMPLATE_TEST_CASE_2("direct_access/reshape", "direct_access", Z, double, float) {
-    etl::dyn_matrix<Z, 2> test_matrix{etl::magic(6)};
+    etl::dyn_matrix<Z, 2> test_matrix;
+    test_matrix = etl::magic(6);
 
     auto v = etl::reshape<3, 12>(test_matrix);
 
@@ -119,7 +123,8 @@ TEMPLATE_TEST_CASE_2("direct_access/reshape", "direct_access", Z, double, float)
 }
 
 TEMPLATE_TEST_CASE_2("direct_access/reshape_dyn", "direct_access", Z, double, float) {
-    etl::dyn_matrix<Z, 2> test_matrix{etl::magic(6)};
+    etl::dyn_matrix<Z, 2> test_matrix;
+    test_matrix = etl::magic(6);
 
     auto v = etl::reshape(test_matrix, 3, 12);
 
@@ -139,7 +144,8 @@ TEMPLATE_TEST_CASE_2("direct_access/reshape_dyn", "direct_access", Z, double, fl
 }
 
 TEMPLATE_TEST_CASE_2("direct_access/dim_view", "direct_access", Z, double, float) {
-    etl::dyn_matrix<Z, 2> test_matrix{etl::magic(6)};
+    etl::dyn_matrix<Z, 2> test_matrix;
+    test_matrix = etl::magic(6);
 
     auto v = row(test_matrix, 2);
 
