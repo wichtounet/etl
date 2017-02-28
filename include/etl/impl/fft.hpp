@@ -535,7 +535,7 @@ struct fft2_many_impl {
 
 //CPP17: if constexpr
 #ifdef ETL_PARALLEL_SUPPORT
-        const std::size_t transforms = size(c) / ( etl::dim<;
+        const std::size_t transforms = etl::dim<0>(c);
         const std::size_t n          = etl::size(c) / transforms;
 
         bool parallel_dispatch = select_parallel_2d(transforms, fft2_many_threshold_transforms, n, fft2_many_threshold_n);
