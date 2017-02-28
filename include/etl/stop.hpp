@@ -17,7 +17,9 @@ namespace etl {
 template <typename T, cpp_enable_if(is_etl_expr<T>::value, !etl_traits<T>::is_value, !etl_traits<T>::is_fast)>
 auto s(T&& value) {
     // Sizes will be directly propagated
-    return dyn_matrix<value_t<T>, etl_traits<T>::dimensions()>(std::forward<T>(value));
+    dyn_matrix<value_t<T>, etl_traits<T>::dimensions()> mat;
+    mat = value;
+    return mat;
 }
 
 /*!
