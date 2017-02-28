@@ -117,8 +117,8 @@ public:
      */
     template <typename... S, cpp_enable_if(
                                  (sizeof...(S) == D),
-                                 cpp::all_convertible_to<std::size_t, S...>::value,
-                                 cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value)>
+                                 cpp::all_convertible_to<std::size_t, S...>::value
+                                 )>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<std::size_t>(sizes)...}}) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
     }
@@ -159,13 +159,11 @@ public:
      *
      * Every element of the matrix will be set to this value.
      */
-    template <typename S1, typename... S, cpp_enable_if(
+    template <typename... S, cpp_enable_if(
                                               (sizeof...(S) == D),
-                                              std::is_convertible<std::size_t, S1>::value, //The first type must be convertible to size_t
-                                              cpp::is_sub_homogeneous<S1, S...>::value,                                          //The first N-1 types must homegeneous
-                                              !cpp::is_specialization_of<values_t, typename cpp::last_type<std::size_t, S1, S...>::type>::value
+                                              !cpp::is_specialization_of<values_t, typename cpp::last_type<std::size_t, S...>::type>::value
                                               )>
-    explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept : base_type(
+    explicit dyn_matrix_impl(std::size_t s1, S... sizes) noexcept : base_type(
                                                                dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)
                                                             ){
