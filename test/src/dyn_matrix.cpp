@@ -67,14 +67,6 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/init_5", "dyn_matrix::dyn_matrix(T)", Z, double
     REQUIRE_EQUALS(b[0], 1);
     REQUIRE_EQUALS(b[1], 2);
 
-    etl::dyn_matrix<Z> c(3, 2, etl::init_flag, Z(3.3));
-
-    REQUIRE_EQUALS(c.rows(), 3UL);
-    REQUIRE_EQUALS(c.columns(), 2UL);
-    REQUIRE_EQUALS(c.size(), 6UL);
-    REQUIRE_EQUALS(c[0], Z(3.3));
-    REQUIRE_EQUALS(c[1], Z(3.3));
-
     etl::dyn_matrix<Z> d(3, 2, Z(3.3));
 
     REQUIRE_EQUALS(d.rows(), 3UL);
