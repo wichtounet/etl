@@ -124,7 +124,7 @@ public:
     }
 
     /*!
-     * \brief Construct a matrix with the given dimensions and values
+     * \brief Construct a matrix with the given dimensions and initializer_list
      * \param sizes The dimensions of the matrix followed by an initializer_list
      */
     template <typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
