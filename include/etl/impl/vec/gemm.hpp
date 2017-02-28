@@ -430,15 +430,11 @@ void gemv(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix
  * \param c The result vector
  */
-template <typename V, typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
-void gevm_small_kernel(const A& a, const B& b, C& c) {
+template <typename V, typename T>
+void gevm_small_kernel(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
     using vec_type = V;
-    using T        = value_t<A>;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
-
-    const auto m = rows(b);
-    const auto n = columns(b);
 
     size_t j = 0;
 
@@ -453,16 +449,16 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
         auto r8 = vec_type::template zero<T>();
 
         for (size_t k = 0; k < m; k++) {
-            auto a1 = vec_type::set(a[k]);
+            auto a1 = vec_type::set(aa[k]);
 
-            auto b1 = b.template loadu<vec_type>(k * n + j + 0 * vec_size);
-            auto b2 = b.template loadu<vec_type>(k * n + j + 1 * vec_size);
-            auto b3 = b.template loadu<vec_type>(k * n + j + 2 * vec_size);
-            auto b4 = b.template loadu<vec_type>(k * n + j + 3 * vec_size);
-            auto b5 = b.template loadu<vec_type>(k * n + j + 4 * vec_size);
-            auto b6 = b.template loadu<vec_type>(k * n + j + 5 * vec_size);
-            auto b7 = b.template loadu<vec_type>(k * n + j + 6 * vec_size);
-            auto b8 = b.template loadu<vec_type>(k * n + j + 7 * vec_size);
+            auto b1 = vec_type::loadu(bb + k * n + j + 0 * vec_size);
+            auto b2 = vec_type::loadu(bb + k * n + j + 1 * vec_size);
+            auto b3 = vec_type::loadu(bb + k * n + j + 2 * vec_size);
+            auto b4 = vec_type::loadu(bb + k * n + j + 3 * vec_size);
+            auto b5 = vec_type::loadu(bb + k * n + j + 4 * vec_size);
+            auto b6 = vec_type::loadu(bb + k * n + j + 5 * vec_size);
+            auto b7 = vec_type::loadu(bb + k * n + j + 6 * vec_size);
+            auto b8 = vec_type::loadu(bb + k * n + j + 7 * vec_size);
 
             r1 = vec_type::fmadd(a1, b1, r1);
             r2 = vec_type::fmadd(a1, b2, r2);
@@ -474,14 +470,14 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
             r8 = vec_type::fmadd(a1, b8, r8);
         }
 
-        c.template storeu<vec_type>(r1, j + 0 * vec_size);
-        c.template storeu<vec_type>(r2, j + 1 * vec_size);
-        c.template storeu<vec_type>(r3, j + 2 * vec_size);
-        c.template storeu<vec_type>(r4, j + 3 * vec_size);
-        c.template storeu<vec_type>(r5, j + 4 * vec_size);
-        c.template storeu<vec_type>(r6, j + 5 * vec_size);
-        c.template storeu<vec_type>(r7, j + 6 * vec_size);
-        c.template storeu<vec_type>(r8, j + 7 * vec_size);
+        vec_type::storeu(cc + j + 0 * vec_size, r1);
+        vec_type::storeu(cc + j + 1 * vec_size, r2);
+        vec_type::storeu(cc + j + 2 * vec_size, r3);
+        vec_type::storeu(cc + j + 3 * vec_size, r4);
+        vec_type::storeu(cc + j + 4 * vec_size, r5);
+        vec_type::storeu(cc + j + 5 * vec_size, r6);
+        vec_type::storeu(cc + j + 6 * vec_size, r7);
+        vec_type::storeu(cc + j + 7 * vec_size, r8);
     }
 
     for (; j + vec_size * 4 - 1 < n; j += vec_size * 4) {
@@ -491,12 +487,12 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
         auto r4 = vec_type::template zero<T>();
 
         for (size_t k = 0; k < m; k++) {
-            auto a1 = vec_type::set(a[k]);
+            auto a1 = vec_type::set(aa[k]);
 
-            auto b1 = b.template loadu<vec_type>(k * n + j + 0 * vec_size);
-            auto b2 = b.template loadu<vec_type>(k * n + j + 1 * vec_size);
-            auto b3 = b.template loadu<vec_type>(k * n + j + 2 * vec_size);
-            auto b4 = b.template loadu<vec_type>(k * n + j + 3 * vec_size);
+            auto b1 = vec_type::loadu(bb + k * n + j + 0 * vec_size);
+            auto b2 = vec_type::loadu(bb + k * n + j + 1 * vec_size);
+            auto b3 = vec_type::loadu(bb + k * n + j + 2 * vec_size);
+            auto b4 = vec_type::loadu(bb + k * n + j + 3 * vec_size);
 
             r1 = vec_type::fmadd(a1, b1, r1);
             r2 = vec_type::fmadd(a1, b2, r2);
@@ -504,34 +500,34 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
             r4 = vec_type::fmadd(a1, b4, r4);
         }
 
-        c.template storeu<vec_type>(r1, j + 0 * vec_size);
-        c.template storeu<vec_type>(r2, j + 1 * vec_size);
-        c.template storeu<vec_type>(r3, j + 2 * vec_size);
-        c.template storeu<vec_type>(r4, j + 3 * vec_size);
+        vec_type::storeu(cc + j + 0 * vec_size, r1);
+        vec_type::storeu(cc + j + 1 * vec_size, r2);
+        vec_type::storeu(cc + j + 2 * vec_size, r3);
+        vec_type::storeu(cc + j + 3 * vec_size, r4);
     }
 
     for (; j + vec_size - 1 < n; j += vec_size) {
         auto r1 = vec_type::template zero<T>();
 
         for (size_t k = 0; k < m; k++) {
-            auto a1 = vec_type::set(a[k]);
+            auto a1 = vec_type::set(aa[k]);
 
-            auto b1 = b.template loadu<vec_type>(k * n + j);
+            auto b1 = vec_type::loadu(bb + k * n + j + 0 * vec_size);
 
             r1 = vec_type::fmadd(a1, b1, r1);
         }
 
-        c.template storeu<vec_type>(r1, j);
+        vec_type::storeu(cc + j + 0 * vec_size, r1);
     }
 
     for (; j < n; j++) {
         auto value = T();
 
         for (size_t k = 0; k < m; k++) {
-            value += a(k) * b(k, j);
+            value += aa[k] * bb[k * n + j];
         }
 
-        c[j] = value;
+        cc[j] = value;
     }
 }
 
@@ -541,20 +537,14 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
  * \param b The rhs matrix
  * \param c The result vector
  */
-template <typename V, typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
-void gevm_large_kernel(const A& a, const B& b, C& c) {
+template <typename V, typename T>
+void gevm_large_kernel(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
     using vec_type = V;
-    using T        = value_t<A>;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-    const auto m = rows(b);
-    const auto n = columns(b);
-
     const size_t n_block = (32 * 1024) / sizeof(T);
     const size_t m_block = n < n_block ? 8 : 4;
-
-    c = 0;
 
     for (size_t block_j = 0; block_j < n; block_j += n_block) {
         for (size_t block_k = 0; block_k < m; block_k += m_block) {
@@ -575,16 +565,16 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
                 auto r8 = vec_type::template zero<T>();
 
                 for (size_t k = block_k; k < m_end; ++k) {
-                    auto a1 = vec_type::set(a[k]);
+                    auto a1 = vec_type::set(aa[k]);
 
-                    auto b1 = b.template loadu<vec_type>(k * n + j + 0 * vec_size);
-                    auto b2 = b.template loadu<vec_type>(k * n + j + 1 * vec_size);
-                    auto b3 = b.template loadu<vec_type>(k * n + j + 2 * vec_size);
-                    auto b4 = b.template loadu<vec_type>(k * n + j + 3 * vec_size);
-                    auto b5 = b.template loadu<vec_type>(k * n + j + 4 * vec_size);
-                    auto b6 = b.template loadu<vec_type>(k * n + j + 5 * vec_size);
-                    auto b7 = b.template loadu<vec_type>(k * n + j + 6 * vec_size);
-                    auto b8 = b.template loadu<vec_type>(k * n + j + 7 * vec_size);
+                    auto b1 = vec_type::loadu(bb + k * n + j + 0 * vec_size);
+                    auto b2 = vec_type::loadu(bb + k * n + j + 1 * vec_size);
+                    auto b3 = vec_type::loadu(bb + k * n + j + 2 * vec_size);
+                    auto b4 = vec_type::loadu(bb + k * n + j + 3 * vec_size);
+                    auto b5 = vec_type::loadu(bb + k * n + j + 4 * vec_size);
+                    auto b6 = vec_type::loadu(bb + k * n + j + 5 * vec_size);
+                    auto b7 = vec_type::loadu(bb + k * n + j + 6 * vec_size);
+                    auto b8 = vec_type::loadu(bb + k * n + j + 7 * vec_size);
 
                     r1 = vec_type::fmadd(a1, b1, r1);
                     r2 = vec_type::fmadd(a1, b2, r2);
@@ -596,14 +586,14 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
                     r8 = vec_type::fmadd(a1, b8, r8);
                 }
 
-                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 0 * vec_size), r1), j + 0 * vec_size);
-                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 1 * vec_size), r2), j + 1 * vec_size);
-                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 2 * vec_size), r3), j + 2 * vec_size);
-                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 3 * vec_size), r4), j + 3 * vec_size);
-                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 4 * vec_size), r5), j + 4 * vec_size);
-                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 5 * vec_size), r6), j + 5 * vec_size);
-                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 6 * vec_size), r7), j + 6 * vec_size);
-                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 7 * vec_size), r8), j + 7 * vec_size);
+                vec_type::storeu(cc + j + 0 * vec_size, vec_type::add(r1, vec_type::loadu(cc + j + 0 * vec_size)));
+                vec_type::storeu(cc + j + 1 * vec_size, vec_type::add(r2, vec_type::loadu(cc + j + 1 * vec_size)));
+                vec_type::storeu(cc + j + 2 * vec_size, vec_type::add(r3, vec_type::loadu(cc + j + 2 * vec_size)));
+                vec_type::storeu(cc + j + 3 * vec_size, vec_type::add(r4, vec_type::loadu(cc + j + 3 * vec_size)));
+                vec_type::storeu(cc + j + 4 * vec_size, vec_type::add(r5, vec_type::loadu(cc + j + 4 * vec_size)));
+                vec_type::storeu(cc + j + 5 * vec_size, vec_type::add(r6, vec_type::loadu(cc + j + 5 * vec_size)));
+                vec_type::storeu(cc + j + 6 * vec_size, vec_type::add(r7, vec_type::loadu(cc + j + 6 * vec_size)));
+                vec_type::storeu(cc + j + 7 * vec_size, vec_type::add(r8, vec_type::loadu(cc + j + 7 * vec_size)));
             }
 
             // 4-Unrolled vectorized loop
@@ -614,12 +604,12 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
                 auto r4 = vec_type::template zero<T>();
 
                 for (size_t k = block_k; k < m_end; ++k) {
-                    auto a1 = vec_type::set(a[k]);
+                    auto a1 = vec_type::set(aa[k]);
 
-                    auto b1 = b.template loadu<vec_type>(k * n + j + 0 * vec_size);
-                    auto b2 = b.template loadu<vec_type>(k * n + j + 1 * vec_size);
-                    auto b3 = b.template loadu<vec_type>(k * n + j + 2 * vec_size);
-                    auto b4 = b.template loadu<vec_type>(k * n + j + 3 * vec_size);
+                    auto b1 = vec_type::loadu(bb + k * n + j + 0 * vec_size);
+                    auto b2 = vec_type::loadu(bb + k * n + j + 1 * vec_size);
+                    auto b3 = vec_type::loadu(bb + k * n + j + 2 * vec_size);
+                    auto b4 = vec_type::loadu(bb + k * n + j + 3 * vec_size);
 
                     r1 = vec_type::fmadd(a1, b1, r1);
                     r2 = vec_type::fmadd(a1, b2, r2);
@@ -627,10 +617,10 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
                     r4 = vec_type::fmadd(a1, b4, r4);
                 }
 
-                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 0 * vec_size), r1), j + 0 * vec_size);
-                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 1 * vec_size), r2), j + 1 * vec_size);
-                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 2 * vec_size), r3), j + 2 * vec_size);
-                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 3 * vec_size), r4), j + 3 * vec_size);
+                vec_type::storeu(cc + j + 0 * vec_size, vec_type::add(r1, vec_type::loadu(cc + j + 0 * vec_size)));
+                vec_type::storeu(cc + j + 1 * vec_size, vec_type::add(r2, vec_type::loadu(cc + j + 1 * vec_size)));
+                vec_type::storeu(cc + j + 2 * vec_size, vec_type::add(r3, vec_type::loadu(cc + j + 2 * vec_size)));
+                vec_type::storeu(cc + j + 3 * vec_size, vec_type::add(r4, vec_type::loadu(cc + j + 3 * vec_size)));
             }
 
             // Base vectorized loop
@@ -638,12 +628,12 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
                 auto r1 = vec_type::template zero<T>();
 
                 for (size_t k = block_k; k < m_end; ++k) {
-                    auto a1 = vec_type::set(a[k]);
-                    auto b1 = b.template loadu<vec_type>(k * n + j + 0 * vec_size);
+                    auto a1 = vec_type::set(aa[k]);
+                    auto b1 = vec_type::loadu(bb + k * n + j + 0 * vec_size);
                     r1 = vec_type::fmadd(a1, b1, r1);
                 }
 
-                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 0 * vec_size), r1), j + 0 * vec_size);
+                vec_type::storeu(cc + j + 0 * vec_size, vec_type::add(r1, vec_type::loadu(cc + j + 0 * vec_size)));
             }
 
             // Remainder non-vectorized loop
@@ -651,10 +641,10 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
                 auto r1 = T();
 
                 for (size_t k = block_k; k < m_end; ++k) {
-                    r1 += a[k] * b(k, j);
+                    r1 += aa[k] * bb[k * n + j];
                 }
 
-                c[j] += r1;
+                cc[j] += r1;
             }
         }
     }
@@ -673,10 +663,15 @@ void gevm(A&& a, B&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
 
+    const auto m = rows(b);
+    const auto n = columns(b);
+
     if(etl::size(b) < gevm_small_threshold){
-        gevm_small_kernel<default_vec>(a, b, c);
+        gevm_small_kernel<default_vec>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
     } else {
-        gevm_large_kernel<default_vec>(a, b, c);
+        c = 0;
+
+        gevm_large_kernel<default_vec>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
     }
 
     c.invalidate_gpu();
