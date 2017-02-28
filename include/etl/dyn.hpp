@@ -97,21 +97,6 @@ public:
     }
 
     /*!
-     * \brief Construct a matrix from an expression
-     * \param e The expression to initialize the matrix with
-     */
-    template <typename E, cpp_enable_if(
-                              std::is_convertible<value_t<E>, value_type>::value,
-                              is_etl_expr<E>::value,
-                              !is_dyn_matrix<E>::value)>
-    explicit dyn_matrix_impl(E&& e) noexcept
-            : base_type(e){
-        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
-
-        assign_evaluate(e, *this);
-    }
-
-    /*!
      * \brief Construct a vector with the given values
      * \param list Initializer list containing all the values of the vector
      */
