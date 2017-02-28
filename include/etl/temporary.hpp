@@ -43,7 +43,9 @@ decltype(auto) build_dyn_matrix_type(E&& expr, std::index_sequence<I...>){
  */
 template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
 decltype(auto) force_temporary(E&& expr) {
-    return typename detail::build_fast_dyn_matrix_type<E, std::make_index_sequence<decay_traits<E>::dimensions()>>::type{std::forward<E>(expr)};
+    typename detail::build_fast_dyn_matrix_type<E, std::make_index_sequence<decay_traits<E>::dimensions()>>::type mat;
+    mat = std::forward<E>(expr);
+    return mat;
 }
 
 /*!

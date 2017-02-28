@@ -158,17 +158,6 @@ public:
     }
 
     /*!
-     * \brief Construct a fast matrix from the given ETL expression
-     * \param e The ETL expression
-     */
-    template <typename E, cpp_enable_if(!is_fast_matrix<E>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
-    explicit fast_matrix_impl(E&& e) : base_type() {
-        init();
-        validate_assign(*this, e);
-        assign_evaluate(std::forward<E>(e), *this);
-    }
-
-    /*!
      * \brief Construct a fast matrix from the given STL container
      * \param container The container to get values from
      */

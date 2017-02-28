@@ -41,7 +41,9 @@ struct build_matrix_type<M, std::index_sequence<I...>> {
  */
 template <typename T, cpp_enable_if(is_etl_expr<T>::value, !etl_traits<T>::is_value, etl_traits<T>::is_fast)>
 auto s(T&& value) {
-    return typename build_matrix_type<T, std::make_index_sequence<etl_traits<T>::dimensions()>>::type(std::forward<T>(value));
+    typename build_matrix_type<T, std::make_index_sequence<etl_traits<T>::dimensions()>>::type mat;
+    mat = std::forward<T>(value);
+    return mat;
 }
 
 } // end of namespace etl
