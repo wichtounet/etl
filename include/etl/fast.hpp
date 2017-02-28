@@ -136,28 +136,6 @@ public:
     }
 
     /*!
-     * \brief Copy construct a fast matrix from a different matrix fast matrix type
-     * \param rhs The fast matrix to copy from
-     */
-    template <typename T2, typename ST2, order SO2, std::size_t... Dims2, cpp_enable_if(SO == SO2)>
-    fast_matrix_impl(const fast_matrix_impl<T2, ST2, SO2, Dims2...>& rhs) noexcept: base_type()  {
-        init();
-        validate_assign(*this, rhs);
-        direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
-    }
-
-    /*!
-     * \brief Copy construct a fast matrix from a different matrix fast matrix type
-     * \param rhs The fast matrix to copy from
-     */
-    template <typename T2, typename ST2, order SO2, std::size_t... Dims2, cpp_disable_if(SO == SO2)>
-    fast_matrix_impl(const fast_matrix_impl<T2, ST2, SO2, Dims2...>& rhs) noexcept: base_type()  {
-        init();
-        validate_assign(*this, rhs);
-        assign_evaluate(rhs, *this);
-    }
-
-    /*!
      * \brief Construct a fast matrix from the given STL container
      * \param container The container to get values from
      */
