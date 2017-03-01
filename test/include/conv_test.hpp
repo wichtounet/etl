@@ -77,13 +77,12 @@ DYN_CONV_FUNCTOR(std_dyn_conv2_valid_flipped, c = selected_helper(etl::conv_impl
 
 DYN_CONV_FUNCTOR(default_dyn_conv2_valid_multi, c = etl::conv_2d_valid_multi(a, b, s1, s2, p1, p2))
 DYN_CONV_FUNCTOR(std_dyn_conv2_valid_multi, c = selected_helper(etl::conv_multi_impl::STD, (etl::conv_2d_valid_multi(a, b, s1, s2, p1, p2))))
-DYN_CONV_FUNCTOR(fft_dyn_conv2_valid_multi, c = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, (etl::conv_2d_valid_multi(a, b, s1, s2, p1, p2))))
 DYN_CONV_FUNCTOR(blas_dyn_conv2_valid_multi, c = selected_helper(etl::conv_multi_impl::BLAS, (etl::conv_2d_valid_multi(a, b, s1, s2, p1, p2))))
 
 DYN_CONV_FUNCTOR(default_dyn_conv2_valid_multi_flipped, c = etl::conv_2d_valid_multi_flipped(a, b, s1, s2, p1, p2))
 DYN_CONV_FUNCTOR(std_dyn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi_impl::STD, (etl::conv_2d_valid_multi_flipped(a, b, s1, s2, p1, p2))))
-DYN_CONV_FUNCTOR(fft_dyn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, (etl::conv_2d_valid_multi_flipped(a, b, s1, s2, p1, p2))))
 DYN_CONV_FUNCTOR(blas_dyn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi_impl::BLAS, (etl::conv_2d_valid_multi_flipped(a, b, s1, s2, p1, p2))))
+
 
 CONV_FUNCTOR(default_conv4_valid, c = (etl::conv_4d_valid<S1,S2,P1,P2>(a, b)))
 CONV_FUNCTOR(std_conv4_valid, c = selected_helper(etl::conv4_impl::STD, (etl::conv_4d_valid<S1,S2,P1,P2>(a, b))))
@@ -111,23 +110,19 @@ CONV_FUNCTOR(fft_std_conv4_full_flipped, c = selected_helper(etl::conv4_impl::FF
 
 CONV_FUNCTOR(default_conv2_valid_multi, c = (etl::conv_2d_valid_multi<S1, S2, P1, P2>(a, b)))
 CONV_FUNCTOR(std_conv2_valid_multi, c = selected_helper(etl::conv_multi_impl::STD, (etl::conv_2d_valid_multi<S1, S2, P1, P2>(a, b))))
-CONV_FUNCTOR(fft_conv2_valid_multi, c = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, (etl::conv_2d_valid_multi<S1, S2, P1, P2>(a, b))))
 CONV_FUNCTOR(blas_conv2_valid_multi, c = selected_helper(etl::conv_multi_impl::BLAS, (etl::conv_2d_valid_multi<S1, S2, P1, P2>(a, b))))
 
 CONV_FUNCTOR(default_conv2_valid_multi_flipped, c = (etl::conv_2d_valid_multi_flipped<S1, S2, P1, P2>(a, b)))
 CONV_FUNCTOR(std_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi_impl::STD, (etl::conv_2d_valid_multi_flipped<S1, S2, P1, P2>(a, b))))
-CONV_FUNCTOR(fft_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, (etl::conv_2d_valid_multi_flipped<S1, S2, P1, P2>(a, b))))
 CONV_FUNCTOR(blas_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi_impl::BLAS, (etl::conv_2d_valid_multi_flipped<S1, S2, P1, P2>(a, b))))
 
 CONV_FUNCTOR(default_conv2_valid_multi_multi, c = (etl::conv_2d_valid_multi_multi<S1, S2, P1, P2>(a, b)))
 CONV_FUNCTOR(std_conv2_valid_multi_multi, c = selected_helper(etl::conv_multi_impl::STD, (etl::conv_2d_valid_multi_multi<S1, S2, P1, P2>(a, b))))
 CONV_FUNCTOR(blas_conv2_valid_multi_multi, c = selected_helper(etl::conv_multi_impl::BLAS, (etl::conv_2d_valid_multi_multi<S1, S2, P1, P2>(a, b))))
-CONV_FUNCTOR(fft_conv2_valid_multi_multi, c = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, (etl::conv_2d_valid_multi_multi<S1, S2, P1, P2>(a, b))))
 
 CONV_FUNCTOR(default_conv2_valid_multi_multi_flipped, c = (etl::conv_2d_valid_multi_multi_flipped<S1, S2, P1, P2>(a, b)))
 CONV_FUNCTOR(std_conv2_valid_multi_multi_flipped, c = selected_helper(etl::conv_multi_impl::STD, (etl::conv_2d_valid_multi_multi_flipped<S1, S2, P1, P2>(a, b))))
 CONV_FUNCTOR(blas_conv2_valid_multi_multi_flipped, c = selected_helper(etl::conv_multi_impl::BLAS, (etl::conv_2d_valid_multi_multi_flipped<S1, S2, P1, P2>(a, b))))
-CONV_FUNCTOR(fft_conv2_valid_multi_multi_flipped, c = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, (etl::conv_2d_valid_multi_multi_flipped<S1, S2, P1, P2>(a, b))))
 
 CONV_FUNCTOR(default_conv2_full_multi, c = etl::conv_2d_full_multi(a, b))
 CONV_FUNCTOR(std_conv2_full_multi, c = selected_helper(etl::conv_multi_impl::STD, etl::conv_2d_full_multi(a, b)))
@@ -205,33 +200,27 @@ CONV_FUNCTOR(fft_std_conv2_full_multi_flipped, c = selected_helper(etl::conv_mul
 
 #define CONV2_VALID_MULTI_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv2_valid_multi)
 #define CONV2_VALID_MULTI_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv2_valid_multi)
-#define CONV2_VALID_MULTI_TEST_CASE_SECTION_FFT CONV_TEST_CASE_SECTIONS(fft_conv2_valid_multi)
 #define CONV2_VALID_MULTI_TEST_CASE_SECTION_BLAS CONV_TEST_CASE_SECTIONS(blas_conv2_valid_multi)
 
 #define CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv2_valid_multi_flipped)
 #define CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv2_valid_multi_flipped)
-#define CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_FFT CONV_TEST_CASE_SECTIONS(fft_conv2_valid_multi_flipped)
 #define CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_BLAS CONV_TEST_CASE_SECTIONS(blas_conv2_valid_multi_flipped)
 
 #define DYN_CONV2_VALID_MULTI_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_dyn_conv2_valid_multi)
 #define DYN_CONV2_VALID_MULTI_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_dyn_conv2_valid_multi)
-#define DYN_CONV2_VALID_MULTI_TEST_CASE_SECTION_FFT CONV_TEST_CASE_SECTIONS(fft_dyn_conv2_valid_multi)
 #define DYN_CONV2_VALID_MULTI_TEST_CASE_SECTION_BLAS CONV_TEST_CASE_SECTIONS(blas_dyn_conv2_valid_multi)
 
 #define DYN_CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_dyn_conv2_valid_multi_flipped)
 #define DYN_CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_dyn_conv2_valid_multi_flipped)
-#define DYN_CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_FFT CONV_TEST_CASE_SECTIONS(fft_dyn_conv2_valid_multi_flipped)
 #define DYN_CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_BLAS CONV_TEST_CASE_SECTIONS(blas_dyn_conv2_valid_multi_flipped)
 
 #define CONV2_VALID_MULTI_MULTI_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv2_valid_multi_multi)
 #define CONV2_VALID_MULTI_MULTI_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv2_valid_multi_multi)
 #define CONV2_VALID_MULTI_MULTI_TEST_CASE_SECTION_BLAS CONV_TEST_CASE_SECTIONS(blas_conv2_valid_multi_multi)
-#define CONV2_VALID_MULTI_MULTI_TEST_CASE_SECTION_FFT CONV_TEST_CASE_SECTIONS(fft_conv2_valid_multi_multi)
 
 #define CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv2_valid_multi_multi_flipped)
 #define CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv2_valid_multi_multi_flipped)
 #define CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE_SECTION_BLAS CONV_TEST_CASE_SECTIONS(blas_conv2_valid_multi_multi_flipped)
-#define CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE_SECTION_FFT CONV_TEST_CASE_SECTIONS(fft_conv2_valid_multi_multi_flipped)
 
 #define CONV2_FULL_MULTI_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv2_full_multi)
 #define CONV2_FULL_MULTI_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv2_full_multi)
@@ -250,6 +239,13 @@ CONV_FUNCTOR(fft_mkl_conv2_full_multi_flipped, c = selected_helper(etl::conv_mul
 CONV_FUNCTOR(fft_mkl_conv4_full, c = selected_helper(etl::conv4_impl::FFT_MKL, etl::conv_4d_full(a, b)))
 CONV_FUNCTOR(fft_mkl_conv4_full_flipped, c = selected_helper(etl::conv4_impl::FFT_MKL, etl::conv_4d_full_flipped(a, b)))
 
+CONV_FUNCTOR(fft_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, (etl::conv_2d_valid_multi_flipped<S1, S2, P1, P2>(a, b))))
+CONV_FUNCTOR(fft_conv2_valid_multi, c = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, (etl::conv_2d_valid_multi<S1, S2, P1, P2>(a, b))))
+DYN_CONV_FUNCTOR(fft_dyn_conv2_valid_multi, c = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, (etl::conv_2d_valid_multi(a, b, s1, s2, p1, p2))))
+DYN_CONV_FUNCTOR(fft_dyn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, (etl::conv_2d_valid_multi_flipped(a, b, s1, s2, p1, p2))))
+CONV_FUNCTOR(fft_conv2_valid_multi_multi, c = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, (etl::conv_2d_valid_multi_multi<S1, S2, P1, P2>(a, b))))
+CONV_FUNCTOR(fft_conv2_valid_multi_multi_flipped, c = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, (etl::conv_2d_valid_multi_multi_flipped<S1, S2, P1, P2>(a, b))))
+
 #define CONV1_FULL_TEST_CASE_SECTION_FFT_MKL CONV_TEST_CASE_SECTIONS(fft_mkl_conv1_full)
 #define CONV2_FULL_TEST_CASE_SECTION_FFT_MKL CONV_TEST_CASE_SECTIONS(fft_mkl_conv2_full)
 #define CONV2_FULL_FLIPPED_TEST_CASE_SECTION_FFT_MKL CONV_TEST_CASE_SECTIONS(fft_mkl_conv2_full_flipped)
@@ -257,6 +253,13 @@ CONV_FUNCTOR(fft_mkl_conv4_full_flipped, c = selected_helper(etl::conv4_impl::FF
 #define CONV2_FULL_MULTI_FLIPPED_TEST_CASE_SECTION_FFT_MKL CONV_TEST_CASE_SECTIONS(fft_mkl_conv2_full_multi_flipped)
 #define CONV4_FULL_TEST_CASE_SECTION_FFT_MKL CONV_TEST_CASE_SECTIONS(fft_mkl_conv4_full)
 #define CONV4_FULL_FLIPPED_TEST_CASE_SECTION_FFT_MKL CONV_TEST_CASE_SECTIONS(fft_mkl_conv4_full_flipped)
+
+#define CONV2_VALID_MULTI_TEST_CASE_SECTION_FFT CONV_TEST_CASE_SECTIONS(fft_conv2_valid_multi)
+#define CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_FFT CONV_TEST_CASE_SECTIONS(fft_conv2_valid_multi_flipped)
+#define CONV2_VALID_MULTI_MULTI_TEST_CASE_SECTION_FFT CONV_TEST_CASE_SECTIONS(fft_conv2_valid_multi_multi)
+#define CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE_SECTION_FFT CONV_TEST_CASE_SECTIONS(fft_conv2_valid_multi_multi_flipped)
+#define DYN_CONV2_VALID_MULTI_TEST_CASE_SECTION_FFT CONV_TEST_CASE_SECTIONS(fft_dyn_conv2_valid_multi)
+#define DYN_CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_FFT CONV_TEST_CASE_SECTIONS(fft_dyn_conv2_valid_multi_flipped)
 #else
 #define CONV1_FULL_TEST_CASE_SECTION_FFT_MKL
 #define CONV2_FULL_TEST_CASE_SECTION_FFT_MKL
@@ -265,6 +268,13 @@ CONV_FUNCTOR(fft_mkl_conv4_full_flipped, c = selected_helper(etl::conv4_impl::FF
 #define CONV2_FULL_MULTI_FLIPPED_TEST_CASE_SECTION_FFT_MKL
 #define CONV4_FULL_TEST_CASE_SECTION_FFT_MKL
 #define CONV4_FULL_FLIPPED_TEST_CASE_SECTION_FFT_MKL
+
+#define CONV2_VALID_MULTI_TEST_CASE_SECTION_FFT
+#define CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_FFT
+#define CONV2_VALID_MULTI_MULTI_TEST_CASE_SECTION_FFT
+#define CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE_SECTION_FFT
+#define DYN_CONV2_VALID_MULTI_TEST_CASE_SECTION_FFT
+#define DYN_CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_FFT
 #endif
 
 #ifdef ETL_CUFFT_MODE
