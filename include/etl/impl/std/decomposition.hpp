@@ -85,6 +85,12 @@ void lu(const AT& A, LT& L, UT& U, PT& P) {
     }
 }
 
+/*!
+ * \brief Use the householder algorithm to perform the A=QR decomposition of the matrix A
+ * \param A The matrix to decompose
+ * \param Q The resulting Q matrix
+ * \param R The resulting R matrix
+ */
 template <typename AT, typename QT, typename RT>
 void householder(const AT& A, QT& Q, RT& R) {
     using T = value_t<AT>;

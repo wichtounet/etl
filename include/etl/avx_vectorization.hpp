@@ -211,11 +211,17 @@ struct avx_intrinsic_traits<int64_t> {
  * \brief Advanced Vector eXtensions (AVX) operations implementation.
  */
 struct avx_vec {
+    /*!
+     * \brief The traits for this vector implementation
+     */
     template <typename T>
-    using traits = avx_intrinsic_traits<T>; ///< The traits for this vector implementation
+    using traits = avx_intrinsic_traits<T>;
 
+    /*!
+     * \brief The vector type for the given type for this vector implementation
+     */
     template <typename T>
-    using vec_type = typename traits<T>::intrinsic_type; ///< The vector type for the given vector type for this vector implementation
+    using vec_type = typename traits<T>::intrinsic_type;
 
 #ifdef VEC_DEBUG
 

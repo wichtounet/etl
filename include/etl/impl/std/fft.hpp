@@ -854,6 +854,13 @@ void ifft1_real(A&& a, C&& c) {
     c.invalidate_gpu();
 }
 
+/*!
+ * \brief Perform many 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ * \param batch The number of transforms
+ * \param n The size of the transform
+ */
 template<typename A, typename C>
 void fft1_many_kernel(const A* a, C* c, size_t batch, size_t n) {
     std::size_t distance = n; //Distance between samples

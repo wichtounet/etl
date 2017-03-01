@@ -439,6 +439,11 @@ bool is_hermitian(E&& expr){
     return true;
 }
 
+/*!
+ * \brief Compare two ETL expressions for equality.
+ *
+ * \return true if the expressions contains the same sequence of values, false othwerise.
+ */
 template <typename L, typename R, cpp_enable_if(all_etl_expr<L, R>::value)>
 bool operator==(L&& lhs, R&& rhs){
     // Both expressions must have the same number of dimensions
