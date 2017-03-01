@@ -331,7 +331,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_valid_multi [conv][conv2]", conv_2d_mu
     CPM_SECTION_FUNCTOR("default", [](smat& a, smat3& b, smat3& r){ r = etl::conv_2d_valid_multi(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::STD, etl::conv_2d_valid_multi(a, b)); })
     VEC_SECTION_FUNCTOR("vec", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::VEC, etl::conv_2d_valid_multi(a, b)); }),
-    CPM_SECTION_FUNCTOR("fft", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT, etl::conv_2d_valid_multi(a, b)); }),
+    CPM_SECTION_FUNCTOR("fft", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, etl::conv_2d_valid_multi(a, b)); }),
     CPM_SECTION_FUNCTOR("blas", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::BLAS, etl::conv_2d_valid_multi(a, b)); })
     CUDNN_SECTION_FUNCTOR("cudnn", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::CUDNN, etl::conv_2d_valid_multi(a, b)); })
 )
@@ -343,7 +343,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_valid_multi_multi [conv][conv2]", conv
     CPM_SECTION_FUNCTOR("default", [](smat3& a, smat3& b, smat4& r){ r = etl::conv_2d_valid_multi_multi(a, b); })
     VEC_SECTION_FUNCTOR("vec", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::VEC, etl::conv_2d_valid_multi_multi(a, b)); })
     ,CPM_SECTION_FUNCTOR("blas", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::BLAS, etl::conv_2d_valid_multi_multi(a, b)); })
-    ,CPM_SECTION_FUNCTOR("fft", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::FFT, etl::conv_2d_valid_multi_multi(a, b)); })
+    ,CPM_SECTION_FUNCTOR("fft", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, etl::conv_2d_valid_multi_multi(a, b)); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_full_multi [conv][conv2]", conv_2d_multi_policy,
@@ -392,7 +392,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_valid_multi_flipped [conv][conv2]", co
     CPM_SECTION_FUNCTOR("default", [](smat& a, smat3& b, smat3& r){ r = etl::conv_2d_valid_multi_flipped(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::STD, etl::conv_2d_valid_multi_flipped(a, b)); })
     VEC_SECTION_FUNCTOR("vec", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::VEC, etl::conv_2d_valid_multi_flipped(a, b)); }),
-    CPM_SECTION_FUNCTOR("fft", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT, etl::conv_2d_valid_multi_flipped(a, b)); }),
+    CPM_SECTION_FUNCTOR("fft", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, etl::conv_2d_valid_multi_flipped(a, b)); }),
     CPM_SECTION_FUNCTOR("blas", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::BLAS, etl::conv_2d_valid_multi_flipped(a, b)); })
     CUDNN_SECTION_FUNCTOR("cudnn", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::CUDNN, etl::conv_2d_valid_multi_flipped(a, b)); })
 )
@@ -404,7 +404,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_valid_multi_multi_flipped [conv][conv2
     CPM_SECTION_FUNCTOR("default", [](smat3& a, smat3& b, smat4& r){ r = etl::conv_2d_valid_multi_multi_flipped(a, b); })
     VEC_SECTION_FUNCTOR("vec", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::VEC, etl::conv_2d_valid_multi_multi_flipped(a, b)); })
     ,CPM_SECTION_FUNCTOR("blas", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::BLAS, etl::conv_2d_valid_multi_multi_flipped(a, b)); })
-    ,CPM_SECTION_FUNCTOR("fft", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::FFT, etl::conv_2d_valid_multi_multi_flipped(a, b)); })
+    ,CPM_SECTION_FUNCTOR("fft", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, etl::conv_2d_valid_multi_multi_flipped(a, b)); })
 )
 
 // Note: STD is way too slow to benchmark
