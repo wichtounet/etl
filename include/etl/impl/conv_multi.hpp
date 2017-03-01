@@ -482,7 +482,7 @@ struct dyn_conv2_valid_multi_multi_impl {
      */
     template <typename I, typename K, typename C>
     void apply(I&& input, K&& kernel, C&& conv) const {
-        auto impl = select_conv_valid_multi_impl<I, K, C>();
+        auto impl = select_conv_valid_multi_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::BLAS) {
             impl::reduc::blas_conv2_valid_multi_multi(input, kernel, conv, s1, s2, p1, p2);
@@ -565,7 +565,7 @@ struct dyn_conv2_valid_multi_multi_flipped_impl : dyn_conv2_valid_multi_multi_im
      */
     template <typename I, typename K, typename C>
     void apply(I&& input, K&& kernel, C&& conv) const {
-        auto impl = select_conv_valid_multi_impl<I, K, C>();
+        auto impl = select_conv_valid_multi_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::BLAS) {
             impl::reduc::blas_conv2_valid_multi_multi_flipped(input, kernel, conv, s1, s2, p1, p2);
