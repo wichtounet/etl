@@ -9,6 +9,7 @@
 
 #ifdef ETL_MKL_MODE
 #include "mkl_dfti.h"
+#include "etl/util/safe_cast.hpp"
 #endif
 
 namespace etl {
@@ -959,7 +960,7 @@ void ifft2_many(A&& a, C&& c) {
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
-    mkl_detail::ifft2_many_kernel(a.memory_start(), batch, n1, n2, c.memory_start());
+    mkl_detail::ifft2_many_kernel(safe_cast(a.memory_start()), batch, n1, n2, safe_cast(c.memory_start()));
 
     c.invalidate_gpu();
 }
