@@ -22,6 +22,88 @@ namespace impl {
 namespace common {
 
 /*!
+ * \brief Pad the input matrix in the output matrix for convolution as multiplication
+ * \param in The input matrix
+ * \param out The output matrix
+ */
+template <typename F1, typename F2>
+void complex_pad_3d(const F1& in, F2& out) {
+    out.ensure_cpu_up_to_date();
+
+    for (size_t outer = 0; outer < etl::dim<0>(in); ++outer) {
+        auto* direct = out(outer).memory_start();
+        for (size_t i = 0; i < etl::dim<1>(in); ++i) {
+            for (size_t j = 0; j < etl::dim<2>(in); ++j) {
+                direct[i * etl::dim<2>(out) + j] = in(outer, i, j);
+            }
+        }
+    }
+}
+
+/*!
+ * \brief Pad the input matrix in the output matrix for convolution as multiplication
+ * \param in The input matrix
+ * \param out The output matrix
+ */
+template <typename F1, typename F2>
+void complex_pad_4d(const F1& in, F2& out) {
+    out.ensure_cpu_up_to_date();
+
+    for (size_t outer1 = 0; outer1 < etl::dim<0>(in); ++outer1) {
+        for (size_t outer2 = 0; outer2 < etl::dim<1>(in); ++outer2) {
+            auto* direct = out(outer1)(outer2).memory_start();
+            for (size_t i = 0; i < etl::dim<2>(in); ++i) {
+                for (size_t j = 0; j < etl::dim<3>(in); ++j) {
+                    direct[i * etl::dim<3>(out) + j] = in(outer1, outer2, i, j);
+                }
+            }
+        }
+    }
+}
+
+/*!
+ * \brief Pad the input matrix in the output matrix for convolution as multiplication
+ * \param in The input matrix
+ * \param out The output matrix
+ * \param p1 The first dimension extra padding of the convolution
+ * \param p2 The second dimension extra padding of the convolution
+ */
+template <typename F1, typename F2>
+void pad_2d_input(const F1& in, F2&& out, size_t p1, size_t p2) {
+    out.ensure_cpu_up_to_date();
+
+    auto* direct = out.memory_start();
+
+    for (size_t i = 0; i < etl::dim<0>(in); ++i) {
+        for (size_t j = 0; j < etl::dim<1>(in); ++j) {
+            direct[(i + p1) * etl::dim<1>(out) + (j + p2)] = in(i, j);
+        }
+    }
+}
+
+/*!
+ * \brief Pad the input matrix in the output matrix for convolution as multiplication
+ * \param in The input matrix
+ * \param out The output matrix
+ * \param p1 The first dimension extra padding of the convolution
+ * \param p2 The second dimension extra padding of the convolution
+ */
+template <typename F1, typename F2>
+void pad_3d_input(const F1& in, F2&& out, size_t p1, size_t p2) {
+    out.ensure_cpu_up_to_date();
+
+    for (size_t n = 0; n < etl::dim<0>(in); ++n) {
+        auto* direct = out(n).memory_start();
+
+        for (size_t i = 0; i < etl::dim<1>(in); ++i) {
+            for (size_t j = 0; j < etl::dim<2>(in); ++j) {
+                direct[(i + p1) * etl::dim<2>(out) + (j + p2)] = in(n, i, j);
+            }
+        }
+    }
+}
+
+/*!
  * \brief Compute the left part of the kernel for a same convolution
  * \param in Pointer to the memory of the input
  * \param n The size of the input

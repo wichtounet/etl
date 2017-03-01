@@ -10,6 +10,7 @@
 #ifdef ETL_MKL_MODE
 #include "mkl_dfti.h"
 #include "etl/util/safe_cast.hpp"
+#include "etl/impl/common/conv.hpp"
 #endif
 
 namespace etl {
@@ -322,6 +323,54 @@ inline void fft2_kernel(const etl::complex<double>* in, std::size_t d1, std::siz
  * \param batch The number of batches
  * \param d1 The first dimension of the matrix
  * \param d2 The second dimension of the matrix
+ */
+inline void inplace_fft2_many_kernel(std::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2) {
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+
+    MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
+
+    void* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 2, dim); //Specify size and precision
+    DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_INPLACE);               //Inpllace FFT
+    DftiSetValue(descriptor, DFTI_NUMBER_OF_TRANSFORMS, batch);           //Number of transforms
+    DftiSetValue(descriptor, DFTI_INPUT_DISTANCE, d1 * d2);               //Input stride
+    DftiSetValue(descriptor, DFTI_OUTPUT_DISTANCE, d1 * d2);              //Output stride
+    DftiCommitDescriptor(descriptor);                                     //Finalize the descriptor
+    DftiComputeForward(descriptor, in_ptr);                               //Compute the Forward FFT
+    DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
+}
+
+/*!
+ * \brief Many 2D FFT kernel, double precision
+ * \param in The input matrix
+ * \param batch The number of batches
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ */
+inline void inplace_fft2_many_kernel(std::complex<double>* in, std::size_t batch, std::size_t d1, std::size_t d2) {
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+
+    MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
+
+    void* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 2, dim); //Specify size and precision
+    DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_INPLACE);               //Inplace FFT
+    DftiSetValue(descriptor, DFTI_NUMBER_OF_TRANSFORMS, batch);           //Number of transforms
+    DftiSetValue(descriptor, DFTI_INPUT_DISTANCE, d1 * d2);               //Input stride
+    DftiSetValue(descriptor, DFTI_OUTPUT_DISTANCE, d1 * d2);              //Output stride
+    DftiCommitDescriptor(descriptor);                                     //Finalize the descriptor
+    DftiComputeForward(descriptor, in_ptr);                               //Compute the Forward FFT
+    DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
+}
+
+/*!
+ * \brief Many 2D FFT kernel, single precision
+ * \param in The input matrix
+ * \param batch The number of batches
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
  * \param out The output matrix
  */
 inline void fft2_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2, std::complex<float>* out) {
@@ -478,6 +527,58 @@ inline void ifft2_kernel(const std::complex<double>* in, std::size_t d1, std::si
  * \param d2 The second dimension of the matrix
  * \param out The output matrix
  */
+inline void inplace_ifft2_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2) {
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+
+    MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
+
+    void* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 2, dim); //Specify size and precision
+    DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_INPLACE);               //Inplace FFT
+    DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0f / (d1 * d2));      //Scale down the output
+    DftiSetValue(descriptor, DFTI_NUMBER_OF_TRANSFORMS, batch);           //Number of transforms
+    DftiSetValue(descriptor, DFTI_INPUT_DISTANCE, d1 * d2);               //Input stride
+    DftiSetValue(descriptor, DFTI_OUTPUT_DISTANCE, d1 * d2);              //Output stride
+    DftiCommitDescriptor(descriptor);                                     //Finalize the descriptor
+    DftiComputeBackward(descriptor, in_ptr);                              //Compute the Forward FFT
+    DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
+}
+
+/*!
+ * \brief Many Inverse 2D FFT kernel, double precision
+ * \param in The input matrix
+ * \param batch The number of batches
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ * \param out The output matrix
+ */
+inline void inplace_ifft2_many_kernel(const std::complex<double>* in, std::size_t batch, std::size_t d1, std::size_t d2) {
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+
+    MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
+
+    void* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 2, dim); //Specify size and precision
+    DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_INPLACE);               //Inplace FFT
+    DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0 / (d1 * d2));       //Scale down the output
+    DftiSetValue(descriptor, DFTI_NUMBER_OF_TRANSFORMS, batch);           //Number of transforms
+    DftiSetValue(descriptor, DFTI_INPUT_DISTANCE, d1 * d2);               //Input stride
+    DftiSetValue(descriptor, DFTI_OUTPUT_DISTANCE, d1 * d2);              //Output stride
+    DftiCommitDescriptor(descriptor);                                     //Finalize the descriptor
+    DftiComputeBackward(descriptor, in_ptr);                              //Compute the Forward FFT
+    DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
+}
+
+/*!
+ * \brief Many Inverse 2D FFT kernel, single precision
+ * \param in The input matrix
+ * \param batch The number of batches
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ * \param out The output matrix
+ */
 inline void ifft2_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -590,12 +691,12 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
         direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
     }
 
-    inplace_fft2_kernel(reinterpret_cast<std::complex<T>*>(a_padded.memory_start()), s1, s2);
-    inplace_fft2_kernel(reinterpret_cast<std::complex<T>*>(b_padded.memory_start()), s1, s2);
+    inplace_fft2_kernel(safe_cast(a_padded.memory_start()), s1, s2);
+    inplace_fft2_kernel(safe_cast(b_padded.memory_start()), s1, s2);
 
     a_padded *= b_padded;
 
-    inplace_ifft2_kernel(reinterpret_cast<std::complex<T>*>(a_padded.memory_start()), s1, s2);
+    inplace_ifft2_kernel(safe_cast(a_padded.memory_start()), s1, s2);
 
     if (beta == T(0.0)) {
         for (std::size_t i = 0; i < size; ++i) {
@@ -1074,7 +1175,7 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
             direct_copy_n(input.memory_start() + i * m2, a_padded.memory_start() + i * s2, m2);
         }
 
-        mkl_detail::inplace_fft2_kernel(reinterpret_cast<std::complex<T>*>(a_padded.memory_start()), s1, s2);
+        mkl_detail::inplace_fft2_kernel(safe_cast(a_padded.memory_start()), s1, s2);
 
         auto batch_fun_k = [&](const size_t first, const size_t last) {
             SERIAL_SECTION {
@@ -1088,7 +1189,7 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
                         direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
                     }
 
-                    mkl_detail::inplace_fft2_kernel(reinterpret_cast<std::complex<T>*>(b_padded.memory_start()), s1, s2);
+                    mkl_detail::inplace_fft2_kernel(safe_cast(b_padded.memory_start()), s1, s2);
 
                     b_padded >>= a_padded;
 
@@ -1185,7 +1286,7 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
                     direct_copy_n(b + i * n2, b_padded(k)(c).memory_start() + i * s2, n2);
                 }
 
-                mkl_detail::inplace_fft2_kernel(reinterpret_cast<std::complex<T>*>(b_padded(k)(c).memory_start()), s1, s2);
+                mkl_detail::inplace_fft2_kernel(safe_cast(b_padded(k)(c).memory_start()), s1, s2);
             }
         };
 
@@ -1205,14 +1306,14 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
                                 direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
                             }
 
-                            mkl_detail::inplace_fft2_kernel(reinterpret_cast<std::complex<T>*>(a_padded.memory_start()), s1, s2);
+                            mkl_detail::inplace_fft2_kernel(safe_cast(a_padded.memory_start()), s1, s2);
 
                             for (std::size_t c = 0; c < C; ++c) {
                                 T* cc      = conv.memory_start() + i * conv_i_inc + c * conv_c_inc;       // conv(i)(c)
 
                                 tmp = a_padded >> b_padded(k)(c);
 
-                                mkl_detail::inplace_ifft2_kernel(reinterpret_cast<std::complex<T>*>(tmp.memory_start()), s1, s2);
+                                mkl_detail::inplace_ifft2_kernel(safe_cast(tmp.memory_start()), s1, s2);
 
                                 for (std::size_t i = 0; i < size; ++i) {
                                     cc[i] += tmp[i].real;
@@ -1255,6 +1356,85 @@ void conv4_full_flipped(I&& input, K&& kernel, C&& conv) {
 
         conv4_full(input, prepared_k, conv);
     }
+}
+
+/*!
+ * \brief FFT implementation of a 2D 'valid' convolution C = I * K, with multiple kernels.
+ *
+ * This works by doing a full convolution by FFT and then extracting
+ * only the valid part of the convolution.
+ *
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    const size_t K = etl::dim<0>(kernels);
+    const size_t i1 = etl::dim<0>(input);
+    const size_t i2 = etl::dim<1>(input);
+    const size_t k1 = etl::dim<1>(kernels);
+    const size_t k2 = etl::dim<2>(kernels);
+
+    // Dimensions of the final valid convolution (stride,padding)
+    const size_t c1 = (i1 - k1 + 2 * p1) / s1 + 1;
+    const size_t c2 = (i2 - k2 + 2 * p2) / s1 + 1;
+
+    //Dimensions of the valid convolution (unit strided)
+    const size_t v1 = (i1 - k1 + 2 * p1) + 1;
+    const size_t v2 = (i2 - k2 + 2 * p2) + 1;
+
+    // Dimensions of the full convolution
+    const size_t t1 = (i1 + k1 + 2 * p1) - 1;
+    const size_t t2 = (i2 + k2 + 2 * p2) - 1;
+
+    // Dimensions of the 'full' borders
+    const size_t b1 = (t1 - v1) / 2;
+    const size_t b2 = (t2 - v2) / 2;
+
+    input.ensure_cpu_up_to_date();
+    kernels.ensure_cpu_up_to_date();
+
+    etl::dyn_matrix<etl::complex<value_t<I>>> input_padded(t1, t2);
+    etl::dyn_matrix<etl::complex<value_t<I>>, 3> kernels_padded(K, t1, t2);
+
+    impl::common::pad_2d_input(input, input_padded, p1, p2);
+    impl::common::complex_pad_3d(kernels, kernels_padded);
+
+    mkl_detail::inplace_fft2_kernel(safe_cast(input_padded.memory_start()), t1, t2);
+    mkl_detail::inplace_fft2_many_kernel(safe_cast(kernels_padded.memory_start()), K, t1, t2);
+
+    for (size_t k = 0; k < K; ++k) {
+        kernels_padded(k) >>= input_padded;
+    }
+
+    mkl_detail::inplace_ifft2_many_kernel(safe_cast(kernels_padded.memory_start()), K, t1, t2);
+
+    for (size_t k = 0; k < K; ++k) {
+        for (size_t i = 0; i < c1; ++i) {
+            for (size_t j = 0; j < c2; ++j) {
+                conv(k, i, j) = kernels_padded(k, i * s1 + b1, j * s2 + b2).real;
+            }
+        }
+    }
+
+    conv.invalidate_gpu();
+}
+
+/*!
+ * \brief MKL FFT implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void fft_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    auto kernels_f = etl::force_temporary(kernels);
+
+    kernels_f.deep_fflip_inplace();
+
+    // TODO It would be faster to do the flip while padding
+    fft_conv2_valid_multi(input, kernels_f, conv, s1, s2, p1, p2);
 }
 
 #else
@@ -1486,6 +1666,46 @@ void conv4_full_flipped(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);
+    cpp_unreachable("Unsupported feature called: mkl fft");
+}
+
+/*!
+ * \brief FFT implementation of a 2D 'valid' convolution C = I * K, with multiple kernels.
+ *
+ * This works by doing a full convolution by FFT and then extracting
+ * only the valid part of the convolution.
+ *
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void fft_conv2_valid_multi(const I& a, const K_T& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+    cpp_unreachable("Unsupported feature called: mkl fft");
+}
+
+/*!
+ * \brief MKL FFT implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void fft_conv2_valid_multi_flipped(I&& a, K_T&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
