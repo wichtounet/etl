@@ -132,9 +132,9 @@ void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t 
     input.ensure_cpu_up_to_date();
     kernels.ensure_cpu_up_to_date();
 
-    etl::dyn_matrix<std::complex<value_t<I>>> input_padded(t1, t2);
-    etl::dyn_matrix<std::complex<value_t<I>>, 3> kernels_padded(K, t1, t2);
-    etl::dyn_matrix<std::complex<value_t<I>>, 3> tmp_result(K, t1, t2);
+    etl::dyn_matrix<etl::complex<value_t<I>>> input_padded(t1, t2);
+    etl::dyn_matrix<etl::complex<value_t<I>>, 3> kernels_padded(K, t1, t2);
+    etl::dyn_matrix<etl::complex<value_t<I>>, 3> tmp_result(K, t1, t2);
 
     pad_2d_input(input, input_padded, p1, p2);
     complex_pad_3d(kernels, kernels_padded);
@@ -151,7 +151,7 @@ void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t 
     for (std::size_t k = 0; k < K; ++k) {
         for (std::size_t i = 0; i < c1; ++i) {
             for (std::size_t j = 0; j < c2; ++j) {
-                conv(k, i, j) = tmp_result(k, i * s1 + b1, j * s2 + b2).real();
+                conv(k, i, j) = tmp_result(k, i * s1 + b1, j * s2 + b2).real;
             }
         }
     }
@@ -198,9 +198,9 @@ void fft_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, s
     input.ensure_cpu_up_to_date();
     kernels.ensure_cpu_up_to_date();
 
-    etl::dyn_matrix<std::complex<value_t<I>>, 3> input_padded(N, t1, t2);
-    etl::dyn_matrix<std::complex<value_t<I>>, 3> kernels_padded(K, t1, t2);
-    etl::dyn_matrix<std::complex<value_t<I>>, 4> tmp_result(K, N, t1, t2);
+    etl::dyn_matrix<etl::complex<value_t<I>>, 3> input_padded(N, t1, t2);
+    etl::dyn_matrix<etl::complex<value_t<I>>, 3> kernels_padded(K, t1, t2);
+    etl::dyn_matrix<etl::complex<value_t<I>>, 4> tmp_result(K, N, t1, t2);
 
     pad_3d_input(input, input_padded, p1, p2);
     complex_pad_3d(kernels, kernels_padded);
@@ -220,7 +220,7 @@ void fft_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, s
         for (std::size_t n = 0; n < N; ++n) {
             for (std::size_t i = 0; i < c1; ++i) {
                 for (std::size_t j = 0; j < c2; ++j) {
-                    conv(k, n, i, j) = tmp_result(k, n, i * s1 + b1, j * s2 + b2).real();
+                    conv(k, n, i, j) = tmp_result(k, n, i * s1 + b1, j * s2 + b2).real;
                 }
             }
         }
