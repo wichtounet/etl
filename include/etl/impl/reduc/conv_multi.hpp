@@ -22,11 +22,11 @@ template <typename F1, typename F2>
 void complex_pad_4d(const F1& in, F2& out) {
     out.ensure_cpu_up_to_date();
 
-    for (std::size_t outer1 = 0; outer1 < etl::dim<0>(in); ++outer1) {
-        for (std::size_t outer2 = 0; outer2 < etl::dim<1>(in); ++outer2) {
+    for (size_t outer1 = 0; outer1 < etl::dim<0>(in); ++outer1) {
+        for (size_t outer2 = 0; outer2 < etl::dim<1>(in); ++outer2) {
             auto* direct = out(outer1)(outer2).memory_start();
-            for (std::size_t i = 0; i < etl::dim<2>(in); ++i) {
-                for (std::size_t j = 0; j < etl::dim<3>(in); ++j) {
+            for (size_t i = 0; i < etl::dim<2>(in); ++i) {
+                for (size_t j = 0; j < etl::dim<3>(in); ++j) {
                     direct[i * etl::dim<3>(out) + j] = in(outer1, outer2, i, j);
                 }
             }
@@ -43,10 +43,10 @@ template <typename F1, typename F2>
 void complex_pad_3d(const F1& in, F2& out) {
     out.ensure_cpu_up_to_date();
 
-    for (std::size_t outer = 0; outer < etl::dim<0>(in); ++outer) {
+    for (size_t outer = 0; outer < etl::dim<0>(in); ++outer) {
         auto* direct = out(outer).memory_start();
-        for (std::size_t i = 0; i < etl::dim<1>(in); ++i) {
-            for (std::size_t j = 0; j < etl::dim<2>(in); ++j) {
+        for (size_t i = 0; i < etl::dim<1>(in); ++i) {
+            for (size_t j = 0; j < etl::dim<2>(in); ++j) {
                 direct[i * etl::dim<2>(out) + j] = in(outer, i, j);
             }
         }
@@ -66,8 +66,8 @@ void pad_2d_input(const F1& in, F2&& out, size_t p1, size_t p2) {
 
     auto* direct = out.memory_start();
 
-    for (std::size_t i = 0; i < etl::dim<0>(in); ++i) {
-        for (std::size_t j = 0; j < etl::dim<1>(in); ++j) {
+    for (size_t i = 0; i < etl::dim<0>(in); ++i) {
+        for (size_t j = 0; j < etl::dim<1>(in); ++j) {
             direct[(i + p1) * etl::dim<1>(out) + (j + p2)] = in(i, j);
         }
     }
@@ -84,11 +84,11 @@ template <typename F1, typename F2>
 void pad_3d_input(const F1& in, F2&& out, size_t p1, size_t p2) {
     out.ensure_cpu_up_to_date();
 
-    for (std::size_t n = 0; n < etl::dim<0>(in); ++n) {
+    for (size_t n = 0; n < etl::dim<0>(in); ++n) {
         auto* direct = out(n).memory_start();
 
-        for (std::size_t i = 0; i < etl::dim<1>(in); ++i) {
-            for (std::size_t j = 0; j < etl::dim<2>(in); ++j) {
+        for (size_t i = 0; i < etl::dim<1>(in); ++i) {
+            for (size_t j = 0; j < etl::dim<2>(in); ++j) {
                 direct[(i + p1) * etl::dim<2>(out) + (j + p2)] = in(n, i, j);
             }
         }
@@ -107,27 +107,27 @@ void pad_3d_input(const F1& in, F2&& out, size_t p1, size_t p2) {
  */
 template <typename I, typename K_T, typename C>
 void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    const std::size_t K = etl::dim<0>(kernels);
-    const std::size_t i1 = etl::dim<0>(input);
-    const std::size_t i2 = etl::dim<1>(input);
-    const std::size_t k1 = etl::dim<1>(kernels);
-    const std::size_t k2 = etl::dim<2>(kernels);
+    const size_t K = etl::dim<0>(kernels);
+    const size_t i1 = etl::dim<0>(input);
+    const size_t i2 = etl::dim<1>(input);
+    const size_t k1 = etl::dim<1>(kernels);
+    const size_t k2 = etl::dim<2>(kernels);
 
     // Dimensions of the final valid convolution (stride,padding)
-    const std::size_t c1 = (i1 - k1 + 2 * p1) / s1 + 1;
-    const std::size_t c2 = (i2 - k2 + 2 * p2) / s1 + 1;
+    const size_t c1 = (i1 - k1 + 2 * p1) / s1 + 1;
+    const size_t c2 = (i2 - k2 + 2 * p2) / s1 + 1;
 
     //Dimensions of the valid convolution (unit strided)
-    const std::size_t v1 = (i1 - k1 + 2 * p1) + 1;
-    const std::size_t v2 = (i2 - k2 + 2 * p2) + 1;
+    const size_t v1 = (i1 - k1 + 2 * p1) + 1;
+    const size_t v2 = (i2 - k2 + 2 * p2) + 1;
 
     // Dimensions of the full convolution
-    const std::size_t t1 = (i1 + k1 + 2 * p1) - 1;
-    const std::size_t t2 = (i2 + k2 + 2 * p2) - 1;
+    const size_t t1 = (i1 + k1 + 2 * p1) - 1;
+    const size_t t2 = (i2 + k2 + 2 * p2) - 1;
 
     // Dimensions of the 'full' borders
-    const std::size_t b1 = (t1 - v1) / 2;
-    const std::size_t b2 = (t2 - v2) / 2;
+    const size_t b1 = (t1 - v1) / 2;
+    const size_t b2 = (t2 - v2) / 2;
 
     input.ensure_cpu_up_to_date();
     kernels.ensure_cpu_up_to_date();
@@ -142,15 +142,15 @@ void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t 
     input_padded.fft2_inplace();
     kernels_padded.fft2_many_inplace();
 
-    for (std::size_t k = 0; k < K; ++k) {
+    for (size_t k = 0; k < K; ++k) {
         tmp_result(k) = input_padded >> kernels_padded(k);
     }
 
     tmp_result.ifft2_many_inplace();
 
-    for (std::size_t k = 0; k < K; ++k) {
-        for (std::size_t i = 0; i < c1; ++i) {
-            for (std::size_t j = 0; j < c2; ++j) {
+    for (size_t k = 0; k < K; ++k) {
+        for (size_t i = 0; i < c1; ++i) {
+            for (size_t j = 0; j < c2; ++j) {
                 conv(k, i, j) = tmp_result(k, i * s1 + b1, j * s2 + b2).real;
             }
         }
@@ -171,29 +171,29 @@ void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t 
  */
 template <typename I, typename K_T, typename C>
 void fft_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    const std::size_t N = etl::dim<0>(input);
-    const std::size_t i1 = etl::dim<1>(input);
-    const std::size_t i2 = etl::dim<2>(input);
+    const size_t N = etl::dim<0>(input);
+    const size_t i1 = etl::dim<1>(input);
+    const size_t i2 = etl::dim<2>(input);
 
-    const std::size_t K = etl::dim<0>(kernels);
-    const std::size_t k1 = etl::dim<1>(kernels);
-    const std::size_t k2 = etl::dim<2>(kernels);
+    const size_t K = etl::dim<0>(kernels);
+    const size_t k1 = etl::dim<1>(kernels);
+    const size_t k2 = etl::dim<2>(kernels);
 
     // Dimensions of the final valid convolution (stride,padding)
-    const std::size_t c1 = (i1 - k1 + 2 * p1) / s1 + 1;
-    const std::size_t c2 = (i2 - k2 + 2 * p2) / s1 + 1;
+    const size_t c1 = (i1 - k1 + 2 * p1) / s1 + 1;
+    const size_t c2 = (i2 - k2 + 2 * p2) / s1 + 1;
 
     //Dimensions of the valid convolution (unit strided)
-    const std::size_t v1 = (i1 - k1 + 2 * p1) + 1;
-    const std::size_t v2 = (i2 - k2 + 2 * p2) + 1;
+    const size_t v1 = (i1 - k1 + 2 * p1) + 1;
+    const size_t v2 = (i2 - k2 + 2 * p2) + 1;
 
     // Dimensions of the full convolution
-    const std::size_t t1 = (i1 + k1 + 2 * p1) - 1;
-    const std::size_t t2 = (i2 + k2 + 2 * p2) - 1;
+    const size_t t1 = (i1 + k1 + 2 * p1) - 1;
+    const size_t t2 = (i2 + k2 + 2 * p2) - 1;
 
     // Dimensions of the 'full' borders
-    const std::size_t b1 = (t1 - v1) / 2;
-    const std::size_t b2 = (t2 - v2) / 2;
+    const size_t b1 = (t1 - v1) / 2;
+    const size_t b2 = (t2 - v2) / 2;
 
     input.ensure_cpu_up_to_date();
     kernels.ensure_cpu_up_to_date();
@@ -208,18 +208,18 @@ void fft_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, s
     input_padded.fft2_many_inplace();
     kernels_padded.fft2_many_inplace();
 
-    for (std::size_t k = 0; k < K; ++k) {
-        for (std::size_t n = 0; n < N; ++n) {
+    for (size_t k = 0; k < K; ++k) {
+        for (size_t n = 0; n < N; ++n) {
             tmp_result(k)(n) = input_padded(n) >> kernels_padded(k);
         }
     }
 
     tmp_result.ifft2_many_inplace();
 
-    for (std::size_t k = 0; k < K; ++k) {
-        for (std::size_t n = 0; n < N; ++n) {
-            for (std::size_t i = 0; i < c1; ++i) {
-                for (std::size_t j = 0; j < c2; ++j) {
+    for (size_t k = 0; k < K; ++k) {
+        for (size_t n = 0; n < N; ++n) {
+            for (size_t i = 0; i < c1; ++i) {
+                for (size_t j = 0; j < c2; ++j) {
                     conv(k, n, i, j) = tmp_result(k, n, i * s1 + b1, j * s2 + b2).real;
                 }
             }
@@ -237,19 +237,19 @@ void fft_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, s
  */
 template <typename I, typename K_T, typename C>
 void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    const std::size_t K  = etl::dim<0>(kernels);
-    const std::size_t i1 = etl::dim<0>(input);
-    const std::size_t i2 = etl::dim<1>(input);
-    const std::size_t k1 = etl::dim<1>(kernels);
-    const std::size_t k2 = etl::dim<2>(kernels);
+    const size_t K  = etl::dim<0>(kernels);
+    const size_t i1 = etl::dim<0>(input);
+    const size_t i2 = etl::dim<1>(input);
+    const size_t k1 = etl::dim<1>(kernels);
+    const size_t k2 = etl::dim<2>(kernels);
 
     // unit-strided result dimensions
-    const std::size_t c1 = (i1 - k1 + 2 * p1) + 1;
-    const std::size_t c2 = (i2 - k2 + 2 * p2) + 1;
+    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
     // real final dimensions
-    const std::size_t f1 = etl::dim<1>(conv);
-    const std::size_t f2 = etl::dim<2>(conv);
+    const size_t f1 = etl::dim<1>(conv);
+    const size_t f2 = etl::dim<2>(conv);
 
     input.ensure_cpu_up_to_date();
     kernels.ensure_cpu_up_to_date();
@@ -278,9 +278,9 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
         etl::reshape(tmp_result, K, c1 * c2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
 
         // Strided copy of the large result into the small result
-        for (std::size_t k = 0; k < K; ++k) {
-            for (std::size_t i = 0; i < f1; ++i) {
-                for (std::size_t j = 0; j < f2; ++j) {
+        for (size_t k = 0; k < K; ++k) {
+            for (size_t i = 0; i < f1; ++i) {
+                for (size_t j = 0; j < f2; ++j) {
                     conv(k, i, j) = tmp_result(k, i * s1, j * s2);
                 }
             }
@@ -300,21 +300,21 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
  */
 template <typename I, typename K_T, typename C>
 void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    const std::size_t N  = etl::dim<0>(input);
-    const std::size_t i1 = etl::dim<1>(input);
-    const std::size_t i2 = etl::dim<2>(input);
+    const size_t N  = etl::dim<0>(input);
+    const size_t i1 = etl::dim<1>(input);
+    const size_t i2 = etl::dim<2>(input);
 
-    const std::size_t K  = etl::dim<0>(kernels);
-    const std::size_t k1 = etl::dim<1>(kernels);
-    const std::size_t k2 = etl::dim<2>(kernels);
+    const size_t K  = etl::dim<0>(kernels);
+    const size_t k1 = etl::dim<1>(kernels);
+    const size_t k2 = etl::dim<2>(kernels);
 
     // unit-strided result dimensions
-    const std::size_t c1 = (i1 - k1 + 2 * p1) + 1;
-    const std::size_t c2 = (i2 - k2 + 2 * p2) + 1;
+    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
     // real final dimensions
-    const std::size_t f1 = etl::dim<2>(conv);
-    const std::size_t f2 = etl::dim<3>(conv);
+    const size_t f1 = etl::dim<2>(conv);
+    const size_t f2 = etl::dim<3>(conv);
 
     input.ensure_cpu_up_to_date();
     kernels.ensure_cpu_up_to_date();
@@ -330,7 +330,7 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
         etl::dyn_matrix<value_t<I>, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
         input_padded = value_t<I>(0);
 
-        for(std::size_t i = 0; i < N; ++i){
+        for(size_t i = 0; i < N; ++i){
             pad_2d_input(input(i), input_padded(i), p1, p2);
         }
 
@@ -345,10 +345,10 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
         etl::reshape(tmp_result, K, N * c1 * c2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
 
         // Strided copy of the large result into the small result
-        for (std::size_t k = 0; k < K; ++k) {
-            for (std::size_t i = 0; i < N; ++i) {
-                for (std::size_t ii = 0; ii < f1; ++ii) {
-                    for (std::size_t j = 0; j < f2; ++j) {
+        for (size_t k = 0; k < K; ++k) {
+            for (size_t i = 0; i < N; ++i) {
+                for (size_t ii = 0; ii < f1; ++ii) {
+                    for (size_t j = 0; j < f2; ++j) {
                         conv(k, i, ii, j) = tmp_result(k, i, ii * s1, j * s2);
                     }
                 }
@@ -369,21 +369,21 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
  */
 template <typename I, typename K_T, typename C>
 void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    const std::size_t N  = etl::dim<0>(input);
-    const std::size_t i1 = etl::dim<1>(input);
-    const std::size_t i2 = etl::dim<2>(input);
+    const size_t N  = etl::dim<0>(input);
+    const size_t i1 = etl::dim<1>(input);
+    const size_t i2 = etl::dim<2>(input);
 
-    const std::size_t K  = etl::dim<0>(kernels);
-    const std::size_t k1 = etl::dim<1>(kernels);
-    const std::size_t k2 = etl::dim<2>(kernels);
+    const size_t K  = etl::dim<0>(kernels);
+    const size_t k1 = etl::dim<1>(kernels);
+    const size_t k2 = etl::dim<2>(kernels);
 
     // unit-strided result dimensions
-    const std::size_t c1 = (i1 - k1 + 2 * p1) + 1;
-    const std::size_t c2 = (i2 - k2 + 2 * p2) + 1;
+    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
     // real final dimensions
-    const std::size_t f1 = etl::dim<2>(conv);
-    const std::size_t f2 = etl::dim<3>(conv);
+    const size_t f1 = etl::dim<2>(conv);
+    const size_t f2 = etl::dim<3>(conv);
 
     input.ensure_cpu_up_to_date();
     kernels.ensure_cpu_up_to_date();
@@ -394,7 +394,7 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
         etl::dyn_matrix<value_t<I>, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
         input_padded = value_t<I>(0);
 
-        for(std::size_t i = 0; i < N; ++i){
+        for(size_t i = 0; i < N; ++i){
             pad_2d_input(input(i), input_padded(i), p1, p2);
         }
 
@@ -409,10 +409,10 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
         etl::reshape(tmp_result, K, N * c1 * c2) = mul(etl::reshape(kernels, K, k1 * k2), input_col);
 
         // Strided copy of the large result into the small result
-        for (std::size_t k = 0; k < K; ++k) {
-            for (std::size_t i = 0; i < N; ++i) {
-                for (std::size_t ii = 0; ii < f1; ++ii) {
-                    for (std::size_t j = 0; j < f2; ++j) {
+        for (size_t k = 0; k < K; ++k) {
+            for (size_t i = 0; i < N; ++i) {
+                for (size_t ii = 0; ii < f1; ++ii) {
+                    for (size_t j = 0; j < f2; ++j) {
                         conv(k, i, ii, j) = tmp_result(k, i, ii * s1, j * s2);
                     }
                 }
@@ -463,19 +463,19 @@ void fft_conv2_valid_multi_multi_flipped(I&& input, K_T&& kernels, C&& conv, siz
  */
 template <typename I, typename K_T, typename C>
 void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    const std::size_t K  = etl::dim<0>(kernels);
-    const std::size_t i1 = etl::dim<0>(input);
-    const std::size_t i2 = etl::dim<1>(input);
-    const std::size_t k1 = etl::dim<1>(kernels);
-    const std::size_t k2 = etl::dim<2>(kernels);
+    const size_t K  = etl::dim<0>(kernels);
+    const size_t i1 = etl::dim<0>(input);
+    const size_t i2 = etl::dim<1>(input);
+    const size_t k1 = etl::dim<1>(kernels);
+    const size_t k2 = etl::dim<2>(kernels);
 
     // unit-strided result dimensions
-    const std::size_t c1 = (i1 - k1 + 2 * p1) + 1;
-    const std::size_t c2 = (i2 - k2 + 2 * p2) + 1;
+    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
     // real final dimensions
-    const std::size_t f1 = etl::dim<1>(conv);
-    const std::size_t f2 = etl::dim<2>(conv);
+    const size_t f1 = etl::dim<1>(conv);
+    const size_t f2 = etl::dim<2>(conv);
 
     input.ensure_cpu_up_to_date();
     kernels.ensure_cpu_up_to_date();
@@ -499,9 +499,9 @@ void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s
         etl::reshape(tmp_result, K, c1 * c2) = mul(etl::reshape(kernels, K, k1 * k2), input_col);
 
         // Strided copy of the large result into the small result
-        for (std::size_t k = 0; k < K; ++k) {
-            for (std::size_t i = 0; i < f1; ++i) {
-                for (std::size_t j = 0; j < f2; ++j) {
+        for (size_t k = 0; k < K; ++k) {
+            for (size_t i = 0; i < f1; ++i) {
+                for (size_t j = 0; j < f2; ++j) {
                     conv(k, i, j) = tmp_result(k, i * s1, j * s2);
                 }
             }
@@ -537,15 +537,15 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
         if (last - first) {
             SERIAL_SECTION {
                 // unit-strided result dimensions
-                const std::size_t sc1 = (n1 - m1 + 2 * p1) + 1;
-                const std::size_t sc2 = (n2 - m2 + 2 * p2) + 1;
+                const size_t sc1 = (n1 - m1 + 2 * p1) + 1;
+                const size_t sc2 = (n2 - m2 + 2 * p2) + 1;
 
                 etl::dyn_matrix<value_t<I_T>, 2> input_col(m1 * m2, sc1 * sc2);
 
                 // Optimize for the most common case
                 if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
-                    for (std::size_t i = first; i < last; ++i) {
-                        for (std::size_t c = 0; c < C; ++c) {
+                    for (size_t i = first; i < last; ++i) {
+                        for (size_t c = 0; c < C; ++c) {
                             im2col_direct_tr(input_col, input(i)(c), m1, m2);
                             etl::reshape(conv(i), K, c1 * c2) += mul(etl::reshape(kernels(c), K, m1 * m2), input_col);
                         }
@@ -554,8 +554,8 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
                     etl::dyn_matrix<value_t<I_T>, 2> input_padded(n1 + 2 * p1, n2 + 2 * p2);
                     etl::dyn_matrix<value_t<I_T>, 3> tmp_result(K, sc1, sc2);
 
-                    for (std::size_t i = first; i < last; ++i) {
-                        for (std::size_t c = 0; c < C; ++c) {
+                    for (size_t i = first; i < last; ++i) {
+                        for (size_t c = 0; c < C; ++c) {
                             if (p1 || p2) {
                                 input_padded = value_t<I_T>(0.0);
 
@@ -570,9 +570,9 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
                                 etl::reshape(tmp_result, K, sc1 * sc2) = mul(etl::reshape(kernels(c), K, m1 * m2), input_col);
 
                                 // Strided copy of the large result into the small result
-                                for (std::size_t k = 0; k < K; ++k) {
-                                    for (std::size_t ii = 0; ii < c1; ++ii) {
-                                        for (std::size_t j = 0; j < c2; ++j) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    for (size_t ii = 0; ii < c1; ++ii) {
+                                        for (size_t j = 0; j < c2; ++j) {
                                             conv(i, k, ii, j) += tmp_result(k, ii * s1, j * s2);
                                         }
                                     }
@@ -602,8 +602,8 @@ void blas_conv4_valid(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s
 
     etl::dyn_matrix<value_t<I_T>, 4> kernels(C, K, m1, m2);
 
-    for(std::size_t c = 0; c < C; ++c){
-        for(std::size_t k = 0; k < K; ++k){
+    for(size_t c = 0; c < C; ++c){
+        for(size_t k = 0; k < K; ++k){
             kernels(c)(k) = fflip(kernel(k)(c));
         }
     }
@@ -621,8 +621,8 @@ void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, 
 
     etl::dyn_matrix<value_t<I_T>, 4> kernels(C, K, m1, m2);
 
-    for(std::size_t c = 0; c < C; ++c){
-        for(std::size_t k = 0; k < K; ++k){
+    for(size_t c = 0; c < C; ++c){
+        for(size_t k = 0; k < K; ++k){
             kernels(c)(k) = kernel(k)(c);
         }
     }
@@ -646,8 +646,8 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
     const auto k2 = etl::dim<3>(kernel);
 
     // unit-strided result dimensions
-    const std::size_t c1 = (i1 - k1 + 2 * p1) + 1;
-    const std::size_t c2 = (i2 - k2 + 2 * p2) + 1;
+    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
     input.ensure_cpu_up_to_date();
     kernel.ensure_cpu_up_to_date();
@@ -658,10 +658,10 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
     auto batch_fun_c = [&](const size_t first, const size_t last) {
         if (last - first) {
             SERIAL_SECTION {
-                for (std::size_t c = first; c < last; ++c) {
+                for (size_t c = first; c < last; ++c) {
                     etl::dyn_matrix<value_t<I_T>, 2> input_col(k1 * k2, c1 * c2);
 
-                    for (std::size_t i = 0; i < I; ++i) {
+                    for (size_t i = 0; i < I; ++i) {
                         // Optimize for the most common case
                         if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
                             im2col_direct_tr(input_col, input(i)(c), k1, k2);
@@ -684,9 +684,9 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                                 etl::reshape(tmp_result, K, c1 * c2) = mul(etl::reshape(kernel(i), K, k1 * k2), input_col);
 
                                 // Strided copy of the large result into the small result
-                                for (std::size_t k = 0; k < K; ++k) {
-                                    for (std::size_t ii = 0; ii < f1; ++ii) {
-                                        for (std::size_t j = 0; j < f2; ++j) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    for (size_t ii = 0; ii < f1; ++ii) {
+                                        for (size_t j = 0; j < f2; ++j) {
                                             conv_temp(c, k, ii, j) += tmp_result(k, ii * s1, j * s2);
                                         }
                                     }
@@ -698,8 +698,8 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                     }
                 }
 
-                for (std::size_t c = 0; c < C; ++c) {
-                    for (std::size_t k = 0; k < K; ++k) {
+                for (size_t c = 0; c < C; ++c) {
+                    for (size_t k = 0; k < K; ++k) {
                         conv(k)(c) = conv_temp(c)(k);
                     }
                 }
