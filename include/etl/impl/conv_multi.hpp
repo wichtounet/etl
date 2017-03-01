@@ -53,7 +53,7 @@ struct conv2_valid_multi_impl {
 
         if (impl == etl::conv_multi_impl::BLAS) {
             impl::reduc::blas_conv2_valid_multi(input, kernel, conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv_multi_impl::FFT) {
+        } else if (impl == etl::conv_multi_impl::VALID_FFT_MKL) {
             impl::reduc::fft_conv2_valid_multi(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::CUDNN) {
             impl::cudnn::conv2_valid_multi(input, kernel, conv, S1, S2, P1, P2);
@@ -155,7 +155,7 @@ struct conv2_valid_multi_flipped_impl : conv2_valid_multi_impl<S1, S2, P1, P2> {
 
         if (impl == etl::conv_multi_impl::BLAS) {
             impl::reduc::blas_conv2_valid_multi_flipped(input, kernel, conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv_multi_impl::FFT) {
+        } else if (impl == etl::conv_multi_impl::VALID_FFT_MKL) {
             impl::reduc::fft_conv2_valid_multi_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::CUDNN) {
             impl::cudnn::conv2_valid_multi_flipped(input, kernel, conv, S1, S2, P1, P2);
@@ -193,7 +193,7 @@ struct conv2_valid_multi_multi_impl {
 
         if (impl == etl::conv_multi_impl::BLAS) {
             impl::reduc::blas_conv2_valid_multi_multi(input, kernel, conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv_multi_impl::FFT) {
+        } else if (impl == etl::conv_multi_impl::VALID_FFT_MKL) {
             impl::reduc::fft_conv2_valid_multi_multi(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::VEC) {
             impl::vec::conv2_valid_multi_multi(input, kernel, conv, S1, S2, P1, P2);
@@ -298,7 +298,7 @@ struct conv2_valid_multi_multi_flipped_impl : conv2_valid_multi_multi_impl<S1, S
 
         if (impl == etl::conv_multi_impl::BLAS) {
             impl::reduc::blas_conv2_valid_multi_multi_flipped(input, kernel, conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv_multi_impl::FFT) {
+        } else if (impl == etl::conv_multi_impl::VALID_FFT_MKL) {
             impl::reduc::fft_conv2_valid_multi_multi_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::VEC) {
             impl::vec::conv2_valid_multi_multi_flipped(input, kernel, conv, S1, S2, P1, P2);
@@ -349,7 +349,7 @@ struct dyn_conv2_valid_multi_impl {
 
         if (impl == etl::conv_multi_impl::BLAS) {
             impl::reduc::blas_conv2_valid_multi(input, kernel, conv, s1, s2, p1, p2);
-        } else if (impl == etl::conv_multi_impl::FFT) {
+        } else if (impl == etl::conv_multi_impl::VALID_FFT_MKL) {
             impl::reduc::fft_conv2_valid_multi(input, kernel, conv, s1, s2, p1, p2);
         } else if (impl == etl::conv_multi_impl::CUDNN) {
             impl::cudnn::conv2_valid_multi(input, kernel, conv, s1, s2, p1, p2);
@@ -433,7 +433,7 @@ struct dyn_conv2_valid_multi_flipped_impl : dyn_conv2_valid_multi_impl {
 
         if (impl == etl::conv_multi_impl::BLAS) {
             impl::reduc::blas_conv2_valid_multi_flipped(input, kernel, conv, s1, s2, p1, p2);
-        } else if (impl == etl::conv_multi_impl::FFT) {
+        } else if (impl == etl::conv_multi_impl::VALID_FFT_MKL) {
             impl::reduc::fft_conv2_valid_multi_flipped(input, kernel, conv, s1, s2, p1, p2);
         } else if (impl == etl::conv_multi_impl::CUDNN) {
             impl::cudnn::conv2_valid_multi_flipped(input, kernel, conv, s1, s2, p1, p2);
@@ -486,7 +486,7 @@ struct dyn_conv2_valid_multi_multi_impl {
 
         if (impl == etl::conv_multi_impl::BLAS) {
             impl::reduc::blas_conv2_valid_multi_multi(input, kernel, conv, s1, s2, p1, p2);
-        } else if (impl == etl::conv_multi_impl::FFT) {
+        } else if (impl == etl::conv_multi_impl::VALID_FFT_MKL) {
             impl::reduc::fft_conv2_valid_multi_multi(input, kernel, conv, s1, s2, p1, p2);
         } else if (impl == etl::conv_multi_impl::VEC) {
             impl::vec::conv2_valid_multi_multi(input, kernel, conv, s1, s2, p1, p2);
@@ -569,7 +569,7 @@ struct dyn_conv2_valid_multi_multi_flipped_impl : dyn_conv2_valid_multi_multi_im
 
         if (impl == etl::conv_multi_impl::BLAS) {
             impl::reduc::blas_conv2_valid_multi_multi_flipped(input, kernel, conv, s1, s2, p1, p2);
-        } else if (impl == etl::conv_multi_impl::FFT) {
+        } else if (impl == etl::conv_multi_impl::VALID_FFT_MKL) {
             impl::reduc::fft_conv2_valid_multi_multi_flipped(input, kernel, conv, s1, s2, p1, p2);
         } else if (impl == etl::conv_multi_impl::VEC) {
             impl::vec::conv2_valid_multi_multi_flipped(input, kernel, conv, s1, s2, p1, p2);

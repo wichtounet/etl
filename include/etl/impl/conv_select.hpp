@@ -549,7 +549,7 @@ inline etl::conv_multi_impl select_default_conv_valid_multi() {
     }
 
     if (mkl_enabled && conv_valid_fft) {
-        return etl::conv_multi_impl::FFT;
+        return etl::conv_multi_impl::VALID_FFT_MKL;
     } else if (cblas_enabled || cublas_enabled) {
         return etl::conv_multi_impl::BLAS;
     }
@@ -592,7 +592,7 @@ inline etl::conv_multi_impl select_default_conv_valid_multi_multi_impl() {
     if (cblas_enabled || cublas_enabled) {
         return etl::conv_multi_impl::BLAS;
     } else if (mkl_enabled && conv_valid_fft) {
-        return etl::conv_multi_impl::FFT;
+        return etl::conv_multi_impl::VALID_FFT_MKL;
     }
 
     return etl::conv_multi_impl::STD;

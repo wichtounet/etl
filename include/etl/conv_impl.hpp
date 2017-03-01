@@ -45,7 +45,7 @@ enum class conv4_impl {
 enum class conv_multi_impl {
     STD,       ///< Standard implementation
     VEC,       ///< VEC implementation
-    FFT,       ///< Reductiont to FFT (valid)
+    VALID_FFT_MKL,       ///< Reductiont to FFT (valid)
     FFT_STD,   ///< FFT reduction (with STD impl)
     FFT_MKL,   ///< FFT reduction (with MKL impl)
     FFT_CUFFT, ///< FFT reduction (with CUFFT impl)
