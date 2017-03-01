@@ -16,76 +16,6 @@ namespace impl {
 namespace reduc {
 
 /*!
- * \brief FFT implementation of a 2D 'valid' convolution C = I * K, with multiple kernels.
- *
- * This works by doing a full convolution by FFT and then extracting
- * only the valid part of the convolution.
- *
- * \param input The input matrix
- * \param kernels The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K_T, typename C>
-void fft_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    const size_t N = etl::dim<0>(input);
-    const size_t i1 = etl::dim<1>(input);
-    const size_t i2 = etl::dim<2>(input);
-
-    const size_t K = etl::dim<0>(kernels);
-    const size_t k1 = etl::dim<1>(kernels);
-    const size_t k2 = etl::dim<2>(kernels);
-
-    // Dimensions of the final valid convolution (stride,padding)
-    const size_t c1 = (i1 - k1 + 2 * p1) / s1 + 1;
-    const size_t c2 = (i2 - k2 + 2 * p2) / s1 + 1;
-
-    //Dimensions of the valid convolution (unit strided)
-    const size_t v1 = (i1 - k1 + 2 * p1) + 1;
-    const size_t v2 = (i2 - k2 + 2 * p2) + 1;
-
-    // Dimensions of the full convolution
-    const size_t t1 = (i1 + k1 + 2 * p1) - 1;
-    const size_t t2 = (i2 + k2 + 2 * p2) - 1;
-
-    // Dimensions of the 'full' borders
-    const size_t b1 = (t1 - v1) / 2;
-    const size_t b2 = (t2 - v2) / 2;
-
-    input.ensure_cpu_up_to_date();
-    kernels.ensure_cpu_up_to_date();
-
-    etl::dyn_matrix<etl::complex<value_t<I>>, 3> input_padded(N, t1, t2);
-    etl::dyn_matrix<etl::complex<value_t<I>>, 3> kernels_padded(K, t1, t2);
-    etl::dyn_matrix<etl::complex<value_t<I>>, 4> tmp_result(K, N, t1, t2);
-
-    impl::common::pad_3d_input(input, input_padded, p1, p2);
-    impl::common::complex_pad_3d(kernels, kernels_padded);
-
-    input_padded.fft2_many_inplace();
-    kernels_padded.fft2_many_inplace();
-
-    for (size_t k = 0; k < K; ++k) {
-        for (size_t n = 0; n < N; ++n) {
-            tmp_result(k)(n) = input_padded(n) >> kernels_padded(k);
-        }
-    }
-
-    tmp_result.ifft2_many_inplace();
-
-    for (size_t k = 0; k < K; ++k) {
-        for (size_t n = 0; n < N; ++n) {
-            for (size_t i = 0; i < c1; ++i) {
-                for (size_t j = 0; j < c2; ++j) {
-                    conv(k, n, i, j) = tmp_result(k, n, i * s1 + b1, j * s2 + b2).real;
-                }
-            }
-        }
-    }
-
-    conv.invalidate_gpu();
-}
-
-/*!
  * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
  * \param input The input matrix
  * \param kernels The kernel matrix
@@ -279,21 +209,6 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
     }
 
     conv.invalidate_gpu();
-}
-
-/*!
- * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
- * \param input The input matrix
- * \param kernels The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K_T, typename C>
-void fft_conv2_valid_multi_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    auto kernels_f = etl::force_temporary(kernels);
-
-    kernels_f.deep_fflip_inplace();
-
-    fft_conv2_valid_multi_multi(input, kernels_f, conv, s1, s2, p1, p2);
 }
 
 /*!
