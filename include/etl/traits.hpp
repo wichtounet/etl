@@ -940,14 +940,23 @@ constexpr std::size_t dim() noexcept {
     return decay_traits<E>::template dim<D>();
 }
 
+/*!
+ * \brief Utility to get the dimensions of an expressions, with support for generator
+ */
 template <typename E, typename Enable = void>
-struct sub_size_compare;
+struct safe_dimensions;
 
+/*!
+ * \brief Utility to get the dimensions of an expressions, with support for generator
+ */
 template <typename E>
-struct sub_size_compare<E, std::enable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<std::size_t, std::numeric_limits<std::size_t>::max()> {};
+struct safe_dimensions<E, std::enable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<size_t, std::numeric_limits<size_t>::max()> {};
 
+/*!
+ * \brief Utility to get the dimensions of an expressions, with support for generator
+ */
 template <typename E>
-struct sub_size_compare<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<std::size_t, etl_traits<E>::dimensions()> {};
+struct safe_dimensions<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<size_t, etl_traits<E>::dimensions()> {};
 
 /*!
  * \brief Convert a flat index into a 2D index

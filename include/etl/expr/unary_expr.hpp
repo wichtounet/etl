@@ -420,7 +420,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
+    template <bool B = (safe_dimensions<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) {
         return sub(*this, i);
     }
@@ -430,7 +430,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
+    template <bool B = (safe_dimensions<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) const {
         return sub(*this, i);
     }
@@ -460,7 +460,7 @@ public:
      * \param args The indices
      * \return The computed value at the position (args...)
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) == sub_size_compare<this_type>::value))>
+    template <typename... S, cpp_enable_if((sizeof...(S) == safe_dimensions<this_type>::value))>
     ETL_STRONG_INLINE(return_type) operator()(S... args) noexcept(noexcept(_value(args...))) {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
@@ -472,7 +472,7 @@ public:
      * \param args The indices
      * \return The computed value at the position (args...)
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) == sub_size_compare<this_type>::value))>
+    template <typename... S, cpp_enable_if((sizeof...(S) == safe_dimensions<this_type>::value))>
     ETL_STRONG_INLINE(const_return_type) operator()(S... args) const noexcept(noexcept(_value(args...))) {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
@@ -793,7 +793,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
+    template <bool B = (safe_dimensions<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) const {
         return sub(*this, i);
     }
@@ -804,7 +804,7 @@ public:
      * \return The computed value at the position (args...)
      */
     template <typename... S>
-    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args) const {
+    std::enable_if_t<sizeof...(S) == safe_dimensions<this_type>::value, value_type> operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return value()(args...);
@@ -962,7 +962,7 @@ public:
      * \return The computed value at the position (args...)
      */
     template <typename... S>
-    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args) const {
+    std::enable_if_t<sizeof...(S) == safe_dimensions<this_type>::value, value_type> operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return op.apply(value()(args...));

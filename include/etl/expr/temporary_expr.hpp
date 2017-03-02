@@ -135,7 +135,7 @@ public:
      * \param args The position indices
      * \return The value at the given position (args...)
      */
-    template <typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<derived_t>::value)>
+    template <typename... S, cpp_enable_if(sizeof...(S) == safe_dimensions<derived_t>::value)>
     value_type operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
@@ -147,7 +147,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <typename DD = D, cpp_enable_if((sub_size_compare<DD>::value > 1))>
+    template <typename DD = D, cpp_enable_if((safe_dimensions<DD>::value > 1))>
     auto operator()(std::size_t i) const {
         return sub(as_derived(), i);
     }
