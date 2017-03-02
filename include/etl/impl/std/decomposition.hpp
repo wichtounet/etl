@@ -131,7 +131,7 @@ void householder(const AT& A, QT& Q, RT& R) {
 
         etl::dyn_vector<T> e(m);
         for (size_t i = 0; i < m; i++){
-            e[i] = x[i] + (i == k) ? a : 0;
+            e[i] = x[i] + ((i == k) ? a : 0);
         }
 
         e /= norm(e);
