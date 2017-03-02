@@ -28,6 +28,11 @@ namespace vec {
 
 namespace detail {
 
+/*!
+ * \brief Indicates if SSE should be preferred for the given kernel size
+ * \param n The kernel size
+ * \return true if SSE should be preferred, false otherwise.
+ */
 template <typename T>
 constexpr bool prefer_sse(const size_t n) {
     return !avx_enabled || (sse3_enabled && (std::is_same<T, float>::value
