@@ -5,11 +5,38 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brie Contains the safe_cast function overloads.
+ *
+ * This function helps generic code in the BLAS/CUBLAS wrappers to
+ * be able to convert types from etl::complex to std::complex
+ * easily.
+ */
+
 #pragma once
 
 namespace etl {
 
 namespace impl {
+
+/*!
+ * \brief Cast any complex pointer to etl::complex pointer
+ * \param in The input pointer
+ * \return The casted pointer
+ */
+inline float* safe_cast(float* in){
+    return in;
+}
+
+/*!
+ * \brief Cast any complex pointer to etl::complex pointer
+ * \param in The input pointer
+ * \return The casted pointer
+ */
+inline double* safe_cast(double* in){
+    return in;
+}
 
 /*!
  * \brief Cast any complex pointer to etl::complex pointer
@@ -45,6 +72,24 @@ inline std::complex<float>* safe_cast(etl::complex<float>* in){
  */
 inline std::complex<double>* safe_cast(etl::complex<double>* in){
     return reinterpret_cast<std::complex<double>*>(in);
+}
+
+/*!
+ * \brief Cast any complex pointer to etl::complex pointer
+ * \param in The input pointer
+ * \return The casted pointer
+ */
+inline const float* safe_cast(const float* in){
+    return in;
+}
+
+/*!
+ * \brief Cast any complex pointer to etl::complex pointer
+ * \param in The input pointer
+ * \return The casted pointer
+ */
+inline const double* safe_cast(const double* in){
+    return in;
 }
 
 /*!
