@@ -716,7 +716,7 @@ struct is_square_matrix <Matrix, std::enable_if_t<!all_fast<Matrix>::value && is
  */
 template <typename T>
 struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
-    using value_type = typename T::value_type;
+    using value_type = typename T::value_type; /// < The value type of the expression
 
     static constexpr bool is_etl                  = true;                                                        ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;                                                       ///< Indicates if the type is a transformer
@@ -949,6 +949,12 @@ struct sub_size_compare<E, std::enable_if_t<etl_traits<E>::is_generator>> : std:
 template <typename E>
 struct sub_size_compare<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<std::size_t, etl_traits<E>::dimensions()> {};
 
+/*!
+ * \brief Convert a flat index into a 2D index
+ * \param sub The matrix expression
+ * \param i The flat index
+ * \return a pair of indices for the equivalent 2D index
+ */
 template <typename E>
 constexpr std::pair<std::size_t, std::size_t> index_to_2d(E&& sub, std::size_t i) {
     return decay_traits<E>::storage_order == order::RowMajor

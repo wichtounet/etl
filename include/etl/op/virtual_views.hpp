@@ -196,8 +196,8 @@ struct fast_magic_view {
  */
 template <typename V>
 struct etl_traits<etl::magic_view<V>> {
-    using expr_t = etl::magic_view<V>; ///< The inspected expression type
-    using value_type = V;
+    using expr_t     = etl::magic_view<V>; ///< The inspected expression type
+    using value_type = V;                  /// < The value type of the expression
 
     static constexpr bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;           ///< Indicates if the type is a transformer
@@ -210,8 +210,8 @@ struct etl_traits<etl::magic_view<V>> {
     static constexpr bool is_direct               = false;           ///< Indicates if the expression has direct memory access
     static constexpr bool is_generator            = false;           ///< Indicates if the expression is a generator
     static constexpr bool needs_evaluator_visitor = false;           ///< Indicates if the exxpression needs a evaluator visitor
-    static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
+    static constexpr bool is_padded               = false;           ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = false;           ///< Indicates if the expression is padded
     static constexpr order storage_order          = order::RowMajor; ///< The expression's storage order
 
     /*!
@@ -256,8 +256,8 @@ struct etl_traits<etl::magic_view<V>> {
  */
 template <std::size_t N, typename V>
 struct etl_traits<etl::fast_magic_view<V, N>> {
-    using expr_t = etl::fast_magic_view<V, N>; ///< The inspected expression type
-    using value_type = V;
+    using expr_t     = etl::fast_magic_view<V, N>; ///< The inspected expression type
+    using value_type = V;                          /// < The value type of the expression
 
     static constexpr bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;           ///< Indicates if the type is a transformer
@@ -270,8 +270,8 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
     static constexpr bool is_direct               = false;           ///< Indicates if the expression has direct memory access
     static constexpr bool is_generator            = false;           ///< Indicates if the expression is a generator
     static constexpr bool needs_evaluator_visitor = false;           ///< Indicates if the exxpression needs a evaluator visitor
-    static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
+    static constexpr bool is_padded               = false;           ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = false;           ///< Indicates if the expression is padded
     static constexpr order storage_order          = order::RowMajor; ///< The expression's storage order
 
     /*!
