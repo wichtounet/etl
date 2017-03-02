@@ -318,17 +318,6 @@ struct mm_mul_impl {
     // C = A * B
     template <typename A, typename B, typename C, cpp_enable_if((!is_transpose_expr<A>::value && !is_transpose_expr<B>::value))>
     static void apply_raw(A&& a, B&& b, C&& c) {
-        apply(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));
-    }
-
-    /*!
-     * \brief Apply the function C = A * B
-     * \param a The lhs of the multiplication
-     * \param b The rhs of the multiplication
-     * \param c The target of the multiplication
-     */
-    template <typename A, typename B, typename C>
-    static void apply(A&& a, B&& b, C&& c) {
         gemm_impl impl = select_gemm_impl<A, B, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
         if (impl == gemm_impl::STD) {

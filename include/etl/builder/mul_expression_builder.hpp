@@ -16,13 +16,15 @@
 
 namespace etl {
 
+#ifndef ETL_ELEMENT_WISE_MULTIPLICATION
+
 /*!
  * \brief Multiply two matrices together
  * \param a The left hand side matrix
  * \param b The right hand side matrix
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_2d<B>::value, !is_element_wise_mul_default)>
+template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_2d<B>::value)>
 auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mm_mul_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
@@ -36,7 +38,7 @@ auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mm_mul_exp
  * \param b The right hand side matrix
  * \return An expression representing the vector-matrix multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_if(is_1d<A>::value, is_2d<B>::value, !is_element_wise_mul_default)>
+template <typename A, typename B, cpp_enable_if(is_1d<A>::value, is_2d<B>::value)>
 auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, vm_mul_expr> {
     return {a, b};
 }
@@ -47,10 +49,12 @@ auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, vm_mul_exp
  * \param b The right hand side vector
  * \return An expression representing the matrix-vector multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_1d<B>::value, !is_element_wise_mul_default)>
+template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_1d<B>::value)>
 auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mv_mul_expr> {
     return {a, b};
 }
+
+#endif
 
 /*!
  * \brief Multiply two matrices together
