@@ -44,23 +44,47 @@ static void mm_mul(A&& a, B&& b, C&& c) {
     }
 }
 
+/*!
+ * \brief Performs the computation c = c + a * b
+ * \param c The output
+ * \param a The lhs of the multiplication
+ * \param b The rhs of the multiplication
+ */
 inline void add_mul(float& c, float a, float b) {
     c += a * b;
 }
 
+/*!
+ * \brief Performs the computation c = c + a * b
+ * \param c The output
+ * \param a The lhs of the multiplication
+ * \param b The rhs of the multiplication
+ */
 inline void add_mul(double& c, double a, double b) {
     c += a * b;
 }
 
+/*!
+ * \brief Performs the computation c = c + a * b
+ * \param c The output
+ * \param a The lhs of the multiplication
+ * \param b The rhs of the multiplication
+ */
 template <typename T>
 inline void add_mul(etl::complex<T>& c, etl::complex<T> a, etl::complex<T> b) {
     c += a * b;
 }
 
-//Note: For some reason, compilers have a real hard time
-//inlining/vectorizing std::complex operations
-//This helper improves performance by more than 50% on some cases
-
+/*!
+ * \brief Performs the computation c = c + a * b
+ * \param c The output
+ * \param a The lhs of the multiplication
+ * \param b The rhs of the multiplication
+ *
+ * Note: For some reason, compilers have a real hard time
+ * inlining/vectorizing std::complex operations
+ * This helper improves performance by more than 50% on some cases
+ */
 template <typename T>
 inline void add_mul(std::complex<T>& c, std::complex<T> a, std::complex<T> b) {
     T ac = a.real() * b.real();

@@ -115,7 +115,7 @@ struct scalar {
  */
 template <typename T>
 struct etl_traits<etl::scalar<T>, void> {
-    using value_type = T;
+    using value_type = T; /// < The value type of the expression
 
     static constexpr bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;           ///< Indicates if the type is a transformer
@@ -128,8 +128,8 @@ struct etl_traits<etl::scalar<T>, void> {
     static constexpr bool is_thread_safe          = true;            ///< Indicates if the expression is thread safe
     static constexpr bool is_generator            = true;            ///< Indicates if the expression is a generator expression
     static constexpr bool needs_evaluator_visitor = false;           ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr bool is_padded               = true;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned              = true;                          ///< Indicates if the expression is padded
+    static constexpr bool is_padded               = true;            ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = true;            ///< Indicates if the expression is padded
     static constexpr order storage_order          = order::RowMajor; ///< The expression storage order
 
     /*!

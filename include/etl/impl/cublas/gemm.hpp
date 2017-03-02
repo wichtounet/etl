@@ -23,6 +23,9 @@ namespace cublas {
 
 #ifdef ETL_CUBLAS_MODE
 
+/*!
+ * \brief Helper to get the CUBLAS type from a floating point type
+ */
 template <typename T>
 using cublas_type = std::conditional_t<
     is_complex_single_t<T>::value,

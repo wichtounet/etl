@@ -360,7 +360,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
                          cpp::is_specialization_of<etl::mean_r_transformer, std::decay_t<T>>>::value>> {
     using expr_t     = T;                                                ///< The expression type
     using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>; ///< The sub expression type
-    using value_type = value_t<sub_expr_t>;
+    using value_type = value_t<sub_expr_t>;                              /// < The value type of the expression
 
     static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = true;                                            ///< Indicates if the type is a transformer
@@ -441,7 +441,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
                          cpp::is_specialization_of<etl::mean_l_transformer, std::decay_t<T>>>::value>> {
     using expr_t     = T;                                                ///< The expression type
     using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>; ///< The sub expression type
-    using value_type = value_t<sub_expr_t>;
+    using value_type = value_t<sub_expr_t>;                              /// < The value type of the expression
 
     static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = true;                                            ///< Indicates if the type is a transformer

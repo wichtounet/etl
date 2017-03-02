@@ -66,7 +66,7 @@ private:
 
     friend struct etl_traits<this_type>;
 
-    static constexpr order storage_order = decay_traits<sub_type>::storage_order; /// < The storage order
+    static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The storage order
 
 public:
     /*!
@@ -724,10 +724,10 @@ public:
  */
 template <typename T>
 struct etl_traits<etl::sub_view<T>> {
-    using expr_t     = etl::sub_view<T>;       ///< The expression type
-    using sub_expr_t = std::decay_t<T>;        ///< The sub expression type
-    using sub_traits = etl_traits<sub_expr_t>; ///< The sub traits
-    using value_type = typename sub_traits::value_type;
+    using expr_t     = etl::sub_view<T>;                ///< The expression type
+    using sub_expr_t = std::decay_t<T>;                 ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;          ///< The sub traits
+    using value_type = typename sub_traits::value_type; /// < The value type of the expression
 
     static constexpr bool is_etl                  = true;                                                                  ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;                                                                 ///< Indicates if the type is a transformer
