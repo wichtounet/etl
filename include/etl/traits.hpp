@@ -1084,6 +1084,7 @@ bool safe_is_gpu_up_to_date(E&& expr){
 template <typename E, cpp_disable_if(all_dma<E>::value)>
 bool safe_is_gpu_up_to_date(E&& expr){
     cpp_unused(expr);
+    return false;
 }
 
 } //end of namespace etl
