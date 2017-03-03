@@ -36,7 +36,8 @@ enum class conv4_impl {
     FFT_STD,   ///< FFT reduction (with STD impl)
     FFT_MKL,   ///< FFT reduction (with MKL impl)
     FFT_CUFFT, ///< FFT reduction (with CUFFT impl)
-    BLAS       ///< BLAS reduction
+    BLAS_VEC,  ///< BLAS reduction
+    BLAS_MKL   ///< BLAS reduction
 };
 
 /*!

@@ -358,19 +358,19 @@ inline etl::conv4_impl select_default_conv4_valid_impl() {
 
     if (conv4_prefer_blas) {
         if (cublas_enabled || mkl_enabled) {
-            return etl::conv4_impl::BLAS;
+            return etl::conv4_impl::BLAS_MKL;
         } else if (vec_enabled && vectorize_impl) {
-            return etl::conv4_impl::VEC;
+            return etl::conv4_impl::BLAS_VEC;
         }
     } else {
         if (vec_enabled && vectorize_impl) {
             return etl::conv4_impl::VEC;
         } else if (cublas_enabled || mkl_enabled) {
-            return etl::conv4_impl::BLAS;
+            return etl::conv4_impl::BLAS_MKL;
         }
     }
 
-    return etl::conv4_impl::BLAS;
+    return etl::conv4_impl::STD;
 }
 
 /*!
@@ -387,11 +387,21 @@ inline etl::conv4_impl select_conv4_valid_impl() {
 
         switch (forced) {
             //VEC cannot always be used
+            case conv4_impl::BLAS_VEC:
             case conv4_impl::VEC:
                 if (!vec_enabled || !vectorize_impl) {                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_valid_impl<I, K, C>();                                                             // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                  // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            //BLAS cannot always be used
+            case conv4_impl::BLAS_MKL:
+                if (!cblas_enabled) {                                                                                             // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to BLAS conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_valid_impl<I, K, C>();                                                               // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                    // COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
