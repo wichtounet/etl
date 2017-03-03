@@ -426,9 +426,9 @@ void gemv(A&& a, B&& b, C&& c) {
 
 /*!
  * \brief Optimized version of small GEVM for row major version
- * \param a The lhs vector
- * \param b The rhs matrix
- * \param c The result vector
+ * \param aa The lhs vector
+ * \param bb The rhs matrix
+ * \param cc The result vector
  */
 template <typename V, typename T>
 void gevm_small_kernel(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
@@ -533,9 +533,9 @@ void gevm_small_kernel(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
 
 /*!
  * \brief Optimized version of large GEVM for row major version
- * \param a The lhs vector
- * \param b The rhs matrix
- * \param c The result vector
+ * \param aa The lhs vector
+ * \param bb The rhs matrix
+ * \param cc The result vector
  */
 template <typename V, typename T>
 void gevm_large_kernel(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
