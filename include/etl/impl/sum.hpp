@@ -41,9 +41,13 @@ namespace detail {
  * \return The implementation to use
  */
 template <typename E>
-cpp14_constexpr etl::sum_impl select_default_sum_impl() {
+cpp14_constexpr etl::sum_impl select_default_sum_impl(bool gpu_up_to_date) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
+
+    if (cublas_enabled && all_dma<E>::value && gpu_up_to_date){
+        return etl::sum_impl::CUBLAS;
+    }
 
     if (vec_enabled && all_vectorizable<vector_mode, E>::value) {
         return etl::sum_impl::VEC;
@@ -58,7 +62,7 @@ cpp14_constexpr etl::sum_impl select_default_sum_impl() {
  * \return The implementation to use
  */
 template <typename E>
-etl::sum_impl select_sum_impl() {
+etl::sum_impl select_sum_impl(bool gpu_up_to_date) {
     if (local_context().sum_selector.forced) {
         auto forced = local_context().sum_selector.impl;
 
@@ -67,7 +71,7 @@ etl::sum_impl select_sum_impl() {
             case sum_impl::VEC:
                 if (!vec_enabled || !decay_traits<E>::template vectorizable<vector_mode>::value) {                                //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_sum_impl<E>();                                                                          //COVERAGE_EXCLUDE_LINE
+                    return select_default_sum_impl<E>(gpu_up_to_date);                                                                          //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -75,7 +79,7 @@ etl::sum_impl select_sum_impl() {
             case sum_impl::CUBLAS:
                 if (!cublas_enabled || !all_dma<E>::value) {                                //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUBLAS sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_sum_impl<E>();                                                                          //COVERAGE_EXCLUDE_LINE
+                    return select_default_sum_impl<E>(gpu_up_to_date);                                                                          //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -83,7 +87,7 @@ etl::sum_impl select_sum_impl() {
             case sum_impl::BLAS:
                 if (!cblas_enabled || !all_dma<E>::value) {                                //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_sum_impl<E>();                                                                          //COVERAGE_EXCLUDE_LINE
+                    return select_default_sum_impl<E>(gpu_up_to_date);                                                                          //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -94,7 +98,7 @@ etl::sum_impl select_sum_impl() {
         }
     }
 
-    return select_default_sum_impl<E>();
+    return select_default_sum_impl<E>(gpu_up_to_date);
 }
 
 /*!
@@ -122,7 +126,7 @@ struct sum_impl {
      */
     template <typename E>
     static value_t<E> apply(const E& e) {
-        auto impl = select_sum_impl<E>();
+        auto impl = select_sum_impl<E>(safe_is_gpu_up_to_date(e));
 
         bool parallel_dispatch = select_parallel(e);
 
@@ -156,7 +160,7 @@ struct sum_impl {
      */
     template <typename E>
     static value_t<E> apply(const E& e) {
-        const auto impl = select_sum_impl<E>();
+        const auto impl = select_sum_impl<E>(safe_is_gpu_up_to_date(e));
 
         if (impl == etl::sum_impl::VEC) {
             return impl::vec::sum(e, 0, size(e));
