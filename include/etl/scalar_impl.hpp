@@ -19,8 +19,9 @@ namespace etl {
  * scalar operations
  */
 enum class scalar_impl {
-    STD,  ///< Standard implementation
-    BLAS, ///< BLAS implementation
+    STD,    ///< Standard implementation
+    BLAS,   ///< BLAS implementation
+    CUBLAS, ///< CUBLAS implementation
 };
 
 } //end of namespace etl

@@ -15,6 +15,7 @@
 //Include the implementations
 #include "etl/impl/std/scalar_op.hpp"
 #include "etl/impl/blas/scalar_op.hpp"
+#include "etl/impl/cublas/scalar_op.hpp"
 
 namespace etl {
 
@@ -29,9 +30,11 @@ namespace detail {
  * \return The implementation to use
  */
 template <typename A, bool Simple>
-cpp14_constexpr scalar_impl select_default_scalar_impl() {
+cpp14_constexpr scalar_impl select_default_scalar_impl(bool gpu) {
     if (all_floating<A>::value) {
-        if (cblas_enabled && !Simple) {
+        if (cublas_enabled && gpu){
+            return scalar_impl::CUBLAS;
+        } else if (cblas_enabled && !Simple) {
             return scalar_impl::BLAS;
         } else {
             return scalar_impl::STD;
@@ -47,7 +50,7 @@ cpp14_constexpr scalar_impl select_default_scalar_impl() {
  * \return The implementation to use
  */
 template <typename A, bool Simple>
-scalar_impl select_scalar_impl() {
+scalar_impl select_scalar_impl(bool gpu) {
     if (local_context().scalar_selector.forced) {
         auto forced = local_context().scalar_selector.impl;
 
@@ -56,10 +59,20 @@ scalar_impl select_scalar_impl() {
             case scalar_impl::BLAS:
                 if (!cblas_enabled || !all_floating<A>::value) {
                     std::cerr << "Forced selection to BLAS scalar implementation, but not possible for this expression" << std::endl;
-                    return select_default_scalar_impl<A, Simple>();
+                    return select_default_scalar_impl<A, Simple>(gpu);
                 }
 
                 return forced;
+
+            //CUBLAS cannot always be used
+            case scalar_impl::CUBLAS:
+                if (!cublas_enabled || !all_floating<A>::value) {
+                    std::cerr << "Forced selection to CUBLAS scalar implementation, but not possible for this expression" << std::endl;
+                    return select_default_scalar_impl<A, Simple>(gpu);
+                }
+
+                return forced;
+
 
             //In other cases, simply use the forced impl
             default:
@@ -67,7 +80,7 @@ scalar_impl select_scalar_impl() {
         }
     }
 
-    return select_default_scalar_impl<A, Simple>();
+    return select_default_scalar_impl<A, Simple>(gpu);
 }
 
 /*!
@@ -81,10 +94,12 @@ struct scalar_add {
      */
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        auto impl = select_scalar_impl<T, true>();
+        auto impl = select_scalar_impl<T, true>(safe_is_gpu_up_to_date(lhs));
 
         if (impl == scalar_impl::BLAS) {
             return etl::impl::blas::scalar_add(lhs, rhs);
+        } else if (impl == scalar_impl::CUBLAS) {
+            return etl::impl::cublas::scalar_add(lhs, rhs);
         } else {
             return etl::impl::standard::scalar_add(lhs, rhs);
         }
@@ -102,10 +117,12 @@ struct scalar_sub {
      */
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        auto impl = select_scalar_impl<T, true>();
+        auto impl = select_scalar_impl<T, true>(safe_is_gpu_up_to_date(lhs));
 
         if (impl == scalar_impl::BLAS) {
             return etl::impl::blas::scalar_sub(lhs, rhs);
+        } else if (impl == scalar_impl::CUBLAS) {
+            return etl::impl::cublas::scalar_sub(lhs, rhs);
         } else {
             return etl::impl::standard::scalar_sub(lhs, rhs);
         }
@@ -123,10 +140,12 @@ struct scalar_mul {
      */
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        auto impl = select_scalar_impl<T, false>();
+        auto impl = select_scalar_impl<T, false>(safe_is_gpu_up_to_date(lhs));
 
         if (impl == scalar_impl::BLAS) {
             return etl::impl::blas::scalar_mul(lhs, rhs);
+        } else if (impl == scalar_impl::CUBLAS) {
+            return etl::impl::cublas::scalar_mul(lhs, rhs);
         } else {
             return etl::impl::standard::scalar_mul(lhs, rhs);
         }
@@ -144,10 +163,12 @@ struct scalar_div {
      */
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        auto impl = select_scalar_impl<T, false>();
+        auto impl = select_scalar_impl<T, false>(safe_is_gpu_up_to_date(lhs));
 
         if (impl == scalar_impl::BLAS) {
             return etl::impl::blas::scalar_div(lhs, rhs);
+        } else if (impl == scalar_impl::CUBLAS) {
+            return etl::impl::cublas::scalar_div(lhs, rhs);
         } else {
             return etl::impl::standard::scalar_div(lhs, rhs);
         }
