@@ -43,14 +43,15 @@ enum class conv4_impl {
  * \brief Enumeration describing the different multiple convolution implementations
  */
 enum class conv_multi_impl {
-    STD,       ///< Standard implementation
-    VEC,       ///< VEC implementation
-    VALID_FFT_MKL,       ///< Reductiont to FFT (valid)
-    FFT_STD,   ///< FFT reduction (with STD impl)
-    FFT_MKL,   ///< FFT reduction (with MKL impl)
-    FFT_CUFFT, ///< FFT reduction (with CUFFT impl)
-    BLAS,      ///< Reduction to BLAS (GEMM)
-    CUDNN      ///< GPU with CUDNN
+    STD,           ///< Standard implementation
+    VEC,           ///< VEC implementation
+    VALID_FFT_MKL, ///< Reductiont to FFT (valid)
+    FFT_STD,       ///< FFT reduction (with STD impl)
+    FFT_MKL,       ///< FFT reduction (with MKL impl)
+    FFT_CUFFT,     ///< FFT reduction (with CUFFT impl)
+    BLAS_VEC,      ///< Reduction to BLAS (GEMM)
+    BLAS_MKL,      ///< Reduction to BLAS (GEMM)
+    CUDNN          ///< GPU with CUDNN
 };
 
 } //end of namespace etl

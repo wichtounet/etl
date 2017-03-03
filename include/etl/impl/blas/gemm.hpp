@@ -9,6 +9,8 @@
 
 #ifdef ETL_BLAS_MODE
 
+#include "etl/impl/common/conv.hpp"
+
 extern "C" {
 #include "cblas.h"
 }
@@ -334,6 +336,336 @@ void gevm(A&& a, B&& b, C&& c) {
     c.invalidate_gpu();
 }
 
+/*!
+ * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    using T = value_t<I>;
+
+    const size_t K  = etl::dim<0>(kernels);
+    const size_t i1 = etl::dim<0>(input);
+    const size_t i2 = etl::dim<1>(input);
+    const size_t k1 = etl::dim<1>(kernels);
+    const size_t k2 = etl::dim<2>(kernels);
+
+    // unit-strided result dimensions
+    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
+
+    // real final dimensions
+    const size_t f1 = etl::dim<1>(conv);
+    const size_t f2 = etl::dim<2>(conv);
+
+    input.ensure_cpu_up_to_date();
+    kernels.ensure_cpu_up_to_date();
+
+    auto prepared_k = force_temporary(kernels);
+
+    // Flip the kernels
+    prepared_k.deep_fflip_inplace();
+
+    etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
+
+    if(p1 || p2){
+        etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
+        input_padded = T(0);
+
+        impl::common::pad_2d_input(input, input_padded, p1, p2);
+
+        im2col_direct_tr(input_col, input_padded, k1, k2);
+    } else {
+        im2col_direct_tr(input_col, input, k1, k2);
+    }
+
+    if(s1 > 1 || s2 > 1){
+        etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
+
+        // tmp_result = prepared_k * input_col
+        cblas_gemm(
+            CblasRowMajor,
+            CblasNoTrans, CblasNoTrans,
+            K, c1 * c2, k1 * k2,
+            T(1.0),
+            prepared_k.memory_start(), k1 * k2,
+            input_col.memory_start(), c1 * c2,
+            T(0.0),
+            tmp_result.memory_start(), c1 * c2);
+
+        // Strided copy of the large result into the small result
+        for (size_t k = 0; k < K; ++k) {
+            for (size_t i = 0; i < f1; ++i) {
+                for (size_t j = 0; j < f2; ++j) {
+                    conv(k, i, j) = tmp_result(k, i * s1, j * s2);
+                }
+            }
+        }
+    } else {
+        // conv = prepared_k * input_col
+        cblas_gemm(
+            CblasRowMajor,
+            CblasNoTrans, CblasNoTrans,
+            K, c1 * c2, k1 * k2,
+            T(1.0),
+            prepared_k.memory_start(), k1 * k2,
+            input_col.memory_start(), c1 * c2,
+            T(0.0),
+            conv.memory_start(), f1 * f2);
+    }
+
+    conv.invalidate_gpu();
+}
+
+/*!
+ * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    using T = value_t<I>;
+
+    const size_t K  = etl::dim<0>(kernels);
+    const size_t i1 = etl::dim<0>(input);
+    const size_t i2 = etl::dim<1>(input);
+    const size_t k1 = etl::dim<1>(kernels);
+    const size_t k2 = etl::dim<2>(kernels);
+
+    // unit-strided result dimensions
+    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
+
+    // real final dimensions
+    const size_t f1 = etl::dim<1>(conv);
+    const size_t f2 = etl::dim<2>(conv);
+
+    input.ensure_cpu_up_to_date();
+    kernels.ensure_cpu_up_to_date();
+
+    etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
+
+    if(p1 || p2){
+        etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
+        input_padded = T(0);
+
+        impl::common::pad_2d_input(input, input_padded, p1, p2);
+
+        im2col_direct_tr(input_col, input_padded, k1, k2);
+    } else {
+        im2col_direct_tr(input_col, input, k1, k2);
+    }
+
+    if(s1 > 1 || s2 > 1){
+        etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
+
+        // tmp_result = kernels * input_col
+        cblas_gemm(
+            CblasRowMajor,
+            CblasNoTrans, CblasNoTrans,
+            K, c1 * c2, k1 * k2,
+            T(1.0),
+            kernels.memory_start(), k1 * k2,
+            input_col.memory_start(), c1 * c2,
+            T(0.0),
+            tmp_result.memory_start(), c1 * c2);
+
+        // Strided copy of the large result into the small result
+        for (size_t k = 0; k < K; ++k) {
+            for (size_t i = 0; i < f1; ++i) {
+                for (size_t j = 0; j < f2; ++j) {
+                    conv(k, i, j) = tmp_result(k, i * s1, j * s2);
+                }
+            }
+        }
+    } else {
+        // conv = kernels * input_col
+        cblas_gemm(
+            CblasRowMajor,
+            CblasNoTrans, CblasNoTrans,
+            K, c1 * c2, k1 * k2,
+            T(1.0),
+            kernels.memory_start(), k1 * k2,
+            input_col.memory_start(), c1 * c2,
+            T(0.0),
+            conv.memory_start(), f1 * f2);
+    }
+
+    conv.invalidate_gpu();
+}
+
+/*!
+ * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple images and multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    using T = value_t<I>;
+
+    const size_t N  = etl::dim<0>(input);
+    const size_t i1 = etl::dim<1>(input);
+    const size_t i2 = etl::dim<2>(input);
+
+    const size_t K  = etl::dim<0>(kernels);
+    const size_t k1 = etl::dim<1>(kernels);
+    const size_t k2 = etl::dim<2>(kernels);
+
+    // unit-strided result dimensions
+    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
+
+    // real final dimensions
+    const size_t f1 = etl::dim<2>(conv);
+    const size_t f2 = etl::dim<3>(conv);
+
+    input.ensure_cpu_up_to_date();
+    kernels.ensure_cpu_up_to_date();
+
+    auto prepared_k = force_temporary(kernels);
+
+    // Flip the kernels
+    prepared_k.deep_fflip_inplace();
+
+    etl::dyn_matrix<T, 2> input_col(k1 * k2, N * c1 * c2);
+
+    if(p1 || p2){
+        etl::dyn_matrix<T, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
+        input_padded = T(0);
+
+        for(size_t i = 0; i < N; ++i){
+            impl::common::pad_2d_input(input(i), input_padded(i), p1, p2);
+        }
+
+        im2col_direct_tr_multi(input_col, input_padded, k1, k2);
+    } else {
+        im2col_direct_tr_multi(input_col, input, k1, k2);
+    }
+
+    if(s1 > 1 || s2 > 1){
+        etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
+
+        cblas_gemm(
+            CblasRowMajor,
+            CblasNoTrans, CblasNoTrans,
+            K, N * c1 * c2, k1 * k2,
+            T(1.0),
+            prepared_k.memory_start(), k1 * k2,
+            input_col.memory_start(), N * c1 * c2,
+            T(0.0),
+            tmp_result.memory_start(), N * c1 * c2);
+
+        // Strided copy of the large result into the small result
+        for (size_t k = 0; k < K; ++k) {
+            for (size_t i = 0; i < N; ++i) {
+                for (size_t ii = 0; ii < f1; ++ii) {
+                    for (size_t j = 0; j < f2; ++j) {
+                        conv(k, i, ii, j) = tmp_result(k, i, ii * s1, j * s2);
+                    }
+                }
+            }
+        }
+    } else {
+        cblas_gemm(
+            CblasRowMajor,
+            CblasNoTrans, CblasNoTrans,
+            K, N * c1 * c2, k1 * k2,
+            T(1.0),
+            prepared_k.memory_start(), k1 * k2,
+            input_col.memory_start(), N * c1 * c2,
+            T(0.0),
+            conv.memory_start(), N * f1 * f2);
+    }
+
+    conv.invalidate_gpu();
+}
+
+/*!
+ * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple images and multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    using T = value_t<I>;
+
+    const size_t N  = etl::dim<0>(input);
+    const size_t i1 = etl::dim<1>(input);
+    const size_t i2 = etl::dim<2>(input);
+
+    const size_t K  = etl::dim<0>(kernels);
+    const size_t k1 = etl::dim<1>(kernels);
+    const size_t k2 = etl::dim<2>(kernels);
+
+    // unit-strided result dimensions
+    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
+
+    // real final dimensions
+    const size_t f1 = etl::dim<2>(conv);
+    const size_t f2 = etl::dim<3>(conv);
+
+    input.ensure_cpu_up_to_date();
+    kernels.ensure_cpu_up_to_date();
+
+    etl::dyn_matrix<T, 2> input_col(k1 * k2, N * c1 * c2);
+
+    if(p1 || p2){
+        etl::dyn_matrix<T, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
+        input_padded = T(0);
+
+        for(size_t i = 0; i < N; ++i){
+            impl::common::pad_2d_input(input(i), input_padded(i), p1, p2);
+        }
+
+        im2col_direct_tr_multi(input_col, input_padded, k1, k2);
+    } else {
+        im2col_direct_tr_multi(input_col, input, k1, k2);
+    }
+
+    if(s1 > 1 || s2 > 1){
+        etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
+
+        cblas_gemm(
+            CblasRowMajor,
+            CblasNoTrans, CblasNoTrans,
+            K, N * c1 * c2, k1 * k2,
+            T(1.0),
+            kernels.memory_start(), k1 * k2,
+            input_col.memory_start(), N * c1 * c2,
+            T(0.0),
+            tmp_result.memory_start(), N * c1 * c2);
+
+        // Strided copy of the large result into the small result
+        for (size_t k = 0; k < K; ++k) {
+            for (size_t i = 0; i < N; ++i) {
+                for (size_t ii = 0; ii < f1; ++ii) {
+                    for (size_t j = 0; j < f2; ++j) {
+                        conv(k, i, ii, j) = tmp_result(k, i, ii * s1, j * s2);
+                    }
+                }
+            }
+        }
+    } else {
+        cblas_gemm(
+            CblasRowMajor,
+            CblasNoTrans, CblasNoTrans,
+            K, N * c1 * c2, k1 * k2,
+            T(1.0),
+            kernels.memory_start(), k1 * k2,
+            input_col.memory_start(), N * c1 * c2,
+            T(0.0),
+            conv.memory_start(), N * f1 * f2);
+    }
+
+    conv.invalidate_gpu();
+}
+
 #else
 
 //COVERAGE_EXCLUDE_BEGIN
@@ -419,6 +751,78 @@ void gevm(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);
+    cpp_unreachable("Unsupported feature called: blas gemm");
+}
+
+/*!
+ * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernels);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+    cpp_unreachable("Unsupported feature called: blas gemm");
+}
+
+/*!
+ * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernels);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+    cpp_unreachable("Unsupported feature called: blas gemm");
+}
+
+/*!
+ * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple images and multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernels);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+    cpp_unreachable("Unsupported feature called: blas gemm");
+}
+
+/*!
+ * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple images and multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernels);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
