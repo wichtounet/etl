@@ -1119,7 +1119,7 @@ void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, 
 }
 
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_filter_valid(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2){
+void blas_conv4_valid_filter(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
