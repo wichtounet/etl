@@ -65,8 +65,9 @@ void basic(){
 
     for (size_t i = 0; i < 10; ++i) {
         C = A * B * B;
-        D += C;
+        D = A * trans(A);
         D *= 1.1;
+        D += C;
         fake += etl::mean(D);
     }
     etl::dump_counters();
