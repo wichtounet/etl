@@ -1064,4 +1064,26 @@ void safe_ensure_cpu_up_to_date(E&& expr){
     cpp_unused(expr);
 }
 
+/*!
+ * \brief Indicates if the GPU memory is up to date. If the expression does
+ * not have direct memory access, return false
+ *
+ * \param expr The expression
+ */
+template <typename E, cpp_enable_if(all_dma<E>::value)>
+bool safe_is_gpu_up_to_date(E&& expr){
+    return expr.is_gpu_up_to_date();
+}
+
+/*!
+ * \brief Indicates if the GPU memory is up to date. If the expression does
+ * not have direct memory access, return false
+ *
+ * \param expr The expression
+ */
+template <typename E, cpp_disable_if(all_dma<E>::value)>
+bool safe_is_gpu_up_to_date(E&& expr){
+    cpp_unused(expr);
+}
+
 } //end of namespace etl
