@@ -123,6 +123,10 @@ inline void dump_counters() {
  * \param name The name of the counter to increase
  */
 inline void inc_counter(const char* name) {
+#ifdef ETL_COUNTERS_VERBOSE
+    std::cout << "counter:inc:" << name << std::endl;
+#endif
+
     decltype(auto) counters = get_counters();
 
     for (decltype(auto) counter : counters.counters) {
