@@ -10,6 +10,7 @@
 #include <random>
 
 #define ETL_COUNTERS
+#define ETL_COUNTERS_VERBOSE
 
 #include "etl/etl.hpp"
 
@@ -20,8 +21,8 @@ float fake = 0;
 
 /*
  *
- * Current values are:
- * Simple: 30 / 20 / 10
+ * Current values are (alloc/gpu_to_cpu/cpu_to_gpu):
+ * Simple: 3 / 2 / 0 (Optimal!)
  * Basic: 50 / 30 / 10
  * Sub: 960 / 640 / 160
  */
@@ -41,7 +42,7 @@ void simple(){
 
     for (size_t i = 0; i < 10; ++i) {
         C = A * B;
-        fake += etl::sum(C);
+        fake += etl::mean(C);
     }
 
     etl::dump_counters();
