@@ -50,6 +50,23 @@ SCALAR_FUNCTOR(blas_scalar_div, SELECTED_SECTION(etl::scalar_impl::BLAS) { c /= 
 #define SCALAR_DIV_TEST_CASE_SECTION_BLAS
 #endif
 
+#ifdef ETL_CUBLAS_MODE
+SCALAR_FUNCTOR(cublas_scalar_add, SELECTED_SECTION(etl::scalar_impl::CUBLAS) { c += a;})
+SCALAR_FUNCTOR(cublas_scalar_sub, SELECTED_SECTION(etl::scalar_impl::CUBLAS) { c -= a;})
+SCALAR_FUNCTOR(cublas_scalar_mul, SELECTED_SECTION(etl::scalar_impl::CUBLAS) { c *= a;})
+SCALAR_FUNCTOR(cublas_scalar_div, SELECTED_SECTION(etl::scalar_impl::CUBLAS) { c /= a;})
+
+#define SCALAR_ADD_TEST_CASE_SECTION_CUBLAS SCALAR_TEST_CASE_SECTIONS(cublas_scalar_add)
+#define SCALAR_SUB_TEST_CASE_SECTION_CUBLAS SCALAR_TEST_CASE_SECTIONS(cublas_scalar_sub)
+#define SCALAR_MUL_TEST_CASE_SECTION_CUBLAS SCALAR_TEST_CASE_SECTIONS(cublas_scalar_mul)
+#define SCALAR_DIV_TEST_CASE_SECTION_CUBLAS SCALAR_TEST_CASE_SECTIONS(cublas_scalar_div)
+#else
+#define SCALAR_ADD_TEST_CASE_SECTION_CUBLAS
+#define SCALAR_SUB_TEST_CASE_SECTION_CUBLAS
+#define SCALAR_MUL_TEST_CASE_SECTION_CUBLAS
+#define SCALAR_DIV_TEST_CASE_SECTION_CUBLAS
+#endif
+
 #define SCALAR_TEST_CASE_DECL(name, description)                               \
     template <typename T, typename Impl>                                       \
     static void UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)(); \
@@ -73,6 +90,7 @@ SCALAR_FUNCTOR(blas_scalar_div, SELECTED_SECTION(etl::scalar_impl::BLAS) { c /= 
         SCALAR_ADD_TEST_CASE_SECTION_DEFAULT    \
         SCALAR_ADD_TEST_CASE_SECTION_STD        \
         SCALAR_ADD_TEST_CASE_SECTION_BLAS       \
+        SCALAR_ADD_TEST_CASE_SECTION_CUBLAS       \
     }                                           \
     SCALAR_TEST_CASE_DEFN
 
@@ -81,6 +99,7 @@ SCALAR_FUNCTOR(blas_scalar_div, SELECTED_SECTION(etl::scalar_impl::BLAS) { c /= 
         SCALAR_SUB_TEST_CASE_SECTION_DEFAULT    \
         SCALAR_SUB_TEST_CASE_SECTION_STD        \
         SCALAR_SUB_TEST_CASE_SECTION_BLAS       \
+        SCALAR_SUB_TEST_CASE_SECTION_CUBLAS       \
     }                                           \
     SCALAR_TEST_CASE_DEFN
 
@@ -89,6 +108,7 @@ SCALAR_FUNCTOR(blas_scalar_div, SELECTED_SECTION(etl::scalar_impl::BLAS) { c /= 
         SCALAR_MUL_TEST_CASE_SECTION_DEFAULT    \
         SCALAR_MUL_TEST_CASE_SECTION_STD        \
         SCALAR_MUL_TEST_CASE_SECTION_BLAS       \
+        SCALAR_MUL_TEST_CASE_SECTION_CUBLAS       \
     }                                           \
     SCALAR_TEST_CASE_DEFN
 
@@ -97,5 +117,6 @@ SCALAR_FUNCTOR(blas_scalar_div, SELECTED_SECTION(etl::scalar_impl::BLAS) { c /= 
         SCALAR_DIV_TEST_CASE_SECTION_DEFAULT    \
         SCALAR_DIV_TEST_CASE_SECTION_STD        \
         SCALAR_DIV_TEST_CASE_SECTION_BLAS       \
+        SCALAR_DIV_TEST_CASE_SECTION_CUBLAS       \
     }                                           \
     SCALAR_TEST_CASE_DEFN
