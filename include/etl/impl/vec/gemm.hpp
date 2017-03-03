@@ -1034,9 +1034,10 @@ void gemm_small_kernel(const T* a, const T* b, T* c, size_t M, size_t N, size_t 
  * \param a The lhs matrix
  * \param b The rhs matrix
  * \param c The result matrix
+ * \param beta The multipliying of the previous value
  */
 template <typename V, typename T>
-void gemm_large_kernel(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
+void gemm_large_kernel(const T* a, const T* b, T* c, size_t M, size_t N, size_t K, T beta) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -1051,9 +1052,17 @@ void gemm_large_kernel(const T* a, const T* b, T* c, size_t M, size_t N, size_t 
         for (size_t block_i = 0; block_i < M; block_i += m_block_size) {
             const size_t i_end = std::min(block_i + m_block_size, M);
 
-            for (size_t i = block_i; i < i_end; ++i) {
-                for (size_t j = block_j; j < j_end; ++j) {
-                    c[i * N + j] = 0;
+            if(beta == T(0.0)){
+                for (size_t i = block_i; i < i_end; ++i) {
+                    for (size_t j = block_j; j < j_end; ++j) {
+                        c[i * N + j] = 0;
+                    }
+                }
+            } else {
+                for (size_t i = block_i; i < i_end; ++i) {
+                    for (size_t j = block_j; j < j_end; ++j) {
+                        c[i * N + j] = beta * c[i * N + j];
+                    }
                 }
             }
 
@@ -1271,6 +1280,8 @@ void gemm_large_kernel(const T* a, const T* b, T* c, size_t M, size_t N, size_t 
  */
 template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
 void gemm(A&& a, B&& b, C&& c) {
+    using T = value_t<A>;
+
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
     a.ensure_cpu_up_to_date();
@@ -1283,7 +1294,7 @@ void gemm(A&& a, B&& b, C&& c) {
     if(etl::size(b) <= gemm_small_threshold){
         gemm_small_kernel<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
     } else {
-        gemm_large_kernel<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+        gemm_large_kernel<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, T(0));
     }
 
     c.invalidate_gpu();
@@ -1318,6 +1329,8 @@ void gemm(A&& a, B&& b, C&& c) {
  */
 template <typename I, typename K_T, typename C>
 void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    using T = value_t<I>;
+
     const size_t K  = etl::dim<0>(kernels);
     const size_t i1 = etl::dim<0>(input);
     const size_t i2 = etl::dim<1>(input);
@@ -1340,11 +1353,11 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
     // Flip the kernels
     prepared_k.deep_fflip_inplace();
 
-    etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, c1 * c2);
+    etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
 
     if(p1 || p2){
-        etl::dyn_matrix<value_t<I>, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
-        input_padded = value_t<I>(0);
+        etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
+        input_padded = T(0);
 
         impl::common::pad_2d_input(input, input_padded, p1, p2);
 
@@ -1354,11 +1367,11 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
     }
 
     if(s1 > 1 || s2 > 1){
-        etl::dyn_matrix<value_t<I>, 3> tmp_result(K, c1, c2);
+        etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
 
         gemm_large_kernel<default_vec>(
             prepared_k.memory_start(), input_col.memory_start(), tmp_result.memory_start(),
-            K, c1 * c2, k1 * k2);
+            K, c1 * c2, k1 * k2, T(0));
 
         // Strided copy of the large result into the small result
         for (size_t k = 0; k < K; ++k) {
@@ -1371,7 +1384,7 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
     } else {
         gemm_large_kernel<default_vec>(
             prepared_k.memory_start(), input_col.memory_start(), conv.memory_start(),
-            K, f1 * f2, k1 * k2);
+            K, f1 * f2, k1 * k2, T(0));
     }
 
     conv.invalidate_gpu();
@@ -1385,6 +1398,8 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
  */
 template <typename I, typename K_T, typename C>
 void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    using T = value_t<I>;
+
     const size_t K  = etl::dim<0>(kernels);
     const size_t i1 = etl::dim<0>(input);
     const size_t i2 = etl::dim<1>(input);
@@ -1402,11 +1417,11 @@ void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s
     input.ensure_cpu_up_to_date();
     kernels.ensure_cpu_up_to_date();
 
-    etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, c1 * c2);
+    etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
 
     if(p1 || p2){
-        etl::dyn_matrix<value_t<I>, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
-        input_padded = value_t<I>(0);
+        etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
+        input_padded = T(0);
 
         impl::common::pad_2d_input(input, input_padded, p1, p2);
 
@@ -1416,11 +1431,11 @@ void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s
     }
 
     if(s1 > 1 || s2 > 1){
-        etl::dyn_matrix<value_t<I>, 3> tmp_result(K, c1, c2);
+        etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
 
         gemm_large_kernel<default_vec>(
             kernels.memory_start(), input_col.memory_start(), tmp_result.memory_start(),
-            K, c1 * c2, k1 * k2);
+            K, c1 * c2, k1 * k2, T(0));
 
         // Strided copy of the large result into the small result
         for (size_t k = 0; k < K; ++k) {
@@ -1433,7 +1448,7 @@ void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s
     } else {
         gemm_large_kernel<default_vec>(
             kernels.memory_start(), input_col.memory_start(), conv.memory_start(),
-            K, f1 * f2, k1 * k2);
+            K, f1 * f2, k1 * k2, T(0));
     }
 
     conv.invalidate_gpu();
@@ -1447,6 +1462,8 @@ void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s
  */
 template <typename I, typename K_T, typename C>
 void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    using T = value_t<I>;
+
     const size_t N  = etl::dim<0>(input);
     const size_t i1 = etl::dim<1>(input);
     const size_t i2 = etl::dim<2>(input);
@@ -1471,11 +1488,11 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
     // Flip the kernels
     prepared_k.deep_fflip_inplace();
 
-    etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, N * c1 * c2);
+    etl::dyn_matrix<T, 2> input_col(k1 * k2, N * c1 * c2);
 
     if(p1 || p2){
-        etl::dyn_matrix<value_t<I>, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
-        input_padded = value_t<I>(0);
+        etl::dyn_matrix<T, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
+        input_padded = T(0);
 
         for(size_t i = 0; i < N; ++i){
             impl::common::pad_2d_input(input(i), input_padded(i), p1, p2);
@@ -1487,11 +1504,11 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
     }
 
     if(s1 > 1 || s2 > 1){
-        etl::dyn_matrix<value_t<I>, 4> tmp_result(K, N, c1, c2);
+        etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
 
         gemm_large_kernel<default_vec>(
             kernels.memory_start(), input_col.memory_start(), tmp_result.memory_start(),
-            K, N * c1 * c2, k1 * k2);
+            K, N * c1 * c2, k1 * k2, T(0));
 
         // Strided copy of the large result into the small result
         for (size_t k = 0; k < K; ++k) {
@@ -1506,7 +1523,7 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
     } else {
         gemm_large_kernel<default_vec>(
             kernels.memory_start(), input_col.memory_start(), conv.memory_start(),
-            K, N * c1 * c2, k1 * k2);
+            K, N * c1 * c2, k1 * k2, T(0));
     }
 
     conv.invalidate_gpu();
@@ -1520,6 +1537,8 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
  */
 template <typename I, typename K_T, typename C>
 void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    using T = value_t<I>;
+
     const size_t N  = etl::dim<0>(input);
     const size_t i1 = etl::dim<1>(input);
     const size_t i2 = etl::dim<2>(input);
@@ -1539,11 +1558,11 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
     input.ensure_cpu_up_to_date();
     kernels.ensure_cpu_up_to_date();
 
-    etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, N * c1 * c2);
+    etl::dyn_matrix<T, 2> input_col(k1 * k2, N * c1 * c2);
 
     if(p1 || p2){
-        etl::dyn_matrix<value_t<I>, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
-        input_padded = value_t<I>(0);
+        etl::dyn_matrix<T, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
+        input_padded = T(0);
 
         for(size_t i = 0; i < N; ++i){
             impl::common::pad_2d_input(input(i), input_padded(i), p1, p2);
@@ -1555,11 +1574,11 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
     }
 
     if(s1 > 1 || s2 > 1){
-        etl::dyn_matrix<value_t<I>, 4> tmp_result(K, N, c1, c2);
+        etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
 
         gemm_large_kernel<default_vec>(
             kernels.memory_start(), input_col.memory_start(), tmp_result.memory_start(),
-            K, N * c1 * c2, k1 * k2);
+            K, N * c1 * c2, k1 * k2, T(0));
 
         // Strided copy of the large result into the small result
         for (size_t k = 0; k < K; ++k) {
@@ -1574,7 +1593,7 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
     } else {
         gemm_large_kernel<default_vec>(
             kernels.memory_start(), input_col.memory_start(), conv.memory_start(),
-            K, N * c1 * c2, k1 * k2);
+            K, N * c1 * c2, k1 * k2, T(0));
     }
 
     conv.invalidate_gpu();
