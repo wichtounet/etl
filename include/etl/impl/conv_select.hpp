@@ -26,15 +26,6 @@ enum class conv_type {
     FULL_MULTI   ///< Full convolution, with multiple kernels
 };
 
-/*!
- * \brief Indicates if the given convolution type has multiple kernels
- * \param type The convolution type to test
- * \return true if the given type has multiple kernels, false otherwise
- */
-constexpr bool is_multi(conv_type type){
-    return type == conv_type::VALID_MULTI || type == conv_type::SAME_MULTI || type == conv_type::FULL_MULTI;
-}
-
 namespace detail {
 
 /*!
