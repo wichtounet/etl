@@ -552,7 +552,7 @@ inline etl::conv_multi_impl select_default_conv_valid_multi() {
     if (mkl_enabled && conv_valid_fft) {
         return etl::conv_multi_impl::VALID_FFT_MKL;
     } else if (cblas_enabled) {
-        return etl::conv_multi_impl::BLAS_VEC;
+        return etl::conv_multi_impl::BLAS_MKL;
     }
 
     if (vectorize_impl && vec_enabled) {
