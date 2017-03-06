@@ -23,7 +23,7 @@ float fake = 0;
  *
  * Current values are (alloc/gpu_to_cpu/cpu_to_gpu):
  * Simple: 3 / 0 / 2 (Optimal!)
- * Basic: 50 / 30 / 10
+ * Basic: 15 / 20 / 3
  * Sub: 960 / 640 / 160
  */
 
@@ -53,20 +53,23 @@ void basic(){
     etl::dyn_matrix<float, 2> B(4096, 4096);
     etl::dyn_matrix<float, 2> C(4096, 4096);
     etl::dyn_matrix<float, 2> D(4096, 4096);
+    etl::dyn_matrix<float, 2> E(4096, 4096);
 
     A = etl::normal_generator<float>(1.0, 0.0);
     B = etl::normal_generator<float>(1.0, 0.0);
     C = etl::normal_generator<float>(1.0, 0.0);
     D = etl::normal_generator<float>(1.0, 0.0);
+    E = etl::normal_generator<float>(1.0, 0.0);
 
     etl::reset_counters();
 
     std::cout << "Basic" << std::endl;
 
     for (size_t i = 0; i < 10; ++i) {
-        C = A * B * B;
+        C = A * B * E;
         D = A * trans(A);
         D *= 1.1;
+        E = D;
         D += C;
         fake += etl::mean(D);
     }
