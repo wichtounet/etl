@@ -91,6 +91,11 @@ constexpr bool cufft_enabled = ETL_CUFFT_MODE_BOOL;
 constexpr bool cudnn_enabled = ETL_CUDNN_MODE_BOOL;
 
 /*!
+ * \brief Indicates if the EGBLAS library is available for ETL.
+ */
+constexpr bool egblas_enabled = ETL_EGBLAS_MODE_BOOL;
+
+/*!
  * \brief Boolean flag indicating if multiplication of two expression
  * means matrix multiplication (false) or element-wise multiplication (true)
  */
