@@ -12,6 +12,8 @@
 #define ETL_COUNTERS
 #define ETL_COUNTERS_VERBOSE
 
+#define IF_DEBUG if(false)
+
 #include "etl/etl.hpp"
 
 typedef std::chrono::high_resolution_clock timer_clock;
@@ -32,9 +34,9 @@ void simple(){
     etl::dyn_matrix<float, 2> B(4096, 4096);
     etl::dyn_matrix<float, 2> C(4096, 4096);
 
-    A = etl::normal_generator<float>(1.0, 0.0);
-    B = etl::normal_generator<float>(1.0, 0.0);
-    C = etl::normal_generator<float>(1.0, 0.0);
+    A = 1e-4 >> etl::sequence_generator<float>(1.0);
+    B = 1e-4 >> etl::sequence_generator<float>(1.0);
+    C = 1e-4 >> etl::sequence_generator<float>(1.0);
 
     etl::reset_counters();
 
@@ -46,6 +48,9 @@ void simple(){
     }
 
     etl::dump_counters();
+
+    std::cout << "   Result: " << fake << std::endl;
+    std::cout << "Should be: 2.8826e+10" << std::endl;
 }
 
 void basic(){
@@ -55,26 +60,38 @@ void basic(){
     etl::dyn_matrix<float, 2> D(4096, 4096);
     etl::dyn_matrix<float, 2> E(4096, 4096);
 
-    A = etl::normal_generator<float>(1.0, 0.0);
-    B = etl::normal_generator<float>(1.0, 0.0);
-    C = etl::normal_generator<float>(1.0, 0.0);
-    D = etl::normal_generator<float>(1.0, 0.0);
-    E = etl::normal_generator<float>(1.0, 0.0);
+    A = 1e-4 >> etl::sequence_generator<float>(1.0);
+    B = 1e-4 >> etl::sequence_generator<float>(1.0);
+    C = 1e-4 >> etl::sequence_generator<float>(1.0);
+    D = 1e-4 >> etl::sequence_generator<float>(1.0);
+    E = 1e-4 >> etl::sequence_generator<float>(1.0);
 
     etl::reset_counters();
 
     std::cout << "Basic" << std::endl;
 
     for (size_t i = 0; i < 10; ++i) {
+        IF_DEBUG std::cout << i << ":0 C = A * B * E" << std::endl;
         C = A * B * E;
+        IF_DEBUG std::cout << i << ":1 D = A * trans(A)" << std::endl;
         D = A * trans(A);
+        IF_DEBUG std::cout << i << ":2 D *= 1.1" << std::endl;
         D *= 1.1;
+        IF_DEBUG std::cout << i << ":3 E = D" << std::endl;
         E = D;
+        IF_DEBUG std::cout << i << ":4 D += C" << std::endl;
         D += C;
+        IF_DEBUG std::cout << i << ":5 fake += etl::mean(D)" << std::endl;
         fake += etl::mean(D);
+        IF_DEBUG std::cout << i << ":6 end" << std::endl;
     }
+
     etl::dump_counters();
+
+    std::cout << "   Result: " << fake << std::endl;
+    std::cout << "Should be: 3.36933e+23" << std::endl;
 }
+
 
 void sub(){
     etl::dyn_matrix<float, 3> A(16, 2048, 2048);
