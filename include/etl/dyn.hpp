@@ -208,7 +208,7 @@ public:
                 validate_assign(*this, rhs);
             }
 
-            direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+            assign_evaluate(rhs, *this);
         }
 
         check_invariants();
