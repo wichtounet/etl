@@ -115,6 +115,12 @@ endif
 
 endif
 
+# On demand activation of egblas support
+ifneq (,$(ETL_EGBLAS))
+CXX_FLAGS += -DETL_EGBLAS_MODE $(shell pkg-config --cflags egblas)
+LD_FLAGS += $(shell pkg-config --libs egblas)
+endif
+
 LD_FLAGS += -pthread
 
 # Enable coverage if not disabled by the user
