@@ -1329,6 +1329,9 @@ void gemm(A&& a, B&& b, C&& c) {
  */
 template <typename I, typename K_T, typename C>
 void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const size_t K  = etl::dim<0>(kernels);
@@ -1398,6 +1401,9 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
  */
 template <typename I, typename K_T, typename C>
 void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const size_t K  = etl::dim<0>(kernels);
@@ -1462,6 +1468,9 @@ void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s
  */
 template <typename I, typename K_T, typename C>
 void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const size_t N  = etl::dim<0>(input);
@@ -1537,6 +1546,9 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
  */
 template <typename I, typename K_T, typename C>
 void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const size_t N  = etl::dim<0>(input);
@@ -1601,6 +1613,9 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
 
 template <typename I_T, typename K_T, typename KS_T, typename C_T>
 void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I_T>;
 
     const auto N = etl::dim<0>(input);  // The number of images
@@ -1727,6 +1742,9 @@ void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, 
 
 template <typename I_T, typename K_T, typename C_T>
 void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I_T>;
 
     const auto I = etl::dim<0>(input);
