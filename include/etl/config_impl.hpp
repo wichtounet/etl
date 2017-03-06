@@ -13,12 +13,6 @@
 static_assert(false, "ETL_CUDA should never be set directly");
 #endif
 
-#ifdef ETL_EGBLAS_MODE
-#ifndef ETL_CUBLAS_MODE
-static_assert(false, "EGBLAS is only intended to work with CUBLAS, not alone");
-#endif
-#endif
-
 #ifdef ETL_VECTORIZE_FULL
 
 //VECTORIZE_FULL enables VECTORIZE_EXPR
@@ -61,6 +55,13 @@ static_assert(false, "EGBLAS is only intended to work with CUBLAS, not alone");
 #ifdef ETL_PARALLEL
 #ifndef ETL_PARALLEL_SUPPORT
 #define ETL_PARALLEL_SUPPORT
+#endif
+#endif
+
+// EGBLAS does not make sense without CUBLAS
+#ifdef ETL_EGBLAS_MODE
+#ifndef ETL_CUBLAS_MODE
+static_assert(false, "EGBLAS is only intended to work with CUBLAS, not alone");
 #endif
 #endif
 
