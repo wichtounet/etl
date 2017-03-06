@@ -22,6 +22,10 @@
 #include "etl/impl/cublas/cuda.hpp"
 #include "etl/impl/cublas/cublas.hpp"
 
+#ifdef ETL_EGBLAS_MODE
+#include "egblas.hpp"
+#endif
+
 #endif
 
 namespace etl {
@@ -38,6 +42,11 @@ namespace cublas {
  */
 template <typename A, cpp_enable_if(all_dma<A>::value && all_single_precision<A>::value)>
 float sum(const A& a) {
+#ifdef ETL_EGBLAS_MODE
+    a.ensure_gpu_up_to_date();
+
+    return egblas_ssum(a.gpu_memory(), etl::size(a), 1);
+#else
     decltype(auto) handle = start_cublas();
 
     auto ones = etl::impl::cuda::cuda_allocate_only<float>(etl::size(a));
@@ -57,6 +66,7 @@ float sum(const A& a) {
     float prod = 0.0;
     cublas_check(cublasSdot(handle.get(), etl::size(a), a.gpu_memory(), 1, ones.get(), 1, &prod));
     return prod;
+#endif
 }
 
 /*!
@@ -64,9 +74,12 @@ float sum(const A& a) {
  */
 template <typename A, cpp_enable_if(all_dma<A>::value && all_double_precision<A>::value)>
 double sum(const A& a) {
-    decltype(auto) handle = start_cublas();
+#ifdef ETL_EGBLAS_MODE
+    a.ensure_gpu_up_to_date();
 
-    //TODO Need to do much better than that!
+    return egblas_dsum(a.gpu_memory(), etl::size(a), 1);
+#else
+    decltype(auto) handle = start_cublas();
 
     etl::dyn_vector<value_t<A>> ones(etl::size(a), 1.0);
 
@@ -76,6 +89,7 @@ double sum(const A& a) {
     double prod = 0.0;
     cublas_check(cublasDdot(handle.get(), etl::size(a), a.gpu_memory(), 1, ones.gpu_memory(), 1, &prod));
     return prod;
+#endif
 }
 
 /*!
@@ -83,7 +97,7 @@ double sum(const A& a) {
  */
 template <typename A, cpp_enable_if(!all_dma<A>::value)>
 value_t<A> sum(const A& /*a*/) {
-    cpp_unreachable("BLAS not enabled/available");
+    cpp_unreachable("CUBLAS not enabled/available");
     return 0.0;
 }
 
