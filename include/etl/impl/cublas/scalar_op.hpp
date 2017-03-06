@@ -34,9 +34,12 @@ namespace cublas {
  */
 template <typename T>
 void scalar_add(T&& lhs, float rhs) {
-    decltype(auto) handle = start_cublas();
-
     lhs.ensure_gpu_up_to_date();
+
+#ifdef ETL_EGBLAS_MODE
+    egblas_scalar_sadd(lhs.gpu_memory(), size(lhs), 1, rhs);
+#else
+    decltype(auto) handle = start_cublas();
 
     // Note: This is immensely retarded...
 
@@ -53,6 +56,7 @@ void scalar_add(T&& lhs, float rhs) {
 #pragma GCC diagnostic pop
 
     cublasSaxpy(handle.get(), size(lhs), &rhs, ones.get(), 1, lhs.gpu_memory(), 1);
+#endif
 
     lhs.invalidate_cpu();
 }
@@ -64,16 +68,21 @@ void scalar_add(T&& lhs, float rhs) {
  */
 template <typename T>
 void scalar_add(T&& lhs, double rhs) {
+    lhs.ensure_gpu_up_to_date();
+
+#ifdef ETL_EGBLAS_MODE
+    egblas_scalar_dadd(lhs.gpu_memory(), size(lhs), 1, rhs);
+#else
     decltype(auto) handle = start_cublas();
 
     // Note: This is immensely retarded...
 
     etl::dyn_vector<value_t<T>> ones(etl::size(lhs), 1.0);
 
-    lhs.ensure_gpu_up_to_date();
     ones.ensure_gpu_up_to_date();
 
     cublasDaxpy(handle.get(), size(lhs), &rhs, ones.gpu_memory(), 1, lhs.gpu_memory(), 1);
+#endif
 
     lhs.invalidate_cpu();
 }
@@ -96,9 +105,12 @@ void scalar_add(T&& lhs, value_t<T> rhs) {
  */
 template <typename T>
 void scalar_sub(T&& lhs, float rhs) {
-    decltype(auto) handle = start_cublas();
-
     lhs.ensure_gpu_up_to_date();
+
+#ifdef ETL_EGBLAS_MODE
+    egblas_scalar_sadd(lhs.gpu_memory(), size(lhs), 1, -rhs);
+#else
+    decltype(auto) handle = start_cublas();
 
     // Note: This is immensely retarded...
 
@@ -115,6 +127,7 @@ void scalar_sub(T&& lhs, float rhs) {
 #pragma GCC diagnostic pop
 
     cublasSaxpy(handle.get(), size(lhs), &rhs, ones.get(), 1, lhs.gpu_memory(), 1);
+#endif
 
     lhs.invalidate_cpu();
 }
@@ -126,16 +139,21 @@ void scalar_sub(T&& lhs, float rhs) {
  */
 template <typename T>
 void scalar_sub(T&& lhs, double rhs) {
+    lhs.ensure_gpu_up_to_date();
+
+#ifdef ETL_EGBLAS_MODE
+    egblas_scalar_dadd(lhs.gpu_memory(), size(lhs), 1, -rhs);
+#else
     decltype(auto) handle = start_cublas();
 
     // Note: This is immensely retarded...
 
     etl::dyn_vector<value_t<T>> ones(etl::size(lhs), -1.0);
 
-    lhs.ensure_gpu_up_to_date();
     ones.ensure_gpu_up_to_date();
 
     cublasDaxpy(handle.get(), size(lhs), &rhs, ones.gpu_memory(), 1, lhs.gpu_memory(), 1);
+#endif
 
     lhs.invalidate_cpu();
 }
