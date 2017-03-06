@@ -22,7 +22,7 @@ float fake = 0;
 /*
  *
  * Current values are (alloc/gpu_to_cpu/cpu_to_gpu):
- * Simple: 3 / 2 / 0 (Optimal!)
+ * Simple: 3 / 0 / 2 (Optimal!)
  * Basic: 50 / 30 / 10
  * Sub: 960 / 640 / 160
  */
