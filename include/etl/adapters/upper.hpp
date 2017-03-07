@@ -70,7 +70,7 @@ public:
      *
      * This constructor can only be used when the matrix is fast
      */
-    upper_matrix(value_type value) noexcept : base_type(value) {
+    explicit upper_matrix(value_type value) noexcept : base_type(value) {
         //Nothing else to init
     }
 
@@ -78,7 +78,7 @@ public:
      * \brief Construct a new upper triangular matrix and fill it with zeros
      * \param dim The dimension of the matrix
      */
-    upper_matrix(std::size_t dim) noexcept : base_type(dim) {
+    explicit upper_matrix(std::size_t dim) noexcept : base_type(dim) {
         //Nothing else to init
     }
 

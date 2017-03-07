@@ -70,7 +70,7 @@ public:
      *
      * This constructor can only be used when the matrix is fast
      */
-    diagonal_matrix(value_type value) noexcept : base_type(value) {
+    explicit diagonal_matrix(value_type value) noexcept : base_type(value) {
         //Nothing else to init
     }
 
@@ -78,7 +78,7 @@ public:
      * \brief Construct a new diagonal matrix and fill it with zeros
      * \param dim The dimension of the matrix
      */
-    diagonal_matrix(std::size_t dim) noexcept : base_type(dim) {
+    explicit diagonal_matrix(std::size_t dim) noexcept : base_type(dim) {
         //Nothing else to init
     }
 

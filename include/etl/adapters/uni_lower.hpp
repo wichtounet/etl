@@ -70,7 +70,7 @@ public:
      * \brief Construct a new uni lower triangular matrix and fill it with zeros
      * \param dim The dimension of the matrix
      */
-    uni_lower_matrix(std::size_t dim) noexcept : base_type(dim) {
+    explicit uni_lower_matrix(std::size_t dim) noexcept : base_type(dim) {
         // Fill the diagonal
         for(size_t i = 0; i < etl::dim<0>(matrix); ++i){
             matrix(i,i) = value_type(1);

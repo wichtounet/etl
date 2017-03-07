@@ -38,8 +38,7 @@ public:
      * \brief Construt a new timed expression around the given ETL expression
      * \param l The ETL expression
      */
-    timed_expr(Expr l)
-            : _value(std::forward<Expr>(l)) {
+    explicit timed_expr(Expr l) : _value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 

@@ -52,7 +52,7 @@ public:
      *
      * This constructor can only be used when the matrix is fast
      */
-    adapter(value_type value) noexcept : matrix(value) {
+    explicit adapter(value_type value) noexcept : matrix(value) {
         //Nothing else to init
     }
 
@@ -60,7 +60,7 @@ public:
      * \brief Construct a new adapter matrix and fill it with zeros
      * \param dim The dimension of the matrix
      */
-    adapter(std::size_t dim) noexcept : matrix(dim, dim, value_type()) {
+    explicit adapter(std::size_t dim) noexcept : matrix(dim, dim, value_type()) {
         //Nothing else to init
     }
 

@@ -84,7 +84,7 @@ public:
      *
      * This constructor can only be used when the matrix is fast
      */
-    symmetric_matrix(value_type value) noexcept : base_type(value) {
+    explicit symmetric_matrix(value_type value) noexcept : base_type(value) {
         //Nothing else to init
     }
 
@@ -92,7 +92,7 @@ public:
      * \brief Construct a new sym matrix and fill it with zeros
      * \param dim The dimension of the matrix
      */
-    symmetric_matrix(std::size_t dim) noexcept : base_type(dim) {
+    explicit symmetric_matrix(std::size_t dim) noexcept : base_type(dim) {
         //Nothing else to init
     }
 
