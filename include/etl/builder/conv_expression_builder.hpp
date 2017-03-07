@@ -41,7 +41,7 @@ auto conv_1d_valid(A&& a, B&& b, C&& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_1d_valid(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -69,7 +69,7 @@ auto conv_1d_same(A&& a, B&& b, C&& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_1d_same(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -97,7 +97,7 @@ auto conv_1d_full(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_1d_full(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -125,7 +125,7 @@ auto conv_2d_valid(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid<S1, S2, P1, P2>(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -162,7 +162,7 @@ auto conv_2d_valid(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1 = 0, siz
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid(a, b, s1, s2, p1, p2);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -190,7 +190,7 @@ auto conv_2d_valid_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_flipped<S1, S2, P1, P2>(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -227,7 +227,7 @@ auto conv_2d_valid_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1 
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_flipped(a, b, s1, s2, p1, p2);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -255,7 +255,7 @@ auto conv_2d_valid_multi(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -292,7 +292,7 @@ auto conv_2d_valid_multi(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, s
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi(a, b, s1, s2, p1, p2);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -320,7 +320,7 @@ auto conv_2d_valid_multi_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_flipped(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -357,7 +357,7 @@ auto conv_2d_valid_multi_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_flipped(a, b, s1, s2, p1, p2);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -384,7 +384,7 @@ auto conv_2d_valid_multi_multi(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_multi(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -411,7 +411,7 @@ auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_multi_flipped(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -448,7 +448,7 @@ auto conv_2d_valid_multi_multi(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_multi(a, b, s1, s2, p1, p2);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -485,7 +485,7 @@ auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_multi_flipped(a, b, s1, s2, p1, p2);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -524,7 +524,7 @@ auto conv_4d_valid(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid<S1, S2, P1, P2>(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -563,7 +563,7 @@ auto conv_4d_valid_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_flipped<S1, S2, P1, P2>(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -602,7 +602,7 @@ auto conv_4d_full(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_full(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -644,7 +644,7 @@ auto conv_4d_valid_filter(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_filter<S1, S2, P1, P2>(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -686,7 +686,7 @@ auto conv_4d_valid_filter_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_filter_flipped<S1, S2, P1, P2>(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -725,7 +725,7 @@ auto conv_4d_full_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_full_flipped(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -753,7 +753,7 @@ auto conv_2d_same(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_same(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -782,7 +782,7 @@ auto conv_2d_same_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_same_flipped(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -810,7 +810,7 @@ auto conv_2d_same_multi(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_same_multi(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -838,7 +838,7 @@ auto conv_2d_same_multi_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_same_multi_flipped(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -866,7 +866,7 @@ auto conv_2d_full(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_full(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -894,7 +894,7 @@ auto conv_2d_full_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_full_flipped(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -922,7 +922,7 @@ auto conv_2d_full_multi(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_full_multi(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -950,7 +950,7 @@ auto conv_2d_full_multi_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_full_multi_flipped(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -984,7 +984,7 @@ auto conv_deep_valid(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_deep_valid(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -1018,7 +1018,7 @@ auto conv_deep_same(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_deep_same(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -1052,7 +1052,7 @@ auto conv_deep_full(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_deep_full(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 //Special convolutions

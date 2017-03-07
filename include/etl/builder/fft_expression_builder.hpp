@@ -64,7 +64,7 @@ auto fft_1d(A&& a, C&& c){
     validate_assign(c, a);
 
     c = fft_1d(a);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -91,7 +91,7 @@ auto ifft_1d(A&& a, C&& c) {
     validate_assign(c, a);
 
     c = ifft_1d(a);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -118,7 +118,7 @@ auto ifft_1d_real(A&& a, C&& c) {
     validate_assign(c, a);
 
     c = ifft_1d_real(a);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -145,7 +145,7 @@ auto fft_2d(A&& a, C&& c){
     validate_assign(c, a);
 
     c = fft_2d(a);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -172,7 +172,7 @@ auto ifft_2d(A&& a, C&& c){
     validate_assign(c, a);
 
     c = ifft_2d(a);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -199,7 +199,7 @@ auto ifft_2d_real(A&& a, C&& c) {
     validate_assign(c, a);
 
     c = ifft_2d_real(a);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -234,7 +234,7 @@ auto fft_1d_many(A&& a, C&& c) {
     validate_assign(c, a);
 
     c = fft_1d_many(a);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -269,7 +269,7 @@ auto ifft_1d_many(A&& a, C&& c) {
     validate_assign(c, a);
 
     c = ifft_1d_many(a);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -304,7 +304,7 @@ auto fft_2d_many(A&& a, C&& c) {
     validate_assign(c, a);
 
     c = fft_2d_many(a);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -339,7 +339,7 @@ auto ifft_2d_many(A&& a, C&& c) {
     validate_assign(c, a);
 
     c = ifft_2d_many(a);
-    return std::forward<C>(c);
+    return c;
 }
 
 } //end of namespace etl

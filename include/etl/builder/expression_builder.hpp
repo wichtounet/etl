@@ -272,7 +272,7 @@ auto operator%(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<R
  */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator+=(LE&& lhs, RE rhs) {
-    detail::scalar_add::apply(std::forward<LE>(lhs), rhs);
+    detail::scalar_add::apply(lhs, rhs);
     return lhs;
 }
 
@@ -285,7 +285,7 @@ LE& operator+=(LE&& lhs, RE rhs) {
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator+=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
-    add_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
+    add_evaluate(rhs, lhs);
     return lhs;
 }
 
@@ -297,7 +297,7 @@ LE& operator+=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator-=(LE&& lhs, RE rhs) {
-    detail::scalar_sub::apply(std::forward<LE>(lhs), rhs);
+    detail::scalar_sub::apply(lhs, rhs);
     return lhs;
 }
 
@@ -310,7 +310,7 @@ LE& operator-=(LE&& lhs, RE rhs) {
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator-=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
-    sub_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
+    sub_evaluate(rhs, lhs);
     return lhs;
 }
 
@@ -322,7 +322,7 @@ LE& operator-=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator*=(LE&& lhs, RE rhs) {
-    detail::scalar_mul::apply(std::forward<LE>(lhs), rhs);
+    detail::scalar_mul::apply(lhs, rhs);
     return lhs;
 }
 
@@ -335,7 +335,7 @@ LE& operator*=(LE&& lhs, RE rhs) {
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator*=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
-    mul_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
+    mul_evaluate(rhs, lhs);
     return lhs;
 }
 
@@ -347,7 +347,7 @@ LE& operator*=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator>>=(LE&& lhs, RE rhs) {
-    detail::scalar_mul::apply(std::forward<LE>(lhs), rhs);
+    detail::scalar_mul::apply(lhs, rhs);
     return lhs;
 }
 
@@ -360,7 +360,7 @@ LE& operator>>=(LE&& lhs, RE rhs) {
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator>>=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
-    mul_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
+    mul_evaluate(rhs, lhs);
     return lhs;
 }
 
@@ -372,7 +372,7 @@ LE& operator>>=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator/=(LE&& lhs, RE rhs) {
-    detail::scalar_div::apply(std::forward<LE>(lhs), rhs);
+    detail::scalar_div::apply(lhs, rhs);
     return lhs;
 }
 
@@ -385,7 +385,7 @@ LE& operator/=(LE&& lhs, RE rhs) {
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator/=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
-    div_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
+    div_evaluate(rhs, lhs);
     return lhs;
 }
 
@@ -397,7 +397,7 @@ LE& operator/=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator%=(LE&& lhs, RE rhs) {
-    detail::scalar_mod::apply(std::forward<LE>(lhs), rhs);
+    detail::scalar_mod::apply(lhs, rhs);
     return lhs;
 }
 
@@ -410,7 +410,7 @@ LE& operator%=(LE&& lhs, RE rhs) {
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator%=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
-    mod_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
+    mod_evaluate(rhs, lhs);
     return lhs;
 }
 
@@ -801,7 +801,7 @@ auto sign(E&& value) -> detail::unary_helper<E, sign_unary_op> {
  */
 template <typename E>
 decltype(auto) identity(E&& value) {
-    return std::forward<E>(value);
+    return value;
 }
 
 /*!

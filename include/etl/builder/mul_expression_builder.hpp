@@ -83,7 +83,7 @@ auto mul(A&& a, B&& b, C&& c) {
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
     c = mul(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -121,7 +121,7 @@ auto mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, vm_mul_expr> {
 template <typename A, typename B, typename C, cpp_enable_if(is_1d<A>::value, is_2d<B>::value)>
 auto mul(A&& a, B&& b, C&& c){
     c = mul(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -145,7 +145,7 @@ auto mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mv_mul_expr> {
 template <typename A, typename B, typename C, cpp_enable_if(is_2d<A>::value, is_1d<B>::value)>
 auto mul(A&& a, B&& b, C&& c) {
     c = mul(a, b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -175,7 +175,7 @@ auto strassen_mul(A&& a, B&& b, C&& c) {
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
     c = mul(a,b);
-    return std::forward<C>(c);
+    return c;
 }
 
 /*!
@@ -186,7 +186,7 @@ auto strassen_mul(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto outer(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, outer_product_expr> {
-    return {std::forward<A>(a), std::forward<B>(b)};
+    return {a, b};
 }
 
 /*!
@@ -198,8 +198,8 @@ auto outer(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, outer_product_
  */
 template <typename A, typename B, typename C>
 auto outer(A&& a, B&& b, C&& c){
-    c = outer(std::forward<A>(a), std::forward<B>(b));
-    return std::forward<C>(c);
+    c = outer(a, b);
+    return c;
 }
 
 /*!
@@ -210,7 +210,7 @@ auto outer(A&& a, B&& b, C&& c){
  */
 template <typename A, typename B>
 auto batch_outer(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, batch_outer_product_expr> {
-    return {std::forward<A>(a), std::forward<B>(b)};
+    return {a, b};
 }
 
 /*!
@@ -222,8 +222,8 @@ auto batch_outer(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, batch_ou
  */
 template <typename A, typename B, typename C>
 auto batch_outer(A&& a, B&& b, C&& c){
-    c = batch_outer(std::forward<A>(a), std::forward<B>(b));
-    return std::forward<C>(c);
+    c = batch_outer(a, b);
+    return c;
 }
 
 } //end of namespace etl
