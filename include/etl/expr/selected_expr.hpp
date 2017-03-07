@@ -177,6 +177,16 @@ public:
 
         forced = old_forced;
     }
+
+    /*!
+     * \brief Prints the type of the optimized expression to the stream
+     * \param os The output stream
+     * \param expr The expression to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const selected_expr& expr) {
+        return os << "selected(" << expr._value << ")";
+    }
 };
 
 /*!
@@ -185,16 +195,5 @@ public:
  */
 template <typename Selector, Selector V, typename Expr>
 struct etl_traits<etl::selected_expr<Selector, V, Expr>> : wrapper_traits<etl::selected_expr<Selector, V, Expr>> {};
-
-/*!
- * \brief Prints the type of the optimized expression to the stream
- * \param os The output stream
- * \param expr The expression to print
- * \return the output stream
- */
-template <typename Selector, Selector V, typename Expr>
-std::ostream& operator<<(std::ostream& os, const selected_expr<Selector, V, Expr>& expr) {
-    return os << "selected(" << expr.value() << ")";
-}
 
 } //end of namespace etl

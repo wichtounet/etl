@@ -163,6 +163,16 @@ public:
 
         std::cout << "timed(%=): " << _value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
     }
+
+    /*!
+     * \brief Prints the type of the timed expression to the stream
+     * \param os The output stream
+     * \param expr The expression to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const timed_expr& expr) {
+        return os << "timed(" << expr._value << ")";
+    }
 };
 
 /*!
@@ -171,16 +181,5 @@ public:
  */
 template <typename Expr, typename R>
 struct etl_traits<etl::timed_expr<Expr, R>> : wrapper_traits<etl::timed_expr<Expr, R>> {};
-
-/*!
- * \brief Prints the type of the timed expression to the stream
- * \param os The output stream
- * \param expr The expression to print
- * \return the output stream
- */
-template <typename Expr, typename R>
-std::ostream& operator<<(std::ostream& os, const timed_expr<Expr, R>& expr) {
-    return os << "timed(" << expr.value() << ")";
-}
 
 } //end of namespace etl

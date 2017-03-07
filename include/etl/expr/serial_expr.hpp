@@ -155,6 +155,16 @@ public:
 
         local_context().serial = old_serial;
     }
+
+    /*!
+     * \brief Prints the type of the optimized expression to the stream
+     * \param os The output stream
+     * \param expr The expression to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const serial_expr& expr) {
+        return os << "serial(" << expr._value << ")";
+    }
 };
 
 /*!
@@ -163,16 +173,5 @@ public:
  */
 template <typename Expr>
 struct etl_traits<etl::serial_expr<Expr>> : wrapper_traits<etl::serial_expr<Expr>> {};
-
-/*!
- * \brief Prints the type of the optimized expression to the stream
- * \param os The output stream
- * \param expr The expression to print
- * \return the output stream
- */
-template <typename Expr>
-std::ostream& operator<<(std::ostream& os, const serial_expr<Expr>& expr) {
-    return os << "serial(" << expr.value() << ")";
-}
 
 } //end of namespace etl

@@ -160,6 +160,16 @@ public:
 
         local_context().parallel = old_parallel;
     }
+
+    /*!
+     * \brief Prints the type of the optimized expression to the stream
+     * \param os The output stream
+     * \param expr The expression to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const parallel_expr& expr) {
+        return os << "parallel(" << expr._value << ")";
+    }
 };
 
 /*!
@@ -168,16 +178,5 @@ public:
  */
 template <typename Expr>
 struct etl_traits<etl::parallel_expr<Expr>> : wrapper_traits<etl::parallel_expr<Expr>> {};
-
-/*!
- * \brief Prints the type of the optimized expression to the stream
- * \param os The output stream
- * \param expr The expression to print
- * \return the output stream
- */
-template <typename Expr>
-std::ostream& operator<<(std::ostream& os, const parallel_expr<Expr>& expr) {
-    return os << "parallel(" << expr.value() << ")";
-}
 
 } //end of namespace etl
