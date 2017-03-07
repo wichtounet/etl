@@ -88,13 +88,28 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::fast_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
-        // CPU versions need to be up to date before we use memory_start()
-        expr.ensure_cpu_up_to_date();
-        result.ensure_cpu_up_to_date();
+        if(expr.is_cpu_up_to_date()){
+            direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
 
-        direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
+            result.validate_cpu();
+        } else {
+            result.invalidate_cpu();
+        }
 
-        result.invalidate_gpu();
+        if(expr.is_gpu_up_to_date()){
+            bool cpu_status = result.is_cpu_up_to_date();
+
+            result.gpu_copy_from(expr.gpu_memory());
+
+            result.validate_gpu();
+
+            // Restore CPU status because gpu_copy_from will erase it
+            if(cpu_status){
+                result.validate_cpu();
+            }
+        } else {
+            result.invalidate_gpu();
+        }
     }
 
     //Parallel assign version
