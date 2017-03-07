@@ -36,7 +36,7 @@ template <typename T>
 void scalar_add(T&& lhs, float rhs) {
     lhs.ensure_gpu_up_to_date();
 
-#ifdef ETL_EGBLAS_MODE
+#ifdef EGBLAS_HAS_SADD
     egblas_scalar_sadd(lhs.gpu_memory(), size(lhs), 1, rhs);
 #else
     decltype(auto) handle = start_cublas();
@@ -70,7 +70,7 @@ template <typename T>
 void scalar_add(T&& lhs, double rhs) {
     lhs.ensure_gpu_up_to_date();
 
-#ifdef ETL_EGBLAS_MODE
+#ifdef EGBLAS_HAS_DADD
     egblas_scalar_dadd(lhs.gpu_memory(), size(lhs), 1, rhs);
 #else
     decltype(auto) handle = start_cublas();
@@ -107,7 +107,7 @@ template <typename T>
 void scalar_sub(T&& lhs, float rhs) {
     lhs.ensure_gpu_up_to_date();
 
-#ifdef ETL_EGBLAS_MODE
+#ifdef EGBLAS_HAS_SADD
     egblas_scalar_sadd(lhs.gpu_memory(), size(lhs), 1, -rhs);
 #else
     decltype(auto) handle = start_cublas();
@@ -141,7 +141,7 @@ template <typename T>
 void scalar_sub(T&& lhs, double rhs) {
     lhs.ensure_gpu_up_to_date();
 
-#ifdef ETL_EGBLAS_MODE
+#ifdef EGBLAS_HAS_DADD
     egblas_scalar_dadd(lhs.gpu_memory(), size(lhs), 1, -rhs);
 #else
     decltype(auto) handle = start_cublas();

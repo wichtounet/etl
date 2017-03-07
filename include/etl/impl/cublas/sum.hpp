@@ -42,7 +42,7 @@ namespace cublas {
  */
 template <typename A, cpp_enable_if(all_dma<A>::value && all_single_precision<A>::value)>
 float sum(const A& a) {
-#ifdef ETL_EGBLAS_MODE
+#ifdef EGBLAS_HAS_SSUM
     a.ensure_gpu_up_to_date();
 
     return egblas_ssum(a.gpu_memory(), etl::size(a), 1);
@@ -74,7 +74,7 @@ float sum(const A& a) {
  */
 template <typename A, cpp_enable_if(all_dma<A>::value && all_double_precision<A>::value)>
 double sum(const A& a) {
-#ifdef ETL_EGBLAS_MODE
+#ifdef EGBLAS_HAS_DSUM
     a.ensure_gpu_up_to_date();
 
     return egblas_dsum(a.gpu_memory(), etl::size(a), 1);
