@@ -25,6 +25,8 @@ unset ETL_BLAS
 unset ETL_CUBLAS
 unset ETL_CUFFT
 unset ETL_CUDNN
+unset ETL_GPU
+unset ETL_EGBLAS
 
 # Use gcc
 export CXX=$ETL_GPP
