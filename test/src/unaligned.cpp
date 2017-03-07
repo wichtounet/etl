@@ -30,7 +30,7 @@ struct unaligned_ptr {
     }
 
     unaligned_ptr& operator=(unaligned_ptr&& rhs) {
-        if (this != rhs) {
+        if (this != &rhs) {
             if (base) {
                 free(base);
             }
