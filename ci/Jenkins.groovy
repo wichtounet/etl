@@ -4,7 +4,7 @@ node {
        checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'SubmoduleOption', disableSubmodules: false, recursiveSubmodules: true, reference: '', trackingSubmodules: false]], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/wichtounet/etl.git']]])
 
        stage 'pre-analysis'
-       sh 'cppcheck --xml-version=2 --enable=all --std=c++11 include/etl/*.hpp test/include/*.hpp test/src/*.cpp workbench/src/*.cpp 2> cppcheck_report.xml'
+       sh 'cppcheck --xml-version=2 -j3 --enable=all --std=c++11 `git ls-files "*.hpp" "*.cpp"` 2> cppcheck_report.xml'
        sh 'sloccount --duplicates --wide --details include/etl test workbench > sloccount.sc'
        sh 'cccc include/etl/*.hpp test/*.cpp workbench/*.cpp || true'
 
