@@ -99,6 +99,7 @@ namespace standard_evaluator {
         if(expr.is_gpu_up_to_date()){
             bool cpu_status = result.is_cpu_up_to_date();
 
+            result.ensure_gpu_allocated();
             result.gpu_copy_from(expr.gpu_memory());
 
             result.validate_gpu();
