@@ -88,6 +88,8 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(std::is_same<value_t<E>, value_t<R>>::value, detail::fast_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
+//TODO(CPP17) if constexpr
+#ifdef ETL_CUDA
         if(expr.is_cpu_up_to_date()){
             direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
 
@@ -111,6 +113,9 @@ namespace standard_evaluator {
         } else {
             result.invalidate_gpu();
         }
+#else
+        direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
+#endif
     }
 
     /*!
