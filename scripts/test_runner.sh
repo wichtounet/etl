@@ -4,7 +4,7 @@ set -e
 function etl_run {
     make clean
     make $ETL_THREADS debug/bin/etl_test
-    ./debug/bin/etl_test
+    ./debug/bin/etl_test --reporter=junit --out catch_report_${1}.xml
 
 if [ "$ETL_LCOV" == "" ]
 then
@@ -103,3 +103,5 @@ else
         sed -i 's/filename="..\//filename="/' coverage_report.xml
     fi
 fi
+
+cp catch_report_1.xml catch_report.xml
