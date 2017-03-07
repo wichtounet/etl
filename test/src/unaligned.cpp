@@ -42,7 +42,7 @@ struct unaligned_ptr {
             rhs.frakked_up = nullptr;
         }
 
-        return this;
+        return *this;
     }
 
     ~unaligned_ptr() {
