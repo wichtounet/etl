@@ -644,8 +644,8 @@ void std_assign_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
-void add_evaluate(Expr&& expr, Result&& result) {
+template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+void std_add_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::add_evaluate(expr, result);
 }
 
@@ -654,92 +654,9 @@ void add_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
-void add_evaluate(Expr&& expr, Result&& result) {
+template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value)>
+void std_add_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::add_evaluate(transpose(expr), result);
-}
-
-/*!
- * \brief Compound add evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
-void add_evaluate(Expr&& expr, Result&& result) {
-    optimized_forward(expr.value(),
-                      [&result](auto& optimized) {
-                          add_evaluate(optimized, result);
-                      });
-}
-
-/*!
- * \brief Compound add evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::value)>
-void add_evaluate(Expr&& expr, Result&& result) {
-    auto old_serial = local_context().serial;
-
-    local_context().serial = true;
-
-    add_evaluate(expr.value(), result);
-
-    local_context().serial = old_serial;
-}
-
-/*!
- * \brief Compound add evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_parallel_expr<Expr>::value)>
-void add_evaluate(Expr&& expr, Result&& result) {
-    auto old_parallel = local_context().parallel;
-
-    local_context().parallel = true;
-
-    add_evaluate(expr.value(), result);
-
-    local_context().parallel = old_parallel;
-}
-
-/*!
- * \brief Compound add evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_selected_expr<Expr>::value)>
-void add_evaluate(Expr&& expr, Result&& result) {
-    decltype(auto) forced = detail::get_forced_impl<typename std::decay_t<Expr>::selector_t>();
-
-    auto old_forced = forced;
-
-    forced.impl = std::decay_t<Expr>::selector_value;
-    forced.forced = true;
-
-    add_evaluate(expr.value(), result);
-
-    forced = old_forced;
-}
-
-/*!
- * \brief Compound add evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
-void add_evaluate(Expr&& expr, Result&& result) {
-    using resolution = typename std::decay_t<Expr>::clock_resolution;
-
-    auto start_time = etl::timer_clock::now();
-
-    add_evaluate(expr.value(), result);
-
-    auto end_time = etl::timer_clock::now();
-    auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
-
-    std::cout << "timed(+=): " << expr.value() << " took " << duration.count() << resolution_to_string<resolution>() << std::endl;
 }
 
 /*!
@@ -747,8 +664,8 @@ void add_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
-void sub_evaluate(Expr&& expr, Result&& result) {
+template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+void std_sub_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::sub_evaluate(expr, result);
 }
 
@@ -757,92 +674,9 @@ void sub_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
-void sub_evaluate(Expr&& expr, Result&& result) {
+template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value)>
+void std_sub_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::sub_evaluate(transpose(expr), result);
-}
-
-/*!
- * \brief Compound sub evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
-void sub_evaluate(Expr&& expr, Result&& result) {
-    optimized_forward(expr.value(),
-                      [&result](auto& optimized) {
-                          sub_evaluate(optimized, result);
-                      });
-}
-
-/*!
- * \brief Compound sub evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::value)>
-void sub_evaluate(Expr&& expr, Result&& result) {
-    auto old_serial = local_context().serial;
-
-    local_context().serial = true;
-
-    sub_evaluate(expr.value(), result);
-
-    local_context().serial = old_serial;
-}
-
-/*!
- * \brief Compound sub evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_parallel_expr<Expr>::value)>
-void sub_evaluate(Expr&& expr, Result&& result) {
-    auto old_parallel = local_context().parallel;
-
-    local_context().parallel = true;
-
-    sub_evaluate(expr.value(), result);
-
-    local_context().parallel = old_parallel;
-}
-
-/*!
- * \brief Compound sub evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_selected_expr<Expr>::value)>
-void sub_evaluate(Expr&& expr, Result&& result) {
-    decltype(auto) forced = detail::get_forced_impl<typename std::decay_t<Expr>::selector_t>();
-
-    auto old_forced = forced;
-
-    forced.impl = std::decay_t<Expr>::selector_value;
-    forced.forced = true;
-
-    sub_evaluate(expr.value(), result);
-
-    forced = old_forced;
-}
-
-/*!
- * \brief Compound sub evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
-void sub_evaluate(Expr&& expr, Result&& result) {
-    using resolution = typename std::decay_t<Expr>::clock_resolution;
-
-    auto start_time = etl::timer_clock::now();
-
-    sub_evaluate(expr.value(), result);
-
-    auto end_time = etl::timer_clock::now();
-    auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
-
-    std::cout << "timed(-=): " << expr.value() << " took " << duration.count() << resolution_to_string<resolution>() << std::endl;
 }
 
 /*!
@@ -850,8 +684,8 @@ void sub_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
-void mul_evaluate(Expr&& expr, Result&& result) {
+template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+void std_mul_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::mul_evaluate(expr, result);
 }
 
@@ -860,92 +694,9 @@ void mul_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
-void mul_evaluate(Expr&& expr, Result&& result) {
+template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value)>
+void std_mul_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::mul_evaluate(transpose(expr), result);
-}
-
-/*!
- * \brief Compound mul evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
-void mul_evaluate(Expr&& expr, Result&& result) {
-    optimized_forward(expr.value(),
-                      [&result](auto& optimized) {
-                          mul_evaluate(optimized, result);
-                      });
-}
-
-/*!
- * \brief Compound mul evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::value)>
-void mul_evaluate(Expr&& expr, Result&& result) {
-    auto old_serial = local_context().serial;
-
-    local_context().serial = true;
-
-    mul_evaluate(expr.value(), result);
-
-    local_context().serial = old_serial;
-}
-
-/*!
- * \brief Compound mul evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_parallel_expr<Expr>::value)>
-void mul_evaluate(Expr&& expr, Result&& result) {
-    auto old_parallel = local_context().parallel;
-
-    local_context().parallel = true;
-
-    mul_evaluate(expr.value(), result);
-
-    local_context().parallel = old_parallel;
-}
-
-/*!
- * \brief Compound mul evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_selected_expr<Expr>::value)>
-void mul_evaluate(Expr&& expr, Result&& result) {
-    decltype(auto) forced = detail::get_forced_impl<typename std::decay_t<Expr>::selector_t>();
-
-    auto old_forced = forced;
-
-    forced.impl = std::decay_t<Expr>::selector_value;
-    forced.forced = true;
-
-    mul_evaluate(expr.value(), result);
-
-    forced = old_forced;
-}
-
-/*!
- * \brief Compound mul evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
-void mul_evaluate(Expr&& expr, Result&& result) {
-    using resolution = typename std::decay_t<Expr>::clock_resolution;
-
-    auto start_time = etl::timer_clock::now();
-
-    mul_evaluate(expr.value(), result);
-
-    auto end_time = etl::timer_clock::now();
-    auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
-
-    std::cout << "timed(*=): " << expr.value() << " took " << duration.count() << resolution_to_string<resolution>() << std::endl;
 }
 
 /*!
@@ -953,8 +704,8 @@ void mul_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
-void div_evaluate(Expr&& expr, Result&& result) {
+template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+void std_div_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::div_evaluate(expr, result);
 }
 
@@ -963,92 +714,9 @@ void div_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
-void div_evaluate(Expr&& expr, Result&& result) {
+template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value)>
+void std_div_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::div_evaluate(transpose(expr), result);
-}
-
-/*!
- * \brief Compound div evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
-void div_evaluate(Expr&& expr, Result&& result) {
-    optimized_forward(expr.value(),
-                      [&result](auto& optimized) {
-                          div_evaluate(optimized, result);
-                      });
-}
-
-/*!
- * \brief Compound div evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::value)>
-void div_evaluate(Expr&& expr, Result&& result) {
-    auto old_serial = local_context().serial;
-
-    local_context().serial = true;
-
-    div_evaluate(expr.value(), result);
-
-    local_context().serial = old_serial;
-}
-
-/*!
- * \brief Compound div evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_parallel_expr<Expr>::value)>
-void div_evaluate(Expr&& expr, Result&& result) {
-    auto old_parallel = local_context().parallel;
-
-    local_context().parallel = true;
-
-    div_evaluate(expr.value(), result);
-
-    local_context().parallel = old_parallel;
-}
-
-/*!
- * \brief Compound mul evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_selected_expr<Expr>::value)>
-void div_evaluate(Expr&& expr, Result&& result) {
-    decltype(auto) forced = detail::get_forced_impl<typename std::decay_t<Expr>::selector_t>();
-
-    auto old_forced = forced;
-
-    forced.impl = std::decay_t<Expr>::selector_value;
-    forced.forced = true;
-
-    div_evaluate(expr.value(), result);
-
-    forced = old_forced;
-}
-
-/*!
- * \brief Compound div evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
-void div_evaluate(Expr&& expr, Result&& result) {
-    using resolution = typename std::decay_t<Expr>::clock_resolution;
-
-    auto start_time = etl::timer_clock::now();
-
-    div_evaluate(expr.value(), result);
-
-    auto end_time = etl::timer_clock::now();
-    auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
-
-    std::cout << "timed(/=): " << expr.value() << " took " << duration.count() << resolution_to_string<resolution>() << std::endl;
 }
 
 /*!
@@ -1056,8 +724,8 @@ void div_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
-void mod_evaluate(Expr&& expr, Result&& result) {
+template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+void std_mod_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::mod_evaluate(expr, result);
 }
 
@@ -1066,92 +734,9 @@ void mod_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
-void mod_evaluate(Expr&& expr, Result&& result) {
+template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value)>
+void std_mod_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::mod_evaluate(transpose(expr), result);
-}
-
-/*!
- * \brief Compound mod evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
-void mod_evaluate(Expr&& expr, Result&& result) {
-    optimized_forward(expr.value(),
-                      [&result](auto& optimized) {
-                          mod_evaluate(optimized, result);
-                      });
-}
-
-/*!
- * \brief Compound mod evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::value)>
-void mod_evaluate(Expr&& expr, Result&& result) {
-    auto old_serial = local_context().serial;
-
-    local_context().serial = true;
-
-    mod_evaluate(expr.value(), result);
-
-    local_context().serial = old_serial;
-}
-
-/*!
- * \brief Compound mod evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_parallel_expr<Expr>::value)>
-void mod_evaluate(Expr&& expr, Result&& result) {
-    auto old_parallel = local_context().parallel;
-
-    local_context().parallel = true;
-
-    mod_evaluate(expr.value(), result);
-
-    local_context().parallel = old_parallel;
-}
-
-/*!
- * \brief Compound mul evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_selected_expr<Expr>::value)>
-void mod_evaluate(Expr&& expr, Result&& result) {
-    decltype(auto) forced = detail::get_forced_impl<typename std::decay_t<Expr>::selector_t>();
-
-    auto old_forced = forced;
-
-    forced.impl = std::decay_t<Expr>::selector_value;
-    forced.forced = true;
-
-    mod_evaluate(expr.value(), result);
-
-    forced = old_forced;
-}
-
-/*!
- * \brief Compound mod evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
-void mod_evaluate(Expr&& expr, Result&& result) {
-    using resolution = typename std::decay_t<Expr>::clock_resolution;
-
-    auto start_time = etl::timer_clock::now();
-
-    mod_evaluate(expr.value(), result);
-
-    auto end_time = etl::timer_clock::now();
-    auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
-
-    std::cout << "timed(%=): " << expr.value() << " took " << duration.count() << resolution_to_string<resolution>() << std::endl;
 }
 
 /*!

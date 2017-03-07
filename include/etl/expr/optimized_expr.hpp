@@ -81,6 +81,76 @@ public:
                           const_cast<tt&>(optimized).assign_to(lhs);
                       });
     }
+
+    /*!
+     * \brief Add to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_add_to(L&& lhs) {
+        //Note: This is more than ugly...
+        optimized_forward(_value,
+                      [&lhs](auto&& optimized) mutable {
+                          using tt = std::remove_const_t<std::remove_reference_t<decltype(optimized)>>;
+                          const_cast<tt&>(optimized).assign_add_to(lhs);
+                      });
+    }
+
+    /*!
+     * \brief Sub from the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_sub_to(L&& lhs) {
+        //Note: This is more than ugly...
+        optimized_forward(_value,
+                      [&lhs](auto&& optimized) mutable {
+                          using tt = std::remove_const_t<std::remove_reference_t<decltype(optimized)>>;
+                          const_cast<tt&>(optimized).assign_sub_to(lhs);
+                      });
+    }
+
+    /*!
+     * \brief Multiply the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_mul_to(L&& lhs) {
+        //Note: This is more than ugly...
+        optimized_forward(_value,
+                      [&lhs](auto&& optimized) mutable {
+                          using tt = std::remove_const_t<std::remove_reference_t<decltype(optimized)>>;
+                          const_cast<tt&>(optimized).assign_mul_to(lhs);
+                      });
+    }
+
+    /*!
+     * \brief Divide the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_div_to(L&& lhs) {
+        //Note: This is more than ugly...
+        optimized_forward(_value,
+                      [&lhs](auto&& optimized) mutable {
+                          using tt = std::remove_const_t<std::remove_reference_t<decltype(optimized)>>;
+                          const_cast<tt&>(optimized).assign_div_to(lhs);
+                      });
+    }
+
+    /*!
+     * \brief Modulo the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_mod_to(L&& lhs) {
+        //Note: This is more than ugly...
+        optimized_forward(_value,
+                      [&lhs](auto&& optimized) mutable {
+                          using tt = std::remove_const_t<std::remove_reference_t<decltype(optimized)>>;
+                          const_cast<tt&>(optimized).assign_mod_to(lhs);
+                      });
+    }
 };
 
 /*!

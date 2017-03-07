@@ -258,6 +258,62 @@ public:
         return matrix.alias(rhs);
     }
 
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(matrix, lhs);
+    }
+
+    /*!
+     * \brief Add to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_add_to(L&& lhs) {
+        std_add_evaluate(matrix, lhs);
+    }
+
+    /*!
+     * \brief Sub from the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_sub_to(L&& lhs) {
+        std_sub_evaluate(matrix, lhs);
+    }
+
+    /*!
+     * \brief Multiply the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_mul_to(L&& lhs) {
+        std_mul_evaluate(matrix, lhs);
+    }
+
+    /*!
+     * \brief Divide the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_div_to(L&& lhs) {
+        std_div_evaluate(matrix, lhs);
+    }
+
+    /*!
+     * \brief Modulo the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_mod_to(L&& lhs) {
+        std_mod_evaluate(matrix, lhs);
+    }
+
     // Internals
 
     /*!

@@ -87,6 +87,96 @@ public:
 
         forced = old_forced;
     }
+
+    /*!
+     * \brief Add to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_add_to(L&& lhs) {
+        decltype(auto) forced = detail::get_forced_impl<selector_t>();
+
+        auto old_forced = forced;
+
+        forced.impl = selector_value;
+        forced.forced = true;
+
+        _value.assign_add_to(lhs);
+
+        forced = old_forced;
+    }
+
+    /*!
+     * \brief Sub from the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_sub_to(L&& lhs) {
+        decltype(auto) forced = detail::get_forced_impl<selector_t>();
+
+        auto old_forced = forced;
+
+        forced.impl = selector_value;
+        forced.forced = true;
+
+        _value.assign_sub_to(lhs);
+
+        forced = old_forced;
+    }
+
+    /*!
+     * \brief Multiply the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_mul_to(L&& lhs) {
+        decltype(auto) forced = detail::get_forced_impl<selector_t>();
+
+        auto old_forced = forced;
+
+        forced.impl = selector_value;
+        forced.forced = true;
+
+        _value.assign_mul_to(lhs);
+
+        forced = old_forced;
+    }
+
+    /*!
+     * \brief Divide the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_div_to(L&& lhs) {
+        decltype(auto) forced = detail::get_forced_impl<selector_t>();
+
+        auto old_forced = forced;
+
+        forced.impl = selector_value;
+        forced.forced = true;
+
+        _value.assign_div_to(lhs);
+
+        forced = old_forced;
+    }
+
+    /*!
+     * \brief Modulo the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_mod_to(L&& lhs) {
+        decltype(auto) forced = detail::get_forced_impl<selector_t>();
+
+        auto old_forced = forced;
+
+        forced.impl = selector_value;
+        forced.forced = true;
+
+        _value.assign_mod_to(lhs);
+
+        forced = old_forced;
+    }
 };
 
 /*!

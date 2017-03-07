@@ -285,7 +285,7 @@ LE& operator+=(LE&& lhs, RE rhs) {
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator+=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
-    add_evaluate(rhs, lhs);
+    rhs.assign_add_to(lhs);
     return lhs;
 }
 
@@ -310,7 +310,7 @@ LE& operator-=(LE&& lhs, RE rhs) {
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator-=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
-    sub_evaluate(rhs, lhs);
+    rhs.assign_sub_to(lhs);
     return lhs;
 }
 
@@ -335,7 +335,7 @@ LE& operator*=(LE&& lhs, RE rhs) {
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator*=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
-    mul_evaluate(rhs, lhs);
+    rhs.assign_mul_to(lhs);
     return lhs;
 }
 
@@ -360,7 +360,7 @@ LE& operator>>=(LE&& lhs, RE rhs) {
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator>>=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
-    mul_evaluate(rhs, lhs);
+    rhs.assign_mul_to(lhs);
     return lhs;
 }
 
@@ -385,7 +385,7 @@ LE& operator/=(LE&& lhs, RE rhs) {
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator/=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
-    div_evaluate(rhs, lhs);
+    rhs.assign_div_to(lhs);
     return lhs;
 }
 
@@ -410,7 +410,7 @@ LE& operator%=(LE&& lhs, RE rhs) {
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
 LE& operator%=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
-    mod_evaluate(rhs, lhs);
+    rhs.assign_mod_to(lhs);
     return lhs;
 }
 

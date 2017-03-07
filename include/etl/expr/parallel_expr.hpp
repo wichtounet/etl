@@ -85,6 +85,81 @@ public:
 
         local_context().parallel = old_parallel;
     }
+
+    /*!
+     * \brief Add to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_add_to(L&& lhs) {
+        auto old_parallel = local_context().parallel;
+
+        local_context().parallel = true;
+
+        _value.assign_add_to(lhs);
+
+        local_context().parallel = old_parallel;
+    }
+
+    /*!
+     * \brief Sub from the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_sub_to(L&& lhs) {
+        auto old_parallel = local_context().parallel;
+
+        local_context().parallel = true;
+
+        _value.assign_sub_to(lhs);
+
+        local_context().parallel = old_parallel;
+    }
+
+    /*!
+     * \brief Multiply the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_mul_to(L&& lhs) {
+        auto old_parallel = local_context().parallel;
+
+        local_context().parallel = true;
+
+        _value.assign_mul_to(lhs);
+
+        local_context().parallel = old_parallel;
+    }
+
+    /*!
+     * \brief Divide the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_div_to(L&& lhs) {
+        auto old_parallel = local_context().parallel;
+
+        local_context().parallel = true;
+
+        _value.assign_div_to(lhs);
+
+        local_context().parallel = old_parallel;
+    }
+
+    /*!
+     * \brief Modulo the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_mod_to(L&& lhs) {
+        auto old_parallel = local_context().parallel;
+
+        local_context().parallel = true;
+
+        _value.assign_mod_to(lhs);
+
+        local_context().parallel = old_parallel;
+    }
 };
 
 /*!

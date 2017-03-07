@@ -83,6 +83,86 @@ public:
 
         std::cout << "timed(=): " << _value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
     }
+
+    /*!
+     * \brief Add to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_add_to(L&& lhs) {
+        auto start_time = etl::timer_clock::now();
+
+        _value.assign_add_to(lhs);
+
+        auto end_time = etl::timer_clock::now();
+        auto duration = std::chrono::duration_cast<clock_resolution>(end_time - start_time);
+
+        std::cout << "timed(+=): " << _value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
+    }
+
+    /*!
+     * \brief Sub from the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_sub_to(L&& lhs) {
+        auto start_time = etl::timer_clock::now();
+
+        _value.assign_sub_to(lhs);
+
+        auto end_time = etl::timer_clock::now();
+        auto duration = std::chrono::duration_cast<clock_resolution>(end_time - start_time);
+
+        std::cout << "timed(-=): " << _value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
+    }
+
+    /*!
+     * \brief Multiply the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_mul_to(L&& lhs) {
+        auto start_time = etl::timer_clock::now();
+
+        _value.assign_mul_to(lhs);
+
+        auto end_time = etl::timer_clock::now();
+        auto duration = std::chrono::duration_cast<clock_resolution>(end_time - start_time);
+
+        std::cout << "timed(*=): " << _value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
+    }
+
+    /*!
+     * \brief Divide the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_div_to(L&& lhs) {
+        auto start_time = etl::timer_clock::now();
+
+        _value.assign_div_to(lhs);
+
+        auto end_time = etl::timer_clock::now();
+        auto duration = std::chrono::duration_cast<clock_resolution>(end_time - start_time);
+
+        std::cout << "timed(/=): " << _value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
+    }
+
+    /*!
+     * \brief Modulo the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_mod_to(L&& lhs) {
+        auto start_time = etl::timer_clock::now();
+
+        _value.assign_mod_to(lhs);
+
+        auto end_time = etl::timer_clock::now();
+        auto duration = std::chrono::duration_cast<clock_resolution>(end_time - start_time);
+
+        std::cout << "timed(%=): " << _value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
+    }
 };
 
 /*!

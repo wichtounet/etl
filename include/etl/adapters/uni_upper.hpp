@@ -139,14 +139,14 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    uni_upper_matrix& operator+=(const R& rhs){
+    uni_upper_matrix& operator+=(R&& rhs){
         // Make sure the other matrix is uni upper triangular
         if(!is_uni_upper_triangular(rhs)){
             throw uni_upper_exception();
         }
 
         validate_expression(*this, rhs);
-        add_evaluate(rhs, *this);
+        rhs.assign_add_to(*this);
         return *this;
     }
 
@@ -166,14 +166,14 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    uni_upper_matrix& operator-=(const R& rhs){
+    uni_upper_matrix& operator-=(R&& rhs){
         // Make sure the other matrix is uni upper triangular
         if(!is_uni_upper_triangular(rhs)){
             throw uni_upper_exception();
         }
 
         validate_expression(*this, rhs);
-        sub_evaluate(rhs, *this);
+        rhs.assign_sub_to(*this);
         return *this;
     }
 
@@ -193,14 +193,14 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    uni_upper_matrix& operator*=(const R& rhs) {
+    uni_upper_matrix& operator*=(R&& rhs) {
         // Make sure the other matrix is uni upper triangular
         if(!is_uni_upper_triangular(rhs)){
             throw uni_upper_exception();
         }
 
         validate_expression(*this, rhs);
-        mul_evaluate(rhs, *this);
+        rhs.assign_mul_to(*this);
         return *this;
     }
 
@@ -220,14 +220,14 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    uni_upper_matrix& operator>>=(const R& rhs) {
+    uni_upper_matrix& operator>>=(R&& rhs) {
         // Make sure the other matrix is uni upper triangular
         if(!is_uni_upper_triangular(rhs)){
             throw uni_upper_exception();
         }
 
         validate_expression(*this, rhs);
-        mul_evaluate(rhs, *this);
+        rhs.assign_mul_to(*this);
         return *this;
     }
 
@@ -247,14 +247,14 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    uni_upper_matrix& operator/=(const R& rhs) {
+    uni_upper_matrix& operator/=(R&& rhs) {
         // Make sure the other matrix is uni upper triangular
         if(!is_uni_upper_triangular(rhs)){
             throw uni_upper_exception();
         }
 
         validate_expression(*this, rhs);
-        div_evaluate(rhs, *this);
+        rhs.assign_div_to(*this);
         return *this;
     }
 
@@ -274,14 +274,14 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    uni_upper_matrix& operator%=(const R& rhs){
+    uni_upper_matrix& operator%=(R&& rhs){
         // Make sure the other matrix is uni upper triangular
         if(!is_uni_upper_triangular(rhs)){
             throw uni_upper_exception();
         }
 
         validate_expression(*this, rhs);
-        mod_evaluate(rhs, *this);
+        rhs.assign_mod_to(*this);
         return *this;
     }
 
