@@ -93,6 +93,8 @@ namespace standard_evaluator {
         result.ensure_cpu_up_to_date();
 
         direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
+
+        result.invalidate_gpu();
     }
 
     //Parallel assign version
