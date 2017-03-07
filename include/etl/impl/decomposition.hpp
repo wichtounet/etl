@@ -47,7 +47,7 @@ struct qr_impl {
      * \param R The R decomposition (output)
      */
     template <typename AT, typename QT, typename RT>
-    static void apply(const AT& A, QT& Q, RT& R) {
+    static void apply(AT& A, QT& Q, RT& R) {
         etl::impl::standard::qr(A, Q, R);
     }
 };

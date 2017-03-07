@@ -217,6 +217,17 @@ public:
         return sub_expr.unsafe_dimension_access(x + 1);
     }
 
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
+    }
+
     // Internals
 
     /*!
@@ -539,6 +550,17 @@ public:
     template<std::size_t... I>
     std::array<std::size_t, decay_traits<this_type>::dimensions()> dim_array(std::index_sequence<I...>) const {
         return {{decay_traits<this_type>::dim(*this, I)...}};
+    }
+
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
     }
 
     // Internals

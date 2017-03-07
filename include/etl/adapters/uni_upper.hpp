@@ -118,7 +118,7 @@ public:
         // Perform the real assign
 
         validate_assign(*this, e);
-        assign_evaluate(std::forward<E>(e), *this);
+        e.assign_to(*this);
 
         return *this;
     }

@@ -201,6 +201,17 @@ public:
         return sub.alias(rhs);
     }
 
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
+    }
+
     // Internals
 
     /*!
@@ -472,6 +483,17 @@ public:
      */
     const_memory_type memory_end() const noexcept {
         return sub.memory_end();
+    }
+
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
     }
 
     // Internals

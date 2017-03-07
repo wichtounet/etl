@@ -33,7 +33,7 @@ struct assignable {
     template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
     derived_t& operator=(E&& e) {
         validate_assign(as_derived(), e);
-        assign_evaluate(std::forward<E>(e), as_derived());
+        e.assign_to(as_derived());
         return as_derived();
     }
 

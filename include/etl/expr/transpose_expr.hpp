@@ -124,6 +124,17 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<T, A>, A> {
 
         detail::transpose::apply(make_temporary(std::forward<A>(a)), std::forward<C>(c));
     }
+
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
+    }
 };
 
 template <typename T, typename A>

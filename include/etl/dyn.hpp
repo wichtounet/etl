@@ -208,7 +208,8 @@ public:
                 validate_assign(*this, rhs);
             }
 
-            assign_evaluate(rhs, *this);
+            // TODO Find a better solution
+            const_cast<dyn_matrix_impl&>(rhs).assign_to(*this);
         }
 
         check_invariants();
@@ -312,7 +313,7 @@ public:
             validate_assign(*this, e);
         }
 
-        assign_evaluate(e, *this);
+        e.assign_to(*this);
 
         check_invariants();
 
@@ -452,6 +453,17 @@ public:
         if(!_memory){
             inherit(e);
         }
+    }
+
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
     }
 
     // Internals

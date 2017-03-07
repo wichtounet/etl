@@ -531,7 +531,7 @@ public:
     sparse_matrix_impl& operator=(E&& e) noexcept {
         validate_assign(*this, e);
 
-        assign_evaluate(e, *this);
+        e.assign_to(*this);
 
         check_invariants();
 

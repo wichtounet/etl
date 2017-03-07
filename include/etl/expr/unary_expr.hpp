@@ -202,6 +202,17 @@ public:
         return _value.alias(rhs);
     }
 
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
+    }
+
     // Internals
 
     /*!
@@ -562,6 +573,17 @@ public:
         return {{this->template dim<I>()...}};
     }
 
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
+    }
+
     // Internals
 
     /*!
@@ -820,6 +842,17 @@ public:
         return _value.alias(rhs);
     }
 
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
+    }
+
     // Internals
 
     /*!
@@ -976,6 +1009,17 @@ public:
     template <typename E>
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
+    }
+
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
     }
 
     // Internals

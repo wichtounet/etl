@@ -146,7 +146,7 @@ public:
     custom_dyn_matrix_impl& operator=(E&& e) noexcept {
         validate_assign(*this, e);
 
-        assign_evaluate(e, *this);
+        e.assign_to(*this);
 
         check_invariants();
 
@@ -259,6 +259,17 @@ public:
     template<typename V = default_vec>
     vec_type<V> loadu(std::size_t i) const noexcept {
         return V::loadu(_memory + i);
+    }
+
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
     }
 
     // Internals

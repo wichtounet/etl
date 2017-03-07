@@ -722,6 +722,12 @@ void assign_evaluate(Expr&& expr, Result&& result) {
     std::cout << "timed(=): " << expr.value() << " took " << duration.count() << resolution_to_string<resolution>() << std::endl;
 }
 
+// TODO This will be integrated with the other functions later
+template <typename Expr, typename Result>
+void std_assign_evaluate(Expr&& expr, Result&& result) {
+    assign_evaluate(expr, result);
+}
+
 /*!
  * \brief Compound add evaluation of the expr into result
  * \param expr The right hand side expression

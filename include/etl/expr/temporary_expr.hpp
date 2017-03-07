@@ -638,6 +638,17 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
     auto allocate() const {
         return Op::allocate(this->a());
     }
+
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
+    }
 };
 
 /*!
@@ -681,6 +692,17 @@ struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr
     auto allocate() const {
         return op.allocate(this->a());
     }
+
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
+    }
 };
 
 /*!
@@ -717,6 +739,17 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
      */
     auto allocate() const {
         return Op::allocate(this->a(), this->b());
+    }
+
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
     }
 };
 
@@ -757,6 +790,17 @@ struct temporary_binary_expr_state final : temporary_expr_bin<temporary_binary_e
      */
     auto allocate() const {
         return op.allocate(this->a(), this->b());
+    }
+
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
     }
 };
 

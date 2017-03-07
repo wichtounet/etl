@@ -212,7 +212,19 @@ public:
         return etl::slice(*this, first, last);
     }
 
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
+    }
+
     // Internals
+
     /*!
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply

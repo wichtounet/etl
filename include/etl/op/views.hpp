@@ -193,6 +193,17 @@ struct dim_view {
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
 
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
+    }
+
     // Internals
 
     /*!
@@ -399,6 +410,17 @@ struct slice_view {
         return sub.memory_start() + last * (etl::size(sub) / etl::dim<0>(sub));
     }
 
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
+    }
+
     // Internals
 
     /*!
@@ -600,6 +622,17 @@ struct memory_slice_view {
      */
     const_memory_type memory_end() const noexcept {
         return sub.memory_start() + last;
+    }
+
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
     }
 
     // Internals

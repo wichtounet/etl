@@ -92,7 +92,7 @@ void lu(const AT& A, LT& L, UT& U, PT& P) {
  * \param R The resulting R matrix
  */
 template <typename AT, typename QT, typename RT>
-void householder(const AT& A, QT& Q, RT& R) {
+void householder(AT& A, QT& Q, RT& R) {
     using T = value_t<AT>;
 
     const auto m = etl::dim<0>(A);
@@ -169,7 +169,7 @@ void householder(const AT& A, QT& Q, RT& R) {
  * \param P The resulting P matrix
  */
 template <typename AT, typename QT, typename RT>
-void qr(const AT& A, QT& Q, RT& R) {
+void qr(AT& A, QT& Q, RT& R) {
     householder(A, Q, R);
 }
 

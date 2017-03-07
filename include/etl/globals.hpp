@@ -599,7 +599,7 @@ bool lu(const AT& A, LT& L, UT& U, PT& P) {
  * \return true if the decomposition suceeded, false otherwise
  */
 template <typename AT, typename QT, typename RT>
-bool qr(const AT& A, QT& Q, RT& R) {
+bool qr(AT& A, QT& Q, RT& R) {
     // A and R have the same dimensions
     if (etl::dim(A, 0) != etl::dim(R, 0) || etl::dim(A, 1) != etl::dim(R, 1)) {
         return false;

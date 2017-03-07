@@ -169,7 +169,7 @@ public:
     template <std::size_t... SDims>
     fast_matrix_impl& operator=(const fast_matrix_impl<T, ST, SO, SDims...>& rhs) noexcept {
         validate_assign(*this, rhs);
-        assign_evaluate(rhs, *this);
+        rhs.assign_to(*this);
         return *this;
     }
 
@@ -193,7 +193,7 @@ public:
     template <typename E, cpp_enable_if(is_etl_expr<E>::value, std::is_convertible<value_t<E>, value_type>::value)>
     fast_matrix_impl& operator=(E&& e) {
         validate_assign(*this, e);
-        assign_evaluate(std::forward<E>(e), *this);
+        e.assign_to(*this);
         return *this;
     }
 
@@ -286,6 +286,17 @@ public:
     template <typename V = default_vec>
     vec_type<V> loadu(std::size_t i) const noexcept {
         return V::loadu(memory_start() + i);
+    }
+
+    // Assignment functions
+
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs) {
+        std_assign_evaluate(*this, lhs);
     }
 
     // Internals
