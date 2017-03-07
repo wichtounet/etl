@@ -74,7 +74,12 @@ public:
      */
     template<typename L>
     void assign_to(L&& lhs) {
-        std_assign_evaluate(*this, lhs);
+        //Note: This is more than ugly...
+        optimized_forward(_value,
+                      [&lhs](auto&& optimized) mutable {
+                          using tt = std::remove_const_t<std::remove_reference_t<decltype(optimized)>>;
+                          const_cast<tt&>(optimized).assign_to(lhs);
+                      });
     }
 };
 

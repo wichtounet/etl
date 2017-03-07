@@ -74,7 +74,14 @@ public:
      */
     template<typename L>
     void assign_to(L&& lhs) {
-        std_assign_evaluate(*this, lhs);
+        auto start_time = etl::timer_clock::now();
+
+        _value.assign_to(lhs);
+
+        auto end_time = etl::timer_clock::now();
+        auto duration = std::chrono::duration_cast<clock_resolution>(end_time - start_time);
+
+        std::cout << "timed(=): " << _value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
     }
 };
 

@@ -72,7 +72,13 @@ public:
      */
     template<typename L>
     void assign_to(L&& lhs) {
-        std_assign_evaluate(*this, lhs);
+        auto old_serial = local_context().serial;
+
+        local_context().serial = true;
+
+        _value.assign_to(lhs);
+
+        local_context().serial = old_serial;
     }
 };
 

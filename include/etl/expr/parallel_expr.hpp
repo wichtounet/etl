@@ -77,7 +77,13 @@ public:
      */
     template<typename L>
     void assign_to(L&& lhs) {
-        std_assign_evaluate(*this, lhs);
+        auto old_parallel = local_context().parallel;
+
+        local_context().parallel = true;
+
+        _value.assign_to(lhs);
+
+        local_context().parallel = old_parallel;
     }
 };
 

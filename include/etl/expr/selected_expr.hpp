@@ -76,7 +76,16 @@ public:
      */
     template<typename L>
     void assign_to(L&& lhs) {
-        std_assign_evaluate(*this, lhs);
+        decltype(auto) forced = detail::get_forced_impl<selector_t>();
+
+        auto old_forced = forced;
+
+        forced.impl = selector_value;
+        forced.forced = true;
+
+        _value.assign_to(lhs);
+
+        forced = old_forced;
     }
 };
 
