@@ -192,7 +192,7 @@ void strassen_mm_mul_r(const A& a, const B& b, C& c) {
 /*!
  * \brief Returns the next power of two of n
  */
-inline std::size_t nextPowerOfTwo(std::size_t n) {
+inline std::size_t next_power_of_two(std::size_t n) {
     return std::pow(2, static_cast<std::size_t>(std::ceil(std::log2(n))));
 }
 
@@ -209,7 +209,7 @@ void strassen_mm_mul(const A& a, const B& b, C& c) {
     //For now, assume matrices are of size 2^nx2^n
 
     std::size_t n = std::max(dim<0>(a), std::max(dim<1>(a), dim<1>(b)));
-    std::size_t m = nextPowerOfTwo(n);
+    std::size_t m = next_power_of_two(n);
 
     if (dim<0>(a) == m && dim<0>(b) == m && dim<1>(a) == m && dim<1>(b) == m) {
         strassen_mm_mul_r(a, b, c);
