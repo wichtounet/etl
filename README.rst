@@ -1,10 +1,12 @@
 Expression Templates Library (ETL) 1.0
 ======================================
 
-.. image:: https://img.shields.io/sonar/https/sonar.baptiste-wicht.ch/etl/coverage.svg
-.. image:: https://img.shields.io/jenkins/s/https/jenkins.baptiste-wicht.ch/etl.svg
-.. image:: https://img.shields.io/github/license/mashape/apistatus.svg
-.. image:: https://codedocs.xyz/wichtounet/etl.svg
+|coverage| |jenkins| |license| |doc|
+
+.. |coverage| image:: https://img.shields.io/sonar/https/sonar.baptiste-wicht.ch/etl/coverage.svg
+.. |jenkins| image:: https://img.shields.io/jenkins/s/https/jenkins.baptiste-wicht.ch/etl.svg 
+.. |license| image:: https://img.shields.io/github/license/mashape/apistatus.svg
+.. |doc| image:: https://codedocs.xyz/wichtounet/etl.svg
    :target: https://codedocs.xyz/wichtounet/etl/
 
 ETL is a header only library for C++ that provides vector and matrix classes
