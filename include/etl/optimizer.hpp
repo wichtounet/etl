@@ -497,11 +497,23 @@ struct optimizer<etl::temporary_binary_expr<T, A, B, Op>> {
     }
 };
 
+/*!
+ * \brief Optimize an expression and reconstruct the parent from the
+ * optimized expression.
+ * \param parent_builder The builder to rebuild the parent
+ * \param expr The expression to optimize
+ */
 template <typename Builder, typename Expr>
 void optimize(Builder parent_builder, Expr& expr) {
     optimizer<std::decay_t<Expr>>::apply(parent_builder, expr);
 }
 
+/*!
+ * \brief Optimize an expression and pass the optimized expression
+ * to the given functor
+ * \param expr The expression to optimize
+ * \param result The functor to apply on the optimized expression
+ */
 template <typename Expr, typename Result>
 void optimized_forward(Expr& expr, Result result) {
     if (is_optimizable_deep(expr)) {
