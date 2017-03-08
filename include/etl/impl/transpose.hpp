@@ -67,12 +67,12 @@ struct inplace_square_transpose {
      */
     template <typename C>
     static void apply(C&& c) {
-        // Condition to use MKL
-        static constexpr bool mkl_possible = mkl_enabled && all_dma<C>::value && all_floating<C>::value;
-
         const auto impl = select_transpose_impl_smart<C, C>();
 
         if(cpp_likely(impl == transpose_impl::SELECT)){
+            // Condition to use MKL
+            static constexpr bool mkl_possible = mkl_enabled && all_dma<C>::value && all_floating<C>::value;
+
             // MKL is always faster than STD on inplace square transpositions
             if(mkl_possible){
                 etl::impl::blas::inplace_square_transpose(c);
