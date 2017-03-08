@@ -223,7 +223,7 @@ bool direct_div(L&& lhs, R&& rhs) {
  * \param rhs The rhs matrix
  */
 template <typename L, typename R>
-void direct_add(T&& lhs, R&& rhs) {
+void direct_add(L&& lhs, R&& rhs) {
     cpp_unused(lhs);
     cpp_unused(rhs);
     cpp_unreachable("CUBLAS not available/enabled");
@@ -235,7 +235,7 @@ void direct_add(T&& lhs, R&& rhs) {
  * \param rhs The rhs matrix
  */
 template <typename L, typename R>
-void direct_sub(T&& lhs, R&& rhs) {
+void direct_sub(L&& lhs, R&& rhs) {
     cpp_unused(lhs);
     cpp_unused(rhs);
     cpp_unreachable("CUBLAS not available/enabled");
@@ -247,7 +247,7 @@ void direct_sub(T&& lhs, R&& rhs) {
  * \param rhs The rhs matrix
  */
 template <typename L, typename R>
-bool direct_mul(T&& lhs, R&& rhs) {
+bool direct_mul(L&& lhs, R&& rhs) {
     cpp_unused(lhs);
     cpp_unused(rhs);
     cpp_unreachable("CUBLAS not available/enabled");
@@ -260,7 +260,7 @@ bool direct_mul(T&& lhs, R&& rhs) {
  * \param rhs The rhs matrix
  */
 template <typename L, typename R>
-bool direct_div(T&& lhs, R&& rhs) {
+bool direct_div(L&& lhs, R&& rhs) {
     cpp_unused(lhs);
     cpp_unused(rhs);
     cpp_unreachable("CUBLAS not available/enabled");
