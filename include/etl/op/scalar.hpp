@@ -171,7 +171,7 @@ struct scalar {
  */
 template <typename T>
 struct etl_traits<etl::scalar<T>, void> {
-    using value_type = T; /// < The value type of the expression
+    using value_type = T; ///< The value type of the expression
 
     static constexpr bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;           ///< Indicates if the type is a transformer

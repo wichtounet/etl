@@ -22,7 +22,7 @@ struct wrapper_traits {
     using expr_t     = T;                                ///< The type of the expression
     using sub_expr_t = std::decay_t<typename T::expr_t>; ///< The sub expression type
     using sub_traits = etl_traits<sub_expr_t>;           ///< sub expression traits
-    using value_type = typename sub_expr_t::value_type;  /// < The value type of the expression
+    using value_type = typename sub_expr_t::value_type;  ///< The value type of the expression
 
     static constexpr bool is_etl                  = sub_traits::is_etl;                  ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = sub_traits::is_transformer;          ///< Indicates if the type is a transformer

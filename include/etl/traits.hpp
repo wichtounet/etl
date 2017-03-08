@@ -723,7 +723,7 @@ struct is_square_matrix <Matrix, std::enable_if_t<!all_fast<Matrix>::value && is
  */
 template <typename T>
 struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
-    using value_type = typename T::value_type; /// < The value type of the expression
+    using value_type = typename T::value_type; ///< The value type of the expression
 
     static constexpr bool is_etl                  = true;                                                        ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;                                                       ///< Indicates if the type is a transformer

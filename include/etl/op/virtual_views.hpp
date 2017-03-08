@@ -197,7 +197,7 @@ struct fast_magic_view {
 template <typename V>
 struct etl_traits<etl::magic_view<V>> {
     using expr_t     = etl::magic_view<V>; ///< The inspected expression type
-    using value_type = V;                  /// < The value type of the expression
+    using value_type = V;                  ///< The value type of the expression
 
     static constexpr bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;           ///< Indicates if the type is a transformer
@@ -257,7 +257,7 @@ struct etl_traits<etl::magic_view<V>> {
 template <std::size_t N, typename V>
 struct etl_traits<etl::fast_magic_view<V, N>> {
     using expr_t     = etl::fast_magic_view<V, N>; ///< The inspected expression type
-    using value_type = V;                          /// < The value type of the expression
+    using value_type = V;                          ///< The value type of the expression
 
     static constexpr bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;           ///< Indicates if the type is a transformer
