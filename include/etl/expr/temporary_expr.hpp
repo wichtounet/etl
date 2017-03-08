@@ -99,16 +99,6 @@ protected:
     }
 
 public:
-    /*!
-     * \brief Evaluate the expression directly into the given result
-     *
-     * Will fail if not previously allocated
-     */
-    template <typename Result>
-    void direct_evaluate(Result&& result){
-        as_derived().apply(std::forward<Result>(result));
-    }
-
     //Apply the expression
 
     /*!
@@ -614,6 +604,8 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
     using this_type   = temporary_unary_expr<T, AExpr, Op>;                  ///< The type of this expression
     using base_type   = temporary_expr_un<this_type, T, AExpr, result_type>; ///< The base type
 
+    static constexpr auto storage_order = decay_traits<AExpr>::storage_order; ///< The storage order of the result
+
     /*!
      * \brief Construct a new expression
      * \param a The left expression
@@ -642,10 +634,22 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
     // Assignment functions
 
     /*!
-     * \brief Assign to the given left-hand-side expression
+     * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template<typename L>
+    template<typename L, cpp_enable_if(decay_traits<L>::storage_order == storage_order)>
+    void assign_to(L&& lhs) {
+        standard_evaluator::pre_assign_rhs(this->a());
+        standard_evaluator::pre_assign_lhs(lhs);
+
+        apply(lhs);
+    }
+
+    /*!
+     * \brief Assign to a matrix of a different storage order
+     * \param lhs The expression to which assign
+     */
+    template<typename L, cpp_enable_if(decay_traits<L>::storage_order != storage_order)>
     void assign_to(L&& lhs) {
         std_assign_evaluate(*this, lhs);
     }
@@ -710,6 +714,8 @@ struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr
     using this_type   = temporary_unary_expr_state<T, AExpr, Op>;            ///< The type of this expression
     using base_type   = temporary_expr_un<this_type, T, AExpr, result_type>; ///< The base type
 
+    static constexpr auto storage_order = decay_traits<AExpr>::storage_order; ///< The storage order of the result
+
     Op op; ///< The stateful operator
 
     /*!
@@ -741,10 +747,22 @@ struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr
     // Assignment functions
 
     /*!
-     * \brief Assign to the given left-hand-side expression
+     * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template<typename L>
+    template<typename L, cpp_enable_if(decay_traits<L>::storage_order == storage_order)>
+    void assign_to(L&& lhs) {
+        standard_evaluator::pre_assign_rhs(this->a());
+        standard_evaluator::pre_assign_lhs(lhs);
+
+        apply(lhs);
+    }
+
+    /*!
+     * \brief Assign to a matrix of a different storage order
+     * \param lhs The expression to which assign
+     */
+    template<typename L, cpp_enable_if(decay_traits<L>::storage_order != storage_order)>
     void assign_to(L&& lhs) {
         std_assign_evaluate(*this, lhs);
     }
@@ -805,6 +823,11 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
     using this_type   = temporary_binary_expr<T, AExpr, BExpr, Op>;                           ///< The type of this expresion
     using base_type   = temporary_expr_bin<this_type, value_type, AExpr, BExpr, result_type>; ///< The base type
 
+    using left_traits  = decay_traits<AExpr>; ///< Traits of the left-hand-side of the expression
+    using right_traits = decay_traits<BExpr>; ///< Traits of the right-hand-side of the expression
+
+    static constexpr auto storage_order = left_traits::is_generator ? right_traits::storage_order : left_traits::storage_order; ///< The storage order
+
     /*!
      * \brief Construct a new expression
      * \param a The left expression
@@ -834,10 +857,23 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
     // Assignment functions
 
     /*!
-     * \brief Assign to the given left-hand-side expression
+     * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template<typename L>
+    template<typename L, cpp_enable_if(decay_traits<L>::storage_order == storage_order)>
+    void assign_to(L&& lhs) {
+        standard_evaluator::pre_assign_rhs(this->a());
+        standard_evaluator::pre_assign_rhs(this->b());
+        standard_evaluator::pre_assign_lhs(lhs);
+
+        apply(lhs);
+    }
+
+    /*!
+     * \brief Assign to a matrix of a different storage order
+     * \param lhs The expression to which assign
+     */
+    template<typename L, cpp_enable_if(decay_traits<L>::storage_order != storage_order)>
     void assign_to(L&& lhs) {
         std_assign_evaluate(*this, lhs);
     }
@@ -898,6 +934,11 @@ struct temporary_binary_expr_state final : temporary_expr_bin<temporary_binary_e
     using this_type   = temporary_binary_expr_state<T, AExpr, BExpr, Op>;                     ///< The type of this expresion
     using base_type   = temporary_expr_bin<this_type, value_type, AExpr, BExpr, result_type>; ///< The base type
 
+    using left_traits  = decay_traits<AExpr>; ///< Traits of the left-hand-side of the expression
+    using right_traits = decay_traits<BExpr>; ///< Traits of the right-hand-side of the expression
+
+    static constexpr auto storage_order = left_traits::is_generator ? right_traits::storage_order : left_traits::storage_order; ///< The storage order
+
     Op op; ///< The stateful operation
 
     /*!
@@ -930,10 +971,23 @@ struct temporary_binary_expr_state final : temporary_expr_bin<temporary_binary_e
     // Assignment functions
 
     /*!
-     * \brief Assign to the given left-hand-side expression
+     * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template<typename L>
+    template<typename L, cpp_enable_if(decay_traits<L>::storage_order == storage_order)>
+    void assign_to(L&& lhs) {
+        standard_evaluator::pre_assign_rhs(this->a());
+        standard_evaluator::pre_assign_rhs(this->b());
+        standard_evaluator::pre_assign_lhs(lhs);
+
+        apply(lhs);
+    }
+
+    /*!
+     * \brief Assign to a matrix of a different storage order
+     * \param lhs The expression to which assign
+     */
+    template<typename L, cpp_enable_if(decay_traits<L>::storage_order != storage_order)>
     void assign_to(L&& lhs) {
         std_assign_evaluate(*this, lhs);
     }

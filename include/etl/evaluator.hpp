@@ -539,16 +539,12 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    //Note: In case of direct evaluation, the temporary_expr itself must
-    //not beevaluated by the visitor, otherwise, the result would
-    //be evaluated twice and a temporary would be allocated for nothing
-
     /*!
      * \brief Assign the result of the expression expression to the result
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_if(!is_temporary_expr<E>::value && !is_base_temporary_expr<E>::value && decay_traits<E>::is_linear)>
+    template <typename E, typename R, cpp_enable_if(decay_traits<E>::is_linear)>
     void assign_evaluate(E&& expr, R&& result) {
         //Evaluate sub parts, if any
         pre_assign_rhs(expr);
@@ -561,7 +557,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc assign_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(!is_temporary_expr<E>::value && !is_base_temporary_expr<E>::value && !decay_traits<E>::is_linear)>
+    template <typename E, typename R, cpp_enable_if(!decay_traits<E>::is_linear)>
     void assign_evaluate(E&& expr, R&& result) {
         //Evaluate sub parts, if any
         pre_assign_rhs(expr);
@@ -579,29 +575,6 @@ namespace standard_evaluator {
             //Perform the real evaluation, selected by TMP
             assign_evaluate_impl(expr, result);
         }
-    }
-
-    /*!
-     * \copydoc assign_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(is_temporary_unary_expr<E>::value || is_base_temporary_unary_expr<E>::value)>
-    void assign_evaluate(E&& expr, R&& result) {
-        pre_assign_rhs(expr.a());
-        pre_assign_lhs(result);
-
-        expr.direct_evaluate(std::forward<R>(result));
-    }
-
-    /*!
-     * \copydoc assign_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(is_temporary_binary_expr<E>::value || is_base_temporary_binary_expr<E>::value)>
-    void assign_evaluate(E&& expr, R&& result) {
-        pre_assign_rhs(expr.a());
-        pre_assign_rhs(expr.b());
-        pre_assign_lhs(result);
-
-        expr.direct_evaluate(result);
     }
 
 } // end of namespace standard_evaluator

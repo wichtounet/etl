@@ -177,16 +177,6 @@ protected:
     }
 
 public:
-    /*!
-     * \brief Evaluate the expression directly into the given result
-     *
-     * Will fail if not previously allocated
-     */
-    template <typename Result>
-    void direct_evaluate(Result&& result){
-        as_derived().apply_base(std::forward<Result>(result));
-    }
-
     //Apply the expression
 
     /*!

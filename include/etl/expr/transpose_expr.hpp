@@ -23,6 +23,9 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<T, A>, A> {
     using value_type = T;                                    ///< The type of value of the expression
     using this_type  = transpose_expr<T, A>;                 ///< The type of this expression
     using base_type  = base_temporary_expr_un<this_type, A>; ///< The base type
+    using sub_traits = decay_traits<A>;                      ///< The traits of the sub type
+
+    static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
 
     /*!
      * \brief Construct a new expression
@@ -128,10 +131,22 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<T, A>, A> {
     // Assignment functions
 
     /*!
-     * \brief Assign to the given left-hand-side expression
+     * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template<typename L>
+    template<typename L, cpp_enable_if(decay_traits<L>::storage_order == storage_order)>
+    void assign_to(L&& lhs) {
+        standard_evaluator::pre_assign_rhs(this->a());
+        standard_evaluator::pre_assign_lhs(lhs);
+
+        this->apply_base(lhs);
+    }
+
+    /*!
+     * \brief Assign to a matrix of a different storage order
+     * \param lhs The expression to which assign
+     */
+    template<typename L, cpp_enable_if(decay_traits<L>::storage_order != storage_order)>
     void assign_to(L&& lhs) {
         std_assign_evaluate(*this, lhs);
     }
