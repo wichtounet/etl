@@ -276,16 +276,38 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
+    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
+    void assign_add_to(L&& lhs) {
+        if(!detail::direct_add(lhs, *this)){
+            std_add_evaluate(*this, lhs);
+        }
+    }
+
+    /*!
+     * \brief Add to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
     void assign_add_to(L&& lhs) {
         std_add_evaluate(*this, lhs);
     }
 
     /*!
-     * \brief Sub from the given left-hand-side expression
+     * \brief Subtract from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
+    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
+    void assign_sub_to(L&& lhs) {
+        if(!detail::direct_sub(lhs, *this)){
+            std_sub_evaluate(*this, lhs);
+        }
+    }
+
+    /*!
+     * \brief Subtract from the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
     void assign_sub_to(L&& lhs) {
         std_sub_evaluate(*this, lhs);
     }
@@ -294,16 +316,37 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
+    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
+    void assign_mul_to(L&& lhs) {
+        if(!detail::direct_mul(lhs, *this)){
+            std_mul_evaluate(*this, lhs);
+        }
+    }
+
+    /*!
+     * \brief Multiply the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
     void assign_mul_to(L&& lhs) {
         std_mul_evaluate(*this, lhs);
     }
-
     /*!
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
+    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
+    void assign_div_to(L&& lhs) {
+        if(!detail::direct_div(lhs, *this)){
+            std_div_evaluate(*this, lhs);
+        }
+    }
+
+    /*!
+     * \brief Divide to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
     void assign_div_to(L&& lhs) {
         std_div_evaluate(*this, lhs);
     }

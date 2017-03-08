@@ -489,6 +489,13 @@ template <typename... E>
 using all_complex = cpp::and_c<is_complex<E>...>;
 
 /*!
+ * \brief Traits to test if the given ETL expresion type has direct memory access (DMA).
+ * \tparam E The ETL expression type.
+ */
+template <typename E>
+using is_dma = has_direct_access<E>;
+
+/*!
  * \brief Traits to test if all the given ETL expresion types have direct memory access (DMA).
  * \tparam E The ETL expression types.
  */

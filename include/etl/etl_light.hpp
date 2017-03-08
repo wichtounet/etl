@@ -93,6 +93,9 @@
 // The optimizer
 #include "etl/optimizer.hpp"
 
+// Necessary for the matrices
+#include "etl/impl/direct_op.hpp"
+
 // The value classes implementation
 #include "etl/crtp/expression_able.hpp"
 #include "etl/fast.hpp"
