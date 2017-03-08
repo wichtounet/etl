@@ -126,6 +126,8 @@ bool direct_mul(L&& lhs, R&& rhs) {
 
     return true;
 #else
+    cpp_unused(lhs);
+    cpp_unused(rhs);
     return false;
 #endif
 }
@@ -145,6 +147,8 @@ bool direct_mul(L&& lhs, R&& rhs) {
 
     return true;
 #else
+    cpp_unused(lhs);
+    cpp_unused(rhs);
     return false;
 #endif
 }
@@ -177,6 +181,8 @@ bool direct_div(L&& lhs, R&& rhs) {
 
     return true;
 #else
+    cpp_unused(lhs);
+    cpp_unused(rhs);
     return false;
 #endif
 }
@@ -196,6 +202,8 @@ bool direct_div(L&& lhs, R&& rhs) {
 
     return true;
 #else
+    cpp_unused(lhs);
+    cpp_unused(rhs);
     return false;
 #endif
 }
