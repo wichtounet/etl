@@ -146,23 +146,18 @@ inline etl::conv_impl select_default_conv2_impl_new() {
         return etl::conv_impl::STD;
     }
 
-    static constexpr bool vec = vectorize_impl && vec_enabled;
-    static constexpr bool cufft = cufft_enabled;
-    static constexpr bool cudnn = cudnn_enabled;
-    static constexpr bool mkl = mkl_enabled;
-
     // Full has more options
     if (TT == conv_type::FULL) {
-        if (cufft) {
+        if (cufft_enabled) {
             return etl::conv_impl::FFT_CUFFT;
-        } else if (mkl) {
+        } else if (mkl_enabled) {
             return etl::conv_impl::FFT_MKL;
-        } else if (cudnn) {
+        } else if (cudnn_enabled) {
             return etl::conv_impl::CUDNN;
         }
     }
 
-    if (vec) {
+    if (vectorize_impl && vec_enabled) {
         return etl::conv_impl::VEC;
     } else {
         return etl::conv_impl::STD;
