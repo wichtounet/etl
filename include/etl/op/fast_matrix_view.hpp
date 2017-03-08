@@ -27,6 +27,7 @@ struct fast_matrix_view;
 template <typename T, std::size_t... Dims>
 struct fast_matrix_view <T, false, Dims...> final :
     iterable<fast_matrix_view<T, false, Dims...>, false>,
+    value_testable<fast_matrix_view<T, false, Dims...>>,
     assignable<fast_matrix_view<T, false, Dims...>, value_t<T>>
 {
     using sub_type             = T;                                                                    ///< The sub type
@@ -305,6 +306,7 @@ public:
 template <typename T, std::size_t... Dims>
 struct fast_matrix_view <T, true, Dims...> final :
     iterable<fast_matrix_view<T, true, Dims...>, true>,
+    value_testable<fast_matrix_view<T, true, Dims...>>,
     assignable<fast_matrix_view<T, true, Dims...>, value_t<T>>
 {
     using this_type            = fast_matrix_view<T, true, Dims...>;                                   ///< The type of this expression

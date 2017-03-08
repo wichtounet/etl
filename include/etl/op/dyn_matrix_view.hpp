@@ -30,6 +30,7 @@ struct dyn_matrix_view;
 template <typename T, size_t D>
 struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final :
     iterable<dyn_matrix_view<T, D>, false>,
+    value_testable<dyn_matrix_view<T, D>>,
     assignable<dyn_matrix_view<T, D>, value_t<T>>
 {
     static_assert(is_etl_expr<T>::value, "dyn_matrix_view only works with ETL expressions");
@@ -312,6 +313,7 @@ public:
 template <typename T, size_t D>
 struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final :
     iterable<dyn_matrix_view<T, D>, true>,
+    value_testable<dyn_matrix_view<T, D>>,
     assignable<dyn_matrix_view<T, D>, value_t<T>>
 {
     static_assert(is_etl_expr<T>::value, "dyn_matrix_view only works with ETL expressions");

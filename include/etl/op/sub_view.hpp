@@ -33,6 +33,7 @@ template <typename T>
 struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
     iterable<sub_view<T>, false>,
     assignable<sub_view<T>, value_t<T>>,
+    value_testable<sub_view<T>>,
     inplace_assignable<sub_view<T>>
 {
     static_assert(is_etl_expr<T>::value, "sub_view<T> only works with ETL expressions");
@@ -321,6 +322,7 @@ template <typename T>
 struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
     iterable<sub_view<T>, true>,
     assignable<sub_view<T>, value_t<T>>,
+    value_testable<sub_view<T>>,
     inplace_assignable<sub_view<T>>
 {
     static_assert(is_etl_expr<T>::value, "sub_view<T> only works with ETL expressions");
