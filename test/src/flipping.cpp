@@ -7,6 +7,27 @@
 
 #include "test_light.hpp"
 
+
+TEMPLATE_TEST_CASE_2("flip/traits/0", "flip", Z, float, double) {
+    etl::fast_matrix<Z, 2, 3> A;
+
+    decltype(auto) a = hflip(A);
+    decltype(auto) b = vflip(A);
+    decltype(auto) c = fflip(A);
+
+    REQUIRE_EQUALS(etl::dimensions(a), 2UL);
+    REQUIRE_EQUALS(etl::dimensions(b), 2UL);
+    REQUIRE_EQUALS(etl::dimensions(c), 2UL);
+
+    REQUIRE_EQUALS(etl::dim<0>(a), 2UL);
+    REQUIRE_EQUALS(etl::dim<0>(b), 2UL);
+    REQUIRE_EQUALS(etl::dim<0>(c), 2UL);
+
+    REQUIRE_EQUALS(etl::dim<1>(a), 3UL);
+    REQUIRE_EQUALS(etl::dim<1>(b), 3UL);
+    REQUIRE_EQUALS(etl::dim<1>(c), 3UL);
+}
+
 // hflip
 
 TEMPLATE_TEST_CASE_2("hflip/fast_vector", "hflip", Z, float, double) {
@@ -17,6 +38,8 @@ TEMPLATE_TEST_CASE_2("hflip/fast_vector", "hflip", Z, float, double) {
     REQUIRE_EQUALS(b[0], 3.0);
     REQUIRE_EQUALS(b[1], -2.0);
     REQUIRE_EQUALS(b[2], 1.0);
+
+    decltype(auto) expr = hflip(a);
 }
 
 TEMPLATE_TEST_CASE_2("hflip/dyn_vector", "hflip", Z, float, double) {
