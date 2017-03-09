@@ -164,6 +164,16 @@ struct scalar {
     void visit(V&& visitor) const {
         cpp_unused(visitor);
     }
+
+    /*!
+     * \brief Prints a scalar value to the given stream
+     * \param os The output stream
+     * \param s The scalar to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const scalar& s) {
+        return os << s.value;
+    }
 };
 
 /*!
@@ -203,16 +213,5 @@ struct etl_traits<etl::scalar<T>, void> {
         return 0;
     }
 };
-
-/*!
- * \brief Prints a scalar value to the given stream
- * \param os The output stream
- * \param s The scalar to print
- * \return the output stream
- */
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const scalar<T>& s) {
-    return os << s.value;
-}
 
 } //end of namespace etl

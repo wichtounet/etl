@@ -161,6 +161,16 @@ public:
     void visit(V&& visitor) const {
         cpp_unused(visitor);
     }
+
+    /*!
+     * \brief Outputs the expression to the given stream
+     * \param os The output stream
+     * \param expr The generator expr
+     * \return The output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const generator_expr& expr) {
+        return os << expr.get_generator();
+    }
 };
 
 /*!
@@ -200,16 +210,5 @@ struct etl_traits<etl::generator_expr<Generator>> {
         return 0;
     }
 };
-
-/*!
- * \brief Outputs the expression to the given stream
- * \param os The output stream
- * \param expr The generator expr
- * \return The output stream
- */
-template <typename Generator>
-std::ostream& operator<<(std::ostream& os, const generator_expr<Generator>& expr) {
-    return os << expr.get_generator();
-}
 
 } //end of namespace etl

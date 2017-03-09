@@ -698,6 +698,16 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
     void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
+
+    /*!
+     * \brief Prints a description of the temporary unary expr to the given stream
+     * \param os The output stream
+     * \param expr The expression to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const temporary_unary_expr& expr) {
+        return os << Op::desc() << "(" << expr.a() << ")";
+    }
 };
 
 /*!
@@ -921,6 +931,16 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
     template<typename L>
     void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
+    }
+
+    /*!
+     * \brief Prints a description of the temporary binary expr to the given stream
+     * \param os The output stream
+     * \param expr The expression to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const temporary_binary_expr& expr) {
+        return os << Op::desc() << "(" << expr.a() << ", " << expr.b() << ")";
     }
 };
 
@@ -1319,27 +1339,5 @@ struct etl_traits<etl::temporary_binary_expr_state<T, A, B, Op>> {
         return Op::dimensions();
     }
 };
-
-/*!
- * \brief Prints a description of the temporary unary expr to the given stream
- * \param os The output stream
- * \param expr The expression to print
- * \return the output stream
- */
-template <typename T, typename AExpr, typename Op>
-std::ostream& operator<<(std::ostream& os, const temporary_unary_expr<T, AExpr, Op>& expr) {
-    return os << Op::desc() << "(" << expr.a() << ")";
-}
-
-/*!
- * \brief Prints a description of the temporary binary expr to the given stream
- * \param os The output stream
- * \param expr The expression to print
- * \return the output stream
- */
-template <typename T, typename AExpr, typename BExpr, typename Op>
-std::ostream& operator<<(std::ostream& os, const temporary_binary_expr<T, AExpr, BExpr, Op>& expr) {
-    return os << Op::desc() << "(" << expr.a() << ", " << expr.b() << ")";
-}
 
 } //end of namespace etl

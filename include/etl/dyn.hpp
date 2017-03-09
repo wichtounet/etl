@@ -611,6 +611,26 @@ private:
         // Allocate the new memory
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
     }
+
+    /*!
+     * \brief Print the description of the matrix to the given stream
+     * \param os The output stream
+     * \param mat The matrix to output the description to the stream
+     * \return The given output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const dyn_matrix_impl& mat) {
+        if (D == 1) {
+            return os << "V[" << mat.size() << "]";
+        }
+
+        os << "M[" << mat.dim(0);
+
+        for (std::size_t i = 1; i < D; ++i) {
+            os << "," << mat.dim(i);
+        }
+
+        return os << "]";
+    }
 };
 
 static_assert(std::is_nothrow_default_constructible<dyn_vector<double>>::value, "dyn_vector should be nothrow default constructible");
@@ -664,27 +684,6 @@ void deserialize(deserializer<Stream>& is, dyn_matrix_impl<T, SO, D>& matrix){
     for(auto& value : matrix){
         is >> value;
     }
-}
-
-/*!
- * \brief Print the description of the matrix to the given stream
- * \param os The output stream
- * \param mat The matrix to output the description to the stream
- * \return The given output stream
- */
-template <typename T, order SO, std::size_t D>
-std::ostream& operator<<(std::ostream& os, const dyn_matrix_impl<T, SO, D>& mat) {
-    if (D == 1) {
-        return os << "V[" << mat.size() << "]";
-    }
-
-    os << "M[" << mat.dim(0);
-
-    for (std::size_t i = 1; i < D; ++i) {
-        os << "," << mat.dim(i);
-    }
-
-    return os << "]";
 }
 
 } //end of namespace etl

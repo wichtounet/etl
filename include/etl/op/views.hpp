@@ -277,6 +277,16 @@ struct dim_view {
         value().visit(visitor);
         visitor.need_value = old_need_value;
     }
+
+    /*!
+     * \brief Print a representation of the view on the given stream
+     * \param os The output stream
+     * \param v The view to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const dim_view& v) {
+        return os << "dim[" << D << "](" << v.sub << ", " << v.i << ")";
+    }
 };
 
 /*!
@@ -1012,16 +1022,5 @@ struct etl_traits<etl::memory_slice_view<T>> {
         return 1;
     }
 };
-
-/*!
- * \brief Print a representation of the view on the given stream
- * \param os The output stream
- * \param v The view to print
- * \return the output stream
- */
-template <typename T, std::size_t D>
-std::ostream& operator<<(std::ostream& os, const dim_view<T, D>& v) {
-    return os << "dim[" << D << "](" << v.sub << ", " << v.i << ")";
-}
 
 } //end of namespace etl

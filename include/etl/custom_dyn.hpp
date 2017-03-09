@@ -385,6 +385,26 @@ public:
     void visit(const detail::evaluator_visitor& visitor) const {
         cpp_unused(visitor);
     }
+
+    /*!
+     * \brief Print the description of the matrix to the given stream
+     * \param os The output stream
+     * \param mat The matrix to output the description to the stream
+     * \return The given output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const custom_dyn_matrix_impl& mat) {
+        if (D == 1) {
+            return os << "CV[" << mat.size() << "]";
+        }
+
+        os << "CM[" << mat.dim(0);
+
+        for (std::size_t i = 1; i < D; ++i) {
+            os << "," << mat.dim(i);
+        }
+
+        return os << "]";
+    }
 };
 
 static_assert(std::is_nothrow_move_constructible<dyn_vector<double>>::value, "dyn_vector should be nothrow move constructible");
@@ -399,27 +419,6 @@ static_assert(std::is_nothrow_destructible<dyn_vector<double>>::value, "dyn_vect
 template <typename T, order SO, std::size_t D>
 void swap(custom_dyn_matrix_impl<T, SO, D>& lhs, custom_dyn_matrix_impl<T, SO, D>& rhs) {
     lhs.swap(rhs);
-}
-
-/*!
- * \brief Print the description of the matrix to the given stream
- * \param os The output stream
- * \param mat The matrix to output the description to the stream
- * \return The given output stream
- */
-template <typename T, order SO, std::size_t D>
-std::ostream& operator<<(std::ostream& os, const custom_dyn_matrix_impl<T, SO, D>& mat) {
-    if (D == 1) {
-        return os << "CV[" << mat.size() << "]";
-    }
-
-    os << "CM[" << mat.dim(0);
-
-    for (std::size_t i = 1; i < D; ++i) {
-        os << "," << mat.dim(i);
-    }
-
-    return os << "]";
 }
 
 } //end of namespace etl

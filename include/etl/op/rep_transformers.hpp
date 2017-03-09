@@ -135,6 +135,16 @@ struct rep_r_transformer : rep_transformer<T, rep_r_transformer<T,D...>> {
     value_type selected_only(const std::index_sequence<I...>& /*seq*/, Sizes... sizes) const {
         return this->sub(cpp::nth_value<I>(sizes...)...);
     }
+
+    /*!
+     * \brief Display the transformer on the given stream
+     * \param os The output stream
+     * \param transformer The transformer to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const rep_r_transformer& transformer) {
+        return os << "rep_r[" << concat_sizes(D...) << "](" << transformer.sub << ")";
+    }
 };
 
 /*!
@@ -186,6 +196,16 @@ struct rep_l_transformer : rep_transformer<T, rep_l_transformer<T,D...>> {
     template <typename... Sizes, std::size_t... I>
     value_type selected_only(const std::index_sequence<I...>& /*seq*/, Sizes... sizes) const {
         return this->sub(cpp::nth_value<I>(sizes...)...);
+    }
+
+    /*!
+     * \brief Display the transformer on the given stream
+     * \param os The output stream
+     * \param transformer The transformer to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const rep_l_transformer& transformer) {
+        return os << "rep_l[" << concat_sizes(D...) << "](" << transformer.sub << ")";
     }
 };
 
@@ -614,27 +634,5 @@ struct etl_traits<dyn_rep_l_transformer<T, D>> {
         return D + etl_traits<sub_expr_t>::dimensions();
     }
 };
-
-/*!
- * \brief Display the transformer on the given stream
- * \param os The output stream
- * \param transformer The transformer to print
- * \return the output stream
- */
-template <typename T, std::size_t... D>
-std::ostream& operator<<(std::ostream& os, const rep_r_transformer<T, D...>& transformer) {
-    return os << "rep_r[" << concat_sizes(D...) << "](" << transformer.sub << ")";
-}
-
-/*!
- * \brief Display the transformer on the given stream
- * \param os The output stream
- * \param transformer The transformer to print
- * \return the output stream
- */
-template <typename T, std::size_t... D>
-std::ostream& operator<<(std::ostream& os, const rep_l_transformer<T, D...>& transformer) {
-    return os << "rep_l[" << concat_sizes(D...) << "](" << transformer.sub << ")";
-}
 
 } //end of namespace etl

@@ -300,6 +300,20 @@ public:
         rhs().visit(visitor);
         visitor.need_value = old_need_value;
     }
+
+    /*!
+     * \brief Prints the type of the binary expression to the stream
+     * \param os The output stream
+     * \param expr The expression to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const binary_expr& expr) {
+        if (BinaryOp::desc_func) {
+            return os << BinaryOp::desc() << "(" << expr.lhs() << ", " << expr.rhs() << ")";
+        } else {
+            return os << "(" << expr.lhs() << ' ' << BinaryOp::desc() << ' ' << expr.rhs() << ")";
+        }
+    }
 };
 
 /*!
@@ -405,20 +419,5 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
         return etl_traits<sub_expr_t>::dimensions();
     }
 };
-
-/*!
- * \brief Prints the type of the binary expression to the stream
- * \param os The output stream
- * \param expr The expression to print
- * \return the output stream
- */
-template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-std::ostream& operator<<(std::ostream& os, const binary_expr<T, LeftExpr, BinaryOp, RightExpr>& expr) {
-    if (BinaryOp::desc_func) {
-        return os << BinaryOp::desc() << "(" << expr.lhs() << ", " << expr.rhs() << ")";
-    } else {
-        return os << "(" << expr.lhs() << ' ' << BinaryOp::desc() << ' ' << expr.rhs() << ")";
-    }
-}
 
 } //end of namespace etl

@@ -412,6 +412,22 @@ public:
     void visit(const detail::evaluator_visitor& visitor) const {
         cpp_unused(visitor);
     }
+
+    /*!
+     * \brief Prints a fast matrix type (not the contents) to the given stream
+     * \param os The output stream
+     * \param matrix The fast matrix to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const fast_matrix_impl& matrix) {
+        cpp_unused(matrix);
+
+        if (sizeof...(Dims) == 1) {
+            return os << "V[" << concat_sizes(Dims...) << "]";
+        }
+
+        return os << "M[" << concat_sizes(Dims...) << "]";
+    }
 };
 
 static_assert(std::is_nothrow_default_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow default constructible");
@@ -441,23 +457,6 @@ fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...> fast_matrix
 template <typename T, typename ST, order SO, std::size_t... Dims>
 void swap(fast_matrix_impl<T, ST, SO, Dims...>& lhs, fast_matrix_impl<T, ST, SO, Dims...>& rhs) {
     lhs.swap(rhs);
-}
-
-/*!
- * \brief Prints a fast matrix type (not the contents) to the given stream
- * \param os The output stream
- * \param matrix The fast matrix to print
- * \return the output stream
- */
-template <typename T, typename ST, order SO, std::size_t... Dims>
-std::ostream& operator<<(std::ostream& os, const fast_matrix_impl<T, ST, SO, Dims...>& matrix) {
-    cpp_unused(matrix);
-
-    if (sizeof...(Dims) == 1) {
-        return os << "V[" << concat_sizes(Dims...) << "]";
-    }
-
-    return os << "M[" << concat_sizes(Dims...) << "]";
 }
 
 /*!

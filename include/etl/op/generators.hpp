@@ -78,6 +78,17 @@ struct uniform_generator_op {
     value_type operator()() {
         return distribution(rand_engine);
     }
+
+    /*!
+     * \brief Outputs the given generator to the given stream
+     * \param os The output stream
+     * \param s The generator
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const normal_generator_op& s) {
+        cpp_unused(s);
+        return os << "N(0,1)";
+    }
 };
 
 /*!
@@ -104,29 +115,16 @@ struct sequence_generator_op {
     value_type operator()() {
         return current++;
     }
+
+    /*!
+     * \brief Outputs the given generator to the given stream
+     * \param os The output stream
+     * \param s The generator
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const sequence_generator_op& s) {
+        return os << "[" << s.start << ",...]";
+    }
 };
-
-/*!
- * \brief Outputs the given generator to the given stream
- * \param os The output stream
- * \param s The generator
- * \return the output stream
- */
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const sequence_generator_op<T>& s) {
-    return os << "[" << s.start << ",...]";
-}
-
-/*!
- * \brief Outputs the given generator to the given stream
- * \param os The output stream
- * \param s The generator
- * \return the output stream
- */
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const normal_generator_op<T>& s) {
-    cpp_unused(s);
-    return os << "N(0,1)";
-}
 
 } //end of namespace etl
