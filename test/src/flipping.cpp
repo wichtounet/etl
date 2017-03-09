@@ -38,8 +38,6 @@ TEMPLATE_TEST_CASE_2("hflip/fast_vector", "hflip", Z, float, double) {
     REQUIRE_EQUALS(b[0], 3.0);
     REQUIRE_EQUALS(b[1], -2.0);
     REQUIRE_EQUALS(b[2], 1.0);
-
-    decltype(auto) expr = hflip(a);
 }
 
 TEMPLATE_TEST_CASE_2("hflip/dyn_vector", "hflip", Z, float, double) {
