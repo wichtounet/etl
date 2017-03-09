@@ -56,7 +56,7 @@ struct cuda_memory {
     /*!
      * \brief Create a new cuda_memory over existing memory
      */
-    cuda_memory(T* memory) noexcept : memory(memory) {}
+    explicit cuda_memory(T* memory) noexcept : memory(memory) {}
 
     /*!
      * \brief Copy construct a new cuda_memory
@@ -177,7 +177,7 @@ auto cuda_allocate_only(std::size_t size) -> cuda_memory<E> {
         exit(EXIT_FAILURE);
     }
 
-    return {memory};
+    return cuda_memory<E>{memory};
 }
 
 /*!
@@ -201,7 +201,7 @@ auto cuda_allocate(const E& expr, bool copy = false) -> cuda_memory<value_t<E>> 
         cuda_check(cudaMemcpy(memory, expr.memory_start(), etl::size(expr) * sizeof(value_t<E>), cudaMemcpyHostToDevice));
     }
 
-    return {memory};
+    return cuda_memory<value_t<E>>{memory};
 }
 
 /*!
@@ -236,7 +236,7 @@ auto cuda_allocate(E* ptr, std::size_t n, bool copy = false) -> cuda_memory<E> {
         cuda_check(cudaMemcpy(memory, ptr, n * sizeof(E), cudaMemcpyHostToDevice));
     }
 
-    return {memory};
+    return cuda_memory<E>{memory};
 }
 
 /*!

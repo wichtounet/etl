@@ -46,7 +46,7 @@ struct cudnn_handle {
      * \brief Construct the helper from the raw handle
      * \param handle The raw cudnn handle
      */
-    cudnn_handle(cudnnHandle_t handle) : handle(handle) {}
+    explicit cudnn_handle(cudnnHandle_t handle) : handle(handle) {}
 
     cudnn_handle(const cudnn_handle& rhs) = delete;
     cudnn_handle& operator=(const cudnn_handle& rhs) = delete;

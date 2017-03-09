@@ -67,8 +67,7 @@ struct cublas_handle {
      * \brief Construct the helper from the raw handle
      * \param handle The raw cublas handle
      */
-    cublas_handle(cublasHandle_t handle)
-            : handle(handle) {}
+    explicit cublas_handle(cublasHandle_t handle) : handle(handle) {}
 
     cublas_handle(const cublas_handle& rhs) = delete;
     cublas_handle& operator=(const cublas_handle& rhs) = delete;

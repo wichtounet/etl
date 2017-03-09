@@ -39,7 +39,7 @@ struct cudnn_wrapper {
     /*!
      * \brief Create a new cudnn_wrapper for the given tensor.
      */
-    cudnn_wrapper(T tensor) : tensor(tensor) {}
+    explicit cudnn_wrapper(T tensor) : tensor(tensor) {}
 
     /*!
      * \brief Move construct a cudnn_wrapper.
