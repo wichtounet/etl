@@ -263,7 +263,12 @@ inline gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
  * \brief Functor for matrix-matrix multiplication
  */
 struct mm_mul_impl {
-    //C = A' * B'
+    /*!
+     * \brief Compute C = trans(A) * trans(B)
+     * \param a The A matrix
+     * \param b The B matrix
+     * \param c The C matrix (output)
+     */
     template <typename A, typename B, typename C, cpp_enable_if((is_transpose_expr<A>::value && is_transpose_expr<B>::value))>
     static void apply_raw(A&& a, B&& b, C&& c) {
         gemm_impl impl = select_gemm_impl<A, B, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
@@ -279,7 +284,12 @@ struct mm_mul_impl {
         }
     }
 
-    //C = A * B'
+    /*!
+     * \brief Compute C = A * trans(B)
+     * \param a The A matrix
+     * \param b The B matrix
+     * \param c The C matrix (output)
+     */
     template <typename A, typename B, typename C, cpp_enable_if((!is_transpose_expr<A>::value && is_transpose_expr<B>::value))>
     static void apply_raw(A&& a, B&& b, C&& c) {
         gemm_impl impl = select_gemm_impl<A, B, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
@@ -295,7 +305,12 @@ struct mm_mul_impl {
         }
     }
 
-    //C = A' * B
+    /*!
+     * \brief Compute C = trans(A) * trans(B)
+     * \param a The A matrix
+     * \param b The B matrix
+     * \param c The C matrix (output)
+     */
     template <typename A, typename B, typename C, cpp_enable_if((is_transpose_expr<A>::value && !is_transpose_expr<B>::value))>
     static void apply_raw(A&& a, B&& b, C&& c) {
         gemm_impl impl = select_gemm_impl<A, B, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
@@ -311,7 +326,12 @@ struct mm_mul_impl {
         }
     }
 
-    // C = A * B
+    /*!
+     * \brief Compute C = A * B
+     * \param a The A matrix
+     * \param b The B matrix
+     * \param c The C matrix (output)
+     */
     template <typename A, typename B, typename C, cpp_enable_if((!is_transpose_expr<A>::value && !is_transpose_expr<B>::value))>
     static void apply_raw(A&& a, B&& b, C&& c) {
         gemm_impl impl = select_gemm_impl<A, B, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
