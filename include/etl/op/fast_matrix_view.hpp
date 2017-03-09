@@ -55,7 +55,7 @@ private:
 
     static constexpr std::size_t n_dimensions = sizeof...(Dims); ///< The number of dimensions of the view
 
-    friend struct etl_traits<etl::fast_matrix_view<T, false, Dims...>>;
+    friend struct etl_traits<fast_matrix_view>;
 
 public:
     /*!
@@ -336,7 +336,7 @@ private:
 
     static constexpr std::size_t n_dimensions = sizeof...(Dims); ///< The number of dimensions of the view
 
-    friend struct etl_traits<etl::fast_matrix_view<T, false, Dims...>>;
+    friend struct etl_traits<fast_matrix_view>;
 
 public:
 

@@ -64,7 +64,7 @@ private:
 
     static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The matrix storage order
 
-    friend struct etl_traits<etl::dyn_matrix_view<T, D>>;
+    friend struct etl_traits<dyn_matrix_view>;
 
 public:
     /*!
@@ -349,7 +349,7 @@ private:
 
     static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The matrix storage order
 
-    friend struct etl_traits<etl::dyn_matrix_view<T, D>>;
+    friend struct etl_traits<dyn_matrix_view>;
 
 public:
     /*!

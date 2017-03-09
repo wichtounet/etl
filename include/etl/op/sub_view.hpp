@@ -65,7 +65,7 @@ private:
     const size_t i;          ///< The index
     const size_t sub_offset; ///< The sub size
 
-    friend struct etl_traits<this_type>;
+    friend struct etl_traits<sub_view>;
 
     static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The storage order
 
@@ -364,7 +364,7 @@ private:
     mutable bool cpu_up_to_date; ///< Indicates if the CPU is up to date
     mutable bool gpu_up_to_date; ///< Indicates if the GPU is up to date
 
-    friend struct etl_traits<this_type>;
+    friend struct etl_traits<sub_view>;
 
 public:
     /*!
