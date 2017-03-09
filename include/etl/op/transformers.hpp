@@ -777,7 +777,7 @@ template <typename E>
 struct etl_traits<dyn_convmtx2_transformer<E>> {
     using expr_t     = etl::dyn_convmtx2_transformer<E>; ///< The expression type
     using sub_expr_t = std::decay_t<E>;                  ///< The sub expression type
-    using value_type = value_t<sub_expr_t>;
+    using value_type = value_t<sub_expr_t>;              ///< The type of value
 
     static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = true;                                            ///< Indicates if the type is a transformer
