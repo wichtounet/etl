@@ -138,27 +138,6 @@ using standard_compound_div = cpp::and_u<
                              !vectorized_compound_div<E, R>::value,
                              !direct_compound_div<E, R>::value>;
 
-// Selectors for optimized evaluation
-
-namespace detail {
-
-/*!
- * \brief Implementation of an integral constant indicating if a direct transpose evaluation is possible.
- */
-template <typename E, typename R>
-struct is_direct_transpose_impl : std::false_type {};
-
-/*!
- * \copydoc is_direct_transpose_impl
- */
-template <typename T, typename E, typename R>
-struct is_direct_transpose_impl<unary_expr<T, transpose_transformer<E>, transform_op>, R>
-    : cpp::and_u<
-        has_direct_access<E>::value,
-        decay_traits<unary_expr<T, transpose_transformer<E>, transform_op>>::storage_order == decay_traits<R>::storage_order> {};
-
-} //end of namespace detail
-
 } //end of namespace detail
 
 } //end of namespace etl
