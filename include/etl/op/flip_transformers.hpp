@@ -18,8 +18,12 @@ struct hflip_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
 
+    friend etl_traits<hflip_transformer>;
+
+private:
     sub_type sub; ///< The subexpression
 
+public:
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
@@ -95,22 +99,6 @@ struct hflip_transformer {
     }
 
     /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
-    }
-
-    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -128,7 +116,17 @@ struct hflip_transformer {
      */
     template<typename V>
     void visit(V&& visitor) const {
-        value().visit(std::forward<V>(visitor));
+        sub.visit(std::forward<V>(visitor));
+    }
+
+    /*!
+     * \brief Display the transformer on the given stream
+     * \param os The output stream
+     * \param transformer The transformer to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const hflip_transformer& transformer) {
+        return os << "hflip(" << transformer.sub << ")";
     }
 };
 
@@ -141,8 +139,12 @@ struct vflip_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
 
+    friend etl_traits<vflip_transformer>;
+
+private:
     sub_type sub; ///< The subexpression
 
+public:
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
@@ -218,22 +220,6 @@ struct vflip_transformer {
     }
 
     /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
-    }
-
-    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -251,7 +237,17 @@ struct vflip_transformer {
      */
     template<typename V>
     void visit(V&& visitor) const {
-        value().visit(std::forward<V>(visitor));
+        sub.visit(std::forward<V>(visitor));
+    }
+
+    /*!
+     * \brief Display the transformer on the given stream
+     * \param os The output stream
+     * \param transformer The transformer to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const vflip_transformer& transformer) {
+        return os << "vflip(" << transformer.sub << ")";
     }
 };
 
@@ -264,8 +260,12 @@ struct fflip_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
 
+    friend etl_traits<fflip_transformer>;
+
+private:
     sub_type sub; ///< The subexpression
 
+public:
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
@@ -320,22 +320,6 @@ struct fflip_transformer {
     }
 
     /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
-    }
-
-    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -353,41 +337,100 @@ struct fflip_transformer {
      */
     template<typename V>
     void visit(V&& visitor) const {
-        value().visit(std::forward<V>(visitor));
+        sub.visit(std::forward<V>(visitor));
+    }
+
+    /*!
+     * \brief Display the transformer on the given stream
+     * \param os The output stream
+     * \param transformer The transformer to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const fflip_transformer& transformer) {
+        return os << "fflip(" << transformer.sub << ")";
     }
 };
 
 /*!
- * \brief Display the transformer on the given stream
- * \param os The output stream
- * \param transformer The transformer to print
- * \return the output stream
+ * \brief Specialization for forwarding everything to the sub expression
  */
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const hflip_transformer<T>& transformer) {
-    return os << "hflip(" << transformer.sub << ")";
-}
+struct etl_traits<T, std::enable_if_t<cpp::or_c<
+                         cpp::is_specialization_of<etl::hflip_transformer, std::decay_t<T>>,
+                         cpp::is_specialization_of<etl::vflip_transformer, std::decay_t<T>>,
+                         cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>>::value>>
+                         {
+    using expr_t     = T;                                  ///< The expression type
+    using sub_expr_t = std::decay_t<typename T::sub_type>; ///< The sub expression type
+    using value_type = value_t<sub_expr_t>;
 
-/*!
- * \brief Display the transformer on the given stream
- * \param os The output stream
- * \param transformer The transformer to print
- * \return the output stream
- */
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const vflip_transformer<T>& transformer) {
-    return os << "vflip(" << transformer.sub << ")";
-}
+    static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer          = true;                                            ///< Indicates if the type is a transformer
+    static constexpr bool is_view                 = false;                                           ///< Indicates if the type is a view
+    static constexpr bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
+    static constexpr bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                 ///< Indicates if the expression is fast
+    static constexpr bool is_linear               = false;                                           ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe          = true;                                            ///< Indicates if the expression is thread safe
+    static constexpr bool is_value                = false;                                           ///< Indicates if the expression is of value type
+    static constexpr bool is_direct               = false;           ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generated
+    static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
+    static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
+    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
-/*!
- * \brief Display the transformer on the given stream
- * \param os The output stream
- * \param transformer The transformer to print
- * \return the output stream
- */
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const fflip_transformer<T>& transformer) {
-    return os << "fflip(" << transformer.sub << ")";
-}
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    using vectorizable = std::false_type;
+
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
+    static std::size_t size(const expr_t& v) {
+        return etl_traits<sub_expr_t>::size(v.sub);
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
+    static std::size_t dim(const expr_t& v, std::size_t d) {
+        return etl_traits<sub_expr_t>::dim(v.sub, d);
+    }
+
+    /*!
+     * \brief Returns the size of an expression of this fast type.
+     * \returns the size of an expression of this fast type.
+     */
+    static constexpr std::size_t size() {
+        return etl_traits<sub_expr_t>::size();
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of an expression of this type
+     * \tparam D The dimension to get
+     * \return the Dth dimension of an expression of this type
+     */
+    template <std::size_t D>
+    static constexpr std::size_t dim() {
+        return etl_traits<sub_expr_t>::template dim<D>();
+    }
+
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
+    static constexpr std::size_t dimensions() {
+        return etl_traits<sub_expr_t>::dimensions();
+    }
+};
 
 } //end of namespace etl
