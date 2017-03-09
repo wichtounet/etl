@@ -264,6 +264,12 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
     result.invalidate_gpu();
 }
 
+/*!
+ * \brief Compute the batch outer product of a and b and store the result in c
+ * \param lhs The a expression
+ * \param rhs The b expression
+ * \param result The c expression
+ */
 template <typename A, typename B, typename C>
 void batch_outer(const A& lhs, const B& rhs, C&& c) {
     batch_outer<default_vec>(lhs, rhs, c);
