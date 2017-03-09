@@ -94,6 +94,23 @@ inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv
     }
 }
 
+/*!
+ * \brief Vectorized implementation of the inner valid computation
+ * of a 2D convolution.
+ *
+ * \param in The input matrix of dimensions (n1, n2)
+ * \param n1 The first dimension  of the input
+ * \param n2 The first dimension  of the input
+ * \param kkk The kernel matrix of dimensions (m1, m2)
+ * \param m1 The first dimension  of the kernel
+ * \param m2 The first dimension  of the kernel
+ * \param out The output matrix
+ * \param s1 The stride in the first dimension
+ * \param s2 The stride in the second dimension
+ * \param p1 The padding in the first dimension
+ * \param p2 The padding in the second dimension
+ * \param beta The multiplicative for the previous values of out
+ */
 template <typename V, typename T>
 void conv2_valid_flipped_inner_kernel(const T* in, size_t n1, size_t n2, const T* kkk, size_t m1, size_t m2, T* out, size_t s1, size_t s2, size_t p1, size_t p2, T beta) {
     using vec_type = V;
@@ -321,6 +338,25 @@ void conv2_valid_flipped_inner_kernel(const T* in, size_t n1, size_t n2, const T
     }
 }
 
+/*!
+ * \brief Outer kernel for the vectorized implementation of a 2D valid convolution.
+ *
+ * This will handle the border cases and delegate the inner work to
+ * the optimized inner kernel.
+ *
+ * \param in The input matrix of dimensions (n1, n2)
+ * \param n1 The first dimension  of the input
+ * \param n2 The first dimension  of the input
+ * \param kkk The kernel matrix of dimensions (m1, m2)
+ * \param m1 The first dimension  of the kernel
+ * \param m2 The first dimension  of the kernel
+ * \param out The output matrix
+ * \param s1 The stride in the first dimension
+ * \param s2 The stride in the second dimension
+ * \param p1 The padding in the first dimension
+ * \param p2 The padding in the second dimension
+ * \param beta The multiplicative for the previous values of out
+ */
 template <typename V, typename I, typename K, typename C>
 void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
     using T        = value_t<I>;
@@ -376,6 +412,25 @@ void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv,
     }
 }
 
+/*!
+ * \brief Outer kernel for the vectorized implementation of a 2D valid convolution, with kernels not flipped.
+ *
+ * This will handle the border cases and delegate the inner work to
+ * the optimized inner kernel.
+ *
+ * \param in The input matrix of dimensions (n1, n2)
+ * \param n1 The first dimension  of the input
+ * \param n2 The first dimension  of the input
+ * \param kkk The kernel matrix of dimensions (m1, m2)
+ * \param m1 The first dimension  of the kernel
+ * \param m2 The first dimension  of the kernel
+ * \param out The output matrix
+ * \param s1 The stride in the first dimension
+ * \param s2 The stride in the second dimension
+ * \param p1 The padding in the first dimension
+ * \param p2 The padding in the second dimension
+ * \param beta The multiplicative for the previous values of out
+ */
 template <typename V, typename I, typename K, typename C>
 void conv2_valid_micro_kernel(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
     etl::dyn_matrix<value_t<I>, 2> kernel_reverse(etl::dim<0>(kernel), etl::dim<1>(kernel));

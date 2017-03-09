@@ -17,6 +17,19 @@ namespace detail {
 #pragma GCC diagnostic ignored "-Waggressive-loop-optimizations"
 #endif
 
+/*!
+ * \brief Vectorized implementation of the inner valid computation
+ * of a 2D convolution with a nx8 kernel, without stride nor
+ * padding.
+ *
+ * \param in The input matrix of dimensions (n1, n2)
+ * \param n1 The first dimension  of the input
+ * \param n2 The first dimension  of the input
+ * \param kkk The kernel matrix of dimensions (m1, m2)
+ * \param m1 The first dimension  of the kernel
+ * \param out The output matrix
+ * \param beta The multiplicative for the previous values of out
+ */
 template <typename V, typename T>
 void conv2_valid_flipped_micro_kernel_nx8(const T* in, size_t n1, size_t n2, const T* kkk, size_t m1, T* out, T beta) {
     using vec_type = V;
