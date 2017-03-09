@@ -132,22 +132,6 @@ struct dim_view {
     }
 
     /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
-    }
-
-    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -256,7 +240,7 @@ struct dim_view {
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor) const {
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -264,7 +248,7 @@ struct dim_view {
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor) const {
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -274,7 +258,7 @@ struct dim_view {
     void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        value().visit(visitor);
+        sub.visit(visitor);
         visitor.need_value = old_need_value;
     }
 
@@ -379,22 +363,6 @@ struct slice_view {
     template <typename... S>
     return_type operator()(std::size_t i, S... args) {
         return sub(i + first, static_cast<std::size_t>(args)...);
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
     }
 
     /*!
@@ -528,7 +496,7 @@ struct slice_view {
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor) const {
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -536,7 +504,7 @@ struct slice_view {
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor) const {
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -546,7 +514,7 @@ struct slice_view {
     void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        value().visit(visitor);
+        sub.visit(visitor);
         visitor.need_value = old_need_value;
     }
 };
@@ -609,22 +577,6 @@ struct memory_slice_view {
      */
     value_type read_flat(std::size_t j) const noexcept {
         return sub[first + j];
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
     }
 
     /*!
@@ -787,7 +739,7 @@ struct memory_slice_view {
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor) const {
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -795,7 +747,7 @@ struct memory_slice_view {
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor) const {
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -805,7 +757,7 @@ struct memory_slice_view {
     void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        value().visit(visitor);
+        sub.visit(visitor);
         visitor.need_value = old_need_value;
     }
 };

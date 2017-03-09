@@ -250,22 +250,6 @@ struct dyn_convmtx_transformer {
     }
 
     /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
-    }
-
-    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -282,7 +266,7 @@ struct dyn_convmtx_transformer {
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor) const {
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -290,7 +274,7 @@ struct dyn_convmtx_transformer {
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor) const {
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -300,7 +284,7 @@ struct dyn_convmtx_transformer {
     void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        value().visit(visitor);
+        sub.visit(visitor);
         visitor.need_value = old_need_value;
     }
 };
@@ -385,22 +369,6 @@ struct dyn_convmtx2_transformer {
     }
 
     /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
-    }
-
-    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -417,7 +385,7 @@ struct dyn_convmtx2_transformer {
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor) const {
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -425,7 +393,7 @@ struct dyn_convmtx2_transformer {
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor) const {
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -435,7 +403,7 @@ struct dyn_convmtx2_transformer {
     void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        value().visit(visitor);
+        sub.visit(visitor);
         visitor.need_value = old_need_value;
     }
 };
