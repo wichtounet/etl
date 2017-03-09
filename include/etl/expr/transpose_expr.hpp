@@ -16,12 +16,12 @@ namespace etl {
 
 /*!
  * \brief A transposition expression.
- * \tparam T The value type
+ * \tparam A The transposed type
  */
-template <typename T, typename A>
-struct transpose_expr : base_temporary_expr_un<transpose_expr<T, A>, A> {
-    using value_type = T;                                    ///< The type of value of the expression
-    using this_type  = transpose_expr<T, A>;                 ///< The type of this expression
+template <typename A>
+struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
+    using value_type = value_t<A>;                           ///< The type of value of the expression
+    using this_type  = transpose_expr<A>;                    ///< The type of this expression
     using base_type  = base_temporary_expr_un<this_type, A>; ///< The base type
     using sub_traits = decay_traits<A>;                      ///< The traits of the sub type
 
@@ -197,12 +197,16 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<T, A>, A> {
     }
 };
 
-template <typename T, typename A>
-struct etl_traits<etl::transpose_expr<T, A>> {
-    using expr_t     = etl::transpose_expr<T, A>; ///< The expression type
-    using sub_expr_t = std::decay_t<A>;           ///< The sub expression type
-    using sub_traits = etl_traits<sub_expr_t>;    ///< The sub traits
-    using value_type = T;                         ///< The value type of the expression
+/*!
+ * \brief Traits for a transpose expression
+ * \param A The transposed sub type
+ */
+template <typename A>
+struct etl_traits<etl::transpose_expr<A>> {
+    using expr_t     = etl::transpose_expr<A>; ///< The expression type
+    using sub_expr_t = std::decay_t<A>;        ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>; ///< The sub traits
+    using value_type = value_t<A>;             ///< The value type of the expression
 
     static constexpr bool is_etl                  = true;                      ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;                     ///< Indicates if the type is a transformer

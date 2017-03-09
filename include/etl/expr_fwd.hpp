@@ -73,7 +73,7 @@ struct fast_matrix_view;
 template <typename T, size_t D, typename Enable = void>
 struct dyn_matrix_view;
 
-template <typename T, typename A>
+template <typename A>
 struct transpose_expr;
 
 } //end of namespace etl
