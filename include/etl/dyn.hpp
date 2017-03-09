@@ -462,7 +462,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -471,7 +471,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
-    void assign_add_to(L&& lhs) {
+    void assign_add_to(L&& lhs)  const {
         if(!detail::direct_add(lhs, *this)){
             std_add_evaluate(*this, lhs);
         }
@@ -482,7 +482,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
-    void assign_add_to(L&& lhs) {
+    void assign_add_to(L&& lhs)  const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -491,7 +491,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
-    void assign_sub_to(L&& lhs) {
+    void assign_sub_to(L&& lhs)  const {
         if(!detail::direct_sub(lhs, *this)){
             std_sub_evaluate(*this, lhs);
         }
@@ -502,7 +502,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
-    void assign_sub_to(L&& lhs) {
+    void assign_sub_to(L&& lhs)  const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -511,7 +511,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
-    void assign_mul_to(L&& lhs) {
+    void assign_mul_to(L&& lhs)  const {
         if(!detail::direct_mul(lhs, *this)){
             std_mul_evaluate(*this, lhs);
         }
@@ -522,7 +522,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
-    void assign_mul_to(L&& lhs) {
+    void assign_mul_to(L&& lhs)  const {
         std_mul_evaluate(*this, lhs);
     }
     /*!
@@ -530,7 +530,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
-    void assign_div_to(L&& lhs) {
+    void assign_div_to(L&& lhs)  const {
         if(!detail::direct_div(lhs, *this)){
             std_div_evaluate(*this, lhs);
         }
@@ -541,7 +541,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>::value)>
-    void assign_div_to(L&& lhs) {
+    void assign_div_to(L&& lhs)  const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -550,7 +550,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mod_to(L&& lhs) {
+    void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
 

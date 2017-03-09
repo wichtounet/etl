@@ -127,7 +127,7 @@ struct hflip_transformer {
      * \param visitor The visitor to apply
      */
     template<typename V>
-    void visit(V&& visitor){
+    void visit(V&& visitor) const {
         value().visit(std::forward<V>(visitor));
     }
 };
@@ -250,7 +250,7 @@ struct vflip_transformer {
      * \param visitor The visitor to apply
      */
     template<typename V>
-    void visit(V&& visitor){
+    void visit(V&& visitor) const {
         value().visit(std::forward<V>(visitor));
     }
 };
@@ -352,7 +352,7 @@ struct fflip_transformer {
      * \param visitor The visitor to apply
      */
     template<typename V>
-    void visit(V&& visitor){
+    void visit(V&& visitor) const {
         value().visit(std::forward<V>(visitor));
     }
 };

@@ -79,7 +79,7 @@ protected:
      *
      * Will fail if not previously allocated
      */
-    void evaluate(){
+    void evaluate() const {
         if (!evaluated) {
             cpp_assert(allocated, "The result has not been allocated");
             as_derived().apply(*_c);
@@ -316,7 +316,7 @@ public:
      * \brief Copy back from the GPU to the expression memory if
      * necessary.
      */
-    void ensure_cpu_up_to_date() {
+    void ensure_cpu_up_to_date() const {
         if(allocated && evaluated){
             result().ensure_cpu_up_to_date();
         }
@@ -423,7 +423,7 @@ struct temporary_expr_un : temporary_expr<D, T, R> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::temporary_allocator_visitor& visitor){
+    void visit(const detail::temporary_allocator_visitor& visitor) const {
         this->allocate_temporary();
 
         _a.visit(visitor);
@@ -433,7 +433,7 @@ struct temporary_expr_un : temporary_expr<D, T, R> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::back_propagate_visitor& visitor){
+    void visit(const detail::back_propagate_visitor& visitor) const {
         _a.visit(visitor);
     }
 
@@ -441,7 +441,7 @@ struct temporary_expr_un : temporary_expr<D, T, R> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(detail::evaluator_visitor& visitor){
+    void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
 
         visitor.need_value = decay_traits<D>::is_gpu;
@@ -551,7 +551,7 @@ struct temporary_expr_bin : temporary_expr<D, T, R> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::temporary_allocator_visitor& visitor){
+    void visit(const detail::temporary_allocator_visitor& visitor) const {
         this->allocate_temporary();
 
         _a.visit(visitor);
@@ -562,7 +562,7 @@ struct temporary_expr_bin : temporary_expr<D, T, R> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::back_propagate_visitor& visitor){
+    void visit(const detail::back_propagate_visitor& visitor) const {
         _a.visit(visitor);
         _b.visit(visitor);
     }
@@ -571,7 +571,7 @@ struct temporary_expr_bin : temporary_expr<D, T, R> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(detail::evaluator_visitor& visitor){
+    void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
 
         visitor.need_value = decay_traits<D>::is_gpu;
@@ -619,7 +619,7 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
      * \param result The expressio where to store the result
      */
     template <typename Result>
-    void apply(Result&& result){
+    void apply(Result&& result) const {
         Op::apply(this->a(), std::forward<Result>(result));
     }
 
@@ -638,7 +638,7 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_enable_if(decay_traits<L>::storage_order == storage_order)>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         standard_evaluator::pre_assign_rhs(this->a());
         standard_evaluator::pre_assign_lhs(lhs);
 
@@ -650,7 +650,7 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_enable_if(decay_traits<L>::storage_order != storage_order)>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -659,7 +659,7 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_add_to(L&& lhs) {
+    void assign_add_to(L&& lhs)  const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -668,7 +668,7 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_sub_to(L&& lhs) {
+    void assign_sub_to(L&& lhs)  const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -677,7 +677,7 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mul_to(L&& lhs) {
+    void assign_mul_to(L&& lhs)  const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -686,7 +686,7 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_div_to(L&& lhs) {
+    void assign_div_to(L&& lhs)  const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -695,7 +695,7 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mod_to(L&& lhs) {
+    void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
 };
@@ -732,7 +732,7 @@ struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr
      * \param result The expressio where to store the result
      */
     template <typename Result>
-    void apply(Result&& result){
+    void apply(Result&& result) const {
         op.apply(this->a(), std::forward<Result>(result));
     }
 
@@ -751,7 +751,7 @@ struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_enable_if(decay_traits<L>::storage_order == storage_order)>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         standard_evaluator::pre_assign_rhs(this->a());
         standard_evaluator::pre_assign_lhs(lhs);
 
@@ -763,7 +763,7 @@ struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_enable_if(decay_traits<L>::storage_order != storage_order)>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -772,7 +772,7 @@ struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_add_to(L&& lhs) {
+    void assign_add_to(L&& lhs)  const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -781,7 +781,7 @@ struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_sub_to(L&& lhs) {
+    void assign_sub_to(L&& lhs)  const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -790,7 +790,7 @@ struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mul_to(L&& lhs) {
+    void assign_mul_to(L&& lhs)  const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -799,7 +799,7 @@ struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_div_to(L&& lhs) {
+    void assign_div_to(L&& lhs)  const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -808,7 +808,7 @@ struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mod_to(L&& lhs) {
+    void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
 };
@@ -842,7 +842,7 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
      * \param result The expressio where to store the result
      */
     template <typename Result>
-    void apply(Result&& result){
+    void apply(Result&& result) const {
         Op::apply(this->a(), this->b(), std::forward<Result>(result));
     }
 
@@ -861,7 +861,7 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_enable_if(decay_traits<L>::storage_order == storage_order)>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         standard_evaluator::pre_assign_rhs(this->a());
         standard_evaluator::pre_assign_rhs(this->b());
         standard_evaluator::pre_assign_lhs(lhs);
@@ -874,7 +874,7 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_enable_if(decay_traits<L>::storage_order != storage_order)>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -883,7 +883,7 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_add_to(L&& lhs) {
+    void assign_add_to(L&& lhs)  const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -892,7 +892,7 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_sub_to(L&& lhs) {
+    void assign_sub_to(L&& lhs)  const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -901,7 +901,7 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mul_to(L&& lhs) {
+    void assign_mul_to(L&& lhs)  const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -910,7 +910,7 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_div_to(L&& lhs) {
+    void assign_div_to(L&& lhs)  const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -919,7 +919,7 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mod_to(L&& lhs) {
+    void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
 };
@@ -975,7 +975,7 @@ struct temporary_binary_expr_state final : temporary_expr_bin<temporary_binary_e
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_enable_if(decay_traits<L>::storage_order == storage_order)>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         standard_evaluator::pre_assign_rhs(this->a());
         standard_evaluator::pre_assign_rhs(this->b());
         standard_evaluator::pre_assign_lhs(lhs);
@@ -988,7 +988,7 @@ struct temporary_binary_expr_state final : temporary_expr_bin<temporary_binary_e
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_enable_if(decay_traits<L>::storage_order != storage_order)>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -997,7 +997,7 @@ struct temporary_binary_expr_state final : temporary_expr_bin<temporary_binary_e
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_add_to(L&& lhs) {
+    void assign_add_to(L&& lhs)  const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -1006,7 +1006,7 @@ struct temporary_binary_expr_state final : temporary_expr_bin<temporary_binary_e
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_sub_to(L&& lhs) {
+    void assign_sub_to(L&& lhs)  const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -1015,7 +1015,7 @@ struct temporary_binary_expr_state final : temporary_expr_bin<temporary_binary_e
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mul_to(L&& lhs) {
+    void assign_mul_to(L&& lhs)  const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -1024,7 +1024,7 @@ struct temporary_binary_expr_state final : temporary_expr_bin<temporary_binary_e
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_div_to(L&& lhs) {
+    void assign_div_to(L&& lhs)  const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -1033,7 +1033,7 @@ struct temporary_binary_expr_state final : temporary_expr_bin<temporary_binary_e
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mod_to(L&& lhs) {
+    void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
 };

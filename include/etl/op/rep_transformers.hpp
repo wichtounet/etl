@@ -71,7 +71,7 @@ struct rep_transformer {
      * \param visitor The visitor to apply
      */
     template<typename V>
-    void visit(V&& visitor){
+    void visit(V&& visitor) const {
         value().visit(std::forward<V>(visitor));
     }
 

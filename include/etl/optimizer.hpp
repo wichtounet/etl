@@ -248,7 +248,7 @@ struct transformer {
      * \param expr The expression to transform
      */
     template <typename Builder>
-    static void transform(Builder builder, Expr& expr) {
+    static void transform(Builder builder, const Expr& expr) {
         std::cout << "Arrived in parent, should not happen" << std::endl;
 
         cpp_unused(builder);
@@ -269,7 +269,7 @@ struct transformer<etl::unary_expr<T, Expr, UnaryOp>> {
      * \param expr The expression to transform
      */
     template <typename Builder>
-    static void transform(Builder parent_builder, etl::unary_expr<T, Expr, UnaryOp>& expr) {
+    static void transform(Builder parent_builder, const etl::unary_expr<T, Expr, UnaryOp>& expr) {
         if (std::is_same<UnaryOp, plus_unary_op<T>>::value) {
             parent_builder(expr.value());
         }
@@ -289,7 +289,7 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>
      * \param expr The expression to transform
      */
     template <typename Builder>
-    static void transform(Builder parent_builder, etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>& expr) {
+    static void transform(Builder parent_builder, const etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>& expr) {
         if (std::is_same<BinaryOp, mul_binary_op<T>>::value) {
             parent_builder(etl::scalar<T>(expr.lhs().value * expr.rhs().value));
         } else if (std::is_same<BinaryOp, plus_binary_op<T>>::value) {
@@ -315,7 +315,7 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>> {
      * \param expr The expression to transform
      */
     template <typename Builder>
-    static void transform(Builder parent_builder, etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>& expr) {
+    static void transform(Builder parent_builder, const etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>& expr) {
         if (expr.lhs().value == 1.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
             parent_builder(expr.rhs());
         } else if (expr.lhs().value == 0.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
@@ -341,7 +341,7 @@ struct transformer<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
      * \param expr The expression to transform
      */
     template <typename Builder>
-    static void transform(Builder parent_builder, etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>& expr) {
+    static void transform(Builder parent_builder, const etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>& expr) {
         if (expr.rhs().value == 1.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
             parent_builder(expr.lhs());
         } else if (expr.rhs().value == 0.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
@@ -362,7 +362,7 @@ struct transformer<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
  * \param expr The expression to optimize
  */
 template <typename Builder, typename Expr>
-void transform(Builder parent_builder, Expr& expr) {
+void transform(Builder parent_builder, const Expr& expr) {
     transformer<std::decay_t<Expr>>::transform(parent_builder, expr);
 }
 
@@ -396,7 +396,7 @@ struct optimizer<etl::unary_expr<T, Expr, UnaryOp>> {
      * \param expr The expression to optimize
      */
     template <typename Builder>
-    static void apply(Builder parent_builder, etl::unary_expr<T, Expr, UnaryOp>& expr) {
+    static void apply(Builder parent_builder, const etl::unary_expr<T, Expr, UnaryOp>& expr) {
         if (is_optimizable(expr)) {
             transform(parent_builder, expr);
         } else if (is_optimizable_deep(expr.value())) {
@@ -422,7 +422,7 @@ struct optimizer<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
      * \param expr The expression to optimize
      */
     template <typename Builder>
-    static void apply(Builder parent_builder, etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& expr) {
+    static void apply(Builder parent_builder, const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& expr) {
         if (is_optimizable(expr)) {
             transform(parent_builder, expr);
         } else if (is_optimizable_deep(expr.lhs())) {
@@ -454,7 +454,7 @@ struct optimizer<etl::temporary_unary_expr<T, A, Op>> {
      * \param expr The expression to optimize
      */
     template <typename Builder>
-    static void apply(Builder parent_builder, etl::temporary_unary_expr<T, A, Op>& expr) {
+    static void apply(Builder parent_builder, const etl::temporary_unary_expr<T, A, Op>& expr) {
         if (is_optimizable_deep(expr.a())) {
             auto lhs_builder = [&](auto&& new_lhs) {
                 parent_builder(etl::temporary_unary_expr<T, etl::detail::build_type<decltype(new_lhs)>, Op>(new_lhs));
@@ -478,7 +478,7 @@ struct optimizer<etl::temporary_binary_expr<T, A, B, Op>> {
      * \param expr The expression to optimize
      */
     template <typename Builder>
-    static void apply(Builder parent_builder, etl::temporary_binary_expr<T, A, B, Op>& expr) {
+    static void apply(Builder parent_builder, const etl::temporary_binary_expr<T, A, B, Op>& expr) {
         if (is_optimizable_deep(expr.a())) {
             auto lhs_builder = [&](auto&& new_lhs) {
                 parent_builder(etl::temporary_binary_expr<T, etl::detail::build_type<decltype(new_lhs)>, B, Op>(new_lhs));

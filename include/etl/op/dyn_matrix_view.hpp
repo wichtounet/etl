@@ -217,7 +217,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -226,7 +226,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_add_to(L&& lhs) {
+    void assign_add_to(L&& lhs)  const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -235,7 +235,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_sub_to(L&& lhs) {
+    void assign_sub_to(L&& lhs)  const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -244,7 +244,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mul_to(L&& lhs) {
+    void assign_mul_to(L&& lhs)  const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -253,7 +253,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_div_to(L&& lhs) {
+    void assign_div_to(L&& lhs)  const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -262,7 +262,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mod_to(L&& lhs) {
+    void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -272,7 +272,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::temporary_allocator_visitor& visitor){
+    void visit(const detail::temporary_allocator_visitor& visitor) const {
         sub.visit(visitor);
     }
 
@@ -280,7 +280,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::back_propagate_visitor& visitor){
+    void visit(const detail::back_propagate_visitor& visitor) const {
         sub.visit(visitor);
     }
 
@@ -288,7 +288,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(detail::evaluator_visitor& visitor){
+    void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
         sub.visit(visitor);
@@ -571,7 +571,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -580,7 +580,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_add_to(L&& lhs) {
+    void assign_add_to(L&& lhs)  const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -589,7 +589,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_sub_to(L&& lhs) {
+    void assign_sub_to(L&& lhs)  const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -598,7 +598,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mul_to(L&& lhs) {
+    void assign_mul_to(L&& lhs)  const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -607,7 +607,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_div_to(L&& lhs) {
+    void assign_div_to(L&& lhs)  const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -616,7 +616,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mod_to(L&& lhs) {
+    void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -626,7 +626,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::temporary_allocator_visitor& visitor){
+    void visit(const detail::temporary_allocator_visitor& visitor) const {
         sub.visit(visitor);
     }
 
@@ -634,12 +634,12 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::back_propagate_visitor& visitor){
+    void visit(const detail::back_propagate_visitor& visitor) const {
         sub.visit(visitor);
 
         // It's only interesting if the sub expression is not direct
         if(decay_traits<sub_type>::needs_evaluator_visitor){
-            this->memory = sub.memory_start();
+            this->memory = const_cast<memory_type>(sub.memory_start());
         }
     }
 
@@ -647,7 +647,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(detail::evaluator_visitor& visitor){
+    void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
         sub.visit(visitor);

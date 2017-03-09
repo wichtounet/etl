@@ -76,7 +76,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         auto old_parallel = local_context().parallel;
 
         local_context().parallel = true;
@@ -91,7 +91,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_add_to(L&& lhs) {
+    void assign_add_to(L&& lhs)  const {
         auto old_parallel = local_context().parallel;
 
         local_context().parallel = true;
@@ -106,7 +106,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_sub_to(L&& lhs) {
+    void assign_sub_to(L&& lhs)  const {
         auto old_parallel = local_context().parallel;
 
         local_context().parallel = true;
@@ -121,7 +121,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mul_to(L&& lhs) {
+    void assign_mul_to(L&& lhs)  const {
         auto old_parallel = local_context().parallel;
 
         local_context().parallel = true;
@@ -136,7 +136,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_div_to(L&& lhs) {
+    void assign_div_to(L&& lhs)  const {
         auto old_parallel = local_context().parallel;
 
         local_context().parallel = true;
@@ -151,7 +151,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mod_to(L&& lhs) {
+    void assign_mod_to(L&& lhs)  const {
         auto old_parallel = local_context().parallel;
 
         local_context().parallel = true;

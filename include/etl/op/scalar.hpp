@@ -105,7 +105,7 @@ struct scalar {
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -114,7 +114,7 @@ struct scalar {
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_add_to(L&& lhs) {
+    void assign_add_to(L&& lhs)  const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -123,7 +123,7 @@ struct scalar {
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_sub_to(L&& lhs) {
+    void assign_sub_to(L&& lhs)  const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -132,7 +132,7 @@ struct scalar {
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mul_to(L&& lhs) {
+    void assign_mul_to(L&& lhs)  const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -141,7 +141,7 @@ struct scalar {
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_div_to(L&& lhs) {
+    void assign_div_to(L&& lhs)  const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -150,7 +150,7 @@ struct scalar {
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mod_to(L&& lhs) {
+    void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
 

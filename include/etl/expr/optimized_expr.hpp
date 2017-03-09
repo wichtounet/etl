@@ -73,13 +73,12 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         //Note: This is more than ugly...
         optimized_forward(_value,
-                      [&lhs](auto&& optimized) mutable {
-                          using tt = std::remove_const_t<std::remove_reference_t<decltype(optimized)>>;
-                          const_cast<tt&>(optimized).assign_to(lhs);
-                      });
+                          [&lhs](auto&& optimized) mutable {
+                              optimized.assign_to(lhs);
+                          });
     }
 
     /*!
@@ -87,12 +86,11 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_add_to(L&& lhs) {
+    void assign_add_to(L&& lhs)  const {
         //Note: This is more than ugly...
         optimized_forward(_value,
                       [&lhs](auto&& optimized) mutable {
-                          using tt = std::remove_const_t<std::remove_reference_t<decltype(optimized)>>;
-                          const_cast<tt&>(optimized).assign_add_to(lhs);
+                          optimized.assign_add_to(lhs);
                       });
     }
 
@@ -101,13 +99,12 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_sub_to(L&& lhs) {
+    void assign_sub_to(L&& lhs)  const {
         //Note: This is more than ugly...
         optimized_forward(_value,
-                      [&lhs](auto&& optimized) mutable {
-                          using tt = std::remove_const_t<std::remove_reference_t<decltype(optimized)>>;
-                          const_cast<tt&>(optimized).assign_sub_to(lhs);
-                      });
+                          [&lhs](auto&& optimized) mutable {
+                              optimized.assign_sub_to(lhs);
+                          });
     }
 
     /*!
@@ -115,12 +112,11 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mul_to(L&& lhs) {
+    void assign_mul_to(L&& lhs)  const {
         //Note: This is more than ugly...
         optimized_forward(_value,
                       [&lhs](auto&& optimized) mutable {
-                          using tt = std::remove_const_t<std::remove_reference_t<decltype(optimized)>>;
-                          const_cast<tt&>(optimized).assign_mul_to(lhs);
+                          optimized.assign_mul_to(lhs);
                       });
     }
 
@@ -129,12 +125,11 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_div_to(L&& lhs) {
+    void assign_div_to(L&& lhs)  const {
         //Note: This is more than ugly...
         optimized_forward(_value,
                       [&lhs](auto&& optimized) mutable {
-                          using tt = std::remove_const_t<std::remove_reference_t<decltype(optimized)>>;
-                          const_cast<tt&>(optimized).assign_div_to(lhs);
+                          optimized.assign_div_to(lhs);
                       });
     }
 
@@ -143,12 +138,11 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mod_to(L&& lhs) {
+    void assign_mod_to(L&& lhs)  const {
         //Note: This is more than ugly...
         optimized_forward(_value,
                       [&lhs](auto&& optimized) mutable {
-                          using tt = std::remove_const_t<std::remove_reference_t<decltype(optimized)>>;
-                          const_cast<tt&>(optimized).assign_mod_to(lhs);
+                          optimized.assign_mod_to(lhs);
                       });
     }
 

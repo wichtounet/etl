@@ -135,7 +135,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<T, A>, A> {
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_enable_if(decay_traits<L>::storage_order == storage_order)>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         standard_evaluator::pre_assign_rhs(this->a());
         standard_evaluator::pre_assign_lhs(lhs);
 
@@ -147,7 +147,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<T, A>, A> {
      * \param lhs The expression to which assign
      */
     template<typename L, cpp_enable_if(decay_traits<L>::storage_order != storage_order)>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -156,7 +156,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<T, A>, A> {
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_add_to(L&& lhs) {
+    void assign_add_to(L&& lhs)  const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -165,7 +165,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<T, A>, A> {
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_sub_to(L&& lhs) {
+    void assign_sub_to(L&& lhs)  const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -174,7 +174,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<T, A>, A> {
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mul_to(L&& lhs) {
+    void assign_mul_to(L&& lhs)  const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -183,7 +183,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<T, A>, A> {
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_div_to(L&& lhs) {
+    void assign_div_to(L&& lhs)  const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -192,7 +192,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<T, A>, A> {
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mod_to(L&& lhs) {
+    void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
 };

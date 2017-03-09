@@ -133,7 +133,7 @@ protected:
      *
      * Will fail if not previously allocated
      */
-    void evaluate(){
+    void evaluate() const {
         if (!evaluated) {
             cpp_assert(allocated, "The result has not been allocated");
             as_derived().apply_base(*_c);
@@ -453,7 +453,7 @@ struct base_temporary_expr_un : base_temporary_expr<D> {
      * \param result The expressio where to store the result
      */
     template <typename Result>
-    void apply_base(Result&& result){
+    void apply_base(Result&& result) const {
         this->as_derived().apply(_a, std::forward<Result>(result));
     }
 
@@ -489,7 +489,7 @@ struct base_temporary_expr_un : base_temporary_expr<D> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::temporary_allocator_visitor& visitor){
+    void visit(const detail::temporary_allocator_visitor& visitor) const {
         this->allocate_temporary();
 
         _a.visit(visitor);
@@ -499,7 +499,7 @@ struct base_temporary_expr_un : base_temporary_expr<D> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::back_propagate_visitor& visitor){
+    void visit(const detail::back_propagate_visitor& visitor) const {
         _a.visit(visitor);
     }
 
@@ -507,7 +507,7 @@ struct base_temporary_expr_un : base_temporary_expr<D> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(detail::evaluator_visitor& visitor){
+    void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
 
         visitor.need_value = decay_traits<D>::is_gpu;
@@ -572,7 +572,7 @@ struct base_temporary_expr_bin : base_temporary_expr<D> {
      * \param result The expressio where to store the result
      */
     template <typename Result>
-    void apply_base(Result&& result){
+    void apply_base(Result&& result) const {
         this->as_derived().apply(_a, _b, std::forward<Result>(result));
     }
 
@@ -624,7 +624,7 @@ struct base_temporary_expr_bin : base_temporary_expr<D> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::temporary_allocator_visitor& visitor){
+    void visit(const detail::temporary_allocator_visitor& visitor) const {
         this->allocate_temporary();
 
         _a.visit(visitor);
@@ -635,7 +635,7 @@ struct base_temporary_expr_bin : base_temporary_expr<D> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::back_propagate_visitor& visitor){
+    void visit(const detail::back_propagate_visitor& visitor) const {
         _a.visit(visitor);
         _b.visit(visitor);
     }
@@ -644,7 +644,7 @@ struct base_temporary_expr_bin : base_temporary_expr<D> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(detail::evaluator_visitor& visitor){
+    void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
 
         visitor.need_value = decay_traits<D>::is_gpu;

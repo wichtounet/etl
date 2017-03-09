@@ -73,7 +73,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         auto start_time = etl::timer_clock::now();
 
         _value.assign_to(lhs);
@@ -89,7 +89,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_add_to(L&& lhs) {
+    void assign_add_to(L&& lhs)  const {
         auto start_time = etl::timer_clock::now();
 
         _value.assign_add_to(lhs);
@@ -105,7 +105,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_sub_to(L&& lhs) {
+    void assign_sub_to(L&& lhs)  const {
         auto start_time = etl::timer_clock::now();
 
         _value.assign_sub_to(lhs);
@@ -121,7 +121,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mul_to(L&& lhs) {
+    void assign_mul_to(L&& lhs)  const {
         auto start_time = etl::timer_clock::now();
 
         _value.assign_mul_to(lhs);
@@ -137,7 +137,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_div_to(L&& lhs) {
+    void assign_div_to(L&& lhs)  const {
         auto start_time = etl::timer_clock::now();
 
         _value.assign_div_to(lhs);
@@ -153,7 +153,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mod_to(L&& lhs) {
+    void assign_mod_to(L&& lhs)  const {
         auto start_time = etl::timer_clock::now();
 
         _value.assign_mod_to(lhs);

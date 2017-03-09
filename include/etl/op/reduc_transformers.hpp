@@ -79,8 +79,8 @@ struct sum_r_transformer {
      * \param visitor The visitor to apply
      */
     template<typename V>
-    void visit(V&& visitor){
-        value().visit(std::forward<V>(visitor));
+    void visit(V&& visitor) const {
+        sub.visit(std::forward<V>(visitor));
     }
 };
 
@@ -154,8 +154,8 @@ struct mean_r_transformer {
      * \param visitor The visitor to apply
      */
     template<typename V>
-    void visit(V&& visitor){
-        value().visit(std::forward<V>(visitor));
+    void visit(V&& visitor) const {
+        sub.visit(std::forward<V>(visitor));
     }
 };
 
@@ -250,8 +250,8 @@ struct sum_l_transformer {
      * \param visitor The visitor to apply
      */
     template<typename V>
-    void visit(V&& visitor){
-        value().visit(std::forward<V>(visitor));
+    void visit(V&& visitor) const {
+        sub.visit(std::forward<V>(visitor));
     }
 };
 
@@ -346,8 +346,8 @@ struct mean_l_transformer {
      * \param visitor The visitor to apply
      */
     template<typename V>
-    void visit(V&& visitor){
-        value().visit(std::forward<V>(visitor));
+    void visit(V&& visitor) const {
+        sub.visit(std::forward<V>(visitor));
     }
 };
 

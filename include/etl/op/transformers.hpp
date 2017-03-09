@@ -124,7 +124,7 @@ struct transpose_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::temporary_allocator_visitor& visitor){
+    void visit(const detail::temporary_allocator_visitor& visitor) const {
         value().visit(visitor);
     }
 
@@ -132,7 +132,7 @@ struct transpose_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::back_propagate_visitor& visitor){
+    void visit(const detail::back_propagate_visitor& visitor) const {
         value().visit(visitor);
     }
 
@@ -140,7 +140,7 @@ struct transpose_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(detail::evaluator_visitor& visitor){
+    void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
         value().visit(visitor);
@@ -259,7 +259,7 @@ struct mm_mul_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::temporary_allocator_visitor& visitor){
+    void visit(const detail::temporary_allocator_visitor& visitor) const {
         lhs().visit(visitor);
         rhs().visit(visitor);
     }
@@ -268,7 +268,7 @@ struct mm_mul_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::back_propagate_visitor& visitor){
+    void visit(const detail::back_propagate_visitor& visitor) const {
         lhs().visit(visitor);
         rhs().visit(visitor);
     }
@@ -277,7 +277,7 @@ struct mm_mul_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(detail::evaluator_visitor& visitor){
+    void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
         lhs().visit(visitor);
@@ -403,7 +403,7 @@ struct dyn_convmtx_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::temporary_allocator_visitor& visitor){
+    void visit(const detail::temporary_allocator_visitor& visitor) const {
         value().visit(visitor);
     }
 
@@ -411,7 +411,7 @@ struct dyn_convmtx_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::back_propagate_visitor& visitor){
+    void visit(const detail::back_propagate_visitor& visitor) const {
         value().visit(visitor);
     }
 
@@ -419,7 +419,7 @@ struct dyn_convmtx_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(detail::evaluator_visitor& visitor){
+    void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
         value().visit(visitor);
@@ -538,7 +538,7 @@ struct dyn_convmtx2_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::temporary_allocator_visitor& visitor){
+    void visit(const detail::temporary_allocator_visitor& visitor) const {
         value().visit(visitor);
     }
 
@@ -546,7 +546,7 @@ struct dyn_convmtx2_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::back_propagate_visitor& visitor){
+    void visit(const detail::back_propagate_visitor& visitor) const {
         value().visit(visitor);
     }
 
@@ -554,7 +554,7 @@ struct dyn_convmtx2_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(detail::evaluator_visitor& visitor){
+    void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
         value().visit(visitor);

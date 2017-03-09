@@ -75,7 +75,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_to(L&& lhs) {
+    void assign_to(L&& lhs)  const {
         decltype(auto) forced = detail::get_forced_impl<selector_t>();
 
         auto old_forced = forced;
@@ -93,7 +93,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_add_to(L&& lhs) {
+    void assign_add_to(L&& lhs)  const {
         decltype(auto) forced = detail::get_forced_impl<selector_t>();
 
         auto old_forced = forced;
@@ -111,7 +111,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_sub_to(L&& lhs) {
+    void assign_sub_to(L&& lhs)  const {
         decltype(auto) forced = detail::get_forced_impl<selector_t>();
 
         auto old_forced = forced;
@@ -129,7 +129,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mul_to(L&& lhs) {
+    void assign_mul_to(L&& lhs)  const {
         decltype(auto) forced = detail::get_forced_impl<selector_t>();
 
         auto old_forced = forced;
@@ -147,7 +147,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_div_to(L&& lhs) {
+    void assign_div_to(L&& lhs)  const {
         decltype(auto) forced = detail::get_forced_impl<selector_t>();
 
         auto old_forced = forced;
@@ -165,7 +165,7 @@ public:
      * \param lhs The expression to which assign
      */
     template<typename L>
-    void assign_mod_to(L&& lhs) {
+    void assign_mod_to(L&& lhs)  const {
         decltype(auto) forced = detail::get_forced_impl<selector_t>();
 
         auto old_forced = forced;
