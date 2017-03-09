@@ -157,6 +157,11 @@ AVX2_INTOP_USING_SSE2(add_epi32)
 
 #endif /* __AVX2__ */
 
+/*!
+ * \brief AVX-Vectorized logarithm in single-precision
+ * \param x The vector of numbers to compute the cosinus from
+ * \return a vector containing the cosinus of the input vector values
+ */
 ETL_INLINE_VEC_256 log256_ps(__m256 x) {
     __m256i imm0;
     __m256 one = *(__m256*)_ps256_1;
@@ -234,6 +239,11 @@ ETL_PS_256_CONST(cephes_exp_p3, 4.1665795894E-2);
 ETL_PS_256_CONST(cephes_exp_p4, 1.6666665459E-1);
 ETL_PS_256_CONST(cephes_exp_p5, 5.0000001201E-1);
 
+/*!
+ * \brief AVX-Vectorized exponential in double-precision
+ * \param x The vector of numbers to compute the exponential from
+ * \return a vector containing the exponential of the input vector values
+ */
 ETL_INLINE_VEC_256D exp256_pd(__m256d x) {
     auto t1 = _mm256_mul_pd(x, _mm256_set1_pd(1.44269504088896340736));
     auto r = _mm256_round_pd(t1, 8);
@@ -311,7 +321,11 @@ ETL_INLINE_VEC_256D exp256_pd(__m256d x) {
     return z;
 }
 
-
+/*!
+ * \brief AVX-Vectorized exponential in single-precision
+ * \param x The vector of numbers to compute the exponential from
+ * \return a vector containing the exponential of the input vector values
+ */
 ETL_INLINE_VEC_256 exp256_ps(__m256 x) {
     __m256 tmp, fx;
     __m256i imm0;
@@ -403,6 +417,12 @@ ETL_PS_256_CONST(cephes_FOPI, 1.27323954473516); // 4 / M_PI
    surprising but correct result.
 
 */
+
+/*!
+ * \brief AVX-Vectorized sinus in single-precision
+ * \param x The vector of numbers to compute the sinus from
+ * \return a vector containing the sinus of the input vector values
+ */
 ETL_INLINE_VEC_256 sin256_ps(__m256 x) { // any x
     __m256 xmm1, xmm2, xmm3, sign_bit, y;
     __m256i imm0, imm2;
@@ -528,7 +548,11 @@ ETL_INLINE_VEC_256 sin256_ps(__m256 x) { // any x
     return y;
 }
 
-/* almost the same as sin_ps */
+/*!
+ * \brief AVX-Vectorized cosinus in single-precision
+ * \param x The vector of numbers to compute the cosinus from
+ * \return a vector containing the cosinus of the input vector values
+ */
 ETL_INLINE_VEC_256 cos256_ps(__m256 x) { // any x
     __m256 xmm1, xmm2, xmm3, y;
     __m256i imm0, imm2;

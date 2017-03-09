@@ -88,6 +88,11 @@ PS_CONST(cephes_log_p8, +3.3333331174E-1);
 PS_CONST(cephes_log_q1, -2.12194440e-4);
 PS_CONST(cephes_log_q2, 0.693359375);
 
+/*!
+ * \brief SSE-Vectorized logarithm in single-precision
+ * \param x The vector of numbers to compute the logarithm from
+ * \return a vector containing the logarithms of the input vector values
+ */
 ETL_INLINE_VEC_128 log_ps(__m128 x) {
     __m128i emm0;
     __m128 one = *(__m128*)_ps_1;
@@ -163,6 +168,11 @@ PS_CONST(cephes_exp_p3, 4.1665795894E-2);
 PS_CONST(cephes_exp_p4, 1.6666665459E-1);
 PS_CONST(cephes_exp_p5, 5.0000001201E-1);
 
+/*!
+ * \brief SSE-Vectorized exponential in double-precision
+ * \param x The vector of numbers to compute the exponential from
+ * \return a vector containing the exponentials of the input vector values
+ */
 ETL_INLINE_VEC_128D exp_pd(__m128d x) {
     const __m128i offset = _mm_setr_epi32(1023, 1023, 0, 0);
 
@@ -253,6 +263,11 @@ ETL_INLINE_VEC_128D exp_pd(__m128d x) {
     return a1;
 }
 
+/*!
+ * \brief SSE-Vectorized exponential in single-precision
+ * \param x The vector of numbers to compute the exponential from
+ * \return a vector containing the exponentials of the input vector values
+ */
 ETL_INLINE_VEC_128 exp_ps(__m128 x) {
     __m128 tmp, fx;
     __m128i emm0;
@@ -315,6 +330,11 @@ PS_CONST(coscof_p1, -1.388731625493765E-003);
 PS_CONST(coscof_p2, 4.166664568298827E-002);
 PS_CONST(cephes_FOPI, 1.27323954473516); // 4 / M_PI
 
+/*!
+ * \brief SSE-Vectorized sinus in single-precision
+ * \param x The vector of numbers to compute the sinus from
+ * \return a vector containing the sinus of the input vector values
+ */
 ETL_INLINE_VEC_128 sin_ps(__m128 x) { // any x
     __m128 xmm1, xmm2, xmm3, sign_bit, y;
 
@@ -392,7 +412,11 @@ ETL_INLINE_VEC_128 sin_ps(__m128 x) { // any x
     return y;
 }
 
-/* almost the same as sin_ps */
+/*!
+ * \brief SSE-Vectorized cosinus in single-precision
+ * \param x The vector of numbers to compute the cosinus from
+ * \return a vector containing the cosinus of the input vector values
+ */
 ETL_INLINE_VEC_128 cos_ps(__m128 x) { // any x
     __m128 xmm1, xmm2, xmm3, y;
     __m128i emm0, emm2;
