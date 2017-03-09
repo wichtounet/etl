@@ -18,8 +18,12 @@ struct sum_r_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
 
+    friend struct etl_traits<sum_r_transformer>;
+
+private:
     sub_type sub; ///< The subexpression
 
+public:
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
@@ -55,14 +59,6 @@ struct sum_r_transformer {
     }
 
     /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -82,6 +78,16 @@ struct sum_r_transformer {
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
     }
+
+    /*!
+     * \brief Display the transformer on the given stream
+     * \param os The output stream
+     * \param transformer The transformer to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const sum_r_transformer& transformer) {
+        return os << "sum_r(" << transformer.sub << ")";
+    }
 };
 
 /*!
@@ -93,8 +99,12 @@ struct mean_r_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
 
+    friend struct etl_traits<mean_r_transformer>;
+
+private:
     sub_type sub; ///< The subexpression
 
+public:
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
@@ -130,14 +140,6 @@ struct mean_r_transformer {
     }
 
     /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -157,6 +159,16 @@ struct mean_r_transformer {
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
     }
+
+    /*!
+     * \brief Display the transformer on the given stream
+     * \param os The output stream
+     * \param transformer The transformer to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const mean_r_transformer& transformer) {
+        return os << "mean_r(" << transformer.sub << ")";
+    }
 };
 
 /*!
@@ -168,8 +180,12 @@ struct sum_l_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
 
+    friend struct etl_traits<sum_l_transformer>;
+
+private:
     sub_type sub; ///< The subexpression
 
+public:
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
@@ -226,14 +242,6 @@ struct sum_l_transformer {
     }
 
     /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -253,6 +261,16 @@ struct sum_l_transformer {
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
     }
+
+    /*!
+     * \brief Display the transformer on the given stream
+     * \param os The output stream
+     * \param transformer The transformer to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const sum_l_transformer& transformer) {
+        return os << "sum_l(" << transformer.sub << ")";
+    }
 };
 
 /*!
@@ -264,8 +282,12 @@ struct mean_l_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
 
+    friend struct etl_traits<mean_l_transformer>;
+
+private:
     sub_type sub; ///< The subexpression
 
+public:
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
@@ -322,14 +344,6 @@ struct mean_l_transformer {
     }
 
     /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -348,6 +362,16 @@ struct mean_l_transformer {
     template<typename V>
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
+    }
+
+    /*!
+     * \brief Display the transformer on the given stream
+     * \param os The output stream
+     * \param transformer The transformer to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const mean_l_transformer& transformer) {
+        return os << "mean_l(" << transformer.sub << ")";
     }
 };
 
@@ -511,49 +535,5 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
         return etl_traits<sub_expr_t>::dimensions() - 1;
     }
 };
-
-/*!
- * \brief Display the transformer on the given stream
- * \param os The output stream
- * \param transformer The transformer to print
- * \return the output stream
- */
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const sum_r_transformer<T>& transformer) {
-    return os << "sum_r(" << transformer.sub << ")";
-}
-
-/*!
- * \brief Display the transformer on the given stream
- * \param os The output stream
- * \param transformer The transformer to print
- * \return the output stream
- */
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const mean_r_transformer<T>& transformer) {
-    return os << "mean_r(" << transformer.sub << ")";
-}
-
-/*!
- * \brief Display the transformer on the given stream
- * \param os The output stream
- * \param transformer The transformer to print
- * \return the output stream
- */
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const sum_l_transformer<T>& transformer) {
-    return os << "sum_l(" << transformer.sub << ")";
-}
-
-/*!
- * \brief Display the transformer on the given stream
- * \param os The output stream
- * \param transformer The transformer to print
- * \return the output stream
- */
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const mean_l_transformer<T>& transformer) {
-    return os << "mean_l(" << transformer.sub << ")";
-}
 
 } //end of namespace etl
