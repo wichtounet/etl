@@ -154,6 +154,16 @@ struct mm_mul_transformer {
         visitor.need_value = old_need_value;
     }
 
+    /*!
+     * \brief Display the transformer on the given stream
+     * \param os The output stream
+     * \param transformer The transformer to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const mm_mul_transformer& transformer) {
+        return os << "mm_mul(" << transformer.left << "," << transformer.right << ")";
+    }
+
 private:
     template <typename A, typename B, cpp_disable_if(all_fast<A, B>::value)>
     void check_mmul_sizes(const A& a, const B& b) {
@@ -825,16 +835,5 @@ struct etl_traits<dyn_convmtx2_transformer<E>> {
         return 2;
     }
 };
-
-/*!
- * \brief Display the transformer on the given stream
- * \param os The output stream
- * \param transformer The transformer to print
- * \return the output stream
- */
-template <typename L, typename R>
-std::ostream& operator<<(std::ostream& os, const mm_mul_transformer<L, R>& transformer) {
-    return os << "mm_mul(" << transformer.left << "," << transformer.right << ")";
-}
 
 } //end of namespace etl
