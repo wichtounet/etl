@@ -1268,7 +1268,7 @@ public:
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const unary_expr& expr) {
-        return os << UnaryOp::desc() << '(' << expr.value() << ')';
+        return os << Op::desc() << '(' << expr.value() << ')';
     }
 };
 

@@ -41,6 +41,17 @@ struct normal_generator_op {
     value_type operator()() {
         return distribution(rand_engine);
     }
+
+    /*!
+     * \brief Outputs the given generator to the given stream
+     * \param os The output stream
+     * \param s The generator
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const normal_generator_op& s) {
+        cpp_unused(s);
+        return os << "N(0,1)";
+    }
 };
 
 /*!
@@ -85,9 +96,9 @@ struct uniform_generator_op {
      * \param s The generator
      * \return the output stream
      */
-    friend std::ostream& operator<<(std::ostream& os, const normal_generator_op& s) {
+    friend std::ostream& operator<<(std::ostream& os, const uniform_generator_op& s) {
         cpp_unused(s);
-        return os << "N(0,1)";
+        return os << "U(0,1)";
     }
 };
 
