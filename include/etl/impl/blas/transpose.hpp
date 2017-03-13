@@ -146,13 +146,17 @@ void transpose(A&& a, C&& c) {
  * \param c The matrix to transpose
  */
 template <typename C, cpp_disable_if(all_dma<C>::value&& all_floating<C>::value)>
-void inplace_square_transpose(C&& /*c*/) {}
+void inplace_square_transpose(C&& c) {
+    cpp_unused(c);
+}
 
 /*!
  * \brief Inplace transposition of the rectangular matrix c
  * \param c The matrix to transpose
  */ template <typename C, cpp_disable_if(all_dma<C>::value&& all_floating<C>::value)>
-void inplace_rectangular_transpose(C&& /*c*/) {}
+void inplace_rectangular_transpose(C&& c) {
+    cpp_unused(c);
+}
 
 /*!
  * \brief Transpose the matrix a and the store the result in c
@@ -160,7 +164,10 @@ void inplace_rectangular_transpose(C&& /*c*/) {}
  * \param c The target matrix
  */
 template <typename A, typename C, cpp_disable_if(all_dma<A, C>::value&& all_floating<A, C>::value)>
-void transpose(A&& /*a*/, C&& /*c*/) {}
+void transpose(A&& a, C&& c) {
+    cpp_unused(a);
+    cpp_unused(c);
+}
 
 #else
 

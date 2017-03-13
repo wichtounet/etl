@@ -520,14 +520,13 @@ inline void ifft2_kernel(const std::complex<double>* in, std::size_t d1, std::si
 }
 
 /*!
- * \brief Many Inverse 2D FFT kernel, single precision
+ * \brief Many inplace Inverse 2D FFT kernel, single precision
  * \param in The input matrix
  * \param batch The number of batches
  * \param d1 The first dimension of the matrix
  * \param d2 The second dimension of the matrix
- * \param out The output matrix
  */
-inline void inplace_ifft2_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2) {
+inline void inplace_ifft2_many_kernel(std::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -551,9 +550,8 @@ inline void inplace_ifft2_many_kernel(const std::complex<float>* in, std::size_t
  * \param batch The number of batches
  * \param d1 The first dimension of the matrix
  * \param d2 The second dimension of the matrix
- * \param out The output matrix
  */
-inline void inplace_ifft2_many_kernel(const std::complex<double>* in, std::size_t batch, std::size_t d1, std::size_t d2) {
+inline void inplace_ifft2_many_kernel(std::complex<double>* in, std::size_t batch, std::size_t d1, std::size_t d2) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};

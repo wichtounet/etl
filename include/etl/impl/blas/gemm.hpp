@@ -100,7 +100,7 @@ inline void cblas_gemm(CBLAS_LAYOUT Layout, CBLAS_TRANSPOSE TransA, CBLAS_TRANSP
  * \param A The A matrix
  * \param lda The leading dimension of A
  * \param X The X vector
- * \param incx The stride of X
+ * \param incX The stride of X
  * \param beta The multiplicator on C
  * \param Y The Y vector
  * \param incY The stride of Y
