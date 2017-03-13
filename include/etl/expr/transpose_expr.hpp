@@ -199,7 +199,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
 
 /*!
  * \brief Traits for a transpose expression
- * \param A The transposed sub type
+ * \tparam A The transposed sub type
  */
 template <typename A>
 struct etl_traits<etl::transpose_expr<A>> {

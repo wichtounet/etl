@@ -344,13 +344,9 @@ void conv2_valid_flipped_inner_kernel(const T* in, size_t n1, size_t n2, const T
  * This will handle the border cases and delegate the inner work to
  * the optimized inner kernel.
  *
- * \param in The input matrix of dimensions (n1, n2)
- * \param n1 The first dimension  of the input
- * \param n2 The first dimension  of the input
- * \param kkk The kernel matrix of dimensions (m1, m2)
- * \param m1 The first dimension  of the kernel
- * \param m2 The first dimension  of the kernel
- * \param out The output matrix
+ * \param input The input matrix of dimensions (n1, n2)
+ * \param kernel The kernel matrix of dimensions (m1, m2)
+ * \param conv The output matrix
  * \param s1 The stride in the first dimension
  * \param s2 The stride in the second dimension
  * \param p1 The padding in the first dimension
@@ -418,13 +414,9 @@ void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv,
  * This will handle the border cases and delegate the inner work to
  * the optimized inner kernel.
  *
- * \param in The input matrix of dimensions (n1, n2)
- * \param n1 The first dimension  of the input
- * \param n2 The first dimension  of the input
- * \param kkk The kernel matrix of dimensions (m1, m2)
- * \param m1 The first dimension  of the kernel
- * \param m2 The first dimension  of the kernel
- * \param out The output matrix
+ * \param input The input matrix of dimensions (n1, n2)
+ * \param kernel The kernel matrix of dimensions (m1, m2)
+ * \param conv The output matrix
  * \param s1 The stride in the first dimension
  * \param s2 The stride in the second dimension
  * \param p1 The padding in the first dimension
