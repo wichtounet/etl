@@ -410,7 +410,6 @@ private:
 /*!
  * \brief Abstrct base class for temporary unary expression
  * \tparam D The derived type
- * \tparam T The value type
  * \tparam A The sub type
  */
 template <typename D, typename A>
@@ -524,7 +523,6 @@ struct base_temporary_expr_un : base_temporary_expr<D> {
 /*!
  * \brief Abstrct base class for temporary binary expression
  * \tparam D The derived type
- * \tparam T The value type
  * \tparam A The left sub expression type
  * \tparam B The right sub expression type
  */
