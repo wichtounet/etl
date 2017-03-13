@@ -788,7 +788,7 @@ public:
 
     /*!
      * \brief Copy from GPU to GPU
-     * \param gpu_memory Pointer to CPU memory
+     * \param new_gpu_memory Pointer to CPU memory from which to copy
      */
     void gpu_copy_from(const value_type* new_gpu_memory) const {
         cpp_assert(sub_expr.gpu_memory(), "GPU must be allocated before copy");

@@ -164,9 +164,8 @@ void householder(AT& A, QT& Q, RT& R) {
 /*!
  * \brief Performs the A=QR decomposition of the matrix A
  * \param A The matrix to decompose
- * \param L The resulting L matrix
- * \param U The resulting U matrix
- * \param P The resulting P matrix
+ * \param Q The resulting Q matrix
+ * \param R The resulting R matrix
  */
 template <typename AT, typename QT, typename RT>
 void qr(AT& A, QT& Q, RT& R) {

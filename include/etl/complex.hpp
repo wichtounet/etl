@@ -375,7 +375,7 @@ inline etl::complex<T> get_conj(const etl::complex<T>& c) {
  * \brief Outputs a textual representation of the complex number in the given stream
  * \param os The stream to output to
  * \param c The complex number to get representation from
- * \param return The output stream
+ * \return The output stream
  */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const etl::complex<T>& c){

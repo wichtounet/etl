@@ -243,7 +243,7 @@ struct etl_traits<etl::transpose_expr<A>> {
 
     /*!
      * \brief Returns the dth dimension of the expression
-     * \param a The left hand side
+     * \param e The sub expression
      * \param d The dimension to get
      * \return the dth dimension of the expression
      */
@@ -253,7 +253,7 @@ struct etl_traits<etl::transpose_expr<A>> {
 
     /*!
      * \brief Returns the size of the expression
-     * \param a The left hand side
+     * \param e The sub expression
      * \return the size of the expression
      */
     static std::size_t size(const expr_t& e) {

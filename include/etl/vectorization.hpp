@@ -24,7 +24,7 @@ namespace etl {
  * \brief SIMD pack of some type, using a vector implementation type
  * \tparam V The vector implementation
  * \tparam T The real type
- * \tparam T The vector type
+ * \tparam VT The vector type
  */
 template <vector_mode_t V, typename T, typename VT>
 struct simd_pack {

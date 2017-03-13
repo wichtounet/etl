@@ -1761,9 +1761,9 @@ void conv4_full_flipped(A&& a, B&& b, C&& c) {
  * This works by doing a full convolution by FFT and then extracting
  * only the valid part of the convolution.
  *
- * \param input The input matrix
- * \param kernels The kernel matrix
- * \param conv The output matrix
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
  */
 template <typename I, typename K_T, typename C>
 void fft_conv2_valid_multi(const I& a, const K_T& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
@@ -1779,9 +1779,9 @@ void fft_conv2_valid_multi(const I& a, const K_T& b, C&& c, size_t s1, size_t s2
 
 /*!
  * \brief MKL FFT implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
- * \param input The input matrix
- * \param kernels The kernel matrix
- * \param conv The output matrix
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
  */
 template <typename I, typename K_T, typename C>
 void fft_conv2_valid_multi_flipped(I&& a, K_T&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
@@ -1801,9 +1801,9 @@ void fft_conv2_valid_multi_flipped(I&& a, K_T&& b, C&& c, size_t s1, size_t s2, 
  * This works by doing a full convolution by FFT and then extracting
  * only the valid part of the convolution.
  *
- * \param input The input matrix
- * \param kernels The kernel matrix
- * \param conv The output matrix
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
  */
 template <typename I, typename K_T, typename C>
 void fft_conv2_valid_multi_multi(const I& a, const K_T& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
@@ -1819,9 +1819,9 @@ void fft_conv2_valid_multi_multi(const I& a, const K_T& b, C&& c, size_t s1, siz
 
 /*!
  * \brief MKL FFT implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
- * \param input The input matrix
- * \param kernels The kernel matrix
- * \param conv The output matrix
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
  */
 template <typename I, typename K_T, typename C>
 void fft_conv2_valid_multi_multi_flipped(I&& a, K_T&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {

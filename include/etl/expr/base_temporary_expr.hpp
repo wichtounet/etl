@@ -59,7 +59,6 @@ using expr_result_t = typename expr_result<E, all_fast<E>::value, Subs...>::type
  * \brief A temporary expression base
  *
  * \tparam D The derived type
- * \tparam R The result type
  *
  * A temporary expression computes the expression directly and stores it into a temporary.
  */
@@ -413,7 +412,6 @@ private:
  * \tparam D The derived type
  * \tparam T The value type
  * \tparam A The sub type
- * \tparam R The result type, if forced
  */
 template <typename D, typename A>
 struct base_temporary_expr_un : base_temporary_expr<D> {
@@ -529,7 +527,6 @@ struct base_temporary_expr_un : base_temporary_expr<D> {
  * \tparam T The value type
  * \tparam A The left sub expression type
  * \tparam B The right sub expression type
- * \tparam R The result type, if forced (void otherwise)
  */
 template <typename D, typename A, typename B>
 struct base_temporary_expr_bin : base_temporary_expr<D> {
