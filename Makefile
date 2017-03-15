@@ -68,7 +68,7 @@ endif
 
 # On demand activation of full GPU support
 ifneq (,$(ETL_GPU))
-CXX_FLAGS += -DETL_GPU $(shell pkg-config --cflags cublas)
+CXX_FLAGS += -DETL_GPU
 
 CXX_FLAGS += $(shell pkg-config --cflags cublas)
 CXX_FLAGS += $(shell pkg-config --cflags cufft)
