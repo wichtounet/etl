@@ -678,4 +678,83 @@ void shuffle(T& matrix){
     }
 }
 
+/*!
+ * \brief Shuffle all the elements of two vectors, using the same permutation
+ * \param v1 The first vector to shuffle
+ * \param v2 The second vector to shuffle
+ */
+template<typename T1, typename T2, cpp_enable_if(decay_traits<T1>::dimensions() == 1)>
+void parallel_shuffle(T1& v1, T2& v2){
+    static_assert(decay_traits<T1>::dimensions() == decay_traits<T2>::dimensions(), "Impossible to shuffle vector of different dimensions");
+
+    cpp_assert(etl::size(v1) == etl::size(v2), "Impossible to shuffle vector of different dimensions");
+
+    static std::random_device rd;
+    static etl::random_engine g(rd());
+
+    const auto n = etl::size(v1);
+
+    if(n < 2){
+        return;
+    }
+
+    using distribution_t = typename std::uniform_int_distribution<size_t>;
+    using param_t        = typename distribution_t::param_type;
+
+    distribution_t dist;
+
+    for (auto i = n - 1; i > 0; --i) {
+        auto new_i = dist(g, param_t(0, i));
+
+        using std::swap;
+        swap(v1[i], v1[new_i]);
+        swap(v2[i], v2[new_i]);
+    }
+}
+
+/*!
+ * \brief Shuffle all the elements of two matrices, using the same permutation.
+ *
+ * The elements will be shuffled according to the first dimension of
+ * the matrix.
+ *
+ * \param m1 The first matrix to shuffle
+ * \param m2 The first matrix to shuffle
+ */
+template<typename T1, typename T2, cpp_enable_if((decay_traits<T1>::dimensions() > 1))>
+void parallel_shuffle(T1& m1, T2& m2){
+    static_assert(decay_traits<T1>::dimensions() == decay_traits<T2>::dimensions(), "Impossible to shuffle vector of different dimensions");
+
+    cpp_assert(etl::size(m1) == etl::size(m2), "Impossible to shuffle vector of different dimensions");
+
+    static std::random_device rd;
+    static etl::random_engine g(rd());
+
+    const auto n = etl::dim<0>(m1);
+
+    if(n < 2){
+        return;
+    }
+
+    using distribution_t = typename std::uniform_int_distribution<size_t>;
+    using param_t        = typename distribution_t::param_type;
+
+    distribution_t dist;
+
+    auto t1 = etl::force_temporary(m1(0));
+    auto t2 = etl::force_temporary(m2(0));
+
+    for (auto i = n - 1; i > 0; --i) {
+        auto new_i = dist(g, param_t(0, i));
+
+        t1 = m1(i);
+        m1(i) = m1(new_i);
+        m1(new_i) = t1;
+
+        t2 = m2(i);
+        m2(i) = m2(new_i);
+        m2(new_i) = t2;
+    }
+}
+
 } //end of namespace etl
