@@ -615,4 +615,67 @@ bool qr(AT& A, QT& Q, RT& R) {
     return true;
 }
 
+/*!
+ * \brief Shuffle all the elements of an ETL vector
+ * \param vector The vector to shuffle
+ */
+template<typename T, cpp_enable_if(decay_traits<T>::dimensions() == 1)>
+void shuffle(T& vector){
+    static std::random_device rd;
+    static etl::random_engine g(rd());
+
+    const auto n = etl::size(vector);
+
+    if(n < 2){
+        return;
+    }
+
+    using distribution_t = typename std::uniform_int_distribution<size_t>;
+    using param_t        = typename distribution_t::param_type;
+
+    distribution_t dist;
+
+    for (auto i = n - 1; i > 0; --i) {
+        auto new_i = dist(g, param_t(0, i));
+
+        using std::swap;
+        swap(vector[i], vector[new_i]);
+    }
+}
+
+/*!
+ * \brief Shuffle all the elements of a matrix.
+ *
+ * The elements will be shuffled according to the first dimension of
+ * the matrix.
+ *
+ * \param matrix The matrix to shuffle
+ */
+template<typename T, cpp_enable_if((decay_traits<T>::dimensions() > 1))>
+void shuffle(T& matrix){
+    static std::random_device rd;
+    static etl::random_engine g(rd());
+
+    const auto n = etl::dim<0>(matrix);
+
+    if(n < 2){
+        return;
+    }
+
+    using distribution_t = typename std::uniform_int_distribution<size_t>;
+    using param_t        = typename distribution_t::param_type;
+
+    distribution_t dist;
+
+    auto temp = etl::force_temporary(matrix(0));
+
+    for (auto i = n - 1; i > 0; --i) {
+        auto new_i = dist(g, param_t(0, i));
+
+        temp = matrix(i);
+        matrix(i) = matrix(new_i);
+        matrix(new_i) = temp;
+    }
+}
+
 } //end of namespace etl
