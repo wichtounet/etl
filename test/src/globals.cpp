@@ -613,3 +613,58 @@ ETL_TEST_CASE("globals/determinant/3", "[globals]") {
     REQUIRE_EQUALS_APPROX(determinant(a), 47.0);
     REQUIRE_EQUALS_APPROX(determinant(b), 45.5);
 }
+
+ETL_TEST_CASE("globals/shuffle/1", "[globals]") {
+    etl::fast_matrix<double, 5> a{0, 1, 2, 3, 4};
+
+    shuffle(a);
+
+    REQUIRE_DIRECT(a[0] >= 0 && a[0] <= 5);
+    REQUIRE_DIRECT(a[1] >= 0 && a[1] <= 5);
+    REQUIRE_DIRECT(a[2] >= 0 && a[2] <= 5);
+    REQUIRE_DIRECT(a[3] >= 0 && a[3] <= 5);
+    REQUIRE_DIRECT(a[4] >= 0 && a[4] <= 5);
+
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 0), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 1), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 2), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 3), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 4), 1);
+}
+
+ETL_TEST_CASE("globals/shuffle/2", "[globals]") {
+    etl::fast_matrix<double, 5, 2> a{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    shuffle(a);
+
+    REQUIRE_DIRECT(a[0] >= 0 && a[0] <= 9);
+    REQUIRE_DIRECT(a[1] >= 0 && a[1] <= 9);
+    REQUIRE_DIRECT(a[2] >= 0 && a[2] <= 9);
+    REQUIRE_DIRECT(a[3] >= 0 && a[3] <= 9);
+    REQUIRE_DIRECT(a[4] >= 0 && a[4] <= 9);
+    REQUIRE_DIRECT(a[5] >= 0 && a[5] <= 9);
+    REQUIRE_DIRECT(a[6] >= 0 && a[6] <= 9);
+    REQUIRE_DIRECT(a[7] >= 0 && a[7] <= 9);
+    REQUIRE_DIRECT(a[8] >= 0 && a[8] <= 9);
+    REQUIRE_DIRECT(a[9] >= 0 && a[9] <= 9);
+
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 0), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 1), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 2), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 3), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 4), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 5), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 6), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 7), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 8), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 9), 1);
+}
+
+ETL_TEST_CASE("globals/shuffle/3", "[globals]") {
+    etl::fast_matrix<double, 1, 10> a{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    etl::fast_matrix<double, 1, 10> b{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    shuffle(b);
+
+    REQUIRE_DIRECT(a == b);
+}
