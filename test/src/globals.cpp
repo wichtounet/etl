@@ -668,3 +668,80 @@ ETL_TEST_CASE("globals/shuffle/3", "[globals]") {
 
     REQUIRE_DIRECT(a == b);
 }
+
+ETL_TEST_CASE("globals/parallel_shuffle/1", "[globals]") {
+    etl::fast_matrix<double, 5> a{0, 1, 2, 3, 4};
+    etl::fast_matrix<double, 5> b{1, 2, 3, 4, 5};
+
+    parallel_shuffle(a, b);
+
+    REQUIRE_DIRECT(a[0] >= 0 && a[0] <= 5);
+    REQUIRE_DIRECT(a[1] >= 0 && a[1] <= 5);
+    REQUIRE_DIRECT(a[2] >= 0 && a[2] <= 5);
+    REQUIRE_DIRECT(a[3] >= 0 && a[3] <= 5);
+    REQUIRE_DIRECT(a[4] >= 0 && a[4] <= 5);
+
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 0), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 1), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 2), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 3), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 4), 1);
+
+    REQUIRE_EQUALS(a[0], b[0] - 1);
+    REQUIRE_EQUALS(a[1], b[1] - 1);
+    REQUIRE_EQUALS(a[2], b[2] - 1);
+    REQUIRE_EQUALS(a[3], b[3] - 1);
+    REQUIRE_EQUALS(a[4], b[4] - 1);
+}
+
+ETL_TEST_CASE("globals/parallel_shuffle/2", "[globals]") {
+    etl::fast_matrix<double, 5, 2> a{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    etl::fast_matrix<double, 5, 2> b;
+    b = a + 1;
+
+    parallel_shuffle(a, b);
+
+    REQUIRE_DIRECT(a[0] >= 0 && a[0] <= 9);
+    REQUIRE_DIRECT(a[1] >= 0 && a[1] <= 9);
+    REQUIRE_DIRECT(a[2] >= 0 && a[2] <= 9);
+    REQUIRE_DIRECT(a[3] >= 0 && a[3] <= 9);
+    REQUIRE_DIRECT(a[4] >= 0 && a[4] <= 9);
+    REQUIRE_DIRECT(a[5] >= 0 && a[5] <= 9);
+    REQUIRE_DIRECT(a[6] >= 0 && a[6] <= 9);
+    REQUIRE_DIRECT(a[7] >= 0 && a[7] <= 9);
+    REQUIRE_DIRECT(a[8] >= 0 && a[8] <= 9);
+    REQUIRE_DIRECT(a[9] >= 0 && a[9] <= 9);
+
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 0), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 1), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 2), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 3), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 4), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 5), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 6), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 7), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 8), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 9), 1);
+
+    REQUIRE_EQUALS(a[0], b[0] - 1);
+    REQUIRE_EQUALS(a[1], b[1] - 1);
+    REQUIRE_EQUALS(a[2], b[2] - 1);
+    REQUIRE_EQUALS(a[3], b[3] - 1);
+    REQUIRE_EQUALS(a[4], b[4] - 1);
+    REQUIRE_EQUALS(a[5], b[5] - 1);
+    REQUIRE_EQUALS(a[6], b[6] - 1);
+    REQUIRE_EQUALS(a[7], b[7] - 1);
+    REQUIRE_EQUALS(a[8], b[8] - 1);
+    REQUIRE_EQUALS(a[9], b[9] - 1);
+}
+
+ETL_TEST_CASE("globals/parallel_shuffle/3", "[globals]") {
+    etl::fast_matrix<double, 1, 10> a{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    etl::fast_matrix<double, 1, 10> b{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    etl::fast_matrix<double, 1, 10> c{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    parallel_shuffle(a, b);
+
+    REQUIRE_DIRECT(a == c);
+    REQUIRE_DIRECT(b == c);
+}
