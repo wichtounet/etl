@@ -645,3 +645,25 @@ TEST_CASE("etl_traits/vectorizable_long", "[traits]") {
         REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
     }
 }
+
+TEST_CASE("etl_traits/vectorize/expr/1", "[traits]") {
+    etl::fast_matrix<float, 3, 3> A;
+    etl::fast_matrix<float, 3, 3> B;
+    etl::fast_matrix<float, 3> C;
+
+    auto expr_1 = sigmoid(A * B + etl::rep_l(C, 3));
+    auto expr_2 = sigmoid(A * B + etl::rep_l<3>(C));
+
+    using expr_1_t = decltype(expr_1);
+    using expr_2_t = decltype(expr_2);
+
+    if (etl::sse3_enabled) {
+        REQUIRE_DIRECT((etl::decay_traits<expr_1_t>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+        REQUIRE_DIRECT((etl::decay_traits<expr_2_t>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+    }
+
+    if (etl::avx_enabled) {
+        REQUIRE_DIRECT((etl::decay_traits<expr_1_t>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT((etl::decay_traits<expr_2_t>::template vectorizable<etl::vector_mode_t::AVX>::value));
+    }
+}
