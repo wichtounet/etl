@@ -50,7 +50,6 @@
 #include "etl/op/scalar.hpp"
 #include "etl/op/generators.hpp"
 #include "etl/op/transformers.hpp"
-#include "etl/op/views.hpp"
 #include "etl/op/virtual_views.hpp"
 #include "etl/op/unary_op.hpp"
 #include "etl/op/binary_op.hpp"
@@ -77,6 +76,9 @@
 #include "etl/builder/expression_builder.hpp"
 
 // The expressions
+#include "etl/op/dim_view.hpp"
+#include "etl/op/slice_view.hpp"
+#include "etl/op/memory_slice_view.hpp"
 #include "etl/op/sub_view.hpp"
 #include "etl/op/dyn_matrix_view.hpp"
 #include "etl/op/fast_matrix_view.hpp"

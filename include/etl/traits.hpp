@@ -719,6 +719,30 @@ struct is_square_matrix <Matrix, std::enable_if_t<!all_fast<Matrix>::value && is
 };
 
 /*!
+ * Builder to construct the type returned by a view.
+ */
+template <typename T, typename S>
+using return_helper =
+    std::conditional_t<
+        std::is_const<std::remove_reference_t<S>>::value,
+        const value_t<T>&,
+        std::conditional_t<
+            cpp::and_u<
+                std::is_lvalue_reference<S>::value,
+                cpp::not_u<std::is_const<T>::value>::value>::value,
+            value_t<T>&,
+            value_t<T>>>;
+
+/*!
+ * Builder to construct the const type returned by a view.
+ */
+template <typename T, typename S>
+using const_return_helper = std::conditional_t<
+    std::is_lvalue_reference<S>::value,
+    const value_t<T>&,
+    value_t<T>>;
+
+/*!
  * \brief Specialization for value structures
  */
 template <typename T>
