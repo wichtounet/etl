@@ -327,7 +327,17 @@ public:
      */
     template <typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
     dyn_matrix_impl& operator=(const Container& vec) {
-        validate_assign(*this, vec);
+        // Inherit from the dimensions if possible
+        if(!_memory && D == 1){
+            // Compute the size and new dimensions
+            _size = vec.size();
+            _dimensions[0] = vec.size();
+
+            // Allocate the new memory
+            _memory = allocate(alloc_size_mat<T>(_size, dim(0)));
+        } else {
+            validate_assign(*this, vec);
+        }
 
         std::copy(vec.begin(), vec.end(), begin());
 
