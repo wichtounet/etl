@@ -104,7 +104,7 @@ inline void dispatch_1d_any(bool p, Functor&& functor, std::size_t first, std::s
     if (p) {
         auto n = last - first;
         size_t T = std::min(n, threads);
-        thread_local cpp::default_thread_pool<> pool(threads);
+        thread_local cpp::default_thread_pool<> pool(threads - 1);
         dispatch_1d(pool, p, std::forward<Functor>(functor), T, first, last);
     } else {
         functor(first, last);
