@@ -69,7 +69,7 @@ inline void dispatch_1d(cpp::default_thread_pool<>& pool, bool p, Functor&& func
 template <typename Functor>
 inline void dispatch_1d(cpp::default_thread_pool<>& pool, bool p, Functor&& functor, std::size_t first, std::size_t last) {
     if (p) {
-        dispatch_1d(pool, p, std::forward<Functor>(functor), pool.size(), first, last);
+        dispatch_1d(pool, p, std::forward<Functor>(functor), pool.size() + 1, first, last);
     } else {
         functor(first, last);
     }
@@ -86,7 +86,7 @@ template <typename Functor>
 inline void dispatch_1d(bool p, Functor&& functor, std::size_t first, std::size_t last) {
     if (p) {
         thread_local cpp::default_thread_pool<> pool(threads - 1);
-        dispatch_1d(pool, p, std::forward<Functor>(functor), first, last);
+        dispatch_1d(pool, p, std::forward<Functor>(functor), threads, first, last);
     } else {
         functor(first, last);
     }
