@@ -9,6 +9,15 @@
 
 namespace etl {
 
+template <typename Expr>
+struct optimizable;
+
+template <typename Expr>
+struct optimizer;
+
+template <typename Expr>
+struct transformer;
+
 struct identity_op;
 
 struct transform_op;
