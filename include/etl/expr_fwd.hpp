@@ -64,7 +64,7 @@ struct dim_view;
 template <typename T, typename Enable = void>
 struct sub_view;
 
-template <typename T>
+template <typename T, typename Enable = void>
 struct slice_view;
 
 template <typename T>
