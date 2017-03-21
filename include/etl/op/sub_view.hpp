@@ -344,8 +344,8 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<value_type>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<value_type>;
 
     using iterable_base_type::begin;
     using iterable_base_type::end;
