@@ -263,6 +263,12 @@ struct slice_view  <T, std::enable_if_t<fast_slice_view_able<T>::value>>
     using iterator             = memory_type;                       ///< The iterator type
     using const_iterator       = const_memory_type;                 ///< The const iterator type
 
+    /*!
+     * \brief The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<value_type>;
+
     using assignable_base_type::operator=;
     using iterable_base_type::begin;
     using iterable_base_type::end;
@@ -270,6 +276,9 @@ struct slice_view  <T, std::enable_if_t<fast_slice_view_able<T>::value>>
 private:
 
     mutable memory_type memory; ///< Pointer to the CPU memory
+
+    mutable bool cpu_up_to_date; ///< Indicates if the CPU is up to date
+    mutable bool gpu_up_to_date; ///< Indicates if the GPU is up to date
 
 public:
 
@@ -283,8 +292,35 @@ public:
             : sub(sub), first(first), last(last), sub_size((size(sub) / etl::dim<0>(sub)) * (last - first)) {
         if (!decay_traits<sub_type>::needs_evaluator_visitor) {
             this->memory = sub.memory_start() + first * (size(sub) / etl::dim<0>(sub));
+
+            // A sub view inherits the CPU/GPU from parent
+            this->cpu_up_to_date = sub.is_cpu_up_to_date();
+            this->gpu_up_to_date = sub.is_gpu_up_to_date();
         } else {
             this->memory = nullptr;
+        }
+    }
+
+    ~slice_view(){
+        if (this->memory) {
+            // Propagate the status on the parent
+            if (!this->cpu_up_to_date) {
+                if (sub.is_gpu_up_to_date()) {
+                    sub.invalidate_cpu();
+                } else {
+                    // If the GPU is not up to date, cannot invalidate the CPU too
+                    ensure_cpu_up_to_date();
+                }
+            }
+
+            if (!this->gpu_up_to_date) {
+                if (sub.is_cpu_up_to_date()) {
+                    sub.invalidate_gpu();
+                } else {
+                    // If the GPU is not up to date, cannot invalidate the CPU too
+                    ensure_gpu_up_to_date();
+                }
+            }
         }
     }
 
@@ -294,6 +330,7 @@ public:
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](std::size_t j) const {
+        ensure_cpu_up_to_date();
         return memory[j];
     }
 
@@ -303,6 +340,8 @@ public:
      * \return a reference to the element at the given index.
      */
     return_type operator[](std::size_t j) {
+        ensure_cpu_up_to_date();
+        invalidate_gpu();
         return memory[j];
     }
 
@@ -313,6 +352,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t j) const noexcept {
+        ensure_cpu_up_to_date();
         return memory[j];
     }
 
@@ -323,6 +363,7 @@ public:
      */
     template <typename... S>
     const_return_type operator()(std::size_t i, S... args) const {
+        ensure_cpu_up_to_date();
         return memory[dyn_index(*this, i, args...)];
     }
 
@@ -333,6 +374,8 @@ public:
      */
     template <typename... S>
     return_type operator()(std::size_t i, S... args) {
+        ensure_cpu_up_to_date();
+        invalidate_gpu();
         return memory[dyn_index(*this, i, args...)];
     }
 
@@ -345,6 +388,40 @@ public:
     template <typename V = default_vec>
     auto load(std::size_t x) const noexcept {
         return V::loadu(memory + x);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     */
+    template <typename V = default_vec>
+    void store(vec_type<V> in, std::size_t x) noexcept {
+        return V::storeu(memory + x, in);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     */
+    template <typename V = default_vec>
+    void storeu(vec_type<V> in, std::size_t x) noexcept {
+        return V::storeu(memory + x, in);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once, using non-temporal store
+     * \param in The several elements to store
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     */
+    template <typename V = default_vec>
+    void stream(vec_type<V> in, std::size_t x) noexcept {
+        //TODO If the slice view is aligned (at compile-time), use stream store here
+        return V::storeu(memory + x, in);
     }
 
     /*!
@@ -478,6 +555,10 @@ public:
         // It's only interesting if the sub expression is not direct
         if(decay_traits<sub_type>::needs_evaluator_visitor){
             this->memory = const_cast<memory_type>(sub.memory_start()) + first * (size(sub) / etl::dim<0>(sub));
+
+            // A sub view inherits the CPU/GPU from parent
+            this->cpu_up_to_date = sub.is_cpu_up_to_date();
+            this->gpu_up_to_date = sub.is_gpu_up_to_date();
         }
     }
 
@@ -498,6 +579,135 @@ public:
         visitor.need_value = true;
         sub.visit(visitor);
         visitor.need_value = old_need_value;
+    }
+
+    // GPU functions
+
+    /*!
+     * \brief Return GPU memory of this expression, if any.
+     * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
+     */
+    value_type* gpu_memory() const noexcept {
+        return sub.gpu_memory() + first * (size(sub) / etl::dim<0>(sub));
+    }
+
+    /*!
+     * \brief Evict the expression from GPU.
+     */
+    void gpu_evict() const noexcept {
+        sub.gpu_evict();
+    }
+
+    /*!
+     * \brief Invalidates the CPU memory
+     */
+    void invalidate_cpu() const noexcept {
+        this->cpu_up_to_date = false;
+    }
+
+    /*!
+     * \brief Invalidates the GPU memory
+     */
+    void invalidate_gpu() const noexcept {
+        this->gpu_up_to_date = false;
+    }
+
+    /*!
+     * \brief Validates the CPU memory
+     */
+    void validate_cpu() const noexcept {
+        this->cpu_up_to_date = true;
+    }
+
+    /*!
+     * \brief Validates the GPU memory
+     */
+    void validate_gpu() const noexcept {
+        this->gpu_up_to_date = true;
+    }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_gpu_allocated() const {
+        // Allocate is done by the sub
+        sub.ensure_gpu_allocated();
+    }
+
+    /*!
+     * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
+     */
+    void ensure_gpu_up_to_date() const {
+        sub.ensure_gpu_allocated();
+
+#ifdef ETL_CUDA
+        if(!this->gpu_up_to_date){
+            cuda_check_assert(cudaMemcpy(
+                const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
+                const_cast<std::remove_const_t<value_type>*>(memory_start()),
+                sub_size * sizeof(value_type), cudaMemcpyHostToDevice));
+
+            this->gpu_up_to_date = true;
+
+            inc_counter("gpu:slice:cpu_to_gpu");
+        }
+#endif
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_cpu_up_to_date() const {
+#ifdef ETL_CUDA
+        if (!this->cpu_up_to_date) {
+            cuda_check_assert(cudaMemcpy(
+                const_cast<std::remove_const_t<value_type>*>(memory_start()),
+                const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
+                sub_size * sizeof(value_type), cudaMemcpyDeviceToHost));
+
+            inc_counter("gpu:slice:gpu_to_cpu");
+        }
+#endif
+
+        this->cpu_up_to_date = true;
+    }
+
+    /*!
+     * \brief Copy from GPU to GPU
+     * \param new_gpu_memory Pointer to CPU memory from which to copy
+     */
+    void gpu_copy_from(const value_type* new_gpu_memory) const {
+        cpp_assert(sub.gpu_memory(), "GPU must be allocated before copy");
+
+#ifdef ETL_CUDA
+        cuda_check_assert(cudaMemcpy(
+            const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
+            const_cast<std::remove_const_t<value_type>*>(new_gpu_memory),
+            sub_size * sizeof(value_type), cudaMemcpyDeviceToDevice));
+#else
+        cpp_unused(new_gpu_memory);
+#endif
+
+        gpu_up_to_date = true;
+        cpu_up_to_date = false;
+    }
+
+    /*!
+     * \brief Indicates if the CPU memory is up to date.
+     * \return true if the CPU memory is up to date, false otherwise.
+     */
+    bool is_cpu_up_to_date() const noexcept {
+        return cpu_up_to_date;
+    }
+
+    /*!
+     * \brief Indicates if the GPU memory is up to date.
+     * \return true if the GPU memory is up to date, false otherwise.
+     */
+    bool is_gpu_up_to_date() const noexcept {
+        return gpu_up_to_date;
     }
 };
 
