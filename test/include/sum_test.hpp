@@ -60,7 +60,7 @@ SUM_FUNCTOR(cublas_sum, SELECTED_SECTION(etl::sum_impl::CUBLAS) { c = etl::sum(a
 SUM_FUNCTOR(cublas_asum, SELECTED_SECTION(etl::sum_impl::CUBLAS) { c = etl::asum(a); })
 
 #define SUM_TEST_CASE_SECTION_CUBLAS SUM_TEST_CASE_SECTIONS(cublas_sum)
-#define ASUM_TEST_CASE_SECTION_CUBLAS ASUM_TEST_CASE_SECTIONS(cublas_asum)
+#define ASUM_TEST_CASE_SECTION_CUBLAS SUM_TEST_CASE_SECTIONS(cublas_asum)
 #else
 #define SUM_TEST_CASE_SECTION_CUBLAS
 #define ASUM_TEST_CASE_SECTION_CUBLAS
