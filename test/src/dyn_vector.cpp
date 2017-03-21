@@ -521,13 +521,58 @@ TEMPLATE_TEST_CASE_2("dyn_vector/bernoulli", "dyn_vector::bernoulli", Z, double,
 
 // TODO Need more sum tests
 
-SUM_TEST_CASE("dyn_vector/sum", "sum") {
+SUM_TEST_CASE("sum/0", "sum") {
     etl::dyn_vector<T> a = {-1.0, 2.0, 8.5};
 
     T value = 0;
     Impl::apply(a, value);
 
-    REQUIRE_EQUALS(value, 9.5);
+    REQUIRE_EQUALS(value, T(9.5));
+}
+
+SUM_TEST_CASE("sum/1", "sum") {
+    etl::dyn_vector<T> a = {-1.0, 2.0, 8.5, 1.0, 3.0, -5.0, 11.4};
+
+    T value = 0;
+    Impl::apply(a, value);
+
+    REQUIRE_EQUALS(value, T(19.9));
+}
+
+SUM_TEST_CASE("sum/2", "sum") {
+    etl::dyn_vector<T> a = {-1.0, 2.0, 8.5, 1.0, 3.0, -5.0, 11.4, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
+
+    T value = 0;
+    Impl::apply(a, value);
+
+    REQUIRE_EQUALS(value, T(64.9));
+}
+
+ASUM_TEST_CASE("asum/0", "asum") {
+    etl::dyn_vector<T> a = {-1.0, 2.0, 8.5};
+
+    T value = 0;
+    Impl::apply(a, value);
+
+    REQUIRE_EQUALS(value, T(11.5));
+}
+
+ASUM_TEST_CASE("asum/1", "asum") {
+    etl::dyn_vector<T> a = {-1.0, 2.0, 8.5, 1.0, 3.0, -5.0, 11.4};
+
+    T value = 0;
+    Impl::apply(a, value);
+
+    REQUIRE_EQUALS(value, T(31.9));
+}
+
+ASUM_TEST_CASE("asum/2", "asum") {
+    etl::dyn_vector<T> a = {-1.0, 2.0, 8.5, 1.0, 3.0, -5.0, 11.4, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
+
+    T value = 0;
+    Impl::apply(a, value);
+
+    REQUIRE_EQUALS(value, T(76.9));
 }
 
 TEMPLATE_TEST_CASE_2("dyn_vector/sum_2", "sum", Z, double, float) {

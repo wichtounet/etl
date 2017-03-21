@@ -120,7 +120,7 @@ TEMPLATE_TEST_CASE_2("big/compound/div", "[big][add]", Z, double, float) {
     }
 }
 
-TEMPLATE_TEST_CASE_2("big/sum/div", "[big][add]", Z, double, float) {
+TEMPLATE_TEST_CASE_2("big/sum/1", "[big][sum]", Z, double, float) {
     etl::dyn_matrix<Z> a(etl::sum_parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> b(etl::sum_parallel_threshold + 100, 1UL);
 
@@ -129,6 +129,17 @@ TEMPLATE_TEST_CASE_2("big/sum/div", "[big][add]", Z, double, float) {
 
     REQUIRE_EQUALS(etl::sum(a), 1.0 * (etl::sum_parallel_threshold + 100));
     REQUIRE_EQUALS(etl::sum(b), 2.5 * (etl::sum_parallel_threshold + 100));
+}
+
+TEMPLATE_TEST_CASE_2("big/sum/2", "[big][sum]", Z, double, float) {
+    etl::dyn_matrix<Z> a(etl::sum_parallel_threshold + 100, 1UL);
+    etl::dyn_matrix<Z> b(etl::sum_parallel_threshold + 100, 1UL);
+
+    a = 1.0;
+    b = 2.5;
+
+    REQUIRE_EQUALS(etl::asum(a), 1.0 * (etl::sum_parallel_threshold + 100));
+    REQUIRE_EQUALS(etl::asum(b), 2.5 * (etl::sum_parallel_threshold + 100));
 }
 
 TEMPLATE_TEST_CASE_2("big/exp", "[big][exp]", Z, double, float) {

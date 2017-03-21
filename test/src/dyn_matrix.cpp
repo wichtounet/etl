@@ -629,6 +629,22 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/sum_3", "sum", Z, double, float) {
     REQUIRE_EQUALS(d, 23.0);
 }
 
+TEMPLATE_TEST_CASE_2("dyn_matrix/asum/1", "asum", Z, double, float) {
+    etl::dyn_matrix<Z> a(3, 1, std::initializer_list<Z>({-1.0, -2.0, 8.5}));
+
+    auto d = asum(a);
+
+    REQUIRE_EQUALS(d, 11.5);
+}
+
+TEMPLATE_TEST_CASE_2("dyn_matrix/asum/2", "asum", Z, double, float) {
+    etl::dyn_matrix<Z> a(3, 1, std::initializer_list<Z>({-1.0, -2.0, -8.5}));
+
+    auto d = asum(a + a);
+
+    REQUIRE_EQUALS(d, 23.0);
+}
+
 TEMPLATE_TEST_CASE_2("dyn_matrix/min_reduc", "min", Z, double, float) {
     etl::dyn_matrix<Z> a(3, 1, std::initializer_list<Z>({-1.0, 2.0, 8.5}));
 
