@@ -173,7 +173,7 @@ struct hermitian_reference {
      * \param ref The hermitian reference to output
      * \return The output stream
      */
-    std::ostream& operator<<(std::ostream& os, const hermitian_reference& ref){
+    friend std::ostream& operator<<(std::ostream& os, const hermitian_reference& ref){
         typename M::value_type c = ref;
         return os << c;
     }
