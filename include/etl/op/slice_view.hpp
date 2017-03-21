@@ -251,17 +251,17 @@ struct slice_view  <T, std::enable_if_t<fast_slice_view_able<T>::value>>
     const size_t last;       ///< The last index
     const size_t sub_size;   ///< The sub size
 
-    using this_type            = slice_view<T>;                     ///< The type of this expression
-    using iterable_base_type   = iterable<this_type, true>;         ///< The iterable base type
-    using assignable_base_type = assignable<this_type, value_t<T>>; ///< The assignable base type
-    using sub_type             = T;                                 ///< The sub type
-    using value_type           = value_t<sub_type>;                 ///< The value contained in the expression
-    using memory_type          = memory_t<sub_type>;                ///< The memory acess type
-    using const_memory_type    = const_memory_t<sub_type>;          ///< The const memory access type
-    using return_type          = value_type&;                       ///< The type returned by the view
-    using const_return_type    = const value_type&;                 ///< The const type return by the view
-    using iterator             = memory_type;                       ///< The iterator type
-    using const_iterator       = const_memory_type;                 ///< The const iterator type
+    using this_type            = slice_view<T>;                                                        ///< The type of this expression
+    using iterable_base_type   = iterable<this_type, true>;                                            ///< The iterable base type
+    using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The assignable base type
+    using sub_type             = T;                                                                    ///< The sub type
+    using value_type           = value_t<sub_type>;                                                    ///< The value contained in the expression
+    using memory_type          = memory_t<sub_type>;                                                   ///< The memory acess type
+    using const_memory_type    = const_memory_t<sub_type>;                                             ///< The const memory access type
+    using return_type          = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
+    using const_return_type    = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
+    using iterator             = memory_type;                                                          ///< The iterator type
+    using const_iterator       = const_memory_type;                                                    ///< The const iterator type
 
     /*!
      * \brief The vectorization type for V
