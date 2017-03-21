@@ -19,17 +19,26 @@ namespace etl {
  * \tparam T The type of expression on which the view is made
  */
 template <typename T>
-struct slice_view {
+struct slice_view : assignable<slice_view<T>, value_t<T>>, value_testable<slice_view<T>>, iterable<slice_view<T>, fast_slice_view_able<T>::value> {
     T sub;                   ///< The Sub expression
     const std::size_t first; ///< The index
     const std::size_t last;  ///< The last index
 
-    using sub_type          = T;                                               ///< The sub type
-    using value_type        = value_t<sub_type>;                               ///< The value contained in the expression
-    using memory_type       = memory_t<sub_type>;                              ///< The memory acess type
-    using const_memory_type = const_memory_t<sub_type>;                        ///< The const memory access type
-    using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
-    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
+    using this_type            = slice_view<T>;                                                        ///< The type of this expression
+    using iterable_base_type   = iterable<this_type, fast_slice_view_able<T>::value>;                  ///< The iterable base type
+    using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The assignable base type
+    using sub_type             = T;                                                                    ///< The sub type
+    using value_type           = value_t<sub_type>;                                                    ///< The value contained in the expression
+    using memory_type          = memory_t<sub_type>;                                                   ///< The memory acess type
+    using const_memory_type    = const_memory_t<sub_type>;                                             ///< The const memory access type
+    using return_type          = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
+    using const_return_type    = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
+    using iterator             = etl::iterator<this_type>;                                             ///< The iterator type
+    using const_iterator       = etl::iterator<const this_type>;                                       ///< The const iterator type
+
+    using assignable_base_type::operator=;
+    using iterable_base_type::begin;
+    using iterable_base_type::end;
 
     /*!
      * \brief Construct a new slice_view over the given sub expression

@@ -1026,9 +1026,9 @@ auto sub(E&& value, std::size_t i) -> sub_view<detail::build_identity_type<E>> {
  * \return a view expression representing a sub dimensional view of the given expression
  */
 template <typename E>
-auto slice(E&& value, std::size_t first, std::size_t last) -> detail::identity_helper<E, slice_view<detail::build_identity_type<E>>> {
+auto slice(E&& value, std::size_t first, std::size_t last) -> slice_view<detail::build_identity_type<E>> {
     static_assert(is_etl_expr<E>::value, "etl::slice can only be used on ETL expressions");
-    return detail::identity_helper<E, slice_view<detail::build_identity_type<E>>>{{value, first, last}};
+    return {value, first, last};
 }
 
 /*!
