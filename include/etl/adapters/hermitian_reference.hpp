@@ -166,6 +166,17 @@ struct hermitian_reference {
     operator const_raw_reference_type&() const {
         return value;
     }
+
+    /*!
+     * \brief Outputs an hermitian reference to the stream
+     * \param os The output stream
+     * \param ref The hermitian reference to output
+     * \return The output stream
+     */
+    std::ostream& operator<<(std::ostream& os, const hermitian_reference& ref){
+        typename M::value_type c = ref;
+        return os << c;
+    }
 };
 
 /*!
@@ -176,18 +187,6 @@ inline typename M::value_type get_conj(const hermitian_reference<M>& ref){
     typename M::value_type c = ref;
     using etl::get_conj;
     return get_conj(c);
-}
-
-/*!
- * \brief Outputs an hermitian reference to the stream
- * \param os The output stream
- * \param ref The hermitian reference to output
- * \return The output stream
- */
-template <typename M>
-std::ostream& operator<<(std::ostream& os, const hermitian_reference<M>& ref){
-    typename M::value_type c = ref;
-    return os << c;
 }
 
 } //end of namespace herm_detail

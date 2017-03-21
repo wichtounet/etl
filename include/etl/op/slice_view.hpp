@@ -27,10 +27,6 @@ struct slice_view;
 template <typename T>
 struct slice_view  <T, std::enable_if_t<!fast_slice_view_able<T>::value>>
 : assignable<slice_view<T>, value_t<T>>, value_testable<slice_view<T>>, iterable<slice_view<T>, fast_slice_view_able<T>::value> {
-    T sub;                   ///< The Sub expression
-    const std::size_t first; ///< The index
-    const std::size_t last;  ///< The last index
-
     using this_type            = slice_view<T>;                                                        ///< The type of this expression
     using iterable_base_type   = iterable<this_type, fast_slice_view_able<T>::value>;                  ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The assignable base type
@@ -46,6 +42,15 @@ struct slice_view  <T, std::enable_if_t<!fast_slice_view_able<T>::value>>
     using assignable_base_type::operator=;
     using iterable_base_type::begin;
     using iterable_base_type::end;
+
+private:
+    T sub;                   ///< The Sub expression
+    const std::size_t first; ///< The index
+    const std::size_t last;  ///< The last index
+
+    friend struct etl_traits<slice_view>;
+
+public:
 
     /*!
      * \brief Construct a new slice_view over the given sub expression
@@ -246,11 +251,6 @@ struct slice_view  <T, std::enable_if_t<!fast_slice_view_able<T>::value>>
 template <typename T>
 struct slice_view  <T, std::enable_if_t<fast_slice_view_able<T>::value>>
 : assignable<slice_view<T>, value_t<T>>, value_testable<slice_view<T>>, iterable<slice_view<T>, true> {
-    T sub;                   ///< The Sub expression
-    const size_t first;      ///< The index
-    const size_t last;       ///< The last index
-    const size_t sub_size;   ///< The sub size
-
     using this_type            = slice_view<T>;                                                        ///< The type of this expression
     using iterable_base_type   = iterable<this_type, true>;                                            ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The assignable base type
@@ -274,11 +274,17 @@ struct slice_view  <T, std::enable_if_t<fast_slice_view_able<T>::value>>
     using iterable_base_type::end;
 
 private:
+    T sub;                   ///< The Sub expression
+    const size_t first;      ///< The index
+    const size_t last;       ///< The last index
+    const size_t sub_size;   ///< The sub size
 
     mutable memory_type memory; ///< Pointer to the CPU memory
 
     mutable bool cpu_up_to_date; ///< Indicates if the CPU is up to date
     mutable bool gpu_up_to_date; ///< Indicates if the GPU is up to date
+
+    friend struct etl_traits<slice_view>;
 
 public:
 
