@@ -778,7 +778,11 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
         }
     };
 
-    dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+    if (etl::is_parallel && !is_blas_parallel) {
+        dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+    } else {
+        batch_fun_n(0, N);
+    }
 
     conv.invalidate_gpu();
 }
@@ -954,7 +958,11 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
         }
     };
 
-    dispatch_1d_any(select_parallel(C, 2), batch_fun_c, 0, C);
+    if (etl::is_parallel && !is_blas_parallel) {
+        dispatch_1d_any(select_parallel(C, 2), batch_fun_c, 0, C);
+    } else {
+        batch_fun_c(0, C);
+    }
 
     conv.invalidate_gpu();
 }
