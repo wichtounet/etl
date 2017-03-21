@@ -26,12 +26,15 @@ namespace etl {
  */
 template <typename Expr>
 struct parallel_expr final {
-private:
-    Expr _value;
-
-public:
     using expr_t     = Expr;          ///< The wrapped expression type
     using value_type = value_t<Expr>; ///< The value type
+
+private:
+    Expr value;
+
+    friend struct wrapper_traits<parallel_expr>;
+
+public:
 
     //Cannot be constructed with no args
     parallel_expr() = delete;
@@ -41,7 +44,7 @@ public:
      * \param l The ETL expression
      */
     explicit parallel_expr(Expr l)
-            : _value(std::forward<Expr>(l)) {
+            : value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
@@ -52,22 +55,6 @@ public:
     //Expressions are invariant
     parallel_expr& operator=(const parallel_expr& e) = delete;
     parallel_expr& operator=(parallel_expr&& e) = delete;
-
-    /*!
-     * \brief Return the sub expression
-     * \return a reference to the sub expression
-     */
-    std::add_lvalue_reference_t<Expr> value() {
-        return _value;
-    }
-
-    /*!
-     * \brief Return the sub expression
-     * \return a reference to the sub expression
-     */
-    cpp::add_const_lvalue_t<Expr> value() const {
-        return _value;
-    }
 
     // Assignment functions
 
@@ -81,7 +68,7 @@ public:
 
         local_context().parallel = true;
 
-        _value.assign_to(lhs);
+        value.assign_to(lhs);
 
         local_context().parallel = old_parallel;
     }
@@ -96,7 +83,7 @@ public:
 
         local_context().parallel = true;
 
-        _value.assign_add_to(lhs);
+        value.assign_add_to(lhs);
 
         local_context().parallel = old_parallel;
     }
@@ -111,7 +98,7 @@ public:
 
         local_context().parallel = true;
 
-        _value.assign_sub_to(lhs);
+        value.assign_sub_to(lhs);
 
         local_context().parallel = old_parallel;
     }
@@ -126,7 +113,7 @@ public:
 
         local_context().parallel = true;
 
-        _value.assign_mul_to(lhs);
+        value.assign_mul_to(lhs);
 
         local_context().parallel = old_parallel;
     }
@@ -141,7 +128,7 @@ public:
 
         local_context().parallel = true;
 
-        _value.assign_div_to(lhs);
+        value.assign_div_to(lhs);
 
         local_context().parallel = old_parallel;
     }
@@ -156,7 +143,7 @@ public:
 
         local_context().parallel = true;
 
-        _value.assign_mod_to(lhs);
+        value.assign_mod_to(lhs);
 
         local_context().parallel = old_parallel;
     }
@@ -168,7 +155,7 @@ public:
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const parallel_expr& expr) {
-        return os << "parallel(" << expr._value << ")";
+        return os << "parallel(" << expr.value << ")";
     }
 };
 

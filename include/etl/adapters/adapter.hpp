@@ -33,7 +33,7 @@ struct adapter {
     using vec_type       = typename V::template vec_type<value_type>;
 
 protected:
-    matrix_t matrix; ///< The adapted matrix
+    matrix_t value; ///< The adapted matrix
 
 public:
     /*!
@@ -41,7 +41,7 @@ public:
      *
      * This constructor can only be used when the matrix is fast
      */
-    adapter() noexcept : matrix(value_type()) {
+    adapter() noexcept : value(value_type()) {
         //Nothing else to init
     }
 
@@ -52,7 +52,7 @@ public:
      *
      * This constructor can only be used when the matrix is fast
      */
-    explicit adapter(value_type value) noexcept : matrix(value) {
+    explicit adapter(value_type value) noexcept : value(value) {
         //Nothing else to init
     }
 
@@ -60,7 +60,7 @@ public:
      * \brief Construct a new adapter matrix and fill it with zeros
      * \param dim The dimension of the matrix
      */
-    explicit adapter(std::size_t dim) noexcept : matrix(dim, dim, value_type()) {
+    explicit adapter(std::size_t dim) noexcept : value(dim, dim, value_type()) {
         //Nothing else to init
     }
 
@@ -70,7 +70,7 @@ public:
      * \param value The value to fill the matrix with
      * \param dim The dimension of the matrix
      */
-    adapter(std::size_t dim, value_type value) noexcept : matrix(dim, dim, value) {
+    adapter(std::size_t dim, value_type value) noexcept : value(dim, dim, value) {
         //Nothing else to init
     }
 
@@ -109,7 +109,7 @@ public:
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
     const value_type& operator()(std::size_t i, std::size_t j) const noexcept {
-        return matrix(i, j);
+        return value(i, j);
     }
 
     /*!
@@ -118,7 +118,7 @@ public:
      * \return a reference to the element at the given index.
      */
     const value_type& operator[](std::size_t i) const noexcept {
-        return matrix[i];
+        return value[i];
     }
 
     /*!
@@ -127,7 +127,7 @@ public:
      * \return a reference to the element at the given index.
      */
     value_type& operator[](std::size_t i) noexcept {
-        return matrix[i];
+        return value[i];
     }
 
     /*!
@@ -137,16 +137,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t i) const noexcept {
-        return matrix.read_flat(i);
-    }
-
-    /*!
-     * \brief Returns a reference to the underlying matrix
-     *
-     * This should only be used by ETL itself.
-     */
-    const expr_t& value() const noexcept {
-        return matrix;
+        return value.read_flat(i);
     }
 
     /*!
@@ -157,7 +148,7 @@ public:
      * the adapter guarantee.
      */
     memory_type memory_start() noexcept {
-        return matrix.memory_start();
+        return value.memory_start();
     }
 
     /*!
@@ -168,7 +159,7 @@ public:
      * the adapter guarantee.
      */
     const_memory_type memory_start() const noexcept {
-        return matrix.memory_start();
+        return value.memory_start();
     }
 
     /*!
@@ -179,7 +170,7 @@ public:
      * the adapter guarantee.
      */
     memory_type memory_end() noexcept {
-        return matrix.memory_end();
+        return value.memory_end();
     }
 
     /*!
@@ -190,7 +181,7 @@ public:
      * the adapter guarantee.
      */
     const_memory_type memory_end() const noexcept {
-        return matrix.memory_end();
+        return value.memory_end();
     }
 
     /*!
@@ -201,7 +192,7 @@ public:
      */
     template<typename V = default_vec>
     vec_type<V> load(std::size_t i) const noexcept {
-        return matrix.template load<V>(i);
+        return value.template load<V>(i);
     }
 
     /*!
@@ -212,7 +203,7 @@ public:
      */
     template<typename V = default_vec>
     vec_type<V> loadu(std::size_t i) const noexcept {
-        return matrix.template loadu<V>(i);
+        return value.template loadu<V>(i);
     }
 
     /*!
@@ -223,7 +214,7 @@ public:
      */
     template <typename V = default_vec>
     void stream(vec_type<V> in, std::size_t i) noexcept {
-        matrix.template stream<V>(in, i);
+        value.template stream<V>(in, i);
     }
 
     /*!
@@ -234,7 +225,7 @@ public:
      */
     template <typename V = default_vec>
     void store(vec_type<V> in, std::size_t i) noexcept {
-        matrix.template store<V>(in, i);
+        value.template store<V>(in, i);
     }
 
     /*!
@@ -245,7 +236,7 @@ public:
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t i) noexcept {
-        matrix.template storeu<V>(in, i);
+        value.template storeu<V>(in, i);
     }
 
     /*!
@@ -255,7 +246,7 @@ public:
      */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
-        return matrix.alias(rhs);
+        return value.alias(rhs);
     }
 
     // Assignment functions
@@ -266,7 +257,7 @@ public:
      */
     template<typename L>
     void assign_to(L&& lhs)  const {
-        std_assign_evaluate(matrix, lhs);
+        std_assign_evaluate(value, lhs);
     }
 
     /*!
@@ -275,7 +266,7 @@ public:
      */
     template<typename L>
     void assign_add_to(L&& lhs)  const {
-        std_add_evaluate(matrix, lhs);
+        std_add_evaluate(value, lhs);
     }
 
     /*!
@@ -284,7 +275,7 @@ public:
      */
     template<typename L>
     void assign_sub_to(L&& lhs)  const {
-        std_sub_evaluate(matrix, lhs);
+        std_sub_evaluate(value, lhs);
     }
 
     /*!
@@ -293,7 +284,7 @@ public:
      */
     template<typename L>
     void assign_mul_to(L&& lhs)  const {
-        std_mul_evaluate(matrix, lhs);
+        std_mul_evaluate(value, lhs);
     }
 
     /*!
@@ -302,7 +293,7 @@ public:
      */
     template<typename L>
     void assign_div_to(L&& lhs)  const {
-        std_div_evaluate(matrix, lhs);
+        std_div_evaluate(value, lhs);
     }
 
     /*!
@@ -311,7 +302,7 @@ public:
      */
     template<typename L>
     void assign_mod_to(L&& lhs)  const {
-        std_mod_evaluate(matrix, lhs);
+        std_mod_evaluate(value, lhs);
     }
 
     // Internals
@@ -345,42 +336,42 @@ public:
      * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
      */
     value_type* gpu_memory() const noexcept {
-        return matrix.gpu_memory();
+        return value.gpu_memory();
     }
 
     /*!
      * \brief Evict the expression from GPU.
      */
     void gpu_evict() const noexcept {
-        matrix.gpu_evict();
+        value.gpu_evict();
     }
 
     /*!
      * \brief Invalidates the CPU memory
      */
     void invalidate_cpu() const noexcept {
-        matrix.invalidate_cpu();
+        value.invalidate_cpu();
     }
 
     /*!
      * \brief Invalidates the GPU memory
      */
     void invalidate_gpu() const noexcept {
-        matrix.invalidate_gpu();
+        value.invalidate_gpu();
     }
 
     /*!
      * \brief Validates the CPU memory
      */
     void validate_cpu() const noexcept {
-        matrix.validate_cpu();
+        value.validate_cpu();
     }
 
     /*!
      * \brief Validates the GPU memory
      */
     void validate_gpu() const noexcept {
-        matrix.validate_gpu();
+        value.validate_gpu();
     }
 
     /*!
@@ -388,14 +379,14 @@ public:
      * is up to date (to undefined value).
      */
     void ensure_gpu_allocated() const {
-        matrix.ensure_gpu_allocated();
+        value.ensure_gpu_allocated();
     }
 
     /*!
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
      */
     void ensure_gpu_up_to_date() const {
-        matrix.ensure_gpu_up_to_date();
+        value.ensure_gpu_up_to_date();
     }
 
     /*!
@@ -403,7 +394,7 @@ public:
      * necessary.
      */
     void ensure_cpu_up_to_date() const {
-        matrix.ensure_cpu_up_to_date();
+        value.ensure_cpu_up_to_date();
     }
 
     /*!
@@ -411,7 +402,7 @@ public:
      * \param gpu_memory Pointer to CPU memory
      */
     void gpu_copy_from(const value_type* gpu_memory) const {
-        matrix.gpu_copy_from(gpu_memory);
+        value.gpu_copy_from(gpu_memory);
     }
 
     /*!
@@ -419,7 +410,7 @@ public:
      * \return true if the CPU memory is up to date, false otherwise.
      */
     bool is_cpu_up_to_date() const noexcept {
-        return matrix.is_cpu_up_to_date();
+        return value.is_cpu_up_to_date();
     }
 
     /*!
@@ -427,7 +418,7 @@ public:
      * \return true if the GPU memory is up to date, false otherwise.
      */
     bool is_gpu_up_to_date() const noexcept {
-        return matrix.is_gpu_up_to_date();
+        return value.is_gpu_up_to_date();
     }
 
     /*!

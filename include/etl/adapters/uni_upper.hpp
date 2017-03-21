@@ -51,7 +51,7 @@ struct uni_upper_matrix final : adapter<Matrix>, iterable<const uni_upper_matrix
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<value_type>;
 
-    using base_type::matrix;
+    using base_type::value;
 
 public:
     /*!
@@ -61,8 +61,8 @@ public:
      */
     uni_upper_matrix() noexcept : base_type() {
         // Fill the diagonal
-        for(size_t i = 0; i < etl::dim<0>(matrix); ++i){
-            matrix(i,i) = value_type(1);
+        for(size_t i = 0; i < etl::dim<0>(value); ++i){
+            value(i,i) = value_type(1);
         }
     }
 
@@ -72,8 +72,8 @@ public:
      */
     explicit uni_upper_matrix(std::size_t dim) noexcept : base_type(dim) {
         // Fill the diagonal
-        for(size_t i = 0; i < etl::dim<0>(matrix); ++i){
-            matrix(i,i) = value_type(1);
+        for(size_t i = 0; i < etl::dim<0>(value); ++i){
+            value(i,i) = value_type(1);
         }
     }
 
@@ -294,7 +294,7 @@ public:
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
     uni_upper_detail::uni_upper_reference<matrix_t> operator()(std::size_t i, std::size_t j) noexcept {
-        return {matrix, i, j};
+        return {value, i, j};
     }
 
     using base_type::operator();

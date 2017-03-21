@@ -91,7 +91,12 @@ private:
 
     using this_type = unary_expr<T, Expr, UnaryOp>; ///< The type of this expression
 
-    Expr _value; ///< The sub expression
+    Expr value; ///< The sub expression
+
+    friend struct etl_traits<unary_expr>;
+    friend struct optimizer<unary_expr>;
+    friend struct optimizable<unary_expr>;
+    friend struct transformer<unary_expr>;
 
 public:
     using value_type        = T;                              ///< The value type
@@ -112,7 +117,7 @@ public:
      * \param l The sub expression
      */
     explicit unary_expr(Expr l)
-            : _value(std::forward<Expr>(l)) {
+            : value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
@@ -124,28 +129,12 @@ public:
     unary_expr& operator=(unary_expr&& rhs) = delete;
 
     /*!
-     * \brief Return the value on which this expression operates
-     * \return The value on which this expression operates.
-     */
-    std::add_lvalue_reference_t<Expr> value() noexcept {
-        return _value;
-    }
-
-    /*!
-     * \brief Return the value on which this expression operates
-     * \return The value on which this expression operates.
-     */
-    cpp::add_const_lvalue_t<Expr> value() const noexcept {
-        return _value;
-    }
-
-    /*!
      * \brief Returns the element at the given index
      * \param i The index
      * \return a reference to the element at the given index.
      */
     value_type operator[](std::size_t i) const {
-        return UnaryOp::apply(value()[i]);
+        return UnaryOp::apply(value[i]);
     }
 
     /*!
@@ -155,7 +144,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t i) const noexcept {
-        return UnaryOp::apply(value().read_flat(i));
+        return UnaryOp::apply(value.read_flat(i));
     }
 
     /*!
@@ -166,7 +155,7 @@ public:
      */
     template <typename V = default_vec>
     vec_type<V> load(std::size_t i) const {
-        return UnaryOp::template load<V>(value().template load<V>(i));
+        return UnaryOp::template load<V>(value.template load<V>(i));
     }
 
     /*!
@@ -177,7 +166,7 @@ public:
      */
     template <typename V = default_vec>
     vec_type<V> loadu(std::size_t i) const {
-        return UnaryOp::template load<V>(value().template loadu<V>(i));
+        return UnaryOp::template load<V>(value.template loadu<V>(i));
     }
 
     /*!
@@ -189,7 +178,7 @@ public:
     value_type operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return UnaryOp::apply(value()(args...));
+        return UnaryOp::apply(value(args...));
     }
 
     /*!
@@ -199,7 +188,7 @@ public:
      */
     template <typename E>
     bool alias(const E& rhs) const noexcept {
-        return _value.alias(rhs);
+        return value.alias(rhs);
     }
 
     // Assignment functions
@@ -265,7 +254,7 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor) const {
-        _value.visit(visitor);
+        value.visit(visitor);
     }
 
     /*!
@@ -273,7 +262,7 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor) const {
-        _value.visit(visitor);
+        value.visit(visitor);
     }
 
     /*!
@@ -283,7 +272,7 @@ public:
     void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        _value.visit(visitor);
+        value.visit(visitor);
         visitor.need_value = old_need_value;
     }
 
@@ -294,7 +283,7 @@ public:
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const unary_expr& expr) {
-        return os << UnaryOp::desc() << '(' << expr.value() << ')';
+        return os << UnaryOp::desc() << '(' << expr.value << ')';
     }
 };
 
@@ -314,7 +303,7 @@ struct unary_expr<T, Expr, identity_op> :
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
 
-    Expr _value;                ///< The sub expression
+    Expr value;                ///< The sub expression
     gpu_memory_handler<T> _gpu; ///< The GPU memory handler
 
     static constexpr bool dma = has_direct_access<Expr>::value;
@@ -324,14 +313,19 @@ private:
      */
     static constexpr bool non_const_return_ref =
         cpp::and_c<
-            std::is_lvalue_reference<decltype(_value[0])>,
-            cpp::not_c<std::is_const<std::remove_reference_t<decltype(_value[0])>>>>::value;
+            std::is_lvalue_reference<decltype(value[0])>,
+            cpp::not_c<std::is_const<std::remove_reference_t<decltype(value[0])>>>>::value;
 
     /*!
      * \brief Indicates if the const functions returns a reference
      */
     static constexpr bool const_return_ref =
-        std::is_lvalue_reference<decltype(_value[0])>::value; ///< Indicates if the const functions returns a reference
+        std::is_lvalue_reference<decltype(value[0])>::value; ///< Indicates if the const functions returns a reference
+
+    friend struct etl_traits<unary_expr>;
+    friend struct optimizer<unary_expr>;
+    friend struct optimizable<unary_expr>;
+    friend struct transformer<unary_expr>;
 
 public:
     using this_type            = unary_expr<T, Expr, identity_op>;                                           ///< The type of this expression
@@ -357,7 +351,7 @@ public:
      * \brief Construct a new unary expression
      * \param l The sub expression
      */
-    explicit unary_expr(Expr l) noexcept : _value(std::forward<Expr>(l)) {
+    explicit unary_expr(Expr l) noexcept : value(std::forward<Expr>(l)) {
         //Nothing to init
     }
 
@@ -372,28 +366,12 @@ public:
     unary_expr(unary_expr&& rhs) = default;
 
     /*!
-     * \brief Return the value on which this expression operates
-     * \return The value on which this expression operates.
-     */
-    std::add_lvalue_reference_t<Expr> value() noexcept {
-        return _value;
-    }
-
-    /*!
-     * \brief Return the value on which this expression operates
-     * \return The value on which this expression operates.
-     */
-    cpp::add_const_lvalue_t<Expr> value() const noexcept {
-        return _value;
-    }
-
-    /*!
      * \brief Returns the element at the given index
      * \param i The index
      * \return a reference to the element at the given index.
      */
     return_type operator[](std::size_t i) {
-        return value()[i];
+        return value[i];
     }
 
     /*!
@@ -402,7 +380,7 @@ public:
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](std::size_t i) const {
-        return value()[i];
+        return value[i];
     }
 
     /*!
@@ -412,7 +390,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t i) const noexcept {
-        return value().read_flat(i);
+        return value.read_flat(i);
     }
 
     /*!
@@ -423,7 +401,7 @@ public:
      */
     template <typename V = default_vec>
     void store(vec_type<V> in, std::size_t i) noexcept {
-        return value().template store<V>(in, i);
+        return value.template store<V>(in, i);
     }
 
     /*!
@@ -434,7 +412,7 @@ public:
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t i) noexcept {
-        return value().template storeu<V>(in, i);
+        return value.template storeu<V>(in, i);
     }
 
     /*!
@@ -445,7 +423,7 @@ public:
      */
     template <typename V = default_vec>
     void stream(vec_type<V> in, std::size_t i) noexcept {
-        return value().template stream<V>(in, i);
+        return value.template stream<V>(in, i);
     }
 
     /*!
@@ -456,7 +434,7 @@ public:
      */
     template <typename V = default_vec>
     ETL_STRONG_INLINE(vec_type<V>) load(std::size_t i) const noexcept {
-        return _value.template load<V>(i);
+        return value.template load<V>(i);
     }
 
     /*!
@@ -467,7 +445,7 @@ public:
      */
     template <typename V = default_vec>
     ETL_STRONG_INLINE(vec_type<V>) loadu(std::size_t i) const noexcept {
-        return _value.template loadu<V>(i);
+        return value.template loadu<V>(i);
     }
 
     /*!
@@ -478,7 +456,7 @@ public:
      * \return a refernece to the ith dimension value.
      */
     std::size_t& unsafe_dimension_access(std::size_t i) {
-        return value().unsafe_dimension_access(i);
+        return value.unsafe_dimension_access(i);
     }
 
     /*!
@@ -527,10 +505,10 @@ public:
      * \return The computed value at the position (args...)
      */
     template <typename... S, cpp_enable_if((sizeof...(S) == safe_dimensions<this_type>::value))>
-    ETL_STRONG_INLINE(return_type) operator()(S... args) noexcept(noexcept(_value(args...))) {
+    ETL_STRONG_INLINE(return_type) operator()(S... args) noexcept(noexcept(value(args...))) {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return _value(args...);
+        return value(args...);
     }
 
     /*!
@@ -539,10 +517,10 @@ public:
      * \return The computed value at the position (args...)
      */
     template <typename... S, cpp_enable_if((sizeof...(S) == safe_dimensions<this_type>::value))>
-    ETL_STRONG_INLINE(const_return_type) operator()(S... args) const noexcept(noexcept(_value(args...))) {
+    ETL_STRONG_INLINE(const_return_type) operator()(S... args) const noexcept(noexcept(value(args...))) {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return _value(args...);
+        return value(args...);
     }
 
     /*!
@@ -562,7 +540,7 @@ public:
      */
     template <typename E, cpp_disable_if(has_direct_access<Expr>::value&& all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
-        return _value.alias(rhs);
+        return value.alias(rhs);
     }
 
     /*!
@@ -571,7 +549,7 @@ public:
      */
     memory_type memory_start() noexcept {
         static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
-        return value().memory_start();
+        return value.memory_start();
     }
 
     /*!
@@ -580,7 +558,7 @@ public:
      */
     const_memory_type memory_start() const noexcept {
         static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
-        return value().memory_start();
+        return value.memory_start();
     }
 
     /*!
@@ -589,7 +567,7 @@ public:
      */
     memory_type memory_end() noexcept {
         static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
-        return value().memory_end();
+        return value.memory_end();
     }
 
     /*!
@@ -598,7 +576,7 @@ public:
      */
     const_memory_type memory_end() const noexcept {
         static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
-        return value().memory_end();
+        return value.memory_end();
     }
 
     /*!
@@ -691,7 +669,7 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor) const {
-        _value.visit(visitor);
+        value.visit(visitor);
     }
 
     /*!
@@ -699,7 +677,7 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor) const {
-        _value.visit(visitor);
+        value.visit(visitor);
     }
 
     /*!
@@ -709,7 +687,7 @@ public:
     void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        _value.visit(visitor);
+        value.visit(visitor);
         visitor.need_value = old_need_value;
     }
 
@@ -768,7 +746,7 @@ public:
      */
     void ensure_gpu_allocated() const {
         static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
-        _gpu.ensure_gpu_allocated(etl::size(_value));
+        _gpu.ensure_gpu_allocated(etl::size(value));
     }
 
     /*!
@@ -776,7 +754,7 @@ public:
      */
     void ensure_gpu_up_to_date() const {
         static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
-        _gpu.ensure_gpu_up_to_date(memory_start(), etl::size(_value));
+        _gpu.ensure_gpu_up_to_date(memory_start(), etl::size(value));
     }
 
     /*!
@@ -785,7 +763,7 @@ public:
      */
     void ensure_cpu_up_to_date() const {
         static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
-        _gpu.ensure_cpu_up_to_date(memory_start(), etl::size(_value));
+        _gpu.ensure_cpu_up_to_date(memory_start(), etl::size(value));
     }
 
     /*!
@@ -794,7 +772,7 @@ public:
      */
     void gpu_copy_from(const T* gpu_memory) const {
         static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
-        _gpu.gpu_copy_from(gpu_memory, etl::size(_value));
+        _gpu.gpu_copy_from(gpu_memory, etl::size(value));
     }
 
     /*!
@@ -822,7 +800,7 @@ public:
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const unary_expr& expr) {
-        return os << expr.value();
+        return os << expr.value;
     }
 
 private:
@@ -859,7 +837,12 @@ struct unary_expr<T, Expr, transform_op> :
 private:
     using this_type = unary_expr<T, Expr, transform_op>; ///< The type of this expression
 
-    Expr _value; ///< The sub expression
+    Expr value; ///< The sub expression
+
+    friend struct etl_traits<unary_expr>;
+    friend struct optimizer<unary_expr>;
+    friend struct optimizable<unary_expr>;
+    friend struct transformer<unary_expr>;
 
 public:
     using value_type        = T;                              ///< The value type of the expression
@@ -874,7 +857,7 @@ public:
      * \param l The sub expression
      */
     explicit unary_expr(Expr l)
-            : _value(std::forward<Expr>(l)) {
+            : value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
@@ -886,28 +869,12 @@ public:
     unary_expr& operator=(unary_expr&& e) = delete;
 
     /*!
-     * \brief Return the value on which this expression operates
-     * \return The value on which this expression operates.
-     */
-    std::add_lvalue_reference_t<Expr> value() noexcept {
-        return _value;
-    }
-
-    /*!
-     * \brief Return the value on which this expression operates
-     * \return The value on which this expression operates.
-     */
-    cpp::add_const_lvalue_t<Expr> value() const noexcept {
-        return _value;
-    }
-
-    /*!
      * \brief Returns the element at the given index
      * \param i The index
      * \return a reference to the element at the given index.
      */
     value_type operator[](std::size_t i) const {
-        return value()[i];
+        return value[i];
     }
 
     /*!
@@ -917,7 +884,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t i) const noexcept {
-        return value().read_flat(i);
+        return value.read_flat(i);
     }
 
     /*!
@@ -939,7 +906,7 @@ public:
     std::enable_if_t<sizeof...(S) == safe_dimensions<this_type>::value, value_type> operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return value()(args...);
+        return value(args...);
     }
 
     /*!
@@ -949,7 +916,7 @@ public:
      */
     template <typename E>
     bool alias(const E& rhs) const noexcept {
-        return _value.alias(rhs);
+        return value.alias(rhs);
     }
 
     // Assignment functions
@@ -1015,7 +982,7 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor) const {
-        _value.visit(visitor);
+        value.visit(visitor);
     }
 
     /*!
@@ -1023,7 +990,7 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor) const {
-        _value.visit(visitor);
+        value.visit(visitor);
     }
 
     /*!
@@ -1033,7 +1000,7 @@ public:
     void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        _value.visit(visitor);
+        value.visit(visitor);
         visitor.need_value = old_need_value;
     }
 
@@ -1044,7 +1011,7 @@ public:
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const unary_expr& expr) {
-        return os << expr.value();
+        return os << expr.value;
     }
 };
 
@@ -1062,8 +1029,13 @@ struct unary_expr<T, Expr, stateful_op<Op>> :
 private:
     using this_type = unary_expr<T, Expr, stateful_op<Op>>; ///< The type of this expression
 
-    Expr _value; ///< The sub expression
+    Expr value; ///< The sub expression
     Op op;       ///< The operator state
+
+    friend struct etl_traits<unary_expr>;
+    friend struct optimizer<unary_expr>;
+    friend struct optimizable<unary_expr>;
+    friend struct transformer<unary_expr>;
 
 public:
     using value_type        = T;                              ///< The value type
@@ -1086,7 +1058,7 @@ public:
      */
     template <typename... Args>
     explicit unary_expr(Expr l, Args&&... args)
-            : _value(std::forward<Expr>(l)), op(std::forward<Args>(args)...) {
+            : value(std::forward<Expr>(l)), op(std::forward<Args>(args)...) {
         //Nothing else to init
     }
 
@@ -1098,28 +1070,12 @@ public:
     unary_expr& operator=(unary_expr&& e) = delete;
 
     /*!
-     * \brief Return the value on which this expression operates
-     * \return The value on which this expression operates.
-     */
-    std::add_lvalue_reference_t<Expr> value() noexcept {
-        return _value;
-    }
-
-    /*!
-     * \brief Return the value on which this expression operates
-     * \return The value on which this expression operates.
-     */
-    cpp::add_const_lvalue_t<Expr> value() const noexcept {
-        return _value;
-    }
-
-    /*!
      * \brief Returns the element at the given index
      * \param i The index
      * \return a reference to the element at the given index.
      */
     value_type operator[](std::size_t i) const {
-        return op.apply(value()[i]);
+        return op.apply(value[i]);
     }
 
     /*!
@@ -1129,7 +1085,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t i) const {
-        return op.apply(value().read_flat(i));
+        return op.apply(value.read_flat(i));
     }
 
     /*!
@@ -1140,7 +1096,7 @@ public:
      */
     template <typename V = default_vec>
     vec_type<V> load(std::size_t i) const {
-        return op.template load<V>(value().template load<V>(i));
+        return op.template load<V>(value.template load<V>(i));
     }
 
     /*!
@@ -1151,7 +1107,7 @@ public:
      */
     template <typename V = default_vec>
     vec_type<V> loadu(std::size_t i) const {
-        return op.template load<V>(value().template loadu<V>(i));
+        return op.template load<V>(value.template loadu<V>(i));
     }
 
     /*!
@@ -1163,7 +1119,7 @@ public:
     std::enable_if_t<sizeof...(S) == safe_dimensions<this_type>::value, value_type> operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return op.apply(value()(args...));
+        return op.apply(value(args...));
     }
 
     /*!
@@ -1173,7 +1129,7 @@ public:
      */
     template <typename E>
     bool alias(const E& rhs) const noexcept {
-        return _value.alias(rhs);
+        return value.alias(rhs);
     }
 
     // Assignment functions
@@ -1239,7 +1195,7 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor) const {
-        _value.visit(visitor);
+        value.visit(visitor);
     }
 
     /*!
@@ -1247,7 +1203,7 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor) const {
-        _value.visit(visitor);
+        value.visit(visitor);
     }
 
     /*!
@@ -1257,7 +1213,7 @@ public:
     void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        _value.visit(visitor);
+        value.visit(visitor);
         visitor.need_value = old_need_value;
     }
 
@@ -1268,7 +1224,7 @@ public:
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const unary_expr& expr) {
-        return os << Op::desc() << '(' << expr.value() << ')';
+        return os << Op::desc() << '(' << expr.value << ')';
     }
 };
 
@@ -1311,7 +1267,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
      * \returns the size of the given expression
      */
     static std::size_t size(const expr_t& v) {
-        return etl_traits<sub_expr_t>::size(v.value());
+        return etl_traits<sub_expr_t>::size(v.value);
     }
 
     /*!
@@ -1321,7 +1277,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
      * \return The dth dimension of the given expression
      */
     static std::size_t dim(const expr_t& v, std::size_t d) {
-        return etl_traits<sub_expr_t>::dim(v.value(), d);
+        return etl_traits<sub_expr_t>::dim(v.value, d);
     }
 
     /*!

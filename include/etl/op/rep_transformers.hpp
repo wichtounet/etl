@@ -19,8 +19,10 @@ struct rep_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
 
+protected:
     sub_type sub; ///< The subexpression
 
+public:
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
@@ -36,22 +38,6 @@ struct rep_transformer {
     template <typename... Sizes>
     value_type operator()(Sizes... args) const {
         return as_derived().selected_only(make_index_range<derived_t::dim_start, derived_t::dim_end>(), args...);
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
     }
 
     /*!
@@ -72,7 +58,7 @@ struct rep_transformer {
      */
     template<typename V>
     void visit(V&& visitor) const {
-        value().visit(std::forward<V>(visitor));
+        sub.visit(std::forward<V>(visitor));
     }
 
 private:
@@ -97,10 +83,17 @@ struct rep_r_transformer : rep_transformer<T, rep_r_transformer<T,D...>> {
     using sub_type   = typename base_type::sub_type;   ///< The type on which the expression works
     using value_type = typename base_type::value_type; ///< The type of value
 
+private:
+
     static constexpr std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr std::size_t dimensions = sizeof...(D) + sub_d;                 ///< The number of dimensions of the transformer
     static constexpr std::size_t dim_start  = 0;                                    ///< First dimension to take into account
     static constexpr std::size_t dim_end    = sub_d;                                ///< Last dimension to take into account
+
+    friend struct rep_transformer<T, rep_r_transformer>;
+    friend struct etl_traits<rep_r_transformer>;
+
+public:
 
     /*!
      * \brief Construct a new transformer around the given expression
@@ -159,10 +152,17 @@ struct rep_l_transformer : rep_transformer<T, rep_l_transformer<T,D...>> {
     using sub_type   = typename base_type::sub_type;   ///< The type on which the expression works
     using value_type = typename base_type::value_type; ///< The type of value
 
+private:
+
     static constexpr std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr std::size_t dimensions = sizeof...(D) + sub_d;                 ///< The number of dimensions of the transformer
     static constexpr std::size_t dim_start  = sizeof...(D);                         ///< Last dimension to take into account
     static constexpr std::size_t dim_end    = dimensions;                           ///< Last dimension to take into account
+
+    friend struct rep_transformer<T, rep_l_transformer>;
+    friend struct etl_traits<rep_l_transformer>;
+
+public:
 
     /*!
      * \brief Construct a new transformer around the given expression
@@ -221,6 +221,8 @@ struct dyn_rep_r_transformer : rep_transformer<T, dyn_rep_r_transformer<T, D>> {
     using sub_type   = typename base_type::sub_type;   ///< The type on which the expression works
     using value_type = typename base_type::value_type; ///< The type of value
 
+private:
+
     static constexpr std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr std::size_t dimensions = D + sub_d;                            ///< The number of dimensions of the transformer
     static constexpr std::size_t dim_start  = 0;                                    ///< First dimension to take into account
@@ -228,6 +230,11 @@ struct dyn_rep_r_transformer : rep_transformer<T, dyn_rep_r_transformer<T, D>> {
 
     std::array<std::size_t, D> reps; ///< The repeated dimensions
     std::size_t m;                   ///< The repeated size
+
+    friend struct rep_transformer<T, dyn_rep_r_transformer>;
+    friend struct etl_traits<dyn_rep_r_transformer>;
+
+public:
 
     /*!
      * \brief Construct a new transformer around the given expression
@@ -282,6 +289,8 @@ struct dyn_rep_l_transformer : rep_transformer<T, dyn_rep_l_transformer<T, D>> {
     using sub_type   = typename base_type::sub_type;   ///< The type on which the expression works
     using value_type = typename base_type::value_type; ///< The type of value
 
+private:
+
     static constexpr std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr std::size_t dimensions = D + sub_d;                            ///< The number of dimensions of the transformer
     static constexpr std::size_t dim_start  = D;                                    ///< First dimension to take into account
@@ -289,6 +298,11 @@ struct dyn_rep_l_transformer : rep_transformer<T, dyn_rep_l_transformer<T, D>> {
 
     std::array<std::size_t, D> reps; ///< The repeated dimensions
     std::size_t m;                   ///< The repeated size
+
+    friend struct rep_transformer<T, dyn_rep_l_transformer>;
+    friend struct etl_traits<dyn_rep_l_transformer>;
+
+public:
 
     /*!
      * \brief Construct a new transformer around the given expression

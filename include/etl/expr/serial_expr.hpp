@@ -21,13 +21,16 @@ namespace etl {
  */
 template <typename Expr>
 struct serial_expr final {
-private:
-    Expr _value;
-
-public:
     using expr_t     = Expr;          ///< The wrapped expression type
     using value_type = value_t<Expr>; ///< The value type
 
+private:
+
+    Expr value;
+
+    friend struct wrapper_traits<serial_expr>;
+
+public:
     //Cannot be constructed with no args
     serial_expr() = delete;
 
@@ -36,7 +39,7 @@ public:
      * \param l The ETL expression
      */
     explicit serial_expr(Expr l)
-            : _value(std::forward<Expr>(l)) {
+            : value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
@@ -47,22 +50,6 @@ public:
     //Expressions are invariant
     serial_expr& operator=(const serial_expr& e) = delete;
     serial_expr& operator=(serial_expr&& e) = delete;
-
-    /*!
-     * \brief Return the sub expression
-     * \return a reference to the sub expression
-     */
-    std::add_lvalue_reference_t<Expr> value() {
-        return _value;
-    }
-
-    /*!
-     * \brief Return the sub expression
-     * \return a reference to the sub expression
-     */
-    cpp::add_const_lvalue_t<Expr> value() const {
-        return _value;
-    }
 
     // Assignment functions
 
@@ -76,7 +63,7 @@ public:
 
         local_context().serial = true;
 
-        _value.assign_to(lhs);
+        value.assign_to(lhs);
 
         local_context().serial = old_serial;
     }
@@ -91,7 +78,7 @@ public:
 
         local_context().serial = true;
 
-        _value.assign_add_to(lhs);
+        value.assign_add_to(lhs);
 
         local_context().serial = old_serial;
     }
@@ -106,7 +93,7 @@ public:
 
         local_context().serial = true;
 
-        _value.assign_sub_to(lhs);
+        value.assign_sub_to(lhs);
 
         local_context().serial = old_serial;
     }
@@ -121,7 +108,7 @@ public:
 
         local_context().serial = true;
 
-        _value.assign_mul_to(lhs);
+        value.assign_mul_to(lhs);
 
         local_context().serial = old_serial;
     }
@@ -136,7 +123,7 @@ public:
 
         local_context().serial = true;
 
-        _value.assign_div_to(lhs);
+        value.assign_div_to(lhs);
 
         local_context().serial = old_serial;
     }
@@ -151,7 +138,7 @@ public:
 
         local_context().serial = true;
 
-        _value.assign_mod_to(lhs);
+        value.assign_mod_to(lhs);
 
         local_context().serial = old_serial;
     }
@@ -163,7 +150,7 @@ public:
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const serial_expr& expr) {
-        return os << "serial(" << expr._value << ")";
+        return os << "serial(" << expr.value << ")";
     }
 };
 

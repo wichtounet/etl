@@ -23,12 +23,16 @@ namespace etl {
  */
 template <typename Expr>
 struct optimized_expr final {
-private:
-    Expr _value;
-
-public:
     using expr_t     = Expr;          ///< The wrapped expression type
     using value_type = value_t<Expr>; ///< The value type
+
+private:
+
+    Expr value;
+
+    friend struct wrapper_traits<optimized_expr>;
+
+public:
 
     //Cannot be constructed with no args
     optimized_expr() = delete;
@@ -38,7 +42,7 @@ public:
      * \param l The ETL expression
      */
     explicit optimized_expr(Expr l)
-            : _value(std::forward<Expr>(l)) {
+            : value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
@@ -50,22 +54,6 @@ public:
     optimized_expr& operator=(const optimized_expr& e) = delete;
     optimized_expr& operator=(optimized_expr&& e) = delete;
 
-    /*!
-     * \brief Return the sub expression
-     * \return a reference to the sub expression
-     */
-    std::add_lvalue_reference_t<Expr> value() {
-        return _value;
-    }
-
-    /*!
-     * \brief Return the sub expression
-     * \return a reference to the sub expression
-     */
-    cpp::add_const_lvalue_t<Expr> value() const {
-        return _value;
-    }
-
     // Assignment functions
 
     /*!
@@ -75,7 +63,7 @@ public:
     template<typename L>
     void assign_to(L&& lhs)  const {
         //Note: This is more than ugly...
-        optimized_forward(_value,
+        optimized_forward(value,
                           [&lhs](auto&& optimized) mutable {
                               optimized.assign_to(lhs);
                           });
@@ -88,7 +76,7 @@ public:
     template<typename L>
     void assign_add_to(L&& lhs)  const {
         //Note: This is more than ugly...
-        optimized_forward(_value,
+        optimized_forward(value,
                       [&lhs](auto&& optimized) mutable {
                           optimized.assign_add_to(lhs);
                       });
@@ -101,7 +89,7 @@ public:
     template<typename L>
     void assign_sub_to(L&& lhs)  const {
         //Note: This is more than ugly...
-        optimized_forward(_value,
+        optimized_forward(value,
                           [&lhs](auto&& optimized) mutable {
                               optimized.assign_sub_to(lhs);
                           });
@@ -114,7 +102,7 @@ public:
     template<typename L>
     void assign_mul_to(L&& lhs)  const {
         //Note: This is more than ugly...
-        optimized_forward(_value,
+        optimized_forward(value,
                       [&lhs](auto&& optimized) mutable {
                           optimized.assign_mul_to(lhs);
                       });
@@ -127,7 +115,7 @@ public:
     template<typename L>
     void assign_div_to(L&& lhs)  const {
         //Note: This is more than ugly...
-        optimized_forward(_value,
+        optimized_forward(value,
                       [&lhs](auto&& optimized) mutable {
                           optimized.assign_div_to(lhs);
                       });
@@ -140,7 +128,7 @@ public:
     template<typename L>
     void assign_mod_to(L&& lhs)  const {
         //Note: This is more than ugly...
-        optimized_forward(_value,
+        optimized_forward(value,
                       [&lhs](auto&& optimized) mutable {
                           optimized.assign_mod_to(lhs);
                       });
@@ -153,7 +141,7 @@ public:
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const optimized_expr& expr) {
-        return os << "OPT(" << expr._value << ")";
+        return os << "OPT(" << expr.value << ")";
     }
 };
 

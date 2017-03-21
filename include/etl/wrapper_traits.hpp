@@ -51,7 +51,7 @@ struct wrapper_traits {
      * \returns the size of the given expression
      */
     static std::size_t size(const expr_t& v) {
-        return sub_traits::size(v.value());
+        return sub_traits::size(v.value);
     }
 
     /*!
@@ -61,7 +61,7 @@ struct wrapper_traits {
      * \return The dth dimension of the given expression
      */
     static std::size_t dim(const expr_t& v, std::size_t d) {
-        return sub_traits::dim(v.value(), d);
+        return sub_traits::dim(v.value, d);
     }
 
     /*!

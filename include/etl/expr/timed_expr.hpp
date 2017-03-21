@@ -23,13 +23,17 @@ namespace etl {
  */
 template <typename Expr, typename R>
 struct timed_expr final {
-private:
-    Expr _value;
-
-public:
     using clock_resolution = R;             ///< The clock resolution
     using expr_t           = Expr;          ///< The wrapped expression type
     using value_type       = value_t<Expr>; ///< The value type
+
+private:
+
+    Expr value;
+
+    friend struct wrapper_traits<timed_expr>;
+
+public:
 
     //Cannot be constructed with no args
     timed_expr() = delete;
@@ -38,7 +42,7 @@ public:
      * \brief Construt a new timed expression around the given ETL expression
      * \param l The ETL expression
      */
-    explicit timed_expr(Expr l) : _value(std::forward<Expr>(l)) {
+    explicit timed_expr(Expr l) : value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
@@ -50,22 +54,6 @@ public:
     timed_expr& operator=(const timed_expr& e) = delete;
     timed_expr& operator=(timed_expr&& e) = delete;
 
-    /*!
-     * \brief Return the sub expression
-     * \return a reference to the sub expression
-     */
-    std::add_lvalue_reference_t<Expr> value() {
-        return _value;
-    }
-
-    /*!
-     * \brief Return the sub expression
-     * \return a reference to the sub expression
-     */
-    cpp::add_const_lvalue_t<Expr> value() const {
-        return _value;
-    }
-
     // Assignment functions
 
     /*!
@@ -76,12 +64,12 @@ public:
     void assign_to(L&& lhs)  const {
         auto start_time = etl::timer_clock::now();
 
-        _value.assign_to(lhs);
+        value.assign_to(lhs);
 
         auto end_time = etl::timer_clock::now();
         auto duration = std::chrono::duration_cast<clock_resolution>(end_time - start_time);
 
-        std::cout << "timed(=): " << _value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
+        std::cout << "timed(=): " << value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
     }
 
     /*!
@@ -92,12 +80,12 @@ public:
     void assign_add_to(L&& lhs)  const {
         auto start_time = etl::timer_clock::now();
 
-        _value.assign_add_to(lhs);
+        value.assign_add_to(lhs);
 
         auto end_time = etl::timer_clock::now();
         auto duration = std::chrono::duration_cast<clock_resolution>(end_time - start_time);
 
-        std::cout << "timed(+=): " << _value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
+        std::cout << "timed(+=): " << value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
     }
 
     /*!
@@ -108,12 +96,12 @@ public:
     void assign_sub_to(L&& lhs)  const {
         auto start_time = etl::timer_clock::now();
 
-        _value.assign_sub_to(lhs);
+        value.assign_sub_to(lhs);
 
         auto end_time = etl::timer_clock::now();
         auto duration = std::chrono::duration_cast<clock_resolution>(end_time - start_time);
 
-        std::cout << "timed(-=): " << _value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
+        std::cout << "timed(-=): " << value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
     }
 
     /*!
@@ -124,12 +112,12 @@ public:
     void assign_mul_to(L&& lhs)  const {
         auto start_time = etl::timer_clock::now();
 
-        _value.assign_mul_to(lhs);
+        value.assign_mul_to(lhs);
 
         auto end_time = etl::timer_clock::now();
         auto duration = std::chrono::duration_cast<clock_resolution>(end_time - start_time);
 
-        std::cout << "timed(*=): " << _value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
+        std::cout << "timed(*=): " << value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
     }
 
     /*!
@@ -140,12 +128,12 @@ public:
     void assign_div_to(L&& lhs)  const {
         auto start_time = etl::timer_clock::now();
 
-        _value.assign_div_to(lhs);
+        value.assign_div_to(lhs);
 
         auto end_time = etl::timer_clock::now();
         auto duration = std::chrono::duration_cast<clock_resolution>(end_time - start_time);
 
-        std::cout << "timed(/=): " << _value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
+        std::cout << "timed(/=): " << value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
     }
 
     /*!
@@ -156,12 +144,12 @@ public:
     void assign_mod_to(L&& lhs)  const {
         auto start_time = etl::timer_clock::now();
 
-        _value.assign_mod_to(lhs);
+        value.assign_mod_to(lhs);
 
         auto end_time = etl::timer_clock::now();
         auto duration = std::chrono::duration_cast<clock_resolution>(end_time - start_time);
 
-        std::cout << "timed(%=): " << _value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
+        std::cout << "timed(%=): " << value << " took " << duration.count() << resolution_to_string<clock_resolution>() << std::endl;
     }
 
     /*!
@@ -171,7 +159,7 @@ public:
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const timed_expr& expr) {
-        return os << "timed(" << expr._value << ")";
+        return os << "timed(" << expr.value << ")";
     }
 };
 

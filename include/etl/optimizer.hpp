@@ -53,7 +53,7 @@ struct optimizable<etl::unary_expr<T, Expr, UnaryOp>> {
 
     /*! \copydoc optimizable::is_deep */
     static bool is_deep(const etl::unary_expr<T, Expr, UnaryOp>& expr) {
-        return is(expr) || is_optimizable_deep(expr.value());
+        return is(expr) || is_optimizable_deep(expr.value);
     }
 };
 
@@ -87,7 +87,7 @@ struct optimizable<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>
 
     /*! \copydoc optimizable::is_deep */
     static bool is_deep(const etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>& expr) {
-        return is(expr) || is_optimizable_deep(expr.lhs()) || is_optimizable_deep(expr.rhs());
+        return is(expr) || is_optimizable_deep(expr.lhs) || is_optimizable_deep(expr.rhs);
     }
 };
 
@@ -100,19 +100,19 @@ template <typename T, typename BinaryOp, typename RightExpr>
 struct optimizable<etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>> {
     /*! \copydoc optimizable::is */
     static bool is(const etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>& expr) {
-        if (expr.lhs().value == 1.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
+        if (expr.lhs.value == 1.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
             return true;
         }
 
-        if (expr.lhs().value == 0.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
+        if (expr.lhs.value == 0.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
             return true;
         }
 
-        if (expr.lhs().value == 0.0 && std::is_same<BinaryOp, plus_binary_op<T>>::value) {
+        if (expr.lhs.value == 0.0 && std::is_same<BinaryOp, plus_binary_op<T>>::value) {
             return true;
         }
 
-        if (expr.lhs().value == 0.0 && std::is_same<BinaryOp, div_binary_op<T>>::value) {
+        if (expr.lhs.value == 0.0 && std::is_same<BinaryOp, div_binary_op<T>>::value) {
             return true;
         }
 
@@ -121,7 +121,7 @@ struct optimizable<etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>> {
 
     /*! \copydoc optimizable::is_deep */
     static bool is_deep(const etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>& expr) {
-        return is(expr) || is_optimizable_deep(expr.lhs()) || is_optimizable_deep(expr.rhs());
+        return is(expr) || is_optimizable_deep(expr.lhs) || is_optimizable_deep(expr.rhs);
     }
 };
 
@@ -134,23 +134,23 @@ template <typename T, typename LeftExpr, typename BinaryOp>
 struct optimizable<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
     /*! \copydoc optimizable::is */
     static bool is(const etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>& expr) {
-        if (expr.rhs().value == 1.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
+        if (expr.rhs.value == 1.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
             return true;
         }
 
-        if (expr.rhs().value == 0.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
+        if (expr.rhs.value == 0.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
             return true;
         }
 
-        if (expr.rhs().value == 0.0 && std::is_same<BinaryOp, plus_binary_op<T>>::value) {
+        if (expr.rhs.value == 0.0 && std::is_same<BinaryOp, plus_binary_op<T>>::value) {
             return true;
         }
 
-        if (expr.rhs().value == 0.0 && std::is_same<BinaryOp, minus_binary_op<T>>::value) {
+        if (expr.rhs.value == 0.0 && std::is_same<BinaryOp, minus_binary_op<T>>::value) {
             return true;
         }
 
-        if (expr.rhs().value == 1.0 && std::is_same<BinaryOp, div_binary_op<T>>::value) {
+        if (expr.rhs.value == 1.0 && std::is_same<BinaryOp, div_binary_op<T>>::value) {
             return true;
         }
 
@@ -159,7 +159,7 @@ struct optimizable<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
 
     /*! \copydoc optimizable::is_deep */
     static bool is_deep(const etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>& expr) {
-        return is(expr) || is_optimizable_deep(expr.lhs()) || is_optimizable_deep(expr.rhs());
+        return is(expr) || is_optimizable_deep(expr.lhs) || is_optimizable_deep(expr.rhs);
     }
 };
 
@@ -177,7 +177,7 @@ struct optimizable<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
 
     /*! \copydoc optimizable::is_deep */
     static bool is_deep(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& expr) {
-        return is_optimizable_deep(expr.lhs()) || is_optimizable_deep(expr.rhs());
+        return is_optimizable_deep(expr.lhs) || is_optimizable_deep(expr.rhs);
     }
 };
 
@@ -271,7 +271,7 @@ struct transformer<etl::unary_expr<T, Expr, UnaryOp>> {
     template <typename Builder>
     static void transform(Builder parent_builder, const etl::unary_expr<T, Expr, UnaryOp>& expr) {
         if (std::is_same<UnaryOp, plus_unary_op<T>>::value) {
-            parent_builder(expr.value());
+            parent_builder(expr.value);
         }
     }
 };
@@ -291,13 +291,13 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>
     template <typename Builder>
     static void transform(Builder parent_builder, const etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>& expr) {
         if (std::is_same<BinaryOp, mul_binary_op<T>>::value) {
-            parent_builder(etl::scalar<T>(expr.lhs().value * expr.rhs().value));
+            parent_builder(etl::scalar<T>(expr.lhs.value * expr.rhs.value));
         } else if (std::is_same<BinaryOp, plus_binary_op<T>>::value) {
-            parent_builder(etl::scalar<T>(expr.lhs().value + expr.rhs().value));
+            parent_builder(etl::scalar<T>(expr.lhs.value + expr.rhs.value));
         } else if (std::is_same<BinaryOp, minus_binary_op<T>>::value) {
-            parent_builder(etl::scalar<T>(expr.lhs().value - expr.rhs().value));
+            parent_builder(etl::scalar<T>(expr.lhs.value - expr.rhs.value));
         } else if (std::is_same<BinaryOp, div_binary_op<T>>::value) {
-            parent_builder(etl::scalar<T>(expr.lhs().value / expr.rhs().value));
+            parent_builder(etl::scalar<T>(expr.lhs.value / expr.rhs.value));
         }
     }
 };
@@ -316,14 +316,14 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>> {
      */
     template <typename Builder>
     static void transform(Builder parent_builder, const etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>& expr) {
-        if (expr.lhs().value == 1.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
-            parent_builder(expr.rhs());
-        } else if (expr.lhs().value == 0.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
-            parent_builder(expr.lhs());
-        } else if (expr.lhs().value == 0.0 && std::is_same<BinaryOp, plus_binary_op<T>>::value) {
-            parent_builder(expr.rhs());
-        } else if (expr.lhs().value == 0.0 && std::is_same<BinaryOp, div_binary_op<T>>::value) {
-            parent_builder(expr.lhs());
+        if (expr.lhs.value == 1.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
+            parent_builder(expr.rhs);
+        } else if (expr.lhs.value == 0.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
+            parent_builder(expr.lhs);
+        } else if (expr.lhs.value == 0.0 && std::is_same<BinaryOp, plus_binary_op<T>>::value) {
+            parent_builder(expr.rhs);
+        } else if (expr.lhs.value == 0.0 && std::is_same<BinaryOp, div_binary_op<T>>::value) {
+            parent_builder(expr.lhs);
         }
     }
 };
@@ -342,16 +342,16 @@ struct transformer<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
      */
     template <typename Builder>
     static void transform(Builder parent_builder, const etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>& expr) {
-        if (expr.rhs().value == 1.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
-            parent_builder(expr.lhs());
-        } else if (expr.rhs().value == 0.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
-            parent_builder(expr.rhs());
-        } else if (expr.rhs().value == 0.0 && std::is_same<BinaryOp, plus_binary_op<T>>::value) {
-            parent_builder(expr.lhs());
-        } else if (expr.rhs().value == 0.0 && std::is_same<BinaryOp, minus_binary_op<T>>::value) {
-            parent_builder(expr.lhs());
-        } else if (expr.rhs().value == 1.0 && std::is_same<BinaryOp, div_binary_op<T>>::value) {
-            parent_builder(expr.lhs());
+        if (expr.rhs.value == 1.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
+            parent_builder(expr.lhs);
+        } else if (expr.rhs.value == 0.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
+            parent_builder(expr.rhs);
+        } else if (expr.rhs.value == 0.0 && std::is_same<BinaryOp, plus_binary_op<T>>::value) {
+            parent_builder(expr.lhs);
+        } else if (expr.rhs.value == 0.0 && std::is_same<BinaryOp, minus_binary_op<T>>::value) {
+            parent_builder(expr.lhs);
+        } else if (expr.rhs.value == 1.0 && std::is_same<BinaryOp, div_binary_op<T>>::value) {
+            parent_builder(expr.lhs);
         }
     }
 };
@@ -399,12 +399,12 @@ struct optimizer<etl::unary_expr<T, Expr, UnaryOp>> {
     static void apply(Builder parent_builder, const etl::unary_expr<T, Expr, UnaryOp>& expr) {
         if (is_optimizable(expr)) {
             transform(parent_builder, expr);
-        } else if (is_optimizable_deep(expr.value())) {
+        } else if (is_optimizable_deep(expr.value)) {
             auto value_builder = [&](auto&& new_value) {
                 parent_builder(etl::unary_expr<T, etl::detail::build_type<decltype(new_value)>, UnaryOp>(new_value));
             };
 
-            optimize(value_builder, expr.value());
+            optimize(value_builder, expr.value);
         } else {
             parent_builder(expr);
         }
@@ -425,18 +425,18 @@ struct optimizer<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
     static void apply(Builder parent_builder, const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& expr) {
         if (is_optimizable(expr)) {
             transform(parent_builder, expr);
-        } else if (is_optimizable_deep(expr.lhs())) {
+        } else if (is_optimizable_deep(expr.lhs)) {
             auto lhs_builder = [&](auto&& new_lhs) {
-                parent_builder(etl::binary_expr<T, etl::detail::build_type<decltype(new_lhs)>, BinaryOp, RightExpr>(new_lhs, expr.rhs()));
+                parent_builder(etl::binary_expr<T, etl::detail::build_type<decltype(new_lhs)>, BinaryOp, RightExpr>(new_lhs, expr.rhs));
             };
 
-            optimize(lhs_builder, expr.lhs());
-        } else if (is_optimizable_deep(expr.rhs())) {
+            optimize(lhs_builder, expr.lhs);
+        } else if (is_optimizable_deep(expr.rhs)) {
             auto rhs_builder = [&](auto&& new_rhs) {
-                parent_builder(etl::binary_expr<T, LeftExpr, BinaryOp, etl::detail::build_type<decltype(new_rhs)>>(expr.lhs(), new_rhs));
+                parent_builder(etl::binary_expr<T, LeftExpr, BinaryOp, etl::detail::build_type<decltype(new_rhs)>>(expr.lhs, new_rhs));
             };
 
-            optimize(rhs_builder, expr.rhs());
+            optimize(rhs_builder, expr.rhs);
         } else {
             parent_builder(expr);
         }

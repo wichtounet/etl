@@ -21,10 +21,6 @@ namespace etl {
  */
 template <typename Selector, Selector V, typename Expr>
 struct selected_expr final {
-private:
-    Expr _value;
-
-public:
     using expr_t     = Expr;          ///< The wrapped expression type
     using value_type = value_t<Expr>; ///< The value type
 
@@ -32,6 +28,13 @@ public:
 
     static constexpr selector_t selector_value = V; ///< The enum selector value
 
+private:
+
+    Expr value;
+
+    friend struct wrapper_traits<selected_expr>;
+
+public:
     //Cannot be constructed with no args
     selected_expr() = delete;
 
@@ -40,7 +43,7 @@ public:
      * \param l The ETL expression
      */
     explicit selected_expr(Expr l)
-            : _value(std::forward<Expr>(l)) {
+            : value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
@@ -51,22 +54,6 @@ public:
     //Expressions are invariant
     selected_expr& operator=(const selected_expr& e) = delete;
     selected_expr& operator=(selected_expr&& e) = delete;
-
-    /*!
-     * \brief Return the sub expression
-     * \return a reference to the sub expression
-     */
-    std::add_lvalue_reference_t<Expr> value() {
-        return _value;
-    }
-
-    /*!
-     * \brief Return the sub expression
-     * \return a reference to the sub expression
-     */
-    cpp::add_const_lvalue_t<Expr> value() const {
-        return _value;
-    }
 
     // Assignment functions
 
@@ -83,7 +70,7 @@ public:
         forced.impl = selector_value;
         forced.forced = true;
 
-        _value.assign_to(lhs);
+        value.assign_to(lhs);
 
         forced = old_forced;
     }
@@ -101,7 +88,7 @@ public:
         forced.impl = selector_value;
         forced.forced = true;
 
-        _value.assign_add_to(lhs);
+        value.assign_add_to(lhs);
 
         forced = old_forced;
     }
@@ -119,7 +106,7 @@ public:
         forced.impl = selector_value;
         forced.forced = true;
 
-        _value.assign_sub_to(lhs);
+        value.assign_sub_to(lhs);
 
         forced = old_forced;
     }
@@ -137,7 +124,7 @@ public:
         forced.impl = selector_value;
         forced.forced = true;
 
-        _value.assign_mul_to(lhs);
+        value.assign_mul_to(lhs);
 
         forced = old_forced;
     }
@@ -155,7 +142,7 @@ public:
         forced.impl = selector_value;
         forced.forced = true;
 
-        _value.assign_div_to(lhs);
+        value.assign_div_to(lhs);
 
         forced = old_forced;
     }
@@ -173,7 +160,7 @@ public:
         forced.impl = selector_value;
         forced.forced = true;
 
-        _value.assign_mod_to(lhs);
+        value.assign_mod_to(lhs);
 
         forced = old_forced;
     }
@@ -185,7 +172,7 @@ public:
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const selected_expr& expr) {
-        return os << "selected(" << expr._value << ")";
+        return os << "selected(" << expr.value << ")";
     }
 };
 

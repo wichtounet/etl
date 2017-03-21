@@ -21,17 +21,23 @@ namespace etl {
  */
 template <typename T, std::size_t D>
 struct dim_view {
+    static_assert(D == 1 || D == 2, "Invalid dimension");
+
+    using sub_type          = T;                                                                       ///< The sub type
+    using value_type        = value_t<sub_type>;                                                       ///< The value contained in the expression
+    using memory_type       = memory_t<sub_type>;                                                      ///< The memory acess type
+    using const_memory_type = const_memory_t<sub_type>;                                                ///< The const memory access type
+    using return_type       = return_helper<sub_type, decltype(std::declval<sub_type>()(0, 0))>;       ///< The type returned by the view
+    using const_return_type = const_return_helper<sub_type, decltype(std::declval<sub_type>()(0, 0))>; ///< The const type return by the view
+
+private:
+
     T sub;               ///< The Sub expression
     const std::size_t i; ///< The index
 
-    static_assert(D == 1 || D == 2, "Invalid dimension");
+    friend struct etl_traits<dim_view>;
 
-    using sub_type          = T;                                                  ///< The sub type
-    using value_type        = value_t<sub_type>;                                  ///< The value contained in the expression
-    using memory_type       = memory_t<sub_type>;                                 ///< The memory acess type
-    using const_memory_type = const_memory_t<sub_type>;                           ///< The const memory access type
-    using return_type       = return_helper<sub_type, decltype(sub(0, 0))>;       ///< The type returned by the view
-    using const_return_type = const_return_helper<sub_type, decltype(sub(0, 0))>; ///< The const type return by the view
+public:
 
     /*!
      * \brief Construct a new dim_view over the given sub expression

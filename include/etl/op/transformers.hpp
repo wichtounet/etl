@@ -80,38 +80,6 @@ struct mm_mul_transformer {
     }
 
     /*!
-     * \brief Returns the left value on which the transformer is working.
-     * \return A reference to the left value on which the transformer is working.
-     */
-    left_type& lhs() {
-        return left;
-    }
-
-    /*!
-     * \brief Returns the left value on which the transformer is working.
-     * \return A reference to the left value on which the transformer is working.
-     */
-    const left_type& lhs() const {
-        return left;
-    }
-
-    /*!
-     * \brief Returns the right value on which the transformer is working.
-     * \return A reference to the right value on which the transformer is working.
-     */
-    right_type& rhs() {
-        return right;
-    }
-
-    /*!
-     * \brief Returns the right value on which the transformer is working.
-     * \return A reference to the right value on which the transformer is working.
-     */
-    const right_type& rhs() const {
-        return right;
-    }
-
-    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -128,8 +96,8 @@ struct mm_mul_transformer {
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor) const {
-        lhs().visit(visitor);
-        rhs().visit(visitor);
+        left.visit(visitor);
+        right.visit(visitor);
     }
 
     /*!
@@ -137,8 +105,8 @@ struct mm_mul_transformer {
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor) const {
-        lhs().visit(visitor);
-        rhs().visit(visitor);
+        left.visit(visitor);
+        right.visit(visitor);
     }
 
     /*!
@@ -148,9 +116,9 @@ struct mm_mul_transformer {
     void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        lhs().visit(visitor);
+        left.visit(visitor);
         visitor.need_value = true;
-        rhs().visit(visitor);
+        right.visit(visitor);
         visitor.need_value = old_need_value;
     }
 

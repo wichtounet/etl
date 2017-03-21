@@ -51,7 +51,7 @@ struct diagonal_matrix final : adapter<Matrix>, iterable<const diagonal_matrix<M
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<value_type>;
 
-    using base_type::matrix;
+    using base_type::value;
 
 public:
     /*!
@@ -299,7 +299,7 @@ public:
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
     diagonal_detail::diagonal_reference<matrix_t> operator()(std::size_t i, std::size_t j) noexcept {
-        return {matrix, i, j};
+        return {value, i, j};
     }
 
     using base_type::operator();

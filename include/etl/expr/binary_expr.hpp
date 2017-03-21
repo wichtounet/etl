@@ -30,8 +30,13 @@ private:
 
     using this_type = binary_expr<T, LeftExpr, BinaryOp, RightExpr>; ///< This type
 
-    LeftExpr _lhs;  ///< The Left hand side expression
-    RightExpr _rhs; ///< The right hand side expression
+    LeftExpr lhs;  ///< The Left hand side expression
+    RightExpr rhs; ///< The right hand side expression
+
+    friend struct etl_traits<binary_expr>;
+    friend struct optimizer<binary_expr>;
+    friend struct optimizable<binary_expr>;
+    friend struct transformer<binary_expr>;
 
 public:
     using value_type        = T;                              ///< The Value type
@@ -55,7 +60,7 @@ public:
      * \param r The right hand side of the expression
      */
     binary_expr(LeftExpr l, RightExpr r)
-            : _lhs(std::forward<LeftExpr>(l)), _rhs(std::forward<RightExpr>(r)) {
+            : lhs(std::forward<LeftExpr>(l)), rhs(std::forward<RightExpr>(r)) {
         //Nothing else to init
     }
 
@@ -76,45 +81,13 @@ public:
     binary_expr& operator=(binary_expr&& e) = delete;
 
     /*!
-     * \brief Returns the left hand side expression on which the transformer is working.
-     * \return A reference to the left hand side expression on which the transformer is working.
-     */
-    std::add_lvalue_reference_t<LeftExpr> lhs() {
-        return _lhs;
-    }
-
-    /*!
-     * \brief Returns the left hand side expression on which the transformer is working.
-     * \return A reference to the left hand side expression on which the transformer is working.
-     */
-    cpp::add_const_lvalue_t<LeftExpr> lhs() const {
-        return _lhs;
-    }
-
-    /*!
-     * \brief Returns the right hand side expression on which the transformer is working.
-     * \return A reference to the right hand side expression on which the transformer is working.
-     */
-    std::add_lvalue_reference_t<RightExpr> rhs() {
-        return _rhs;
-    }
-
-    /*!
-     * \brief Returns the right hand side expression on which the transformer is working.
-     * \return A reference to the right hand side expression on which the transformer is working.
-     */
-    cpp::add_const_lvalue_t<RightExpr> rhs() const {
-        return _rhs;
-    }
-
-    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
     template <typename E>
     bool alias(const E& rhs) const noexcept {
-        return _lhs.alias(rhs) || _rhs.alias(rhs);
+        return lhs.alias(rhs) || rhs.alias(rhs);
     }
 
     //Apply the expression
@@ -125,7 +98,7 @@ public:
      * \return a reference to the element at the given index.
      */
     value_type operator[](std::size_t i) const {
-        return BinaryOp::apply(lhs()[i], rhs()[i]);
+        return BinaryOp::apply(lhs[i], rhs[i]);
     }
 
     /*!
@@ -135,7 +108,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t i) const {
-        return BinaryOp::apply(lhs().read_flat(i), rhs().read_flat(i));
+        return BinaryOp::apply(lhs.read_flat(i), rhs.read_flat(i));
     }
 
     /*!
@@ -146,7 +119,7 @@ public:
      */
     template <typename V = default_vec>
     ETL_STRONG_INLINE(vec_type<V>) load(std::size_t i) const {
-        return BinaryOp::template load<V>(lhs().template load<V>(i), rhs().template load<V>(i));
+        return BinaryOp::template load<V>(lhs.template load<V>(i), rhs.template load<V>(i));
     }
 
     /*!
@@ -157,7 +130,7 @@ public:
      */
     template <typename V = default_vec>
     ETL_STRONG_INLINE(vec_type<V>) loadu(std::size_t i) const {
-        return BinaryOp::template load<V>(lhs().template loadu<V>(i), rhs().template loadu<V>(i));
+        return BinaryOp::template load<V>(lhs.template loadu<V>(i), rhs.template loadu<V>(i));
     }
 
     /*!
@@ -169,7 +142,7 @@ public:
     value_type operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return BinaryOp::apply(lhs()(args...), rhs()(args...));
+        return BinaryOp::apply(lhs(args...), rhs(args...));
     }
 
     /*!
@@ -275,8 +248,8 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor) const {
-        lhs().visit(visitor);
-        rhs().visit(visitor);
+        lhs.visit(visitor);
+        rhs.visit(visitor);
     }
 
     /*!
@@ -284,8 +257,8 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor) const {
-        lhs().visit(visitor);
-        rhs().visit(visitor);
+        lhs.visit(visitor);
+        rhs.visit(visitor);
     }
 
     /*!
@@ -295,9 +268,9 @@ public:
     void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        lhs().visit(visitor);
+        lhs.visit(visitor);
         visitor.need_value = true;
-        rhs().visit(visitor);
+        rhs.visit(visitor);
         visitor.need_value = old_need_value;
     }
 
@@ -309,9 +282,9 @@ public:
      */
     friend std::ostream& operator<<(std::ostream& os, const binary_expr& expr) {
         if (BinaryOp::desc_func) {
-            return os << BinaryOp::desc() << "(" << expr.lhs() << ", " << expr.rhs() << ")";
+            return os << BinaryOp::desc() << "(" << expr.lhs << ", " << expr.rhs << ")";
         } else {
-            return os << "(" << expr.lhs() << ' ' << BinaryOp::desc() << ' ' << expr.rhs() << ")";
+            return os << "(" << expr.lhs << ' ' << BinaryOp::desc() << ' ' << expr.rhs << ")";
         }
     }
 };
@@ -361,7 +334,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
      */
     template <bool B = left_directed, cpp_enable_if(B)>
     static constexpr auto& get(const expr_t& v) {
-        return v.lhs();
+        return v.lhs;
     }
 
     /*!
@@ -371,7 +344,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
      */
     template <bool B = left_directed, cpp_disable_if(B)>
     static constexpr auto& get(const expr_t& v) {
-        return v.rhs();
+        return v.rhs;
     }
 
     /*!
