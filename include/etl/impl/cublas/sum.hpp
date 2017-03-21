@@ -101,6 +101,44 @@ value_t<A> sum(const A& /*a*/) {
     return 0.0;
 }
 
+/*!
+ * \brief Compute the sum of a
+ * \param a The lhs expression
+ */
+template <typename A, cpp_enable_if(all_dma<A>::value && all_single_precision<A>::value)>
+float asum(const A& a) {
+    decltype(auto) handle = start_cublas();
+
+    a.ensure_gpu_up_to_date();
+
+    float prod = 0.0;
+    cublas_check(cublasSasum(handle.get(), etl::size(a), a.gpu_memory(), 1, &prod));
+    return prod;
+}
+
+/*!
+ * \copydoc sum
+ */
+template <typename A, cpp_enable_if(all_dma<A>::value && all_double_precision<A>::value)>
+double asum(const A& a) {
+    decltype(auto) handle = start_cublas();
+
+    a.ensure_gpu_up_to_date();
+
+    double prod = 0.0;
+    cublas_check(cublasDasum(handle.get(), etl::size(a), a.gpu_memory(), 1, &prod));
+    return prod;
+}
+
+/*!
+ * \copydoc asum
+ */
+template <typename A, cpp_enable_if(!all_dma<A>::value)>
+value_t<A> asum(const A& /*a*/) {
+    cpp_unreachable("CUBLAS not enabled/available");
+    return 0.0;
+}
+
 #else
 
 /*!
@@ -108,6 +146,15 @@ value_t<A> sum(const A& /*a*/) {
  */
 template <typename A>
 value_t<A> sum(const A& /*a*/) {
+    cpp_unreachable("CUBLAS not enabled/available");
+    return 0.0;
+}
+
+/*!
+ * \copydoc asum
+ */
+template <typename A>
+value_t<A> asum(const A& /*a*/) {
     cpp_unreachable("CUBLAS not enabled/available");
     return 0.0;
 }

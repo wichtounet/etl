@@ -36,6 +36,25 @@ value_t<E> sum(const E& input, std::size_t first, std::size_t last) {
     return acc;
 }
 
+/*!
+ * \brief Compute the sum of the absolute values in the given range
+ * \param input The input expression
+ * \param first The beginning of the range
+ * \param last The end of the range
+ * \return the absolute sum
+ */
+template <typename E>
+value_t<E> asum(const E& input, std::size_t first, std::size_t last) {
+    value_t<E> acc(0);
+
+    for (std::size_t i = first; i < last; ++i) {
+        using std::abs;
+        acc += abs(input[i]);
+    }
+
+    return acc;
+}
+
 } //end of namespace standard
 } //end of namespace impl
 } //end of namespace etl

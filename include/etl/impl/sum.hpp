@@ -175,6 +175,66 @@ struct sum_impl {
 #endif
 };
 
+/*!
+ * \brief Absolute Sum operation implementation
+ */
+struct asum_impl {
+    //CPP17: if constexpr
+#ifdef ETL_PARALLEL_SUPPORT
+    /*!
+     * \brief Apply the functor to e
+     */
+    template <typename E>
+    static value_t<E> apply(const E& e) {
+        auto impl = select_sum_impl<E>(safe_is_gpu_up_to_date(e));
+
+        bool parallel_dispatch = select_parallel(e);
+
+        value_t<E> acc(0);
+
+        auto acc_functor = [&acc](value_t<E> value) {
+            acc += value;
+        };
+
+        //TODO Make it so that dispatching aligns the sub parts
+
+        if (impl == etl::sum_impl::VEC) {
+            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
+                return impl::vec::asum(e, first, last);
+            }, acc_functor, 0, size(e));
+        } else if(impl == etl::sum_impl::BLAS){
+            return impl::blas::asum(e);
+        } else if(impl == etl::sum_impl::CUBLAS){
+            return impl::cublas::asum(e);
+        } else {
+            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
+                return impl::standard::asum(e, first, last);
+            }, acc_functor, 0, size(e));
+        }
+
+        return acc;
+    }
+#else
+    /*!
+     * \brief Apply the functor to e
+     */
+    template <typename E>
+    static value_t<E> apply(const E& e) {
+        const auto impl = select_sum_impl<E>(safe_is_gpu_up_to_date(e));
+
+        if (impl == etl::sum_impl::VEC) {
+            return impl::vec::asum(e, 0, size(e));
+        } else if(impl == etl::sum_impl::BLAS){
+            return impl::blas::asum(e);
+        } else if(impl == etl::sum_impl::CUBLAS){
+            return impl::cublas::asum(e);
+        } else {
+            return impl::standard::asum(e, 0, size(e));
+        }
+    }
+#endif
+};
+
 } //end of namespace detail
 
 } //end of namespace etl

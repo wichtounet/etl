@@ -64,6 +64,26 @@ value_t<A> sum(const A& a) {
     return cblas_ddot(etl::size(a), m_a, 1, m_b, 1);
 }
 
+/*!
+ * \brief Compute the asum of a
+ * \param a The lhs expression
+ * \return the asum
+ */
+template <typename A, cpp_enable_if(all_dma<A>::value&& all_single_precision<A>::value)>
+value_t<A> asum(const A& a) {
+    a.ensure_cpu_up_to_date();
+    return cblas_sasum(etl::size(a), a.memory_start(), 1);
+}
+
+/*!
+ * \copydoc asum
+ */
+template <typename A, cpp_enable_if(all_dma<A>::value&& all_double_precision<A>::value)>
+value_t<A> asum(const A& a) {
+    a.ensure_cpu_up_to_date();
+    return cblas_dasum(etl::size(a), a.memory_start(), 1);
+}
+
 //COVERAGE_EXCLUDE_BEGIN
 
 /*!
@@ -75,6 +95,15 @@ value_t<A> sum(const A& /*a*/) {
     return 0.0;
 }
 
+/*!
+ * \copydoc asum
+ */
+template <typename A, cpp_enable_if(!all_dma<A>::value)>
+value_t<A> asum(const A& /*a*/) {
+    cpp_unreachable("BLAS not enabled/available");
+    return 0.0;
+}
+
 #else
 
 /*!
@@ -82,6 +111,15 @@ value_t<A> sum(const A& /*a*/) {
  */
 template <typename A>
 value_t<A> sum(const A& /*a*/) {
+    cpp_unreachable("BLAS not enabled/available");
+    return 0.0;
+}
+
+/*!
+ * \copydoc asum
+ */
+template <typename A>
+value_t<A> asum(const A& /*a*/) {
     cpp_unreachable("BLAS not enabled/available");
     return 0.0;
 }

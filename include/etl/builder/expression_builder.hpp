@@ -1388,6 +1388,21 @@ value_t<E> sum(E&& values) {
 }
 
 /*!
+ * \brief Returns the sum of all the absolute values contained in the given expression
+ * \param values The expression to reduce
+ * \return The sum of the absolute values of the expression
+ */
+template <typename E>
+value_t<E> asum(E&& values) {
+    static_assert(is_etl_expr<E>::value, "etl::asum can only be used on ETL expressions");
+
+    //Reduction force evaluation
+    force(values);
+
+    return detail::asum_impl::apply(values);
+}
+
+/*!
  * \brief Returns the mean of all the values contained in the given expression
  * \param values The expression to reduce
  * \return The mean of the values of the expression
@@ -1397,6 +1412,18 @@ value_t<E> mean(E&& values) {
     static_assert(is_etl_expr<E>::value, "etl::mean can only be used on ETL expressions");
 
     return sum(values) / size(values);
+}
+
+/*!
+ * \brief Returns the mean of all the absolute values contained in the given expression
+ * \param values The expression to reduce
+ * \return The mean of the absolute values of the expression
+ */
+template <typename E>
+value_t<E> amean(E&& values) {
+    static_assert(is_etl_expr<E>::value, "etl::amean can only be used on ETL expressions");
+
+    return asum(values) / size(values);
 }
 
 /*!
