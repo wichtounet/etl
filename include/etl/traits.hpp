@@ -602,6 +602,13 @@ template <typename T>
 using fast_sub_view_able = cpp::and_u<has_direct_access<T>::value, decay_traits<T>::storage_order == order::RowMajor>;
 
 /*!
+ * \brief Simple utility traits indicating if a light slice view can be created out
+ * of this type.
+ */
+template <typename T>
+using fast_slice_view_able = fast_sub_view_able<T>;
+
+/*!
  * \brief Traits to test if an expression is inplace transpose-able
  * \tparam T The type to test
  */
