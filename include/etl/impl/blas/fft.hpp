@@ -826,8 +826,8 @@ void fft1_many(A&& a, C&& c) {
 
     static constexpr std::size_t N = etl::dimensions<C>();
 
-    std::size_t n     = a.template dim<N - 1>(); //Size of the transform
-    std::size_t batch = etl::size(a) / n;            //Number of batch
+    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
+    std::size_t batch = etl::size(a) / n;   //Number of batch
 
     auto a_complex = allocate<value_t<C>>(etl::size(a));
 
@@ -851,8 +851,8 @@ void fft1_many(A&& a, C&& c) {
 
     static constexpr std::size_t N = etl::dimensions<C>();
 
-    std::size_t n     = a.template dim<N - 1>(); //Size of the transform
-    std::size_t batch = etl::size(a) / n;        //Number of batch
+    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
+    std::size_t batch = etl::size(a) / n;   //Number of batch
 
     mkl_detail::fft_many_kernel(a.memory_start(), batch, n, c.memory_start());
 
