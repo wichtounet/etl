@@ -357,6 +357,12 @@ TEMPLATE_TEST_CASE_2("etl_traits/has_direct_access", "has_direct_access", Z, flo
     //Unary do not have direct access
     REQUIRE_DIRECT(!etl::has_direct_access<decltype(abs(a))>::value);
     REQUIRE_DIRECT(!etl::has_direct_access<decltype(abs(b))>::value);
+
+    if (etl::vec_enabled) {
+        //Some unary can be vectorizable
+        REQUIRE_DIRECT((etl::all_vectorizable<etl::vector_mode, decltype(abs(a))>::value));
+        REQUIRE_DIRECT((etl::all_vectorizable<etl::vector_mode, decltype(abs(b))>::value));
+    }
 }
 
 TEMPLATE_TEST_CASE_2("etl_traits/vectorizable", "vectorizable", Z, float, double) {
@@ -407,14 +413,14 @@ TEMPLATE_TEST_CASE_2("etl_traits/vectorizable", "vectorizable", Z, float, double
         REQUIRE_DIRECT(etl::etl_traits<decltype(a(0)(0) * a(0)(0))>::template vectorizable<etl::vector_mode>::value);
         REQUIRE_DIRECT(etl::etl_traits<decltype(b(0)(0) * b(0)(0))>::template vectorizable<etl::vector_mode>::value);
 
-        //Binary do not have direct access
+        //Binary is vectorizable
         REQUIRE_DIRECT(etl::etl_traits<decltype(a + b)>::template vectorizable<etl::vector_mode>::value);
         REQUIRE_DIRECT(etl::etl_traits<decltype(b + b)>::template vectorizable<etl::vector_mode>::value);
-    }
 
-    //abs do not have direct access
-    REQUIRE_DIRECT(!etl::etl_traits<decltype(abs(a))>::template vectorizable<etl::vector_mode>::value);
-    REQUIRE_DIRECT(!etl::etl_traits<decltype(abs(b))>::template vectorizable<etl::vector_mode>::value);
+        //abs is vectorizable
+        REQUIRE_DIRECT(etl::etl_traits<decltype(abs(a))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(abs(b))>::template vectorizable<etl::vector_mode>::value);
+    }
 }
 
 template <typename Z, typename E>
