@@ -86,8 +86,8 @@ public:
      * \return true if the two expressions aliases, false otherwise
      */
     template <typename E>
-    bool alias(const E& rhs) const noexcept {
-        return lhs.alias(rhs) || rhs.alias(rhs);
+    bool alias(const E& other) const noexcept {
+        return lhs.alias(other) || rhs.alias(other);
     }
 
     //Apply the expression
