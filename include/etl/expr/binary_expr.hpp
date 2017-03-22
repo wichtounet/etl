@@ -82,7 +82,7 @@ public:
 
     /*!
      * \brief Test if this expression aliases with the given expression
-     * \param rhs The other expression to test
+     * \param other The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
     template <typename E>
