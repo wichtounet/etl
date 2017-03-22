@@ -618,6 +618,15 @@ inline etl::conv_multi_impl select_conv_valid_multi_impl() {
 
                 return forced;
 
+            //MKL cannot always be used
+            case conv_multi_impl::VALID_FFT_MKL:
+                if (!mkl_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to MKL conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_valid_multi<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
             //BLAS cannot always be used
             case conv_multi_impl::BLAS_MKL:
                 if (!cblas_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
