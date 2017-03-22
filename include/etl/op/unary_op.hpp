@@ -39,7 +39,13 @@ struct abs_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
+
+    /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -48,6 +54,17 @@ struct abs_unary_op {
      */
     static constexpr T apply(const T& x) noexcept {
         return std::abs(x);
+    }
+
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
+    template <typename V = default_vec>
+    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+        return V::max(x, V::sub(V::template zero<T>(), x));
     }
 
     /*!
