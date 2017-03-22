@@ -377,7 +377,7 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S>
+    template <typename... S, cpp_enable_if((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
     const_return_type operator()(std::size_t i, S... args) const {
         ensure_cpu_up_to_date();
         return memory[dyn_index(*this, i, args...)];
@@ -388,11 +388,21 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S>
+    template <typename... S, cpp_enable_if((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
     return_type operator()(std::size_t i, S... args) {
         ensure_cpu_up_to_date();
         invalidate_gpu();
         return memory[dyn_index(*this, i, args...)];
+    }
+
+    /*!
+     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
+     * \param x The index to use
+     * \return a sub view of the matrix at position x.
+     */
+    template <typename TT = sub_type, cpp_enable_if((decay_traits<TT>::dimensions() > 2))>
+    auto operator()(std::size_t x) const {
+        return sub(*this, x);
     }
 
     /*!
