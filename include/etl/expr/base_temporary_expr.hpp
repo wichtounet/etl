@@ -408,7 +408,7 @@ private:
 };
 
 /*!
- * \brief Abstrct base class for temporary unary expression
+ * \brief Abstract base class for temporary unary expression
  * \tparam D The derived type
  * \tparam A The sub type
  */
@@ -521,7 +521,7 @@ struct base_temporary_expr_un : base_temporary_expr<D> {
 };
 
 /*!
- * \brief Abstrct base class for temporary binary expression
+ * \brief Abstract base class for temporary binary expression
  * \tparam D The derived type
  * \tparam A The left sub expression type
  * \tparam B The right sub expression type
@@ -647,6 +647,176 @@ struct base_temporary_expr_bin : base_temporary_expr<D> {
 
         visitor.need_value = decay_traits<D>::is_gpu;
         _b.visit(visitor);
+
+        this->evaluate();
+
+        if (old_need_value) {
+            this->ensure_cpu_up_to_date();
+        }
+
+        visitor.need_value = old_need_value;
+    }
+};
+
+/*!
+ * \brief Abstract base class for temporary ternary expression
+ * \tparam D The derived type
+ * \tparam A The left sub expression type
+ * \tparam B The right sub expression type
+ */
+template <typename D, typename A, typename B, typename C>
+struct base_temporary_expr_tern : base_temporary_expr<D> {
+    static_assert(is_etl_expr<A>::value, "The argument must be an ETL expr");
+    static_assert(is_etl_expr<B>::value, "The argument must be an ETL expr");
+    static_assert(is_etl_expr<C>::value, "The argument must be an ETL expr");
+
+    using this_type = base_temporary_expr_tern<D, A, B, C>; ///< This type
+    using base_type = base_temporary_expr<D>;               ///< The base type
+
+private:
+
+    A _a;                       ///< The first sub expression reference
+    B _b;                       ///< The second sub expression reference
+    C _c;                       ///< The third sub expression reference
+
+public:
+
+    /*!
+     * \brief Construct a new expression
+     * \param a The first sub expression
+     * \param b The second sub expression
+     * \param c The third sub expression
+     */
+    base_temporary_expr_tern(A a, B b, C c) : _a(a), _b(b), _c(c) {
+        //Nothing else to init
+    }
+
+    /*!
+     * \brief Construct a new expression by copy
+     * \param e The expression to copy
+     */
+    base_temporary_expr_tern(const base_temporary_expr_tern& e) : base_type(e), _a(e._a), _b(e._b), _c(e._c) {
+        //Nothing else to init
+    }
+
+    /*!
+     * \brief Construct a new expression by move
+     * \param e The expression to move
+     */
+    base_temporary_expr_tern(base_temporary_expr_tern&& e) noexcept : base_type(std::move(e)), _a(e._a), _b(e._b), _c(e._c) {
+        //Nothing else to init
+    }
+
+    /*!
+     * \brief Apply the op and store the result in result
+     * \param result The expressio where to store the result
+     */
+    template <typename Result>
+    void apply_base(Result&& result) const {
+        this->as_derived().apply(_a, _b, _c, std::forward<Result>(result));
+    }
+
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
+    template <typename E>
+    bool alias(const E& rhs) const {
+        return _a.alias(rhs) || _b.alias(rhs) || _c.alias(rhs);
+    }
+
+protected:
+
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
+    std::add_lvalue_reference_t<A> a() {
+        return _a;
+    }
+
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
+    cpp::add_const_lvalue_t<A> a() const {
+        return _a;
+    }
+
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
+    std::add_lvalue_reference_t<B> b() {
+        return _b;
+    }
+
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
+    cpp::add_const_lvalue_t<B> b() const {
+        return _b;
+    }
+
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
+    std::add_lvalue_reference_t<C> c() {
+        return _c;
+    }
+
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
+    cpp::add_const_lvalue_t<C> c() const {
+        return _c;
+    }
+
+public:
+
+    // Internals
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::temporary_allocator_visitor& visitor) const {
+        this->allocate_temporary();
+
+        _a.visit(visitor);
+        _b.visit(visitor);
+        _c.visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::back_propagate_visitor& visitor) const {
+        _a.visit(visitor);
+        _b.visit(visitor);
+        _c.visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(detail::evaluator_visitor& visitor) const {
+        bool old_need_value = visitor.need_value;
+
+        visitor.need_value = decay_traits<D>::is_gpu;
+        _a.visit(visitor);
+
+        visitor.need_value = decay_traits<D>::is_gpu;
+        _b.visit(visitor);
+
+        visitor.need_value = decay_traits<D>::is_gpu;
+        _c.visit(visitor);
 
         this->evaluate();
 
