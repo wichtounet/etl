@@ -448,6 +448,22 @@ auto max_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t 
     return temporary_binary_expr_state<value_t<E>, detail::build_type<E>, detail::build_type<F>, dyn_max_pool_derivative_3d_expr<value_t<E>, decay_traits<E>::dimensions()>>{{c1, c2, c3}, input, output};
 }
 
+/* Max Pool 3D Upsample */
+
+/*!
+ * \brief Derivative of the 3D Max Pooling of the given matrix expression and upsampling.
+ * \param input The input
+ * \param output The output
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \tparam C3 The third pooling ratio
+ * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
+ */
+template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C>
+auto max_pool_upsample_3d(A&& input, B&& output, C&& errors) {
+    return max_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3>{input, output, errors};
+}
+
 /* Upsample 2D */
 
 /*!
