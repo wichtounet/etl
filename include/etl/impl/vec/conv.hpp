@@ -1228,38 +1228,41 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv, value_t<I> be
         conv.ensure_cpu_up_to_date();
     }
 
+    auto* in = input.memory_start();
+    auto* kkk = kernel.memory_start();
+    auto* out = conv.memory_start();
+
     if (beta == T(0)) {
         for (size_t i = 0; i < c1; ++i) {
             const auto k_lo = std::max<int>(0, i - m1 + 1);
             const auto k_hi = std::min(n1 - 1, i) + 1;
 
+            const int k1 = int(m1) - 1 - int(i);
+
             for (size_t j = 0; j < c2; ++j) {
                 const auto l_lo = std::max<int>(0, j - m2 + 1);
                 const auto l_hi = std::min(n2 - 1, j) + 1;
+
+                const int k2 = int(m2) - 1 - int(j);
 
                 auto r1    = vec_type::template zero<T>();
                 auto temp1 = T(0);
 
                 for (size_t k = k_lo; k < k_hi; ++k) {
-                    const auto idx1 = m1 - 1 - i + k;
-
                     size_t l = l_lo;
 
                     for (; l + vec_size - 1 < l_hi; l += vec_size) {
-                        const auto idx2 = m2 - 1 - j + l;
-
-                        auto i1  = input.template loadu<vec_type>(k * n2 + l);
-                        auto sk1 = kernel.template loadu<vec_type>(idx1 * m2 + idx2 + vec_size * 0);
+                        auto i1  = vec_type::loadu(in + k * n2 + l);
+                        auto sk1 = vec_type::loadu(kkk + (k1 + k) * m2 + (k2 + l) + vec_size * 0);
                         r1       = vec_type::fmadd(sk1, i1, r1);
                     }
 
                     for (; l < l_hi; ++l) {
-                        const auto idx2 = m2 - 1 - j + l;
-                        temp1 += input(k, l) * kernel(idx1, idx2);
+                        temp1 += in[k * n2 + l] * kkk[(k1 + k) * m2 + k2 + l];
                     }
                 }
 
-                conv(i, j) = vec_type::hadd(r1) + temp1;
+                out[i * c2 +j] = vec_type::hadd(r1) + temp1;
             }
         }
     } else {
@@ -1267,33 +1270,32 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv, value_t<I> be
             const auto k_lo = std::max<int>(0, i - m1 + 1);
             const auto k_hi = std::min(n1 - 1, i) + 1;
 
+            const int k1 = int(m1) - 1 - int(i);
+
             for (size_t j = 0; j < c2; ++j) {
                 const auto l_lo = std::max<int>(0, j - m2 + 1);
                 const auto l_hi = std::min(n2 - 1, j) + 1;
+
+                const int k2 = int(m2) - 1 - int(j);
 
                 auto r1    = vec_type::template zero<T>();
                 auto temp1 = T(0);
 
                 for (size_t k = k_lo; k < k_hi; ++k) {
-                    const auto idx1 = m1 - 1 - i + k;
-
                     size_t l = l_lo;
 
                     for (; l + vec_size - 1 < l_hi; l += vec_size) {
-                        const auto idx2 = m2 - 1 - j + l;
-
-                        auto i1  = input.template loadu<vec_type>(k * n2 + l);
-                        auto sk1 = kernel.template loadu<vec_type>(idx1 * m2 + idx2 + vec_size * 0);
+                        auto i1  = vec_type::loadu(in + k * n2 + l);
+                        auto sk1 = vec_type::loadu(kkk + (k1 + k) * m2 + (k2 + l) + vec_size * 0);
                         r1       = vec_type::fmadd(sk1, i1, r1);
                     }
 
                     for (; l < l_hi; ++l) {
-                        const auto idx2 = m2 - 1 - j + l;
-                        temp1 += input(k, l) * kernel(idx1, idx2);
+                        temp1 += in[k * n2 + l] * kkk[(k1 + k) * m2 + k2 + l];
                     }
                 }
 
-                conv(i, j) = beta * conv(i, j) + vec_type::hadd(r1) + temp1;
+                out[i * c2 +j] = beta * out[i * c2 +j] + vec_type::hadd(r1) + temp1;
             }
         }
     }
