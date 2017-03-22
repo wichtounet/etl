@@ -1272,34 +1272,41 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
 
         dyn_matrix<etl::complex<T>, 3> b_padded(K, C, size);
 
+        // 1. Pad all the kenels and compute their FFT
+
         auto batch_fun_kc = [&](const size_t first, const size_t last) {
-            for (std::size_t kc = first; kc < last; ++kc) {
-                size_t k = kc / C;
-                size_t c = kc % C;
+            if (last - first) {
+                SERIAL_SECTION {
+                    for (std::size_t kc = first; kc < last; ++kc) {
+                        size_t k = kc / C;
+                        size_t c = kc % C;
 
-                const T* b = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc; // kernel(k)(c)
+                        const T* b = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc; // kernel(k)(c)
 
-                b_padded(k)(c) = 0;
-                for (std::size_t i = 0; i < n1; ++i) {
-                    direct_copy_n(b + i * n2, b_padded(k)(c).memory_start() + i * s2, n2);
+                        b_padded(k)(c) = 0;
+                        for (std::size_t i = 0; i < n1; ++i) {
+                            direct_copy_n(b + i * n2, b_padded(k)(c).memory_start() + i * s2, n2);
+                        }
+
+                        mkl_detail::inplace_fft2_kernel(safe_cast(b_padded(k)(c).memory_start()), s1, s2);
+                    }
                 }
-
-                mkl_detail::inplace_fft2_kernel(safe_cast(b_padded(k)(c).memory_start()), s1, s2);
             }
         };
+
+        // 2. Pad all the images and compute the result of ifft(image >> kernel)
 
         auto batch_fun_n = [&](const size_t first, const size_t last) {
             if (last - first) {
                 SERIAL_SECTION {
+                    dyn_vector<etl::complex<T>> a_padded(size);
+                    dyn_vector<etl::complex<T>> tmp(size);
+
                     for (std::size_t i = first; i < last; ++i) {
                         for (std::size_t k = 0; k < K; ++k) {
                             const T* a = input.memory_start() + i * input_i_inc + k * input_k_inc; // input(i)(k)
 
-                            dyn_vector<etl::complex<T>> a_padded(size);
-                            dyn_vector<etl::complex<T>> tmp(size);
-
                             a_padded = 0;
-
                             for (std::size_t i = 0; i < m1; ++i) {
                                 direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
                             }
