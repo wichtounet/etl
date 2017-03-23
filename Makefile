@@ -238,13 +238,13 @@ modernize:
 	rm etl_file_list
 
 clang-tidy:
-	@ /usr/share/clang/run-clang-tidy.py -p . -header-filter '^include/etl' -checks='cert-*,cppcoreguidelines-*,google-*,llvm-*,misc-*,modernize-*,performance-*,readility-*,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-google-readability-namespace-comments,-llvm-namespace-comment,-llvm-include-order,-google-runtime-references,-misc-unconventional-assign-operator,-cppcoreguidelines-c-copy-assignment-signature' -j9 2>/dev/null  | /usr/bin/zgrep -v "^clang-tidy"
+	@ /usr/share/clang/run-clang-tidy.py -p . -header-filter '^include/etl' -checks='cert-*,cppcoreguidelines-*,google-*,llvm-*,misc-*,modernize-*,performance-*,readility-*,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-google-readability-namespace-comments,-llvm-namespace-comment,-llvm-include-order,-google-runtime-references,-misc-unconventional-assign-operator,-cppcoreguidelines-c-copy-assignment-signature,-google-readability-todo,-cppcoreguidelines-pro-type-vararg,-cppcoreguidelines-pro-type-const-cast,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-cppcoreguidelines-pro-bounds-constant-array-index,-cert-err58-cpp' -j9 2>/dev/null  | /usr/bin/zgrep -v "^clang-tidy"
 
 clang-tidy-all:
 	@ /usr/share/clang/run-clang-tidy.py -header-filter '^include/etl' -checks='*' -j9
 
 clang-tidy-mono:
-	clang-tidy -p . -header-filter '^include/etl' -checks='cert-*,cppcoreguidelines-*,google-*,llvm-*,misc-*,modernize-*,performance-*,readility-*,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-google-readability-namespace-comments,-llvm-namespace-comment,-llvm-include-order,-google-runtime-references,-misc-unconventional-assign-operator,-cppcoreguidelines-c-copy-assignment-signature' test/*.cpp
+	clang-tidy -p . -header-filter '^include/etl' -checks='cert-*,cppcoreguidelines-*,google-*,llvm-*,misc-*,modernize-*,performance-*,readility-*,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-google-readability-namespace-comments,-llvm-namespace-comment,-llvm-include-order,-google-runtime-references,-misc-unconventional-assign-operator,-cppcoreguidelines-c-copy-assignment-signature,-google-readability-todo,-cppcoreguidelines-pro-type-vararg,-cppcoreguidelines-pro-type-const-cast,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-cppcoreguidelines-pro-bounds-constant-array-index,-cert-err58-cpp' test/*.cpp
 
 clang-tidy-mono-all:
 	clang-tidy -p . -header-filter '^include/etl' -checks='*' test/*.cpp
