@@ -651,6 +651,21 @@ static_assert(std::is_nothrow_move_assignable<dyn_vector<double>>::value, "dyn_v
 static_assert(std::is_nothrow_destructible<dyn_vector<double>>::value, "dyn_vector should be nothrow destructible");
 
 /*!
+ * \brief Helper to create a dyn matrix using the dimensions.
+ *
+ * This avoids having to set the number of dimensions.
+ *
+ * \tparam T The type contained in the matrix
+ * \param sizes The dimensions
+ *
+ * \return A dyn matrix of the given dimensions.
+ */
+template<typename T, typename... Sizes>
+etl::dyn_matrix<T, sizeof...(Sizes)> make_dyn_matrix(Sizes... sizes){
+    return etl::dyn_matrix<T, sizeof...(Sizes)>(sizes...);
+}
+
+/*!
  * \brief Swap two dyn matrix
  * \param lhs The first matrix
  * \param rhs The second matrix
