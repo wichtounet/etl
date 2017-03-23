@@ -72,7 +72,7 @@ public:
      * \param dims The dimensions
      */
     template<typename... S>
-    dyn_matrix_view(sub_type sub, S... dims)
+    explicit dyn_matrix_view(sub_type sub, S... dims)
             : sub(sub), dimensions{{dims...}}, _size(etl::size(sub)) {}
 
     /*!
