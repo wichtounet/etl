@@ -119,13 +119,13 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
      * \param a The input
      * \param c The expression where to store the results
      */
-    template <typename C> //TODO Make sure there are no copies here!
-    static void apply(A a, C&& c) {
+    template <typename C>
+    static void apply(const A& a, C&& c) {
         static_assert(all_etl_expr<A, C>::value, "Transpose only supported for ETL expressions");
 
         check(a, c);
 
-        detail::transpose::apply(make_temporary(std::forward<A>(a)), std::forward<C>(c));
+        detail::transpose::apply(make_temporary(a), std::forward<C>(c));
     }
 
     // Assignment functions
