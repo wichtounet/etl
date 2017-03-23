@@ -492,6 +492,20 @@ auto max_pool_upsample_3d(A&& input, B&& output, C&& errors) {
     return max_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3>{input, output, errors};
 }
 
+/*!
+ * \brief Derivative of the 3D Max Pooling of the given matrix expression and upsampling.
+ * \param input The input
+ * \param output The output
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \param c3 The third pooling ratio
+ * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
+ */
+template <typename A, typename B, typename C>
+auto max_pool_upsample_3d(A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t c3) {
+    return dyn_max_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>>{input, output, errors, c1, c2, c3};
+}
+
 /* Upsample 2D */
 
 /*!
