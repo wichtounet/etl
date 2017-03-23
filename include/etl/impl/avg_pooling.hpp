@@ -11,6 +11,8 @@ namespace etl {
 
 namespace impl {
 
+// TODO Optimize average pooling like max pooling was optimized
+
 /*!
  * \brief Functor for 2D Average Pooling
  */

@@ -11,6 +11,8 @@ namespace etl {
 
 namespace impl {
 
+// TODO Optimize upsampling like max pooling upsampling was optimized
+
 /*!
  * \brief Functor for 2D Upsampling
  */

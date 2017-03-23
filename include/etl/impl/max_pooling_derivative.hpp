@@ -11,6 +11,8 @@ namespace etl {
 
 namespace impl {
 
+// TODO Optimize max pool derivative like max pooling upsampling was optimized
+
 /*!
  * \brief Functor for the derivative of 2D Max Pooling
  */
