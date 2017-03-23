@@ -26,7 +26,7 @@ struct max_pool_upsample_2d {
      * \tparam C2 The second dimension pooling ratio
      */
     template <size_t C1, size_t C2, typename A, typename B, typename C, typename M>
-    static void pool_derivative_block(const A& in, const B& out, const C& errors, M& m, size_t i, size_t j) {
+    static void pool_block_2d(const A& in, const B& out, const C& errors, M& m, size_t i, size_t j) {
         auto max = out(i, j);
         auto error = errors(i, j);
 
@@ -52,7 +52,7 @@ struct max_pool_upsample_2d {
     static void apply(A&& in, B&& out, C&& errors, M&& m) {
         for (size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (size_t j = 0; j < etl::dim<1>(out); ++j) {
-                pool_derivative_block<C1, C2>(in, out, errors, m, i, j);
+                pool_block_2d<C1, C2>(in, out, errors, m, i, j);
             }
         }
     }
@@ -68,7 +68,7 @@ struct max_pool_upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M>
-    static void pool_derivative_block(const A& in, const B& out, const C& errors, M& m, size_t i, size_t j, size_t c1, size_t c2) {
+    static void pool_block_2d(const A& in, const B& out, const C& errors, M& m, size_t i, size_t j, size_t c1, size_t c2) {
         auto max = out(i, j);
         auto error = errors(i, j);
 
@@ -94,7 +94,7 @@ struct max_pool_upsample_2d {
     static void apply(A&& in, B&& out, C&& errors, M&& m, size_t c1, size_t c2) {
         for (size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (size_t j = 0; j < etl::dim<1>(out); ++j) {
-                pool_derivative_block(in, out, errors, m, i, j, c1, c2);
+                pool_block_2d(in, out, errors, m, i, j, c1, c2);
             }
         }
     }
@@ -147,7 +147,7 @@ struct max_pool_upsample_3d {
      * \tparam C3 The third dimension pooling ratio
      */
     template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C, typename M>
-    static void pool_derivative_block(const A& in, const B& out, const C& errors, M& m, size_t i, size_t j, size_t k) {
+    static void pool_block_3d(const A& in, const B& out, const C& errors, M& m, size_t i, size_t j, size_t k) {
         auto max = out(i, j, k);
         auto error = errors(i, j, k);
 
@@ -177,7 +177,7 @@ struct max_pool_upsample_3d {
         for (size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (size_t j = 0; j < etl::dim<1>(out); ++j) {
                 for (size_t k = 0; k < etl::dim<2>(out); ++k) {
-                    pool_derivative_block<C1, C2, C3>(in, out, errors, m, i, j, k);
+                    pool_block_3d<C1, C2, C3>(in, out, errors, m, i, j, k);
                 }
             }
         }
@@ -196,7 +196,7 @@ struct max_pool_upsample_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M>
-    static void pool_derivative_block(const A& in, const B& out, const C& errors, M& m, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3) {
+    static void pool_block_3d(const A& in, const B& out, const C& errors, M& m, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3) {
         auto max = out(i, j, k);
         auto error = errors(i, j, k);
 
@@ -226,7 +226,7 @@ struct max_pool_upsample_3d {
         for (size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (size_t j = 0; j < etl::dim<1>(out); ++j) {
                 for (size_t k = 0; k < etl::dim<2>(out); ++k) {
-                    pool_derivative_block(in, out, errors, m, i, j, k, c1, c2, c3);
+                    pool_block_3d(in, out, errors, m, i, j, k, c1, c2, c3);
                 }
             }
         }
