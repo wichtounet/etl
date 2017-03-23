@@ -237,21 +237,17 @@ modernize:
 	clang-modernize -add-override -loop-convert -pass-by-value -use-auto -use-nullptr -p ${PWD} -include-from=etl_file_list
 	rm etl_file_list
 
-# clang-tidy with some false positive checks removed
-tidy:
-	clang-tidy -checks='*,-llvm-include-order,-clang-analyzer-alpha.core.*,-google-readability-todo,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-google-runtime-references,-readability-else-after-return' -p ${PWD} test/src/*.cpp -header-filter='include/etl/*' | tee tidy_report_light
-	echo "The full report from clang-tidy is availabe in tidy_report_light"
+clang-tidy:
+	@ /usr/share/clang/run-clang-tidy.py -p . -header-filter '^include/etl' -checks='cert-*,cppcoreguidelines-*,google-*,llvm-*,misc-*,modernize-*,performance-*,readility-*,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-google-readability-namespace-comments,-llvm-namespace-comment,-llvm-include-order,-google-runtime-references' -j9 2>/dev/null  | /usr/bin/zgrep -v "^clang-tidy"
 
-tidy_filter:
-	/usr/bin/zgrep "warning:" tidy_report_light | sort | uniq | /usr/bin/zgrep -v "\.cpp"
+clang-tidy-all:
+	@ /usr/share/clang/run-clang-tidy.py -header-filter '^include/etl' -checks='*' -j9
 
-# clang-tidy with all the checks
-tidy_all:
-	clang-tidy -checks='*' -p ${PWD} ${CPP_FILES} -header-filter='include/etl/*' | tee tidy_report_all
-	echo "The full report from clang-tidy is availabe in tidy_report_all"
+clang-tidy-mono:
+	clang-tidy -p . -header-filter '^include/etl' -checks='cert-*,cppcoreguidelines-*,google-*,llvm-*,misc-*,modernize-*,performance-*,readility-*,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-google-readability-namespace-comments,-llvm-namespace-comment,-llvm-include-order,-google-runtime-references' test/*.cpp
 
-tidy_all_filter:
-	/usr/bin/zgrep "warning:" tidy_report_all | sort | uniq | /usr/bin/zgrep -v "\.cpp"
+clang-tidy-mono-all:
+	clang-tidy -p . -header-filter '^include/etl' -checks='*' test/*.cpp
 
 doc:
 	doxygen Doxyfile
