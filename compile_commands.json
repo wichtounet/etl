@@ -1,392 +1,507 @@
 [
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/dyn_matrix.cpp.d -o debug/test/src/dyn_matrix.cpp.o -c test/src/dyn_matrix.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/dyn_matrix.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/max_pool.cpp.d -o debug/test/src/max_pool.cpp.o -c test/src/max_pool.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/max_pool.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/conv_4d_stride.cpp.d -o debug/test/src/conv_4d_stride.cpp.o -c test/src/conv_4d_stride.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/conv_4d_stride.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/big.cpp.d -o debug/test/src/big.cpp.o -c test/src/big.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/big.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/dyn_pooling_stride.cpp.d -o debug/test/src/dyn_pooling_stride.cpp.o -c test/src/dyn_pooling_stride.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/dyn_pooling_stride.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/convmtx.cpp.d -o debug/test/src/convmtx.cpp.o -c test/src/convmtx.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/convmtx.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/assert.cpp.d -o debug/test/src/assert.cpp.o -c test/src/assert.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/assert.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/globals.cpp.d -o debug/test/src/globals.cpp.o -c test/src/globals.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/globals.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/fft2.cpp.d -o debug/test/src/fft2.cpp.o -c test/src/fft2.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/fft2.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/fast_dyn_matrix.cpp.d -o debug/test/src/fast_dyn_matrix.cpp.o -c test/src/fast_dyn_matrix.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/fast_dyn_matrix.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/sparse_complex.cpp.d -o debug/test/src/sparse_complex.cpp.o -c test/src/sparse_complex.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/sparse_complex.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/iterations.cpp.d -o debug/test/src/iterations.cpp.o -c test/src/iterations.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/iterations.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/virtual_views.cpp.d -o debug/test/src/virtual_views.cpp.o -c test/src/virtual_views.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/virtual_views.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/slice.cpp.d -o debug/test/src/slice.cpp.o -c test/src/slice.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/slice.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/rep.cpp.d -o debug/test/src/rep.cpp.o -c test/src/rep.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/rep.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/conv_2d_stride.cpp.d -o debug/test/src/conv_2d_stride.cpp.o -c test/src/conv_2d_stride.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/conv_2d_stride.cpp.o test/src/conv_2d_stride.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/conv_2d_stride.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/optimize_1.cpp.d -o debug/test/src/optimize_1.cpp.o -c test/src/optimize_1.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/upsample.cpp.o test/src/upsample.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/upsample.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/optimize_1.cpp.o test/src/optimize_1.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/optimize_1.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/dyn_rep.cpp.d -o debug/test/src/dyn_rep.cpp.o -c test/src/dyn_rep.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/dyn_rep.cpp.o test/src/dyn_rep.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/dyn_rep.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/ifft.cpp.d -o debug/test/src/ifft.cpp.o -c test/src/ifft.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/ifft.cpp.o test/src/ifft.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/ifft.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/stop.cpp.d -o debug/test/src/stop.cpp.o -c test/src/stop.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/stop.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/dyn_pooling_derivative.cpp.o test/src/dyn_pooling_derivative.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/dyn_pooling_derivative.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/decomposition.cpp.d -o debug/test/src/decomposition.cpp.o -c test/src/decomposition.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/decomposition.cpp.o test/src/decomposition.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/decomposition.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/conv_2d.cpp.d -o debug/test/src/conv_2d.cpp.o -c test/src/conv_2d.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/conv_2d.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/cross.cpp.o test/src/cross.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/cross.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/serializer.cpp.d -o debug/test/src/serializer.cpp.o -c test/src/serializer.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/serializer.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/fast_vector.cpp.d -o debug/test/src/fast_vector.cpp.o -c test/src/fast_vector.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/fast_vector.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/print.cpp.d -o debug/test/src/print.cpp.o -c test/src/print.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/print.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/column_major.cpp.d -o debug/test/src/column_major.cpp.o -c test/src/column_major.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/column_major.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/dyn_vector.cpp.d -o debug/test/src/dyn_vector.cpp.o -c test/src/dyn_vector.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/dyn_vector.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/dot.cpp.d -o debug/test/src/dot.cpp.o -c test/src/dot.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/dot.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/iterators.cpp.d -o debug/test/src/iterators.cpp.o -c test/src/iterators.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/iterators.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/compare.cpp.d -o debug/test/src/compare.cpp.o -c test/src/compare.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/compare.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/optimize_2.cpp.d -o debug/test/src/optimize_2.cpp.o -c test/src/optimize_2.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/optimize_2.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/views.cpp.d -o debug/test/src/views.cpp.o -c test/src/views.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/views.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/selected.cpp.d -o debug/test/src/selected.cpp.o -c test/src/selected.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/selected.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/sparse_matrix.cpp.d -o debug/test/src/sparse_matrix.cpp.o -c test/src/sparse_matrix.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/sparse_matrix.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/inv.cpp.d -o debug/test/src/inv.cpp.o -c test/src/inv.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/inv.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/traits.cpp.d -o debug/test/src/traits.cpp.o -c test/src/traits.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/traits.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/ifft2.cpp.d -o debug/test/src/ifft2.cpp.o -c test/src/ifft2.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/ifft2.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/pooling.cpp.d -o debug/test/src/pooling.cpp.o -c test/src/pooling.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/pooling.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/sym.cpp.d -o debug/test/src/sym.cpp.o -c test/src/sym.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/sym.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/pooling_deep.cpp.d -o debug/test/src/pooling_deep.cpp.o -c test/src/pooling_deep.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/pooling_deep.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/generators.cpp.d -o debug/test/src/generators.cpp.o -c test/src/generators.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/generators.cpp.o test/src/generators.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/generators.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/fft.cpp.d -o debug/test/src/fft.cpp.o -c test/src/fft.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/fft.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/serializer.cpp.o test/src/serializer.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/serializer.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/timed.cpp.d -o debug/test/src/timed.cpp.o -c test/src/timed.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/timed.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/gemm.cpp.o test/src/gemm.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/gemm.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/transpose.cpp.d -o debug/test/src/transpose.cpp.o -c test/src/transpose.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/transpose.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/fast_vector.cpp.o test/src/fast_vector.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/fast_vector.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/tmp.cpp.d -o debug/test/src/tmp.cpp.o -c test/src/tmp.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/tmp.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/print.cpp.o test/src/print.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/print.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/unaligned.cpp.d -o debug/test/src/unaligned.cpp.o -c test/src/unaligned.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/unaligned.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/column_major.cpp.o test/src/column_major.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/column_major.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/multiplication.cpp.d -o debug/test/src/multiplication.cpp.o -c test/src/multiplication.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/multiplication.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/dyn_vector.cpp.o test/src/dyn_vector.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/dyn_vector.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/unmanaged.cpp.d -o debug/test/src/unmanaged.cpp.o -c test/src/unmanaged.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/unmanaged.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/gemm_tn.cpp.o test/src/gemm_tn.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/gemm_tn.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/integers.cpp.d -o debug/test/src/integers.cpp.o -c test/src/integers.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/integers.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/iterators.cpp.o test/src/iterators.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/iterators.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/reduc.cpp.d -o debug/test/src/reduc.cpp.o -c test/src/reduc.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/reduc.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/compare.cpp.o test/src/compare.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/compare.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/conv_multi.cpp.d -o debug/test/src/conv_multi.cpp.o -c test/src/conv_multi.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/conv_multi.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/gemm_tt.cpp.o test/src/gemm_tt.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/gemm_tt.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/dyn_pooling.cpp.d -o debug/test/src/dyn_pooling.cpp.o -c test/src/dyn_pooling.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/dyn_pooling.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/views.cpp.o test/src/views.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/views.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/dyn_max_pool.cpp.d -o debug/test/src/dyn_max_pool.cpp.o -c test/src/dyn_max_pool.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/dyn_max_pool.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/symmetric.cpp.o test/src/symmetric.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/symmetric.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/alignment.cpp.d -o debug/test/src/alignment.cpp.o -c test/src/alignment.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/alignment.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/diagonal.cpp.o test/src/diagonal.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/diagonal.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/alias.cpp.d -o debug/test/src/alias.cpp.o -c test/src/alias.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/alias.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/selected.cpp.o test/src/selected.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/selected.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/flipping.cpp.d -o debug/test/src/flipping.cpp.o -c test/src/flipping.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/gemv.cpp.o test/src/gemv.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/gemv.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/dyn_pooling_stride.cpp.o test/src/dyn_pooling_stride.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/dyn_pooling_stride.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/sparse_matrix.cpp.o test/src/sparse_matrix.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/sparse_matrix.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/inv.cpp.o test/src/inv.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/inv.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/flipping.cpp.o test/src/flipping.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/flipping.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/test.cpp.d -o debug/test/src/test.cpp.o -c test/src/test.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/traits.cpp.o test/src/traits.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/traits.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/ifft2.cpp.o test/src/ifft2.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/ifft2.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/pooling.cpp.o test/src/pooling.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/pooling.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/upper.cpp.o test/src/upper.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/upper.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/gemm_expr.cpp.o test/src/gemm_expr.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/gemm_expr.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/strictly_lower.cpp.o test/src/strictly_lower.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/strictly_lower.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/hermitian.cpp.o test/src/hermitian.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/hermitian.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/pooling_deep.cpp.o test/src/pooling_deep.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/pooling_deep.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/lower.cpp.o test/src/lower.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/lower.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/gevm.cpp.o test/src/gevm.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/gevm.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/stop.cpp.o test/src/stop.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/stop.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/timed.cpp.o test/src/timed.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/timed.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/transpose.cpp.o test/src/transpose.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/transpose.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/tmp.cpp.o test/src/tmp.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/tmp.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/unaligned.cpp.o test/src/unaligned.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/unaligned.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/dyn_upsample.cpp.o test/src/dyn_upsample.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/dyn_upsample.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/virtual_views.cpp.o test/src/virtual_views.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/virtual_views.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/unmanaged.cpp.o test/src/unmanaged.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/unmanaged.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/sparse_complex.cpp.o test/src/sparse_complex.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/sparse_complex.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/integers.cpp.o test/src/integers.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/integers.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/reduc.cpp.o test/src/reduc.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/reduc.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/conv_multi.cpp.o test/src/conv_multi.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/conv_multi.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/dyn_pooling.cpp.o test/src/dyn_pooling.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/dyn_pooling.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/dyn_max_pool.cpp.o test/src/dyn_max_pool.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/dyn_max_pool.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/dyn_matrix.cpp.o test/src/dyn_matrix.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/dyn_matrix.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/alignment.cpp.o test/src/alignment.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/alignment.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/alias.cpp.o test/src/alias.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/alias.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/uni_upper.cpp.o test/src/uni_upper.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/uni_upper.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/test.cpp.o test/src/test.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/test.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/pooling_stride.cpp.d -o debug/test/src/pooling_stride.cpp.o -c test/src/pooling_stride.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/pooling_stride.cpp.o test/src/pooling_stride.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/pooling_stride.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/dyn_pooling_deep.cpp.d -o debug/test/src/dyn_pooling_deep.cpp.o -c test/src/dyn_pooling_deep.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/dyn_pooling_deep.cpp.o test/src/dyn_pooling_deep.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/dyn_pooling_deep.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/conv_4d.cpp.d -o debug/test/src/conv_4d.cpp.o -c test/src/conv_4d.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/conv_4d.cpp.o test/src/conv_4d.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/conv_4d.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/complex.cpp.d -o debug/test/src/complex.cpp.o -c test/src/complex.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/complex.cpp.o test/src/complex.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/complex.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/opaque.cpp.d -o debug/test/src/opaque.cpp.o -c test/src/opaque.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/opaque.cpp"
-    }, 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/strictly_upper.cpp.o test/src/strictly_upper.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/strictly_upper.cpp"
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/trigo.cpp.d -o debug/test/src/trigo.cpp.o -c test/src/trigo.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/trigo.cpp.o test/src/trigo.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/trigo.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/conv_1d.cpp.d -o debug/test/src/conv_1d.cpp.o -c test/src/conv_1d.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/conv_1d.cpp.o test/src/conv_1d.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/conv_1d.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/parallel.cpp.d -o debug/test/src/parallel.cpp.o -c test/src/parallel.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/parallel.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/conv_deep.cpp.d -o debug/test/src/conv_deep.cpp.o -c test/src/conv_deep.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/conv_deep.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/serial.cpp.d -o debug/test/src/serial.cpp.o -c test/src/serial.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/serial.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/im2col.cpp.d -o debug/test/src/im2col.cpp.o -c test/src/im2col.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/src/im2col.cpp"
-    }, 
-    {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/conv_multi_multi.cpp.d -o debug/test/src/conv_multi_multi.cpp.o -c test/src/conv_multi_multi.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/conv_multi_multi.cpp.o test/src/conv_multi_multi.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/conv_multi_multi.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/fast_matrix.cpp.d -o debug/test/src/fast_matrix.cpp.o -c test/src/fast_matrix.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/slice.cpp.o test/src/slice.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/slice.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/parallel.cpp.o test/src/parallel.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/parallel.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/conv_deep.cpp.o test/src/conv_deep.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/conv_deep.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/serial.cpp.o test/src/serial.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/serial.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/im2col.cpp.o test/src/im2col.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/im2col.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/gpu.cpp.o test/src/gpu.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/gpu.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/pooling_derivative.cpp.o test/src/pooling_derivative.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/pooling_derivative.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/optimize_2.cpp.o test/src/optimize_2.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/optimize_2.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/fast_matrix.cpp.o test/src/fast_matrix.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/fast_matrix.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/direct.cpp.d -o debug/test/src/direct.cpp.o -c test/src/direct.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/direct.cpp.o test/src/direct.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/direct.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -MD -MF debug/test/src/special_cases.cpp.d -o debug/test/src/special_cases.cpp.o -c test/src/special_cases.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/special_cases.cpp.o test/src/special_cases.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/test/src/special_cases.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -Ibenchmark/include -Icpm/include -MD -MF debug/benchmark/src/benchmark_cdbn.cpp.d -o debug/benchmark/src/benchmark_cdbn.cpp.o -c benchmark/src/benchmark_cdbn.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/conv_2d.cpp.o test/src/conv_2d.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/conv_2d.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/max_pool.cpp.o test/src/max_pool.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/max_pool.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/conv_4d_stride.cpp.o test/src/conv_4d_stride.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/conv_4d_stride.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/big.cpp.o test/src/big.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/big.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/dot.cpp.o test/src/dot.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/dot.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/convmtx.cpp.o test/src/convmtx.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/convmtx.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/assert.cpp.o test/src/assert.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/assert.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/globals.cpp.o test/src/globals.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/globals.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/outer.cpp.o test/src/outer.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/outer.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/fft2.cpp.o test/src/fft2.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/fft2.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/fast_dyn_matrix.cpp.o test/src/fast_dyn_matrix.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/fast_dyn_matrix.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/fft.cpp.o test/src/fft.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/fft.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/iterations.cpp.o test/src/iterations.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/iterations.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/scalar_op.cpp.o test/src/scalar_op.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/scalar_op.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/pooling_upsample.cpp.o test/src/pooling_upsample.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/pooling_upsample.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/uni_lower.cpp.o test/src/uni_lower.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/uni_lower.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/gemm_nt.cpp.o test/src/gemm_nt.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/gemm_nt.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -o debug/test/src/rep.cpp.o test/src/rep.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/test/src/rep.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -Ibenchmark/include -Icpm/include -o debug/benchmark/src/benchmark_cdbn.cpp.o benchmark/src/benchmark_cdbn.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/benchmark/src/benchmark_cdbn.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -Ibenchmark/include -Icpm/include -MD -MF debug/benchmark/src/benchmark_fft.cpp.d -o debug/benchmark/src/benchmark_fft.cpp.o -c benchmark/src/benchmark_fft.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -Ibenchmark/include -Icpm/include -o debug/benchmark/src/benchmark_fft.cpp.o benchmark/src/benchmark_fft.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/benchmark/src/benchmark_fft.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -Ibenchmark/include -Icpm/include -MD -MF debug/benchmark/src/benchmark.cpp.d -o debug/benchmark/src/benchmark.cpp.o -c benchmark/src/benchmark.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -Ibenchmark/include -Icpm/include -o debug/benchmark/src/benchmark.cpp.o benchmark/src/benchmark.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/benchmark/src/benchmark.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -Ibenchmark/include -Icpm/include -MD -MF debug/benchmark/src/benchmark_conv.cpp.d -o debug/benchmark/src/benchmark_conv.cpp.o -c benchmark/src/benchmark_conv.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -Ibenchmark/include -Icpm/include -o debug/benchmark/src/benchmark_conv.cpp.o benchmark/src/benchmark_conv.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/benchmark/src/benchmark_conv.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -Ibenchmark/include -Icpm/include -MD -MF debug/benchmark/src/benchmark_gemm.cpp.d -o debug/benchmark/src/benchmark_gemm.cpp.o -c benchmark/src/benchmark_gemm.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -Ibenchmark/include -Icpm/include -o debug/benchmark/src/benchmark_gemm.cpp.o benchmark/src/benchmark_gemm.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/benchmark/src/benchmark_gemm.cpp"
-    }, 
+    },
     {
-        "command": "clang++-3.9 -g -fprofile-arcs -ftest-coverage -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -DETL_MKL_MODE -I/opt/intel/mkl//include -Wno-tautological-compare -DETL_PARALLEL -DETL_EXTENDED_BENCH -DETL_CUBLAS_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUFFT_MODE -I/opt/cuda//include -Wno-documentation -DETL_CUDNN_MODE -I/opt/cuda//include -Wno-documentation -Ibenchmark/include -Icpm/include -MD -MF debug/benchmark/src/benchmark_thesis.cpp.d -o debug/benchmark/src/benchmark_thesis.cpp.o -c benchmark/src/benchmark_thesis.cpp", 
-        "directory": "/home/wichtounet/dev/etl", 
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -Ibenchmark/include -Icpm/include -o debug/benchmark/src/benchmark_pool.cpp.o benchmark/src/benchmark_pool.cpp",
+        "directory": "/home/wichtounet/dev/etl",
+        "file": "/home/wichtounet/dev/etl/benchmark/src/benchmark_pool.cpp"
+    },
+    {
+        "command": "c++ -c -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Wno-uninitialized -Ilib/include -Idoctest -ICatch/include -Itest/include -ftemplate-backtrace-limit=0 -Wno-error=documentation -Ibenchmark/include -Icpm/include -o debug/benchmark/src/benchmark_thesis.cpp.o benchmark/src/benchmark_thesis.cpp",
+        "directory": "/home/wichtounet/dev/etl",
         "file": "/home/wichtounet/dev/etl/benchmark/src/benchmark_thesis.cpp"
     }
 ]
