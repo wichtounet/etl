@@ -9,6 +9,25 @@
 
 #include <vector>
 
+TEMPLATE_TEST_CASE_2("pool_upsample/max2/1", "[pooling]", Z, float, double) {
+    etl::fast_matrix<Z, 4, 4> input;
+    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+
+    etl::fast_matrix<Z, 2, 2> errors;
+    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+
+    etl::fast_matrix<Z, 2, 2> output;
+    output = etl::max_pool_2d<2, 2>(input);
+
+    etl::fast_matrix<Z, 4, 4> c1;
+    etl::fast_matrix<Z, 4, 4> c2;
+
+    c1 = etl::max_pool_derivative_2d<2, 2>(input, output) >> etl::upsample_2d<2, 2>(errors);
+    c2 = etl::max_pool_upsample_2d<2, 2>(input, output, errors);
+
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+}
+
 TEMPLATE_TEST_CASE_2("pool_upsample/max3/1", "[pooling]", Z, float, double) {
     etl::fast_matrix<Z, 2, 4, 4> input;
     input = etl::uniform_generator<Z>(-1000.0, 1000.0);
