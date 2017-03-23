@@ -72,8 +72,8 @@ struct cublas_handle {
     cublas_handle(const cublas_handle& rhs) = delete;
     cublas_handle& operator=(const cublas_handle& rhs) = delete;
 
-    cublas_handle(cublas_handle&& rhs) = default;
-    cublas_handle& operator=(cublas_handle&& rhs) = default;
+    cublas_handle(cublas_handle&& rhs) noexcept = default;
+    cublas_handle& operator=(cublas_handle&& rhs) noexcept = default;
 
     /*!
      * \brief Get the cublas handle

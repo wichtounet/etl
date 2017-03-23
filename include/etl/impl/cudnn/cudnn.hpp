@@ -51,8 +51,8 @@ struct cudnn_handle {
     cudnn_handle(const cudnn_handle& rhs) = delete;
     cudnn_handle& operator=(const cudnn_handle& rhs) = delete;
 
-    cudnn_handle(cudnn_handle&& rhs) = default;
-    cudnn_handle& operator=(cudnn_handle&& rhs) = default;
+    cudnn_handle(cudnn_handle&& rhs) noexcept = default;
+    cudnn_handle& operator=(cudnn_handle&& rhs) noexcept = default;
 
     /*!
      * \brief Get the cudnn handle
