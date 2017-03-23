@@ -67,18 +67,18 @@ void inv(A&& a, C&& c) {
         c = 0;
 
         // The column in c
-        for (long s = n - 1; s >= 0; --s) {
+        for (int64_t s = n - 1; s >= 0; --s) {
             // The row in a
-            for (long row = n - 1; row >= 0; --row) {
+            for (int64_t row = n - 1; row >= 0; --row) {
                 auto b = row == s ? 1.0 : 0.0;
 
-                if (row == long(n) - 1) {
+                if (row == int64_t(n) - 1) {
                     c(row, s) = b / a(row, row);
                 } else {
                     value_t<A> acc(0);
 
                     // The column in a
-                    for (long col = n - 1; col > row; --col) {
+                    for (int64_t col = n - 1; col > row; --col) {
                         acc += a(row, col) * c(col, s);
                     }
 
