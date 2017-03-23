@@ -1266,10 +1266,8 @@ struct max_pool_upsample_2d {
      * \param m The storage matrix
      * \param i The first index of the block
      * \param j The second index of the block
-     * \param k The third index of the block
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
-     * \param c3 The third dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M>
     static void pool_derivative_block(const A& in, const B& out, const C& errors, M& m, size_t i, size_t j, size_t c1, size_t c2) {
