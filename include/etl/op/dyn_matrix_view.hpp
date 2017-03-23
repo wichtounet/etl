@@ -357,7 +357,7 @@ public:
      * \param dims The dimensions
      */
     template<typename... S>
-    dyn_matrix_view(sub_type sub, S... dims) : sub(sub), dimensions{{dims...}}, _size(etl::size(sub)) {
+    explicit dyn_matrix_view(sub_type sub, S... dims) : sub(sub), dimensions{{dims...}}, _size(etl::size(sub)) {
         if(!decay_traits<sub_type>::needs_evaluator_visitor){
             this->memory = sub.memory_start();
         } else {
