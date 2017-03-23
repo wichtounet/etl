@@ -103,10 +103,10 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
         check(a, b, c, result);
 
         impl::max_pool_upsample_2d::apply<C1, C2>(
-            make_temporary(std::forward<A>(a)),
-            make_temporary(std::forward<B>(b)),
-            make_temporary(std::forward<C>(c)),
-            make_temporary(std::forward<R>(result)));
+            make_temporary(a),
+            make_temporary(b),
+            make_temporary(c),
+            result);
     }
 
     // Assignment functions
@@ -338,10 +338,10 @@ struct max_pool_upsample_3d_expr : base_temporary_expr_tern<max_pool_upsample_3d
         check(a, b, c, result);
 
         impl::max_pool_upsample_3d::apply<C1, C2, C3>(
-            make_temporary(std::forward<A>(a)),
-            make_temporary(std::forward<B>(b)),
-            make_temporary(std::forward<C>(c)),
-            make_temporary(std::forward<R>(result)));
+            make_temporary(a),
+            make_temporary(b),
+            make_temporary(c),
+            result);
     }
 
     // Assignment functions
@@ -550,10 +550,10 @@ public:
         check(a, b, c, result);
 
         impl::max_pool_upsample_2d::apply(
-            make_temporary(std::forward<A>(a)),
-            make_temporary(std::forward<B>(b)),
-            make_temporary(std::forward<C>(c)),
-            make_temporary(std::forward<R>(result)),
+            make_temporary(a),
+            make_temporary(b),
+            make_temporary(c),
+            result,
             c1, c2);
     }
 
@@ -748,10 +748,10 @@ public:
         check(a, b, c, result);
 
         impl::max_pool_upsample_3d::apply(
-            make_temporary(std::forward<A>(a)),
-            make_temporary(std::forward<B>(b)),
-            make_temporary(std::forward<C>(c)),
-            make_temporary(std::forward<R>(result)),
+            make_temporary(a),
+            make_temporary(b),
+            make_temporary(c),
+            result,
             c1, c2, c3);
     }
 
