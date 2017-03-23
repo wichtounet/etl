@@ -439,8 +439,6 @@ public:
         return memory[j];
     }
 
-    //TODO These two following operators should also be handled in lighter weight way!
-
     /*!
      * \brief Access to the element at the given (args...) position
      * \param args The indices
