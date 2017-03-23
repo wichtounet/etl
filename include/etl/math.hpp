@@ -64,7 +64,7 @@ inline constexpr double sign(W v) noexcept {
  * \param n The number to test
  * \return true if the number is a power of two, false otherwise
  */
-inline constexpr bool is_power_of_two(long n) {
+inline constexpr bool is_power_of_two(int64_t n) {
     return (n & (n - 1)) == 0;
 }
 
