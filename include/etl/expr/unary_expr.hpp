@@ -122,7 +122,7 @@ public:
     }
 
     unary_expr(const unary_expr& rhs) = default;
-    unary_expr(unary_expr&& rhs) = default;
+    unary_expr(unary_expr&& rhs) noexcept = default;
 
     //Expression are invariant
     unary_expr& operator=(const unary_expr& rhs) = delete;
@@ -363,7 +363,7 @@ public:
     /*!
      * \brief Move construct an unary expression
      */
-    unary_expr(unary_expr&& rhs) = default;
+    unary_expr(unary_expr&& rhs) noexcept = default;
 
     /*!
      * \brief Returns the element at the given index
@@ -1063,7 +1063,7 @@ public:
     }
 
     unary_expr(const unary_expr& rhs) = default;
-    unary_expr(unary_expr&& rhs) = default;
+    unary_expr(unary_expr&& rhs) noexcept = default;
 
     //Expression are invariant
     unary_expr& operator=(const unary_expr& e) = delete;
