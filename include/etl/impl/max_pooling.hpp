@@ -11,6 +11,8 @@ namespace etl {
 
 namespace impl {
 
+// TODO Optimize max_pool_2d like max_pool_3d was optimized
+
 /*!
  * \brief Functor for 2D Max Pooling
  */
@@ -56,7 +58,7 @@ struct max_pool_2d {
      * \tparam S2 The second dimension stride
      */
     template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A>
-    static auto pool_block(const A& sub, size_t j, size_t k) {
+    static auto pool_block_2d(const A& sub, size_t j, size_t k) {
         auto max = sub(j * S1, k * S2);
 
         for (size_t jj = 0; jj < C1; ++jj) {
@@ -110,7 +112,7 @@ struct max_pool_2d {
 
         for (size_t j = P1; j < o1 - P1; ++j) {
             for (size_t k = P1; k < o2 - P2; ++k) {
-                m(j, k) = pool_block<C1, C2, S1, S2, P1, P2>(sub, j, k);
+                m(j, k) = pool_block_2d<C1, C2, S1, S2, P1, P2>(sub, j, k);
             }
         }
     }
@@ -124,7 +126,7 @@ struct max_pool_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A>
-    static auto pool_block(const A& sub, size_t j, size_t k, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+    static auto pool_block_2d(const A& sub, size_t j, size_t k, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         auto max = sub(j * s1 - p1, k * s2 - p2);
 
         for (size_t jj = 0; jj < c1; ++jj) {
@@ -176,7 +178,7 @@ struct max_pool_2d {
 
         for (size_t j = p1; j < o1 - p1; ++j) {
             for (size_t k = p2; k < o2 - p2; ++k) {
-                m(j, k) = pool_block(sub, j, k, c1, c2, s1, s2, p1, p2);
+                m(j, k) = pool_block_2d(sub, j, k, c1, c2, s1, s2, p1, p2);
             }
         }
     }
@@ -266,7 +268,7 @@ struct max_pool_3d {
      * \tparam C3 The third dimension pooling ratio
      */
     template <size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A>
-    static auto pool_block(const A& sub, size_t i, size_t j, size_t k) {
+    static auto pool_block_3d(const A& sub, size_t i, size_t j, size_t k) {
         const auto s_i = i * S1 - P1;
         const auto s_j = j * S2 - P2;
         const auto s_k = k * S3 - P3;
@@ -351,7 +353,7 @@ struct max_pool_3d {
         for (size_t i = P1; i < o1 - P1; ++i) {
             for (size_t j = P2; j < o2 - P2; ++j) {
                 for (size_t k = P3; k < o3 - P3; ++k) {
-                    m(i, j, k) = pool_block<C1, C2, C3, S1, S2, S3, P1, P2, P3>(sub, i, j, k);
+                    m(i, j, k) = pool_block_3d<C1, C2, C3, S1, S2, S3, P1, P2, P3>(sub, i, j, k);
                 }
             }
         }
@@ -368,7 +370,7 @@ struct max_pool_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A>
-    static auto pool_block(const A& sub, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
+    static auto pool_block_3d(const A& sub, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         auto max = sub(i * s1 - p1, j * s2 - p2, k * s3 - p3);
 
         for (size_t ii = 0; ii < c1; ++ii) {
@@ -449,9 +451,75 @@ struct max_pool_3d {
         for (size_t i = p1; i < o1 - p1; ++i) {
             for (size_t j = p2; j < o2 - p2; ++j) {
                 for (size_t k = p3; k < o3 - p3; ++k) {
-                    m(i, j, k) = pool_block(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    m(i, j, k) = pool_block_3d(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
                 }
             }
+        }
+    }
+
+    /*
+     * 4D handling
+     *
+     * This is especially optimized because this is the most common
+     * case in machine learning. Moreover, this is also easy to
+     * parallelize and optimize
+     */
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     * \tparam C3 The third dimension pooling ratio
+     */
+    template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A, typename M, cpp_enable_if(is_4d<A>::value)>
+    static void apply(const A& sub, M&& m) {
+        auto batch_fun_n = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    for(size_t n = first; n < last; ++n){
+                        apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(sub(n), m(n));
+                    }
+                }
+            }
+        };
+
+        const size_t N = etl::dim<0>(sub);
+
+        if (etl::is_parallel) {
+            dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+        } else {
+            batch_fun_n(0, N);
+        }
+    }
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     * \param c3 The third dimension pooling ratio
+     */
+    template <typename A, typename M, cpp_enable_if(is_4d<A>::value)>
+    static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
+        auto batch_fun_n = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    for(size_t n = first; n < last; ++n){
+                        apply(sub(n), m(n), c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    }
+                }
+            }
+        };
+
+        const size_t N = etl::dim<0>(sub);
+
+        if (etl::is_parallel) {
+            dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+        } else {
+            batch_fun_n(0, N);
         }
     }
 
@@ -465,7 +533,7 @@ struct max_pool_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A, typename M, cpp_enable_if(!is_3d<A>::value)>
+    template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A, typename M, cpp_enable_if(!is_3d<A>::value && !is_4d<A>::value)>
     static void apply(const A& sub, M&& m) {
         for(size_t i = 0; i < etl::dim<0>(sub); ++i){
             apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(sub(i), m(i));
@@ -480,7 +548,7 @@ struct max_pool_3d {
      * \param c2 The second dimension pooling ratio
      * \param c3 The third dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_if(!is_3d<A>::value)>
+    template <typename A, typename M, cpp_enable_if(!is_3d<A>::value && !is_4d<A>::value)>
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         for(size_t i = 0; i < etl::dim<0>(sub); ++i){
             apply(sub(i), m(i), c1, c2, c3, s1, s2, s3, p1, p2, p3);
