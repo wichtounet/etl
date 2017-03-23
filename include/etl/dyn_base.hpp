@@ -239,7 +239,7 @@ protected:
      * \param rhs The dyn_base to move from
      */
     template <typename E>
-    dyn_base(E&& rhs)
+    explicit dyn_base(E&& rhs)
             : _size(etl::size(rhs)) {
         for (std::size_t d = 0; d < etl::dimensions(rhs); ++d) {
             _dimensions[d] = etl::dim(rhs, d);
