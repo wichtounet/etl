@@ -46,8 +46,7 @@ struct complex {
      * \brief Construct a complex number by copy
      * \param rhs The complex to copy from
      */
-    constexpr complex(const complex& rhs)
-            : real(rhs.real), imag(rhs.imag) {}
+    constexpr complex(const complex& rhs) = default;
 
     /*!
      * \brief Assign a real part to the complex number
@@ -66,12 +65,7 @@ struct complex {
      * \param rhs The complex number to copy
      * \return a reference to this
      */
-    complex& operator=(const complex& rhs) noexcept {
-        real         = rhs.real;
-        imag         = rhs.imag;
-
-        return *this;
-    }
+    complex& operator=(const complex& rhs) noexcept = default;
 
     /*!
      * \brief Assign a complex number by copy
