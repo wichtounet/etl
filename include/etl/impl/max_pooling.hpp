@@ -285,6 +285,38 @@ struct max_pool_3d {
 
         return max;
     }
+    /*!
+     * \brief Pool a block of the sub expression.
+     *
+     * This is an optimized version for 4D handling, but does not
+     * support padding.
+     *
+     * \param sub The sub expression
+     * \param i The first index of the block
+     * \param j The second index of the block
+     * \param k The third index of the block
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     * \tparam C3 The third dimension pooling ratio
+     */
+    template <size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, typename A>
+    static auto pool_block_4d(const A& sub, size_t n, size_t i, size_t j, size_t k) {
+        const auto s_i = i * S1;
+        const auto s_j = j * S2;
+        const auto s_k = k * S3;
+
+        auto max = sub(n, s_i, s_j, s_k);
+
+        for (size_t ii = 0; ii < C1; ++ii) {
+            for (size_t jj = 0; jj < C2; ++jj) {
+                for (size_t kk = 0; kk < C3; ++kk) {
+                    max = std::max(max, sub(n, s_i + ii, s_j + jj, s_k + kk));
+                }
+            }
+        }
+
+        return max;
+    }
 
     /*!
      * \brief Apply the functor on sub and store the result in m
@@ -377,6 +409,35 @@ struct max_pool_3d {
             for (size_t jj = 0; jj < c2; ++jj) {
                 for (size_t kk = 0; kk < c3; ++kk) {
                     max = std::max(max, sub(i * s1 + ii - p1, j * s2 + jj - p2, k * s3 + kk - p3));
+                }
+            }
+        }
+
+        return max;
+    }
+
+    /*!
+     * \brief Pool a block of the sub expression.
+     *
+     * This is an optimized version for 4D handling, but does not
+     * support padding.
+     *
+     * \param sub The sub expression
+     * \param i The first index of the block
+     * \param j The second index of the block
+     * \param k The third index of the block
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     * \param c3 The third dimension pooling ratio
+     */
+    template <typename A>
+    static auto pool_block_4d(const A& sub, size_t n, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3) {
+        auto max = sub(n, i * s1, j * s2, k * s3);
+
+        for (size_t ii = 0; ii < c1; ++ii) {
+            for (size_t jj = 0; jj < c2; ++jj) {
+                for (size_t kk = 0; kk < c3; ++kk) {
+                    max = std::max(max, sub(n, i * s1 + ii, j * s2 + jj, k * s3 + kk));
                 }
             }
         }
@@ -478,14 +539,27 @@ struct max_pool_3d {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
             if (last - first) {
                 SERIAL_SECTION {
-                    for(size_t n = first; n < last; ++n){
-                        apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(sub(n), m(n));
+                    if (cpp_likely(!P1 && !P2 && !P3)) {
+                        for (size_t n = first; n < last; ++n) {
+                            for (size_t i = 0; i < etl::dim<1>(m); ++i) {
+                                for (size_t j = 0; j < etl::dim<2>(m); ++j) {
+                                    for (size_t k = 0; k < etl::dim<3>(m); ++k) {
+                                        m(n, i, j, k) = pool_block_4d<C1, C2, C3, S1, S2, S3>(sub, n, i, j, k);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // In the general case, we use the regular algorithm
+                        for (size_t n = first; n < last; ++n) {
+                            apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(sub(n), m(n));
+                        }
                     }
                 }
             }
         };
 
-        const size_t N = etl::dim<0>(sub);
+        const size_t N = etl::dim<0>(m);
 
         if (etl::is_parallel) {
             dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
@@ -507,14 +581,26 @@ struct max_pool_3d {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
             if (last - first) {
                 SERIAL_SECTION {
-                    for(size_t n = first; n < last; ++n){
-                        apply(sub(n), m(n), c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    if (cpp_likely(!p1 && !p2 && !p3)) {
+                        for (size_t n = first; n < last; ++n) {
+                            for (size_t i = 0; i < etl::dim<1>(m); ++i) {
+                                for (size_t j = 0; j < etl::dim<2>(m); ++j) {
+                                    for (size_t k = 0; k < etl::dim<3>(m); ++k) {
+                                        m(n, i, j, k) = pool_block_4d(sub, n, i, j, k, c1, c2, c3, s1, s2, s3);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        for (size_t n = first; n < last; ++n) {
+                            apply(sub(n), m(n), c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                        }
                     }
                 }
             }
         };
 
-        const size_t N = etl::dim<0>(sub);
+        const size_t N = etl::dim<0>(m);
 
         if (etl::is_parallel) {
             dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
