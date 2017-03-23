@@ -27,7 +27,7 @@ struct hermitian_exception : std::exception {
     /*!
      * \brief Returns a description of the exception
      */
-    virtual const char* what() const noexcept {
+    const char* what() const noexcept override {
         return "Invalid assignment to a hermitian matrix";
     }
 };
@@ -123,14 +123,14 @@ public:
      * \brief Construct a hermitian_matrix by move
      * \param rhs The right-hand-side matrix
      */
-    hermitian_matrix(hermitian_matrix&& rhs) = default;
+    hermitian_matrix(hermitian_matrix&& rhs) noexcept = default;
 
     /*!
      * \brief Assign to the matrix by move
      * \param rhs The right-hand-side matrix
      * \return a reference to the assigned matrix
      */
-    hermitian_matrix& operator=(hermitian_matrix&& rhs) = default;
+    hermitian_matrix& operator=(hermitian_matrix&& rhs) noexcept = default;
 
     /*!
      * \brief Assign the values of the ETL expression to the hermitian matrix

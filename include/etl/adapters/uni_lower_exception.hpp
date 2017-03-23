@@ -25,7 +25,7 @@ struct uni_lower_exception : std::exception {
     /*!
      * \brief Returns a description of the exception
      */
-    virtual const char* what() const noexcept {
+    const char* what() const noexcept override {
         return "Invalid assignment to a uni lower triangular matrix";
     }
 };
