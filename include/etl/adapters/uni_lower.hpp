@@ -94,14 +94,14 @@ public:
      * \brief Construct a uni_lower_matrix by move
      * \param rhs The right-hand-side matrix
      */
-    uni_lower_matrix(uni_lower_matrix&& rhs) = default;
+    uni_lower_matrix(uni_lower_matrix&& rhs) noexcept = default;
 
     /*!
      * \brief Assign to the matrix by move
      * \param rhs The right-hand-side matrix
      * \return a reference to the assigned matrix
      */
-    uni_lower_matrix& operator=(uni_lower_matrix&& rhs) = default;
+    uni_lower_matrix& operator=(uni_lower_matrix&& rhs) noexcept = default;
 
     /*!
      * \brief Assign the values of the ETL expression to the uni lower triangular matrix

@@ -91,14 +91,14 @@ public:
      * \brief Construct a adapter by move
      * \param rhs The right-hand-side matrix
      */
-    adapter(adapter&& rhs) = default;
+    adapter(adapter&& rhs) noexcept = default;
 
     /*!
      * \brief Assign to the matrix by move
      * \param rhs The right-hand-side matrix
      * \return a reference to the assigned matrix
      */
-    adapter& operator=(adapter&& rhs) = default;
+    adapter& operator=(adapter&& rhs) noexcept = default;
 
     /*!
      * \brief Access the (i, j) element of the 2D matrix

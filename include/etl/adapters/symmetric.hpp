@@ -123,14 +123,14 @@ public:
      * \brief Construct a symmetric_matrix by move
      * \param rhs The right-hand-side matrix
      */
-    symmetric_matrix(symmetric_matrix&& rhs) = default;
+    symmetric_matrix(symmetric_matrix&& rhs) noexcept = default;
 
     /*!
      * \brief Assign to the matrix by move
      * \param rhs The right-hand-side matrix
      * \return a reference to the assigned matrix
      */
-    symmetric_matrix& operator=(symmetric_matrix&& rhs) = default;
+    symmetric_matrix& operator=(symmetric_matrix&& rhs) noexcept = default;
 
     /*!
      * \brief Assign the values of the ETL expression to the symmetric matrix

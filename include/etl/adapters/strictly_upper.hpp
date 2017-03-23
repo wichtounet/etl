@@ -99,14 +99,14 @@ public:
      * \brief Construct a strictly_upper_matrix by move
      * \param rhs The right-hand-side matrix
      */
-    strictly_upper_matrix(strictly_upper_matrix&& rhs) = default;
+    strictly_upper_matrix(strictly_upper_matrix&& rhs) noexcept = default;
 
     /*!
      * \brief Assign to the matrix by move
      * \param rhs The right-hand-side matrix
      * \return a reference to the assigned matrix
      */
-    strictly_upper_matrix& operator=(strictly_upper_matrix&& rhs) = default;
+    strictly_upper_matrix& operator=(strictly_upper_matrix&& rhs) noexcept = default;
 
     /*!
      * \brief Assign the values of the ETL expression to the upper triangular matrix

@@ -99,14 +99,14 @@ public:
      * \brief Construct a diagonal_matrix by move
      * \param rhs The right-hand-side matrix
      */
-    diagonal_matrix(diagonal_matrix&& rhs) = default;
+    diagonal_matrix(diagonal_matrix&& rhs) noexcept = default;
 
     /*!
      * \brief Assign to the matrix by move
      * \param rhs The right-hand-side matrix
      * \return a reference to the assigned matrix
      */
-    diagonal_matrix& operator=(diagonal_matrix&& rhs) = default;
+    diagonal_matrix& operator=(diagonal_matrix&& rhs) noexcept = default;
 
     /*!
      * \brief Assign the values of the ETL expression to the diagonal matrix

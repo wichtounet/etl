@@ -99,14 +99,14 @@ public:
      * \brief Construct a strictly_lower_matrix by move
      * \param rhs The right-hand-side matrix
      */
-    strictly_lower_matrix(strictly_lower_matrix&& rhs) = default;
+    strictly_lower_matrix(strictly_lower_matrix&& rhs) noexcept = default;
 
     /*!
      * \brief Assign to the matrix by move
      * \param rhs The right-hand-side matrix
      * \return a reference to the assigned matrix
      */
-    strictly_lower_matrix& operator=(strictly_lower_matrix&& rhs) = default;
+    strictly_lower_matrix& operator=(strictly_lower_matrix&& rhs) noexcept = default;
 
     /*!
      * \brief Assign the values of the ETL expression to the strictly lower triangular matrix
