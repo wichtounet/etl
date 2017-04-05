@@ -155,6 +155,14 @@ using conv_4d_full_policy_2 = NARY_POLICY(
     /* W */ VALUES_POLICY(5, 5, 5, 5, 5, 5, 5, 5)
     );
 
+using conv_4d_full_policy_3 = NARY_POLICY(
+    /* N */ VALUES_POLICY(5, 10, 15, 20, 25, 30, 35, 40),
+    /* K */ VALUES_POLICY(10, 10, 10, 10, 10, 10, 10, 10),
+    /* C */ VALUES_POLICY(10, 10, 10, 10, 10, 10, 10, 10),
+    /* I */ VALUES_POLICY(14, 14, 14, 14, 14, 14, 14, 14),
+    /* W */ VALUES_POLICY(3, 3, 3, 3, 3, 3, 3, 3)
+    );
+
 // Policy fairer to AVX
 using conv_4d_valid_policy_1 = NARY_POLICY(
     /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
