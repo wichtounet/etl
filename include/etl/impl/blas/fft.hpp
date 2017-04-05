@@ -1340,22 +1340,22 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
             }
         };
 
-        size_t mkl_threads = 0;
-        if(is_blas_parallel){
-            mkl_threads = mkl_get_max_threads();
-            mkl_set_num_threads(1);
-        }
-
         if (etl::is_parallel) {
+            size_t mkl_threads = 0;
+            if(is_blas_parallel){
+                mkl_threads = mkl_get_max_threads();
+                mkl_set_num_threads(1);
+            }
+
             dispatch_1d_any(select_parallel(K * C, 2), batch_fun_kc, 0, K * C);
             dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+
+            if(is_blas_parallel){
+                mkl_set_num_threads(mkl_threads);
+            }
         } else {
             batch_fun_kc(0, K * C);
             batch_fun_n(0, N);
-        }
-
-        if(is_blas_parallel){
-            mkl_set_num_threads(mkl_threads);
         }
 
         conv.invalidate_gpu();
