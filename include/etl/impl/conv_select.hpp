@@ -443,17 +443,29 @@ inline etl::conv4_impl select_default_conv4_full_impl() {
 
     static constexpr bool cudnn = cudnn_enabled;
 
+    // CUDNN is always faster than the others
     if(cudnn){
         return etl::conv4_impl::CUDNN;
-    } else if(cufft_enabled){
-        return etl::conv4_impl::FFT_CUFFT;
-    } else if(mkl_enabled){
-        return etl::conv4_impl::FFT_MKL;
-    } else if(vectorize_impl && vec_enabled){
-        return etl::conv4_impl::VEC;
-    } else {
-        return etl::conv4_impl::FFT_STD;
     }
+
+    // CUFFT is generally faster than the other, but anyway in GPU mode, CUDNN should be available
+    if(cufft_enabled){
+        return etl::conv4_impl::FFT_CUFFT;
+    }
+
+    // MKL is generally faster than VEC
+    // This could be improved for small batch size where VEC is interesting
+    if (mkl_enabled) {
+        return etl::conv4_impl::FFT_MKL;
+    }
+
+    // If possible, use vectorized implementations
+    if(vectorize_impl && vec_enabled){
+        return etl::conv4_impl::VEC;
+    }
+
+    // If nothing else if available
+    return etl::conv4_impl::FFT_STD;
 }
 
 /*!
