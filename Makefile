@@ -15,7 +15,7 @@ BLAS_PKG = mkl
 endif
 
 # Try to detect parallel mkl
-ifeq ("mkl-threads",$(ETL_BLAS_PKG))
+ifneq (,$(findstring threads,$(BLAS_PKG)))
 CXX_FLAGS += -DETL_BLAS_THREADS
 endif
 
