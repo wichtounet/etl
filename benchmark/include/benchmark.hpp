@@ -148,7 +148,7 @@ using conv_4d_full_policy_1 = NARY_POLICY(
     );
 
 using conv_4d_full_policy_2 = NARY_POLICY(
-    /* N */ VALUES_POLICY(5, 10, 15, 20, 25, 30, 35, 40),
+    /* N */ VALUES_POLICY(5, 10, 20, 30, 40, 60, 80, 100),
     /* K */ VALUES_POLICY(10, 10, 10, 10, 10, 10, 10, 10),
     /* C */ VALUES_POLICY(1, 1, 1, 1, 1, 1, 1, 1),
     /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28),
@@ -156,9 +156,17 @@ using conv_4d_full_policy_2 = NARY_POLICY(
     );
 
 using conv_4d_full_policy_3 = NARY_POLICY(
-    /* N */ VALUES_POLICY(5, 10, 15, 20, 25, 30, 35, 40),
-    /* K */ VALUES_POLICY(10, 10, 10, 10, 10, 10, 10, 10),
-    /* C */ VALUES_POLICY(10, 10, 10, 10, 10, 10, 10, 10),
+    /* N */ VALUES_POLICY(5, 10, 20, 30, 40, 60, 80, 100),
+    /* K */ VALUES_POLICY(24, 24, 24, 24, 24, 24, 24, 24),
+    /* C */ VALUES_POLICY(12, 12, 12, 12, 12, 12, 12, 12),
+    /* I */ VALUES_POLICY(14, 14, 14, 14, 14, 14, 14, 14),
+    /* W */ VALUES_POLICY(3, 3, 3, 3, 3, 3, 3, 3)
+    );
+
+using conv_4d_full_policy_4 = NARY_POLICY(
+    /* N */ VALUES_POLICY(5, 10, 20, 30, 40, 60, 80, 100),
+    /* K */ VALUES_POLICY(12, 12, 12, 12, 12, 12, 12, 12),
+    /* C */ VALUES_POLICY(24, 24, 24, 24, 24, 24, 24, 24),
     /* I */ VALUES_POLICY(14, 14, 14, 14, 14, 14, 14, 14),
     /* W */ VALUES_POLICY(3, 3, 3, 3, 3, 3, 3, 3)
     );
