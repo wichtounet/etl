@@ -38,6 +38,17 @@ void pad_2d_input(const I& in, C& out, size_t p1, size_t p2) {
     out.invalidate_gpu();
 }
 
+#ifdef __AVX__
+using safe_avx_vec = avx_vec;
+#else
+using safe_avx_vec = no_vec;
+#endif
+
+#ifdef __SSE3__
+using safe_sse_vec = sse_vec;
+#else
+using safe_sse_vec = no_vec;
+#endif
 
 } //end of namespace detail
 } //end of namespace vec

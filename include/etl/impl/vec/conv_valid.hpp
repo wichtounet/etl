@@ -406,18 +406,6 @@ void conv2_valid_micro_kernel(const I& input, const K& kernel, C&& conv, size_t 
     conv2_valid_flipped_micro_kernel<V>(input, kernel_reverse, conv, s1, s2, p1, p2, beta);
 }
 
-#ifdef __AVX__
-using safe_avx_vec = avx_vec;
-#else
-using safe_avx_vec = no_vec;
-#endif
-
-#ifdef __SSE3__
-using safe_sse_vec = sse_vec;
-#else
-using safe_sse_vec = no_vec;
-#endif
-
 } // end of namespace detail
 
 /*!

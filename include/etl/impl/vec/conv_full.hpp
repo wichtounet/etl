@@ -341,7 +341,7 @@ void conv4_full(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename V, typename I, typename KK, typename CC>
+template <typename I, typename KK, typename CC>
 void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
@@ -356,55 +356,55 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
-        auto batch_fun_nc = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
+        const size_t k2 = etl::dim<3>(kernel);
+
+        if (detail::prefer_sse<T>(k2)) {
+            auto batch_fun_nc = [&](const size_t first, const size_t last) {
+                if (last - first) {
                     for (size_t nc = first; nc < last; ++nc) {
                         const size_t i = nc / C;
                         const size_t c = nc % C;
 
                         // k = 0
-                        conv2_full_flipped<V>(input(i)(0), kernel(0)(c), conv(i)(c), T(0));
+                        conv2_full_flipped<detail::safe_sse_vec>(input(i)(0), kernel(0)(c), conv(i)(c), T(0));
 
                         for (size_t k = 1; k < K; ++k) {
-                            conv2_full_flipped<V>(input(i)(k), kernel(k)(c), conv(i)(c), T(1));
+                            conv2_full_flipped<detail::safe_sse_vec>(input(i)(k), kernel(k)(c), conv(i)(c), T(1));
                         }
                     }
                 }
-            }
-        };
+            };
 
-        if(etl::is_parallel){
-            dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
+            if (etl::is_parallel) {
+                dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
+            } else {
+                batch_fun_nc(0, N * C);
+            }
         } else {
-            batch_fun_nc(0, N * C);
+            auto batch_fun_nc = [&](const size_t first, const size_t last) {
+                if (last - first) {
+                    for (size_t nc = first; nc < last; ++nc) {
+                        const size_t i = nc / C;
+                        const size_t c = nc % C;
+
+                        // k = 0
+                        conv2_full_flipped<detail::safe_avx_vec>(input(i)(0), kernel(0)(c), conv(i)(c), T(0));
+
+                        for (size_t k = 1; k < K; ++k) {
+                            conv2_full_flipped<detail::safe_avx_vec>(input(i)(k), kernel(k)(c), conv(i)(c), T(1));
+                        }
+                    }
+                }
+            };
+
+            if (etl::is_parallel) {
+                dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
+            } else {
+                batch_fun_nc(0, N * C);
+            }
         }
 
         conv.invalidate_gpu();
-    }
-}
-
-/*!
- * \brief SSE implementation of a 4D 'full' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C>
-void conv4_full_flipped(const I& input, const K& kernel, C&& conv) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
-
-    if(avx_enabled && sse3_enabled){
-        const size_t k2 = etl::dim<3>(kernel);
-
-        if (detail::prefer_sse<value_t<I>>(k2)) {
-            return conv4_full_flipped<detail::safe_avx_vec>(input, kernel, conv);
-        } else {
-            return conv4_full_flipped<detail::safe_sse_vec>(input, kernel, conv);
-        }
-    } else {
-        return conv4_full_flipped<default_vec>(input, kernel, conv);
     }
 }
 
