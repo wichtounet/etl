@@ -353,10 +353,95 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
     const size_t C = etl::dim<1>(kernel);
 
     if (K > 0) {
+        const size_t k1 = etl::dim<2>(kernel);
+        const size_t k2 = etl::dim<3>(kernel);
+
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
-        const size_t k2 = etl::dim<3>(kernel);
+
+        // Disabled for now because slower in fact than non-padded
+        if (padding_impl && false) {
+            constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+            constexpr size_t SS = AS / 2;
+
+            if (k2 < SS || k2 % AS > 0) {
+                const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+
+                auto p_kernel = common::pad_right_multi(kernel, pad);
+
+                if (detail::prefer_sse<T>(k2 + pad)) {
+                    auto batch_fun_nc = [&](const size_t first, const size_t last) {
+                        if (last - first) {
+                            etl::dyn_matrix<T, 2> padded_conv(etl::dim<2>(conv), pad + etl::dim<3>(conv));
+
+                            for (size_t nc = first; nc < last; ++nc) {
+                                const size_t i = nc / C;
+                                const size_t c = nc % C;
+
+                                // k = 0
+                                conv2_full_flipped<detail::safe_sse_vec>(input(i)(0), p_kernel(0)(c), padded_conv, T(0));
+
+                                for (size_t k = 1; k < K; ++k) {
+                                    conv2_full_flipped<detail::safe_sse_vec>(input(i)(k), p_kernel(k)(c), padded_conv, T(1));
+                                }
+
+                                // Copy back the results
+
+                                for (size_t k = 0; k < etl::dim<2>(conv); ++k) {
+                                    for (size_t l = 0; l < etl::dim<3>(conv); ++l) {
+                                        conv(i, c, k, l) = padded_conv(k, pad + l);
+                                    }
+                                }
+                            }
+                        }
+                    };
+
+                    if (etl::is_parallel) {
+                        dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
+                    } else {
+                        batch_fun_nc(0, N * C);
+                    }
+
+                } else {
+                    auto batch_fun_nc = [&](const size_t first, const size_t last) {
+                        if (last - first) {
+                            etl::dyn_matrix<T, 2> padded_conv(etl::dim<2>(conv), pad + etl::dim<2>(conv));
+
+                            for (size_t nc = first; nc < last; ++nc) {
+                                const size_t i = nc / C;
+                                const size_t c = nc % C;
+
+                                // k = 0
+                                conv2_full_flipped<detail::safe_avx_vec>(input(i)(0), p_kernel(0)(c), padded_conv, T(0));
+
+                                for (size_t k = 1; k < K; ++k) {
+                                    conv2_full_flipped<detail::safe_avx_vec>(input(i)(k), p_kernel(k)(c), padded_conv, T(1));
+                                }
+
+                                // Copy back the results
+
+                                for (size_t k = 0; k < etl::dim<2>(conv); ++k) {
+                                    for (size_t l = 0; l < etl::dim<3>(conv); ++l) {
+                                        conv(i, c, k, l) = padded_conv(k, pad + l);
+                                    }
+                                }
+                            }
+                        }
+                    };
+
+                    if (etl::is_parallel) {
+                        dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
+                    } else {
+                        batch_fun_nc(0, N * C);
+                    }
+                }
+
+                conv.invalidate_gpu();
+
+                return;
+            }
+        }
 
         if (detail::prefer_sse<T>(k2)) {
             auto batch_fun_nc = [&](const size_t first, const size_t last) {
