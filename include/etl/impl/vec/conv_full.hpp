@@ -226,7 +226,7 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
         }
     };
 
-    dispatch_1d_any(select_parallel(KK, 2), batch_fun_k, 0, KK);
+    smart_dispatch_1d_any(batch_fun_k, 0, KK, 2);
 }
 
 /*!
@@ -250,7 +250,7 @@ void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
         }
     };
 
-    dispatch_1d_any(select_parallel(KK, 2), batch_fun_k, 0, KK);
+    smart_dispatch_1d_any(batch_fun_k, 0, KK, 2);
 }
 
 /*!
@@ -301,11 +301,7 @@ void conv4_full(const I& input, const KK& kernel, CC&& conv) {
             }
         };
 
-        if(etl::is_parallel){
-            dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
-        } else {
-            batch_fun_nc(0, N * C);
-        }
+        smart_dispatch_1d_any(batch_fun_nc, 0, N * C, 2);
 
         conv.invalidate_gpu();
     }
@@ -405,11 +401,7 @@ bool conv4_full_flipped_small(const I& input, const KK& kernel, CC&& conv) {
                     }
                 };
 
-                if (etl::is_parallel) {
-                    dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
-                } else {
-                    batch_fun_nc(0, N * C);
-                }
+                smart_dispatch_1d_any(batch_fun_nc, 0, N * C, 2);
             } else {
                 auto batch_fun_nc = [&](const size_t first, const size_t last) {
                     if (last - first) {
@@ -427,11 +419,7 @@ bool conv4_full_flipped_small(const I& input, const KK& kernel, CC&& conv) {
                     }
                 };
 
-                if (etl::is_parallel) {
-                    dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
-                } else {
-                    batch_fun_nc(0, N * C);
-                }
+                smart_dispatch_1d_any(batch_fun_nc, 0, N * C, 2);
             }
 
             return true;
@@ -471,11 +459,7 @@ bool conv4_full_flipped_small(const I& input, const KK& kernel, CC&& conv) {
             }
         };
 
-        if (etl::is_parallel) {
-            dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
-        } else {
-            batch_fun_nc(0, N * C);
-        }
+        smart_dispatch_1d_any(batch_fun_nc, 0, N * C, 2);
     } else {
         auto batch_fun_nc = [&](const size_t first, const size_t last) {
             if (last - first) {
@@ -493,11 +477,7 @@ bool conv4_full_flipped_small(const I& input, const KK& kernel, CC&& conv) {
             }
         };
 
-        if (etl::is_parallel) {
-            dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
-        } else {
-            batch_fun_nc(0, N * C);
-        }
+        smart_dispatch_1d_any(batch_fun_nc, 0, N * C, 2);
     }
 
     return true;
@@ -560,12 +540,7 @@ bool conv4_full_flipped_padding(const I& input, const KK& kernel, CC&& conv) {
                     }
                 };
 
-                if (etl::is_parallel) {
-                    dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
-                } else {
-                    batch_fun_nc(0, N * C);
-                }
-
+                smart_dispatch_1d_any(batch_fun_nc, 0, N * C, 2);
             } else {
                 auto batch_fun_nc = [&](const size_t first, const size_t last) {
                     if (last - first) {
@@ -593,11 +568,7 @@ bool conv4_full_flipped_padding(const I& input, const KK& kernel, CC&& conv) {
                     }
                 };
 
-                if (etl::is_parallel) {
-                    dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
-                } else {
-                    batch_fun_nc(0, N * C);
-                }
+                smart_dispatch_1d_any(batch_fun_nc, 0, N * C, 2);
             }
 
             return true;
@@ -663,11 +634,7 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
                 }
             };
 
-            if (etl::is_parallel) {
-                dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
-            } else {
-                batch_fun_nc(0, N * C);
-            }
+            smart_dispatch_1d_any(batch_fun_nc, 0, N * C, 2);
         } else {
             auto batch_fun_nc = [&](const size_t first, const size_t last) {
                 if (last - first) {
@@ -685,11 +652,7 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
                 }
             };
 
-            if (etl::is_parallel) {
-                dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
-            } else {
-                batch_fun_nc(0, N * C);
-            }
+            smart_dispatch_1d_any(batch_fun_nc, 0, N * C, 2);
         }
 
         conv.invalidate_gpu();
@@ -699,5 +662,3 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
 } //end of namespace vec
 } //end of namespace impl
 } //end of namespace etl
-
-#include "etl/impl/vec/conv_same.hpp"

@@ -947,7 +947,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
                     }
                 };
 
-                dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+                smart_dispatch_1d_any(fun_k, 0, K, 2);
             } else {
                 auto fun_k = [&](const size_t first, const size_t last) {
                     for (size_t k = first; k < last; ++k) {
@@ -955,7 +955,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
                     }
                 };
 
-                dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+                smart_dispatch_1d_any(fun_k, 0, K, 2);
             }
 
             return;
@@ -969,7 +969,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
             }
         };
 
-        dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+        smart_dispatch_1d_any(fun_k, 0, K, 2);
     } else {
         auto fun_k = [&](const size_t first, const size_t last) {
             for (size_t k = first; k < last; ++k) {
@@ -977,7 +977,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
             }
         };
 
-        dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+        smart_dispatch_1d_any(fun_k, 0, K, 2);
     }
 
     conv.invalidate_gpu();
@@ -1025,7 +1025,7 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
                     }
                 };
 
-                dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+                smart_dispatch_1d_any(fun_k, 0, K, 2);
             } else {
                 auto fun_k = [&](const size_t first, const size_t last) {
                     for (size_t k = first; k < last; ++k) {
@@ -1033,7 +1033,7 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
                     }
                 };
 
-                dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+                smart_dispatch_1d_any(fun_k, 0, K, 2);
             }
 
             return;
@@ -1047,7 +1047,7 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
             }
         };
 
-        dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+        smart_dispatch_1d_any(fun_k, 0, K, 2);
     } else {
         auto fun_k = [&](const size_t first, const size_t last) {
             for (size_t k = first; k < last; ++k) {
@@ -1055,7 +1055,7 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
             }
         };
 
-        dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+        smart_dispatch_1d_any(fun_k, 0, K, 2);
     }
 
     conv.invalidate_gpu();
@@ -1106,7 +1106,7 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
                     }
                 };
 
-                dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+                smart_dispatch_1d_any(fun_kn, 0, KN, 2);
             } else {
                 auto fun_kn = [&](const size_t first, const size_t last) {
                     for (size_t kn = first; kn < last; ++kn) {
@@ -1117,7 +1117,7 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
                     }
                 };
 
-                dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+                smart_dispatch_1d_any(fun_kn, 0, KN, 2);
             }
 
             return;
@@ -1134,7 +1134,7 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
             }
         };
 
-        dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+        smart_dispatch_1d_any(fun_kn, 0, KN, 2);
     } else {
         auto fun_kn = [&](const size_t first, const size_t last) {
             for (size_t kn = first; kn < last; ++kn) {
@@ -1145,7 +1145,7 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
             }
         };
 
-        dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+        smart_dispatch_1d_any(fun_kn, 0, KN, 2);
     }
 
     conv.invalidate_gpu();
@@ -1198,7 +1198,7 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
                     }
                 };
 
-                dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+                smart_dispatch_1d_any(fun_kn, 0, KN, 2);
             } else {
                 auto fun_kn = [&](const size_t first, const size_t last) {
                     for (size_t kn = first; kn < last; ++kn) {
@@ -1209,7 +1209,7 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
                     }
                 };
 
-                dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+                smart_dispatch_1d_any(fun_kn, 0, KN, 2);
             }
 
             return;
@@ -1226,7 +1226,7 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
             }
         };
 
-        dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+        smart_dispatch_1d_any(fun_kn, 0, KN, 2);
     } else {
         auto fun_kn = [&](const size_t first, const size_t last) {
             for (size_t kn = first; kn < last; ++kn) {
@@ -1237,7 +1237,7 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
             }
         };
 
-        dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+        smart_dispatch_1d_any(fun_kn, 0, KN, 2);
     }
 
     conv.invalidate_gpu();
@@ -1292,7 +1292,7 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
                         }
                     };
 
-                    dispatch_1d_any(select_parallel(K * N, 4), fun_nk, 0, K * N);
+                    smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
                 } else {
                     auto fun_nk = [&](const size_t first, const size_t last) {
                         for (size_t nk = first; nk < last; ++nk) {
@@ -1307,7 +1307,7 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
                         }
                     };
 
-                    dispatch_1d_any(select_parallel(K * N, 4), fun_nk, 0, K * N);
+                    smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
                 }
 
                 return;
@@ -1328,7 +1328,7 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
                 }
             };
 
-            dispatch_1d_any(select_parallel(K * N, 4), fun_nk, 0, K * N);
+            smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
         } else {
             auto fun_nk = [&](const size_t first, const size_t last) {
                 for (size_t nk = first; nk < last; ++nk) {
@@ -1343,7 +1343,7 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
                 }
             };
 
-            dispatch_1d_any(select_parallel(K * N, 4), fun_nk, 0, K * N);
+            smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
         }
 
         conv.invalidate_gpu();
@@ -1400,7 +1400,7 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
                         }
                     };
 
-                    dispatch_1d_any(select_parallel(K * N, 4), fun_nk, 0, K * N);
+                    smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
                 } else {
                     auto fun_nk = [&](const size_t first, const size_t last) {
                         for (size_t nk = first; nk < last; ++nk) {
@@ -1415,7 +1415,7 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
                         }
                     };
 
-                    dispatch_1d_any(select_parallel(K * N, 4), fun_nk, 0, K * N);
+                    smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
                 }
 
                 return;
@@ -1436,7 +1436,7 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
                 }
             };
 
-            dispatch_1d_any(select_parallel(K * N, 4), fun_nk, 0, K * N);
+            smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
         } else {
             auto fun_nk = [&](const size_t first, const size_t last) {
                 for (size_t nk = first; nk < last; ++nk) {
@@ -1451,7 +1451,7 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
                 }
             };
 
-            dispatch_1d_any(select_parallel(K * N, 4), fun_nk, 0, K * N);
+            smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
         }
 
         conv.invalidate_gpu();
@@ -1512,7 +1512,7 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
                         }
                     };
 
-                    dispatch_1d_any(select_parallel(K * C, 4), fun_kc, 0, K * C);
+                    smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
                 } else {
                     auto fun_kc = [&](const size_t first, const size_t last) {
                         //i = 0
@@ -1533,7 +1533,7 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
                         }
                     };
 
-                    dispatch_1d_any(select_parallel(K * C, 4), fun_kc, 0, K * C);
+                    smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
                 }
 
                 return;
@@ -1560,7 +1560,7 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
                 }
             };
 
-            dispatch_1d_any(select_parallel(K * C, 4), fun_kc, 0, K * C);
+            smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
         } else {
             auto fun_kc = [&](const size_t first, const size_t last) {
                 //i = 0
@@ -1581,7 +1581,7 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
                 }
             };
 
-            dispatch_1d_any(select_parallel(K * C, 4), fun_kc, 0, K * C);
+            smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
         }
 
         conv.invalidate_gpu();
@@ -1643,7 +1643,7 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                         }
                     };
 
-                    dispatch_1d_any(select_parallel(K * C, 4), fun_kc, 0, K * C);
+                    smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
                 } else {
                     auto fun_kc = [&](const size_t first, const size_t last) {
                         //i = 0
@@ -1664,7 +1664,7 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                         }
                     };
 
-                    dispatch_1d_any(select_parallel(K * C, 4), fun_kc, 0, K * C);
+                    smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
                 }
 
                 conv.invalidate_gpu();
@@ -1693,7 +1693,7 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                 }
             };
 
-            dispatch_1d_any(select_parallel(K * C, 4), fun_kc, 0, K * C);
+            smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
         } else {
             auto fun_kc = [&](const size_t first, const size_t last) {
                 //i = 0
@@ -1714,7 +1714,7 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                 }
             };
 
-            dispatch_1d_any(select_parallel(K * C, 4), fun_kc, 0, K * C);
+            smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
         }
 
         conv.invalidate_gpu();
@@ -1724,6 +1724,3 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
 } //end of namespace vec
 } //end of namespace impl
 } //end of namespace etl
-
-#include "etl/impl/vec/conv_full.hpp"
-#include "etl/impl/vec/conv_same.hpp"
