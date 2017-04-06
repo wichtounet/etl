@@ -1425,58 +1425,42 @@ void conv4_full(const I& input, const KK& kernel, CC&& conv) {
     const size_t k1 = etl::dim<2>(kernel);
     const size_t k2 = etl::dim<3>(kernel);
 
-    input.ensure_cpu_up_to_date();
-    kernel.ensure_cpu_up_to_date();
+    if (K > 0) {
+        input.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date();
 
-    if (C > 0) {
         etl::dyn_matrix<T, 4> prepared_k(K, C, k1, k2);
 
         std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
 
         prepared_k.deep_fflip_inplace();
 
-        if (N > C) {
-            auto batch_fun_n = [&](const size_t first, const size_t last) {
-                if (last - first) {
-                    for (size_t i = first; i < last; ++i) {
+        auto batch_fun_nc = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    for (size_t nc = first; nc < last; ++nc) {
+                        const size_t i = nc / C;
+                        const size_t c = nc % C;
+
                         // k = 0
-                        for (size_t c = 0; c < C; ++c) {
-                            conv2_full_flipped<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
-                        }
+                        conv2_full_flipped<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
 
                         for (size_t k = 1; k < K; ++k) {
-                            for (size_t c = 0; c < C; ++c) {
-                                conv2_full_flipped<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
-                            }
+                            conv2_full_flipped<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
                         }
                     }
                 }
-            };
+            }
+        };
 
-            dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+        if(etl::is_parallel){
+            dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
         } else {
-            auto batch_fun_c = [&](const size_t first, const size_t last) {
-                if (last - first) {
-                    for (size_t i = 0; i < N; ++i) {
-                        // k = 0
-                        for (size_t c = first; c < last; ++c) {
-                            conv2_full_flipped<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
-                        }
-
-                        for (size_t k = 1; k < K; ++k) {
-                            for (size_t c = first; c < last; ++c) {
-                                conv2_full_flipped<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
-                            }
-                        }
-                    }
-                }
-            };
-
-            dispatch_1d_any(select_parallel(C, 2), batch_fun_c, 0, C);
+            batch_fun_nc(0, N * C);
         }
-    }
 
-    conv.invalidate_gpu();
+        conv.invalidate_gpu();
+    }
 }
 
 /*!
@@ -1520,52 +1504,36 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
     const size_t K = etl::dim<0>(kernel);
     const size_t C = etl::dim<1>(kernel);
 
-    input.ensure_cpu_up_to_date();
-    kernel.ensure_cpu_up_to_date();
+    if (K > 0) {
+        input.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date();
 
-    if (C > 0) {
-        if (N > C) {
-            auto batch_fun_n = [&](const size_t first, const size_t last) {
-                if (last - first) {
-                    for (size_t i = first; i < last; ++i) {
+        auto batch_fun_nc = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    for (size_t nc = first; nc < last; ++nc) {
+                        const size_t i = nc / C;
+                        const size_t c = nc % C;
+
                         // k = 0
-                        for (size_t c = 0; c < C; ++c) {
-                            conv2_full_flipped<V>(input(i)(0), kernel(0)(c), conv(i)(c), T(0));
-                        }
+                        conv2_full_flipped<V>(input(i)(0), kernel(0)(c), conv(i)(c), T(0));
 
                         for (size_t k = 1; k < K; ++k) {
-                            for (size_t c = 0; c < C; ++c) {
-                                conv2_full_flipped<V>(input(i)(k), kernel(k)(c), conv(i)(c), T(1));
-                            }
+                            conv2_full_flipped<V>(input(i)(k), kernel(k)(c), conv(i)(c), T(1));
                         }
                     }
                 }
-            };
+            }
+        };
 
-            dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+        if(etl::is_parallel){
+            dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
         } else {
-            auto batch_fun_c = [&](const size_t first, const size_t last) {
-                if (last - first) {
-                    for (size_t i = 0; i < N; ++i) {
-                        // k = 0
-                        for (size_t c = first; c < last; ++c) {
-                            conv2_full_flipped<V>(input(i)(0), kernel(0)(c), conv(i)(c), T(0));
-                        }
-
-                        for (size_t k = 1; k < K; ++k) {
-                            for (size_t c = first; c < last; ++c) {
-                                conv2_full_flipped<V>(input(i)(k), kernel(k)(c), conv(i)(c), T(1));
-                            }
-                        }
-                    }
-                }
-            };
-
-            dispatch_1d_any(select_parallel(C, 2), batch_fun_c, 0, C);
+            batch_fun_nc(0, N * C);
         }
-    }
 
-    conv.invalidate_gpu();
+        conv.invalidate_gpu();
+    }
 }
 
 /*!
