@@ -1368,18 +1368,145 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
-void conv4_full_flipped(I&& input, K&& kernel, C&& conv) {
+template <typename II, typename KK, typename CC>
+void conv4_full_flipped(II&& input, KK&& kernel, CC&& conv) {
+    using T = value_t<II>;
+
     if (etl::dim<1>(kernel) > 0) {
-        kernel.ensure_cpu_up_to_date(); // Need for flipping
+        input.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date();
 
-        etl::dyn_matrix<value_t<I>, 4> prepared_k(etl::dim<0>(kernel), etl::dim<1>(kernel), etl::dim<2>(kernel), etl::dim<3>(kernel));
+        const size_t conv_i_inc = etl::dim<1>(conv) * etl::dim<2>(conv) * etl::dim<3>(conv);
+        const size_t conv_c_inc = etl::dim<2>(conv) * etl::dim<3>(conv);
 
-        std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
+        const size_t input_i_inc = etl::dim<1>(input) * etl::dim<2>(input) * etl::dim<3>(input);
+        const size_t input_k_inc = etl::dim<2>(input) * etl::dim<3>(input);
 
-        prepared_k.deep_fflip_inplace();
+        const size_t N = etl::dim<0>(input);
+        const size_t K = etl::dim<0>(kernel);
+        const size_t C = etl::dim<1>(kernel);
 
-        conv4_full(input, prepared_k, conv);
+        const size_t m1 = etl::dim<2>(input);
+        const size_t m2 = etl::dim<3>(input);
+
+        const size_t n1 = etl::dim<2>(kernel);
+        const size_t n2 = etl::dim<3>(kernel);
+
+        const size_t s1   = m1 + n1 - 1;
+        const size_t s2   = m2 + n2 - 1;
+        const size_t size = s1 * s2;
+
+        dyn_matrix<etl::complex<T>, 3> b_padded(K, C, size);
+
+        // 1. Flip and pad all the kenels and compute their FFT
+
+        auto batch_fun_kc = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    for (size_t kc = first; kc < last; ++kc) {
+                        size_t k = kc / C;
+                        size_t c = kc % C;
+
+                        auto b_memory = b_padded(k)(c).memory_start();
+
+                        std::fill(b_memory, b_memory + size, T(0));
+
+                        for (size_t i = 0; i < n1; ++i) {
+                            size_t k_i = n1 - i - 1;
+
+                            for(size_t j = 0; j < n2; ++j){
+                                size_t k_j = n2 - j - 1;
+
+                                b_memory[i * s2 + j] = kernel(k, c, k_i, k_j);
+                            }
+                        }
+
+                        mkl_detail::inplace_fft2_kernel(safe_cast(b_memory), s1, s2);
+                    }
+                }
+            }
+        };
+
+        // 2. Pad all the images and compute the result of ifft(image >> kernel)
+
+        auto batch_fun_n = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    dyn_vector<etl::complex<T>> a_padded(size);
+                    dyn_vector<etl::complex<T>> tmp(size);
+
+                    for (std::size_t i = first; i < last; ++i) {
+                        // k = 0
+
+                        const T* a = input.memory_start() + i * input_i_inc + 0 * input_k_inc; // input(i)(0)
+
+                        a_padded = 0;
+                        for (size_t i = 0; i < m1; ++i) {
+                            direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
+                        }
+
+                        mkl_detail::inplace_fft2_kernel(safe_cast(a_padded.memory_start()), s1, s2);
+
+                        for (size_t c = 0; c < C; ++c) {
+                            T* cc      = conv.memory_start() + i * conv_i_inc + c * conv_c_inc;       // conv(i)(c)
+
+                            tmp = a_padded >> b_padded(0)(c);
+
+                            mkl_detail::inplace_ifft2_kernel(safe_cast(tmp.memory_start()), s1, s2);
+
+                            for (std::size_t i = 0; i < size; ++i) {
+                                cc[i] = tmp[i].real;
+                            }
+                        }
+
+                        // k = [1,K]
+
+                        for (std::size_t k = 1; k < K; ++k) {
+                            const T* a = input.memory_start() + i * input_i_inc + k * input_k_inc; // input(i)(k)
+
+                            a_padded = 0;
+                            for (std::size_t i = 0; i < m1; ++i) {
+                                direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
+                            }
+
+                            mkl_detail::inplace_fft2_kernel(safe_cast(a_padded.memory_start()), s1, s2);
+
+                            for (std::size_t c = 0; c < C; ++c) {
+                                T* cc      = conv.memory_start() + i * conv_i_inc + c * conv_c_inc;       // conv(i)(c)
+
+                                tmp = a_padded >> b_padded(k)(c);
+
+                                mkl_detail::inplace_ifft2_kernel(safe_cast(tmp.memory_start()), s1, s2);
+
+                                for (std::size_t i = 0; i < size; ++i) {
+                                    cc[i] += tmp[i].real;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        if (etl::is_parallel) {
+            size_t mkl_threads = 0;
+            if(is_blas_parallel){
+                mkl_threads = mkl_get_max_threads();
+                mkl_set_num_threads(1);
+            }
+
+            dispatch_1d_any(select_parallel(K * C, 2), batch_fun_kc, 0, K * C);
+            dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+
+            if(is_blas_parallel){
+                mkl_set_num_threads(mkl_threads);
+            }
+        } else {
+            batch_fun_kc(0, K * C);
+            batch_fun_n(0, N);
+        }
+
+        conv.invalidate_gpu();
     }
 }
 
