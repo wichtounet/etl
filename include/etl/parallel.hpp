@@ -112,6 +112,37 @@ inline void dispatch_1d_any(bool p, Functor&& functor, std::size_t first, std::s
 }
 
 /*!
+ * \brief Dispatch the elements of a range to a functor in a parallel manner.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
+ * \param threshold The threshold for parallelization
+ */
+template <typename Functor>
+inline void smart_dispatch_1d_any(Functor&& functor, size_t first, size_t last, size_t threshold) {
+    if (etl::is_parallel) {
+        auto n = last - first;
+
+        if (select_parallel(n, threshold)) {
+            size_t T = std::min(n, threads);
+            thread_local cpp::default_thread_pool<> pool(threads - 1);
+            dispatch_1d(pool, true, std::forward<Functor>(functor), T, first, last);
+        } else {
+            functor(first, last);
+        }
+    } else {
+        functor(first, last);
+    }
+}
+
+/*!
  * \brief Dispatch the elements of a range to a functor in a parallel manner and use an accumulator functor to accumulate the results
  * \param p Boolean tag to indicate if parallel dispatching must be done
  * \param functor The functor to execute
