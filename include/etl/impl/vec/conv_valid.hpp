@@ -1373,6 +1373,9 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
+        // TODO Performance can be improved further by doing the
+        // padding of the kernel inside the thread for small kernel (3x3, 5x5)
+
         if (padding_impl) {
             static constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
             static constexpr size_t SS = AS / 2;
