@@ -359,6 +359,154 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
+        // Handle small general kernels by turning them into valid convolutions
+        if(k1 == k2 && (k2 == 3 || k2 == 5)){
+            const size_t pad = k2 - 1;
+            const size_t full_pad = pad * 2;
+
+            if(padding_impl){
+                constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+                constexpr size_t SS = AS / 2;
+
+                if (k2 < SS || k2 % AS > 0) {
+                    const size_t valid_pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+
+                    // Prepare the padding (padding for full->valid and padding for valid impl)
+
+                    etl::dyn_matrix<T, 4> p_input(etl::dim<0>(input), etl::dim<1>(input), full_pad + etl::dim<2>(input), full_pad + etl::dim<3>(input) + valid_pad);
+
+                    p_input = 0;
+
+                    for (size_t i = 0; i < etl::dim<0>(input); ++i) {
+                        for (size_t j = 0; j < etl::dim<1>(input); ++j) {
+                            for (size_t k = 0; k < etl::dim<2>(input); ++k) {
+                                direct_copy_n(input(i)(j)(k).memory_start(), p_input(i)(j)(pad + k).memory_start() + pad, etl::dim<3>(input));
+                            }
+                        }
+                    }
+
+                    auto p_kernel = common::pad_right_multi(kernel, valid_pad);
+
+                    if (detail::prefer_sse<T>(k2 + valid_pad)) {
+                        auto batch_fun_nc = [&](const size_t first, const size_t last) {
+                            if (last - first) {
+                                for (size_t nc = first; nc < last; ++nc) {
+                                    const size_t i = nc / C;
+                                    const size_t c = nc % C;
+
+                                    // k = 0
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(p_input(i)(0), p_kernel(0)(c), conv(i)(c), 1, 1, 0, 0, T(0));
+
+                                    for (size_t k = 1; k < K; ++k) {
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(p_input(i)(k), p_kernel(k)(c), conv(i)(c), 1, 1, 0, 0, T(1));
+                                    }
+                                }
+                            }
+                        };
+
+                        if (etl::is_parallel) {
+                            dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
+                        } else {
+                            batch_fun_nc(0, N * C);
+                        }
+                    } else {
+                        auto batch_fun_nc = [&](const size_t first, const size_t last) {
+                            if (last - first) {
+                                for (size_t nc = first; nc < last; ++nc) {
+                                    const size_t i = nc / C;
+                                    const size_t c = nc % C;
+
+                                    // k = 0
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(p_input(i)(0), p_kernel(0)(c), conv(i)(c), 1, 1, 0, 0, T(0));
+
+                                    for (size_t k = 1; k < K; ++k) {
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(p_input(i)(k), p_kernel(k)(c), conv(i)(c), 1, 1, 0, 0, T(1));
+                                    }
+                                }
+                            }
+                        };
+
+                        if (etl::is_parallel) {
+                            dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
+                        } else {
+                            batch_fun_nc(0, N * C);
+                        }
+                    }
+
+                    // Invalidate the GPU and return early
+
+                    conv.invalidate_gpu();
+
+                    return;
+                }
+            }
+
+            etl::dyn_matrix<T, 4> p_input(etl::dim<0>(input), etl::dim<1>(input), full_pad + etl::dim<2>(input), full_pad + etl::dim<3>(input));
+
+            p_input = 0;
+
+            for (size_t i = 0; i < etl::dim<0>(input); ++i) {
+                for (size_t j = 0; j < etl::dim<1>(input); ++j) {
+                    for (size_t k = 0; k < etl::dim<2>(input); ++k) {
+                        direct_copy_n(input(i)(j)(k).memory_start(), p_input(i)(j)(pad + k).memory_start() + pad, etl::dim<3>(input));
+                    }
+                }
+            }
+
+            // No padding => Defer directly to conv2_valid_flipped
+
+            if (detail::prefer_sse<T>(k2)) {
+                auto batch_fun_nc = [&](const size_t first, const size_t last) {
+                    if (last - first) {
+                        for (size_t nc = first; nc < last; ++nc) {
+                            const size_t i = nc / C;
+                            const size_t c = nc % C;
+
+                            // k = 0
+                            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(p_input(i)(0), kernel(0)(c), conv(i)(c), 1, 1, 0, 0, T(0));
+
+                            for (size_t k = 1; k < K; ++k) {
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(p_input(i)(k), kernel(k)(c), conv(i)(c), 1, 1, 0, 0, T(1));
+                            }
+                        }
+                    }
+                };
+
+                if (etl::is_parallel) {
+                    dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
+                } else {
+                    batch_fun_nc(0, N * C);
+                }
+            } else {
+                auto batch_fun_nc = [&](const size_t first, const size_t last) {
+                    if (last - first) {
+                        for (size_t nc = first; nc < last; ++nc) {
+                            const size_t i = nc / C;
+                            const size_t c = nc % C;
+
+                            // k = 0
+                            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(p_input(i)(0), kernel(0)(c), conv(i)(c), 1, 1, 0, 0, T(0));
+
+                            for (size_t k = 1; k < K; ++k) {
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(p_input(i)(k), kernel(k)(c), conv(i)(c), 1, 1, 0, 0, T(1));
+                            }
+                        }
+                    }
+                };
+
+                if (etl::is_parallel) {
+                    dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
+                } else {
+                    batch_fun_nc(0, N * C);
+                }
+            }
+
+            // Invalidate the GPU and return early
+
+            conv.invalidate_gpu();
+
+            return;
+        }
 
         // Disabled for now because slower in fact than non-padded
         if (padding_impl && false) {
