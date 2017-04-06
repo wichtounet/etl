@@ -1664,6 +1664,8 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                     dispatch_1d_any(select_parallel(K * C, 4), fun_kc, 0, K * C);
                 }
 
+                conv.invalidate_gpu();
+
                 return;
             }
         }
