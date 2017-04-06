@@ -336,112 +336,44 @@ void conv4_full(const I& input, const K& kernel, C&& conv) {
 }
 
 /*!
- * \brief SSE implementation of a 4D 'full' convolution C = I * K
+ * \brief Optimized implementation of a 4D 'full' convolution C = I * K for small kernels.
+ *
+ * This returns true if it was able to perform the optimized
+ * convolution false otherwise
+ *
  * \param input The input matrix
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename KK, typename CC>
-void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
-
+bool conv4_full_flipped_small(const I& input, const KK& kernel, CC&& conv) {
     using T = value_t<I>;
 
     const size_t N = etl::dim<0>(input);
     const size_t K = etl::dim<0>(kernel);
     const size_t C = etl::dim<1>(kernel);
 
-    if (K > 0) {
-        const size_t k1 = etl::dim<2>(kernel);
-        const size_t k2 = etl::dim<3>(kernel);
+    const size_t k1 = etl::dim<2>(kernel);
+    const size_t k2 = etl::dim<3>(kernel);
 
-        input.ensure_cpu_up_to_date();
-        kernel.ensure_cpu_up_to_date();
+    // Handle small square kernels
+    if(k1 != k2 || !(k2 == 3 || k2 == 5)){
+        return false;
+    }
 
-        // Handle small general kernels by turning them into valid convolutions
-        if(k1 == k2 && (k2 == 3 || k2 == 5)){
-            const size_t pad = k2 - 1;
-            const size_t full_pad = pad * 2;
+    const size_t pad = k2 - 1;
+    const size_t full_pad = pad * 2;
 
-            if(padding_impl){
-                constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
-                constexpr size_t SS = AS / 2;
+    if(padding_impl){
+        constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+        constexpr size_t SS = AS / 2;
 
-                if (k2 < SS || k2 % AS > 0) {
-                    const size_t valid_pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+        if (k2 < SS || k2 % AS > 0) {
+            const size_t valid_pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-                    // Prepare the padding (padding for full->valid and padding for valid impl)
+            // Prepare the double padding of the input (padding for full->valid and padding for valid impl)
 
-                    etl::dyn_matrix<T, 4> p_input(etl::dim<0>(input), etl::dim<1>(input), full_pad + etl::dim<2>(input), full_pad + etl::dim<3>(input) + valid_pad);
-
-                    p_input = 0;
-
-                    for (size_t i = 0; i < etl::dim<0>(input); ++i) {
-                        for (size_t j = 0; j < etl::dim<1>(input); ++j) {
-                            for (size_t k = 0; k < etl::dim<2>(input); ++k) {
-                                direct_copy_n(input(i)(j)(k).memory_start(), p_input(i)(j)(pad + k).memory_start() + pad, etl::dim<3>(input));
-                            }
-                        }
-                    }
-
-                    auto p_kernel = common::pad_right_multi(kernel, valid_pad);
-
-                    if (detail::prefer_sse<T>(k2 + valid_pad)) {
-                        auto batch_fun_nc = [&](const size_t first, const size_t last) {
-                            if (last - first) {
-                                for (size_t nc = first; nc < last; ++nc) {
-                                    const size_t i = nc / C;
-                                    const size_t c = nc % C;
-
-                                    // k = 0
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(p_input(i)(0), p_kernel(0)(c), conv(i)(c), 1, 1, 0, 0, T(0));
-
-                                    for (size_t k = 1; k < K; ++k) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(p_input(i)(k), p_kernel(k)(c), conv(i)(c), 1, 1, 0, 0, T(1));
-                                    }
-                                }
-                            }
-                        };
-
-                        if (etl::is_parallel) {
-                            dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
-                        } else {
-                            batch_fun_nc(0, N * C);
-                        }
-                    } else {
-                        auto batch_fun_nc = [&](const size_t first, const size_t last) {
-                            if (last - first) {
-                                for (size_t nc = first; nc < last; ++nc) {
-                                    const size_t i = nc / C;
-                                    const size_t c = nc % C;
-
-                                    // k = 0
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(p_input(i)(0), p_kernel(0)(c), conv(i)(c), 1, 1, 0, 0, T(0));
-
-                                    for (size_t k = 1; k < K; ++k) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(p_input(i)(k), p_kernel(k)(c), conv(i)(c), 1, 1, 0, 0, T(1));
-                                    }
-                                }
-                            }
-                        };
-
-                        if (etl::is_parallel) {
-                            dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
-                        } else {
-                            batch_fun_nc(0, N * C);
-                        }
-                    }
-
-                    // Invalidate the GPU and return early
-
-                    conv.invalidate_gpu();
-
-                    return;
-                }
-            }
-
-            etl::dyn_matrix<T, 4> p_input(etl::dim<0>(input), etl::dim<1>(input), full_pad + etl::dim<2>(input), full_pad + etl::dim<3>(input));
+            etl::dyn_matrix<T, 4> p_input(etl::dim<0>(input), etl::dim<1>(input), full_pad + etl::dim<2>(input), full_pad + etl::dim<3>(input) + valid_pad);
 
             p_input = 0;
 
@@ -453,9 +385,10 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
                 }
             }
 
-            // No padding => Defer directly to conv2_valid_flipped
+            // Pad the kernel for fast implementation
+            auto p_kernel = common::pad_right_multi(kernel, valid_pad);
 
-            if (detail::prefer_sse<T>(k2)) {
+            if (detail::prefer_sse<T>(k2 + valid_pad)) {
                 auto batch_fun_nc = [&](const size_t first, const size_t last) {
                     if (last - first) {
                         for (size_t nc = first; nc < last; ++nc) {
@@ -463,10 +396,10 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
                             const size_t c = nc % C;
 
                             // k = 0
-                            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(p_input(i)(0), kernel(0)(c), conv(i)(c), 1, 1, 0, 0, T(0));
+                            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(p_input(i)(0), p_kernel(0)(c), conv(i)(c), 1, 1, 0, 0, T(0));
 
                             for (size_t k = 1; k < K; ++k) {
-                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(p_input(i)(k), kernel(k)(c), conv(i)(c), 1, 1, 0, 0, T(1));
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(p_input(i)(k), p_kernel(k)(c), conv(i)(c), 1, 1, 0, 0, T(1));
                             }
                         }
                     }
@@ -485,10 +418,10 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
                             const size_t c = nc % C;
 
                             // k = 0
-                            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(p_input(i)(0), kernel(0)(c), conv(i)(c), 1, 1, 0, 0, T(0));
+                            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(p_input(i)(0), p_kernel(0)(c), conv(i)(c), 1, 1, 0, 0, T(0));
 
                             for (size_t k = 1; k < K; ++k) {
-                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(p_input(i)(k), kernel(k)(c), conv(i)(c), 1, 1, 0, 0, T(1));
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(p_input(i)(k), p_kernel(k)(c), conv(i)(c), 1, 1, 0, 0, T(1));
                             }
                         }
                     }
@@ -501,95 +434,217 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
                 }
             }
 
-            // Invalidate the GPU and return early
+            return true;
+        }
+    }
 
+    // No padding implementation => Defer directly to conv2_valid_flipped
+
+    // Pad the input for valid convolution
+
+    etl::dyn_matrix<T, 4> p_input(etl::dim<0>(input), etl::dim<1>(input), full_pad + etl::dim<2>(input), full_pad + etl::dim<3>(input));
+
+    p_input = 0;
+
+    for (size_t i = 0; i < etl::dim<0>(input); ++i) {
+        for (size_t j = 0; j < etl::dim<1>(input); ++j) {
+            for (size_t k = 0; k < etl::dim<2>(input); ++k) {
+                direct_copy_n(input(i)(j)(k).memory_start(), p_input(i)(j)(pad + k).memory_start() + pad, etl::dim<3>(input));
+            }
+        }
+    }
+
+    if (detail::prefer_sse<T>(k2)) {
+        auto batch_fun_nc = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                for (size_t nc = first; nc < last; ++nc) {
+                    const size_t i = nc / C;
+                    const size_t c = nc % C;
+
+                    // k = 0
+                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(p_input(i)(0), kernel(0)(c), conv(i)(c), 1, 1, 0, 0, T(0));
+
+                    for (size_t k = 1; k < K; ++k) {
+                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(p_input(i)(k), kernel(k)(c), conv(i)(c), 1, 1, 0, 0, T(1));
+                    }
+                }
+            }
+        };
+
+        if (etl::is_parallel) {
+            dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
+        } else {
+            batch_fun_nc(0, N * C);
+        }
+    } else {
+        auto batch_fun_nc = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                for (size_t nc = first; nc < last; ++nc) {
+                    const size_t i = nc / C;
+                    const size_t c = nc % C;
+
+                    // k = 0
+                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(p_input(i)(0), kernel(0)(c), conv(i)(c), 1, 1, 0, 0, T(0));
+
+                    for (size_t k = 1; k < K; ++k) {
+                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(p_input(i)(k), kernel(k)(c), conv(i)(c), 1, 1, 0, 0, T(1));
+                    }
+                }
+            }
+        };
+
+        if (etl::is_parallel) {
+            dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
+        } else {
+            batch_fun_nc(0, N * C);
+        }
+    }
+
+    return true;
+}
+
+/*!
+ * \brief Optimized implementation of a 4D 'full' convolution C = I * K with padding.
+ *
+ * This returns true if the method was able to perform the
+ * convolution, false otherwise.
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename KK, typename CC>
+bool conv4_full_flipped_padding(const I& input, const KK& kernel, CC&& conv) {
+    using T = value_t<I>;
+
+    const size_t N = etl::dim<0>(input);
+    const size_t K = etl::dim<0>(kernel);
+    const size_t C = etl::dim<1>(kernel);
+
+    const size_t k2 = etl::dim<3>(kernel);
+
+    // Disabled for now because slower in fact than non-padded
+    if (padding_impl && false) {
+        constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+        constexpr size_t SS = AS / 2;
+
+        if (k2 < SS || k2 % AS > 0) {
+            const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+
+            auto p_kernel = common::pad_right_multi(kernel, pad);
+
+            if (detail::prefer_sse<T>(k2 + pad)) {
+                auto batch_fun_nc = [&](const size_t first, const size_t last) {
+                    if (last - first) {
+                        etl::dyn_matrix<T, 2> padded_conv(etl::dim<2>(conv), pad + etl::dim<3>(conv));
+
+                        for (size_t nc = first; nc < last; ++nc) {
+                            const size_t i = nc / C;
+                            const size_t c = nc % C;
+
+                            // k = 0
+                            conv2_full_flipped<detail::safe_sse_vec>(input(i)(0), p_kernel(0)(c), padded_conv, T(0));
+
+                            for (size_t k = 1; k < K; ++k) {
+                                conv2_full_flipped<detail::safe_sse_vec>(input(i)(k), p_kernel(k)(c), padded_conv, T(1));
+                            }
+
+                            // Copy back the results
+
+                            for (size_t k = 0; k < etl::dim<2>(conv); ++k) {
+                                for (size_t l = 0; l < etl::dim<3>(conv); ++l) {
+                                    conv(i, c, k, l) = padded_conv(k, pad + l);
+                                }
+                            }
+                        }
+                    }
+                };
+
+                if (etl::is_parallel) {
+                    dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
+                } else {
+                    batch_fun_nc(0, N * C);
+                }
+
+            } else {
+                auto batch_fun_nc = [&](const size_t first, const size_t last) {
+                    if (last - first) {
+                        etl::dyn_matrix<T, 2> padded_conv(etl::dim<2>(conv), pad + etl::dim<2>(conv));
+
+                        for (size_t nc = first; nc < last; ++nc) {
+                            const size_t i = nc / C;
+                            const size_t c = nc % C;
+
+                            // k = 0
+                            conv2_full_flipped<detail::safe_avx_vec>(input(i)(0), p_kernel(0)(c), padded_conv, T(0));
+
+                            for (size_t k = 1; k < K; ++k) {
+                                conv2_full_flipped<detail::safe_avx_vec>(input(i)(k), p_kernel(k)(c), padded_conv, T(1));
+                            }
+
+                            // Copy back the results
+
+                            for (size_t k = 0; k < etl::dim<2>(conv); ++k) {
+                                for (size_t l = 0; l < etl::dim<3>(conv); ++l) {
+                                    conv(i, c, k, l) = padded_conv(k, pad + l);
+                                }
+                            }
+                        }
+                    }
+                };
+
+                if (etl::is_parallel) {
+                    dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
+                } else {
+                    batch_fun_nc(0, N * C);
+                }
+            }
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/*!
+ * \brief Vectorized implementation of a 4D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename KK, typename CC>
+void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
+    using T = value_t<I>;
+
+    const size_t N = etl::dim<0>(input);
+    const size_t K = etl::dim<0>(kernel);
+    const size_t C = etl::dim<1>(kernel);
+
+    if (K > 0) {
+        const size_t k2 = etl::dim<3>(kernel);
+
+        input.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date();
+
+        // 1. Try optimized algorithms for small kernels
+
+        if(conv4_full_flipped_small(input, kernel, conv)){
             conv.invalidate_gpu();
-
             return;
         }
 
-        // Disabled for now because slower in fact than non-padded
-        if (padding_impl && false) {
-            constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
-            constexpr size_t SS = AS / 2;
+        // 2. Try padding implementation
 
-            if (k2 < SS || k2 % AS > 0) {
-                const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
-
-                auto p_kernel = common::pad_right_multi(kernel, pad);
-
-                if (detail::prefer_sse<T>(k2 + pad)) {
-                    auto batch_fun_nc = [&](const size_t first, const size_t last) {
-                        if (last - first) {
-                            etl::dyn_matrix<T, 2> padded_conv(etl::dim<2>(conv), pad + etl::dim<3>(conv));
-
-                            for (size_t nc = first; nc < last; ++nc) {
-                                const size_t i = nc / C;
-                                const size_t c = nc % C;
-
-                                // k = 0
-                                conv2_full_flipped<detail::safe_sse_vec>(input(i)(0), p_kernel(0)(c), padded_conv, T(0));
-
-                                for (size_t k = 1; k < K; ++k) {
-                                    conv2_full_flipped<detail::safe_sse_vec>(input(i)(k), p_kernel(k)(c), padded_conv, T(1));
-                                }
-
-                                // Copy back the results
-
-                                for (size_t k = 0; k < etl::dim<2>(conv); ++k) {
-                                    for (size_t l = 0; l < etl::dim<3>(conv); ++l) {
-                                        conv(i, c, k, l) = padded_conv(k, pad + l);
-                                    }
-                                }
-                            }
-                        }
-                    };
-
-                    if (etl::is_parallel) {
-                        dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
-                    } else {
-                        batch_fun_nc(0, N * C);
-                    }
-
-                } else {
-                    auto batch_fun_nc = [&](const size_t first, const size_t last) {
-                        if (last - first) {
-                            etl::dyn_matrix<T, 2> padded_conv(etl::dim<2>(conv), pad + etl::dim<2>(conv));
-
-                            for (size_t nc = first; nc < last; ++nc) {
-                                const size_t i = nc / C;
-                                const size_t c = nc % C;
-
-                                // k = 0
-                                conv2_full_flipped<detail::safe_avx_vec>(input(i)(0), p_kernel(0)(c), padded_conv, T(0));
-
-                                for (size_t k = 1; k < K; ++k) {
-                                    conv2_full_flipped<detail::safe_avx_vec>(input(i)(k), p_kernel(k)(c), padded_conv, T(1));
-                                }
-
-                                // Copy back the results
-
-                                for (size_t k = 0; k < etl::dim<2>(conv); ++k) {
-                                    for (size_t l = 0; l < etl::dim<3>(conv); ++l) {
-                                        conv(i, c, k, l) = padded_conv(k, pad + l);
-                                    }
-                                }
-                            }
-                        }
-                    };
-
-                    if (etl::is_parallel) {
-                        dispatch_1d_any(select_parallel(N * C, 2), batch_fun_nc, 0, N * C);
-                    } else {
-                        batch_fun_nc(0, N * C);
-                    }
-                }
-
-                conv.invalidate_gpu();
-
-                return;
-            }
+        if(conv4_full_flipped_padding(input, kernel, conv)){
+            conv.invalidate_gpu();
+            return;
         }
+
+        // 3. General algorithms
 
         if (detail::prefer_sse<T>(k2)) {
             auto batch_fun_nc = [&](const size_t first, const size_t last) {
