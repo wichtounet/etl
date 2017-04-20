@@ -569,8 +569,9 @@ auto conv_4d_valid_flipped(A&& a, B&& b, C&& c) {
 /*!
  * \brief Generic 4D convolution of a with the kernels from b
  *
- * The 4D matrix a is assumed to be of [N, C, H, W] dimensions.
+ * The 4D matrix a is assumed to be of [N, K, H, W] dimensions.
  * The 4D matrix b is assumed to be of [K, C, H, W] dimensions.
+ * The 4D matrix c is assumed to be of [N, C, H, W] dimensions.
  *
  * \param a The input expression
  * \param b The kernel expression
@@ -587,9 +588,9 @@ auto conv_4d_full(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv4_f
 /*!
  * \brief Generic 4D convolution of a with the kernels from b
  *
- * The 4D matrix a is assumed to be of [N, C, Hi, Wi] dimensions.
- * The 4D matrix b is assumed to be of [K, C, Hf, Wf] dimensions.
- * The 4D matrix c is assumed to be of [N, K, Hi - Hf + 1, Wi - Wf + 1] dimensions.
+ * The 4D matrix a is assumed to be of [N, K, H, W] dimensions.
+ * The 4D matrix b is assumed to be of [K, C, H, W] dimensions.
+ * The 4D matrix c is assumed to be of [N, C, H, W] dimensions.
  *
  * \param a The input expression
  * \param b The kernel expression
