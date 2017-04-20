@@ -36,7 +36,35 @@ CONV4_VALID_BACK_TEST_CASE("conv/4d/valid/back/1", "[conv][conv4][back][valid]")
     }
 }
 
-CONV4_VALID_BACK_FLIPPED_TEST_CASE("conv/4d/valid/back/2", "[conv][conv4][back][valid]") {
+CONV4_VALID_BACK_TEST_CASE("conv/4d/valid/back/2", "[conv][conv4][back][valid]") {
+    etl::fast_matrix<T, 7, 9, 5, 5> I;
+    etl::fast_matrix<T, 9, 2, 3, 3> K;
+
+    I = etl::sequence_generator(1.0) * 0.04;
+    K = etl::sequence_generator(2.0) * 0.03;
+
+    etl::fast_matrix<T, 7, 2, 5, 5> ref;
+    etl::fast_matrix<T, 7, 2, 5, 5> c;
+
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        ref = 0.0;
+        for (std::size_t i = 0; i < etl::dim<0>(I); ++i) {
+            for (std::size_t c = 0; c < etl::dim<1>(K); ++c) {
+                for (std::size_t k = 0; k < etl::dim<0>(K); ++k) {
+                    ref(i)(c) += etl::conv_2d_valid<1, 1, 1, 1>(I(i)(k), K(k)(c));
+                }
+            }
+        }
+    }
+
+    Impl::template apply<1, 1, 1, 1>(I, K, c);
+
+    for (std::size_t i = 0; i < ref.size(); ++i) {
+        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], base_eps * 10);
+    }
+}
+
+CONV4_VALID_BACK_FLIPPED_TEST_CASE("conv/4d/valid/back/flipped/1", "[conv][conv4][back][valid]") {
     etl::fast_matrix<T, 7, 9, 5, 5> I;
     etl::fast_matrix<T, 9, 2, 3, 3> K;
 
