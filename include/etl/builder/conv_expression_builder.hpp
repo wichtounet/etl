@@ -578,6 +578,86 @@ auto conv_4d_valid_flipped(A&& a, B&& b, C&& c) {
  *
  * \return an expression representing the results of the convolutions.
  */
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+auto conv_4d_valid_back(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv4_valid_back_expr<value_t<A>, S1, S2, P1, P2>> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+/*!
+ * \brief Generic 4D convolution of a with the kernels from b
+ *
+ * The 4D matrix a is assumed to be of [N, K, H, W] dimensions.
+ * The 4D matrix b is assumed to be of [K, C, H, W] dimensions.
+ * The 4D matrix c is assumed to be of [N, C, H, W] dimensions.
+ *
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The output expression
+ *
+ * \return c
+ */
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
+auto conv_4d_valid_back(A&& a, B&& b, C&& c) {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    c = conv_4d_valid_back<S1, S2, P1, P2>(a, b);
+    return c;
+}
+
+/*!
+ * \brief Generic 4D convolution of a with the kernels from b
+ *
+ * The 4D matrix a is assumed to be of [N, K, H, W] dimensions.
+ * The 4D matrix b is assumed to be of [K, C, H, W] dimensions.
+ * The 4D matrix c is assumed to be of [N, C, H, W] dimensions.
+ *
+ * \param a The input expression
+ * \param b The kernel expression
+ *
+ * \return an expression representing the results of the convolutions.
+ */
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+auto conv_4d_valid_back_flipped(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv4_valid_back_flipped_expr<value_t<A>, S1, S2, P1, P2>> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+/*!
+ * \brief Generic 4D convolution of a with the kernels from b
+ *
+ * The 4D matrix a is assumed to be of [N, K, H, W] dimensions.
+ * The 4D matrix b is assumed to be of [K, C, H, W] dimensions.
+ * The 4D matrix c is assumed to be of [N, C, H, W] dimensions.
+ *
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The output expression
+ *
+ * \return c
+ */
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
+auto conv_4d_valid_back_flipped(A&& a, B&& b, C&& c) {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    c = conv_4d_valid_back_flipped<S1, S2, P1, P2>(a, b);
+    return c;
+}
+
+/*!
+ * \brief Generic 4D convolution of a with the kernels from b
+ *
+ * The 4D matrix a is assumed to be of [N, K, H, W] dimensions.
+ * The 4D matrix b is assumed to be of [K, C, H, W] dimensions.
+ * The 4D matrix c is assumed to be of [N, C, H, W] dimensions.
+ *
+ * \param a The input expression
+ * \param b The kernel expression
+ *
+ * \return an expression representing the results of the convolutions.
+ */
 template <typename A, typename B>
 auto conv_4d_full(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv4_full_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");

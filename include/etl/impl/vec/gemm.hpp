@@ -1908,6 +1908,102 @@ void blas_conv4_valid_filter_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size
     blas_conv4_valid_filter_prepared(input, kernel, conv, s1, s2, p1, p2);
 }
 
+template <typename I_T, typename K_T, typename C_T>
+void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    using T = value_t<I_T>;
+
+    const auto N = etl::dim<0>(input);
+    const auto C = etl::dim<1>(kernel);
+    const auto K = etl::dim<1>(input);
+
+    const size_t i1 = etl::dim<2>(input);
+    const size_t i2 = etl::dim<3>(input);
+    const size_t k1 = etl::dim<2>(kernel);
+    const size_t k2 = etl::dim<3>(kernel);
+
+    // unit-strided result dimensions
+    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
+
+    // real final dimensions
+    const size_t f1 = etl::dim<2>(conv);
+    const size_t f2 = etl::dim<3>(conv);
+
+    input.ensure_cpu_up_to_date();
+    kernel.ensure_cpu_up_to_date();
+
+    auto batch_fun_n = [&](const size_t first, const size_t last) {
+        if (last - first) {
+            SERIAL_SECTION {
+                for (size_t i = first; i < last; ++i) {
+                    for (size_t k = 0; k < K; ++k) {
+                        // use im2col on input(i)(k)
+
+                        etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
+
+                        if (p1 || p2) {
+                            etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
+                            input_padded = T(0);
+
+                            impl::common::pad_2d_input(input(i)(k), input_padded, p1, p2);
+
+                            im2col_direct_tr(input_col, input_padded, k1, k2);
+                        } else {
+                            im2col_direct_tr(input_col, input(i)(k), k1, k2);
+                        }
+
+                        if (s1 > 1 || s2 > 1) {
+                            etl::dyn_matrix<T, 3> tmp_result(C, c1, c2);
+
+                            // tmp_result = kernel(k) * input_col
+                            gemm_large_kernel<default_vec>(
+                                kernel(k).memory_start(), input_col.memory_start(), tmp_result.memory_start(),
+                                C, c1 * c2, k1 * k2, T(0.0));
+
+                            // Strided copy of the large result into the small result
+                            for (size_t c = 0; c < C; ++c) {
+                                for (size_t m = 0; m < f1; ++m) {
+                                    for (size_t n = 0; n < f2; ++n) {
+                                        conv(i, c, m, n) += tmp_result(c, m * s1, n * s2);
+                                    }
+                                }
+                            }
+                        } else {
+                            // conv(i) = kernel(k) * input_col
+                            gemm_large_kernel<default_vec>(
+                                kernel(k).memory_start(), input_col.memory_start(), conv(i).memory_start(),
+                                C, c1 * c2, k1 * k2, T(1.0));
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    if (etl::is_parallel && !is_blas_parallel) {
+        dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+    } else {
+        batch_fun_n(0, N);
+    }
+
+    conv.invalidate_gpu();
+}
+
+template <typename I_T, typename K_T, typename C_T>
+void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    auto prepared_k = force_temporary(kernel);
+
+    // Flip the kernels
+    prepared_k.deep_fflip_inplace();
+
+    blas_conv4_valid_back_prepared(input, prepared_k, conv, s1, s2, p1, p2);
+}
+
+template <typename I_T, typename K_T, typename C_T>
+void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    blas_conv4_valid_back_prepared(input, kernel, conv, s1, s2, p1, p2);
+}
+
 } //end of namespace vec
 
 } //end of namespace impl

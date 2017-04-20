@@ -1459,6 +1459,221 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
 }
 
 /*!
+ * \brief SSE implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename KK, typename CC>
+void conv4_valid_back(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
+    using T = value_t<I>;
+
+    if (etl::dim<1>(kernel) > 0) {
+        const auto N = etl::dim<0>(input);
+        const auto C = etl::dim<1>(kernel);
+        const auto K = etl::dim<1>(input);
+
+        const size_t k2 = etl::dim<3>(kernel);
+
+        input.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date();
+
+        conv = 0;
+
+        if (padding_impl) {
+            static constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+            static constexpr size_t SS = AS / 2;
+
+            if (k2 < SS || k2 % AS > 0) {
+                const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+
+                auto padded_input  = common::pad_right_multi(input, pad);
+                auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
+
+                if (detail::prefer_sse<T>(k2 + pad)) {
+                    auto fun_nc = [&](const size_t first, const size_t last) {
+                        for (size_t nk = first; nk < last; ++nk) {
+                            const size_t i = nk / C;
+                            const size_t c = nk % C;
+
+                            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+
+                            for (size_t k = 1; k < K; ++k) {
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                            }
+                        }
+                    };
+
+                    smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                } else {
+                    auto fun_nc = [&](const size_t first, const size_t last) {
+                        for (size_t nk = first; nk < last; ++nk) {
+                            const size_t i = nk / C;
+                            const size_t c = nk % C;
+
+                            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+
+                            for (size_t k = 1; k < K; ++k) {
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                            }
+                        }
+                    };
+
+                    smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                }
+
+                return;
+            }
+        }
+
+        if (detail::prefer_sse<T>(k2)) {
+            auto fun_nc = [&](const size_t first, const size_t last) {
+                for (size_t nk = first; nk < last; ++nk) {
+                    const size_t i = nk / C;
+                    const size_t c = nk % C;
+
+                    detail::conv2_valid_micro_kernel<detail::safe_sse_vec>(input(i)(0), kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+
+                    for (size_t k = 1; k < K; ++k) {
+                        detail::conv2_valid_micro_kernel<detail::safe_sse_vec>(input(i)(k), kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                    }
+                }
+            };
+
+            smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+        } else {
+            auto fun_nc = [&](const size_t first, const size_t last) {
+                for (size_t nk = first; nk < last; ++nk) {
+                    const size_t i = nk / C;
+                    const size_t c = nk % C;
+
+                    detail::conv2_valid_micro_kernel<detail::safe_avx_vec>(input(i)(0), kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+
+                    for (size_t k = 1; k < K; ++k) {
+                        detail::conv2_valid_micro_kernel<detail::safe_avx_vec>(input(i)(k), kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                    }
+                }
+            };
+
+            smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+        }
+
+        conv.invalidate_gpu();
+    }
+}
+
+/*!
+ * \brief SSE implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename KK, typename CC>
+void conv4_valid_back_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
+    using T = value_t<I>;
+
+    if (etl::dim<0>(kernel) > 0) {
+        const auto N = etl::dim<0>(input);
+        const auto C = etl::dim<1>(kernel);
+        const auto K = etl::dim<1>(input);
+
+        const size_t k2 = etl::dim<3>(kernel);
+
+        input.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date();
+
+        // TODO Performance can be improved further by doing the
+        // padding of the kernel inside the thread for small kernel (3x3, 5x5)
+
+        if (padding_impl) {
+            static constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+            static constexpr size_t SS = AS / 2;
+
+            if (k2 < SS || k2 % AS > 0) {
+                const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+
+                auto padded_input  = common::pad_right_multi(input, pad);
+                auto padded_kernel = common::pad_right_multi(kernel, pad);
+
+                if (detail::prefer_sse<T>(k2 + pad)) {
+                    auto fun_nc = [&](const size_t first, const size_t last) {
+                        for (size_t nk = first; nk < last; ++nk) {
+                            const size_t i = nk / C;
+                            const size_t c = nk % C;
+
+                            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+
+                            for (size_t k = 1; k < K; ++k) {
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                            }
+                        }
+                    };
+
+                    smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                } else {
+                    auto fun_nc = [&](const size_t first, const size_t last) {
+                        for (size_t nk = first; nk < last; ++nk) {
+                            const size_t i = nk / C;
+                            const size_t c = nk % C;
+
+                            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+
+                            for (size_t k = 1; k < K; ++k) {
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                            }
+                        }
+                    };
+
+                    smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                }
+
+                return;
+            }
+        }
+
+        if (detail::prefer_sse<T>(k2)) {
+            auto fun_nc = [&](const size_t first, const size_t last) {
+                for (size_t nk = first; nk < last; ++nk) {
+                    const size_t i = nk / C;
+                    const size_t c = nk % C;
+
+                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(input(i)(0), kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+
+                    for (size_t k = 1; k < K; ++k) {
+                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(input(i)(c), kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                    }
+                }
+            };
+
+            smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+        } else {
+            auto fun_nc = [&](const size_t first, const size_t last) {
+                for (size_t nk = first; nk < last; ++nk) {
+                    const size_t i = nk / C;
+                    const size_t c = nk % C;
+
+                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(input(i)(0), kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+
+                    for (size_t k = 1; k < K; ++k) {
+                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(input(i)(k), kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                    }
+                }
+            };
+
+            smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+        }
+
+        conv.invalidate_gpu();
+    }
+}
+
+/*!
  * \brief AVX implementation of a 4D 'valid' convolution C = I * K, where the output are considered to be kernels
  *
  * \param input The input matrix

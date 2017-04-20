@@ -428,6 +428,88 @@ inline etl::conv4_impl select_conv4_valid_impl() {
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
+inline etl::conv4_impl select_default_conv4_valid_back_impl() {
+    //Note: since the constexpr values will be known at compile time, the
+    //conditions will be a lot simplified
+
+    static constexpr order input_order  = decay_traits<I>::storage_order;
+    static constexpr order kernel_order = decay_traits<K>::storage_order;
+    static constexpr order output_order = decay_traits<C>::storage_order;
+
+    //Only the standard implementation is able to handle column major
+    if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
+        return etl::conv4_impl::STD;
+    }
+
+    if (conv4_prefer_blas) {
+        if (cublas_enabled || mkl_enabled) {
+            return etl::conv4_impl::BLAS_MKL;
+        } else if (vec_enabled && vectorize_impl) {
+            return etl::conv4_impl::BLAS_VEC;
+        }
+    } else {
+        if (vec_enabled && vectorize_impl) {
+            return etl::conv4_impl::VEC;
+        } else if (cublas_enabled || mkl_enabled) {
+            return etl::conv4_impl::BLAS_MKL;
+        }
+    }
+
+    return etl::conv4_impl::STD;
+}
+
+
+/*!
+ * \brief Select the implementation of the conv of I and K in C
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
+inline etl::conv4_impl select_conv4_valid_back_impl() {
+    if (local_context().conv4_selector.forced) {
+        auto forced = local_context().conv4_selector.impl;
+
+        switch (forced) {
+            //VEC cannot always be used
+            case conv4_impl::BLAS_VEC:
+            case conv4_impl::VEC:
+                if (!vec_enabled || !vectorize_impl) {                                                                             // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_valid_back_impl<I, K, C>();                                                             // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                  // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            //BLAS cannot always be used
+            case conv4_impl::BLAS_MKL:
+                if (!cblas_enabled) {                                                                                             // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to BLAS conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_valid_back_impl<I, K, C>();                                                               // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                    // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            default:
+                return forced;
+        }
+    }
+
+    return select_default_conv4_valid_back_impl<I, K, C>();
+}
+
+/*!
+ * \brief Select the implementation of the 4D conv of I and K in C
+ *
+ * This does not take the local context into account.
+ *
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
 inline etl::conv4_impl select_default_conv4_full_impl(size_t k1, size_t k2) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified

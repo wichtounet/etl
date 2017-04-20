@@ -449,6 +449,56 @@ void conv4_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
 }
 
 /*!
+ * \brief Standard implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv4_valid_back(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(etl::dim<1>(input) == etl::dim<0>(kernel), "Invalid dimensions for std::conv4_valid_back");
+    cpp_assert(etl::dim<1>(kernel) == etl::dim<1>(conv), "Invalid dimensions for std::conv4_valid_back");
+    cpp_assert(etl::dim<0>(input) == etl::dim<0>(conv), "Invalid dimensions for std::conv4_valid_back");
+
+    if(etl::dim<0>(kernel) > 0){
+        for (std::size_t i = 0; i < etl::dim<0>(input); ++i) {
+            for (std::size_t c = 0; c < etl::dim<1>(kernel); ++c) {
+                conv2_valid(input(i)(0), kernel(0)(c), conv(i)(c), s1, s2, p1, p2, 0.0);
+
+                for (std::size_t k = 1; k < etl::dim<0>(kernel); ++k) {
+                    conv2_valid(input(i)(k), kernel(k)(c), conv(i)(c), s1, s2, p1, p2, 1.0);
+                }
+            }
+        }
+    }
+}
+
+/*!
+ * \brief Standard implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv4_valid_back_flipped(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(etl::dim<1>(input) == etl::dim<0>(kernel), "Invalid dimensions for std::conv4_valid_back_flipped");
+    cpp_assert(etl::dim<1>(kernel) == etl::dim<1>(conv), "Invalid dimensions for std::conv4_valid_back_flipped");
+    cpp_assert(etl::dim<0>(input) == etl::dim<0>(conv), "Invalid dimensions for std::conv4_valid_back_flipped");
+
+    if(etl::dim<0>(kernel) > 0){
+        for (std::size_t i = 0; i < etl::dim<0>(input); ++i) {
+            for (std::size_t c = 0; c < etl::dim<1>(kernel); ++c) {
+                conv2_valid_flipped(input(i)(0), kernel(0)(c), conv(i)(c), s1, s2, p1, p2, 0.0);
+
+                for (std::size_t k = 1; k < etl::dim<0>(kernel); ++k) {
+                    conv2_valid_flipped(input(i)(k), kernel(k)(c), conv(i)(c), s1, s2, p1, p2, 1.0);
+                }
+            }
+        }
+    }
+}
+
+/*!
  * \brief Standard implementation of a 4D 'valid' convolution C = I * K, where the output are considered to be kernels
  * \param input The input matrix
  * \param kernel The kernel matrix
