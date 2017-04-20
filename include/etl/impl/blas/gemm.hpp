@@ -1358,6 +1358,50 @@ void blas_conv4_valid_filter_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
+/*!
+ * \brief Compute a 4D valid backward convolution using a BLAS matrix multiplication kernel
+ * \param input The input matrix
+ * \param kernel The kernel matrix, with flipped kernels
+ * \param conv The output matrix
+ * \param s1 The stride of the first dimension
+ * \param s2 The stride of the second dimension
+ * \param p1 The padding of the first dimension
+ * \param p2 The padding of the second dimension
+ */
+template <typename I_T, typename K_T, typename C_T>
+void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2){
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+    cpp_unreachable("Unsupported feature called: blas gemm");
+}
+
+/*!
+ * \brief Compute a 4D valid backward convolution, with flipped kernels,  using a BLAS matrix multiplication kernel
+ * \param input The input matrix
+ * \param kernel The kernel matrix, with flipped kernels
+ * \param conv The output matrix
+ * \param s1 The stride of the first dimension
+ * \param s2 The stride of the second dimension
+ * \param p1 The padding of the first dimension
+ * \param p2 The padding of the second dimension
+ */
+template <typename I_T, typename K_T, typename C_T>
+void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2){
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+    cpp_unreachable("Unsupported feature called: blas gemm");
+}
+
 //COVERAGE_EXCLUDE_END
 
 #endif
