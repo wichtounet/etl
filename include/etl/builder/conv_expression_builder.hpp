@@ -942,6 +942,86 @@ auto conv_4d_valid_filter_flipped(A&& a, B&& b, C&& c) {
  * \return an expression representing the results of the convolutions.
  */
 template <typename A, typename B>
+auto conv_4d_valid_filter(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2) {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    using op_t = dyn_conv4_valid_filter_expr<value_t<A>>;
+    return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
+}
+
+/*!
+ * \brief Generic 4D convolution of a with the kernels from b
+ *
+ * The 4D matrix a is assumed to be of [N, C, Hi, Wi] dimensions.
+ * The 4D matrix b is assumed to be of [K, C, Hf, Wf] dimensions.
+ * The 4D matrix c is assumed to be of [N, K, Hi - Hf + 1, Wi - Wf + 1] dimensions.
+ *
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The output expression
+ *
+ * \return c
+ */
+template <typename A, typename B, typename C>
+auto conv_4d_valid_filter(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    c = conv_4d_valid_filter(a, b, s1, s2, p1, p2);
+    return c;
+}
+
+/*!
+ * \brief Generic 4D convolution of a with the kernels from b
+ *
+ * The 4D matrix a is assumed to be of [N, C, H, W] dimensions.
+ * The 4D matrix b is assumed to be of [K, C, H, W] dimensions.
+ *
+ * \param a The input expression
+ * \param b The kernel expression
+ *
+ * \return an expression representing the results of the convolutions.
+ */
+template <typename A, typename B>
+auto conv_4d_valid_filter_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2){
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    using op_t = dyn_conv4_valid_filter_flipped_expr<value_t<A>>;
+    return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
+}
+
+/*!
+ * \brief Generic 4D convolution of a with the kernels from b
+ *
+ * The 4D matrix a is assumed to be of [N, C, Hi, Wi] dimensions.
+ * The 4D matrix b is assumed to be of [K, C, Hf, Wf] dimensions.
+ * The 4D matrix c is assumed to be of [N, K, Hi - Hf + 1, Wi - Wf + 1] dimensions.
+ *
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The output expression
+ *
+ * \return c
+ */
+template <typename A, typename B, typename C>
+auto conv_4d_valid_filter_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    c = conv_4d_valid_filter_flipped(a, b, s1, s2, p1, p2);
+    return c;
+}
+
+/*!
+ * \brief Generic 4D convolution of a with the kernels from b
+ *
+ * The 4D matrix a is assumed to be of [N, C, H, W] dimensions.
+ * The 4D matrix b is assumed to be of [K, C, H, W] dimensions.
+ *
+ * \param a The input expression
+ * \param b The kernel expression
+ *
+ * \return an expression representing the results of the convolutions.
+ */
+template <typename A, typename B>
 auto conv_4d_full_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv4_full_flipped_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
 
