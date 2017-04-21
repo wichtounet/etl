@@ -1266,8 +1266,6 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
-        conv = 0;
-
         if (padding_impl) {
             static constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
             static constexpr size_t SS = AS / 2;
