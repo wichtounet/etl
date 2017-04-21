@@ -352,7 +352,7 @@ inline etl::conv4_impl select_default_conv4_valid_impl() {
     }
 
     if (conv4_prefer_blas) {
-        if (cublas_enabled || mkl_enabled) {
+        if (cblas_enabled) {
             return etl::conv4_impl::BLAS_MKL;
         } else if (vec_enabled && vectorize_impl) {
             return etl::conv4_impl::BLAS_VEC;
@@ -360,7 +360,7 @@ inline etl::conv4_impl select_default_conv4_valid_impl() {
     } else {
         if (vec_enabled && vectorize_impl) {
             return etl::conv4_impl::VEC;
-        } else if (cublas_enabled || mkl_enabled) {
+        } else if (cblas_enabled) {
             return etl::conv4_impl::BLAS_MKL;
         }
     }
@@ -442,7 +442,7 @@ inline etl::conv4_impl select_default_conv4_valid_back_impl() {
     }
 
     if (conv4_prefer_blas) {
-        if (cublas_enabled || mkl_enabled) {
+        if (cblas_enabled) {
             return etl::conv4_impl::BLAS_MKL;
         } else if (vec_enabled && vectorize_impl) {
             return etl::conv4_impl::BLAS_VEC;
@@ -450,7 +450,7 @@ inline etl::conv4_impl select_default_conv4_valid_back_impl() {
     } else {
         if (vec_enabled && vectorize_impl) {
             return etl::conv4_impl::VEC;
-        } else if (cublas_enabled || mkl_enabled) {
+        } else if (cblas_enabled) {
             return etl::conv4_impl::BLAS_MKL;
         }
     }
