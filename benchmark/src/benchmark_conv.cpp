@@ -434,6 +434,29 @@ CONV4_BENCH("sconv4_valid_15 [conv][conv4][conv4_chain]", conv_4d_valid_policy_1
 CONV4_BENCH("sconv4_valid_16 [conv][conv4][conv4_chain]", conv_4d_valid_policy_16, conv_4d_valid)
 CONV4_BENCH("sconv4_valid_17 [conv][conv4][conv4_chain]", conv_4d_valid_policy_17, conv_4d_valid)
 
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv4_valid_same [conv][conv4]", conv_4d_valid_policy_3,
+    FLOPS([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){ return 2 * n * k * c * i * i * w * w; }),
+    CPM_SECTION_INIT([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){
+        return std::make_tuple(smat4(n, c, i, i), smat4(k, c, w, w), smat4(n, k, i, i)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat4& a, smat4& b, smat4& r){ r = etl::conv_4d_valid(a, b, 1, 1, 1, 1); }),
+    CPM_SECTION_FUNCTOR("std", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::STD, etl::conv_4d_valid(a, b, 1, 1, 1, 1)); })
+    VEC_SECTION_FUNCTOR("vec", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::VEC, etl::conv_4d_valid(a, b, 1, 1, 1, 1)); })
+    VEC_SECTION_FUNCTOR("blas_vec", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS_VEC, etl::conv_4d_valid(a, b, 1, 1, 1, 1)); })
+    BLAS_SECTION_FUNCTOR("blas_mkl", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS_MKL, etl::conv_4d_valid(a, b, 1, 1, 1, 1)); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_valid(a, b, 1, 1, 1, 1)); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv4_valid_back_same [conv][conv4]", conv_4d_valid_policy_3,
+    FLOPS([](std::size_t n, std::size_t c, std::size_t k, std::size_t i, std::size_t w){ return 2 * n * c * k * i * i * w * w; }),
+    CPM_SECTION_INIT([](std::size_t n, std::size_t c, std::size_t k, std::size_t i, std::size_t w){
+        return std::make_tuple(smat4(n, k, i, i), smat4(k, c, w, w), smat4(n, c, i, i)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat4& a, smat4& b, smat4& r){ r = etl::conv_4d_valid_back<1,1,1,1>(a, b); }),
+    CPM_SECTION_FUNCTOR("fft_std", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::FFT_STD, (etl::conv_4d_valid_back<1,1,1,1>(a, b))); })
+    VEC_SECTION_FUNCTOR("vec", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::VEC, (etl::conv_4d_valid_back<1,1,1,1>(a, b))); })
+    MKL_SECTION_FUNCTOR("fft_mkl", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::FFT_MKL, (etl::conv_4d_valid_back<1,1,1,1>(a, b))); })
+    CUFFT_SECTION_FUNCTOR("fft_cufft", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::FFT_CUFFT, (etl::conv_4d_valid_back<1,1,1,1>(a, b))); })
+)
+
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv4_valid_filter [conv][conv4]", conv_4d_valid_policy,
     FLOPS([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){ return 2 * n * k * c * i * i * w * w; }),
     CPM_SECTION_INIT([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){
