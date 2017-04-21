@@ -99,6 +99,12 @@ CONV_FUNCTOR(std_conv4_valid_back, c = selected_helper(etl::conv4_impl::STD, (et
 CONV_FUNCTOR(default_conv4_valid_back_flipped, c = (etl::conv_4d_valid_back_flipped<S1,S2,P1,P2>(a, b)))
 CONV_FUNCTOR(std_conv4_valid_back_flipped, c = selected_helper(etl::conv4_impl::STD, (etl::conv_4d_valid_back_flipped<S1,S2,P1,P2>(a, b))))
 
+DYN_CONV_FUNCTOR(default_dyn_conv4_valid_back, c = (etl::conv_4d_valid_back(a, b, s1, s2, p1, p2)))
+DYN_CONV_FUNCTOR(std_dyn_conv4_valid_back, c = selected_helper(etl::conv4_impl::STD, (etl::conv_4d_valid_back(a, b, s1, s2, p1, p2))))
+
+DYN_CONV_FUNCTOR(default_dyn_conv4_valid_back_flipped, c = (etl::conv_4d_valid_back_flipped(a, b, s1, s2, p1, p2)))
+DYN_CONV_FUNCTOR(std_dyn_conv4_valid_back_flipped, c = selected_helper(etl::conv4_impl::STD, (etl::conv_4d_valid_back_flipped(a, b, s1, s2, p1, p2))))
+
 CONV_FUNCTOR(default_conv4_valid_filter, c = (etl::conv_4d_valid_filter<S1, S2, P1, P2>(a, b)))
 CONV_FUNCTOR(std_conv4_valid_filter, c = selected_helper(etl::conv4_impl::STD, (etl::conv_4d_valid_filter<S1, S2, P1, P2>(a, b))))
 
@@ -193,6 +199,12 @@ CONV_FUNCTOR(fft_std_conv2_full_multi_flipped, c = selected_helper(etl::conv_mul
 #define CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv4_valid_back_flipped)
 #define CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv4_valid_back_flipped)
 
+#define DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_dyn_conv4_valid_back)
+#define DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_dyn_conv4_valid_back)
+
+#define DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_dyn_conv4_valid_back_flipped)
+#define DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_dyn_conv4_valid_back_flipped)
+
 #define CONV4_VALID_FILTER_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv4_valid_filter)
 #define CONV4_VALID_FILTER_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv4_valid_filter)
 
@@ -251,6 +263,8 @@ CONV_FUNCTOR(blas_vec_conv4_valid_filter_flipped, c = selected_helper(etl::conv4
 
 DYN_CONV_FUNCTOR(blas_vec_dyn_conv4_valid, c = selected_helper(etl::conv4_impl::BLAS_VEC, (etl::conv_4d_valid(a, b, s1, s2, p1, p2))))
 DYN_CONV_FUNCTOR(blas_vec_dyn_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::BLAS_VEC, (etl::conv_4d_valid_flipped(a, b, s1, s2, p1, p2))))
+DYN_CONV_FUNCTOR(blas_vec_dyn_conv4_valid_back, c = selected_helper(etl::conv4_impl::BLAS_VEC, (etl::conv_4d_valid_back(a, b, s1, s2, p1, p2))))
+DYN_CONV_FUNCTOR(blas_vec_dyn_conv4_valid_back_flipped, c = selected_helper(etl::conv4_impl::BLAS_VEC, (etl::conv_4d_valid_back_flipped(a, b, s1, s2, p1, p2))))
 
 #define CONV2_VALID_MULTI_TEST_CASE_SECTION_BLAS_VEC CONV_TEST_CASE_SECTIONS(blas_vec_conv2_valid_multi)
 #define CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_BLAS_VEC CONV_TEST_CASE_SECTIONS(blas_vec_conv2_valid_multi_flipped)
@@ -269,6 +283,8 @@ DYN_CONV_FUNCTOR(blas_vec_dyn_conv4_valid_flipped, c = selected_helper(etl::conv
 
 #define DYN_CONV4_VALID_TEST_CASE_SECTION_BLAS_VEC CONV_TEST_CASE_SECTIONS(blas_vec_dyn_conv4_valid)
 #define DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_BLAS_VEC CONV_TEST_CASE_SECTIONS(blas_vec_dyn_conv4_valid_flipped)
+#define DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_BLAS_VEC CONV_TEST_CASE_SECTIONS(blas_vec_dyn_conv4_valid_back)
+#define DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_BLAS_VEC CONV_TEST_CASE_SECTIONS(blas_vec_dyn_conv4_valid_back_flipped)
 #else
 #define CONV2_VALID_MULTI_TEST_CASE_SECTION_BLAS_VEC
 #define CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_BLAS_VEC
@@ -287,6 +303,8 @@ DYN_CONV_FUNCTOR(blas_vec_dyn_conv4_valid_flipped, c = selected_helper(etl::conv
 
 #define DYN_CONV4_VALID_TEST_CASE_SECTION_BLAS_VEC
 #define DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_BLAS_VEC
+#define DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_BLAS_VEC
+#define DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_BLAS_VEC
 #endif
 
 #ifdef ETL_BLAS_MODE
@@ -307,6 +325,8 @@ CONV_FUNCTOR(blas_mkl_conv4_valid_filter_flipped, c = selected_helper(etl::conv4
 
 DYN_CONV_FUNCTOR(blas_mkl_dyn_conv4_valid, c = selected_helper(etl::conv4_impl::BLAS_MKL, (etl::conv_4d_valid(a, b, s1, s2, p1, p2))))
 DYN_CONV_FUNCTOR(blas_mkl_dyn_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::BLAS_MKL, (etl::conv_4d_valid_flipped(a, b, s1, s2, p1, p2))))
+DYN_CONV_FUNCTOR(blas_mkl_dyn_conv4_valid_back, c = selected_helper(etl::conv4_impl::BLAS_MKL, (etl::conv_4d_valid_back(a, b, s1, s2, p1, p2))))
+DYN_CONV_FUNCTOR(blas_mkl_dyn_conv4_valid_back_flipped, c = selected_helper(etl::conv4_impl::BLAS_MKL, (etl::conv_4d_valid_back_flipped(a, b, s1, s2, p1, p2))))
 
 #define CONV2_VALID_MULTI_TEST_CASE_SECTION_BLAS_MKL CONV_TEST_CASE_SECTIONS(blas_mkl_conv2_valid_multi)
 #define CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_BLAS_MKL CONV_TEST_CASE_SECTIONS(blas_mkl_conv2_valid_multi_flipped)
@@ -325,6 +345,8 @@ DYN_CONV_FUNCTOR(blas_mkl_dyn_conv4_valid_flipped, c = selected_helper(etl::conv
 
 #define DYN_CONV4_VALID_TEST_CASE_SECTION_BLAS_MKL CONV_TEST_CASE_SECTIONS(blas_mkl_dyn_conv4_valid)
 #define DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_BLAS_MKL CONV_TEST_CASE_SECTIONS(blas_mkl_dyn_conv4_valid_flipped)
+#define DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_BLAS_MKL CONV_TEST_CASE_SECTIONS(blas_mkl_dyn_conv4_valid_back)
+#define DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_BLAS_MKL CONV_TEST_CASE_SECTIONS(blas_mkl_dyn_conv4_valid_back_flipped)
 #else
 #define CONV2_VALID_MULTI_TEST_CASE_SECTION_BLAS_MKL
 #define CONV2_VALID_MULTI_FLIPPED_TEST_CASE_SECTION_BLAS_MKL
@@ -343,6 +365,8 @@ DYN_CONV_FUNCTOR(blas_mkl_dyn_conv4_valid_flipped, c = selected_helper(etl::conv
 
 #define DYN_CONV4_VALID_TEST_CASE_SECTION_BLAS_MKL
 #define DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_BLAS_MKL
+#define DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_BLAS_MKL
+#define DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_BLAS_MKL
 #endif
 
 #ifdef ETL_MKL_MODE
@@ -457,6 +481,8 @@ CONV_FUNCTOR(vec_conv4_valid_filter_flipped, c = selected_helper(etl::conv4_impl
 
 DYN_CONV_FUNCTOR(vec_dyn_conv4_valid, c = selected_helper(etl::conv4_impl::VEC, (etl::conv_4d_valid(a, b, s1, s2, p1, p2))))
 DYN_CONV_FUNCTOR(vec_dyn_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::VEC, (etl::conv_4d_valid_flipped(a, b, s1, s2, p1, p2))))
+DYN_CONV_FUNCTOR(vec_dyn_conv4_valid_back, c = selected_helper(etl::conv4_impl::VEC, (etl::conv_4d_valid_back(a, b, s1, s2, p1, p2))))
+DYN_CONV_FUNCTOR(vec_dyn_conv4_valid_back_flipped, c = selected_helper(etl::conv4_impl::VEC, (etl::conv_4d_valid_back_flipped(a, b, s1, s2, p1, p2))))
 
 #define CONV1_VALID_TEST_CASE_SECTION_VEC CONV_TEST_CASE_SECTIONS(vec_conv1_valid)
 #define CONV1_SAME_TEST_CASE_SECTION_VEC CONV_TEST_CASE_SECTIONS(vec_conv1_same)
@@ -496,6 +522,8 @@ DYN_CONV_FUNCTOR(vec_dyn_conv4_valid_flipped, c = selected_helper(etl::conv4_imp
 
 #define DYN_CONV4_VALID_TEST_CASE_SECTION_VEC CONV_TEST_CASE_SECTIONS(vec_dyn_conv4_valid)
 #define DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_VEC CONV_TEST_CASE_SECTIONS(vec_dyn_conv4_valid_flipped)
+#define DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_VEC CONV_TEST_CASE_SECTIONS(vec_dyn_conv4_valid_back)
+#define DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_VEC CONV_TEST_CASE_SECTIONS(vec_dyn_conv4_valid_back_flipped)
 #else
 #define CONV1_VALID_TEST_CASE_SECTION_VEC
 #define CONV1_SAME_TEST_CASE_SECTION_VEC
@@ -535,6 +563,8 @@ DYN_CONV_FUNCTOR(vec_dyn_conv4_valid_flipped, c = selected_helper(etl::conv4_imp
 
 #define DYN_CONV4_VALID_TEST_CASE_SECTION_VEC
 #define DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_VEC
+#define DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_VEC
+#define DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_VEC
 #endif
 
 #ifdef TEST_CUDNN
@@ -556,6 +586,8 @@ CONV_FUNCTOR(cudnn_conv4_full_flipped, c = selected_helper(etl::conv4_impl::CUDN
 
 DYN_CONV_FUNCTOR(cudnn_dyn_conv4_valid, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid(a, b, s1, s2, p1, p2))))
 DYN_CONV_FUNCTOR(cudnn_dyn_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid_flipped(a, b, s1, s2, p1, p2))))
+DYN_CONV_FUNCTOR(cudnn_dyn_conv4_valid_back, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid_back(a, b, s1, s2, p1, p2))))
+DYN_CONV_FUNCTOR(cudnn_dyn_conv4_valid_back_flipped, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid_back_flipped(a, b, s1, s2, p1, p2))))
 
 CONV_FUNCTOR(cudnn_conv2_valid_multi, c = selected_helper(etl::conv_multi_impl::CUDNN, (etl::conv_2d_valid_multi<S1, S2, P1, P2>(a, b))))
 CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi_impl::CUDNN, (etl::conv_2d_valid_multi_flipped<S1, S2, P1, P2>(a, b))))
@@ -582,6 +614,8 @@ CONV_FUNCTOR(cudnn_conv2_full_multi_flipped, c = selected_helper(etl::conv_multi
 
 #define DYN_CONV4_VALID_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_dyn_conv4_valid)
 #define DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_dyn_conv4_valid_flipped)
+#define DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_dyn_conv4_valid_back)
+#define DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_dyn_conv4_valid_back_flipped)
 
 #define CONV2_FULL_MULTI_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_conv2_full_multi)
 #define CONV2_FULL_MULTI_FLIPPED_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_conv2_full_multi_flipped)
@@ -608,6 +642,8 @@ CONV_FUNCTOR(cudnn_conv2_full_multi_flipped, c = selected_helper(etl::conv_multi
 
 #define DYN_CONV4_VALID_TEST_CASE_SECTION_CUDNN
 #define DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_CUDNN
+#define DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_CUDNN
+#define DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_CUDNN
 
 #define CONV2_FULL_MULTI_TEST_CASE_SECTION_CUDNN
 #define CONV2_FULL_MULTI_FLIPPED_TEST_CASE_SECTION_CUDNN
@@ -764,6 +800,28 @@ CONV_FUNCTOR(cudnn_conv2_full_multi_flipped, c = selected_helper(etl::conv_multi
     }                                                    \
     CONV_TEST_CASE_DEFN
 
+#define DYN_CONV4_VALID_TEST_CASE(name, description) \
+    CONV_TEST_CASE_DECL(name, description) {     \
+        DYN_CONV4_VALID_TEST_CASE_SECTION_DEFAULT    \
+        DYN_CONV4_VALID_TEST_CASE_SECTION_STD        \
+        DYN_CONV4_VALID_TEST_CASE_SECTION_BLAS_VEC   \
+        DYN_CONV4_VALID_TEST_CASE_SECTION_BLAS_MKL   \
+        DYN_CONV4_VALID_TEST_CASE_SECTION_VEC        \
+        DYN_CONV4_VALID_TEST_CASE_SECTION_CUDNN      \
+    }                                            \
+    CONV_TEST_CASE_DEFN
+
+#define DYN_CONV4_VALID_FLIPPED_TEST_CASE(name, description) \
+    CONV_TEST_CASE_DECL(name, description) {             \
+        DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_DEFAULT    \
+        DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_STD        \
+        DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_BLAS_VEC   \
+        DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_BLAS_MKL   \
+        DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_VEC        \
+        DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_CUDNN      \
+    }                                                    \
+    CONV_TEST_CASE_DEFN
+
 #define CONV4_VALID_BACK_TEST_CASE(name, description) \
     CONV_TEST_CASE_DECL(name, description) {          \
         CONV4_VALID_BACK_TEST_CASE_SECTION_DEFAULT    \
@@ -781,6 +839,26 @@ CONV_FUNCTOR(cudnn_conv2_full_multi_flipped, c = selected_helper(etl::conv_multi
         CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_BLAS_VEC   \
         CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_BLAS_MKL   \
         CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_VEC        \
+    }                                                         \
+    CONV_TEST_CASE_DEFN
+
+#define DYN_CONV4_VALID_BACK_TEST_CASE(name, description) \
+    CONV_TEST_CASE_DECL(name, description) {          \
+        DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_DEFAULT    \
+        DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_STD        \
+        DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_BLAS_VEC   \
+        DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_BLAS_MKL   \
+        DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_VEC        \
+    }                                                 \
+    CONV_TEST_CASE_DEFN
+
+#define DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE(name, description) \
+    CONV_TEST_CASE_DECL(name, description) {                  \
+        DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_DEFAULT    \
+        DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_STD        \
+        DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_BLAS_VEC   \
+        DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_BLAS_MKL   \
+        DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_VEC        \
     }                                                         \
     CONV_TEST_CASE_DEFN
 
@@ -804,28 +882,6 @@ CONV_FUNCTOR(cudnn_conv2_full_multi_flipped, c = selected_helper(etl::conv_multi
         CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_VEC        \
         CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_CUDNN      \
     }                                                           \
-    CONV_TEST_CASE_DEFN
-
-#define DYN_CONV4_VALID_TEST_CASE(name, description) \
-    CONV_TEST_CASE_DECL(name, description) {     \
-        DYN_CONV4_VALID_TEST_CASE_SECTION_DEFAULT    \
-        DYN_CONV4_VALID_TEST_CASE_SECTION_STD        \
-        DYN_CONV4_VALID_TEST_CASE_SECTION_BLAS_VEC   \
-        DYN_CONV4_VALID_TEST_CASE_SECTION_BLAS_MKL   \
-        DYN_CONV4_VALID_TEST_CASE_SECTION_VEC        \
-        DYN_CONV4_VALID_TEST_CASE_SECTION_CUDNN      \
-    }                                            \
-    CONV_TEST_CASE_DEFN
-
-#define DYN_CONV4_VALID_FLIPPED_TEST_CASE(name, description) \
-    CONV_TEST_CASE_DECL(name, description) {             \
-        DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_DEFAULT    \
-        DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_STD        \
-        DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_BLAS_VEC   \
-        DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_BLAS_MKL   \
-        DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_VEC        \
-        DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_CUDNN      \
-    }                                                    \
     CONV_TEST_CASE_DEFN
 
 #define CONV4_FULL_TEST_CASE(name, description) \
