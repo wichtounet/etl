@@ -335,6 +335,46 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_multi(const I& input, size_t pad){
 }
 
 /*!
+ * \brief Return a new matrix equivalent to padding the last dimension of the input matrix to the right
+ * \param input The matrix to pad
+ * \param pad The number of padding elements
+ * \return a new matrix containing the result
+ */
+template <typename I, cpp_enable_if((decay_traits<I>::dimensions() == 4))>
+etl::dyn_matrix<value_t<I>, 4> pad_right_multi_double(const I& input, size_t pad, size_t p1, size_t p2){
+    using T = value_t<I>;
+
+    input.ensure_cpu_up_to_date();
+
+    etl::dyn_matrix<T, 4> padded_input(etl::dim<0>(input), etl::dim<1>(input), etl::dim<2>(input) + 2 * p1, etl::dim<3>(input) + pad + 2 * p2);
+
+    padded_input = 0;
+
+    const auto C1 = etl::dim<1>(input) * etl::dim<2>(input) * etl::dim<3>(input);
+    const auto C2 = etl::dim<2>(input) * etl::dim<3>(input);
+    const auto C3 = etl::dim<3>(input);
+
+    const auto PC1 = etl::dim<1>(padded_input) * etl::dim<2>(padded_input) * etl::dim<3>(padded_input);
+    const auto PC2 = etl::dim<2>(padded_input) * etl::dim<3>(padded_input);
+    const auto PC3 = etl::dim<3>(padded_input);
+
+    for(size_t i = 0; i < etl::dim<0>(input); ++i){
+        for(size_t j = 0; j < etl::dim<1>(input); ++j){
+            for(size_t k = 0; k < etl::dim<2>(input); ++k){
+                size_t p_k = p1 + k;
+
+                direct_copy_n(
+                    input.memory_start() + i * C1 + j * C2 + p_k * C3,
+                    padded_input.memory_start() + i * PC1 + j * PC2 + p_k * PC3 + p2,
+                    etl::dim<3>(input));
+            }
+        }
+    }
+
+    return padded_input;
+}
+
+/*!
  * \brief Return a new matrix equivalent to padding the last dimension of the flipped input matrix to the right
  * \param input The matrix to pad
  * \param pad The number of padding elements

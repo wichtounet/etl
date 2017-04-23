@@ -1273,39 +1273,76 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
             if (k2 < SS || k2 % AS > 0) {
                 const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-                auto padded_input  = common::pad_right_multi(input, pad);
-                auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
+                if (cpp_likely(p1 == 0 && p2 == 0)) {
+                    auto padded_input  = common::pad_right_multi(input, pad);
+                    auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
 
-                if (detail::prefer_sse<T>(k2 + pad)) {
-                    auto fun_nk = [&](const size_t first, const size_t last) {
-                        for (size_t nk = first; nk < last; ++nk) {
-                            const size_t i = nk / K;
-                            const size_t k = nk % K;
+                    if (detail::prefer_sse<T>(k2 + pad)) {
+                        auto fun_nk = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / K;
+                                const size_t k = nk % K;
 
-                            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
 
-                            for (size_t c = 1; c < C; ++c) {
-                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, p1, p2, T(1));
+                                for (size_t c = 1; c < C; ++c) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, p1, p2, T(1));
+                                }
                             }
-                        }
-                    };
+                        };
 
-                    smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                    } else {
+                        auto fun_nk = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / K;
+                                const size_t k = nk % K;
+
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
+
+                                for (size_t c = 1; c < C; ++c) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, p1, p2, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                    }
                 } else {
-                    auto fun_nk = [&](const size_t first, const size_t last) {
-                        for (size_t nk = first; nk < last; ++nk) {
-                            const size_t i = nk / K;
-                            const size_t k = nk % K;
+                    auto padded_input  = common::pad_right_multi_double(input, pad, p1, p2);
+                    auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
 
-                            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
+                    if (detail::prefer_sse<T>(k2 + pad)) {
+                        auto fun_nk = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / K;
+                                const size_t k = nk % K;
 
-                            for (size_t c = 1; c < C; ++c) {
-                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, p1, p2, T(1));
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, 0, 0, T(0));
+
+                                for (size_t c = 1; c < C; ++c) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, 0, 0, T(1));
+                                }
                             }
-                        }
-                    };
+                        };
 
-                    smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                    } else {
+                        auto fun_nk = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / K;
+                                const size_t k = nk % K;
+
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, 0, 0, T(0));
+
+                                for (size_t c = 1; c < C; ++c) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, 0, 0, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                    }
                 }
 
                 return;
@@ -1381,39 +1418,76 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
             if (k2 < SS || k2 % AS > 0) {
                 const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-                auto padded_input  = common::pad_right_multi(input, pad);
-                auto padded_kernel = common::pad_right_multi(kernel, pad);
+                if(cpp_likely(p1 == 0 && p2 == 0)){
+                    auto padded_input  = common::pad_right_multi(input, pad);
+                    auto padded_kernel = common::pad_right_multi(kernel, pad);
 
-                if (detail::prefer_sse<T>(k2 + pad)) {
-                    auto fun_nk = [&](const size_t first, const size_t last) {
-                        for (size_t nk = first; nk < last; ++nk) {
-                            const size_t i = nk / K;
-                            const size_t k = nk % K;
+                    if (detail::prefer_sse<T>(k2 + pad)) {
+                        auto fun_nk = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / K;
+                                const size_t k = nk % K;
 
-                            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
 
-                            for (size_t c = 1; c < C; ++c) {
-                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, p1, p2, T(1));
+                                for (size_t c = 1; c < C; ++c) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, p1, p2, T(1));
+                                }
                             }
-                        }
-                    };
+                        };
 
-                    smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                    } else {
+                        auto fun_nk = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / K;
+                                const size_t k = nk % K;
+
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
+
+                                for (size_t c = 1; c < C; ++c) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, p1, p2, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                    }
                 } else {
-                    auto fun_nk = [&](const size_t first, const size_t last) {
-                        for (size_t nk = first; nk < last; ++nk) {
-                            const size_t i = nk / K;
-                            const size_t k = nk % K;
+                    auto padded_input  = common::pad_right_multi_double(input, pad, p1, p2);
+                    auto padded_kernel = common::pad_right_multi(kernel, pad);
 
-                            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
+                    if (detail::prefer_sse<T>(k2 + pad)) {
+                        auto fun_nk = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / K;
+                                const size_t k = nk % K;
 
-                            for (size_t c = 1; c < C; ++c) {
-                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, p1, p2, T(1));
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, 0, 0, T(0));
+
+                                for (size_t c = 1; c < C; ++c) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, 0, 0, T(1));
+                                }
                             }
-                        }
-                    };
+                        };
 
-                    smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                    } else {
+                        auto fun_nk = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / K;
+                                const size_t k = nk % K;
+
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, 0, 0, T(0));
+
+                                for (size_t c = 1; c < C; ++c) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, 0, 0, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                    }
                 }
 
                 return;
@@ -1488,39 +1562,76 @@ void conv4_valid_back(const I& input, const KK& kernel, CC&& conv, size_t s1, si
             if (k2 < SS || k2 % AS > 0) {
                 const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-                auto padded_input  = common::pad_right_multi(input, pad);
-                auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
+                if(cpp_likely(p1 == 0 && p2 == 0)){
+                    auto padded_input  = common::pad_right_multi(input, pad);
+                    auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
 
-                if (detail::prefer_sse<T>(k2 + pad)) {
-                    auto fun_nc = [&](const size_t first, const size_t last) {
-                        for (size_t nk = first; nk < last; ++nk) {
-                            const size_t i = nk / C;
-                            const size_t c = nk % C;
+                    if (detail::prefer_sse<T>(k2 + pad)) {
+                        auto fun_nc = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / C;
+                                const size_t c = nk % C;
 
-                            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
 
-                            for (size_t k = 1; k < K; ++k) {
-                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                                for (size_t k = 1; k < K; ++k) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                                }
                             }
-                        }
-                    };
+                        };
 
-                    smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                    } else {
+                        auto fun_nc = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / C;
+                                const size_t c = nk % C;
+
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+
+                                for (size_t k = 1; k < K; ++k) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                    }
                 } else {
-                    auto fun_nc = [&](const size_t first, const size_t last) {
-                        for (size_t nk = first; nk < last; ++nk) {
-                            const size_t i = nk / C;
-                            const size_t c = nk % C;
+                    auto padded_input  = common::pad_right_multi_double(input, pad, p1, p2);
+                    auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
 
-                            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+                    if (detail::prefer_sse<T>(k2 + pad)) {
+                        auto fun_nc = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / C;
+                                const size_t c = nk % C;
 
-                            for (size_t k = 1; k < K; ++k) {
-                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, 0, 0, T(0));
+
+                                for (size_t k = 1; k < K; ++k) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, 0, 0, T(1));
+                                }
                             }
-                        }
-                    };
+                        };
 
-                    smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                    } else {
+                        auto fun_nc = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / C;
+                                const size_t c = nk % C;
+
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, 0, 0, T(0));
+
+                                for (size_t k = 1; k < K; ++k) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, 0, 0, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                    }
                 }
 
                 return;
@@ -1596,39 +1707,76 @@ void conv4_valid_back_flipped(const I& input, const KK& kernel, CC&& conv, size_
             if (k2 < SS || k2 % AS > 0) {
                 const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-                auto padded_input  = common::pad_right_multi(input, pad);
-                auto padded_kernel = common::pad_right_multi(kernel, pad);
+                if(cpp_likely(p1 == 0 && p2 == 0)){
+                    auto padded_input  = common::pad_right_multi(input, pad);
+                    auto padded_kernel = common::pad_right_multi(kernel, pad);
 
-                if (detail::prefer_sse<T>(k2 + pad)) {
-                    auto fun_nc = [&](const size_t first, const size_t last) {
-                        for (size_t nk = first; nk < last; ++nk) {
-                            const size_t i = nk / C;
-                            const size_t c = nk % C;
+                    if (detail::prefer_sse<T>(k2 + pad)) {
+                        auto fun_nc = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / C;
+                                const size_t c = nk % C;
 
-                            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
 
-                            for (size_t k = 1; k < K; ++k) {
-                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                                for (size_t k = 1; k < K; ++k) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                                }
                             }
-                        }
-                    };
+                        };
 
-                    smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                    } else {
+                        auto fun_nc = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / C;
+                                const size_t c = nk % C;
+
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+
+                                for (size_t k = 1; k < K; ++k) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                    }
                 } else {
-                    auto fun_nc = [&](const size_t first, const size_t last) {
-                        for (size_t nk = first; nk < last; ++nk) {
-                            const size_t i = nk / C;
-                            const size_t c = nk % C;
+                    auto padded_input  = common::pad_right_multi_double(input, pad, p1, p2);
+                    auto padded_kernel = common::pad_right_multi(kernel, pad);
 
-                            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+                    if (detail::prefer_sse<T>(k2 + pad)) {
+                        auto fun_nc = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / C;
+                                const size_t c = nk % C;
 
-                            for (size_t k = 1; k < K; ++k) {
-                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, 0, 0, T(0));
+
+                                for (size_t k = 1; k < K; ++k) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, 0, 0, T(1));
+                                }
                             }
-                        }
-                    };
+                        };
 
-                    smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                    } else {
+                        auto fun_nc = [&](const size_t first, const size_t last) {
+                            for (size_t nk = first; nk < last; ++nk) {
+                                const size_t i = nk / C;
+                                const size_t c = nk % C;
+
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, 0, 0, T(0));
+
+                                for (size_t k = 1; k < K; ++k) {
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, 0, 0, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                    }
                 }
 
                 return;
@@ -1702,51 +1850,100 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
             if (k2 < SS || k2 % AS > 0) {
                 const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-                auto padded_input  = common::pad_right_multi(input, pad);
-                auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
+                if(cpp_likely(p1 == 0 && p2 == 0)){
+                    auto padded_input  = common::pad_right_multi(input, pad);
+                    auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
 
-                if (detail::prefer_sse<T>(k2 + pad)) {
-                    auto fun_kc = [&](const size_t first, const size_t last) {
-                        //i = 0
-                        for (size_t kc = first; kc < last; ++kc) {
-                            const size_t k = kc / C;
-                            const size_t c = kc % C;
-
-                            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
-                        }
-
-                        for (size_t i = 1; i < N; ++i) {
+                    if (detail::prefer_sse<T>(k2 + pad)) {
+                        auto fun_kc = [&](const size_t first, const size_t last) {
+                            //i = 0
                             for (size_t kc = first; kc < last; ++kc) {
                                 const size_t k = kc / C;
                                 const size_t c = kc % C;
 
-                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                             }
-                        }
-                    };
 
-                    smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                            for (size_t i = 1; i < N; ++i) {
+                                for (size_t kc = first; kc < last; ++kc) {
+                                    const size_t k = kc / C;
+                                    const size_t c = kc % C;
+
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                    } else {
+                        auto fun_kc = [&](const size_t first, const size_t last) {
+                            //i = 0
+                            for (size_t kc = first; kc < last; ++kc) {
+                                const size_t k = kc / C;
+                                const size_t c = kc % C;
+
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
+                            }
+
+                            for (size_t i = 1; i < N; ++i) {
+                                for (size_t kc = first; kc < last; ++kc) {
+                                    const size_t k = kc / C;
+                                    const size_t c = kc % C;
+
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                    }
                 } else {
-                    auto fun_kc = [&](const size_t first, const size_t last) {
-                        //i = 0
-                        for (size_t kc = first; kc < last; ++kc) {
-                            const size_t k = kc / C;
-                            const size_t c = kc % C;
+                    auto padded_input  = common::pad_right_multi_double(input, pad, p1, p2);
+                    auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
 
-                            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
-                        }
-
-                        for (size_t i = 1; i < N; ++i) {
+                    if (detail::prefer_sse<T>(k2 + pad)) {
+                        auto fun_kc = [&](const size_t first, const size_t last) {
+                            //i = 0
                             for (size_t kc = first; kc < last; ++kc) {
                                 const size_t k = kc / C;
                                 const size_t c = kc % C;
 
-                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, 0, 0, T(0));
                             }
-                        }
-                    };
 
-                    smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                            for (size_t i = 1; i < N; ++i) {
+                                for (size_t kc = first; kc < last; ++kc) {
+                                    const size_t k = kc / C;
+                                    const size_t c = kc % C;
+
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, 0, 0, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                    } else {
+                        auto fun_kc = [&](const size_t first, const size_t last) {
+                            //i = 0
+                            for (size_t kc = first; kc < last; ++kc) {
+                                const size_t k = kc / C;
+                                const size_t c = kc % C;
+
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, 0, 0, T(0));
+                            }
+
+                            for (size_t i = 1; i < N; ++i) {
+                                for (size_t kc = first; kc < last; ++kc) {
+                                    const size_t k = kc / C;
+                                    const size_t c = kc % C;
+
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, 0, 0, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                    }
                 }
 
                 return;
@@ -1833,51 +2030,100 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
             if (k2 < SS || k2 % AS > 0) {
                 const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-                auto padded_input  = common::pad_right_multi(input, pad);
-                auto padded_kernel = common::pad_right_multi(kernel, pad);
+                if(cpp_likely(p1 == 0 && p2 == 0)){
+                    auto padded_input  = common::pad_right_multi(input, pad);
+                    auto padded_kernel = common::pad_right_multi(kernel, pad);
 
-                if (detail::prefer_sse<T>(k2 + pad)) {
-                    auto fun_kc = [&](const size_t first, const size_t last) {
-                        //i = 0
-                        for (size_t kc = first; kc < last; ++kc) {
-                            const size_t k = kc / C;
-                            const size_t c = kc % C;
-
-                            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
-                        }
-
-                        for (size_t i = 1; i < N; ++i) {
+                    if (detail::prefer_sse<T>(k2 + pad)) {
+                        auto fun_kc = [&](const size_t first, const size_t last) {
+                            //i = 0
                             for (size_t kc = first; kc < last; ++kc) {
                                 const size_t k = kc / C;
                                 const size_t c = kc % C;
 
-                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                             }
-                        }
-                    };
 
-                    smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                            for (size_t i = 1; i < N; ++i) {
+                                for (size_t kc = first; kc < last; ++kc) {
+                                    const size_t k = kc / C;
+                                    const size_t c = kc % C;
+
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                    } else {
+                        auto fun_kc = [&](const size_t first, const size_t last) {
+                            //i = 0
+                            for (size_t kc = first; kc < last; ++kc) {
+                                const size_t k = kc / C;
+                                const size_t c = kc % C;
+
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
+                            }
+
+                            for (size_t i = 1; i < N; ++i) {
+                                for (size_t kc = first; kc < last; ++kc) {
+                                    const size_t k = kc / C;
+                                    const size_t c = kc % C;
+
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                    }
                 } else {
-                    auto fun_kc = [&](const size_t first, const size_t last) {
-                        //i = 0
-                        for (size_t kc = first; kc < last; ++kc) {
-                            const size_t k = kc / C;
-                            const size_t c = kc % C;
+                    auto padded_input  = common::pad_right_multi_double(input, pad, p1, p2);
+                    auto padded_kernel = common::pad_right_multi(kernel, pad);
 
-                            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
-                        }
-
-                        for (size_t i = 1; i < N; ++i) {
+                    if (detail::prefer_sse<T>(k2 + pad)) {
+                        auto fun_kc = [&](const size_t first, const size_t last) {
+                            //i = 0
                             for (size_t kc = first; kc < last; ++kc) {
                                 const size_t k = kc / C;
                                 const size_t c = kc % C;
 
-                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, 0, 0, T(0));
                             }
-                        }
-                    };
 
-                    smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                            for (size_t i = 1; i < N; ++i) {
+                                for (size_t kc = first; kc < last; ++kc) {
+                                    const size_t k = kc / C;
+                                    const size_t c = kc % C;
+
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, 0, 0, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                    } else {
+                        auto fun_kc = [&](const size_t first, const size_t last) {
+                            //i = 0
+                            for (size_t kc = first; kc < last; ++kc) {
+                                const size_t k = kc / C;
+                                const size_t c = kc % C;
+
+                                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, 0, 0, T(0));
+                            }
+
+                            for (size_t i = 1; i < N; ++i) {
+                                for (size_t kc = first; kc < last; ++kc) {
+                                    const size_t k = kc / C;
+                                    const size_t c = kc % C;
+
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, 0, 0, T(1));
+                                }
+                            }
+                        };
+
+                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                    }
                 }
 
                 conv.invalidate_gpu();
