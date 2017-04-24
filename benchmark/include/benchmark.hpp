@@ -62,6 +62,11 @@
 #define TEST_STRASSEN
 #endif
 
+// TODO Instead of using this fix, do the real fix inside CPM
+#if !defined(TEST_VEC) && !defined(TEST_BLAS)
+#define TEST_STDFIX
+#endif
+
 using i8vec = etl::dyn_vector<int8_t>;
 using i16vec = etl::dyn_vector<int16_t>;
 using i32vec = etl::dyn_vector<int32_t>;
@@ -128,8 +133,7 @@ using gemm_policy = NARY_POLICY(
     VALUES_POLICY(10, 20, 40, 60, 80, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000));
 using square_policy = NARY_POLICY(
     VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000),
-    VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000));
-using small_square_policy = NARY_POLICY(
+    VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000)); using small_square_policy = NARY_POLICY(
     VALUES_POLICY(100, 150, 200, 250, 300, 350, 400, 450, 500),
     VALUES_POLICY(100, 150, 200, 250, 300, 350, 400, 450, 500));
 
@@ -157,6 +161,12 @@ using large_kernel_policy_2d = NARY_POLICY(
 using small_kernel_policy_2d = NARY_POLICY(
     VALUES_POLICY(100, 150, 200, 250, 300, 350, 400),
     VALUES_POLICY(10, 15, 20, 25, 30, 35, 40));
+
+#ifdef TEST_STDFIX
+#define STDFIX_SECTION_FUNCTOR(name, ...) , CPM_SECTION_FUNCTOR(name, __VA_ARGS__)
+#else
+#define STDFIX_SECTION_FUNCTOR(name, ...)
+#endif
 
 #ifdef TEST_VEC
 #define VEC_SECTION_FUNCTOR(name, ...) , CPM_SECTION_FUNCTOR(name, __VA_ARGS__)
