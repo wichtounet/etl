@@ -7,6 +7,7 @@
 
 #define CPM_LIB
 #include "benchmark.hpp"
+#include "benchmark_conv.hpp"
 
 //1D-Convolution benchmarks with large-kernel
 CPM_BENCH() {
