@@ -1243,6 +1243,26 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
     conv.invalidate_gpu();
 }
 
+template<typename T>
+inline cpp14_constexpr bool need_padding(size_t k1, size_t k2){
+    constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+    constexpr size_t SS = AS / 2;
+
+    cpp_unused(k1);
+
+    return k2 < SS || k2 % AS > 0;
+}
+
+template<typename T>
+inline cpp14_constexpr size_t select_pad(size_t k1, size_t k2){
+    constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+    constexpr size_t SS = AS / 2;
+
+    cpp_unused(k1);
+
+    return k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+}
+
 /*!
  * \brief SSE implementation of a 4D 'valid' convolution C = I * K
  * \param input The input matrix
@@ -1261,17 +1281,15 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
         const size_t K = etl::dim<0>(kernel); // The number of kernels
         const size_t C = etl::dim<1>(input);  // The number of channels
 
+        const size_t k1 = etl::dim<3>(kernel);
         const size_t k2 = etl::dim<3>(kernel);
 
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
-        if (padding_impl) {
-            static constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
-            static constexpr size_t SS = AS / 2;
-
-            if (k2 < SS || k2 % AS > 0) {
-                const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+        if /* constexpr*/ (padding_impl) {
+            if(need_padding<T>(k1, k2)){
+                const size_t pad = select_pad<T>(k1, k2);;
 
                 if (cpp_likely(p1 == 0 && p2 == 0)) {
                     auto padded_input  = common::pad_right_multi(input, pad);
