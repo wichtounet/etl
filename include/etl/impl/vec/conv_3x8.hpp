@@ -12,6 +12,8 @@ namespace impl {
 namespace vec {
 namespace detail {
 
+#ifdef __AVX__
+
 #ifndef __clang__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Waggressive-loop-optimizations"
@@ -418,6 +420,21 @@ void conv2_valid_flipped_micro_kernel_3x8(const T* in, size_t n1, size_t n2, con
 
 #ifndef __clang__
 #pragma GCC diagnostic pop
+#endif
+
+#else
+
+template <typename V, typename T>
+void conv2_valid_flipped_micro_kernel_3x8(const T* in, size_t n1, size_t n2, const T* kkk, T* out, T beta) {
+    cpp_unused(in);
+    cpp_unused(n1);
+    cpp_unused(n2);
+    cpp_unused(kkk);
+    cpp_unused(out);
+    cpp_unused(beta);
+    cpp_unreachable("Should never get called");
+}
+
 #endif
 
 } //end of namespace detail

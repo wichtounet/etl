@@ -1264,7 +1264,8 @@ inline cpp14_constexpr size_t select_pad(size_t k1, size_t k2){
     constexpr size_t AS   = single ? 8 : 4;
     constexpr size_t SS   = AS / 2;
 
-    if(single && k1 == 3 && k2 == 3){
+    // Very special version for 3x3 with AVX
+    if(single && avx_enabled && k1 == 3 && k2 == 3){
         return AS - 3;
     }
 
