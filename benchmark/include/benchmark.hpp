@@ -324,6 +324,15 @@ using conv_4d_valid_policy_17 = NARY_POLICY(
     /* W */ VALUES_POLICY(8, 8, 8, 8, 8, 8, 8, 8, 8, 8)
     );
 
+// Policy with very small kernels but large image
+using conv_4d_valid_policy_18 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30, 30, 40, 40),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30, 40, 50, 50),
+    /* I */ VALUES_POLICY(128, 128, 128, 128, 128, 128, 128, 128, 128, 128),
+    /* W */ VALUES_POLICY(3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
+    );
+
 using pmp_policy = VALUES_POLICY(100, 120, 140, 160, 180, 200, 400, 600, 800, 1000);
 using pmp_policy_3 = VALUES_POLICY(10, 20, 30, 40, 50, 60, 80, 90, 100);
 

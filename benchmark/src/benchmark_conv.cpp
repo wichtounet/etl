@@ -433,6 +433,7 @@ CONV4_BENCH("sconv4_valid_14 [conv][conv4][conv4_chain]", conv_4d_valid_policy_1
 CONV4_BENCH("sconv4_valid_15 [conv][conv4][conv4_chain]", conv_4d_valid_policy_15, conv_4d_valid)
 CONV4_BENCH("sconv4_valid_16 [conv][conv4][conv4_chain]", conv_4d_valid_policy_16, conv_4d_valid)
 CONV4_BENCH("sconv4_valid_17 [conv][conv4][conv4_chain]", conv_4d_valid_policy_17, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_18 [conv][conv4][conv4_chain]", conv_4d_valid_policy_18, conv_4d_valid)
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv4_valid_same [conv][conv4]", conv_4d_valid_policy_3,
     FLOPS([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){ return 2 * n * k * c * i * i * w * w; }),
