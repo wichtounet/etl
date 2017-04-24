@@ -361,11 +361,9 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_multi_double(const I& input, size_t pad
     for(size_t i = 0; i < etl::dim<0>(input); ++i){
         for(size_t j = 0; j < etl::dim<1>(input); ++j){
             for(size_t k = 0; k < etl::dim<2>(input); ++k){
-                size_t p_k = p1 + k;
-
                 direct_copy_n(
-                    input.memory_start() + i * C1 + j * C2 + p_k * C3,
-                    padded_input.memory_start() + i * PC1 + j * PC2 + p_k * PC3 + p2,
+                    input.memory_start() + i * C1 + j * C2 + k * C3,
+                    padded_input.memory_start() + i * PC1 + j * PC2 + (p1 + k) * PC3 + p2,
                     etl::dim<3>(input));
             }
         }
