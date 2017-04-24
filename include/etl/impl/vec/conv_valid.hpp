@@ -11,6 +11,7 @@
 
 // The different optimized kernels
 #include "etl/impl/vec/conv_3x4.hpp"
+#include "etl/impl/vec/conv_3x8.hpp"
 #include "etl/impl/vec/conv_8x8.hpp"
 #include "etl/impl/vec/conv_nx8.hpp"
 #include "etl/impl/vec/conv_nx16.hpp"
@@ -97,6 +98,9 @@ void conv2_valid_flipped_inner_kernel(const T* in, size_t n1, size_t n2, const T
     if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
         if (vec_size == 4 && m1 == 3 && m2 == 4) {
             conv2_valid_flipped_micro_kernel_3x4<V>(in, n1, n2, kkk, out, beta);
+            return;
+        } else if (vec_size == 8 && m1 == 3 && m2 == 8) {
+            conv2_valid_flipped_micro_kernel_3x8<V>(in, n1, n2, kkk, out, beta);
             return;
         } else if (vec_size == 8 && m1 == 5 && m2 == 8) {
             conv2_valid_flipped_micro_kernel_5x8<V>(in, n1, n2, kkk, out, beta);
@@ -1245,8 +1249,9 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
 
 template<typename T>
 inline cpp14_constexpr bool need_padding(size_t k1, size_t k2){
-    constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
-    constexpr size_t SS = AS / 2;
+    constexpr bool single = std::is_same<T, float>::value;
+    constexpr size_t AS   = single ? 8 : 4;
+    constexpr size_t SS   = AS / 2;
 
     cpp_unused(k1);
 
@@ -1255,8 +1260,13 @@ inline cpp14_constexpr bool need_padding(size_t k1, size_t k2){
 
 template<typename T>
 inline cpp14_constexpr size_t select_pad(size_t k1, size_t k2){
-    constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
-    constexpr size_t SS = AS / 2;
+    constexpr bool single = std::is_same<T, float>::value;
+    constexpr size_t AS   = single ? 8 : 4;
+    constexpr size_t SS   = AS / 2;
+
+    if(single && k1 == 3 && k2 == 3){
+        return AS - 3;
+    }
 
     cpp_unused(k1);
 
