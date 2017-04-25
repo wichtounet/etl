@@ -22,10 +22,10 @@ namespace etl {
  */
 template <typename A, typename B, typename C, size_t C1, size_t C2>
 struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d_expr<A, B, C, C1, C2>, A, B, C> {
-    using value_type = value_t<A>;                                     ///< The type of value of the expression
-    using sub_traits = etl::decay_traits<A>;                           /// The traits of the first sub type
-    using this_type  = max_pool_upsample_2d_expr<A, B, C, C1, C2>; ///< The type of this expression
-    using base_type  = base_temporary_expr_tern<this_type, A, B, C>;   ///< The base type
+    using value_type = value_t<A>;                                   ///< The type of value of the expression
+    using sub_traits = etl::decay_traits<A>;                         ///< The traits of the first sub type
+    using this_type  = max_pool_upsample_2d_expr<A, B, C, C1, C2>;   ///< The type of this expression
+    using base_type  = base_temporary_expr_tern<this_type, A, B, C>; ///< The base type
 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
 
@@ -255,7 +255,7 @@ struct etl_traits<etl::max_pool_upsample_2d_expr<A, B, C, C1, C2>> {
 template <typename A, typename B, typename C, size_t C1, size_t C2, size_t C3>
 struct max_pool_upsample_3d_expr : base_temporary_expr_tern<max_pool_upsample_3d_expr<A, B, C, C1, C2, C3>, A, B, C> {
     using value_type = value_t<A>;                                     ///< The type of value of the expression
-    using sub_traits = etl::decay_traits<A>;                           /// The traits of the first sub type
+    using sub_traits = etl::decay_traits<A>;                           ///< The traits of the first sub type
     using this_type  = max_pool_upsample_3d_expr<A, B, C, C1, C2, C3>; ///< The type of this expression
     using base_type  = base_temporary_expr_tern<this_type, A, B, C>;   ///< The base type
 
@@ -490,7 +490,7 @@ struct etl_traits<etl::max_pool_upsample_3d_expr<A, B, C, C1, C2, C3>> {
 template <typename A, typename B, typename C>
 struct dyn_max_pool_upsample_2d_expr : base_temporary_expr_tern<dyn_max_pool_upsample_2d_expr<A, B, C>, A, B, C> {
     using value_type = value_t<A>;                                     ///< The type of value of the expression
-    using sub_traits = etl::decay_traits<A>;                           /// The traits of the first sub type
+    using sub_traits = etl::decay_traits<A>;                           ///< The traits of the first sub type
     using this_type  = dyn_max_pool_upsample_2d_expr<A, B, C>;         ///< The type of this expression
     using base_type  = base_temporary_expr_tern<this_type, A, B, C>;   ///< The base type
 
@@ -686,7 +686,7 @@ struct etl_traits<etl::dyn_max_pool_upsample_2d_expr<A, B, C>> {
 template <typename A, typename B, typename C>
 struct dyn_max_pool_upsample_3d_expr : base_temporary_expr_tern<dyn_max_pool_upsample_3d_expr<A, B, C>, A, B, C> {
     using value_type = value_t<A>;                                     ///< The type of value of the expression
-    using sub_traits = etl::decay_traits<A>;                           /// The traits of the first sub type
+    using sub_traits = etl::decay_traits<A>;                           ///< The traits of the first sub type
     using this_type  = dyn_max_pool_upsample_3d_expr<A, B, C>;         ///< The type of this expression
     using base_type  = base_temporary_expr_tern<this_type, A, B, C>;   ///< The base type
 
