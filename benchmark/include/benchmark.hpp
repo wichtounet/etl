@@ -99,6 +99,11 @@ using dmat_cm = etl::dyn_matrix_cm<double>;
 using cmat_cm = etl::dyn_matrix_cm<std::complex<float>>;
 using zmat_cm = etl::dyn_matrix_cm<std::complex<double>>;
 
+using svec_cm = etl::dyn_matrix_cm<float, 1>;
+using dvec_cm = etl::dyn_matrix_cm<double, 1>;
+using cvec_cm = etl::dyn_matrix_cm<std::complex<float>, 1>;
+using zvec_cm = etl::dyn_matrix_cm<std::complex<double>, 1>;
+
 using mat_policy = VALUES_POLICY(10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000,3000);
 using mat_policy_2d = NARY_POLICY(mat_policy, mat_policy);
 

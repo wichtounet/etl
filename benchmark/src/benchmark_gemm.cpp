@@ -101,12 +101,12 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (d) [gemm]", gemv_policy,
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (cm/s) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d2; }),
-    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(smat_cm(d1,d2), svec(d2), svec(d1)); }),
-    CPM_SECTION_FUNCTOR("default", [](smat_cm& a, svec& b, svec& c){ c = a * b; }),
-    CPM_SECTION_FUNCTOR("std", [](smat_cm& a, svec& b, svec& c){ c = selected_helper(etl::gemm_impl::STD, a * b); })
-    VEC_SECTION_FUNCTOR("vec", [](smat_cm& a, svec& b, svec& c){ c = selected_helper(etl::gemm_impl::VEC, a * b); })
-    BLAS_SECTION_FUNCTOR("blas", [](smat_cm& a, svec& b, svec& c){ c = selected_helper(etl::gemm_impl::BLAS, a * b); })
-    CUBLAS_SECTION_FUNCTOR("cublas", [](smat_cm& a, svec& b, svec& c){ c = selected_helper(etl::gemm_impl::CUBLAS, a * b); })
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(smat_cm(d1,d2), svec_cm(d2), svec_cm(d1)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat_cm& a, svec_cm& b, svec_cm& c){ c = a * b; }),
+    CPM_SECTION_FUNCTOR("std", [](smat_cm& a, svec_cm& b, svec_cm& c){ c = selected_helper(etl::gemm_impl::STD, a * b); })
+    VEC_SECTION_FUNCTOR("vec", [](smat_cm& a, svec_cm& b, svec_cm& c){ c = selected_helper(etl::gemm_impl::VEC, a * b); })
+    BLAS_SECTION_FUNCTOR("blas", [](smat_cm& a, svec_cm& b, svec_cm& c){ c = selected_helper(etl::gemm_impl::BLAS, a * b); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](smat_cm& a, svec_cm& b, svec_cm& c){ c = selected_helper(etl::gemm_impl::CUBLAS, a * b); })
 )
 
 #ifdef ETL_EXTENDED_BENCH
