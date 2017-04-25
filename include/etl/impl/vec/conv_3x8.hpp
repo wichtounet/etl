@@ -225,6 +225,29 @@ void conv2_valid_flipped_micro_kernel_3x8(const T* in, size_t n1, size_t n2, con
                 out[i * c2 + j + 7] = r4[4];
             }
 
+            for (; j + 1 < c2; j += 2) {
+                auto i1 = vec_type::loadu(in + (i + 0) * n2 + j + 0 + 0);
+                auto i2 = vec_type::loadu(in + (i + 0) * n2 + j + 1 + 0);
+
+                auto r1 = vec_type::mul(i1, k1);
+                auto r2 = vec_type::mul(i2, k1);
+
+                auto i21 = vec_type::loadu(in + (i + 1) * n2 + j + 0 + 0);
+                auto i22 = vec_type::loadu(in + (i + 1) * n2 + j + 1 + 0);
+
+                r1 = vec_type::fmadd(i21, k2, r1);
+                r2 = vec_type::fmadd(i22, k2, r2);
+
+                auto i31 = vec_type::loadu(in + (i + 2) * n2 + j + 0 + 0);
+                auto i32 = vec_type::loadu(in + (i + 2) * n2 + j + 1 + 0);
+
+                r1 = vec_type::fmadd(i31, k3, r1);
+                r2 = vec_type::fmadd(i32, k3, r2);
+
+                out[i * c2 + j + 0] = vec_type::hadd(r1);
+                out[i * c2 + j + 1] = vec_type::hadd(r2);
+            }
+
             for (; j < c2; j += 1) {
                 auto i1 = vec_type::loadu(in + (i + 0) * n2 + j + 0 + 0);
 
@@ -397,6 +420,29 @@ void conv2_valid_flipped_micro_kernel_3x8(const T* in, size_t n1, size_t n2, con
 
                 out[i * c2 + j + 3] = beta * out[i * c2 + j + 3] + r4[0];
                 out[i * c2 + j + 7] = beta * out[i * c2 + j + 7] + r4[4];
+            }
+
+            for (; j + 1 < c2; j += 2) {
+                auto i1 = vec_type::loadu(in + (i + 0) * n2 + j + 0 + 0);
+                auto i2 = vec_type::loadu(in + (i + 0) * n2 + j + 1 + 0);
+
+                auto r1 = vec_type::mul(i1, k1);
+                auto r2 = vec_type::mul(i2, k1);
+
+                auto i21 = vec_type::loadu(in + (i + 1) * n2 + j + 0 + 0);
+                auto i22 = vec_type::loadu(in + (i + 1) * n2 + j + 1 + 0);
+
+                r1 = vec_type::fmadd(i21, k2, r1);
+                r2 = vec_type::fmadd(i22, k2, r2);
+
+                auto i31 = vec_type::loadu(in + (i + 2) * n2 + j + 0 + 0);
+                auto i32 = vec_type::loadu(in + (i + 2) * n2 + j + 1 + 0);
+
+                r1 = vec_type::fmadd(i31, k3, r1);
+                r2 = vec_type::fmadd(i32, k3, r2);
+
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + vec_type::hadd(r1);
+                out[i * c2 + j + 1] = beta * out[i * c2 + j + 1] + vec_type::hadd(r2);
             }
 
             for (; j < c2; j += 1) {
