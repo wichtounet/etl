@@ -25,7 +25,7 @@ namespace vec {
  * \param cc The result vector
  */
 template <typename V, bool Padded, typename T>
-void gemv_small_kernel(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
+void gemv_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -152,7 +152,7 @@ void gemv_small_kernel(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
  * \param cc The result vector
  */
 template <typename V, bool Padded, typename T>
-void gemv_large_kernel(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
+void gemv_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -396,9 +396,9 @@ void gemv(A&& a, B&& b, C&& c) {
     const auto n = columns(a);
 
     if (etl::size(a) < gemv_small_threshold) {
-        gemv_small_kernel<default_vec, all_padded<A, B, C>::value>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+        gemv_small_kernel_rr<default_vec, all_padded<A, B, C>::value>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
     } else {
-        gemv_large_kernel<default_vec, all_padded<A, B, C>::value>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+        gemv_large_kernel_rr<default_vec, all_padded<A, B, C>::value>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
     }
 
     c.invalidate_gpu();
@@ -433,7 +433,7 @@ void gemv(A&& a, B&& b, C&& c) {
  * \param cc The result vector
  */
 template <typename V, typename T>
-void gevm_small_kernel(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
+void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -540,7 +540,7 @@ void gevm_small_kernel(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
  * \param cc The result vector
  */
 template <typename V, typename T>
-void gevm_large_kernel(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
+void gevm_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -669,11 +669,11 @@ void gevm(A&& a, B&& b, C&& c) {
     const auto n = columns(b);
 
     if(etl::size(b) < gevm_small_threshold){
-        gevm_small_kernel<default_vec>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+        gevm_small_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
     } else {
         c = 0;
 
-        gevm_large_kernel<default_vec>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+        gevm_large_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
     }
 
     c.invalidate_gpu();
@@ -705,7 +705,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * \param c The result matrix
  */
 template <typename V, typename T>
-void gemm_small_kernel(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
+void gemm_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -1037,7 +1037,7 @@ void gemm_small_kernel(const T* a, const T* b, T* c, size_t M, size_t N, size_t 
  * \param beta The multipliying of the previous value
  */
 template <typename V, typename T>
-void gemm_large_kernel(const T* a, const T* b, T* c, size_t M, size_t N, size_t K, T beta) {
+void gemm_large_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size_t K, T beta) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -1292,9 +1292,9 @@ void gemm(A&& a, B&& b, C&& c) {
     const size_t K = etl::columns(a);
 
     if(etl::size(b) <= gemm_small_threshold){
-        gemm_small_kernel<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+        gemm_small_kernel_rr<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
     } else {
-        gemm_large_kernel<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, T(0));
+        gemm_large_kernel_rr<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, T(0));
     }
 
     c.invalidate_gpu();
@@ -1372,7 +1372,7 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
     if(s1 > 1 || s2 > 1){
         etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
 
-        gemm_large_kernel<default_vec>(
+        gemm_large_kernel_rr<default_vec>(
             prepared_k.memory_start(), input_col.memory_start(), tmp_result.memory_start(),
             K, c1 * c2, k1 * k2, T(0));
 
@@ -1385,7 +1385,7 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
             }
         }
     } else {
-        gemm_large_kernel<default_vec>(
+        gemm_large_kernel_rr<default_vec>(
             prepared_k.memory_start(), input_col.memory_start(), conv.memory_start(),
             K, f1 * f2, k1 * k2, T(0));
     }
@@ -1439,7 +1439,7 @@ void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s
     if(s1 > 1 || s2 > 1){
         etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
 
-        gemm_large_kernel<default_vec>(
+        gemm_large_kernel_rr<default_vec>(
             kernels.memory_start(), input_col.memory_start(), tmp_result.memory_start(),
             K, c1 * c2, k1 * k2, T(0));
 
@@ -1452,7 +1452,7 @@ void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s
             }
         }
     } else {
-        gemm_large_kernel<default_vec>(
+        gemm_large_kernel_rr<default_vec>(
             kernels.memory_start(), input_col.memory_start(), conv.memory_start(),
             K, f1 * f2, k1 * k2, T(0));
     }
@@ -1515,7 +1515,7 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
     if(s1 > 1 || s2 > 1){
         etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
 
-        gemm_large_kernel<default_vec>(
+        gemm_large_kernel_rr<default_vec>(
             prepared_k.memory_start(), input_col.memory_start(), tmp_result.memory_start(),
             K, N * c1 * c2, k1 * k2, T(0));
 
@@ -1530,7 +1530,7 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
             }
         }
     } else {
-        gemm_large_kernel<default_vec>(
+        gemm_large_kernel_rr<default_vec>(
             prepared_k.memory_start(), input_col.memory_start(), conv.memory_start(),
             K, N * c1 * c2, k1 * k2, T(0));
     }
@@ -1588,7 +1588,7 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
     if(s1 > 1 || s2 > 1){
         etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
 
-        gemm_large_kernel<default_vec>(
+        gemm_large_kernel_rr<default_vec>(
             kernels.memory_start(), input_col.memory_start(), tmp_result.memory_start(),
             K, N * c1 * c2, k1 * k2, T(0));
 
@@ -1603,7 +1603,7 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
             }
         }
     } else {
-        gemm_large_kernel<default_vec>(
+        gemm_large_kernel_rr<default_vec>(
             kernels.memory_start(), input_col.memory_start(), conv.memory_start(),
             K, N * c1 * c2, k1 * k2, T(0));
     }
@@ -1661,7 +1661,7 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
                         for (size_t c = 0; c < C; ++c) {
                             im2col_direct_tr(input_col, input(i)(c), m1, m2);
 
-                            gemm_large_kernel<default_vec>(
+                            gemm_large_kernel_rr<default_vec>(
                                 kernels(c).memory_start(), input_col.memory_start(), conv(i).memory_start(),
                                 K, c1 * c2, m1 * m2, T(1.0));
                         }
@@ -1683,7 +1683,7 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
                             }
 
                             if (s1 > 1 || s2 > 1) {
-                                gemm_large_kernel<default_vec>(
+                                gemm_large_kernel_rr<default_vec>(
                                     kernels(c).memory_start(), input_col.memory_start(), tmp_result.memory_start(),
                                     K, sc1 * sc2, m1 * m2, T(0.0));
 
@@ -1696,7 +1696,7 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
                                     }
                                 }
                             } else {
-                                gemm_large_kernel<default_vec>(
+                                gemm_large_kernel_rr<default_vec>(
                                     kernels(c).memory_start(), input_col.memory_start(), conv(i).memory_start(),
                                     K, c1 * c2, m1 * m2, T(1.0));
                             }
@@ -1820,7 +1820,7 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                         // Optimize for the most common case
                         if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
                             im2col_direct_tr(input_col, input(i)(c), k1, k2);
-                            gemm_large_kernel<default_vec>(
+                            gemm_large_kernel_rr<default_vec>(
                                 kernel(i).memory_start(), input_col.memory_start(), conv_temp(c).memory_start(),
                                 K, f1 * f2, k1 * k2, T(1.0));
                         } else {
@@ -1838,7 +1838,7 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                             if (s1 > 1 || s2 > 1) {
                                 etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
 
-                                gemm_large_kernel<default_vec>(
+                                gemm_large_kernel_rr<default_vec>(
                                     kernel(i).memory_start(), input_col.memory_start(), tmp_result.memory_start(),
                                     K, c1 * c2, k1 * k2, T(0.0));
 
@@ -1851,7 +1851,7 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                                     }
                                 }
                             } else {
-                                gemm_large_kernel<default_vec>(
+                                gemm_large_kernel_rr<default_vec>(
                                     kernel(i).memory_start(), input_col.memory_start(), conv_temp(c).memory_start(),
                                     K, f1 * f2, k1 * k2, T(1.0));
                             }
@@ -1966,7 +1966,7 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
                             etl::dyn_matrix<T, 3> tmp_result(C, c1, c2);
 
                             // tmp_result = kernel(k) * input_col
-                            gemm_large_kernel<default_vec>(
+                            gemm_large_kernel_rr<default_vec>(
                                 kernel(k).memory_start(), input_col.memory_start(), tmp_result.memory_start(),
                                 C, c1 * c2, k1 * k2, T(0.0));
 
@@ -1980,7 +1980,7 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
                             }
                         } else {
                             // conv(i) = kernel(k) * input_col
-                            gemm_large_kernel<default_vec>(
+                            gemm_large_kernel_rr<default_vec>(
                                 kernel(k).memory_start(), input_col.memory_start(), conv(i).memory_start(),
                                 C, c1 * c2, k1 * k2, T(1.0));
                         }
