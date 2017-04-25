@@ -395,7 +395,7 @@ void gemv(A&& a, B&& b, C&& c) {
     const auto m = rows(a);
     const auto n = columns(a);
 
-    if (etl::size(a) < gemv_small_threshold) {
+    if (etl::size(a) < gemv_rm_small_threshold) {
         gemv_small_kernel_rr<default_vec, all_padded<A, B, C>::value>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
     } else {
         gemv_large_kernel_rr<default_vec, all_padded<A, B, C>::value>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
@@ -405,12 +405,241 @@ void gemv(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Unoptimized version of GEMV for column major version
+ * \brief Optimized version of small GEMV for column major version
+ * \param aa The lhs matrix
+ * \param bb The rhs vector
+ * \param cc The result vector
+ */
+template <typename V, bool Padded, typename T>
+void gemv_small_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
+    using vec_type = V;
+
+    static constexpr size_t vec_size = vec_type::template traits<T>::size;
+
+    static constexpr bool remainder = !advanced_padding || !Padded;
+    const size_t last = remainder ? (m & size_t(-vec_size)) : m;
+
+    size_t i = 0;
+
+#ifdef ETL_GEMV_SMALL_CC_8
+    // Vectorized loop, unrolled 8x
+    for (; i + 8 * vec_size - 1 < last; i += 8 * vec_size) {
+        auto r1 = vec_type::template zero<T>();
+        auto r2 = vec_type::template zero<T>();
+        auto r3 = vec_type::template zero<T>();
+        auto r4 = vec_type::template zero<T>();
+        auto r5 = vec_type::template zero<T>();
+        auto r6 = vec_type::template zero<T>();
+        auto r7 = vec_type::template zero<T>();
+        auto r8 = vec_type::template zero<T>();
+
+        for (size_t j = 0; j < n; ++j) {
+            auto b1 = vec_type::set(bb[j]);
+
+            r1 = vec_type::fmadd(vec_type::loadu(aa + (i + 0 * vec_size) + j * m), b1, r1);
+            r2 = vec_type::fmadd(vec_type::loadu(aa + (i + 1 * vec_size) + j * m), b1, r2);
+            r3 = vec_type::fmadd(vec_type::loadu(aa + (i + 2 * vec_size) + j * m), b1, r3);
+            r4 = vec_type::fmadd(vec_type::loadu(aa + (i + 3 * vec_size) + j * m), b1, r4);
+            r5 = vec_type::fmadd(vec_type::loadu(aa + (i + 4 * vec_size) + j * m), b1, r5);
+            r6 = vec_type::fmadd(vec_type::loadu(aa + (i + 5 * vec_size) + j * m), b1, r6);
+            r7 = vec_type::fmadd(vec_type::loadu(aa + (i + 6 * vec_size) + j * m), b1, r7);
+            r8 = vec_type::fmadd(vec_type::loadu(aa + (i + 7 * vec_size) + j * m), b1, r8);
+        }
+
+        vec_type::storeu(cc + i + 0 * vec_size, r1);
+        vec_type::storeu(cc + i + 1 * vec_size, r2);
+        vec_type::storeu(cc + i + 2 * vec_size, r3);
+        vec_type::storeu(cc + i + 3 * vec_size, r4);
+        vec_type::storeu(cc + i + 4 * vec_size, r5);
+        vec_type::storeu(cc + i + 5 * vec_size, r6);
+        vec_type::storeu(cc + i + 6 * vec_size, r7);
+        vec_type::storeu(cc + i + 7 * vec_size, r8);
+    }
+#endif
+
+    // Vectorized loop, unrolled 4x
+    for (; i + 4 * vec_size - 1 < last; i += 4 * vec_size) {
+        auto r1 = vec_type::template zero<T>();
+        auto r2 = vec_type::template zero<T>();
+        auto r3 = vec_type::template zero<T>();
+        auto r4 = vec_type::template zero<T>();
+
+        for (size_t j = 0; j < n; ++j) {
+            auto b1 = vec_type::set(bb[j]);
+
+            r1 = vec_type::fmadd(vec_type::loadu(aa + (i + 0 * vec_size) + j * m), b1, r1);
+            r2 = vec_type::fmadd(vec_type::loadu(aa + (i + 1 * vec_size) + j * m), b1, r2);
+            r3 = vec_type::fmadd(vec_type::loadu(aa + (i + 2 * vec_size) + j * m), b1, r3);
+            r4 = vec_type::fmadd(vec_type::loadu(aa + (i + 3 * vec_size) + j * m), b1, r4);
+        }
+
+        vec_type::storeu(cc + i + 0 * vec_size, r1);
+        vec_type::storeu(cc + i + 1 * vec_size, r2);
+        vec_type::storeu(cc + i + 2 * vec_size, r3);
+        vec_type::storeu(cc + i + 3 * vec_size, r4);
+    }
+
+    // Vectorized loop, unrolled 2x
+    for (; i + 2 * vec_size - 1 < last; i += 2 * vec_size) {
+        auto r1 = vec_type::template zero<T>();
+        auto r2 = vec_type::template zero<T>();
+
+        for (size_t j = 0; j < n; ++j) {
+            auto b1 = vec_type::set(bb[j]);
+
+            r1 = vec_type::fmadd(vec_type::loadu(aa + (i + 0 * vec_size) + j * m), b1, r1);
+            r2 = vec_type::fmadd(vec_type::loadu(aa + (i + 1 * vec_size) + j * m), b1, r2);
+        }
+
+        vec_type::storeu(cc + i + 0 * vec_size, r1);
+        vec_type::storeu(cc + i + 1 * vec_size, r2);
+    }
+
+    // Vectorized loop, not unrolled
+    for (; i + vec_size - 1 < last; i += vec_size) {
+        auto r1 = vec_type::template zero<T>();
+
+        for (size_t j = 0; j < n; ++j) {
+            auto b1 = vec_type::set(bb[j]);
+            r1      = vec_type::fmadd(vec_type::loadu(aa + i + j * m), b1, r1);
+        }
+
+        vec_type::storeu(cc + i, r1);
+    }
+
+    // Normal loop
+    for (; remainder && i < m; ++i) {
+        T value(0);
+
+        for (size_t j = 0; j < n; ++j) {
+            value += aa[i + j * m] * bb[j];
+        }
+
+        cc[i] = value;
+    }
+}
+
+/*!
+ * \brief Optimized version of large GEMV for column major version
+ * \param aa The lhs matrix
+ * \param bb The rhs vector
+ * \param cc The result vector
+ */
+template <typename V, bool Padded, typename T>
+void gemv_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
+    using vec_type = V;
+
+    static constexpr size_t vec_size = vec_type::template traits<T>::size;
+
+    const size_t m_block = (32 * 1024) / sizeof(T);
+    const size_t n_block = (n < m_block) ? 8 : 4;
+
+    for (size_t block_i = 0U; block_i < m; block_i += m_block) {
+        for (size_t block_j = 0UL; block_j < n; block_j += n_block) {
+            const size_t m_end = std::min(block_i + m_block, m);
+            const size_t n_end = std::min(block_j + n_block, n);
+
+            size_t i = block_i;
+
+#ifdef ETL_GEMV_LARGE_CC_4
+            // Vectorized loop, unrolled 4x
+            for (; i + 4 * vec_size - 1 < m_end; i += 4 * vec_size) {
+                auto r1 = vec_type::template zero<T>();
+                auto r2 = vec_type::template zero<T>();
+                auto r3 = vec_type::template zero<T>();
+                auto r4 = vec_type::template zero<T>();
+
+                for (size_t j = block_j; j < n_end; ++j) {
+                    auto b1 = vec_type::set(bb[j]);
+
+                    r1 = vec_type::fmadd(vec_type::loadu(aa + i + 0 * vec_size+  j * m), b1, r1);
+                    r2 = vec_type::fmadd(vec_type::loadu(aa + i + 1 * vec_size + j * m), b1, r2);
+                    r3 = vec_type::fmadd(vec_type::loadu(aa + i + 2 * vec_size + j * m), b1, r3);
+                    r4 = vec_type::fmadd(vec_type::loadu(aa + i + 3 * vec_size + j * m), b1, r4);
+                }
+
+                vec_type::storeu(cc + i + 0 * vec_size, vec_type::add(vec_type::loadu(cc + i + 0 * vec_size), r1));
+                vec_type::storeu(cc + i + 1 * vec_size, vec_type::add(vec_type::loadu(cc + i + 1 * vec_size), r2));
+                vec_type::storeu(cc + i + 2 * vec_size, vec_type::add(vec_type::loadu(cc + i + 2 * vec_size), r3));
+                vec_type::storeu(cc + i + 3 * vec_size, vec_type::add(vec_type::loadu(cc + i + 3 * vec_size), r4));
+            }
+#endif
+
+            // Vectorized loop, unrolled 2x
+            for (; i + 2 * vec_size - 1 < m_end; i += 2 * vec_size) {
+                auto r1 = vec_type::template zero<T>();
+                auto r2 = vec_type::template zero<T>();
+
+                for (size_t j = block_j; j < n_end; ++j) {
+                    auto b1 = vec_type::set(bb[j]);
+
+                    r1 = vec_type::fmadd(vec_type::loadu(aa + i + 0 * vec_size+  j * m), b1, r1);
+                    r2 = vec_type::fmadd(vec_type::loadu(aa + i + 1 * vec_size + j * m), b1, r2);
+                }
+
+                vec_type::storeu(cc + i + 0 * vec_size, vec_type::add(vec_type::loadu(cc + i + 0 * vec_size), r1));
+                vec_type::storeu(cc + i + 1 * vec_size, vec_type::add(vec_type::loadu(cc + i + 1 * vec_size), r2));
+            }
+
+            // Vectorized loop
+            for (; i + vec_size - 1 < m_end; i += vec_size) {
+                auto r1 = vec_type::template zero<T>();
+
+                for (size_t j = block_j; j < n_end; ++j) {
+                    auto b1 = vec_type::set(bb[j]);
+                    r1 = vec_type::fmadd(vec_type::loadu(aa + i + j * m), b1, r1);
+                }
+
+                vec_type::storeu(cc + i, vec_type::add(vec_type::loadu(cc + i), r1));
+            }
+
+            // Remainder loop
+            for (; i < m_end; ++i) {
+                T value(0);
+
+                for (size_t j = block_j; j < n_end; ++j) {
+                    value += aa[i + j * m] * bb[j];
+                }
+
+                cc[i] += value;
+            }
+        }
+    }
+}
+
+/*!
+ * \brief Optimized version of GEMV for column major version
  * \param a The lhs matrix
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_disable_if((all_row_major<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A,B,C>::value))>
+void gemv(A&& a, B&& b, C&& c) {
+    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    const auto m = rows(a);
+    const auto n = columns(a);
+
+    if (etl::size(a) < gemv_cm_small_threshold) {
+        gemv_small_kernel_cc<default_vec, all_padded<A, B, C>::value>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+    } else {
+        c = 0;
+        gemv_large_kernel_cc<default_vec, all_padded<A, B, C>::value>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+    }
+
+    c.invalidate_gpu();
+}
+
+/*!
+ * \brief Unoptimized version of GEMV for mixed order
+ * \param a The lhs matrix
+ * \param b The rhs vector
+ * \param c The result vector
+ */
+template <typename A, typename B, typename C, cpp_disable_if((all_column_major<A,B,C>::value || all_row_major<A,B,C>::value))>
 void gemv(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -419,8 +648,8 @@ void gemv(A&& a, B&& b, C&& c) {
 
     c = 0;
 
-    for (size_t i = 0; i < m; i++) {
-        for (size_t k = 0; k < n; k++) {
+    for (size_t k = 0; k < n; k++) {
+        for (size_t i = 0; i < m; i++) {
             c(i) += a(i, k) * b(k);
         }
     }
