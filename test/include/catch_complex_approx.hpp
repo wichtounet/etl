@@ -23,7 +23,7 @@ struct ComplexApprox {
      * \brief Construct a ComplexApprox for the given complex value
      * \param value the expected complex value
      */
-    explicit ComplexApprox(std::complex<T> value)
+    explicit ComplexApprox(const std::complex<T>& value)
             : eps(std::numeric_limits<float>::epsilon() * 100), value(value) {
         //Nothing else to init
     }
@@ -46,7 +46,7 @@ struct ComplexApprox {
      * \param rhs The expected complex number
      * \return true if they are approximatily the same
      */
-    friend bool operator==(std::complex<T> lhs, const ComplexApprox& rhs) {
+    friend bool operator==(const std::complex<T>& lhs, const ComplexApprox& rhs) {
         return fabs(lhs.real() - rhs.value.real()) < rhs.eps * (1.0 + std::max(fabs(lhs.real()), fabs(rhs.value.real()))) && fabs(lhs.imag() - rhs.value.imag()) < rhs.eps * (1.0 + std::max(fabs(lhs.imag()), fabs(rhs.value.imag())));
     }
 
@@ -56,7 +56,7 @@ struct ComplexApprox {
      * \param rhs The complex number (the number to test)
      * \return true if they are approximatily the same
      */
-    friend bool operator==(const ComplexApprox& lhs, std::complex<T> rhs) {
+    friend bool operator==(const ComplexApprox& lhs, const std::complex<T>& rhs) {
         return operator==(rhs, lhs);
     }
 
@@ -66,7 +66,7 @@ struct ComplexApprox {
      * \param rhs The expected complex number
      * \return true if they are not approximatily the same
      */
-    friend bool operator!=(std::complex<T> lhs, const ComplexApprox& rhs) {
+    friend bool operator!=(const std::complex<T>& lhs, const ComplexApprox& rhs) {
         return !operator==(lhs, rhs);
     }
 
@@ -76,7 +76,7 @@ struct ComplexApprox {
      * \param rhs The complex number (the number to test)
      * \return true if they are not approximatily the same
      */
-    friend bool operator!=(const ComplexApprox& lhs, std::complex<T> rhs) {
+    friend bool operator!=(const ComplexApprox& lhs, const std::complex<T>& rhs) {
         return !operator==(rhs, lhs);
     }
 
