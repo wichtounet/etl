@@ -239,6 +239,31 @@ GEMV_TEST_CASE("column_major/gemv/0", "[mul]") {
     REQUIRE_EQUALS(c(1), 122);
 }
 
+GEMV_TEST_CASE("column_major/gemv/1", "[gemv]") {
+    etl::dyn_matrix_cm<T> a(512, 512);
+    etl::dyn_matrix_cm<T,1> b(512);
+
+    etl::dyn_matrix_cm<T,1> c(512);
+    etl::dyn_matrix_cm<T,1> c_ref(512);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(a, b, c);
+
+    c_ref = 0;
+
+    for (size_t k = 0; k < 512; k++) {
+        for (size_t i = 0; i < 512; i++) {
+            c_ref(i) += a(i, k) * b(k);
+        }
+    }
+
+    for(size_t i = 0; i < etl::size(c); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
+    }
+}
+
 GEVM_TEST_CASE("column_major/gevm/0", "[mul]") {
     etl::fast_matrix_cm<T, 3, 2> a = {1, 3, 5, 2, 4, 6};
     etl::fast_vector_cm<T, 3> b    = {7, 8, 9};
