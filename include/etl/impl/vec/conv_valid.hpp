@@ -1247,6 +1247,14 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
     conv.invalidate_gpu();
 }
 
+/*!
+ * \brief Decide if padding is used for the given kernel dimensions.
+ *
+ * \param k1 The first dimension of the kernel.
+ * \param k2 The second dimension of the kernel.
+ *
+ * \return true if padding is to be used, false otherwise.
+ */
 template<typename T>
 inline cpp14_constexpr bool need_padding(size_t k1, size_t k2){
     constexpr bool single = std::is_same<T, float>::value;
@@ -1258,6 +1266,17 @@ inline cpp14_constexpr bool need_padding(size_t k1, size_t k2){
     return k2 < SS || k2 % AS > 0;
 }
 
+/*!
+ * \brief Select the amount of padding for the second dimension of the kernel
+ * based on the dimensions of the kernel.
+ *
+ * This must only be called if need_padding(k1,k1) returns true.
+ *
+ * \param k1 The first dimension of the kernel.
+ * \param k2 The second dimension of the kernel.
+ *
+ * \return The amount of padding for the second dimension of the kernel and input.
+ */
 template<typename T>
 inline cpp14_constexpr size_t select_pad(size_t k1, size_t k2){
     constexpr bool single = std::is_same<T, float>::value;
@@ -1300,7 +1319,7 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
 
         if /* constexpr*/ (padding_impl) {
             if(need_padding<T>(k1, k2)){
-                const size_t pad = select_pad<T>(k1, k2);;
+                const size_t pad = select_pad<T>(k1, k2);
 
                 if (cpp_likely(p1 == 0 && p2 == 0)) {
                     auto padded_input  = common::pad_right_multi(input, pad);

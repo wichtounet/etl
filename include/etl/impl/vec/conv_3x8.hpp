@@ -19,6 +19,22 @@ namespace detail {
 #pragma GCC diagnostic ignored "-Waggressive-loop-optimizations"
 #endif
 
+/*!
+ * \brief Vectorized implementation of the inner valid computation
+ * of a 2D convolution with a 3x8 kernel, without stride nor
+ * padding. This version uses AVX and stores twice the kernel inside the AVX
+ * vector in order to compute two results at once.
+ *
+ * Since ETL uses padding for convolution, this handle the 3x3
+ * kernel that is used a lot
+ *
+ * \param in The input matrix of dimensions (n1, n2)
+ * \param n1 The first dimension  of the input
+ * \param n2 The first dimension  of the input
+ * \param kkk The kernel matrix of dimensions (m1, m2)
+ * \param out The output matrix
+ * \param beta The multiplicative for the previous values of out
+ */
 template <typename V, typename T, cpp_disable_if(std::is_same<V, etl::avx_vec>::value && std::is_same<T, float>::value)>
 void conv2_valid_flipped_micro_kernel_3x8(const T* in, size_t n1, size_t n2, const T* kkk, T* out, T beta) {
     cpp_unused(in);
@@ -31,19 +47,7 @@ void conv2_valid_flipped_micro_kernel_3x8(const T* in, size_t n1, size_t n2, con
 }
 
 /*!
- * \brief Vectorized implementation of the inner valid computation
- * of a 2D convolution with a 3x8 kernel, without stride nor
- * padding.
- *
- * Since ETL uses padding for convolution, this handle the 3x3
- * kernel that is used a lot
- *
- * \param in The input matrix of dimensions (n1, n2)
- * \param n1 The first dimension  of the input
- * \param n2 The first dimension  of the input
- * \param kkk The kernel matrix of dimensions (m1, m2)
- * \param out The output matrix
- * \param beta The multiplicative for the previous values of out
+ * \copydoc conv2_valid_flipped_micro_kernel_3x8
  */
 template <typename V, typename T, cpp_enable_if(std::is_same<V, etl::avx_vec>::value && std::is_same<T, float>::value)>
 void conv2_valid_flipped_micro_kernel_3x8(const T* in, size_t n1, size_t n2, const T* kkk, T* out, T beta) {
@@ -470,6 +474,9 @@ void conv2_valid_flipped_micro_kernel_3x8(const T* in, size_t n1, size_t n2, con
 
 #else
 
+/*!
+ * \copydoc conv2_valid_flipped_micro_kernel_3x8
+ */
 template <typename V, typename T>
 void conv2_valid_flipped_micro_kernel_3x8(const T* in, size_t n1, size_t n2, const T* kkk, T* out, T beta) {
     cpp_unused(in);

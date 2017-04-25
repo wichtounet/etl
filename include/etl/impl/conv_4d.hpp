@@ -167,11 +167,15 @@ struct conv4_valid_flipped_impl : conv4_valid_impl<S1, S2, P1, P2> {
  * \brief The functor impl for 4D valid conv
  */
 struct dyn_conv4_valid_impl {
-    const size_t s1;
-    const size_t s2;
-    const size_t p1;
-    const size_t p2;
+    const size_t s1; ///< The stride of the first dimension
+    const size_t s2; ///< The stride of the second dimension
+    const size_t p1; ///< The padding of the first dimension
+    const size_t p2; ///< The padding of the second dimension
 
+    /*!
+     * \brief Construct a new dyn_conv4_valid_impl with the correct
+     * strides and padding dimensions.
+     */
     dyn_conv4_valid_impl(size_t s1, size_t s2, size_t p1, size_t p2) : s1(s1), s2(s2), p1(p1), p2(p2) {
         //Nothing else
     }
@@ -254,6 +258,10 @@ struct dyn_conv4_valid_impl {
  * \brief The functor impl for 4D valid conv
  */
 struct dyn_conv4_valid_flipped_impl : dyn_conv4_valid_impl {
+    /*!
+     * \brief Construct a new dyn_conv4_valid_flipped_impl with the correct
+     * strides and padding dimensions.
+     */
     dyn_conv4_valid_flipped_impl(size_t s1, size_t s2, size_t p1, size_t p2) : dyn_conv4_valid_impl(s1, s2, p1, p2) {
         //Nothing else
     }
@@ -455,11 +463,15 @@ struct conv4_valid_filter_flipped_impl : conv4_valid_filter_impl<S1, S2, P1, P2>
  * \brief The functor impl for 4D valid conv
  */
 struct dyn_conv4_valid_filter_impl {
-    const size_t s1;
-    const size_t s2;
-    const size_t p1;
-    const size_t p2;
+    const size_t s1; ///< The stride of the first dimension
+    const size_t s2; ///< The stride of the second dimension
+    const size_t p1; ///< The padding of the first dimension
+    const size_t p2; ///< The padding of the second dimension
 
+    /*!
+     * \brief Construct a new dyn_conv4_valid_filter_impl with the correct
+     * strides and padding dimensions.
+     */
     dyn_conv4_valid_filter_impl(size_t s1, size_t s2, size_t p1, size_t p2) : s1(s1), s2(s2), p1(p1), p2(p2) {
         //Nothing else
     }
@@ -542,6 +554,10 @@ struct dyn_conv4_valid_filter_impl {
  * \brief The functor impl for 4D valid conv
  */
 struct dyn_conv4_valid_filter_flipped_impl : dyn_conv4_valid_filter_impl {
+    /*!
+     * \brief Construct a new dyn_conv4_valid_filter_flipped_impl with the correct
+     * strides and padding dimensions.
+     */
     dyn_conv4_valid_filter_flipped_impl(size_t s1, size_t s2, size_t p1, size_t p2) : dyn_conv4_valid_filter_impl(s1, s2, p1, p2) {
         //Nothing else
     }
@@ -735,11 +751,15 @@ struct conv4_valid_back_flipped_impl : conv4_valid_back_impl<S1, S2, P1, P2> {
  * \brief The functor impl for 4D valid_back conv
  */
 struct dyn_conv4_valid_back_impl {
-    const size_t s1;
-    const size_t s2;
-    const size_t p1;
-    const size_t p2;
+    const size_t s1; ///< The stride of the first dimension
+    const size_t s2; ///< The stride of the second dimension
+    const size_t p1; ///< The padding of the first dimension
+    const size_t p2; ///< The padding of the second dimension
 
+    /*!
+     * \brief Construct a new dyn_conv4_valid_back_impl with the correct
+     * strides and padding dimensions.
+     */
     dyn_conv4_valid_back_impl(size_t s1, size_t s2, size_t p1, size_t p2) : s1(s1), s2(s2), p1(p1), p2(p2) {
         //Nothing else
     }
@@ -817,6 +837,10 @@ struct dyn_conv4_valid_back_impl {
  * \brief The functor impl for 4D valid_back conv
  */
 struct dyn_conv4_valid_back_flipped_impl : dyn_conv4_valid_back_impl {
+    /*!
+     * \brief Construct a new dyn_conv4_valid_back_flipped_impl with the correct
+     * strides and padding dimensions.
+     */
     dyn_conv4_valid_back_flipped_impl(size_t s1, size_t s2, size_t p1, size_t p2) : dyn_conv4_valid_back_impl(s1, s2, p1, p2) {
         //Nothing else
     }

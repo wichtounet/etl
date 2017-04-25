@@ -1002,6 +1002,16 @@ void blas_conv4_valid_filter_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size
     blas_conv4_valid_filter_prepared(input, kernel, conv, s1, s2, p1, p2);
 }
 
+/*!
+ * \brief Compute a 4D valid backward convolution using a BLAS matrix multiplication kernel, kernels are already prepared (flipped)
+ * \param input The input matrix
+ * \param kernel The kernel matrix, with flipped kernels
+ * \param conv The output matrix
+ * \param s1 The stride of the first dimension
+ * \param s2 The stride of the second dimension
+ * \param p1 The padding of the first dimension
+ * \param p2 The padding of the second dimension
+ */
 template <typename I_T, typename K_T, typename C_T>
 void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using T = value_t<I_T>;
@@ -1095,6 +1105,16 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
     conv.invalidate_gpu();
 }
 
+/*!
+ * \brief Compute a 4D valid backward convolution using a BLAS matrix multiplication kernel
+ * \param input The input matrix
+ * \param kernel The kernel matrix, with flipped kernels
+ * \param conv The output matrix
+ * \param s1 The stride of the first dimension
+ * \param s2 The stride of the second dimension
+ * \param p1 The padding of the first dimension
+ * \param p2 The padding of the second dimension
+ */
 template <typename I_T, typename K_T, typename C_T>
 void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     auto prepared_k = force_temporary(kernel);
@@ -1105,6 +1125,16 @@ void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, siz
     blas_conv4_valid_back_prepared(input, prepared_k, conv, s1, s2, p1, p2);
 }
 
+/*!
+ * \brief Compute a 4D valid backward convolution using a BLAS matrix multiplication kernel and flipped kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix, with flipped kernels
+ * \param conv The output matrix
+ * \param s1 The stride of the first dimension
+ * \param s2 The stride of the second dimension
+ * \param p1 The padding of the first dimension
+ * \param p2 The padding of the second dimension
+ */
 template <typename I_T, typename K_T, typename C_T>
 void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     blas_conv4_valid_back_prepared(input, kernel, conv, s1, s2, p1, p2);

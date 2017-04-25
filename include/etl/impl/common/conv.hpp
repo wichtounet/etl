@@ -335,9 +335,13 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_multi(const I& input, size_t pad){
 }
 
 /*!
- * \brief Return a new matrix equivalent to padding the last dimension of the input matrix to the right
+ * \brief Return a new matrix equivalent to padding the last dimension of the input matrix to the right and padding directly the input with convolution zero padding.
+ *
  * \param input The matrix to pad
  * \param pad The number of padding elements
+ * \param p1 The first dimension padding
+ * \param p2 The second dimension padding
+ *
  * \return a new matrix containing the result
  */
 template <typename I, cpp_enable_if((decay_traits<I>::dimensions() == 4))>
