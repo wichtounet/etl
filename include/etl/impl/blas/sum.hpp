@@ -89,7 +89,7 @@ value_t<A> asum(const A& a) {
 /*!
  * \copydoc sum
  */
-template <typename A, cpp_enable_if(!all_dma<A>::value)>
+template <typename A, cpp_enable_if(!all_dma<A>::value || !all_floating<A>::value)>
 value_t<A> sum(const A& /*a*/) {
     cpp_unreachable("BLAS not enabled/available");
     return 0.0;
@@ -98,7 +98,7 @@ value_t<A> sum(const A& /*a*/) {
 /*!
  * \copydoc asum
  */
-template <typename A, cpp_enable_if(!all_dma<A>::value)>
+template <typename A, cpp_enable_if(!all_dma<A>::value || !all_floating<A>::value)>
 value_t<A> asum(const A& /*a*/) {
     cpp_unreachable("BLAS not enabled/available");
     return 0.0;
