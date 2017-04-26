@@ -11,7 +11,10 @@
 #include "etl/impl/std/gemm.hpp"
 #include "etl/impl/std/strassen_mmul.hpp"
 #include "etl/impl/blas/gemm.hpp"
+#include "etl/impl/vec/gemv.hpp"
+#include "etl/impl/vec/gevm.hpp"
 #include "etl/impl/vec/gemm.hpp"
+#include "etl/impl/vec/gemm_conv.hpp"
 #include "etl/impl/cublas/gemm.hpp"
 
 namespace etl {
