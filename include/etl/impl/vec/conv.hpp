@@ -58,6 +58,8 @@ using safe_sse_vec = no_vec;
 // Note: Valid must be included first!
 
 #include "etl/impl/common/conv.hpp"
-#include "etl/impl/vec/conv_valid.hpp"
+#include "etl/impl/vec/conv_valid_1d.hpp"
+#include "etl/impl/vec/conv_valid_2d.hpp"
+#include "etl/impl/vec/conv_valid_4d.hpp"
 #include "etl/impl/vec/conv_full.hpp"
 #include "etl/impl/vec/conv_same.hpp"
