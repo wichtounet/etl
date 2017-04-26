@@ -605,7 +605,7 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/complex_3", "dyn_matrix::complex", Z, double, f
 
 // Reductions
 
-TEMPLATE_TEST_CASE_2("dny_matrix/sum", "sum", Z, double, float) {
+TEMPLATE_TEST_CASE_2("dyn_matrix/sum", "sum", Z, double, float) {
     etl::dyn_matrix<Z> a(3, 1, std::initializer_list<Z>({-1.0, 2.0, 8.5}));
 
     auto d = sum(a);
