@@ -629,6 +629,19 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/sum_3", "sum", Z, double, float) {
     REQUIRE_EQUALS(d, 23.0);
 }
 
+TEMPLATE_TEST_CASE_2("dyn_matrix/sum/4", "sum", Z, int, unsigned int) {
+    etl::dyn_matrix<Z> a(4, 1, std::initializer_list<Z>({1, 2, 8, 4}));
+
+    auto d = sum(a + a);
+    REQUIRE_EQUALS(d, Z(30));
+
+    d = sum(a);
+    REQUIRE_EQUALS(d, Z(15));
+
+    d = sum(a(1));
+    REQUIRE_EQUALS(d, Z(2));
+}
+
 TEMPLATE_TEST_CASE_2("dyn_matrix/asum/1", "asum", Z, double, float) {
     etl::dyn_matrix<Z> a(3, 1, std::initializer_list<Z>({-1.0, -2.0, 8.5}));
 
