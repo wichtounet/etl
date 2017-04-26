@@ -1283,7 +1283,44 @@ struct sse_vec {
         return _mm_cvtsd_f64(_mm_add_sd(in.value, shuf));
     }
 
-    //TODO Vectorize the two following functions
+    //TODO Vectorize the following functions
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    ETL_STATIC_INLINE(int8_t) hadd(sse_simd_byte in) {
+        return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7]
+             + in[8] + in[9] + in[10] + in[11] + in[12] + in[13] + in[14] + in[15];
+    }
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    ETL_STATIC_INLINE(int16_t) hadd(sse_simd_short in) {
+        return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7];
+    }
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    ETL_STATIC_INLINE(int32_t) hadd(sse_simd_int in) {
+        return in[0] + in[1] + in[2] + in[3];
+    }
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    ETL_STATIC_INLINE(int64_t) hadd(sse_simd_long in) {
+        return in[0] + in[1];
+    }
 
     /*!
      * \brief Perform an horizontal sum of the given vector.

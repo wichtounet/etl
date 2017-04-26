@@ -1333,7 +1333,47 @@ struct avx_vec {
         return _mm_cvtsd_f64(_mm256_castpd256_pd128(t2));
     }
 
-    //TODO Vectorize the two following functions
+    //TODO Vectorize the following functions
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    ETL_STATIC_INLINE(int8_t) hadd(avx_simd_byte in) {
+        return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7]
+             + in[8] + in[9] + in[10] + in[11] + in[12] + in[13] + in[14] + in[15]
+             + in[16] + in[17] + in[18] + in[19] + in[20] + in[21] + in[22] + in[23]
+             + in[24] + in[25] + in[26] + in[27] + in[28] + in[29] + in[30] + in[31];
+    }
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    ETL_STATIC_INLINE(int16_t) hadd(avx_simd_short in) {
+        return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7]
+             + in[8] + in[9] + in[10] + in[11] + in[12] + in[13] + in[14] + in[15];
+    }
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    ETL_STATIC_INLINE(int32_t) hadd(avx_simd_int in) {
+        return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7];
+    }
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    ETL_STATIC_INLINE(int64_t) hadd(avx_simd_long in) {
+        return in[0] + in[1] + in[2] + in[3];
+    }
 
     /*!
      * \brief Perform an horizontal sum of the given vector.
