@@ -723,9 +723,7 @@ void parallel_shuffle(T1& v1, T2& v2){
  */
 template<typename T1, typename T2, cpp_enable_if((decay_traits<T1>::dimensions() > 1))>
 void parallel_shuffle(T1& m1, T2& m2){
-    static_assert(decay_traits<T1>::dimensions() == decay_traits<T2>::dimensions(), "Impossible to shuffle vector of different dimensions");
-
-    cpp_assert(etl::size(m1) == etl::size(m2), "Impossible to shuffle vector of different dimensions");
+    cpp_assert(etl::dim<0>(m1) == etl::dim<0>(m2), "Impossible to shuffle together matrices of different first dimension");
 
     static std::random_device rd;
     static etl::random_engine g(rd());
