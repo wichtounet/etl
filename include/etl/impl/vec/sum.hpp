@@ -18,6 +18,14 @@ namespace impl {
 
 namespace vec {
 
+/*!
+ * \brief Vectorized sum computation
+ * \param lhs The expression to compute the sum from
+ * \param first The first index
+ * \param last The last index
+ * \tparam V The vectorization type
+ * \return The sum of the given range
+ */
 template <typename V, typename L>
 value_t<L> selected_sum(const L& lhs, size_t first, size_t last) {
     //Note: Padding cannot be taken into account we don't start at zero
@@ -67,6 +75,14 @@ value_t<L> selected_sum(const L& lhs, size_t first, size_t last) {
     return p1 + p2;
 }
 
+/*!
+ * \brief Vectorized absolute sum computation
+ * \param lhs The expression to compute the sum from
+ * \param first The first index
+ * \param last The last index
+ * \tparam V The vectorization type
+ * \return The sbsolute um of the given range
+ */
 template <typename V, typename L>
 value_t<L> selected_asum(const L& lhs, size_t first, size_t last) {
     //Note: Padding cannot be taken into account we don't start at zero

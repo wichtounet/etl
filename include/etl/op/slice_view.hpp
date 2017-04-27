@@ -317,6 +317,9 @@ public:
         }
     }
 
+    /*!
+     * \brief Destructs the slice view
+     */
     ~slice_view(){
         if (this->memory) {
             // Propagate the status on the parent
