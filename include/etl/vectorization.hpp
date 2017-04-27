@@ -35,10 +35,19 @@ struct simd_pack {
 
     intrinsic_type value; ///< The vector of value
 
+    /*!
+     * \brief Construct a new simd_pack around the given vector
+     * \param value The vector value to build around
+     */
     simd_pack(intrinsic_type value) : value(value){
         // Nothing else to init
     }
 
+    /*!
+     * \brief Extract an element of the vector value
+     * \param i The index of the element to get
+     * \return The ith element from the vector
+     */
     ETL_STRONG_INLINE(value_type) operator[](size_t i) const noexcept {
         return reinterpret_cast<const value_type*>(&value)[i];
     }
@@ -84,13 +93,17 @@ struct get_vector_impl {
  */
 template <>
 struct get_intrinsic_traits<vector_mode_t::AVX512> {
+    /*!
+     * \brief The type of the intrinsic traits for T
+     * \tparam T The type to get the intrinsic traits for
+     */
     template <typename T>
     using type = avx512_intrinsic_traits<T>;
 };
 
 template <>
 struct get_vector_impl<vector_mode_t::AVX512> {
-    using type = avx512_vec;
+    using type = avx512_vec; ///< The vector implementation
 };
 
 #endif
@@ -102,13 +115,17 @@ struct get_vector_impl<vector_mode_t::AVX512> {
  */
 template <>
 struct get_intrinsic_traits<vector_mode_t::AVX> {
+    /*!
+     * \brief The type of the intrinsic traits for T
+     * \tparam T The type to get the intrinsic traits for
+     */
     template <typename T>
     using type = avx_intrinsic_traits<T>;
 };
 
 template <>
 struct get_vector_impl<vector_mode_t::AVX> {
-    using type = avx_vec;
+    using type = avx_vec; ///< The vector implementation
 };
 
 #endif
@@ -120,13 +137,17 @@ struct get_vector_impl<vector_mode_t::AVX> {
  */
 template <>
 struct get_intrinsic_traits<vector_mode_t::SSE3> {
+    /*!
+     * \brief The type of the intrinsic traits for T
+     * \tparam T The type to get the intrinsic traits for
+     */
     template <typename T>
     using type = sse_intrinsic_traits<T>;
 };
 
 template <>
 struct get_vector_impl<vector_mode_t::SSE3> {
-    using type = sse_vec;
+    using type = sse_vec; ///< The vector implementation
 };
 
 #endif
