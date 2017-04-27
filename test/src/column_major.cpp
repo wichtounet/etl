@@ -264,7 +264,7 @@ GEMV_TEST_CASE("column_major/gemv/1", "[gemv]") {
     }
 }
 
-GEVM_TEST_CASE("column_major/gevm/0", "[mul]") {
+GEVM_TEST_CASE("column_major/gevm/0", "[cm][gevm]") {
     etl::fast_matrix_cm<T, 3, 2> a = {1, 3, 5, 2, 4, 6};
     etl::fast_vector_cm<T, 3> b    = {7, 8, 9};
     etl::fast_matrix_cm<T, 2> c;
@@ -273,6 +273,31 @@ GEVM_TEST_CASE("column_major/gevm/0", "[mul]") {
 
     REQUIRE_EQUALS(c(0), 76);
     REQUIRE_EQUALS(c(1), 100);
+}
+
+GEVM_TEST_CASE("column_major/gevm/1", "[cm][gevm]") {
+    etl::dyn_matrix_cm<T> a(512, 512);
+    etl::dyn_matrix_cm<T, 1> b(512);
+
+    etl::dyn_matrix_cm<T, 1> c(512);
+    etl::dyn_matrix_cm<T, 1> c_ref(512);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(b, a, c);
+
+    c_ref = 0;
+
+    for (size_t k = 0; k < 512; k++) {
+        for (size_t j = 0; j < 512; j++) {
+            c_ref(j) += b(k) * a(k, j);
+        }
+    }
+
+    for(size_t i = 0; i < etl::size(c); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
+    }
 }
 
 CONV1_FULL_TEST_CASE("column_major/conv/full_1", "[cm][conv]") {
