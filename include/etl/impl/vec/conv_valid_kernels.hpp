@@ -36,6 +36,20 @@ namespace vec {
 
 namespace detail {
 
+/*!
+ * \brief Handle a point in the border for computation of valid convolution.
+ *
+ * \param input The input matrix of dimensions (n1, n2)
+ * \param kernel The kernel matrix of dimensions (m1, m2)
+ * \param conv The output matrix
+ * \param i The first index to compute
+ * \param j The second index to compute
+ * \param s1 The stride in the first dimension
+ * \param s2 The stride in the second dimension
+ * \param p1 The padding in the first dimension
+ * \param p2 The padding in the second dimension
+ * \param beta The multiplicative for the previous values of out
+ */
 template <typename I, typename K, typename C>
 inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv, size_t i, size_t j, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
     using T = value_t<I>;
