@@ -195,7 +195,7 @@ TEMPLATE_TEST_CASE_2("big/relu_derivative", "[big][add]", Z, double, float) {
     etl::dyn_matrix<Z> c(1024, 1UL);
 
     a = etl::uniform_generator(0.0, 5000.0);
-    c = relu_derivative(a);;
+    c = relu_derivative(a);
 
     for (std::size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], (a[i] > 0.0 ? Z(1.0) : Z(0.0)));
