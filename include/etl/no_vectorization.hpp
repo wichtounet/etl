@@ -95,6 +95,17 @@ struct no_vec {
     }
 
     /*!
+     * \brief Create a vector containing the rounded up values
+     * \param value The value
+     * \return Vector of value
+     */
+    template <typename F>
+    static F round_up(F x) {
+        cpp_unused(x);
+        return F();
+    }
+
+    /*!
      * \brief Vector addition or lhs and rhs
      * \param lhs The left hand side of the operation
      * \param rhs The right hand side of the operation

@@ -738,6 +738,20 @@ struct avx_vec {
         return loadu(tmp);
     }
 
+    /*!
+     * \brief Round up each values of the vector and return them
+     */
+    ETL_STATIC_INLINE(avx_simd_float) round_up(avx_simd_float x) {
+        return _mm256_round_ps(x.value, (_MM_FROUND_TO_POS_INF |_MM_FROUND_NO_EXC));
+    }
+
+    /*!
+     * \brief Round up each values of the vector and return them
+     */
+    ETL_STATIC_INLINE(avx_simd_double) round_up(avx_simd_double x) {
+        return _mm256_round_pd(x.value, (_MM_FROUND_TO_POS_INF |_MM_FROUND_NO_EXC));
+    }
+
     // Addition
 
 #ifdef __AVX2__

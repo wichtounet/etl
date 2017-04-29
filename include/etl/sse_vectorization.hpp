@@ -690,6 +690,20 @@ struct sse_vec {
     }
 
     /*!
+     * \brief Round up each values of the vector and return them
+     */
+    ETL_STATIC_INLINE(sse_simd_float) round_up(sse_simd_float x) {
+        return _mm_round_ps(x.value, (_MM_FROUND_TO_POS_INF |_MM_FROUND_NO_EXC));
+    }
+
+    /*!
+     * \brief Round up each values of the vector and return them
+     */
+    ETL_STATIC_INLINE(sse_simd_double) round_up(sse_simd_double x) {
+        return _mm_round_pd(x.value, (_MM_FROUND_TO_POS_INF |_MM_FROUND_NO_EXC));
+    }
+
+    /*!
      * \brief Fill a packed vector  by replicating a value
      */
     ETL_STATIC_INLINE(sse_simd_complex_float<std::complex<float>>) set(std::complex<float> value) {
