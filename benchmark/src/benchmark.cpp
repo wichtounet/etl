@@ -418,4 +418,10 @@ CPM_BENCH() {
         [](svec& a, svec& r){ r = relu(a); },
         [](std::size_t d){ return d; }
     );
+
+    CPM_TWO_PASS_NS("nn_relu_der",
+        [](std::size_t d){ return std::make_tuple(svec(d), svec(d)); },
+        [](svec& a, svec& r){ r = relu_derivative(a); },
+        [](std::size_t d){ return d; }
+    );
 }
