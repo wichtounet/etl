@@ -20,7 +20,8 @@ namespace etl {
 constexpr std::size_t gemm_std_max    = 75 * 75;   ///< The maximum number of elements to be handled by std algorithm
 constexpr std::size_t gemm_cublas_min = 180 * 180; ///< The minimum number or elements before considering cublas
 
-constexpr std::size_t gemm_small_threshold = 1000; ///< The number of elements of B after which we use BLAS-like kernel (for GEMM)
+constexpr std::size_t gemm_rr_small_threshold = 1000; ///< The number of elements of B after which we use BLAS-like kernel (for GEMM)
+constexpr std::size_t gemm_cc_small_threshold = 1000; ///< The number of elements of B after which we use BLAS-like kernel (for GEMM)
 
 constexpr std::size_t gevm_rm_small_threshold = 1000; ///< The number of elements of b after which we use BLAS-like kernel
 constexpr std::size_t gevm_cm_small_threshold = 1000; ///< The number of elements of b after which we use BLAS-like kernel
@@ -48,7 +49,8 @@ constexpr std::size_t stream_threshold = 1024; ///< The threshold at which strea
 constexpr std::size_t gemm_std_max    = 75 * 75;   ///< The maximum number of elements to be handled by std algorithm
 constexpr std::size_t gemm_cublas_min = 180 * 180; ///< The minimum number or elements before considering cublas
 
-constexpr std::size_t gemm_small_threshold = 10000;   ///< The number of elements of B after which we use BLAS-like kernel (for GEMM)
+constexpr std::size_t gemm_rr_small_threshold = 10000;   ///< The number of elements of B after which we use BLAS-like kernel (for GEMM)
+constexpr std::size_t gemm_cc_small_threshold = 40000;   ///< The number of elements of B after which we use BLAS-like kernel (for GEMM)
 
 constexpr std::size_t gevm_rm_small_threshold = 62000;   ///< The number of elements of b after which we use BLAS-like kernel
 constexpr std::size_t gevm_cm_small_threshold = 4000000; ///< The number of elements of b after which we use BLAS-like kernel
