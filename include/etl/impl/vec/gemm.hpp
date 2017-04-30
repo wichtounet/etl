@@ -630,9 +630,9 @@ void gemm(A&& a, B&& b, C&& c) {
 
     c = 0;
 
-    for (std::size_t i = 0; i < rows(a); i++) {
+    for (std::size_t j = 0; j < columns(b); j++) {
         for (std::size_t k = 0; k < columns(a); k++) {
-            for (std::size_t j = 0; j < columns(b); j++) {
+            for (std::size_t i = 0; i < rows(a); i++) {
                 c(i, j) += a(i, k) * b(k, j);
             }
         }
