@@ -29,6 +29,7 @@
 #include "etl/random.hpp"
 #include "etl/duration.hpp"
 #include "etl/threshold.hpp"
+#include "etl/thread_engine.hpp"
 #include "etl/parallel.hpp"
 #include "etl/memory.hpp"
 #include "etl/allocator.hpp"

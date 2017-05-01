@@ -179,4 +179,87 @@ inline void dispatch_1d_acc(bool p, Functor&& functor, AccFunctor&& acc_functor,
     }
 }
 
+#ifdef ETL_PARALLEL_SUPPORT
+
+/*!
+ * \brief Indicates if an 1D evaluation should run in paralle
+ * \param n The size of the evaluation
+ * \param threshold The parallel threshold
+ * \return true if the evaluation should be done in paralle, false otherwise
+ */
+inline bool engine_select_parallel(std::size_t n, std::size_t threshold = parallel_threshold) {
+    return threads > 1 && !local_context().serial && (local_context().parallel || (is_parallel && n >= threshold));
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel
+ * manner, using the global thread engine.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
+ * \param threshold The threshold for parallelization
+ */
+template <typename Functor>
+inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, size_t threshold) {
+    cpp_assert(last >= first, "Range must be valid");
+
+    const size_t n = last - first;
+
+    if (n) {
+        if (engine_select_parallel(n, threshold)) {
+            const size_t T     = std::min(n, etl::threads);
+            const size_t batch = n / T;
+
+            thread_engine::acquire();
+
+            for (std::size_t t = 0; t < T - 1; ++t) {
+                thread_engine::schedule(functor, first + t * batch, first + (t + 1) * batch);
+            }
+
+            thread_engine::schedule(functor, first + (T - 1) * batch, last);
+
+            thread_engine::wait();
+        } else {
+            functor(first, last);
+        }
+    }
+}
+
+#else
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel
+ * manner, using the global thread engine.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
+ * \param threshold The threshold for parallelization
+ */
+template <typename Functor>
+inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, size_t threshold) {
+    cpp_assert(last >= first, "Range must be valid");
+
+    const size_t n = last - first;
+
+    if (n) {
+        functor(first, last);
+    }
+}
+
+#endif
+
 } //end of namespace etl
