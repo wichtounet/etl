@@ -74,20 +74,30 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
         static_assert(all_etl_expr<A, C>::value, "Transpose only supported for ETL expressions");
 
         const auto N = etl::size(a) / etl::size(c);
+        const auto K = etl::size(c);
 
         using T = value_t<A>;
 
         check(a, c);
 
-        for(size_t k = 0; k < etl::dim<0>(c); ++k){
-            T mean(0);
 
-            for(size_t b = 0; b < etl::dim<0>(a); ++b){
-                mean += sum(a(b)(k));
+        auto batch_fun_k = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    for (size_t k = first; k < last; ++k) {
+                        T mean(0);
+
+                        for (size_t b = 0; b < etl::dim<0>(a); ++b) {
+                            mean += sum(a(b)(k));
+                        }
+
+                        c(k) = mean / N;
+                    }
+                }
             }
+        };
 
-            c(k) = mean / N;
-        }
+        smart_dispatch_1d_any(batch_fun_k, 0, K, 2);
     }
 
     // Assignment functions
