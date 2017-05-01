@@ -258,6 +258,8 @@ template <typename Functor>
 inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, size_t threshold) {
     cpp_assert(last >= first, "Range must be valid");
 
+    cpp_unused(threshold);
+
     const size_t n = last - first;
 
     if (n) {
@@ -276,6 +278,8 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, siz
 template <typename T, typename Functor, typename AccFunctor>
 inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, std::size_t first, std::size_t last, size_t threshold) {
     cpp_assert(last >= first, "Range must be valid");
+
+    cpp_unused(threshold);
 
     const size_t n = last - first;
 
