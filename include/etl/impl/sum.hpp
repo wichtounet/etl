@@ -128,8 +128,6 @@ struct sum_impl {
     static value_t<E> apply(const E& e) {
         auto impl = select_sum_impl<E>(safe_is_gpu_up_to_date(e));
 
-        bool parallel_dispatch = select_parallel(e);
-
         value_t<E> acc(0);
 
         auto acc_functor = [&acc](value_t<E> value) {
@@ -139,17 +137,17 @@ struct sum_impl {
         //TODO Make it so that dispatching aligns the sub parts
 
         if (impl == etl::sum_impl::VEC) {
-            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
+            engine_dispatch_1d_acc<value_t<E>>([&e](std::size_t first, std::size_t last) -> value_t<E> {
                 return impl::vec::sum(e, first, last);
-            }, acc_functor, 0, size(e));
+            }, acc_functor, 0, size(e), sum_parallel_threshold);
         } else if(impl == etl::sum_impl::BLAS){
             return impl::blas::sum(e);
         } else if(impl == etl::sum_impl::CUBLAS){
             return impl::cublas::sum(e);
         } else {
-            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
+            engine_dispatch_1d_acc<value_t<E>>([&e](std::size_t first, std::size_t last) -> value_t<E> {
                 return impl::standard::sum(e, first, last);
-            }, acc_functor, 0, size(e));
+            }, acc_functor, 0, size(e), sum_parallel_threshold);
         }
 
         return acc;
