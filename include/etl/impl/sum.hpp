@@ -182,16 +182,16 @@ struct asum_impl {
 
         if (impl == etl::sum_impl::VEC) {
             engine_dispatch_1d_acc<value_t<E>>([&e](std::size_t first, std::size_t last) -> value_t<E> {
-                return impl::vec::asum(e, first, last, sum_parallel_threshold);
-            }, acc_functor, 0, size(e));
+                return impl::vec::asum(e, first, last);
+            }, acc_functor, 0, size(e), sum_parallel_threshold);
         } else if(impl == etl::sum_impl::BLAS){
             return impl::blas::asum(e);
         } else if(impl == etl::sum_impl::CUBLAS){
             return impl::cublas::asum(e);
         } else {
             engine_dispatch_1d_acc<value_t<E>>([&e](std::size_t first, std::size_t last) -> value_t<E> {
-                return impl::standard::asum(e, first, last, sum_parallel_threshold);
-            }, acc_functor, 0, size(e));
+                return impl::standard::asum(e, first, last);
+            }, acc_functor, 0, size(e), sum_parallel_threshold);
         }
 
         return acc;
