@@ -232,6 +232,48 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, siz
     }
 }
 
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel manner and use an accumulator functor to accumulate the results
+ * \param p Boolean tag to indicate if parallel dispatching must be done
+ * \param functor The functor to execute
+ * \param acc_functor The functor to accumulate results
+ * \param first The beginning of the range
+ * \param last The end of the range
+ */
+template <typename TT, typename Functor, typename AccFunctor>
+inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, std::size_t first, std::size_t last, size_t threshold) {
+    const size_t n     = last - first;
+
+    if(n){
+        if (engine_select_parallel(n, threshold)) {
+            const size_t T     = std::min(n, etl::threads);
+            const size_t batch = n / T;
+
+            thread_engine::acquire();
+
+            std::vector<TT> futures(T);
+
+            auto sub_functor = [&futures, &functor](std::size_t t, std::size_t first, std::size_t last) {
+                futures[t]   = functor(first, last);
+            };
+
+            for (size_t t = 0; t < T - 1; ++t) {
+                thread_engine::schedule(sub_functor, t, first + t * batch, first + (t + 1) * batch);
+            }
+
+            thread_engine::schedule(sub_functor, T - 1, first + (T - 1) * batch, last);
+
+            thread_engine::wait();
+
+            for (auto fut : futures) {
+                acc_functor(fut);
+            }
+        } else {
+            acc_functor(functor(first, last));
+        }
+    }
+}
+
 #else
 
 /*!
@@ -257,6 +299,25 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, siz
 
     if (n) {
         functor(first, last);
+    }
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel manner and use an accumulator functor to accumulate the results
+ * \param p Boolean tag to indicate if parallel dispatching must be done
+ * \param functor The functor to execute
+ * \param acc_functor The functor to accumulate results
+ * \param first The beginning of the range
+ * \param last The end of the range
+ */
+template <typename T, typename Functor, typename AccFunctor>
+inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, std::size_t first, std::size_t last, size_t threshold) {
+    cpp_assert(last >= first, "Range must be valid");
+
+    const size_t n = last - first;
+
+    if (n) {
+        acc_functor(functor(first, last));
     }
 }
 
