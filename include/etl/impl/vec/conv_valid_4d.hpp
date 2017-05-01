@@ -108,7 +108,7 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                        engine_dispatch_1d(fun_nk, 0, N * K, 4);
                     } else {
                         auto fun_nk = [&](const size_t first, const size_t last) {
                             for (size_t nk = first; nk < last; ++nk) {
@@ -123,7 +123,7 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                        engine_dispatch_1d(fun_nk, 0, N * K, 4);
                     }
                 } else {
                     auto padded_input  = common::pad_right_multi_double(input, pad, p1, p2);
@@ -143,7 +143,7 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                        engine_dispatch_1d(fun_nk, 0, N * K, 4);
                     } else {
                         auto fun_nk = [&](const size_t first, const size_t last) {
                             for (size_t nk = first; nk < last; ++nk) {
@@ -158,7 +158,7 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                        engine_dispatch_1d(fun_nk, 0, N * K, 4);
                     }
                 }
 
@@ -180,7 +180,7 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
                 }
             };
 
-            smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+            engine_dispatch_1d(fun_nk, 0, N * K, 4);
         } else {
             auto fun_nk = [&](const size_t first, const size_t last) {
                 for (size_t nk = first; nk < last; ++nk) {
@@ -195,7 +195,7 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
                 }
             };
 
-            smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+            engine_dispatch_1d(fun_nk, 0, N * K, 4);
         }
 
         conv.invalidate_gpu();
@@ -253,7 +253,7 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                        engine_dispatch_1d(fun_nk, 0, N * K, 4);
                     } else {
                         auto fun_nk = [&](const size_t first, const size_t last) {
                             for (size_t nk = first; nk < last; ++nk) {
@@ -268,7 +268,7 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                        engine_dispatch_1d(fun_nk, 0, N * K, 4);
                     }
                 } else {
                     auto padded_input  = common::pad_right_multi_double(input, pad, p1, p2);
@@ -288,7 +288,7 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                        engine_dispatch_1d(fun_nk, 0, N * K, 4);
                     } else {
                         auto fun_nk = [&](const size_t first, const size_t last) {
                             for (size_t nk = first; nk < last; ++nk) {
@@ -303,7 +303,7 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+                        engine_dispatch_1d(fun_nk, 0, N * K, 4);
                     }
                 }
 
@@ -325,7 +325,7 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
                 }
             };
 
-            smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+            engine_dispatch_1d(fun_nk, 0, N * K, 4);
         } else {
             auto fun_nk = [&](const size_t first, const size_t last) {
                 for (size_t nk = first; nk < last; ++nk) {
@@ -340,7 +340,7 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
                 }
             };
 
-            smart_dispatch_1d_any(fun_nk, 0, N * K, 4);
+            engine_dispatch_1d(fun_nk, 0, N * K, 4);
         }
 
         conv.invalidate_gpu();
@@ -397,7 +397,7 @@ void conv4_valid_back(const I& input, const KK& kernel, CC&& conv, size_t s1, si
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                        engine_dispatch_1d(fun_nc, 0, N * C, 4);
                     } else {
                         auto fun_nc = [&](const size_t first, const size_t last) {
                             for (size_t nk = first; nk < last; ++nk) {
@@ -412,7 +412,7 @@ void conv4_valid_back(const I& input, const KK& kernel, CC&& conv, size_t s1, si
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                        engine_dispatch_1d(fun_nc, 0, N * C, 4);
                     }
                 } else {
                     auto padded_input  = common::pad_right_multi_double(input, pad, p1, p2);
@@ -432,7 +432,7 @@ void conv4_valid_back(const I& input, const KK& kernel, CC&& conv, size_t s1, si
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                        engine_dispatch_1d(fun_nc, 0, N * C, 4);
                     } else {
                         auto fun_nc = [&](const size_t first, const size_t last) {
                             for (size_t nk = first; nk < last; ++nk) {
@@ -447,7 +447,7 @@ void conv4_valid_back(const I& input, const KK& kernel, CC&& conv, size_t s1, si
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                        engine_dispatch_1d(fun_nc, 0, N * C, 4);
                     }
                 }
 
@@ -469,7 +469,7 @@ void conv4_valid_back(const I& input, const KK& kernel, CC&& conv, size_t s1, si
                 }
             };
 
-            smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+            engine_dispatch_1d(fun_nc, 0, N * C, 4);
         } else {
             auto fun_nc = [&](const size_t first, const size_t last) {
                 for (size_t nk = first; nk < last; ++nk) {
@@ -484,7 +484,7 @@ void conv4_valid_back(const I& input, const KK& kernel, CC&& conv, size_t s1, si
                 }
             };
 
-            smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+            engine_dispatch_1d(fun_nc, 0, N * C, 4);
         }
 
         conv.invalidate_gpu();
@@ -542,7 +542,7 @@ void conv4_valid_back_flipped(const I& input, const KK& kernel, CC&& conv, size_
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                        engine_dispatch_1d(fun_nc, 0, N * C, 4);
                     } else {
                         auto fun_nc = [&](const size_t first, const size_t last) {
                             for (size_t nk = first; nk < last; ++nk) {
@@ -557,7 +557,7 @@ void conv4_valid_back_flipped(const I& input, const KK& kernel, CC&& conv, size_
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                        engine_dispatch_1d(fun_nc, 0, N * C, 4);
                     }
                 } else {
                     auto padded_input  = common::pad_right_multi_double(input, pad, p1, p2);
@@ -577,7 +577,7 @@ void conv4_valid_back_flipped(const I& input, const KK& kernel, CC&& conv, size_
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                        engine_dispatch_1d(fun_nc, 0, N * C, 4);
                     } else {
                         auto fun_nc = [&](const size_t first, const size_t last) {
                             for (size_t nk = first; nk < last; ++nk) {
@@ -592,7 +592,7 @@ void conv4_valid_back_flipped(const I& input, const KK& kernel, CC&& conv, size_
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+                        engine_dispatch_1d(fun_nc, 0, N * C, 4);
                     }
                 }
 
@@ -614,7 +614,7 @@ void conv4_valid_back_flipped(const I& input, const KK& kernel, CC&& conv, size_
                 }
             };
 
-            smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+            engine_dispatch_1d(fun_nc, 0, N * C, 4);
         } else {
             auto fun_nc = [&](const size_t first, const size_t last) {
                 for (size_t nk = first; nk < last; ++nk) {
@@ -629,7 +629,7 @@ void conv4_valid_back_flipped(const I& input, const KK& kernel, CC&& conv, size_
                 }
             };
 
-            smart_dispatch_1d_any(fun_nc, 0, N * C, 4);
+            engine_dispatch_1d(fun_nc, 0, N * C, 4);
         }
 
         conv.invalidate_gpu();
@@ -691,7 +691,7 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                        engine_dispatch_1d(fun_kc, 0, K * C, 4);
                     } else {
                         auto fun_kc = [&](const size_t first, const size_t last) {
                             //i = 0
@@ -712,7 +712,7 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                        engine_dispatch_1d(fun_kc, 0, K * C, 4);
                     }
                 } else {
                     auto padded_input  = common::pad_right_multi_double(input, pad, p1, p2);
@@ -738,7 +738,7 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                        engine_dispatch_1d(fun_kc, 0, K * C, 4);
                     } else {
                         auto fun_kc = [&](const size_t first, const size_t last) {
                             //i = 0
@@ -759,7 +759,7 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                        engine_dispatch_1d(fun_kc, 0, K * C, 4);
                     }
                 }
 
@@ -787,7 +787,7 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
                 }
             };
 
-            smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+            engine_dispatch_1d(fun_kc, 0, K * C, 4);
         } else {
             auto fun_kc = [&](const size_t first, const size_t last) {
                 //i = 0
@@ -808,7 +808,7 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
                 }
             };
 
-            smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+            engine_dispatch_1d(fun_kc, 0, K * C, 4);
         }
 
         conv.invalidate_gpu();
@@ -871,7 +871,7 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                        engine_dispatch_1d(fun_kc, 0, K * C, 4);
                     } else {
                         auto fun_kc = [&](const size_t first, const size_t last) {
                             //i = 0
@@ -892,7 +892,7 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                        engine_dispatch_1d(fun_kc, 0, K * C, 4);
                     }
                 } else {
                     auto padded_input  = common::pad_right_multi_double(input, pad, p1, p2);
@@ -918,7 +918,7 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                        engine_dispatch_1d(fun_kc, 0, K * C, 4);
                     } else {
                         auto fun_kc = [&](const size_t first, const size_t last) {
                             //i = 0
@@ -939,7 +939,7 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                             }
                         };
 
-                        smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+                        engine_dispatch_1d(fun_kc, 0, K * C, 4);
                     }
                 }
 
@@ -969,7 +969,7 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                 }
             };
 
-            smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+            engine_dispatch_1d(fun_kc, 0, K * C, 4);
         } else {
             auto fun_kc = [&](const size_t first, const size_t last) {
                 //i = 0
@@ -990,7 +990,7 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                 }
             };
 
-            smart_dispatch_1d_any(fun_kc, 0, K * C, 4);
+            engine_dispatch_1d(fun_kc, 0, K * C, 4);
         }
 
         conv.invalidate_gpu();
