@@ -1206,7 +1206,7 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
             mkl_set_num_threads(1);
         }
 
-        engine_dispatch_1d(batch_fun_k, 0, KK, 2);
+        engine_dispatch_1d(batch_fun_k, 0, KK, 2UL);
 
         if(is_blas_parallel){
             mkl_set_num_threads(mkl_threads);
@@ -1343,8 +1343,8 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
                 mkl_set_num_threads(1);
             }
 
-            engine_dispatch_1d(batch_fun_kc, 0, K * C, 2);
-            engine_dispatch_1d(batch_fun_n, 0, N, 2);
+            engine_dispatch_1d(batch_fun_kc, 0, K * C, 2UL);
+            engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
 
             if(is_blas_parallel){
                 mkl_set_num_threads(mkl_threads);
@@ -1491,8 +1491,8 @@ void conv4_full_flipped(II&& input, KK&& kernel, CC&& conv) {
                 mkl_set_num_threads(1);
             }
 
-            engine_dispatch_1d(batch_fun_kc, 0, K * C, 2);
-            engine_dispatch_1d(batch_fun_n, 0, N, 2);
+            engine_dispatch_1d(batch_fun_kc, 0, K * C, 2UL);
+            engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
 
             if(is_blas_parallel){
                 mkl_set_num_threads(mkl_threads);
