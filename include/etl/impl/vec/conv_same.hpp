@@ -209,7 +209,7 @@ void conv2_same_multi(const I& input, const K& kernel, C&& conv) {
         }
     };
 
-    engine_dispatch_1d(batch_fun_k, 0, Kn, 2);
+    engine_dispatch_1d(batch_fun_k, 0, Kn, 2UL);
 }
 
 /*!
@@ -232,7 +232,7 @@ void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
         }
     };
 
-    engine_dispatch_1d(batch_fun_k, 0, Kn, 2);
+    engine_dispatch_1d(batch_fun_k, 0, Kn, 2UL);
 }
 
 } //end of namespace vec

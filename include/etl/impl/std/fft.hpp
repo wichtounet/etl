@@ -574,7 +574,7 @@ void fft_n_many(const In* r_in, etl::complex<T>* r_out, const std::size_t batch,
         }
     };
 
-    engine_dispatch_1d(batch_fun_b, 0, batch, 8);
+    engine_dispatch_1d(batch_fun_b, 0, batch, 8UL);
 }
 
 template <typename T>
@@ -877,7 +877,7 @@ void fft1_many_kernel(const A* a, C* c, size_t batch, size_t n) {
             }
         };
 
-        engine_dispatch_1d(batch_fun_b, 0, batch, 8);
+        engine_dispatch_1d(batch_fun_b, 0, batch, 8UL);
     } else {
         detail::fft_n_many(a, reinterpret_cast<etl::complex<typename C::value_type>*>(c), batch, n);
     }
@@ -1166,7 +1166,7 @@ void conv2_full_multi_fft(II&& input, KK&& kernel, CC&& conv) {
             }
         };
 
-        engine_dispatch_1d(batch_fun_k, 0, K, 2);
+        engine_dispatch_1d(batch_fun_k, 0, K, 2UL);
 
         conv.invalidate_gpu();
     }
@@ -1301,7 +1301,7 @@ void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
             }
         };
 
-        engine_dispatch_1d(batch_fun_n, 0, N, 2);
+        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
 
         conv.invalidate_gpu();
     }

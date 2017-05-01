@@ -654,7 +654,7 @@ void conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, 
         }
     };
 
-    dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+    engine_dispatch_1d(fun_k, 0, K, 2UL);
 }
 
 /*!
@@ -673,7 +673,7 @@ void conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv, siz
         }
     };
 
-    dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+    engine_dispatch_1d(fun_k, 0, K, 2UL);
 }
 
 /*!
@@ -697,7 +697,7 @@ void conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_
         }
     };
 
-    dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+    engine_dispatch_1d(fun_kn, 0, KN, 2UL);
 }
 
 /*!
@@ -721,7 +721,7 @@ void conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& con
         }
     };
 
-    dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+    engine_dispatch_1d(fun_kn, 0, KN, 2UL);
 }
 
 /*!
@@ -740,7 +740,7 @@ void conv2_full_multi(const I& input, const K_T& kernels, C&& conv) {
         }
     };
 
-    dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+    engine_dispatch_1d(fun_k, 0, K, 2UL);
 }
 
 /*!
@@ -759,7 +759,7 @@ void conv2_full_multi_flipped(const I& input, const K_T& kernels, C&& conv) {
         }
     };
 
-    dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+    engine_dispatch_1d(fun_k, 0, K, 2UL);
 }
 
 /*!
@@ -778,7 +778,7 @@ void conv2_same_multi(const I& input, const K_T& kernels, C&& conv) {
         }
     };
 
-    dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+    engine_dispatch_1d(fun_k, 0, K, 2UL);
 }
 
 /*!
@@ -797,7 +797,7 @@ void conv2_same_multi_flipped(const I& input, const K_T& kernels, C&& conv) {
         }
     };
 
-    dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+    engine_dispatch_1d(fun_k, 0, K, 2UL);
 }
 
 } //end of namespace standard

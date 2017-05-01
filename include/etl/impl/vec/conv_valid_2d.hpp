@@ -225,7 +225,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
                     }
                 };
 
-                engine_dispatch_1d(fun_k, 0, K, 2);
+                engine_dispatch_1d(fun_k, 0, K, 2UL);
             } else {
                 auto fun_k = [&](const size_t first, const size_t last) {
                     for (size_t k = first; k < last; ++k) {
@@ -233,7 +233,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
                     }
                 };
 
-                engine_dispatch_1d(fun_k, 0, K, 2);
+                engine_dispatch_1d(fun_k, 0, K, 2UL);
             }
 
             return;
@@ -247,7 +247,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
             }
         };
 
-        engine_dispatch_1d(fun_k, 0, K, 2);
+        engine_dispatch_1d(fun_k, 0, K, 2UL);
     } else {
         auto fun_k = [&](const size_t first, const size_t last) {
             for (size_t k = first; k < last; ++k) {
@@ -255,7 +255,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
             }
         };
 
-        engine_dispatch_1d(fun_k, 0, K, 2);
+        engine_dispatch_1d(fun_k, 0, K, 2UL);
     }
 
     conv.invalidate_gpu();
@@ -303,7 +303,7 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
                     }
                 };
 
-                engine_dispatch_1d(fun_k, 0, K, 2);
+                engine_dispatch_1d(fun_k, 0, K, 2UL);
             } else {
                 auto fun_k = [&](const size_t first, const size_t last) {
                     for (size_t k = first; k < last; ++k) {
@@ -311,7 +311,7 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
                     }
                 };
 
-                engine_dispatch_1d(fun_k, 0, K, 2);
+                engine_dispatch_1d(fun_k, 0, K, 2UL);
             }
 
             return;
@@ -325,7 +325,7 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
             }
         };
 
-        engine_dispatch_1d(fun_k, 0, K, 2);
+        engine_dispatch_1d(fun_k, 0, K, 2UL);
     } else {
         auto fun_k = [&](const size_t first, const size_t last) {
             for (size_t k = first; k < last; ++k) {
@@ -333,7 +333,7 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
             }
         };
 
-        engine_dispatch_1d(fun_k, 0, K, 2);
+        engine_dispatch_1d(fun_k, 0, K, 2UL);
     }
 
     conv.invalidate_gpu();
@@ -384,7 +384,7 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
                     }
                 };
 
-                engine_dispatch_1d(fun_kn, 0, KN, 2);
+                engine_dispatch_1d(fun_kn, 0, KN, 2UL);
             } else {
                 auto fun_kn = [&](const size_t first, const size_t last) {
                     for (size_t kn = first; kn < last; ++kn) {
@@ -395,7 +395,7 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
                     }
                 };
 
-                engine_dispatch_1d(fun_kn, 0, KN, 2);
+                engine_dispatch_1d(fun_kn, 0, KN, 2UL);
             }
 
             return;
@@ -412,7 +412,7 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
             }
         };
 
-        engine_dispatch_1d(fun_kn, 0, KN, 2);
+        engine_dispatch_1d(fun_kn, 0, KN, 2UL);
     } else {
         auto fun_kn = [&](const size_t first, const size_t last) {
             for (size_t kn = first; kn < last; ++kn) {
@@ -423,7 +423,7 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
             }
         };
 
-        engine_dispatch_1d(fun_kn, 0, KN, 2);
+        engine_dispatch_1d(fun_kn, 0, KN, 2UL);
     }
 
     conv.invalidate_gpu();
@@ -476,7 +476,7 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
                     }
                 };
 
-                engine_dispatch_1d(fun_kn, 0, KN, 2);
+                engine_dispatch_1d(fun_kn, 0, KN, 2UL);
             } else {
                 auto fun_kn = [&](const size_t first, const size_t last) {
                     for (size_t kn = first; kn < last; ++kn) {
@@ -487,7 +487,7 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
                     }
                 };
 
-                engine_dispatch_1d(fun_kn, 0, KN, 2);
+                engine_dispatch_1d(fun_kn, 0, KN, 2UL);
             }
 
             return;
@@ -504,7 +504,7 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
             }
         };
 
-        engine_dispatch_1d(fun_kn, 0, KN, 2);
+        engine_dispatch_1d(fun_kn, 0, KN, 2UL);
     } else {
         auto fun_kn = [&](const size_t first, const size_t last) {
             for (size_t kn = first; kn < last; ++kn) {
@@ -515,7 +515,7 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
             }
         };
 
-        engine_dispatch_1d(fun_kn, 0, KN, 2);
+        engine_dispatch_1d(fun_kn, 0, KN, 2UL);
     }
 
     conv.invalidate_gpu();

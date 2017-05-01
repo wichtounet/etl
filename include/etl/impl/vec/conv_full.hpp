@@ -226,7 +226,7 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
         }
     };
 
-    engine_dispatch_1d(batch_fun_k, 0, KK, 2);
+    engine_dispatch_1d(batch_fun_k, 0, KK, 2UL);
 }
 
 /*!
@@ -250,7 +250,7 @@ void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
         }
     };
 
-    engine_dispatch_1d(batch_fun_k, 0, KK, 2);
+    engine_dispatch_1d(batch_fun_k, 0, KK, 2UL);
 }
 
 /*!
@@ -301,7 +301,7 @@ void conv4_full(const I& input, const KK& kernel, CC&& conv) {
             }
         };
 
-        engine_dispatch_1d(batch_fun_nc, 0, N * C, 2);
+        engine_dispatch_1d(batch_fun_nc, 0, N * C, 2UL);
 
         conv.invalidate_gpu();
     }
@@ -401,7 +401,7 @@ bool conv4_full_flipped_small(const I& input, const KK& kernel, CC&& conv) {
                     }
                 };
 
-                engine_dispatch_1d(batch_fun_nc, 0, N * C, 2);
+                engine_dispatch_1d(batch_fun_nc, 0, N * C, 2UL);
             } else {
                 auto batch_fun_nc = [&](const size_t first, const size_t last) {
                     if (last - first) {
@@ -419,7 +419,7 @@ bool conv4_full_flipped_small(const I& input, const KK& kernel, CC&& conv) {
                     }
                 };
 
-                engine_dispatch_1d(batch_fun_nc, 0, N * C, 2);
+                engine_dispatch_1d(batch_fun_nc, 0, N * C, 2UL);
             }
 
             return true;
@@ -459,7 +459,7 @@ bool conv4_full_flipped_small(const I& input, const KK& kernel, CC&& conv) {
             }
         };
 
-        engine_dispatch_1d(batch_fun_nc, 0, N * C, 2);
+        engine_dispatch_1d(batch_fun_nc, 0, N * C, 2UL);
     } else {
         auto batch_fun_nc = [&](const size_t first, const size_t last) {
             if (last - first) {
@@ -477,7 +477,7 @@ bool conv4_full_flipped_small(const I& input, const KK& kernel, CC&& conv) {
             }
         };
 
-        engine_dispatch_1d(batch_fun_nc, 0, N * C, 2);
+        engine_dispatch_1d(batch_fun_nc, 0, N * C, 2UL);
     }
 
     return true;
@@ -540,7 +540,7 @@ bool conv4_full_flipped_padding(const I& input, const KK& kernel, CC&& conv) {
                     }
                 };
 
-                engine_dispatch_1d(batch_fun_nc, 0, N * C, 2);
+                engine_dispatch_1d(batch_fun_nc, 0, N * C, 2UL);
             } else {
                 auto batch_fun_nc = [&](const size_t first, const size_t last) {
                     if (last - first) {
@@ -568,7 +568,7 @@ bool conv4_full_flipped_padding(const I& input, const KK& kernel, CC&& conv) {
                     }
                 };
 
-                engine_dispatch_1d(batch_fun_nc, 0, N * C, 2);
+                engine_dispatch_1d(batch_fun_nc, 0, N * C, 2UL);
             }
 
             return true;
@@ -634,7 +634,7 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
                 }
             };
 
-            engine_dispatch_1d(batch_fun_nc, 0, N * C, 2);
+            engine_dispatch_1d(batch_fun_nc, 0, N * C, 2UL);
         } else {
             auto batch_fun_nc = [&](const size_t first, const size_t last) {
                 if (last - first) {
@@ -652,7 +652,7 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
                 }
             };
 
-            engine_dispatch_1d(batch_fun_nc, 0, N * C, 2);
+            engine_dispatch_1d(batch_fun_nc, 0, N * C, 2UL);
         }
 
         conv.invalidate_gpu();

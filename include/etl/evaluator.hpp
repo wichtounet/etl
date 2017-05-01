@@ -146,19 +146,19 @@ namespace standard_evaluator {
         using RS = decltype(memory_slice(result, 0, n));
         using ES = decltype(memory_slice(expr, 0, n));
 
-        thread_local cpp::default_thread_pool<> pool(threads - 1);
+        thread_engine::acquire();
 
         //Distribute evenly the batches
 
         auto batch = n / threads;
 
         for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(Fun<RS,ES>(memory_slice(result, t * batch, (t+1) * batch), memory_slice(expr, t * batch, (t+1) * batch)));
+            thread_engine::schedule(Fun<RS,ES>(memory_slice(result, t * batch, (t+1) * batch), memory_slice(expr, t * batch, (t+1) * batch)));
         }
 
-        Fun<RS,ES>(memory_slice(result, (threads - 1) * batch, n), memory_slice(expr, (threads - 1) * batch, n))();
+        thread_engine::schedule(Fun<RS,ES>(memory_slice(result, (threads - 1) * batch, n), memory_slice(expr, (threads - 1) * batch, n)));
 
-        pool.wait();
+        thread_engine::wait();
     }
 #else
     /*!
@@ -186,19 +186,19 @@ namespace standard_evaluator {
         using RS = decltype(memory_slice(result, 0, n));
         using ES = decltype(memory_slice(expr, 0, n));
 
-        thread_local cpp::default_thread_pool<> pool(threads - 1);
+        thread_engine::acquire();
 
         //Distribute evenly the batches
 
         auto batch = n / threads;
 
         for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(Fun<V, RS, ES>(memory_slice(result, t * batch, (t + 1) * batch), memory_slice(expr, t * batch, (t + 1) * batch)));
+            thread_engine::schedule(Fun<V, RS, ES>(memory_slice(result, t * batch, (t + 1) * batch), memory_slice(expr, t * batch, (t + 1) * batch)));
         }
 
-        Fun<V, RS, ES>(memory_slice(result, (threads - 1) * batch, n), memory_slice(expr, (threads - 1) * batch, n))();
+        thread_engine::schedule(Fun<V, RS, ES>(memory_slice(result, (threads - 1) * batch, n), memory_slice(expr, (threads - 1) * batch, n)));
 
-        pool.wait();
+        thread_engine::wait();
     }
 #else
     /*!

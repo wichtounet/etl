@@ -259,7 +259,7 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
         }
     };
 
-    dispatch_1d_any(select_parallel(M, 2) && N > 25, batch_fun_m, 0, M);
+    engine_dispatch_1d(batch_fun_m, 0, M, select_parallel(M, 2) && N > 25);
 
     result.invalidate_gpu();
 }

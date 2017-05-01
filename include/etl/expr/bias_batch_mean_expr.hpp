@@ -97,7 +97,7 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
             }
         };
 
-        engine_dispatch_1d(batch_fun_k, 0, K, 2);
+        engine_dispatch_1d(batch_fun_k, 0, K, 2UL);
     }
 
     // Assignment functions

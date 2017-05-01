@@ -328,7 +328,7 @@ struct max_pool_upsample_3d {
 
         const size_t N = etl::dim<0>(out);
 
-        engine_dispatch_1d(batch_fun_n, 0, N, 2);
+        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
     }
 
     /*!
@@ -359,7 +359,7 @@ struct max_pool_upsample_3d {
 
         const size_t N = etl::dim<0>(out);
 
-        engine_dispatch_1d(batch_fun_n, 0, N, 2);
+        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
     }
 
     // Deep handling
