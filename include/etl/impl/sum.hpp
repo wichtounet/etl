@@ -102,20 +102,6 @@ etl::sum_impl select_sum_impl(bool gpu_up_to_date) {
 }
 
 /*!
- * \brief Indicate if the sum must run in parallel for the given expression
- * \param e type The expression to sum
- * \return true if the implementation must run in parallel or not (false).
- */
-template <typename E>
-inline bool select_parallel(const E& e) {
-    if ((is_parallel && !local_context().serial) || (parallel_support && local_context().parallel)) {
-        return size(e) >= sum_parallel_threshold;
-    } else {
-        return false;
-    }
-}
-
-/*!
  * \brief Sum operation implementation
  */
 struct sum_impl {
@@ -186,8 +172,6 @@ struct asum_impl {
     static value_t<E> apply(const E& e) {
         auto impl = select_sum_impl<E>(safe_is_gpu_up_to_date(e));
 
-        bool parallel_dispatch = select_parallel(e);
-
         value_t<E> acc(0);
 
         auto acc_functor = [&acc](value_t<E> value) {
@@ -197,16 +181,16 @@ struct asum_impl {
         //TODO Make it so that dispatching aligns the sub parts
 
         if (impl == etl::sum_impl::VEC) {
-            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
-                return impl::vec::asum(e, first, last);
+            engine_dispatch_1d_acc<value_t<E>>([&e](std::size_t first, std::size_t last) -> value_t<E> {
+                return impl::vec::asum(e, first, last, sum_parallel_threshold);
             }, acc_functor, 0, size(e));
         } else if(impl == etl::sum_impl::BLAS){
             return impl::blas::asum(e);
         } else if(impl == etl::sum_impl::CUBLAS){
             return impl::cublas::asum(e);
         } else {
-            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
-                return impl::standard::asum(e, first, last);
+            engine_dispatch_1d_acc<value_t<E>>([&e](std::size_t first, std::size_t last) -> value_t<E> {
+                return impl::standard::asum(e, first, last, sum_parallel_threshold);
             }, acc_functor, 0, size(e));
         }
 

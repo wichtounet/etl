@@ -142,43 +142,6 @@ inline void smart_dispatch_1d_any(Functor&& functor, size_t first, size_t last, 
     }
 }
 
-/*!
- * \brief Dispatch the elements of a range to a functor in a parallel manner and use an accumulator functor to accumulate the results
- * \param p Boolean tag to indicate if parallel dispatching must be done
- * \param functor The functor to execute
- * \param acc_functor The functor to accumulate results
- * \param first The beginning of the range
- * \param last The end of the range
- */
-template <typename T, typename Functor, typename AccFunctor>
-inline void dispatch_1d_acc(bool p, Functor&& functor, AccFunctor&& acc_functor, std::size_t first, std::size_t last) {
-    if (p) {
-        std::vector<T> futures(threads - 1);
-        thread_local cpp::default_thread_pool<> pool(threads - 1);
-
-        auto n     = last - first;
-        auto batch = n / threads;
-
-        auto sub_functor = [&futures, &functor](std::size_t t, std::size_t first, std::size_t last) {
-            futures[t]   = functor(first, last);
-        };
-
-        for (std::size_t t = 0; t < threads - 1; ++t) {
-            pool.do_task(sub_functor, t, first + t * batch, first + (t + 1) * batch);
-        }
-
-        acc_functor(functor(first + (threads - 1) * batch, last));
-
-        pool.wait();
-
-        for (auto fut : futures) {
-            acc_functor(fut);
-        }
-    } else {
-        acc_functor(functor(first, last));
-    }
-}
-
 #ifdef ETL_PARALLEL_SUPPORT
 
 /*!
