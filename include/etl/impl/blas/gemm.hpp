@@ -778,7 +778,7 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
         }
     };
 
-    engine_dispatch_1d(batch_fun_n, 0, N, 2);
+    engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
 
     conv.invalidate_gpu();
 }
@@ -954,7 +954,7 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
         }
     };
 
-    engine_dispatch_1d(batch_fun_c, 0, C, 2);
+    engine_dispatch_1d(batch_fun_c, 0, C, 2UL);
 
     conv.invalidate_gpu();
 }
@@ -1088,7 +1088,7 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
         }
     };
 
-    engine_dispatch_1d(batch_fun_n, 0, N, 2);
+    engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
 
     conv.invalidate_gpu();
 }
