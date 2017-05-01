@@ -1206,11 +1206,7 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
             mkl_set_num_threads(1);
         }
 
-        if (etl::is_parallel) {
-            dispatch_1d_any(select_parallel(KK, 2), batch_fun_k, 0, KK);
-        } else {
-            batch_fun_k(0, KK);
-        }
+        engine_dispatch_1d(batch_fun_k, 0, KK, 2);
 
         if(is_blas_parallel){
             mkl_set_num_threads(mkl_threads);

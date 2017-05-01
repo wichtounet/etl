@@ -209,7 +209,7 @@ void conv2_same_multi(const I& input, const K& kernel, C&& conv) {
         }
     };
 
-    dispatch_1d_any(select_parallel(Kn, 2), batch_fun_k, 0, Kn);
+    engine_dispatch_1d(batch_fun_k, 0, Kn, 2);
 }
 
 /*!
@@ -232,7 +232,7 @@ void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
         }
     };
 
-    dispatch_1d_any(select_parallel(Kn, 2), batch_fun_k, 0, Kn);
+    engine_dispatch_1d(batch_fun_k, 0, Kn, 2);
 }
 
 } //end of namespace vec

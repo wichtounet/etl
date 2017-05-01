@@ -561,11 +561,7 @@ struct max_pool_3d {
 
         const size_t N = etl::dim<0>(m);
 
-        if (etl::is_parallel) {
-            dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
-        } else {
-            batch_fun_n(0, N);
-        }
+        engine_dispatch_1d(batch_fun_n, 0, N, 2);
     }
 
     /*!
@@ -602,11 +598,7 @@ struct max_pool_3d {
 
         const size_t N = etl::dim<0>(m);
 
-        if (etl::is_parallel) {
-            dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
-        } else {
-            batch_fun_n(0, N);
-        }
+        engine_dispatch_1d(batch_fun_n, 0, N, 2);
     }
 
     // Deep handling
