@@ -630,175 +630,175 @@ void gemm(A&& a, B&& b, C&& c) {
  */
 template <typename V, typename T>
 void gemm_small_kernel_cc(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
-    //using vec_type = V;
+    using vec_type = V;
 
-    //static constexpr size_t vec_size = vec_type::template traits<T>::size;
+    static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
     size_t i = 0;
 
-    //for (; i + 4 * vec_size - 1 < M; i += 4 * vec_size) {
-        //size_t j = 0;
+    for (; i + 4 * vec_size - 1 < M; i += 4 * vec_size) {
+        size_t j = 0;
 
-        //for (; (j + 2UL) <= N; j += 2UL) {
-            //auto r11 = vec_type::template zero<T>();
-            //auto r12 = vec_type::template zero<T>();
+        for (; (j + 2UL) <= N; j += 2UL) {
+            auto r11 = vec_type::template zero<T>();
+            auto r12 = vec_type::template zero<T>();
 
-            //auto r21 = vec_type::template zero<T>();
-            //auto r22 = vec_type::template zero<T>();
+            auto r21 = vec_type::template zero<T>();
+            auto r22 = vec_type::template zero<T>();
 
-            //auto r31 = vec_type::template zero<T>();
-            //auto r32 = vec_type::template zero<T>();
+            auto r31 = vec_type::template zero<T>();
+            auto r32 = vec_type::template zero<T>();
 
-            //auto r41 = vec_type::template zero<T>();
-            //auto r42 = vec_type::template zero<T>();
+            auto r41 = vec_type::template zero<T>();
+            auto r42 = vec_type::template zero<T>();
 
-            //for (size_t k = 0; k < K; ++k) {
-                //auto a11 = vec_type::loadu(a + (i + vec_size * 0) + k * M);
-                //auto a21 = vec_type::loadu(a + (i + vec_size * 1) + k * M);
-                //auto a31 = vec_type::loadu(a + (i + vec_size * 2) + k * M);
-                //auto a41 = vec_type::loadu(a + (i + vec_size * 3) + k * M);
+            for (size_t k = 0; k < K; ++k) {
+                auto a11 = vec_type::loadu(a + (i + vec_size * 0) + k * M);
+                auto a21 = vec_type::loadu(a + (i + vec_size * 1) + k * M);
+                auto a31 = vec_type::loadu(a + (i + vec_size * 2) + k * M);
+                auto a41 = vec_type::loadu(a + (i + vec_size * 3) + k * M);
 
-                //auto b1 = vec_type::set(b[k + (j + 0) * K]);
-                //auto b2 = vec_type::set(b[k + (j + 1) * K]);
+                auto b1 = vec_type::set(b[k + (j + 0) * K]);
+                auto b2 = vec_type::set(b[k + (j + 1) * K]);
 
-                //r11 = vec_type::fmadd(a11, b1, r11);
-                //r12 = vec_type::fmadd(a11, b2, r12);
+                r11 = vec_type::fmadd(a11, b1, r11);
+                r12 = vec_type::fmadd(a11, b2, r12);
 
-                //r21 = vec_type::fmadd(a21, b1, r21);
-                //r22 = vec_type::fmadd(a21, b2, r22);
+                r21 = vec_type::fmadd(a21, b1, r21);
+                r22 = vec_type::fmadd(a21, b2, r22);
 
-                //r31 = vec_type::fmadd(a31, b1, r31);
-                //r32 = vec_type::fmadd(a31, b2, r32);
+                r31 = vec_type::fmadd(a31, b1, r31);
+                r32 = vec_type::fmadd(a31, b2, r32);
 
-                //r41 = vec_type::fmadd(a41, b1, r41);
-                //r42 = vec_type::fmadd(a41, b2, r42);
-            //}
+                r41 = vec_type::fmadd(a41, b1, r41);
+                r42 = vec_type::fmadd(a41, b2, r42);
+            }
 
-            //vec_type::storeu(c + (i + vec_size * 0) + (j + 0) * M, r11);
-            //vec_type::storeu(c + (i + vec_size * 0) + (j + 1) * M, r12);
+            vec_type::storeu(c + (i + vec_size * 0) + (j + 0) * M, r11);
+            vec_type::storeu(c + (i + vec_size * 0) + (j + 1) * M, r12);
 
-            //vec_type::storeu(c + (i + vec_size * 1) + (j + 0) * M, r21);
-            //vec_type::storeu(c + (i + vec_size * 1) + (j + 1) * M, r22);
+            vec_type::storeu(c + (i + vec_size * 1) + (j + 0) * M, r21);
+            vec_type::storeu(c + (i + vec_size * 1) + (j + 1) * M, r22);
 
-            //vec_type::storeu(c + (i + vec_size * 2) + (j + 0) * M, r31);
-            //vec_type::storeu(c + (i + vec_size * 2) + (j + 1) * M, r32);
+            vec_type::storeu(c + (i + vec_size * 2) + (j + 0) * M, r31);
+            vec_type::storeu(c + (i + vec_size * 2) + (j + 1) * M, r32);
 
-            //vec_type::storeu(c + (i + vec_size * 3) + (j + 0) * M, r41);
-            //vec_type::storeu(c + (i + vec_size * 3) + (j + 1) * M, r42);
-        //}
+            vec_type::storeu(c + (i + vec_size * 3) + (j + 0) * M, r41);
+            vec_type::storeu(c + (i + vec_size * 3) + (j + 1) * M, r42);
+        }
 
-        //if (j < N) {
-            //auto r11 = vec_type::template zero<T>();
-            //auto r21 = vec_type::template zero<T>();
-            //auto r31 = vec_type::template zero<T>();
-            //auto r41 = vec_type::template zero<T>();
+        if (j < N) {
+            auto r11 = vec_type::template zero<T>();
+            auto r21 = vec_type::template zero<T>();
+            auto r31 = vec_type::template zero<T>();
+            auto r41 = vec_type::template zero<T>();
 
-            //for (size_t k = 0; k < K; ++k) {
-                //auto a11 = vec_type::loadu(a + i + vec_size * 0 + k * M);
-                //auto a21 = vec_type::loadu(a + i + vec_size * 1 + k * M);
-                //auto a31 = vec_type::loadu(a + i + vec_size * 2 + k * M);
-                //auto a41 = vec_type::loadu(a + i + vec_size * 3 + k * M);
+            for (size_t k = 0; k < K; ++k) {
+                auto a11 = vec_type::loadu(a + i + vec_size * 0 + k * M);
+                auto a21 = vec_type::loadu(a + i + vec_size * 1 + k * M);
+                auto a31 = vec_type::loadu(a + i + vec_size * 2 + k * M);
+                auto a41 = vec_type::loadu(a + i + vec_size * 3 + k * M);
 
-                //auto b1 = vec_type::set(b[k + j * K]);
+                auto b1 = vec_type::set(b[k + j * K]);
 
-                //r11 = vec_type::fmadd(a11, b1, r11);
-                //r21 = vec_type::fmadd(a21, b1, r21);
-                //r31 = vec_type::fmadd(a31, b1, r31);
-                //r41 = vec_type::fmadd(a41, b1, r41);
-            //}
+                r11 = vec_type::fmadd(a11, b1, r11);
+                r21 = vec_type::fmadd(a21, b1, r21);
+                r31 = vec_type::fmadd(a31, b1, r31);
+                r41 = vec_type::fmadd(a41, b1, r41);
+            }
 
-            //vec_type::storeu(c + i + vec_size * 0 + j * M, r11);
-            //vec_type::storeu(c + i + vec_size * 1 + j * M, r21);
-            //vec_type::storeu(c + i + vec_size * 2 + j * M, r31);
-            //vec_type::storeu(c + i + vec_size * 3 + j * M, r41);
-        //}
-    //}
+            vec_type::storeu(c + i + vec_size * 0 + j * M, r11);
+            vec_type::storeu(c + i + vec_size * 1 + j * M, r21);
+            vec_type::storeu(c + i + vec_size * 2 + j * M, r31);
+            vec_type::storeu(c + i + vec_size * 3 + j * M, r41);
+        }
+    }
 
-    //for (; i + 2 * vec_size - 1 < M; i += 2 * vec_size) {
-        //size_t j = 0;
+    for (; i + 2 * vec_size - 1 < M; i += 2 * vec_size) {
+        size_t j = 0;
 
-        //for (; (j + 2UL) <= N; j += 2UL) {
-            //auto r11 = vec_type::template zero<T>();
-            //auto r12 = vec_type::template zero<T>();
+        for (; (j + 2UL) <= N; j += 2UL) {
+            auto r11 = vec_type::template zero<T>();
+            auto r12 = vec_type::template zero<T>();
 
-            //auto r21 = vec_type::template zero<T>();
-            //auto r22 = vec_type::template zero<T>();
+            auto r21 = vec_type::template zero<T>();
+            auto r22 = vec_type::template zero<T>();
 
-            //for (size_t k = 0; k < K; ++k) {
-                //auto a11 = vec_type::loadu(a + (i + vec_size * 0) + k * M);
-                //auto a21 = vec_type::loadu(a + (i + vec_size * 1) + k * M);
+            for (size_t k = 0; k < K; ++k) {
+                auto a11 = vec_type::loadu(a + (i + vec_size * 0) + k * M);
+                auto a21 = vec_type::loadu(a + (i + vec_size * 1) + k * M);
 
-                //auto b1 = vec_type::set(b[k + (j + 0) * K]);
-                //auto b2 = vec_type::set(b[k + (j + 1) * K]);
+                auto b1 = vec_type::set(b[k + (j + 0) * K]);
+                auto b2 = vec_type::set(b[k + (j + 1) * K]);
 
-                //r11 = vec_type::fmadd(a11, b1, r11);
-                //r12 = vec_type::fmadd(a11, b2, r12);
+                r11 = vec_type::fmadd(a11, b1, r11);
+                r12 = vec_type::fmadd(a11, b2, r12);
 
-                //r21 = vec_type::fmadd(a21, b1, r21);
-                //r22 = vec_type::fmadd(a21, b2, r22);
-            //}
+                r21 = vec_type::fmadd(a21, b1, r21);
+                r22 = vec_type::fmadd(a21, b2, r22);
+            }
 
-            //vec_type::storeu(c + (i + vec_size * 0) + (j + 0) * M, r11);
-            //vec_type::storeu(c + (i + vec_size * 0) + (j + 1) * M, r12);
+            vec_type::storeu(c + (i + vec_size * 0) + (j + 0) * M, r11);
+            vec_type::storeu(c + (i + vec_size * 0) + (j + 1) * M, r12);
 
-            //vec_type::storeu(c + (i + vec_size * 1) + (j + 0) * M, r21);
-            //vec_type::storeu(c + (i + vec_size * 1) + (j + 1) * M, r22);
-        //}
+            vec_type::storeu(c + (i + vec_size * 1) + (j + 0) * M, r21);
+            vec_type::storeu(c + (i + vec_size * 1) + (j + 1) * M, r22);
+        }
 
-        //if (j < N) {
-            //auto r11 = vec_type::template zero<T>();
-            //auto r21 = vec_type::template zero<T>();
+        if (j < N) {
+            auto r11 = vec_type::template zero<T>();
+            auto r21 = vec_type::template zero<T>();
 
-            //for (size_t k = 0; k < K; ++k) {
-                //auto a11 = vec_type::loadu(a + i + vec_size * 0 + k * M);
-                //auto a21 = vec_type::loadu(a + i + vec_size * 1 + k * M);
+            for (size_t k = 0; k < K; ++k) {
+                auto a11 = vec_type::loadu(a + i + vec_size * 0 + k * M);
+                auto a21 = vec_type::loadu(a + i + vec_size * 1 + k * M);
 
-                //auto b1 = vec_type::set(b[k + j * K]);
+                auto b1 = vec_type::set(b[k + j * K]);
 
-                //r11 = vec_type::fmadd(a11, b1, r11);
-                //r21 = vec_type::fmadd(a21, b1, r21);
-            //}
+                r11 = vec_type::fmadd(a11, b1, r11);
+                r21 = vec_type::fmadd(a21, b1, r21);
+            }
 
-            //vec_type::storeu(c + i + vec_size * 0 + j * M, r11);
-            //vec_type::storeu(c + i + vec_size * 1 + j * M, r21);
-        //}
-    //}
+            vec_type::storeu(c + i + vec_size * 0 + j * M, r11);
+            vec_type::storeu(c + i + vec_size * 1 + j * M, r21);
+        }
+    }
 
-    //for (; i + vec_size - 1 < M; i += vec_size) {
-        //size_t j = 0;
+    for (; i + vec_size - 1 < M; i += vec_size) {
+        size_t j = 0;
 
-        //for (; (j + 2UL) <= N; j += 2UL) {
-            //auto r1 = vec_type::template zero<T>();
-            //auto r2 = vec_type::template zero<T>();
+        for (; (j + 2UL) <= N; j += 2UL) {
+            auto r1 = vec_type::template zero<T>();
+            auto r2 = vec_type::template zero<T>();
 
-            //for (size_t k = 0; k < K; ++k) {
-                //auto a1 = vec_type::loadu(a + i + k * M);
+            for (size_t k = 0; k < K; ++k) {
+                auto a1 = vec_type::loadu(a + i + k * M);
 
-                //auto b1 = vec_type::set(b[k + (j + 0) * K]);
-                //auto b2 = vec_type::set(b[k + (j + 1) * K]);
+                auto b1 = vec_type::set(b[k + (j + 0) * K]);
+                auto b2 = vec_type::set(b[k + (j + 1) * K]);
 
-                //r1 = vec_type::fmadd(a1, b1, r1);
-                //r2 = vec_type::fmadd(a1, b2, r2);
-            //}
+                r1 = vec_type::fmadd(a1, b1, r1);
+                r2 = vec_type::fmadd(a1, b2, r2);
+            }
 
-            //vec_type::storeu(c + i + (j + 0) * M, r1);
-            //vec_type::storeu(c + i + (j + 1) * M, r2);
-        //}
+            vec_type::storeu(c + i + (j + 0) * M, r1);
+            vec_type::storeu(c + i + (j + 1) * M, r2);
+        }
 
-        //if (j < N) {
-            //auto r1 = vec_type::template zero<T>();
+        if (j < N) {
+            auto r1 = vec_type::template zero<T>();
 
-            //for (size_t k = 0; k < K; ++k) {
-                //auto a1 = vec_type::loadu(a + i + k * M);
+            for (size_t k = 0; k < K; ++k) {
+                auto a1 = vec_type::loadu(a + i + k * M);
 
-                //auto b1 = vec_type::set(b[k + j * K]);
+                auto b1 = vec_type::set(b[k + j * K]);
 
-                //r1 = vec_type::fmadd(a1, b1, r1);
-            //}
+                r1 = vec_type::fmadd(a1, b1, r1);
+            }
 
-            //vec_type::storeu(c + i + j * M, r1);
-        //}
-    //}
+            vec_type::storeu(c + i + j * M, r1);
+        }
+    }
 
     for (; i < M; ++i) {
         size_t j = 0;
