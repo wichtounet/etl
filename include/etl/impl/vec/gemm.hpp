@@ -850,6 +850,13 @@ void gemm_large_kernel_cc(const T* a, const T* b, T* c, size_t M, size_t N, size
         for (size_t block_j = 0; block_j < N; block_j += n_block_size) {
             const size_t j_end = std::min(block_j + n_block_size, N);
 
+            // Clear the block
+            for (size_t j = block_j; j < j_end; ++j) {
+                for (size_t i = block_i; i < i_end; ++i) {
+                    c[i + j * M] = 0;
+                }
+            }
+
             for (size_t block_k = 0; block_k < K; block_k += k_block_size) {
                 const size_t k_end = std::min(block_k + k_block_size, K);
 
@@ -1082,7 +1089,6 @@ void gemm(A&& a, B&& b, C&& c) {
     if(etl::size(c) <= gemm_cc_small_threshold){
         gemm_small_kernel_cc<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
     } else {
-        c = 0;
         gemm_large_kernel_cc<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
     }
 
