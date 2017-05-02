@@ -96,7 +96,7 @@ struct no_vec {
 
     /*!
      * \brief Create a vector containing the rounded up values
-     * \param value The value
+     * \param x The value
      * \return Vector of value
      */
     template <typename F>

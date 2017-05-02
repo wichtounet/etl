@@ -245,7 +245,6 @@ struct avg_pool_2d {
      * \param m The storage matrix
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
-     * \tparam C3 The third dimension pooling ratio
      */
     template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_if(is_3d<A>::value)>
     static void apply(const A& sub, M&& m) {
@@ -281,7 +280,6 @@ struct avg_pool_2d {
      * \param m The storage matrix
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
-     * \param c3 The third dimension pooling ratio
      */
     template <typename A, typename M, cpp_enable_if(is_3d<A>::value)>
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {

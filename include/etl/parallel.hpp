@@ -45,8 +45,7 @@ inline bool engine_select_parallel(std::size_t n, std::size_t threshold = parall
 
 /*!
  * \brief Indicates if an 1D evaluation should run in paralle
- * \param n The size of the evaluation
- * \param threshold The parallel threshold
+ * \param select The secondary parallel selection
  * \return true if the evaluation should be done in paralle, false otherwise
  */
 inline bool engine_select_parallel(bool select) {
@@ -107,7 +106,7 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, siz
  * \param functor The functor to execute
  * \param first The beginning of the range
  * \param last The end of the range. Must be bigger or equal to first.
- * \param threshold The threshold for parallelization
+ * \param select The selector for parallelization
  */
 template <typename Functor>
 inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, bool select) {
@@ -137,11 +136,12 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, boo
 
 /*!
  * \brief Dispatch the elements of a range to a functor in a parallel manner and use an accumulator functor to accumulate the results
- * \param p Boolean tag to indicate if parallel dispatching must be done
+ *
  * \param functor The functor to execute
  * \param acc_functor The functor to accumulate results
  * \param first The beginning of the range
  * \param last The end of the range
+ * \param threshold The threshold for parallelization
  */
 template <typename TT, typename Functor, typename AccFunctor>
 inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, std::size_t first, std::size_t last, size_t threshold) {
