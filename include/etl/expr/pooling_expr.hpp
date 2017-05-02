@@ -121,12 +121,6 @@ struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, S1, S2, P1, 
 };
 
 /*!
- * \brief Max Pooling 2D expression type
- */
-template <typename T, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2>
-using max_pool_2d_expr = basic_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, impl::max_pool_2d>;
-
-/*!
  * \brief Average Pooling 2D expression type
  */
 template <typename T, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2>
@@ -247,12 +241,6 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
         return D;
     }
 };
-
-/*!
- * \brief Max Pooling 2D expression type
- */
-template <typename T, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, size_t D>
-using deep_max_pool_2d_expr = basic_deep_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, D, impl::max_pool_2d>;
 
 /*!
  * \brief Average Pooling 2D expression type
