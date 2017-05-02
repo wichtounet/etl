@@ -364,6 +364,10 @@ void gemm_large_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size
     const size_t m_block_size = 64;
     const size_t k_block_size = 128;
 
+    // TODO Ideally, it should be possible to split the workload in thread easily
+    // Unfortunately, adding a lambda around the following code makes it twice
+    // slower, for some reason
+
     for (size_t block_j = 0; block_j < N; block_j += n_block_size) {
         const size_t j_end = std::min(block_j + n_block_size, N);
 
