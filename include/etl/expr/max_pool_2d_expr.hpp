@@ -42,12 +42,6 @@ struct max_pool_2d_expr : base_temporary_expr_un<max_pool_2d_expr<A, C1, C2, S1,
      */
     template <typename C>
     static void apply(const A& a, C&& c) {
-        static_assert(all_etl_expr<A, C>::value, "max_pool_2d only supported for ETL expressions");
-        static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
-
-        impl::max_pool_2d::template apply<C1, C2, S1, S2, P1, P2>(
-            make_temporary(std::forward<A>(a)),
-            std::forward<C>(c));
     }
 
     // Assignment functions
@@ -56,12 +50,19 @@ struct max_pool_2d_expr : base_temporary_expr_un<max_pool_2d_expr<A, C1, C2, S1,
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
-        standard_evaluator::pre_assign_rhs(this->a());
-        standard_evaluator::pre_assign_lhs(lhs);
+    template<typename C>
+    void assign_to(C&& c)  const {
+        static_assert(all_etl_expr<A, C>::value, "max_pool_2d only supported for ETL expressions");
+        static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
-        this->apply_base(lhs);
+        auto& a = this->a();
+
+        standard_evaluator::pre_assign_rhs(a);
+        standard_evaluator::pre_assign_lhs(c);
+
+        impl::max_pool_2d::template apply<C1, C2, S1, S2, P1, P2>(
+            make_temporary(a),
+            std::forward<C>(c));
     }
 
     /*!

@@ -135,7 +135,7 @@ protected:
     void evaluate() const {
         if (!evaluated) {
             cpp_assert(allocated, "The result has not been allocated");
-            as_derived().apply_base(*_c);
+            as_derived().assign_to(*_c);
             evaluated = true;
         }
     }
@@ -446,15 +446,6 @@ struct base_temporary_expr_un : base_temporary_expr<D> {
     }
 
     /*!
-     * \brief Apply the op and store the result in result
-     * \param result The expressio where to store the result
-     */
-    template <typename Result>
-    void apply_base(Result&& result) const {
-        this->as_derived().apply(_a, std::forward<Result>(result));
-    }
-
-    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -560,15 +551,6 @@ struct base_temporary_expr_bin : base_temporary_expr<D> {
      */
     base_temporary_expr_bin(base_temporary_expr_bin&& e) noexcept : base_type(std::move(e)), _a(e._a), _b(e._b) {
         //Nothing else to init
-    }
-
-    /*!
-     * \brief Apply the op and store the result in result
-     * \param result The expressio where to store the result
-     */
-    template <typename Result>
-    void apply_base(Result&& result) const {
-        this->as_derived().apply(_a, _b, std::forward<Result>(result));
     }
 
     /*!
@@ -705,15 +687,6 @@ public:
      */
     base_temporary_expr_tern(base_temporary_expr_tern&& e) noexcept : base_type(std::move(e)), _a(e._a), _b(e._b), _c(e._c) {
         //Nothing else to init
-    }
-
-    /*!
-     * \brief Apply the op and store the result in result
-     * \param result The expressio where to store the result
-     */
-    template <typename Result>
-    void apply_base(Result&& result) const {
-        this->as_derived().apply(_a, _b, _c, std::forward<Result>(result));
     }
 
     /*!

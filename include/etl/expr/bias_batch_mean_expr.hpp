@@ -64,14 +64,20 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
         cpp_unused(c);
     }
 
+    // Assignment functions
+
     /*!
-     * \brief Apply the expression
-     * \param a The input
-     * \param c The expression where to store the results
+     * \brief Assign to a matrix of the same storage order
+     * \param lhs The expression to which assign
      */
-    template <typename C>
-    static void apply(const A& a, C&& c) {
-        static_assert(all_etl_expr<A, C>::value, "Transpose only supported for ETL expressions");
+    template<typename C>
+    void assign_to(C&& c)  const {
+        static_assert(all_etl_expr<A, C>::value, "bias_batch_mean only supported for ETL expressions");
+
+        auto& a = this->a();
+
+        standard_evaluator::pre_assign_rhs(a);
+        standard_evaluator::pre_assign_lhs(c);
 
         const auto N = etl::size(a) / etl::size(c);
         const auto K = etl::size(c);
@@ -79,7 +85,6 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
         using T = value_t<A>;
 
         check(a, c);
-
 
         auto batch_fun_k = [&](const size_t first, const size_t last) {
             if (last - first) {
@@ -98,20 +103,6 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
         };
 
         engine_dispatch_1d(batch_fun_k, 0, K, 2UL);
-    }
-
-    // Assignment functions
-
-    /*!
-     * \brief Assign to a matrix of the same storage order
-     * \param lhs The expression to which assign
-     */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
-        standard_evaluator::pre_assign_rhs(this->a());
-        standard_evaluator::pre_assign_lhs(lhs);
-
-        this->apply_base(lhs);
     }
 
     /*!

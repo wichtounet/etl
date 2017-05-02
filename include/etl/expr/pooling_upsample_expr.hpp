@@ -91,14 +91,19 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
         cpp_assert(etl::dim<D - 1>(a) == C2 * etl::dim<D - 1>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
     }
 
+    // Assignment functions
+
     /*!
-     * \brief Apply the expression
-     * \param a The input
-     * \param c The expression where to store the results
+     * \brief Assign to a matrix of the same storage order
+     * \param lhs The expression to which assign
      */
-    template <typename R>
-    static void apply(A&& a, B&& b, C&& c, R&& result) {
+    template<typename R>
+    void assign_to(R&& result)  const {
         static_assert(all_etl_expr<A, B, C, R>::value, "Max Pool Derivative only supported for ETL expressions");
+
+        auto& a = this->a();
+        auto& b = this->b();
+        auto& c = this->c();
 
         check(a, b, c, result);
 
@@ -106,18 +111,7 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
             make_temporary(a),
             make_temporary(b),
             make_temporary(c),
-            result);
-    }
-
-    // Assignment functions
-
-    /*!
-     * \brief Assign to a matrix of the same storage order
-     * \param lhs The expression to which assign
-     */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
-        this->apply_base(lhs);
+            std::forward<R>(result));
     }
 
     /*!
@@ -333,15 +327,6 @@ struct max_pool_upsample_3d_expr : base_temporary_expr_tern<max_pool_upsample_3d
      */
     template <typename R>
     static void apply(A&& a, B&& b, C&& c, R&& result) {
-        static_assert(all_etl_expr<A, B, C, R>::value, "Max Pool Derivative only supported for ETL expressions");
-
-        check(a, b, c, result);
-
-        impl::max_pool_upsample_3d::apply<C1, C2, C3>(
-            make_temporary(a),
-            make_temporary(b),
-            make_temporary(c),
-            result);
     }
 
     // Assignment functions
@@ -350,9 +335,21 @@ struct max_pool_upsample_3d_expr : base_temporary_expr_tern<max_pool_upsample_3d
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
-        this->apply_base(lhs);
+    template<typename R>
+    void assign_to(R&& result)  const {
+        static_assert(all_etl_expr<A, B, C, R>::value, "Max Pool Derivative only supported for ETL expressions");
+
+        auto& a = this->a();
+        auto& b = this->b();
+        auto& c = this->c();
+
+        check(a, b, c, result);
+
+        impl::max_pool_upsample_3d::apply<C1, C2, C3>(
+            make_temporary(a),
+            make_temporary(b),
+            make_temporary(c),
+            std::forward<R>(result));
     }
 
     /*!
@@ -538,14 +535,19 @@ public:
         cpp_assert(etl::dim<D - 1>(a) == c2 * etl::dim<D - 1>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
     }
 
+    // Assignment functions
+
     /*!
-     * \brief Apply the expression
-     * \param a The input
-     * \param c The expression where to store the results
+     * \brief Assign to a matrix of the same storage order
+     * \param lhs The expression to which assign
      */
-    template <typename R>
-    void apply(A&& a, B&& b, C&& c, R&& result) const {
+    template<typename R>
+    void assign_to(R&& result)  const {
         static_assert(all_etl_expr<A, B, C, R>::value, "Max Pool Derivative only supported for ETL expressions");
+
+        auto& a = this->a();
+        auto& b = this->b();
+        auto& c = this->c();
 
         check(a, b, c, result);
 
@@ -553,19 +555,8 @@ public:
             make_temporary(a),
             make_temporary(b),
             make_temporary(c),
-            result,
+            std::forward<R>(result),
             c1, c2);
-    }
-
-    // Assignment functions
-
-    /*!
-     * \brief Assign to a matrix of the same storage order
-     * \param lhs The expression to which assign
-     */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
-        this->apply_base(lhs);
     }
 
     /*!
@@ -743,16 +734,6 @@ public:
      */
     template <typename R>
     void apply(A&& a, B&& b, C&& c, R&& result) const {
-        static_assert(all_etl_expr<A, B, C, R>::value, "Max Pool Derivative only supported for ETL expressions");
-
-        check(a, b, c, result);
-
-        impl::max_pool_upsample_3d::apply(
-            make_temporary(a),
-            make_temporary(b),
-            make_temporary(c),
-            result,
-            c1, c2, c3);
     }
 
     // Assignment functions
@@ -761,9 +742,22 @@ public:
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
-        this->apply_base(lhs);
+    template<typename R>
+    void assign_to(R&& result)  const {
+        static_assert(all_etl_expr<A, B, C, R>::value, "Max Pool Derivative only supported for ETL expressions");
+
+        auto& a = this->a();
+        auto& b = this->b();
+        auto& c = this->c();
+
+        check(a, b, c, result);
+
+        impl::max_pool_upsample_3d::apply(
+            make_temporary(a),
+            make_temporary(b),
+            make_temporary(c),
+            std::forward<R>(result),
+            c1, c2, c3);
     }
 
     /*!

@@ -114,41 +114,33 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
         cpp_unused(cm_to_cm);
     }
 
-    /*!
-     * \brief Apply the expression
-     * \param a The input
-     * \param c The expression where to store the results
-     */
-    template <typename C>
-    static void apply(const A& a, C&& c) {
-        static_assert(all_etl_expr<A, C>::value, "Transpose only supported for ETL expressions");
-
-        check(a, c);
-
-        detail::transpose::apply(make_temporary(a), std::forward<C>(c));
-    }
-
     // Assignment functions
 
     /*!
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_enable_if(decay_traits<L>::storage_order == storage_order)>
-    void assign_to(L&& lhs)  const {
-        standard_evaluator::pre_assign_rhs(this->a());
-        standard_evaluator::pre_assign_lhs(lhs);
+    template<typename C, cpp_enable_if(decay_traits<C>::storage_order == storage_order)>
+    void assign_to(C&& c)  const {
+        static_assert(all_etl_expr<A, C>::value, "Transpose only supported for ETL expressions");
 
-        this->apply_base(lhs);
+        auto& a = this->a();
+
+        standard_evaluator::pre_assign_rhs(a);
+        standard_evaluator::pre_assign_lhs(c);
+
+        check(a, c);
+
+        detail::transpose::apply(make_temporary(a), std::forward<C>(c));
     }
 
     /*!
      * \brief Assign to a matrix of a different storage order
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_enable_if(decay_traits<L>::storage_order != storage_order)>
-    void assign_to(L&& lhs)  const {
-        std_assign_evaluate(*this, lhs);
+    template<typename C, cpp_enable_if(decay_traits<C>::storage_order != storage_order)>
+    void assign_to(C&& c)  const {
+        std_assign_evaluate(*this, c);
     }
 
     /*!

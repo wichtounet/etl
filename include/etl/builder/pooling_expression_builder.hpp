@@ -26,7 +26,7 @@ namespace etl {
  * \return A expression representing the 2D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, typename E>
-auto max_pool_2d(E&& value) {
+max_pool_2d_expr<E, C1, C2, S1, S2, P1, P2> max_pool_2d(E&& value) {
     return max_pool_2d_expr<E, C1, C2, S1, S2, P1, P2>{value};
 }
 
