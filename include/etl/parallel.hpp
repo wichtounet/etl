@@ -134,8 +134,6 @@ inline std::pair<size_t, size_t> thread_blocks(size_t M, size_t N) {
  */
 template <typename Functor>
 inline void engine_dispatch_2d(Functor&& functor, size_t last1, size_t last2, size_t threshold) {
-    cpp_assert(last >= first, "Range must be valid");
-
     if (last1 && last2) {
         if (engine_select_parallel(last1 * last2, threshold)) {
             thread_engine::acquire();
