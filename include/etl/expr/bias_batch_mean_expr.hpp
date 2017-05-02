@@ -213,6 +213,7 @@ struct etl_traits<etl::bias_batch_mean_expr<A>> {
      */
     static std::size_t dim(const expr_t& e, std::size_t d) {
         cpp_assert(d == 0, "Invalid dimensions access");
+        cpp_unused(d);
         return etl::dim<1>(e._a);
     }
 
