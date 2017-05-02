@@ -15,7 +15,7 @@ namespace etl {
  * \param threshold The parallel threshold
  * \return true if the evaluation should be done in paralle, false otherwise
  */
-inline bool select_parallel(std::size_t n, std::size_t threshold = parallel_threshold) {
+inline bool select_parallel(size_t n, size_t threshold = parallel_threshold) {
     return threads > 1 && ((parallel_support && local_context().parallel)|| (is_parallel && n >= threshold && !local_context().serial));
 }
 
@@ -27,7 +27,7 @@ inline bool select_parallel(std::size_t n, std::size_t threshold = parallel_thre
  * \param t2 The second parallel threshold
  * \return true if the evaluation should be done in paralle, false otherwise
  */
-inline bool select_parallel_2d(std::size_t n1, std::size_t t1, std::size_t n2, std::size_t t2) {
+inline bool select_parallel_2d(size_t n1, size_t t1, size_t n2, size_t t2) {
     return threads > 1 && ((parallel_support && local_context().parallel) || (is_parallel && n1 >= t1 && n2 >= t2 && !local_context().serial));
 }
 
@@ -39,7 +39,7 @@ inline bool select_parallel_2d(std::size_t n1, std::size_t t1, std::size_t n2, s
  * \param threshold The parallel threshold
  * \return true if the evaluation should be done in paralle, false otherwise
  */
-inline bool engine_select_parallel(std::size_t n, std::size_t threshold = parallel_threshold) {
+inline bool engine_select_parallel(size_t n, size_t threshold = parallel_threshold) {
     return threads > 1 && !local_context().serial && (local_context().parallel || (is_parallel && n >= threshold));
 }
 
@@ -80,7 +80,7 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, siz
 
             thread_engine::acquire();
 
-            for (std::size_t t = 0; t < T - 1; ++t) {
+            for (size_t t = 0; t < T - 1; ++t) {
                 thread_engine::schedule(functor, first + t * batch, first + (t + 1) * batch);
             }
 
@@ -199,7 +199,7 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, boo
 
             thread_engine::acquire();
 
-            for (std::size_t t = 0; t < T - 1; ++t) {
+            for (size_t t = 0; t < T - 1; ++t) {
                 thread_engine::schedule(functor, first + t * batch, first + (t + 1) * batch);
             }
 
@@ -222,7 +222,7 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, boo
  * \param threshold The threshold for parallelization
  */
 template <typename TT, typename Functor, typename AccFunctor>
-inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, std::size_t first, std::size_t last, size_t threshold) {
+inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, size_t first, size_t last, size_t threshold) {
     const size_t n     = last - first;
 
     if(n){
@@ -234,7 +234,7 @@ inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, 
 
             std::vector<TT> futures(T);
 
-            auto sub_functor = [&futures, &functor](std::size_t t, std::size_t first, std::size_t last) {
+            auto sub_functor = [&futures, &functor](size_t t, size_t first, size_t last) {
                 futures[t]   = functor(first, last);
             };
 
@@ -322,7 +322,7 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, boo
  * \param last The end of the range
  */
 template <typename T, typename Functor, typename AccFunctor>
-inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, std::size_t first, std::size_t last, size_t threshold) {
+inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, size_t first, size_t last, size_t threshold) {
     cpp_assert(last >= first, "Range must be valid");
 
     cpp_unused(threshold);
