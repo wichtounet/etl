@@ -24,7 +24,7 @@ struct conf_thread_engine {
     }
 
     template <class Functor, typename... Args>
-    static void schedule(Functor&& fun, Args... args) {
+    static void schedule(Functor&& fun, Args&&... args) {
         pool.do_task(std::forward<Functor>(fun), std::forward<Args>(args)...);
     }
 
@@ -48,7 +48,7 @@ struct thread_engine {
     }
 
     template <class Functor, typename... Args>
-    static void schedule(Functor&& fun, Args... args) {
+    static void schedule(Functor&& fun, Args&&... args) {
         cpp_unreachable("thread_engine can only be used if paralle support is enabled");
     }
 
