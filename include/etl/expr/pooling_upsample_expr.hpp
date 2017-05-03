@@ -95,7 +95,7 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
 
     /*!
      * \brief Assign to a matrix of the same storage order
-     * \param lhs The expression to which assign
+     * \param result The expression to which assign
      */
     template<typename R>
     void assign_to(R&& result)  const {
@@ -320,20 +320,11 @@ struct max_pool_upsample_3d_expr : base_temporary_expr_tern<max_pool_upsample_3d
         cpp_assert(etl::dim<D - 1>(a) == C3 * etl::dim<D - 1>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
     }
 
-    /*!
-     * \brief Apply the expression
-     * \param a The input
-     * \param c The expression where to store the results
-     */
-    template <typename R>
-    static void apply(A&& a, B&& b, C&& c, R&& result) {
-    }
-
     // Assignment functions
 
     /*!
      * \brief Assign to a matrix of the same storage order
-     * \param lhs The expression to which assign
+     * \param result The expression to which assign
      */
     template<typename R>
     void assign_to(R&& result)  const {
@@ -539,7 +530,7 @@ public:
 
     /*!
      * \brief Assign to a matrix of the same storage order
-     * \param lhs The expression to which assign
+     * \param result The expression to which assign
      */
     template<typename R>
     void assign_to(R&& result)  const {
@@ -727,20 +718,11 @@ public:
         cpp_assert(etl::dim<D - 1>(a) == c3 * etl::dim<D - 1>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
     }
 
-    /*!
-     * \brief Apply the expression
-     * \param a The input
-     * \param c The expression where to store the results
-     */
-    template <typename R>
-    void apply(A&& a, B&& b, C&& c, R&& result) const {
-    }
-
     // Assignment functions
 
     /*!
      * \brief Assign to a matrix of the same storage order
-     * \param lhs The expression to which assign
+     * \param result The expression to which assign
      */
     template<typename R>
     void assign_to(R&& result)  const {

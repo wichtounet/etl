@@ -118,7 +118,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
 
     /*!
      * \brief Assign to a matrix of the same storage order
-     * \param lhs The expression to which assign
+     * \param c The expression to which assign
      */
     template<typename C, cpp_enable_if(decay_traits<C>::storage_order == storage_order)>
     void assign_to(C&& c)  const {
@@ -136,7 +136,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
 
     /*!
      * \brief Assign to a matrix of a different storage order
-     * \param lhs The expression to which assign
+     * \param c The expression to which assign
      */
     template<typename C, cpp_enable_if(decay_traits<C>::storage_order != storage_order)>
     void assign_to(C&& c)  const {
