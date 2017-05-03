@@ -76,6 +76,7 @@
 #include "etl/expr/pool_2d_expr.hpp"
 #include "etl/expr/dyn_pool_2d_expr.hpp"
 #include "etl/expr/pool_3d_expr.hpp"
+#include "etl/expr/dyn_pool_3d_expr.hpp"
 
 // The expressions building
 #include "etl/checks.hpp"
@@ -106,7 +107,6 @@
 #include "etl/expr/inv_expr.hpp"
 #include "etl/expr/conv_expr.hpp"
 #include "etl/expr/convmtx2_expr.hpp"
-#include "etl/expr/pooling_expr.hpp"
 #include "etl/expr/pooling_derivative_expr.hpp"
 #include "etl/expr/upsample_expr.hpp"
 

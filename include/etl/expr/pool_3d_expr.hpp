@@ -32,15 +32,6 @@ struct pool_3d_expr : base_temporary_expr_un<pool_3d_expr<A, C1, C2, C3, S1, S2,
         //Nothing else to init
     }
 
-    /*!
-     * \brief Apply the expression
-     * \param a The input
-     * \param c The expression where to store the results
-     */
-    template <typename C>
-    static void apply(const A& a, C&& c) {
-    }
-
     // Assignment functions
 
     /*!
