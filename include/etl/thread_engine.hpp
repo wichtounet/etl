@@ -31,8 +31,7 @@ struct conf_thread_engine {
         cpp_assert(etl::parallel_support, "thread_engine can only be used if paralle support is enabled");
         cpp_assert(!local_context().serial, "thread_engine cannot be used in serial context");
         cpp_assert(etl::threads > 1, "thread_engine cannot be used with less than 2");
-
-        etl::local_context().serial = true;
+        cpp_assert(is_parallel_session(), "thread_engine should only be used in parallel session");
     }
 
     /*!
@@ -50,8 +49,6 @@ struct conf_thread_engine {
      */
     static void wait(){
         get_pool().wait();
-
-        etl::local_context().serial = false;
     }
 
     /*!

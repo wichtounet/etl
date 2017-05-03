@@ -24,6 +24,7 @@
 #include "etl/sparse_storage.hpp"
 #include "etl/config.hpp"
 #include "etl/context.hpp"
+#include "etl/parallel_session.hpp"
 #include "etl/complex.hpp"
 #include "etl/vectorization.hpp"
 #include "etl/random.hpp"

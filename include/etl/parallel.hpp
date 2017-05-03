@@ -78,15 +78,17 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, siz
             const size_t T     = std::min(n, etl::threads);
             const size_t batch = n / T;
 
-            thread_engine::acquire();
+            ETL_PARALLEL_SESSION {
+                thread_engine::acquire();
 
-            for (size_t t = 0; t < T - 1; ++t) {
-                thread_engine::schedule(functor, first + t * batch, first + (t + 1) * batch);
+                for (size_t t = 0; t < T - 1; ++t) {
+                    thread_engine::schedule(functor, first + t * batch, first + (t + 1) * batch);
+                }
+
+                thread_engine::schedule(functor, first + (T - 1) * batch, last);
+
+                thread_engine::wait();
             }
-
-            thread_engine::schedule(functor, first + (T - 1) * batch, last);
-
-            thread_engine::wait();
         } else {
             functor(first, last);
         }
@@ -136,35 +138,37 @@ template <typename Functor>
 inline void engine_dispatch_2d(Functor&& functor, size_t last1, size_t last2, size_t threshold) {
     if (last1 && last2) {
         if (engine_select_parallel(last1 * last2, threshold)) {
-            thread_engine::acquire();
+            ETL_PARALLEL_SESSION {
+                thread_engine::acquire();
 
-            auto block = thread_blocks(last1, last2);
+                auto block = thread_blocks(last1, last2);
 
-            const size_t block_1 = last1 / block.first + (last1 % block.first > 0);
-            const size_t block_2 = last2 / block.second + (last2 % block.second > 0);
+                const size_t block_1 = last1 / block.first + (last1 % block.first > 0);
+                const size_t block_2 = last2 / block.second + (last2 % block.second > 0);
 
-            for(size_t i = 0; i < block.first; ++i){
-                const size_t row = block_1 * i;
+                for (size_t i = 0; i < block.first; ++i) {
+                    const size_t row = block_1 * i;
 
-                if(cpp_unlikely(row >= last1)){
-                    continue;
-                }
-
-                for(size_t j = 0; j < block.second; ++j){
-                    const size_t column = block_2 * j;
-
-                    if(cpp_unlikely(column >= last2)){
+                    if (cpp_unlikely(row >= last1)) {
                         continue;
                     }
 
-                    const size_t m = std::min(block_1, last1 - row);
-                    const size_t n = std::min(block_2, last2 - column);
+                    for (size_t j = 0; j < block.second; ++j) {
+                        const size_t column = block_2 * j;
 
-                    thread_engine::schedule(functor, row, row + m, column, column + n);
+                        if (cpp_unlikely(column >= last2)) {
+                            continue;
+                        }
+
+                        const size_t m = std::min(block_1, last1 - row);
+                        const size_t n = std::min(block_2, last2 - column);
+
+                        thread_engine::schedule(functor, row, row + m, column, column + n);
+                    }
                 }
-            }
 
-            thread_engine::wait();
+                thread_engine::wait();
+            }
         } else {
             functor(0, last1, 0, last2);
         }
@@ -197,15 +201,17 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, boo
             const size_t T     = std::min(n, etl::threads);
             const size_t batch = n / T;
 
-            thread_engine::acquire();
+            ETL_PARALLEL_SESSION {
+                thread_engine::acquire();
 
-            for (size_t t = 0; t < T - 1; ++t) {
-                thread_engine::schedule(functor, first + t * batch, first + (t + 1) * batch);
+                for (size_t t = 0; t < T - 1; ++t) {
+                    thread_engine::schedule(functor, first + t * batch, first + (t + 1) * batch);
+                }
+
+                thread_engine::schedule(functor, first + (T - 1) * batch, last);
+
+                thread_engine::wait();
             }
-
-            thread_engine::schedule(functor, first + (T - 1) * batch, last);
-
-            thread_engine::wait();
         } else {
             functor(first, last);
         }
@@ -230,21 +236,23 @@ inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, 
             const size_t T     = std::min(n, etl::threads);
             const size_t batch = n / T;
 
-            thread_engine::acquire();
-
             std::vector<TT> futures(T);
 
-            auto sub_functor = [&futures, &functor](size_t t, size_t first, size_t last) {
-                futures[t]   = functor(first, last);
-            };
+            ETL_PARALLEL_SESSION {
+                thread_engine::acquire();
 
-            for (size_t t = 0; t < T - 1; ++t) {
-                thread_engine::schedule(sub_functor, t, first + t * batch, first + (t + 1) * batch);
+                auto sub_functor = [&futures, &functor](size_t t, size_t first, size_t last) {
+                    futures[t] = functor(first, last);
+                };
+
+                for (size_t t = 0; t < T - 1; ++t) {
+                    thread_engine::schedule(sub_functor, t, first + t * batch, first + (t + 1) * batch);
+                }
+
+                thread_engine::schedule(sub_functor, T - 1, first + (T - 1) * batch, last);
+
+                thread_engine::wait();
             }
-
-            thread_engine::schedule(sub_functor, T - 1, first + (T - 1) * batch, last);
-
-            thread_engine::wait();
 
             for (auto fut : futures) {
                 acc_functor(fut);
