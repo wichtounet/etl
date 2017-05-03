@@ -73,7 +73,8 @@
 #include "etl/expr/transpose_expr.hpp"
 #include "etl/expr/bias_batch_mean_expr.hpp"
 #include "etl/expr/pooling_upsample_expr.hpp"
-#include "etl/expr/max_pool_2d_expr.hpp"
+#include "etl/expr/pool_2d_expr.hpp"
+#include "etl/expr/dyn_pool_2d_expr.hpp"
 
 // The expressions building
 #include "etl/checks.hpp"

@@ -72,7 +72,6 @@
 #include "etl/expr/detail.hpp"
 #include "etl/expr/transpose_expr.hpp"
 #include "etl/expr/bias_batch_mean_expr.hpp"
-#include "etl/expr/pooling_upsample_expr.hpp"
 
 // The expressions building
 #include "etl/checks.hpp"

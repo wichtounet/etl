@@ -21,7 +21,7 @@ namespace temporary_detail {
  * \tparam Fast Indicates if the result is fast or dynamic
  * \tparam Subs The sub expressions
  */
-template <typename E, bool Fast, typename... Subs>
+template <typename E, bool Fast>
 struct expr_result;
 
 /*!
@@ -50,8 +50,8 @@ struct expr_result<E, true> {
  * \brief Helper traits to directly get the result type for an impl_expr
  * \tparam E The temporary expression type
  */
-template <typename E, typename... Subs>
-using expr_result_t = typename expr_result<E, all_fast<E>::value, Subs...>::type;
+template <bool Fast, typename E>
+using expr_result_t = typename expr_result<E, Fast && all_fast<E>::value>::type;
 
 } // end of temporary_detail
 
@@ -62,11 +62,11 @@ using expr_result_t = typename expr_result<E, all_fast<E>::value, Subs...>::type
  *
  * A temporary expression computes the expression directly and stores it into a temporary.
  */
-template <typename D>
+template <typename D, bool Fast>
 struct base_temporary_expr : value_testable<D>, dim_testable<D>, iterable<const D, true> {
     using derived_t         = D;                                    ///< The derived type
     using value_type        = typename decay_traits<D>::value_type; ///< The value type
-    using result_type       = temporary_detail::expr_result_t<D>;   ///< The result type
+    using result_type       = temporary_detail::expr_result_t<Fast, D>;   ///< The result type
     using memory_type       = value_type*;                          ///< The memory type
     using const_memory_type = const value_type*;                    ///< The const memory type
 
@@ -412,12 +412,12 @@ private:
  * \tparam D The derived type
  * \tparam A The sub type
  */
-template <typename D, typename A>
-struct base_temporary_expr_un : base_temporary_expr<D> {
+template <typename D, typename A, bool Fast = true>
+struct base_temporary_expr_un : base_temporary_expr<D, Fast> {
     static_assert(is_etl_expr<A>::value, "The argument must be an ETL expr");
 
     using this_type = base_temporary_expr_un<D, A>; ///< This type
-    using base_type = base_temporary_expr<D>;       ///< The base type
+    using base_type = base_temporary_expr<D, Fast>;       ///< The base type
 
     A _a;                       ///< The sub expression reference
 
@@ -517,13 +517,13 @@ struct base_temporary_expr_un : base_temporary_expr<D> {
  * \tparam A The left sub expression type
  * \tparam B The right sub expression type
  */
-template <typename D, typename A, typename B>
-struct base_temporary_expr_bin : base_temporary_expr<D> {
+template <typename D, typename A, typename B, bool Fast = true>
+struct base_temporary_expr_bin : base_temporary_expr<D, Fast> {
     static_assert(is_etl_expr<A>::value, "The argument must be an ETL expr");
     static_assert(is_etl_expr<B>::value, "The argument must be an ETL expr");
 
     using this_type = base_temporary_expr_bin<D, A, B>; ///< This type
-    using base_type = base_temporary_expr<D>;           ///< The base type
+    using base_type = base_temporary_expr<D, Fast>;           ///< The base type
 
     A _a;                       ///< The sub expression reference
     B _b;                       ///< The sub expression reference
@@ -646,14 +646,14 @@ struct base_temporary_expr_bin : base_temporary_expr<D> {
  * \tparam A The left sub expression type
  * \tparam B The right sub expression type
  */
-template <typename D, typename A, typename B, typename C>
-struct base_temporary_expr_tern : base_temporary_expr<D> {
+template <typename D, typename A, typename B, typename C, bool Fast = true>
+struct base_temporary_expr_tern : base_temporary_expr<D, Fast> {
     static_assert(is_etl_expr<A>::value, "The argument must be an ETL expr");
     static_assert(is_etl_expr<B>::value, "The argument must be an ETL expr");
     static_assert(is_etl_expr<C>::value, "The argument must be an ETL expr");
 
     using this_type = base_temporary_expr_tern<D, A, B, C>; ///< This type
-    using base_type = base_temporary_expr<D>;               ///< The base type
+    using base_type = base_temporary_expr<D, Fast>;               ///< The base type
 
 private:
 
