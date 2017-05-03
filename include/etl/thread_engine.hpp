@@ -13,7 +13,7 @@ namespace etl {
 
 template<typename Pool>
 struct conf_thread_engine {
-    static Pool pool;
+    //static Pool pool;
 
     static void acquire(){
         cpp_assert(etl::parallel_support, "thread_engine can only be used if paralle support is enabled");
@@ -25,18 +25,20 @@ struct conf_thread_engine {
 
     template <class Functor, typename... Args>
     static void schedule(Functor&& fun, Args&&... args) {
-        pool.do_task(std::forward<Functor>(fun), std::forward<Args>(args)...);
+        get_pool().do_task(std::forward<Functor>(fun), std::forward<Args>(args)...);
     }
 
     static void wait(){
-        pool.wait();
+        get_pool().wait();
 
         etl::local_context().serial = false;
     }
-};
 
-template<typename Pool>
-Pool conf_thread_engine<Pool>::pool(etl::threads);
+    static Pool& get_pool(){
+        static Pool pool(etl::threads);
+        return pool;
+    }
+};
 
 using thread_engine = conf_thread_engine<cpp::default_thread_pool<>>;
 
