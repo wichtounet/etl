@@ -19,7 +19,6 @@ namespace temporary_detail {
  * \brief Traits to build the result type of a temporary expression
  * \tparam E The temporary expression type
  * \tparam Fast Indicates if the result is fast or dynamic
- * \tparam Subs The sub expressions
  */
 template <typename E, bool Fast>
 struct expr_result;

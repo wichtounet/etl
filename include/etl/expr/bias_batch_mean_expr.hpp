@@ -68,7 +68,7 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
 
     /*!
      * \brief Assign to a matrix of the same storage order
-     * \param c The expression to which assign
+     * \param lhs The expression to which assign
      */
     template<typename L>
     void assign_to(L&& lhs)  const {
