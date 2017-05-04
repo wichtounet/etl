@@ -479,7 +479,7 @@ auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, max_binary_op<
  */
 template <typename E, typename T, cpp_enable_if(std::is_arithmetic<T>::value)>
 auto min(E&& value, T v) {
-    static_assert(is_etl_expr<E>::value, "etl::max can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>::value, "etl::min can only be used on ETL expressions");
     return detail::make_stateful_unary_expr<E, min_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(v));
 }
 
