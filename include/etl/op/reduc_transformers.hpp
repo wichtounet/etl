@@ -10,6 +10,170 @@
 namespace etl {
 
 /*!
+ * \brief Transform (dynamic) that returns only the maximum elements from the
+ * right dimensions.
+ * \tparam T The type on which the transformer is applied
+ */
+template <typename T>
+struct argmax_transformer {
+    using sub_type   = T;          ///< The type on which the expression works
+    using value_type = value_t<T>; ///< The type of valuie
+
+    friend struct etl_traits<argmax_transformer>;
+
+private:
+    sub_type sub; ///< The subexpression
+
+public:
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit argmax_transformer(sub_type expr)
+            : sub(expr) {}
+
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
+    value_type operator[](std::size_t i) const {
+        return max_index(sub(i));
+    }
+
+    /*!
+     * \brief Returns the value at the given index
+     * This function never has side effects.
+     * \param i The index
+     * \return the value at the given index.
+     */
+    value_type read_flat(std::size_t i) const {
+        return max_index(sub(i));
+    }
+
+    /*!
+     * \brief Returns the value at the given position (i, sizes...)
+     */
+    template <typename... Sizes>
+    value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
+        return max_index(sub(i));
+    }
+
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
+    template <typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
+
+    // Internals
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    template<typename V>
+    void visit(V&& visitor) const {
+        sub.visit(std::forward<V>(visitor));
+    }
+
+    /*!
+     * \brief Display the transformer on the given stream
+     * \param os The output stream
+     * \param transformer The transformer to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const argmax_transformer& transformer) {
+        return os << "argmax(" << transformer.sub << ")";
+    }
+};
+
+/*!
+ * \brief Transform (dynamic) that returns only the maximum elements from the
+ * right dimensions.
+ * \tparam T The type on which the transformer is applied
+ */
+template <typename T>
+struct argmin_transformer {
+    using sub_type   = T;          ///< The type on which the expression works
+    using value_type = value_t<T>; ///< The type of valuie
+
+    friend struct etl_traits<argmin_transformer>;
+
+private:
+    sub_type sub; ///< The subexpression
+
+public:
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit argmin_transformer(sub_type expr)
+            : sub(expr) {}
+
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
+    value_type operator[](std::size_t i) const {
+        return min_index(sub(i));
+    }
+
+    /*!
+     * \brief Returns the value at the given index
+     * This function never has side effects.
+     * \param i The index
+     * \return the value at the given index.
+     */
+    value_type read_flat(std::size_t i) const {
+        return min_index(sub(i));
+    }
+
+    /*!
+     * \brief Returns the value at the given position (i, sizes...)
+     */
+    template <typename... Sizes>
+    value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
+        return min_index(sub(i));
+    }
+
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
+    template <typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
+
+    // Internals
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    template<typename V>
+    void visit(V&& visitor) const {
+        sub.visit(std::forward<V>(visitor));
+    }
+
+    /*!
+     * \brief Display the transformer on the given stream
+     * \param os The output stream
+     * \param transformer The transformer to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const argmin_transformer& transformer) {
+        return os << "argmin(" << transformer.sub << ")";
+    }
+};
+
+/*!
  * \brief Transform (dynamic) that sums the expression from the right, effectively removing the right dimension.
  * \tparam T The type on which the transformer is applied
  */
@@ -380,6 +544,8 @@ public:
  */
 template <typename T>
 struct etl_traits<T, std::enable_if_t<cpp::or_c<
+                         cpp::is_specialization_of<etl::argmax_transformer, std::decay_t<T>>,
+                         cpp::is_specialization_of<etl::argmin_transformer, std::decay_t<T>>,
                          cpp::is_specialization_of<etl::sum_r_transformer, std::decay_t<T>>,
                          cpp::is_specialization_of<etl::mean_r_transformer, std::decay_t<T>>>::value>> {
     using expr_t     = T;                                                ///< The expression type

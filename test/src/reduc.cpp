@@ -279,3 +279,51 @@ TEMPLATE_TEST_CASE_2("bias_batch_mean/4", "[mean]", Z, float, double) {
     REQUIRE_EQUALS(b(1), Z(2.0 / 12.5));
     REQUIRE_EQUALS(b(2), Z(2.0 / 16.5));
 }
+
+// Tests for argmax
+
+TEMPLATE_TEST_CASE_2("argmax/0", "[mean]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a({1, 2, 3, 4, 5, 6, 7, 8, 9});
+    etl::fast_matrix<Z, 3> b;
+
+    b = etl::argmax(a);
+
+    REQUIRE_EQUALS(b(0), Z(2));
+    REQUIRE_EQUALS(b(1), Z(2));
+    REQUIRE_EQUALS(b(2), Z(2));
+}
+
+TEMPLATE_TEST_CASE_2("argmax/1", "[mean]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a({0, 1, 0, 0.1, 0.2, 0.1, 0.1, 0.1, 0.2});
+    etl::fast_matrix<Z, 3> b;
+
+    b = etl::argmax(a);
+
+    REQUIRE_EQUALS(b(0), Z(1));
+    REQUIRE_EQUALS(b(1), Z(1));
+    REQUIRE_EQUALS(b(2), Z(2));
+}
+
+// Tests for argmax
+
+TEMPLATE_TEST_CASE_2("argmin/0", "[mean]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a({1, 2, 3, 4, 5, 6, 7, 8, 9});
+    etl::fast_matrix<Z, 3> b;
+
+    b = etl::argmin(a);
+
+    REQUIRE_EQUALS(b(0), Z(0));
+    REQUIRE_EQUALS(b(1), Z(0));
+    REQUIRE_EQUALS(b(2), Z(0));
+}
+
+TEMPLATE_TEST_CASE_2("argmin/1", "[mean]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a({0, 1, 0, 0.1, 0.2, 0.1, 0.1, 0.1, 0.0});
+    etl::fast_matrix<Z, 3> b;
+
+    b = etl::argmin(a);
+
+    REQUIRE_EQUALS(b(0), Z(0));
+    REQUIRE_EQUALS(b(1), Z(0));
+    REQUIRE_EQUALS(b(2), Z(2));
+}
