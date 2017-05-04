@@ -1477,6 +1477,29 @@ using value_return_t =std::conditional_t<
 } //end of namespace detail
 
 /*!
+ * \brief Returns the index of the maximum element contained in the expression
+ * \param values The expression to search
+ * \return The index of the maximum element of the expression
+ */
+template <typename E>
+size_t max_index(E&& values) {
+    static_assert(is_etl_expr<E>::value, "etl::max can only be used on ETL expressions");
+
+    //Reduction force evaluation
+    force(values);
+
+    size_t m = 0;
+
+    for (size_t i = 1; i < size(values); ++i) {
+        if (values[i] > values[m]) {
+            m = i;
+        }
+    }
+
+    return m;
+}
+
+/*!
  * \brief Returns the maximum element contained in the expression
  * When possible, this returns a reference to the element.
  * \param values The expression to search
@@ -1486,18 +1509,31 @@ template <typename E>
 detail::value_return_t<E> max(E&& values) {
     static_assert(is_etl_expr<E>::value, "etl::max can only be used on ETL expressions");
 
+    auto m = max_index(values);
+    return values[m];
+}
+
+/*!
+ * \brief Returns the index of the minimum element contained in the expression
+ * \param values The expression to search
+ * \return The index of the minimum element of the expression
+ */
+template <typename E>
+size_t min_index(E&& values) {
+    static_assert(is_etl_expr<E>::value, "etl::min can only be used on ETL expressions");
+
     //Reduction force evaluation
     force(values);
 
-    std::size_t m = 0;
+    size_t m = 0;
 
-    for (std::size_t i = 1; i < size(values); ++i) {
-        if (values[i] > values[m]) {
+    for (size_t i = 1; i < size(values); ++i) {
+        if (values[i] < values[m]) {
             m = i;
         }
     }
 
-    return values[m];
+    return m;
 }
 
 /*!
@@ -1510,17 +1546,7 @@ template <typename E>
 detail::value_return_t<E> min(E&& values) {
     static_assert(is_etl_expr<E>::value, "etl::min can only be used on ETL expressions");
 
-    //Reduction force evaluation
-    force(values);
-
-    std::size_t m = 0;
-
-    for (std::size_t i = 1; i < size(values); ++i) {
-        if (values[i] < values[m]) {
-            m = i;
-        }
-    }
-
+    auto m = min_index(values);
     return values[m];
 }
 
