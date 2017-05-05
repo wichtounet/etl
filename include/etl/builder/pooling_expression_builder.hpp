@@ -374,8 +374,8 @@ auto max_pool_upsample_3d(A&& input, B&& output, C&& errors, size_t c1, size_t c
  * \return A expression representing the Upsampling of the given expression
  */
 template <size_t C1, size_t C2, typename E>
-auto upsample_2d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_2d_expr<value_t<E>, decay_traits<E>::dimensions(), C1, C2>>{value};
+upsample_2d_expr<E, C1, C2, impl::upsample_2d> upsample_2d(E&& value) {
+    return upsample_2d_expr<E, C1, C2, impl::upsample_2d>{value};
 }
 
 /*!
@@ -386,8 +386,8 @@ auto upsample_2d(E&& value) {
  * \return A expression representing the Upsampling of the given expression
  */
 template <typename E>
-auto upsample_2d(E&& value, size_t c1, size_t c2) {
-    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_upsample_2d_expr<value_t<E>, decay_traits<E>::dimensions()>>{{c1, c2}, value};
+dyn_upsample_2d_expr<E, impl::upsample_2d> upsample_2d(E&& value, size_t c1, size_t c2) {
+    return dyn_upsample_2d_expr<E, impl::upsample_2d>{value, c1, c2};
 }
 
 /* Upsample 3D */
@@ -401,8 +401,8 @@ auto upsample_2d(E&& value, size_t c1, size_t c2) {
  * \return A expression representing the Upsampling of the given expression
  */
 template <size_t C1, size_t C2, size_t C3, typename E>
-auto upsample_3d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_3d_expr<value_t<E>, decay_traits<E>::dimensions(), C1, C2, C3>>{value};
+upsample_3d_expr<E, C1, C2, C3, impl::upsample_3d> upsample_3d(E&& value) {
+    return upsample_3d_expr<E, C1, C2, C3, impl::upsample_3d>{value};
 }
 
 /*!
@@ -414,8 +414,8 @@ auto upsample_3d(E&& value) {
  * \return A expression representing the Upsampling of the given expression
  */
 template <typename E>
-auto upsample_3d(E&& value, size_t c1, size_t c2, size_t c3) {
-    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_upsample_3d_expr<value_t<E>, decay_traits<E>::dimensions()>>{{c1, c2, c3}, value};
+dyn_upsample_3d_expr<E, impl::upsample_3d> upsample_3d(E&& value, size_t c1, size_t c2, size_t c3) {
+    return dyn_upsample_3d_expr<E, impl::upsample_3d>{value, c1, c2, c3};
 }
 
 /* Probabilistic Max Pooling (hidden) */
