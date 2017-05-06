@@ -125,19 +125,6 @@ template <typename A, typename B, template <typename> class OP>
 using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>>;
 
 /*!
- * \brief Helper to create a temporary unary expression.
- */
-template <typename A, template <typename> class OP>
-using temporary_unary_helper = temporary_unary_expr<value_t<A>, build_type<A>, OP<value_t<A>>>;
-
-/*!
- * \brief Helper to create a temporary unary expression with
- * a forced value type.
- */
-template <typename T, typename A, template <typename> class OP>
-using temporary_unary_helper_type = temporary_unary_expr<T, build_type<A>, OP<T>>;
-
-/*!
  * \brief Helper to create a temporary binary expression with an
  * operation that takes a number of dimensions as input template
  * type.
