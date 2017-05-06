@@ -85,6 +85,7 @@
 #include "etl/expr/prob_pool_2d_expr.hpp"
 #include "etl/expr/dyn_prob_pool_2d_expr.hpp"
 #include "etl/expr/convmtx_2d_expr.hpp"
+#include "etl/expr/fft_expr.hpp"
 
 // The expressions building
 #include "etl/checks.hpp"
@@ -110,7 +111,6 @@
 // The complex expressions
 #include "etl/expr/mmul_expr.hpp"
 #include "etl/expr/outer_product_expr.hpp"
-#include "etl/expr/fft_expr.hpp"
 #include "etl/expr/inv_expr.hpp"
 #include "etl/expr/conv_expr.hpp"
 #include "etl/expr/pooling_derivative_expr.hpp"

@@ -5,108 +5,169 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-/*!
- * \file fft_expr.hpp
- * \brief Contains the FFT expressions.
-*/
-
 #pragma once
 
-//Get the implementations
-#include "etl/impl/fft.hpp"
+#include "etl/expr/base_temporary_expr.hpp"
 
 namespace etl {
 
 /*!
- * \brief A configurable expression for FFT
- * \tparam T The value type
- * \tparam D The number of dimensions of the FFT
- * \tparam Impl The implementation to use
+ * \brief A transposition expression.
+ * \tparam A The transposed type
  */
-template <typename T, std::size_t D, typename Impl>
-struct basic_fft_expr : impl_expr<basic_fft_expr<T, D, Impl>, T> {
-    using this_type  = basic_fft_expr<T, D, Impl>; ///< The type of this expression
-    using value_type = T;                          ///< The value type
+template <typename A, typename T, typename Impl>
+struct fft_expr : base_temporary_expr_un<fft_expr<A, T, Impl>, A> {
+    using value_type = T;                                    ///< The type of value of the expression
+    using this_type  = fft_expr<A, T, Impl>;                    ///< The type of this expression
+    using base_type  = base_temporary_expr_un<this_type, A>; ///< The base type
+    using sub_traits = decay_traits<A>;                      ///< The traits of the sub type
 
-    static constexpr bool is_gpu = cufft_enabled; ///< Indicate if the expression is executed on GPU
-
-    /*!
-     * \brief The result type for a given sub expression type
-     * \tparam A The sub epxpression type
-     */
-    template <typename A>
-    using result_type = detail::expr_result_t<this_type, T, A>;
+    static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
 
     /*!
-     * \brief Apply the expression
+     * \brief Construct a new expression
      * \param a The sub expression
-     * \param c The expression where to store the results
      */
-    template <typename A, typename C>
-    static void apply(A&& a, C&& c) {
-        static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "Fast-Fourrier Transform only supported for ETL expressions");
+    explicit fft_expr(A a) : base_type(a) {
+        //Nothing else to init
+    }
+
+    // Assignment functions
+
+    /*!
+     * \brief Assign to a matrix of the same storage order
+     * \param c The expression to which assign
+     */
+    template<typename C>
+    void assign_to(C&& c)  const {
+        static_assert(all_etl_expr<A, C>::value, "max_pool_2d only supported for ETL expressions");
+        static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
+
+        auto& a = this->a();
+
+        standard_evaluator::pre_assign_rhs(a);
+        standard_evaluator::pre_assign_lhs(c);
 
         Impl::apply(
-            make_temporary(std::forward<A>(a)),
+            make_temporary(a),
             std::forward<C>(c));
     }
 
     /*!
-     * \brief Returns a textual representation of the operation
-     * \return a textual representation of the operation
+     * \brief Add to the given left-hand-side expression
+     * \param lhs The expression to which assign
      */
-    static std::string desc() noexcept {
-        return "fft";
+    template<typename L>
+    void assign_add_to(L&& lhs)  const {
+        std_add_evaluate(*this, lhs);
     }
 
     /*!
+     * \brief Sub from the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_sub_to(L&& lhs)  const {
+        std_sub_evaluate(*this, lhs);
+    }
+
+    /*!
+     * \brief Multiply the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_mul_to(L&& lhs)  const {
+        std_mul_evaluate(*this, lhs);
+    }
+
+    /*!
+     * \brief Divide the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_div_to(L&& lhs)  const {
+        std_div_evaluate(*this, lhs);
+    }
+
+    /*!
+     * \brief Modulo the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_mod_to(L&& lhs)  const {
+        std_mod_evaluate(*this, lhs);
+    }
+};
+
+/*!
+ * \brief Traits for a transpose expression
+ * \tparam A The transposed sub type
+ */
+template <typename A, typename T, typename Impl>
+struct etl_traits<etl::fft_expr<A, T, Impl>> {
+    using expr_t     = etl::fft_expr<A, T, Impl>; ///< The expression type
+    using sub_expr_t = std::decay_t<A>;           ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;    ///< The sub traits
+    using value_type = T;                         ///< The value type of the expression
+
+    static constexpr bool is_etl                  = true;                      ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer          = false;                     ///< Indicates if the type is a transformer
+    static constexpr bool is_view                 = false;                     ///< Indicates if the type is a view
+    static constexpr bool is_magic_view           = false;                     ///< Indicates if the type is a magic view
+    static constexpr bool is_fast                 = sub_traits::is_fast;       ///< Indicates if the expression is fast
+    static constexpr bool is_linear               = true;                      ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe          = true;                      ///< Indicates if the expression is thread safe
+    static constexpr bool is_value                = false;                     ///< Indicates if the expression is of value type
+    static constexpr bool is_direct               = true;                      ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator            = false;                     ///< Indicates if the expression is a generator
+    static constexpr bool is_padded               = false;                     ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = true;                      ///< Indicates if the expression is padded
+    static constexpr bool is_gpu                  = false;                     ///< Indicates if the expression can be done on GPU
+    static constexpr bool needs_evaluator_visitor = true;                      ///< Indicates if the expression needs a evaluator visitor
+    static constexpr order storage_order          = sub_traits::storage_order; ///< The expression's storage order
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    using vectorizable = std::true_type;
+
+    /*!
      * \brief Returns the DDth dimension of the expression
-     * \tparam A The sub expression type
-     * \tparam DD The dimension to get
      * \return the DDth dimension of the expression
      */
-    template <typename A, std::size_t DD>
+    template <std::size_t DD>
     static constexpr std::size_t dim() {
         return decay_traits<A>::template dim<DD>();
     }
 
     /*!
      * \brief Returns the dth dimension of the expression
-     * \param a The sub expression
+     * \param e The sub expression
      * \param d The dimension to get
      * \return the dth dimension of the expression
      */
-    template <typename A>
-    static std::size_t dim(const A& a, std::size_t d) {
-        return etl_traits<A>::dim(a, d);
+    static std::size_t dim(const expr_t& e, std::size_t d) {
+        return etl::dim(e._a, d);
     }
 
     /*!
      * \brief Returns the size of the expression
-     * \param a The sub expression
+     * \param e The sub expression
      * \return the size of the expression
      */
-    template <typename A>
-    static std::size_t size(const A& a) {
-        return etl::size(a);
+    static std::size_t size(const expr_t& e) {
+        return sub_traits::size(e);
     }
 
     /*!
      * \brief Returns the size of the expression
      * \return the size of the expression
      */
-    template <typename A>
     static constexpr std::size_t size() {
-        return etl::decay_traits<A>::size();
-    }
-
-    /*!
-     * \brief Returns the storage order of the expression.
-     * \return the storage order of the expression
-     */
-    template <typename A>
-    static constexpr etl::order order() {
-        return etl::order::RowMajor;
+        return sub_traits::size();
     }
 
     /*!
@@ -114,68 +175,8 @@ struct basic_fft_expr : impl_expr<basic_fft_expr<T, D, Impl>, T> {
      * \return the number of dimensions of the expression
      */
     static constexpr std::size_t dimensions() {
-        return D;
+        return sub_traits::dimensions();
     }
 };
-
-/*!
- * \brief Expression for 1D FFT
- */
-template <typename T>
-using fft1_expr = basic_fft_expr<T, 1, detail::fft1_impl>;
-
-/*!
- * \brief Expression for 1D Inverse FFT
- */
-template <typename T>
-using ifft1_expr = basic_fft_expr<T, 1, detail::ifft1_impl>;
-
-/*!
- * \brief Expression for 1D Inverse FFT in real
- */
-template <typename T>
-using ifft1_real_expr = basic_fft_expr<T, 1, detail::ifft1_real_impl>;
-
-/*!
- * \brief Expression for 2D FFT
- */
-template <typename T>
-using fft2_expr = basic_fft_expr<T, 2, detail::fft2_impl>;
-
-/*!
- * \brief Expression for 2D Inverse FFT
- */
-template <typename T>
-using ifft2_expr = basic_fft_expr<T, 2, detail::ifft2_impl>;
-
-/*!
- * \brief Expression for 2D Inverse FFT in real
- */
-template <typename T>
-using ifft2_real_expr = basic_fft_expr<T, 2, detail::ifft2_real_impl>;
-
-/*!
- * \brief Expression for many 1D FFT done at once
- */
-template <typename T>
-using fft1_many_expr = basic_fft_expr<T, 2, detail::fft1_many_impl>;
-
-/*!
- * \brief Expression for many 1D Inverse FFT done at once
- */
-template <typename T>
-using ifft1_many_expr = basic_fft_expr<T, 2, detail::ifft1_many_impl>;
-
-/*!
- * \brief Expression for many 2D FFT done at once
- */
-template <typename T>
-using fft2_many_expr = basic_fft_expr<T, 3, detail::fft2_many_impl>;
-
-/*!
- * \brief Expression for many 2D Inverse FFT done at once
- */
-template <typename T>
-using ifft2_many_expr = basic_fft_expr<T, 3, detail::ifft2_many_impl>;
 
 } //end of namespace etl

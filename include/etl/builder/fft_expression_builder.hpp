@@ -46,10 +46,10 @@ using ifft_real_value_type = std::conditional_t<is_complex<A>::value, typename v
  * \return an expression representing the 1D FFT of a
  */
 template <typename A>
-auto fft_1d(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft1_expr> {
+fft_expr<A, detail::fft_value_type<A>, detail::fft1_impl> fft_1d(A&& a) {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
 
-    return detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft1_expr>{a};
+    return fft_expr<A, detail::fft_value_type<A>, detail::fft1_impl>{a};
 }
 
 /*!
@@ -73,10 +73,10 @@ auto fft_1d(A&& a, C&& c){
  * \return an expression representing the 1D inverse FFT of a
  */
 template <typename A>
-auto ifft_1d(A&& a) -> detail::temporary_unary_helper_type<detail::ifft_value_type<A>, A, ifft1_expr> {
+fft_expr<A, detail::ifft_value_type<A>, detail::ifft1_impl> ifft_1d(A&& a) {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
 
-    return detail::temporary_unary_helper_type<detail::ifft_value_type<A>, A, ifft1_expr>{a};
+    return fft_expr<A, detail::ifft_value_type<A>, detail::ifft1_impl>{a};
 }
 
 /*!
@@ -100,10 +100,10 @@ auto ifft_1d(A&& a, C&& c) {
  * \return an expression representing the real part of the 1D inverse FFT of a
  */
 template <typename A>
-auto ifft_1d_real(A&& a) -> detail::temporary_unary_helper_type<detail::ifft_real_value_type<A>, A, ifft1_real_expr> {
+fft_expr<A, detail::ifft_real_value_type<A>, detail::ifft1_real_impl> ifft_1d_real(A&& a) {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
 
-    return detail::temporary_unary_helper_type<detail::ifft_real_value_type<A>, A, ifft1_real_expr>{a};
+    return fft_expr<A, detail::ifft_real_value_type<A>, detail::ifft1_real_impl>{a};
 }
 
 /*!
@@ -127,10 +127,10 @@ auto ifft_1d_real(A&& a, C&& c) {
  * \return an expression representing the 2D FFT of a
  */
 template <typename A>
-auto fft_2d(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft2_expr> {
+fft_expr<A, detail::fft_value_type<A>, detail::fft2_impl> fft_2d(A&& a) {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
 
-    return detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft2_expr>{a};
+    return fft_expr<A, detail::fft_value_type<A>, detail::fft2_impl>{a};
 }
 
 /*!
@@ -154,10 +154,10 @@ auto fft_2d(A&& a, C&& c){
  * \return an expression representing the 2D inverse FFT of a
  */
 template <typename A>
-auto ifft_2d(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, ifft2_expr> {
+fft_expr<A, detail::ifft_value_type<A>, detail::ifft2_impl> ifft_2d(A&& a) {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
 
-    return detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, ifft2_expr>{a};
+    return fft_expr<A, detail::ifft_value_type<A>, detail::ifft2_impl>{a};
 }
 
 /*!
@@ -181,10 +181,10 @@ auto ifft_2d(A&& a, C&& c){
  * \return an expression representing the real part of the 2D inverse FFT of a
  */
 template <typename A>
-auto ifft_2d_real(A&& a) -> detail::temporary_unary_helper_type<detail::ifft_real_value_type<A>, A, ifft2_real_expr> {
+fft_expr<A, detail::ifft_real_value_type<A>, detail::ifft2_real_impl> ifft_2d_real(A&& a) {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
 
-    return detail::temporary_unary_helper_type<detail::ifft_real_value_type<A>, A, ifft2_real_expr>{a};
+    return fft_expr<A, detail::ifft_real_value_type<A>, detail::ifft2_real_impl>{a};
 }
 
 /*!
@@ -211,11 +211,11 @@ auto ifft_2d_real(A&& a, C&& c) {
  * \return an expression representing several 1D FFT of a
  */
 template <typename A>
-auto fft_1d_many(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft1_many_expr> {
+fft_expr<A, detail::fft_value_type<A>, detail::fft1_many_impl> fft_1d_many(A&& a) {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() >= 2, "fft_many requires at least 2D matrices");
 
-    return detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft1_many_expr>{a};
+    return fft_expr<A, detail::fft_value_type<A>, detail::fft1_many_impl>{a};
 }
 
 /*!
@@ -246,11 +246,11 @@ auto fft_1d_many(A&& a, C&& c) {
  * \return an expression representing several 1D FFT of a
  */
 template <typename A>
-auto ifft_1d_many(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, ifft1_many_expr> {
+fft_expr<A, detail::ifft_value_type<A>, detail::ifft1_many_impl> ifft_1d_many(A&& a) {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() >= 2, "ifft_many requires at least 2D matrices");
 
-    return detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, ifft1_many_expr>{a};
+    return fft_expr<A, detail::ifft_value_type<A>, detail::ifft1_many_impl>{a};
 }
 
 /*!
@@ -281,11 +281,11 @@ auto ifft_1d_many(A&& a, C&& c) {
  * \return an expression representing several 2D FFT of a
  */
 template <typename A>
-auto fft_2d_many(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft2_many_expr> {
+fft_expr<A, detail::fft_value_type<A>, detail::fft2_many_impl> fft_2d_many(A&& a) {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() >= 3, "fft_many requires at least 3D matrices");
 
-    return detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft2_many_expr>{a};
+    return fft_expr<A, detail::fft_value_type<A>, detail::fft2_many_impl>{a};
 }
 
 /*!
@@ -316,11 +316,11 @@ auto fft_2d_many(A&& a, C&& c) {
  * \return an expression representing several 2D FFT of a
  */
 template <typename A>
-auto ifft_2d_many(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, ifft2_many_expr> {
+fft_expr<A, detail::ifft_value_type<A>, detail::ifft2_many_impl> ifft_2d_many(A&& a) {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() >= 3, "ifft_many requires at least 3D matrices");
 
-    return detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, ifft2_many_expr>{a};
+    return fft_expr<A, detail::ifft_value_type<A>, detail::ifft2_many_impl>{a};
 }
 
 /*!
