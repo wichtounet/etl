@@ -216,6 +216,11 @@ struct dyn_pmp_h_impl {
         cpp_assert(p1 == 0, "pmp_p does not support pooling");
         cpp_assert(p2 == 0, "pmp_p does not support pooling");
 
+        cpp_unused(s1);
+        cpp_unused(s2);
+        cpp_unused(p1);
+        cpp_unused(p2);
+
         using T = value_t<A>;
 
         const size_t M = etl::dim<0>(a);
@@ -246,6 +251,11 @@ struct dyn_pmp_h_impl {
         cpp_assert(s2 == c2, "pmp_p does not support strides");
         cpp_assert(p1 == 0, "pmp_p does not support pooling");
         cpp_assert(p2 == 0, "pmp_p does not support pooling");
+
+        cpp_unused(s1);
+        cpp_unused(s2);
+        cpp_unused(p1);
+        cpp_unused(p2);
 
         using T = value_t<A>;
 
@@ -286,6 +296,11 @@ struct dyn_pmp_h_impl {
         cpp_assert(s2 == c2, "pmp_p does not support strides");
         cpp_assert(p1 == 0, "pmp_p does not support pooling");
         cpp_assert(p2 == 0, "pmp_p does not support pooling");
+
+        cpp_unused(s1);
+        cpp_unused(s2);
+        cpp_unused(p1);
+        cpp_unused(p2);
 
         using T = value_t<A>;
 
@@ -526,6 +541,11 @@ struct dyn_pmp_p_impl {
         cpp_assert(p1 == 0, "pmp_p does not support pooling");
         cpp_assert(p2 == 0, "pmp_p does not support pooling");
 
+        cpp_unused(s1);
+        cpp_unused(s2);
+        cpp_unused(p1);
+        cpp_unused(p2);
+
         using T = value_t<A>;
 
         const size_t M = etl::dim<0>(a);
@@ -556,6 +576,11 @@ struct dyn_pmp_p_impl {
         cpp_assert(s2 == c2, "pmp_p does not support strides");
         cpp_assert(p1 == 0, "pmp_p does not support pooling");
         cpp_assert(p2 == 0, "pmp_p does not support pooling");
+
+        cpp_unused(s1);
+        cpp_unused(s2);
+        cpp_unused(p1);
+        cpp_unused(p2);
 
         using T = value_t<A>;
 
@@ -596,6 +621,11 @@ struct dyn_pmp_p_impl {
         cpp_assert(s2 == c2, "pmp_p does not support strides");
         cpp_assert(p1 == 0, "pmp_p does not support pooling");
         cpp_assert(p2 == 0, "pmp_p does not support pooling");
+
+        cpp_unused(s1);
+        cpp_unused(s2);
+        cpp_unused(p1);
+        cpp_unused(p2);
 
         using T = value_t<A>;
 
