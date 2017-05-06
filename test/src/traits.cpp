@@ -337,7 +337,6 @@ TEMPLATE_TEST_CASE_2("etl_traits/has_direct_access", "has_direct_access", Z, flo
     REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape(b, 3, 40))>::value);
 
     //Temporary unary expressions have direct access
-    REQUIRE_DIRECT(etl::is_temporary_unary_expr<decltype(etl::fft_1d(a(1)(0)(0)))>::value);
     REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::fft_1d(a(1)(0)(0)))>::value);
     REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::fft_1d(b(1)(0)(0)))>::value);
 
