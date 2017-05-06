@@ -233,3 +233,31 @@ using conv_4d_valid_policy_18 = NARY_POLICY(
     /* I */ VALUES_POLICY(128, 128, 128, 128, 128, 128, 128, 128, 128, 128),
     /* W */ VALUES_POLICY(3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
     );
+
+// ImageNet forward policy
+using imagenet_forward_policy = NARY_POLICY(
+    /* N */ VALUES_POLICY(32,  32,  32,  32,  32),
+    /* K */ VALUES_POLICY(32,  32,  32,  32,  32),
+    /* C */ VALUES_POLICY(3,   32,  32,  32,  32),
+    /* I */ VALUES_POLICY(256, 128, 64,  32,  16),
+    /* W */ VALUES_POLICY(3,   3,   3,   3,   3)
+    );
+
+// ImageNet backward policy
+using imagenet_backward_policy = NARY_POLICY(
+    /* N */ VALUES_POLICY(32,  32,  32,  32,  32),
+    /* K */ VALUES_POLICY(3,   32,  32,  32,  32),
+    /* C */ VALUES_POLICY(32,  32,  32,  32,  32),
+    /* I */ VALUES_POLICY(256, 128, 64,  32,  16),
+    /* W */ VALUES_POLICY(3,   3,   3,   3,   3)
+    );
+
+// ImageNet gradients policy
+using imagenet_gradients_policy = NARY_POLICY(
+    /* N */ VALUES_POLICY(32,  32,  32,  32,  32),
+    /* K */ VALUES_POLICY(32,   32,  32,  32,  32),
+    /* C */ VALUES_POLICY(3,   32,  32,  32,  32),
+    /* I */ VALUES_POLICY(256, 128, 64,  32,  16),
+    /* W */ VALUES_POLICY(256, 128, 64,  32,  16)
+    );
+
