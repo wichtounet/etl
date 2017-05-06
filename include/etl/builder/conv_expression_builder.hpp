@@ -1415,11 +1415,11 @@ auto convmtx2(A&& a, std::size_t k1, std::size_t k2) -> detail::stable_transform
  * \return a matrix expression for convolution
  */
 template <std::size_t K1, std::size_t K2, typename A>
-auto convmtx2_direct(A&& a) -> temporary_unary_expr<value_t<A>, detail::build_type<A>, direct_convmtx2_expr<value_t<A>, K1, K2>> {
+convmtx_2d_expr<A, K1, K2> convmtx2_direct(A&& a) {
     static_assert(is_etl_expr<A>::value, "Convolution matrices only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2, "Convolutional matrix only works in 2D");
 
-    return temporary_unary_expr<value_t<A>, detail::build_type<A>, direct_convmtx2_expr<value_t<A>, K1, K2>>{a};
+    return convmtx_2d_expr<A, K1, K2>{a};
 }
 
 } //end of namespace etl
