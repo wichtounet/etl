@@ -184,24 +184,6 @@ struct optimizable<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
 /*!
  * \copydoc optimizable
  *
- * Specialization for temporary_unary_expr
- */
-template <typename T, typename A, typename Op>
-struct optimizable<etl::temporary_unary_expr<T, A, Op>> {
-    /*! \copydoc optimizable::is */
-    static bool is(const etl::temporary_unary_expr<T, A, Op>& /*unused*/) {
-        return false;
-    }
-
-    /*! \copydoc optimizable::is_deep */
-    static bool is_deep(const etl::temporary_unary_expr<T, A, Op>& expr) {
-        return is_optimizable_deep(expr.a());
-    }
-};
-
-/*!
- * \copydoc optimizable
- *
  * Specialization for temporary_binary_expr
  */
 template <typename T, typename A, typename B, typename Op>
@@ -437,30 +419,6 @@ struct optimizer<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
             };
 
             optimize(rhs_builder, expr.rhs);
-        } else {
-            parent_builder(expr);
-        }
-    }
-};
-
-/*!
- * \brief An optimizer for temporary unary expr
- */
-template <typename T, typename A, typename Op>
-struct optimizer<etl::temporary_unary_expr<T, A, Op>> {
-    /*!
-     * \brief Optimize the expression using the given builder
-     * \param parent_builder The builder to use
-     * \param expr The expression to optimize
-     */
-    template <typename Builder>
-    static void apply(Builder parent_builder, const etl::temporary_unary_expr<T, A, Op>& expr) {
-        if (is_optimizable_deep(expr.a())) {
-            auto lhs_builder = [&](auto&& new_lhs) {
-                parent_builder(etl::temporary_unary_expr<T, etl::detail::build_type<decltype(new_lhs)>, Op>(new_lhs));
-            };
-
-            optimize(lhs_builder, expr.a());
         } else {
             parent_builder(expr);
         }

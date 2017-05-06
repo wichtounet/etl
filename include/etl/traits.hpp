@@ -252,15 +252,6 @@ template <typename T>
 using is_dyn_matrix_view = traits_detail::is_dyn_matrix_view<T>;
 
 /*!
- * \brief Traits indicating if the given ETL type is a temporary unary expression.
- * \tparam T The type to test
- */
-template <typename T>
-using is_temporary_unary_expr = cpp::or_c<
-    cpp::is_specialization_of<etl::temporary_unary_expr, std::decay_t<T>>,
-    cpp::is_specialization_of<etl::temporary_unary_expr_state, std::decay_t<T>>>;
-
-/*!
  * \brief Traits indicating if the given ETL type is a temporary binary expression.
  * \tparam T The type to test
  */
@@ -268,13 +259,6 @@ template <typename T>
 using is_temporary_binary_expr = cpp::or_c<
     cpp::is_specialization_of<etl::temporary_binary_expr, std::decay_t<T>>,
     cpp::is_specialization_of<etl::temporary_binary_expr_state, std::decay_t<T>>>;
-
-/*!
- * \brief Traits indicating if the given ETL type is a temporary expression.
- * \tparam T The type to test
- */
-template <typename T>
-using is_temporary_expr = cpp::or_c<is_temporary_unary_expr<T>, is_temporary_binary_expr<T>>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a transformer expression.
