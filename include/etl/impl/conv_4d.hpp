@@ -27,7 +27,7 @@ struct conv4_valid_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_valid_impl<I, K, C>();
+        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_valid(input, kernel, conv, S1, S2, P1, P2);
@@ -138,7 +138,7 @@ struct conv4_valid_flipped_impl : conv4_valid_impl<S1, S2, P1, P2> {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_valid_impl<I, K, C>();
+        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_valid_flipped(input, kernel, conv, S1, S2, P1, P2);
@@ -188,7 +188,7 @@ struct dyn_conv4_valid_impl {
      */
     template <typename I, typename K, typename C>
     void apply(const I& input, const K& kernel, C&& conv) const {
-        auto impl = select_conv4_valid_impl<I, K, C>();
+        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_valid(input, kernel, conv, s1, s2, p1, p2);
@@ -274,7 +274,7 @@ struct dyn_conv4_valid_flipped_impl : dyn_conv4_valid_impl {
      */
     template <typename I, typename K, typename C>
     void apply(const I& input, const K& kernel, C&& conv) const {
-        auto impl = select_conv4_valid_impl<I, K, C>();
+        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_valid_flipped(input, kernel, conv, s1, s2, p1, p2);
@@ -312,7 +312,7 @@ struct conv4_valid_filter_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_valid_impl<I, K, C>();
+        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_valid_filter(input, kernel, conv, S1, S2, P1, P2);
@@ -423,7 +423,7 @@ struct conv4_valid_filter_flipped_impl : conv4_valid_filter_impl<S1, S2, P1, P2>
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_valid_impl<I, K, C>();
+        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
             if(S1 > 1 || S2 > 1 || P1 || P2){
@@ -484,7 +484,7 @@ struct dyn_conv4_valid_filter_impl {
      */
     template <typename I, typename K, typename C>
     void apply(const I& input, const K& kernel, C&& conv) const {
-        auto impl = select_conv4_valid_impl<I, K, C>();
+        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_valid_filter(input, kernel, conv, s1, s2, p1, p2);
@@ -570,7 +570,7 @@ struct dyn_conv4_valid_filter_flipped_impl : dyn_conv4_valid_filter_impl {
      */
     template <typename I, typename K, typename C>
     void apply(const I& input, const K& kernel, C&& conv) const {
-        auto impl = select_conv4_valid_impl<I, K, C>();
+        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
             if(s1 > 1 || s2 > 1 || p1 || p2){
@@ -619,7 +619,7 @@ struct conv4_valid_back_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_valid_back_impl<I, K, C>();
+        auto impl = select_conv4_valid_back_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid_back(input, kernel, conv, S1, S2, P1, P2);
@@ -724,7 +724,7 @@ struct conv4_valid_back_flipped_impl : conv4_valid_back_impl<S1, S2, P1, P2> {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_valid_back_impl<I, K, C>();
+        auto impl = select_conv4_valid_back_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid_back_flipped(input, kernel, conv, S1, S2, P1, P2);
@@ -771,7 +771,7 @@ struct dyn_conv4_valid_back_impl {
      */
     template <typename I, typename K, typename C>
     void apply(const I& input, const K& kernel, C&& conv) const {
-        auto impl = select_conv4_valid_back_impl<I, K, C>();
+        auto impl = select_conv4_valid_back_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid_back(input, kernel, conv, s1, s2, p1, p2);
@@ -853,7 +853,7 @@ struct dyn_conv4_valid_back_flipped_impl : dyn_conv4_valid_back_impl {
      */
     template <typename I, typename K, typename C>
     void apply(const I& input, const K& kernel, C&& conv) const {
-        auto impl = select_conv4_valid_back_impl<I, K, C>();
+        auto impl = select_conv4_valid_back_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid_back_flipped(input, kernel, conv, s1, s2, p1, p2);

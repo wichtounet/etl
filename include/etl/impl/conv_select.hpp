@@ -332,7 +332,7 @@ inline etl::conv_impl select_conv_impl() {
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv4_impl select_default_conv4_valid_impl() {
+inline etl::conv4_impl select_default_conv4_valid_impl(size_t i1, size_t i2, size_t k1, size_t k2) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
@@ -351,6 +351,19 @@ inline etl::conv4_impl select_default_conv4_valid_impl() {
         return etl::conv4_impl::CUDNN;
     }
 
+    // Small kernels
+    if(k1 == k2 && k1 <= 5){
+        if(i1 == i2 && i1 > 100){
+            return etl::conv4_impl::VEC;
+        } else {
+            if (cblas_enabled) {
+                return etl::conv4_impl::BLAS_MKL;
+            } else if (vec_enabled && vectorize_impl) {
+                return etl::conv4_impl::BLAS_VEC;
+            }
+        }
+    }
+
     if (conv4_prefer_blas) {
         if (cblas_enabled) {
             return etl::conv4_impl::BLAS_MKL;
@@ -376,7 +389,7 @@ inline etl::conv4_impl select_default_conv4_valid_impl() {
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv4_impl select_conv4_valid_impl() {
+inline etl::conv4_impl select_conv4_valid_impl(size_t i1, size_t i2, size_t k1, size_t k2) {
     if (local_context().conv4_selector.forced) {
         auto forced = local_context().conv4_selector.impl;
 
@@ -386,7 +399,7 @@ inline etl::conv4_impl select_conv4_valid_impl() {
             case conv4_impl::VEC:
                 if (!vec_enabled || !vectorize_impl) {                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv4_valid_impl<I, K, C>();                                                             // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_valid_impl<I, K, C>(i1, i2, k1, k2);                                                             // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                  // COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -395,7 +408,7 @@ inline etl::conv4_impl select_conv4_valid_impl() {
             case conv4_impl::BLAS_MKL:
                 if (!cblas_enabled) {                                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv4_valid_impl<I, K, C>();                                                               // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_valid_impl<I, K, C>(i1, i2, k1, k2);                                                               // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                    // COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -404,7 +417,7 @@ inline etl::conv4_impl select_conv4_valid_impl() {
             case conv4_impl::CUDNN:
                 if (!cudnn_enabled) {                                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv4_valid_impl<I, K, C>();                                                               // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_valid_impl<I, K, C>(i1, i2, k1, k2);                                                               // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                    // COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -414,7 +427,7 @@ inline etl::conv4_impl select_conv4_valid_impl() {
         }
     }
 
-    return select_default_conv4_valid_impl<I, K, C>();
+    return select_default_conv4_valid_impl<I, K, C>(i1, i2, k1, k2);
 }
 
 /*!
@@ -428,7 +441,7 @@ inline etl::conv4_impl select_conv4_valid_impl() {
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv4_impl select_default_conv4_valid_back_impl() {
+inline etl::conv4_impl select_default_conv4_valid_back_impl(size_t i1, size_t i2, size_t k1, size_t k2) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
@@ -439,6 +452,21 @@ inline etl::conv4_impl select_default_conv4_valid_back_impl() {
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
         return etl::conv4_impl::STD;
+    }
+
+    // Small kernels
+    if(k1 == k2 && k1 <= 5){
+        if(i1 == i2 && i1 > 100){
+            if (vec_enabled && vectorize_impl) {
+                return etl::conv4_impl::VEC;
+            }
+        } else {
+            if (cblas_enabled) {
+                return etl::conv4_impl::BLAS_MKL;
+            } else if (vec_enabled && vectorize_impl) {
+                return etl::conv4_impl::BLAS_VEC;
+            }
+        }
     }
 
     if (conv4_prefer_blas) {
@@ -467,7 +495,7 @@ inline etl::conv4_impl select_default_conv4_valid_back_impl() {
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv4_impl select_conv4_valid_back_impl() {
+inline etl::conv4_impl select_conv4_valid_back_impl(size_t i1, size_t i2, size_t k1, size_t k2) {
     if (local_context().conv4_selector.forced) {
         auto forced = local_context().conv4_selector.impl;
 
@@ -477,7 +505,7 @@ inline etl::conv4_impl select_conv4_valid_back_impl() {
             case conv4_impl::VEC:
                 if (!vec_enabled || !vectorize_impl) {                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv4_valid_back_impl<I, K, C>();                                                             // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_valid_back_impl<I, K, C>(i1, i2, k1, k2);                                                             // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                  // COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -486,7 +514,7 @@ inline etl::conv4_impl select_conv4_valid_back_impl() {
             case conv4_impl::BLAS_MKL:
                 if (!cblas_enabled) {                                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv4_valid_back_impl<I, K, C>();                                                               // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_valid_back_impl<I, K, C>(i1, i2, k1, k2);                                                               // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                    // COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -496,7 +524,7 @@ inline etl::conv4_impl select_conv4_valid_back_impl() {
         }
     }
 
-    return select_default_conv4_valid_back_impl<I, K, C>();
+    return select_default_conv4_valid_back_impl<I, K, C>(i1, i2, k1, k2);
 }
 
 /*!
