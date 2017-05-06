@@ -190,12 +190,6 @@ static_assert(false, "EGBLAS is only intended to work with CUBLAS, not alone");
 #define ETL_INTEL_COMPILER_BOOL false
 #endif
 
-#ifdef ETL_CONV4_PREFER_BLAS
-#define ETL_CONV4_PREFER_BLAS_BOOL true
-#else
-#define ETL_CONV4_PREFER_BLAS_BOOL false
-#endif
-
 // Vectorization detection
 
 #ifdef __AVX512F__

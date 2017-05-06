@@ -364,18 +364,10 @@ inline etl::conv4_impl select_default_conv4_valid_impl(size_t i1, size_t i2, siz
         }
     }
 
-    if (conv4_prefer_blas) {
-        if (cblas_enabled) {
-            return etl::conv4_impl::BLAS_MKL;
-        } else if (vec_enabled && vectorize_impl) {
-            return etl::conv4_impl::BLAS_VEC;
-        }
-    } else {
-        if (vec_enabled && vectorize_impl) {
-            return etl::conv4_impl::VEC;
-        } else if (cblas_enabled) {
-            return etl::conv4_impl::BLAS_MKL;
-        }
+    if (vec_enabled && vectorize_impl) {
+        return etl::conv4_impl::VEC;
+    } else if (cblas_enabled) {
+        return etl::conv4_impl::BLAS_MKL;
     }
 
     return etl::conv4_impl::STD;
@@ -469,18 +461,10 @@ inline etl::conv4_impl select_default_conv4_valid_back_impl(size_t i1, size_t i2
         }
     }
 
-    if (conv4_prefer_blas) {
-        if (cblas_enabled) {
-            return etl::conv4_impl::BLAS_MKL;
-        } else if (vec_enabled && vectorize_impl) {
-            return etl::conv4_impl::BLAS_VEC;
-        }
-    } else {
-        if (vec_enabled && vectorize_impl) {
-            return etl::conv4_impl::VEC;
-        } else if (cblas_enabled) {
-            return etl::conv4_impl::BLAS_MKL;
-        }
+    if (vec_enabled && vectorize_impl) {
+        return etl::conv4_impl::VEC;
+    } else if (cblas_enabled) {
+        return etl::conv4_impl::BLAS_MKL;
     }
 
     return etl::conv4_impl::STD;

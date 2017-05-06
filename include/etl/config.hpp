@@ -193,13 +193,6 @@ constexpr bool vec_enabled = avx512_enabled || avx_enabled || sse3_enabled;
  */
 constexpr bool intel_compiler = ETL_INTEL_COMPILER_BOOL;
 
-/*!
- * \brief Indicates if the conv4 valid operations should be done in
- * BLAS instead of VEC (CUDNN will still be used)
- */
-constexpr bool conv4_prefer_blas = ETL_CONV4_PREFER_BLAS_BOOL;
-//TODO: Once there is a good selection for conv4_valid, this should be removed
-
 /* Checks for parameters */
 
 static_assert(!is_parallel || parallel_support, "is_parallel can only work with parallel_support");
