@@ -19,10 +19,10 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename Impl>
-struct pool_2d_expr : base_temporary_expr_un<pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>, A> {
+template <typename A, size_t C1, size_t C2, typename Impl>
+struct prob_pool_2d_expr : base_temporary_expr_un<prob_pool_2d_expr<A, C1, C2, Impl>, A> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
-    using this_type  = pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>;                    ///< The type of this expression
+    using this_type  = prob_pool_2d_expr<A, C1, C2, Impl>;                    ///< The type of this expression
     using base_type  = base_temporary_expr_un<this_type, A>; ///< The base type
     using sub_traits = decay_traits<A>;                      ///< The traits of the sub type
 
@@ -32,7 +32,7 @@ struct pool_2d_expr : base_temporary_expr_un<pool_2d_expr<A, C1, C2, S1, S2, P1,
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    explicit pool_2d_expr(A a) : base_type(a) {
+    explicit prob_pool_2d_expr(A a) : base_type(a) {
         //Nothing else to init
     }
 
@@ -52,7 +52,7 @@ struct pool_2d_expr : base_temporary_expr_un<pool_2d_expr<A, C1, C2, S1, S2, P1,
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_lhs(c);
 
-        Impl::template apply<C1, C2, S1, S2, P1, P2>(
+        Impl::template apply<C1, C2, C1, C2, 0, 0>(
             make_temporary(a),
             std::forward<C>(c));
     }
@@ -107,12 +107,12 @@ struct pool_2d_expr : base_temporary_expr_un<pool_2d_expr<A, C1, C2, S1, S2, P1,
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename Impl>
-struct etl_traits<etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>> {
-    using expr_t     = etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>; ///< The expression type
-    using sub_expr_t = std::decay_t<A>;                                  ///< The sub expression type
-    using sub_traits = etl_traits<sub_expr_t>;                           ///< The sub traits
-    using value_type = value_t<A>;                                       ///< The value type of the expression
+template <typename A, size_t C1, size_t C2, typename Impl>
+struct etl_traits<etl::prob_pool_2d_expr<A, C1, C2, Impl>> {
+    using expr_t     = etl::prob_pool_2d_expr<A, C1, C2, Impl>; ///< The expression type
+    using sub_expr_t = std::decay_t<A>;                         ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;                  ///< The sub traits
+    using value_type = value_t<A>;                              ///< The value type of the expression
 
     static constexpr size_t D = sub_traits::dimensions(); ///< The number of dimensions of this expressions
 
@@ -146,9 +146,7 @@ struct etl_traits<etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>> {
      */
     template <std::size_t DD>
     static constexpr std::size_t dim() {
-        return DD == D - 2 ? (decay_traits<A>::template dim<DD>() - C1 + 2 * P1) / S1 + 1
-             : DD == D - 1 ? (decay_traits<A>::template dim<DD>() - C2 + 2 * P2) / S2 + 1
-                           : decay_traits<A>::template dim<DD>();
+        return decay_traits<A>::template dim<DD>();
     }
 
     /*!
@@ -158,13 +156,7 @@ struct etl_traits<etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>> {
      * \return the dth dimension of the expression
      */
     static std::size_t dim(const expr_t& e, std::size_t d) {
-        if (d == D - 2) {
-            return (etl::dim(e._a, d) - C1 + 2 * P1) / S1 + 1;
-        } else if (d == D - 1){
-            return (etl::dim(e._a, d) - C2 + 2 * P2) / S2 + 1;
-        } else {
-            return etl::dim(e._a, d);
-        }
+        return etl::dim(e._a, d);
     }
 
     /*!

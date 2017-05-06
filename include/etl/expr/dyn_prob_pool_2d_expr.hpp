@@ -9,30 +9,29 @@
 
 #include "etl/expr/base_temporary_expr.hpp"
 
-//Get the implementations
-#include "etl/impl/pooling.hpp"
-#include "etl/impl/prob_pooling.hpp"
-
 namespace etl {
 
 /*!
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename Impl>
-struct pool_2d_expr : base_temporary_expr_un<pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>, A> {
+template <typename A, typename Impl>
+struct dyn_prob_pool_2d_expr  : base_temporary_expr_un<dyn_prob_pool_2d_expr <A, Impl>, A, false> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
-    using this_type  = pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>;                    ///< The type of this expression
-    using base_type  = base_temporary_expr_un<this_type, A>; ///< The base type
+    using this_type  = dyn_prob_pool_2d_expr <A, Impl>;            ///< The type of this expression
+    using base_type  = base_temporary_expr_un<this_type, A, false>; ///< The base type
     using sub_traits = decay_traits<A>;                      ///< The traits of the sub type
 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
+
+    size_t c1;
+    size_t c2;
 
     /*!
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    explicit pool_2d_expr(A a) : base_type(a) {
+    explicit dyn_prob_pool_2d_expr (A a, size_t c1, size_t c2) : base_type(a), c1(c1), c2(c2) {
         //Nothing else to init
     }
 
@@ -40,7 +39,7 @@ struct pool_2d_expr : base_temporary_expr_un<pool_2d_expr<A, C1, C2, S1, S2, P1,
 
     /*!
      * \brief Assign to a matrix of the same storage order
-     * \param c The expression to which assign
+     * \param lhs The expression to which assign
      */
     template<typename C>
     void assign_to(C&& c)  const {
@@ -52,9 +51,10 @@ struct pool_2d_expr : base_temporary_expr_un<pool_2d_expr<A, C1, C2, S1, S2, P1,
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_lhs(c);
 
-        Impl::template apply<C1, C2, S1, S2, P1, P2>(
+        Impl::template apply<>(
             make_temporary(a),
-            std::forward<C>(c));
+            std::forward<C>(c),
+            c1, c2, c1, c2, 0, 0);
     }
 
     /*!
@@ -107,12 +107,12 @@ struct pool_2d_expr : base_temporary_expr_un<pool_2d_expr<A, C1, C2, S1, S2, P1,
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename Impl>
-struct etl_traits<etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>> {
-    using expr_t     = etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>; ///< The expression type
-    using sub_expr_t = std::decay_t<A>;                                  ///< The sub expression type
-    using sub_traits = etl_traits<sub_expr_t>;                           ///< The sub traits
-    using value_type = value_t<A>;                                       ///< The value type of the expression
+template <typename A, typename Impl>
+struct etl_traits<etl::dyn_prob_pool_2d_expr <A, Impl>> {
+    using expr_t     = etl::dyn_prob_pool_2d_expr<A, Impl>; ///< The expression type
+    using sub_expr_t = std::decay_t<A>;                     ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;              ///< The sub traits
+    using value_type = value_t<A>;                          ///< The value type of the expression
 
     static constexpr size_t D = sub_traits::dimensions(); ///< The number of dimensions of this expressions
 
@@ -120,7 +120,7 @@ struct etl_traits<etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>> {
     static constexpr bool is_transformer          = false;                     ///< Indicates if the type is a transformer
     static constexpr bool is_view                 = false;                     ///< Indicates if the type is a view
     static constexpr bool is_magic_view           = false;                     ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = sub_traits::is_fast;       ///< Indicates if the expression is fast
+    static constexpr bool is_fast                 = false;                     ///< Indicates if the expression is fast
     static constexpr bool is_linear               = true;                      ///< Indicates if the expression is linear
     static constexpr bool is_thread_safe          = true;                      ///< Indicates if the expression is thread safe
     static constexpr bool is_value                = false;                     ///< Indicates if the expression is of value type
@@ -141,30 +141,13 @@ struct etl_traits<etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>> {
     using vectorizable = std::true_type;
 
     /*!
-     * \brief Returns the DDth dimension of the expression
-     * \return the DDth dimension of the expression
-     */
-    template <std::size_t DD>
-    static constexpr std::size_t dim() {
-        return DD == D - 2 ? (decay_traits<A>::template dim<DD>() - C1 + 2 * P1) / S1 + 1
-             : DD == D - 1 ? (decay_traits<A>::template dim<DD>() - C2 + 2 * P2) / S2 + 1
-                           : decay_traits<A>::template dim<DD>();
-    }
-
-    /*!
      * \brief Returns the dth dimension of the expression
      * \param e The sub expression
      * \param d The dimension to get
      * \return the dth dimension of the expression
      */
     static std::size_t dim(const expr_t& e, std::size_t d) {
-        if (d == D - 2) {
-            return (etl::dim(e._a, d) - C1 + 2 * P1) / S1 + 1;
-        } else if (d == D - 1){
-            return (etl::dim(e._a, d) - C2 + 2 * P2) / S2 + 1;
-        } else {
-            return etl::dim(e._a, d);
-        }
+        return etl::dim(e._a, d);
     }
 
     /*!
@@ -178,23 +161,6 @@ struct etl_traits<etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>> {
             acc *= dim(e, i);
         }
         return acc;
-    }
-
-    /*!
-     * \brief Returns the multiplicative sum of the dimensions at the given indices
-     * \return the multiplicative sum of the dimensions at the given indices
-     */
-    template <size_t... I>
-    static constexpr size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
-        return mul_all<dim<I>()...>::value;
-    }
-
-    /*!
-     * \brief Returns the size of the expression
-     * \return the size of the expression
-     */
-    static constexpr std::size_t size() {
-        return size_mul(std::make_index_sequence<D>());
     }
 
     /*!

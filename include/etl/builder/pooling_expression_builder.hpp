@@ -427,10 +427,10 @@ dyn_upsample_3d_expr<E, impl::upsample_3d> upsample_3d(E&& value, size_t c1, siz
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Probabilistic Max Pooling of hidden units
  */
-template <size_t C1, size_t C2, typename E, cpp_enable_if(is_etl_expr<E>::value)>
-auto p_max_pool_h(E&& value) {
+template <size_t C1, size_t C2, typename E>
+prob_pool_2d_expr<E, C1, C2, impl::pmp_h_impl> p_max_pool_h(E&& value) {
     validate_pmax_pooling<C1, C2>(value);
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, pmp_h_expr<value_t<E>, decay_traits<E>::dimensions(), C1, C2>>{value};
+    return prob_pool_2d_expr<E, C1, C2, impl::pmp_h_impl>{value};
 }
 
 /*!
@@ -440,10 +440,10 @@ auto p_max_pool_h(E&& value) {
  * \param c2 The second pooling ratio
  * \return A expression representing the Probabilistic Max Pooling of hidden units
  */
-template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
-auto p_max_pool_h(E&& value, size_t c1, size_t c2) {
+template <typename E>
+dyn_prob_pool_2d_expr<E, impl::dyn_pmp_h_impl> p_max_pool_h(E&& value, size_t c1, size_t c2) {
     validate_pmax_pooling(value, c1, c2);
-    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_pmp_h_expr<value_t<E>, decay_traits<E>::dimensions()>>{{1, 1, c1, c2}, value};
+    return dyn_prob_pool_2d_expr<E, impl::dyn_pmp_h_impl>{value, c1, c2};
 }
 
 /* Probabilistic Max Pooling (pooling) */
@@ -455,10 +455,10 @@ auto p_max_pool_h(E&& value, size_t c1, size_t c2) {
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Probabilistic Max Pooling of pooling units
  */
-template <size_t C1, size_t C2, typename E, cpp_enable_if(is_etl_expr<E>::value)>
-auto p_max_pool_p(E&& value) {
+template <size_t C1, size_t C2, typename E>
+pool_2d_expr<E, C1, C2, C1, C2, 0, 0, impl::pmp_p_impl> p_max_pool_p(E&& value) {
     validate_pmax_pooling<C1, C2>(value);
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, pmp_p_expr<value_t<E>, decay_traits<E>::dimensions(), C1, C2>>{value};
+    return pool_2d_expr<E, C1, C2, C1, C2, 0, 0, impl::pmp_p_impl>{value};
 }
 
 /*!
@@ -468,10 +468,10 @@ auto p_max_pool_p(E&& value) {
  * \param c2 The second pooling ratio
  * \return A expression representing the Probabilistic Max Pooling of pooling units
  */
-template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
-auto p_max_pool_p(E&& value, size_t c1, size_t c2) {
+template <typename E>
+dyn_pool_2d_expr<E, impl::dyn_pmp_p_impl> p_max_pool_p(E&& value, size_t c1, size_t c2) {
     validate_pmax_pooling(value, c1, c2);
-    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_pmp_p_expr<value_t<E>, decay_traits<E>::dimensions()>>{{c1, c2, c1, c2}, value};
+    return dyn_pool_2d_expr<E, impl::dyn_pmp_p_impl>{value, c1, c2, c1, c2, 0, 0};
 }
 
 } //end of namespace etl

@@ -9,7 +9,7 @@
 
 namespace etl {
 
-namespace detail {
+namespace impl {
 
 template<typename T>
 inline void pmp_h_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base){
@@ -80,23 +80,21 @@ inline void pmp_h_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& 
 }
 
 /*!
- * \brief Implemenetation of Probabilistic Max Pooling for hidden units
- */
-template<size_t D, size_t C1, size_t C2>
-struct pmp_h_impl ;
-
-/*!
  * \brief 2D Implemenetation of Probabilistic Max Pooling for hidden units
  */
-template<size_t C1, size_t C2>
-struct pmp_h_impl <2, C1, C2> {
+struct pmp_h_impl {
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 2)>
     static void apply(A&& a, C&& c) {
+        static_assert(S1 == C1, "pmp_h does not support strides");
+        static_assert(S2 == C2, "pmp_h does not support strides");
+        static_assert(P1 == 0, "pmp_h does not support padding");
+        static_assert(P2 == 0, "pmp_h does not support padding");
+
         using T = value_t<A>;
 
         const size_t M = etl::dim<0>(a);
@@ -115,20 +113,19 @@ struct pmp_h_impl <2, C1, C2> {
 
         c = exp_sub / (1.0 + base);
     }
-};
 
-/*!
- * \brief 3D Implemenetation of Probabilistic Max Pooling for hidden units
- */
-template<size_t C1, size_t C2>
-struct pmp_h_impl <3, C1, C2> {
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 3)>
     static void apply(A&& a, C&& c) {
+        static_assert(S1 == C1, "pmp_h does not support strides");
+        static_assert(S2 == C2, "pmp_h does not support strides");
+        static_assert(P1 == 0, "pmp_h does not support padding");
+        static_assert(P2 == 0, "pmp_h does not support padding");
+
         using T = value_t<A>;
 
         const size_t L = etl::dim<0>(a);
@@ -156,20 +153,19 @@ struct pmp_h_impl <3, C1, C2> {
             }
         }
     }
-};
 
-/*!
- * \brief 4D Implemenetation of Probabilistic Max Pooling for hidden units
- */
-template<size_t C1, size_t C2>
-struct pmp_h_impl <4, C1, C2> {
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 4)>
     static void apply(A&& a, C&& c) {
+        static_assert(S1 == C1, "pmp_h does not support strides");
+        static_assert(S2 == C2, "pmp_h does not support strides");
+        static_assert(P1 == 0, "pmp_h does not support padding");
+        static_assert(P2 == 0, "pmp_h does not support padding");
+
         using T = value_t<A>;
 
         const size_t K = etl::dim<0>(a);
@@ -207,29 +203,19 @@ struct pmp_h_impl <4, C1, C2> {
 /*!
  * \brief Dynamic Implemenetation of Probabilistic Max Pooling for hidden units
  */
-template<size_t D>
-struct dyn_pmp_h_impl ;
-
-/*!
- * \brief Dynamic 2D Implemenetation of Probabilistic Max Pooling for hidden units
- */
-template<>
-struct dyn_pmp_h_impl <2> {
-    const size_t c1; ///< Pooling factor for the first dimension
-    const size_t c2; ///< Pooling factor for the second dimension
-
-    /*!
-     * \brief Construct a new functor with the given pooling ratios
-     */
-    dyn_pmp_h_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
-
+struct dyn_pmp_h_impl {
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C>
-    void apply(A&& a, C&& c) const {
+    template <typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 2)>
+    static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+        cpp_assert(s1 == c1, "pmp_p does not support strides");
+        cpp_assert(s2 == c2, "pmp_p does not support strides");
+        cpp_assert(p1 == 0, "pmp_p does not support pooling");
+        cpp_assert(p2 == 0, "pmp_p does not support pooling");
+
         using T = value_t<A>;
 
         const size_t M = etl::dim<0>(a);
@@ -248,28 +234,19 @@ struct dyn_pmp_h_impl <2> {
 
         c = exp_sub / (1.0 + base);
     }
-};
-
-/*!
- * \brief Dynamic 3D Implemenetation of Probabilistic Max Pooling for hidden units
- */
-template<>
-struct dyn_pmp_h_impl <3> {
-    const size_t c1; ///< Pooling factor for the first dimension
-    const size_t c2; ///< Pooling factor for the second dimension
-
-    /*!
-     * \brief Construct a new functor with the given pooling ratios
-     */
-    dyn_pmp_h_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C>
-    void apply(A&& a, C&& c) const {
+    template <typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 3)>
+    static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+        cpp_assert(s1 == c1, "pmp_p does not support strides");
+        cpp_assert(s2 == c2, "pmp_p does not support strides");
+        cpp_assert(p1 == 0, "pmp_p does not support pooling");
+        cpp_assert(p2 == 0, "pmp_p does not support pooling");
+
         using T = value_t<A>;
 
         const size_t L = etl::dim<0>(a);
@@ -297,28 +274,19 @@ struct dyn_pmp_h_impl <3> {
             }
         }
     }
-};
-
-/*!
- * \brief Dynamic 4D Implemenetation of Probabilistic Max Pooling for hidden units
- */
-template<>
-struct dyn_pmp_h_impl <4> {
-    const size_t c1; ///< Pooling factor for the first dimension
-    const size_t c2; ///< Pooling factor for the second dimension
-
-    /*!
-     * \brief Construct a new functor with the given pooling ratios
-     */
-    dyn_pmp_h_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C>
-    void apply(A&& a, C&& c) const {
+    template <typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 4)>
+    static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+        cpp_assert(s1 == c1, "pmp_p does not support strides");
+        cpp_assert(s2 == c2, "pmp_p does not support strides");
+        cpp_assert(p1 == 0, "pmp_p does not support pooling");
+        cpp_assert(p2 == 0, "pmp_p does not support pooling");
+
         using T = value_t<A>;
 
         const size_t K = etl::dim<0>(a);
@@ -424,21 +392,19 @@ inline void pmp_p_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& 
 /*!
  * \brief Implemenetation of Probabilistic Max Pooling for pooling units
  */
-template<size_t D, size_t C1, size_t C2>
-struct pmp_p_impl ;
-
-/*!
- * \brief 2D Implemenetation of Probabilistic Max Pooling for pooling units
- */
-template<size_t C1, size_t C2>
-struct pmp_p_impl <2, C1, C2> {
+struct pmp_p_impl {
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 2)>
     static void apply(A&& a, C&& c) {
+        static_assert(S1 == C1, "pmp_p does not support strides");
+        static_assert(S2 == C2, "pmp_p does not support strides");
+        static_assert(P1 == 0, "pmp_p does not support padding");
+        static_assert(P2 == 0, "pmp_p does not support padding");
+
         using T = value_t<A>;
 
         const size_t M = etl::dim<0>(a);
@@ -457,20 +423,19 @@ struct pmp_p_impl <2, C1, C2> {
 
         c = 1.0 / (1.0 + base);
     }
-};
 
-/*!
- * \brief 3D Implemenetation of Probabilistic Max Pooling for pooling units
- */
-template<size_t C1, size_t C2>
-struct pmp_p_impl <3, C1, C2> {
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 3)>
     static void apply(A&& a, C&& c) {
+        static_assert(S1 == C1, "pmp_p does not support strides");
+        static_assert(S2 == C2, "pmp_p does not support strides");
+        static_assert(P1 == 0, "pmp_p does not support padding");
+        static_assert(P2 == 0, "pmp_p does not support padding");
+
         using T = value_t<A>;
 
         const size_t L = etl::dim<0>(a);
@@ -498,20 +463,19 @@ struct pmp_p_impl <3, C1, C2> {
             }
         }
     }
-};
 
-/*!
- * \brief 4D Implemenetation of Probabilistic Max Pooling for pooling units
- */
-template<size_t C1, size_t C2>
-struct pmp_p_impl <4, C1, C2> {
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 4)>
     static void apply(A&& a, C&& c) {
+        static_assert(S1 == C1, "pmp_p does not support strides");
+        static_assert(S2 == C2, "pmp_p does not support strides");
+        static_assert(P1 == 0, "pmp_p does not support padding");
+        static_assert(P2 == 0, "pmp_p does not support padding");
+
         using T = value_t<A>;
 
         const size_t K = etl::dim<0>(a);
@@ -547,31 +511,21 @@ struct pmp_p_impl <4, C1, C2> {
 };
 
 /*!
- * \brief Dynamic Implemenetation of Probabilistic Max Pooling for pooling units
+ * \brief Dynamic 4D Implemenetation of Probabilistic Max Pooling for pooling units
  */
-template<size_t D>
-struct dyn_pmp_p_impl ;
-
-/*!
- * \brief Dynamic 2D Implemenetation of Probabilistic Max Pooling for pooling units
- */
-template<>
-struct dyn_pmp_p_impl <2> {
-    const size_t c1; ///< Pooling factor for the first dimension
-    const size_t c2; ///< Pooling factor for the second dimension
-
-    /*!
-     * \brief Construct a new functor with the given pooling ratios
-     */
-    dyn_pmp_p_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
-
+struct dyn_pmp_p_impl {
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C>
-    void apply(A&& a, C&& c) const {
+    template <typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 2)>
+    static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+        cpp_assert(s1 == c1, "pmp_p does not support strides");
+        cpp_assert(s2 == c2, "pmp_p does not support strides");
+        cpp_assert(p1 == 0, "pmp_p does not support pooling");
+        cpp_assert(p2 == 0, "pmp_p does not support pooling");
+
         using T = value_t<A>;
 
         const size_t M = etl::dim<0>(a);
@@ -590,28 +544,19 @@ struct dyn_pmp_p_impl <2> {
 
         c = 1.0 / (1.0 + base);
     }
-};
-
-/*!
- * \brief Dynamic 3D Implemenetation of Probabilistic Max Pooling for pooling units
- */
-template<>
-struct dyn_pmp_p_impl <3> {
-    const size_t c1; ///< Pooling factor for the first dimension
-    const size_t c2; ///< Pooling factor for the second dimension
-
-    /*!
-     * \brief Construct a new functor with the given pooling ratios
-     */
-    dyn_pmp_p_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C>
-    void apply(A&& a, C&& c) const {
+    template <typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 3)>
+    static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+        cpp_assert(s1 == c1, "pmp_p does not support strides");
+        cpp_assert(s2 == c2, "pmp_p does not support strides");
+        cpp_assert(p1 == 0, "pmp_p does not support pooling");
+        cpp_assert(p2 == 0, "pmp_p does not support pooling");
+
         using T = value_t<A>;
 
         const size_t L = etl::dim<0>(a);
@@ -639,28 +584,19 @@ struct dyn_pmp_p_impl <3> {
             }
         }
     }
-};
-
-/*!
- * \brief Dynamic 4D Implemenetation of Probabilistic Max Pooling for pooling units
- */
-template<>
-struct dyn_pmp_p_impl <4> {
-    const size_t c1; ///< Pooling factor for the first dimension
-    const size_t c2; ///< Pooling factor for the second dimension
-
-    /*!
-     * \brief Construct a new functor with the given pooling ratios
-     */
-    dyn_pmp_p_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C>
-    void apply(A&& a, C&& c) const {
+    template <typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 4)>
+    static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+        cpp_assert(s1 == c1, "pmp_p does not support strides");
+        cpp_assert(s2 == c2, "pmp_p does not support strides");
+        cpp_assert(p1 == 0, "pmp_p does not support pooling");
+        cpp_assert(p2 == 0, "pmp_p does not support pooling");
+
         using T = value_t<A>;
 
         const size_t K = etl::dim<0>(a);
@@ -695,6 +631,6 @@ struct dyn_pmp_p_impl <4> {
     }
 };
 
-} //end of namespace detail
+} //end of namespace impl
 
 } //end of namespace etl
