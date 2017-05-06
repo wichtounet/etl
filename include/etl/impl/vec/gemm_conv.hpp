@@ -642,44 +642,57 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
     auto batch_fun_n = [&](const size_t first, const size_t last) {
         if (last - first) {
             SERIAL_SECTION {
-                for (size_t i = first; i < last; ++i) {
-                    for (size_t k = 0; k < K; ++k) {
-                        // use im2col on input(i)(k)
+                etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
 
-                        etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
-
-                        if (p1 || p2) {
-                            etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
-                            input_padded = T(0);
-
-                            impl::common::pad_2d_input(input(i)(k), input_padded, p1, p2);
-
-                            im2col_direct_tr(input_col, input_padded, k1, k2);
-                        } else {
+                // Optimize for the most common case
+                if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
+                    for (size_t i = first; i < last; ++i) {
+                        for (size_t k = 0; k < K; ++k) {
+                            // use im2col on input(i)(k)
                             im2col_direct_tr(input_col, input(i)(k), k1, k2);
-                        }
 
-                        if (s1 > 1 || s2 > 1) {
-                            etl::dyn_matrix<T, 3> tmp_result(C, c1, c2);
-
-                            // tmp_result = kernel(k) * input_col
-                            gemm_large_kernel_rr<default_vec>(
-                                kernel(k).memory_start(), input_col.memory_start(), tmp_result.memory_start(),
-                                C, c1 * c2, k1 * k2, T(0.0));
-
-                            // Strided copy of the large result into the small result
-                            for (size_t c = 0; c < C; ++c) {
-                                for (size_t m = 0; m < f1; ++m) {
-                                    for (size_t n = 0; n < f2; ++n) {
-                                        conv(i, c, m, n) += tmp_result(c, m * s1, n * s2);
-                                    }
-                                }
-                            }
-                        } else {
                             // conv(i) = kernel(k) * input_col
                             gemm_large_kernel_rr<default_vec>(
                                 kernel(k).memory_start(), input_col.memory_start(), conv(i).memory_start(),
                                 C, c1 * c2, k1 * k2, T(1.0));
+                        }
+                    }
+                } else {
+                    etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
+                    etl::dyn_matrix<T, 3> tmp_result(C, c1, c2);
+
+                    for (size_t i = first; i < last; ++i) {
+                        for (size_t k = 0; k < K; ++k) {
+                            // use im2col on input(i)(k)
+
+                            if (p1 || p2) {
+                                input_padded = T(0);
+                                impl::common::pad_2d_input(input(i)(k), input_padded, p1, p2);
+                                im2col_direct_tr(input_col, input_padded, k1, k2);
+                            } else {
+                                im2col_direct_tr(input_col, input(i)(k), k1, k2);
+                            }
+
+                            if (s1 > 1 || s2 > 1) {
+                                // tmp_result = kernel(k) * input_col
+                                gemm_large_kernel_rr<default_vec>(
+                                    kernel(k).memory_start(), input_col.memory_start(), tmp_result.memory_start(),
+                                    C, c1 * c2, k1 * k2, T(0.0));
+
+                                // Strided copy of the large result into the small result
+                                for (size_t c = 0; c < C; ++c) {
+                                    for (size_t m = 0; m < f1; ++m) {
+                                        for (size_t n = 0; n < f2; ++n) {
+                                            conv(i, c, m, n) += tmp_result(c, m * s1, n * s2);
+                                        }
+                                    }
+                                }
+                            } else {
+                                // conv(i) = kernel(k) * input_col
+                                gemm_large_kernel_rr<default_vec>(
+                                    kernel(k).memory_start(), input_col.memory_start(), conv(i).memory_start(),
+                                    C, c1 * c2, k1 * k2, T(1.0));
+                            }
                         }
                     }
                 }
