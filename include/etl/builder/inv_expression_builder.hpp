@@ -22,10 +22,10 @@ namespace etl {
  * \return an expression representing the 1D FFT of a
  */
 template <typename A>
-auto inv(A&& a) -> detail::temporary_unary_helper_type<value_t<A>, A, inv_expr> {
+inv_expr<A> inv(A&& a) {
     static_assert(is_etl_expr<A>::value, "Inverse only supported for ETL expressions");
 
-    return detail::temporary_unary_helper_type<value_t<A>, A, inv_expr>{a};
+    return inv_expr<A>{a};
 }
 
 } //end of namespace etl
