@@ -46,9 +46,14 @@ struct mm_mul_transformer {
      * \return the value at the given index.
      */
     value_type operator[](size_t i) const {
-        size_t i_i, i_j;
-        std::tie(i_i, i_j) = index_to_2d(left, i);
-        return operator()(i_i, i_j);
+        const auto m = etl::dim<0>(left);
+        const auto n = etl::dim<1>(right);
+
+        if /*constexpr*/ (etl::decay_traits<left_type>::storage_order == order::RowMajor){
+            return operator()(i / n, i % n);
+        } else {
+            return operator()(i % m, i / m);
+        }
     }
 
     /*!
@@ -58,9 +63,14 @@ struct mm_mul_transformer {
      * \return the value at the given index.
      */
     value_type read_flat(size_t i) const {
-        size_t i_i, i_j;
-        std::tie(i_i, i_j) = index_to_2d(left, i);
-        return operator()(i_i, i_j);
+        const auto m = etl::dim<0>(left);
+        const auto n = etl::dim<1>(right);
+
+        if /*constexpr*/ (etl::decay_traits<left_type>::storage_order == order::RowMajor){
+            return operator()(i / n, i % n);
+        } else {
+            return operator()(i % m, i / m);
+        }
     }
 
     /*!
