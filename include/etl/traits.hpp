@@ -48,6 +48,12 @@ template <typename E, std::size_t D, typename Enable>
 struct is_dyn_matrix_view<dyn_matrix_view<E, D, Enable>> : std::true_type {};
 
 template <typename T>
+struct is_sub_view : std::false_type {};
+
+template <typename E, bool Aligned>
+struct is_sub_view<sub_view<E, Aligned>> : std::true_type {};
+
+template <typename T>
 struct is_selected_expr_impl : std::false_type {};
 
 template <typename Selector, Selector V, typename Expr>
@@ -237,7 +243,7 @@ using is_wrapper_expr = cpp::or_c<is_optimized_expr<T>, is_selected_expr<T>, is_
  * \brief Traits to test if the given expression is a sub_view
  */
 template <typename T>
-using is_sub_view = cpp::is_specialization_of<etl::sub_view, std::decay_t<T>>;
+using is_sub_view = traits_detail::is_sub_view<std::decay_t<T>>;
 
 /*!
  * \brief Traits to test if the given expression is a slice_view

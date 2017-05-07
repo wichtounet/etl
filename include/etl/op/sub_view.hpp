@@ -22,23 +22,23 @@ namespace etl {
  * \brief View that shows a sub matrix of an expression
  * \tparam T The type of expression on which the view is made
  */
-template <typename T, typename Enable>
+template <typename T, bool Aligned, typename Enable>
 struct sub_view;
 
 /*!
  * \brief View that shows a sub matrix of an expression
  * \tparam T The type of expression on which the view is made
  */
-template <typename T>
-struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
-    iterable<sub_view<T>, false>,
-    assignable<sub_view<T>, value_t<T>>,
-    value_testable<sub_view<T>>,
-    inplace_assignable<sub_view<T>>
+template <typename T, bool Aligned>
+struct sub_view <T, Aligned, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
+    iterable<sub_view<T, Aligned>, false>,
+    assignable<sub_view<T, Aligned>, value_t<T>>,
+    value_testable<sub_view<T, Aligned>>,
+    inplace_assignable<sub_view<T, Aligned>>
 {
     static_assert(is_etl_expr<T>::value, "sub_view<T> only works with ETL expressions");
 
-    using this_type            = sub_view<T>;                                                          ///< The type of this expression
+    using this_type            = sub_view<T, Aligned>;                                                          ///< The type of this expression
     using iterable_base_type   = iterable<this_type, false>;                                           ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The iterable base type
     using sub_type             = T;                                                                    ///< The sub type
@@ -318,18 +318,18 @@ public:
  * \brief View that shows a sub matrix of an expression
  * \tparam T The type of expression on which the view is made
  */
-template <typename T>
-struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
-    iterable<sub_view<T>, true>,
-    assignable<sub_view<T>, value_t<T>>,
-    value_testable<sub_view<T>>,
-    inplace_assignable<sub_view<T>>
+template <typename T, bool Aligned>
+struct sub_view <T, Aligned, std::enable_if_t<fast_sub_view_able<T>::value>> :
+    iterable<sub_view<T, Aligned>, true>,
+    assignable<sub_view<T, Aligned>, value_t<T>>,
+    value_testable<sub_view<T, Aligned>>,
+    inplace_assignable<sub_view<T, Aligned>>
 {
     static_assert(is_etl_expr<T>::value, "sub_view<T> only works with ETL expressions");
     static_assert(decay_traits<T>::dimensions() > 1, "sub_view<T, true> should only be done with Matrices >1D");
     static_assert(decay_traits<T>::storage_order == order::RowMajor, "sub_view<T, true> should only be done with RowMajor");
 
-    using this_type            = sub_view<T>;                                                          ///< The type of this expression
+    using this_type            = sub_view<T, Aligned>;                                                          ///< The type of this expression
     using iterable_base_type   = iterable<this_type, true>;                                            ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The iterable base type
     using sub_type             = T;                                                                    ///< The sub type
@@ -834,9 +834,9 @@ public:
 /*!
  * \brief Specialization for sub_view
  */
-template <typename T>
-struct etl_traits<etl::sub_view<T>> {
-    using expr_t     = etl::sub_view<T>;                ///< The expression type
+template <typename T, bool Aligned>
+struct etl_traits<etl::sub_view<T, Aligned>> {
+    using expr_t     = etl::sub_view<T, Aligned>;                ///< The expression type
     using sub_expr_t = std::decay_t<T>;                 ///< The sub expression type
     using sub_traits = etl_traits<sub_expr_t>;          ///< The sub traits
     using value_type = typename sub_traits::value_type; ///< The value type of the expression

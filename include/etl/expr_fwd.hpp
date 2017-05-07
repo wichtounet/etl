@@ -61,7 +61,7 @@ struct temporary_binary_expr_state;
 template <typename T, std::size_t D>
 struct dim_view;
 
-template <typename T, typename Enable = void>
+template <typename T, bool Aligned, typename Enable = void>
 struct sub_view;
 
 template <typename T, typename Enable = void>
