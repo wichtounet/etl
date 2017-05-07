@@ -54,7 +54,7 @@ private:
     /*!
      * \brief Returns the sequence of values as a std::vector
      */
-    template <typename T, std::size_t... I>
+    template <typename T, size_t... I>
     std::vector<T> list_sub(const std::index_sequence<I...>& /*i*/) const {
         return {static_cast<T>(std::get<I>(values))...};
     }
@@ -97,7 +97,7 @@ struct is_initializer_list_constructor<S1, S2, S...> : cpp::is_specialization_of
 /*!
  * \brief Returns the size of a matrix given its dimensions
  */
-inline std::size_t size(std::size_t first) {
+inline size_t size(size_t first) {
     return first;
 }
 
@@ -105,24 +105,24 @@ inline std::size_t size(std::size_t first) {
  * \brief Returns the size of a matrix given its dimensions
  */
 template <typename... T>
-inline std::size_t size(std::size_t first, T... args) {
+inline size_t size(size_t first, T... args) {
     return first * size(args...);
 }
 
 /*!
  * \brief Returns the size of a matrix given its dimensions
  */
-template <std::size_t... I, typename... T>
-inline std::size_t size(const std::index_sequence<I...>& /*i*/, const T&... args) {
+template <size_t... I, typename... T>
+inline size_t size(const std::index_sequence<I...>& /*i*/, const T&... args) {
     return size((cpp::nth_value<I>(args...))...);
 }
 
 /*!
  * \brief Returns a collection of dimensions of the matrix.
  */
-template <std::size_t... I, typename... T>
-inline std::array<std::size_t, sizeof...(I)> sizes(const std::index_sequence<I...>& /*i*/, const T&... args) {
-    return {{static_cast<std::size_t>(cpp::nth_value<I>(args...))...}};
+template <size_t... I, typename... T>
+inline std::array<size_t, sizeof...(I)> sizes(const std::index_sequence<I...>& /*i*/, const T&... args) {
+    return {{static_cast<size_t>(cpp::nth_value<I>(args...))...}};
 }
 
 } // end of namespace dyn_detail
@@ -132,20 +132,20 @@ inline std::array<std::size_t, sizeof...(I)> sizes(const std::index_sequence<I..
  *
  * The matrix support an arbitrary number of dimensions.
  */
-template <typename T, std::size_t D>
+template <typename T, size_t D>
 struct dyn_base {
     static_assert(D > 0, "A matrix must have a least 1 dimension");
 
 protected:
-    static constexpr std::size_t n_dimensions = D;                                      ///< The number of dimensions
-    static constexpr std::size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
+    static constexpr size_t n_dimensions = D;                                      ///< The number of dimensions
+    static constexpr size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
 
     using value_type             = T;                                     ///< The value type
-    using dimension_storage_impl = std::array<std::size_t, n_dimensions>; ///< The type used to store the dimensions
+    using dimension_storage_impl = std::array<size_t, n_dimensions>; ///< The type used to store the dimensions
     using memory_type            = value_type*;                           ///< The memory type
     using const_memory_type      = const value_type*;                     ///< The const memory type
 
-    std::size_t _size;                  ///< The size of the matrix
+    size_t _size;                  ///< The size of the matrix
     dimension_storage_impl _dimensions; ///< The dimensions of the matrix
 
     /*!
@@ -158,7 +158,7 @@ protected:
         cpp_assert(_dimensions.size() == D, "Invalid dimensions");
 
 #ifndef NDEBUG
-        auto computed = std::accumulate(_dimensions.begin(), _dimensions.end(), std::size_t(1), std::multiplies<std::size_t>());
+        auto computed = std::accumulate(_dimensions.begin(), _dimensions.end(), size_t(1), std::multiplies<size_t>());
         cpp_assert(computed == _size, "Incoherency in dimensions");
 #endif
     }
@@ -170,7 +170,7 @@ protected:
      * \return The allocated memory
      */
     template <typename M = value_type>
-    static M* allocate(std::size_t n) {
+    static M* allocate(size_t n) {
         M* memory = aligned_allocator<alignment>::template allocate<M>(n);
         cpp_assert(memory, "Impossible to allocate memory for dyn_matrix");
         cpp_assert(reinterpret_cast<uintptr_t>(memory) % alignment == 0, "Failed to align memory of matrix");
@@ -193,10 +193,10 @@ protected:
      * \param n The number of elements to release
      */
     template <typename M>
-    static void release(M* ptr, std::size_t n) {
+    static void release(M* ptr, size_t n) {
         //In case of non-trivial type, we need to call the destructors
         if (!std::is_trivial<M>::value) {
-            for (std::size_t i = 0; i < n; ++i) {
+            for (size_t i = 0; i < n; ++i) {
                 ptr[i].~M();
             }
         }
@@ -230,7 +230,7 @@ protected:
      * \param size The size of the matrix
      * \param dimensions The dimensions of the matrix
      */
-    dyn_base(std::size_t size, dimension_storage_impl dimensions) noexcept : _size(size), _dimensions(dimensions) {
+    dyn_base(size_t size, dimension_storage_impl dimensions) noexcept : _size(size), _dimensions(dimensions) {
         check_invariants();
     }
 
@@ -241,7 +241,7 @@ protected:
     template <typename E>
     explicit dyn_base(E&& rhs)
             : _size(etl::size(rhs)) {
-        for (std::size_t d = 0; d < etl::dimensions(rhs); ++d) {
+        for (size_t d = 0; d < etl::dimensions(rhs); ++d) {
             _dimensions[d] = etl::dim(rhs, d);
         }
 
@@ -253,7 +253,7 @@ public:
      * \brief Returns the number of dimensions of the matrix
      * \return the number of dimensions of the matrix
      */
-    static constexpr std::size_t dimensions() noexcept {
+    static constexpr size_t dimensions() noexcept {
         return n_dimensions;
     }
 
@@ -261,7 +261,7 @@ public:
      * \brief Returns the size of the matrix, in O(1)
      * \return The size of the matrix
      */
-    std::size_t size() const noexcept {
+    size_t size() const noexcept {
         return _size;
     }
 
@@ -269,7 +269,7 @@ public:
      * \brief Returns the number of rows of the matrix (the first dimension)
      * \return The number of rows of the matrix
      */
-    std::size_t rows() const noexcept {
+    size_t rows() const noexcept {
         return _dimensions[0];
     }
 
@@ -277,7 +277,7 @@ public:
      * \brief Returns the number of columns of the matrix (the first dimension)
      * \return The number of columns of the matrix
      */
-    std::size_t columns() const noexcept {
+    size_t columns() const noexcept {
         static_assert(n_dimensions > 1, "columns() only valid for 2D+ matrices");
         return _dimensions[1];
     }
@@ -287,7 +287,7 @@ public:
      * \param d The dimension to get
      * \return The Dth dimension of the matrix
      */
-    std::size_t dim(std::size_t d) const noexcept {
+    size_t dim(size_t d) const noexcept {
         cpp_assert(d < n_dimensions, "Invalid dimension");
 
         return _dimensions[d];
@@ -297,8 +297,8 @@ public:
      * \brief Returns the D2th dimension of the matrix
      * \return The D2th dimension of the matrix
      */
-    template <std::size_t D2>
-    std::size_t dim() const noexcept {
+    template <size_t D2>
+    size_t dim() const noexcept {
         cpp_assert(D2 < n_dimensions, "Invalid dimension");
 
         return _dimensions[D2];
@@ -310,7 +310,7 @@ public:
  * \brief Dense Matrix with run-time fixed dimensions.
  * The matrix support an arbitrary number of dimensions.
  */
-template <typename Derived, typename T, order SO, std::size_t D>
+template <typename Derived, typename T, order SO, size_t D>
 struct dense_dyn_base : dyn_base<T, D> {
     using value_type        = T;                 ///< The type of the contained values
     using base_type         = dyn_base<T, D>;    ///< The base type
@@ -322,7 +322,7 @@ struct dense_dyn_base : dyn_base<T, D> {
 
     using dimension_storage_impl = typename base_type::dimension_storage_impl; ///< The storage type used to store the dimensions
 
-    static constexpr std::size_t n_dimensions = D;  ///< The number of dimensions
+    static constexpr size_t n_dimensions = D;  ///< The number of dimensions
     static constexpr order storage_order      = SO; ///< The storage order
 
     using base_type::_size;
@@ -359,7 +359,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * \param size The size of the matrix
      * \param dimensions The dimensions of the matrix
      */
-    dense_dyn_base(std::size_t size, dimension_storage_impl dimensions) noexcept : base_type(size, dimensions) {
+    dense_dyn_base(size_t size, dimension_storage_impl dimensions) noexcept : base_type(size, dimensions) {
         //Nothing else to init
     }
 
@@ -380,7 +380,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
     template <bool B = n_dimensions == 1, cpp_enable_if(B)>
-    value_type& operator()(std::size_t i) noexcept(assert_nothrow) {
+    value_type& operator()(size_t i) noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
 
         ensure_cpu_up_to_date();
@@ -397,7 +397,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
     template <bool B = n_dimensions == 1, cpp_enable_if(B)>
-    const value_type& operator()(std::size_t i) const noexcept(assert_nothrow) {
+    const value_type& operator()(size_t i) const noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
 
         ensure_cpu_up_to_date();
@@ -413,7 +413,7 @@ struct dense_dyn_base : dyn_base<T, D> {
     template <typename... S, cpp_enable_if(
                                  (n_dimensions > 1),
                                  (sizeof...(S) == n_dimensions),
-                                 cpp::all_convertible_to<std::size_t, S...>::value)>
+                                 cpp::all_convertible_to<size_t, S...>::value)>
     const value_type& operator()(S... sizes) const noexcept(assert_nothrow) {
         ensure_cpu_up_to_date();
         return _memory[etl::dyn_index(as_derived(), sizes...)];
@@ -427,7 +427,7 @@ struct dense_dyn_base : dyn_base<T, D> {
     template <typename... S, cpp_enable_if(
                                  (n_dimensions > 1),
                                  (sizeof...(S) == n_dimensions),
-                                 cpp::all_convertible_to<std::size_t, S...>::value)>
+                                 cpp::all_convertible_to<size_t, S...>::value)>
     value_type& operator()(S... sizes) noexcept(assert_nothrow) {
         ensure_cpu_up_to_date();
         invalidate_gpu();
@@ -439,7 +439,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    const value_type& operator[](std::size_t i) const noexcept {
+    const value_type& operator[](size_t i) const noexcept {
         cpp_assert(i < _size, "Out of bounds");
 
         ensure_cpu_up_to_date();
@@ -452,7 +452,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type& operator[](std::size_t i) noexcept {
+    value_type& operator[](size_t i) noexcept {
         cpp_assert(i < _size, "Out of bounds");
 
         ensure_cpu_up_to_date();
@@ -467,7 +467,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const noexcept {
+    value_type read_flat(size_t i) const noexcept {
         cpp_assert(i < _size, "Out of bounds");
 
         ensure_cpu_up_to_date();
@@ -533,7 +533,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * \return a sub view of the matrix at position i.
      */
     template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
-    auto operator()(std::size_t i) noexcept {
+    auto operator()(size_t i) noexcept {
         return sub(as_derived(), i);
     }
 
@@ -543,7 +543,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * \return a sub view of the matrix at position i.
      */
     template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
-    auto operator()(std::size_t i) const noexcept {
+    auto operator()(size_t i) const noexcept {
         return sub(as_derived(), i);
     }
 
@@ -553,7 +553,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * \param last The last index to use
      * \return a slice view of the matrix at position i.
      */
-    auto slice(std::size_t first, std::size_t last) noexcept {
+    auto slice(size_t first, size_t last) noexcept {
         return etl::slice(as_derived(), first, last);
     }
 
@@ -563,7 +563,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * \param last The last index to use
      * \return a slice view of the matrix at position i.
      */
-    auto slice(std::size_t first, std::size_t last) const noexcept {
+    auto slice(size_t first, size_t last) const noexcept {
         return etl::slice(as_derived(), first, last);
     }
 

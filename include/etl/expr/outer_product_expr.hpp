@@ -53,7 +53,7 @@ struct outer_product_expr : impl_expr<outer_product_expr<T>, T> {
      * \brief Returns the size of the expression given a and b
      */
     template <typename A, typename B>
-    static std::size_t size(const A& a, const B& b) {
+    static size_t size(const A& a, const B& b) {
         return etl::dim<0>(a) * etl::dim<0>(b);
     }
 
@@ -61,7 +61,7 @@ struct outer_product_expr : impl_expr<outer_product_expr<T>, T> {
      * \brief Returns the dth of the expression given a and b
      */
     template <typename A, typename B>
-    static std::size_t dim(const A& a, const B& b, std::size_t d) {
+    static size_t dim(const A& a, const B& b, size_t d) {
         return d == 0 ? etl::dim<0>(a) : etl::dim<0>(b);
     }
 
@@ -69,7 +69,7 @@ struct outer_product_expr : impl_expr<outer_product_expr<T>, T> {
      * \brief Returns the size of the expression given the type of a and b
      */
     template <typename A, typename B>
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return etl_traits<A>::template dim<0>() * etl_traits<B>::template dim<0>();
     }
 
@@ -85,8 +85,8 @@ struct outer_product_expr : impl_expr<outer_product_expr<T>, T> {
     /*!
      * \brief Returns the Dth of the expression given a and b
      */
-    template <typename A, typename B, std::size_t D>
-    static constexpr std::size_t dim() {
+    template <typename A, typename B, size_t D>
+    static constexpr size_t dim() {
         return D == 0 ? decay_traits<A>::template dim<0>() : decay_traits<B>::template dim<0>();
     }
 
@@ -94,7 +94,7 @@ struct outer_product_expr : impl_expr<outer_product_expr<T>, T> {
      * \brief Return the number of dimensions of the expression
      * \return the number of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 2;
     }
 };
@@ -139,7 +139,7 @@ struct batch_outer_product_expr : impl_expr<batch_outer_product_expr<T>, T> {
      * \brief Returns the size of the expression given a and b
      */
     template <typename A, typename B>
-    static std::size_t size(const A& a, const B& b) {
+    static size_t size(const A& a, const B& b) {
         return etl::dim<1>(a) * etl::dim<1>(b);
     }
 
@@ -147,7 +147,7 @@ struct batch_outer_product_expr : impl_expr<batch_outer_product_expr<T>, T> {
      * \brief Returns the dth of the expression given a and b
      */
     template <typename A, typename B>
-    static std::size_t dim(const A& a, const B& b, std::size_t d) {
+    static size_t dim(const A& a, const B& b, size_t d) {
         return d == 0 ? etl::dim<1>(a) : etl::dim<1>(b);
     }
 
@@ -155,7 +155,7 @@ struct batch_outer_product_expr : impl_expr<batch_outer_product_expr<T>, T> {
      * \brief Returns the size of the expression given the type of a and b
      */
     template <typename A, typename B>
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return etl_traits<A>::template dim<1>() * etl_traits<B>::template dim<1>();
     }
 
@@ -171,8 +171,8 @@ struct batch_outer_product_expr : impl_expr<batch_outer_product_expr<T>, T> {
     /*!
      * \brief Returns the Dth of the expression given a and b
      */
-    template <typename A, typename B, std::size_t D>
-    static constexpr std::size_t dim() {
+    template <typename A, typename B, size_t D>
+    static constexpr size_t dim() {
         return D == 0 ? decay_traits<A>::template dim<1>() : decay_traits<B>::template dim<1>();
     }
 
@@ -180,7 +180,7 @@ struct batch_outer_product_expr : impl_expr<batch_outer_product_expr<T>, T> {
      * \brief Return the number of dimensions of the expression
      * \return the number of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 2;
     }
 };

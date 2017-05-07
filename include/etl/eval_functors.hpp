@@ -29,7 +29,7 @@ struct Assign {
 
     value_type* lhs;         ///< The left hand side
     R_Expr rhs;              ///< The right hand side
-    const std::size_t _size; ///< The size to assign
+    const size_t _size; ///< The size to assign
 
     /*!
      * \brief Constuct a new Assign
@@ -44,12 +44,12 @@ struct Assign {
      * \brief Assign rhs to lhs
      */
     void operator()(){
-        std::size_t iend = 0;
+        size_t iend = 0;
 
         if (unroll_normal_loops) {
-            iend = _size & std::size_t(-4);
+            iend = _size & size_t(-4);
 
-            for (std::size_t i = 0; i < iend; i += 4) {
+            for (size_t i = 0; i < iend; i += 4) {
                 lhs[i]     = rhs.read_flat(i);
                 lhs[i + 1] = rhs.read_flat(i + 1);
                 lhs[i + 2] = rhs.read_flat(i + 2);
@@ -57,7 +57,7 @@ struct Assign {
             }
         }
 
-        for (std::size_t i = iend; i < _size; ++i) {
+        for (size_t i = iend; i < _size; ++i) {
             lhs[i] = rhs.read_flat(i);
         }
     }
@@ -73,7 +73,7 @@ struct vectorized_base {
     L_Expr lhs;              ///< The left hand side
     memory_type lhs_m;       ///< The left hand side memory
     R_Expr rhs;              ///< The right hand side
-    const std::size_t _size; ///< The size to assign
+    const size_t _size; ///< The size to assign
 
     /*!
      * \brief The RHS value type
@@ -109,7 +109,7 @@ struct vectorized_base {
      * \param i The index where to start loading from
      * \return a vector from lhs starting at position i
      */
-    inline auto lhs_load(std::size_t i) const {
+    inline auto lhs_load(size_t i) const {
         return lhs.template load<vect_impl>(i);
     }
 
@@ -118,7 +118,7 @@ struct vectorized_base {
      * \param i The index where to start loading from
      * \return a vector from rhs starting at position i
      */
-    inline auto rhs_load(std::size_t i) const {
+    inline auto rhs_load(size_t i) const {
         return rhs.template load<vect_impl>(i);
     }
 };
@@ -158,7 +158,7 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr> {
 
         const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
 
-        std::size_t i = 0;
+        size_t i = 0;
 
         if(streaming && _size > stream_threshold / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)){
             for (; i < last; i += IT::size) {
@@ -196,7 +196,7 @@ struct AssignAdd {
 
     value_type* lhs;         ///< The left hand side
     R_Expr rhs;              ///< The right hand side
-    const std::size_t _size;  ///< The size to assign
+    const size_t _size;  ///< The size to assign
 
     /*!
      * \brief Constuct a new AssignAdd
@@ -211,12 +211,12 @@ struct AssignAdd {
      * \brief Assign rhs to lhs
      */
     void operator()(){
-        std::size_t iend = 0;
+        size_t iend = 0;
 
         if (unroll_normal_loops) {
-            iend = (_size & std::size_t(-4));
+            iend = (_size & size_t(-4));
 
-            for (std::size_t i = 0; i < iend; i += 4) {
+            for (size_t i = 0; i < iend; i += 4) {
                 lhs[i] += rhs[i];
                 lhs[i + 1] += rhs[i + 1];
                 lhs[i + 2] += rhs[i + 2];
@@ -224,7 +224,7 @@ struct AssignAdd {
             }
         }
 
-        for (std::size_t i = iend; i < _size; ++i) {
+        for (size_t i = iend; i < _size; ++i) {
             lhs[i] += rhs[i];
         }
     }
@@ -263,7 +263,7 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, R_Expr> {
 
         const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
 
-        std::size_t i = 0;
+        size_t i = 0;
 
         for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
             lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
@@ -291,7 +291,7 @@ struct AssignSub {
 
     value_type* lhs;         ///< The left hand side
     R_Expr rhs;              ///< The right hand side
-    const std::size_t _size;  ///< The size to assign
+    const size_t _size;  ///< The size to assign
 
     /*!
      * \brief Constuct a new AssignSub
@@ -306,12 +306,12 @@ struct AssignSub {
      * \brief Assign rhs to lhs
      */
     void operator()(){
-        std::size_t iend = 0;
+        size_t iend = 0;
 
         if (unroll_normal_loops) {
-            iend = (_size & std::size_t(-4));
+            iend = (_size & size_t(-4));
 
-            for (std::size_t i = 0; i < iend; i += 4) {
+            for (size_t i = 0; i < iend; i += 4) {
                 lhs[i] -= rhs[i];
                 lhs[i + 1] -= rhs[i + 1];
                 lhs[i + 2] -= rhs[i + 2];
@@ -319,7 +319,7 @@ struct AssignSub {
             }
         }
 
-        for (std::size_t i = iend; i < _size; ++i) {
+        for (size_t i = iend; i < _size; ++i) {
             lhs[i] -= rhs[i];
         }
     }
@@ -358,7 +358,7 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, R_Expr> {
 
         const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
 
-        std::size_t i = 0;
+        size_t i = 0;
 
         for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
             lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
@@ -386,7 +386,7 @@ struct AssignMul {
 
     value_type* lhs;         ///< The left hand side
     R_Expr rhs;              ///< The right hand side
-    const std::size_t _size;  ///< The size to assign
+    const size_t _size;  ///< The size to assign
 
     /*!
      * \brief Constuct a new AssignMul
@@ -401,12 +401,12 @@ struct AssignMul {
      * \brief Assign rhs to lhs
      */
     void operator()(){
-        std::size_t iend = 0;
+        size_t iend = 0;
 
         if (unroll_normal_loops) {
-            iend = (_size & std::size_t(-4));
+            iend = (_size & size_t(-4));
 
-            for (std::size_t i = 0; i < iend; i += 4) {
+            for (size_t i = 0; i < iend; i += 4) {
                 lhs[i] *= rhs[i];
                 lhs[i + 1] *= rhs[i + 1];
                 lhs[i + 2] *= rhs[i + 2];
@@ -414,7 +414,7 @@ struct AssignMul {
             }
         }
 
-        for (std::size_t i = iend; i < _size; ++i) {
+        for (size_t i = iend; i < _size; ++i) {
             lhs[i] *= rhs[i];
         }
     }
@@ -453,7 +453,7 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr> {
 
         const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
 
-        std::size_t i = 0;
+        size_t i = 0;
 
         for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
             lhs.template store<vect_impl>(vect_impl::mul(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
@@ -481,7 +481,7 @@ struct AssignDiv {
 
     value_type* lhs;         ///< The left hand side
     R_Expr rhs;              ///< The right hand side
-    const std::size_t _size;  ///< The size to assign
+    const size_t _size;  ///< The size to assign
 
     /*!
      * \brief Constuct a new AssignDiv
@@ -496,12 +496,12 @@ struct AssignDiv {
      * \brief Assign rhs to lhs
      */
     void operator()(){
-        std::size_t iend = 0;
+        size_t iend = 0;
 
         if (unroll_normal_loops) {
-            iend = (_size & std::size_t(-4));
+            iend = (_size & size_t(-4));
 
-            for (std::size_t i = 0; i < iend; i += 4) {
+            for (size_t i = 0; i < iend; i += 4) {
                 lhs[i] /= rhs[i];
                 lhs[i + 1] /= rhs[i + 1];
                 lhs[i + 2] /= rhs[i + 2];
@@ -509,7 +509,7 @@ struct AssignDiv {
             }
         }
 
-        for (std::size_t i = iend; i < _size; ++i) {
+        for (size_t i = iend; i < _size; ++i) {
             lhs[i] /= rhs[i];
         }
     }
@@ -548,7 +548,7 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr> {
 
         const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
 
-        std::size_t i = 0;
+        size_t i = 0;
 
         for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
             lhs.template store<vect_impl>(vect_impl::div(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);

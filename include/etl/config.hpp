@@ -37,7 +37,7 @@ constexpr bool conv_valid_fft = ETL_CONV_VALID_FFT_BOOL;
 /*!
  * \brief The number of threads ETL can use in parallel mode
  */
-const std::size_t threads = ETL_PARALLEL_THREADS;
+const size_t threads = ETL_PARALLEL_THREADS;
 
 /*!
  * \brief Indicates if support for parallelization is integrated

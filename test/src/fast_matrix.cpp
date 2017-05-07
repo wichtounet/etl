@@ -21,7 +21,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/init_1", "fast_matrix::fast_matrix(T)", Z, flo
     REQUIRE_EQUALS(test_matrix.dim(0), 2UL);
     REQUIRE_EQUALS(test_matrix.dim(1), 3UL);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE_EQUALS(test_matrix[i], Z(3.3));
     }
 }
@@ -33,7 +33,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/init_2", "fast_matrix::operator=(T)", Z, float
 
     REQUIRE_EQUALS(test_matrix.size(), 4UL);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE_EQUALS(test_matrix[i], Z(3.3));
     }
 }
@@ -53,7 +53,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/init_4", "fast_matrix::fast_matrix(T)", Z, flo
 
     REQUIRE_EQUALS(test_matrix.size(), 24UL);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE_EQUALS(test_matrix[i], Z(3.3));
     }
 }
@@ -65,7 +65,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/init_5", "fast_matrix::operator=(T)", Z, float
 
     REQUIRE_EQUALS(test_matrix.size(), 24UL);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE_EQUALS(test_matrix[i], Z(3.3));
     }
 }
@@ -75,7 +75,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/init_6", "fast_matrix::operator=(T)", Z, float
 
     REQUIRE_EQUALS(test_matrix.size(), 5UL);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE_EQUALS(test_matrix[i], Z(3.3));
         REQUIRE_EQUALS(test_matrix(i), Z(3.3));
     }

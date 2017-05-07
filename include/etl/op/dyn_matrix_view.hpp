@@ -59,7 +59,7 @@ struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final :
 
 private:
     T sub;                                 ///< The sub expression
-    std::array<std::size_t, D> dimensions; ///< The dimensions of the view
+    std::array<size_t, D> dimensions; ///< The dimensions of the view
     size_t _size;                          ///< The size of the view
 
     static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The matrix storage order
@@ -80,7 +80,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    const_return_type operator[](std::size_t j) const {
+    const_return_type operator[](size_t j) const {
         return sub[j];
     }
 
@@ -89,7 +89,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    return_type operator[](std::size_t j) {
+    return_type operator[](size_t j) {
         return sub[j];
     }
 
@@ -98,7 +98,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given position.
      */
-    const_return_type operator()(std::size_t j) const {
+    const_return_type operator()(size_t j) const {
         return sub[j];
     }
 
@@ -120,7 +120,7 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t j) const noexcept {
+    value_type read_flat(size_t j) const noexcept {
         return sub.read_flat(j);
     }
 
@@ -129,7 +129,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given position.
      */
-    return_type operator()(std::size_t j) {
+    return_type operator()(size_t j) {
         return sub[j];
     }
 
@@ -152,7 +152,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto load(std::size_t x) const noexcept {
+    auto load(size_t x) const noexcept {
         return sub.template load<V>(x);
     }
 
@@ -163,7 +163,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto loadu(std::size_t x) const noexcept {
+    auto loadu(size_t x) const noexcept {
         return sub.template loadu<V>(x);
     }
 
@@ -174,7 +174,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t i) noexcept {
+    void stream(vec_type<V> in, size_t i) noexcept {
         sub.template stream<V>(in, i);
     }
 
@@ -185,7 +185,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void store(vec_type<V> in, std::size_t i) noexcept {
+    void store(vec_type<V> in, size_t i) noexcept {
         sub.template store<V>(in, i);
     }
 
@@ -196,7 +196,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void storeu(vec_type<V> in, std::size_t i) noexcept {
+    void storeu(vec_type<V> in, size_t i) noexcept {
         sub.template storeu<V>(in, i);
     }
 
@@ -342,7 +342,7 @@ struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final :
 
 private:
     T sub;                                 ///< The sub expression
-    std::array<std::size_t, D> dimensions; ///< The dimensions of the view
+    std::array<size_t, D> dimensions; ///< The dimensions of the view
     size_t _size;                          ///< The size of the view
 
     mutable memory_type memory; ///< Pointer to the memory of expression
@@ -370,7 +370,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    const_return_type operator[](std::size_t j) const {
+    const_return_type operator[](size_t j) const {
         ensure_cpu_up_to_date();
         return memory[j];
     }
@@ -380,7 +380,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    return_type operator[](std::size_t j) {
+    return_type operator[](size_t j) {
         ensure_cpu_up_to_date();
         invalidate_gpu();
         return memory[j];
@@ -392,7 +392,7 @@ public:
      * \return a reference to the element at the given position.
      */
     template<cpp_enable_if_cst((D == 1))>
-    const_return_type operator()(std::size_t j) const {
+    const_return_type operator()(size_t j) const {
         ensure_cpu_up_to_date();
         return memory[j];
     }
@@ -403,7 +403,7 @@ public:
      * \return a reference to the element at the given position.
      */
     template<cpp_enable_if_cst((D == 1))>
-    return_type operator()(std::size_t j) {
+    return_type operator()(size_t j) {
         ensure_cpu_up_to_date();
         invalidate_gpu();
         return memory[j];
@@ -415,7 +415,7 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t j) const noexcept {
+    value_type read_flat(size_t j) const noexcept {
         ensure_cpu_up_to_date();
         return memory[j];
     }
@@ -474,7 +474,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto load(std::size_t x) const noexcept {
+    auto load(size_t x) const noexcept {
         return V::loadu(memory + x);
     }
 
@@ -485,7 +485,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto loadu(std::size_t x) const noexcept {
+    auto loadu(size_t x) const noexcept {
         return V::loadu(memory + x);
     }
 
@@ -496,7 +496,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t i) noexcept {
+    void stream(vec_type<V> in, size_t i) noexcept {
         return V::stream(memory + i, in);
     }
 
@@ -507,7 +507,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void store(vec_type<V> in, std::size_t i) noexcept {
+    void store(vec_type<V> in, size_t i) noexcept {
         sub.template store<V>(in, i);
     }
 
@@ -518,7 +518,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void storeu(vec_type<V> in, std::size_t i) noexcept {
+    void storeu(vec_type<V> in, size_t i) noexcept {
         return V::storeu(memory + i, in);
     }
 
@@ -793,7 +793,7 @@ struct etl_traits<etl::dyn_matrix_view<T, D>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static size_t size(const expr_t& v) {
         return v._size;
     }
 
@@ -803,7 +803,7 @@ struct etl_traits<etl::dyn_matrix_view<T, D>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         return v.dimensions[d];
     }
 
@@ -811,7 +811,7 @@ struct etl_traits<etl::dyn_matrix_view<T, D>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return D;
     }
 };

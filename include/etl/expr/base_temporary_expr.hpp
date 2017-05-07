@@ -161,7 +161,7 @@ protected:
     /*!
      * \brief Allocate the dynamic temporary
      */
-    template <std::size_t... I>
+    template <size_t... I>
     result_type* dyn_allocate(std::index_sequence<I...> /*seq*/) const {
         return new result_type(decay_traits<derived_t>::dim(as_derived(), I)...);
     }
@@ -182,7 +182,7 @@ public:
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type operator[](std::size_t i) const {
+    value_type operator[](size_t i) const {
         return result()[i];
     }
 
@@ -192,7 +192,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const {
+    value_type read_flat(size_t i) const {
         return result().read_flat(i);
     }
 
@@ -203,7 +203,7 @@ public:
      */
     template <typename... S, cpp_enable_if(sizeof...(S) == safe_dimensions<derived_t>::value)>
     value_type operator()(S... args) const {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
         return result()(args...);
     }
@@ -214,7 +214,7 @@ public:
      * \return a sub view of the matrix at position i.
      */
     template <typename DD = D, cpp_enable_if((safe_dimensions<DD>::value > 1))>
-    auto operator()(std::size_t i) const {
+    auto operator()(size_t i) const {
         return sub(as_derived(), i);
     }
 
@@ -224,7 +224,7 @@ public:
      * \param last The last index to use
      * \return a slice view of the matrix at position i.
      */
-    auto slice(std::size_t first, std::size_t last) noexcept {
+    auto slice(size_t first, size_t last) noexcept {
         return slice(*this, first, last);
     }
 
@@ -234,7 +234,7 @@ public:
      * \param last The last index to use
      * \return a slice view of the matrix at position i.
      */
-    auto slice(std::size_t first, std::size_t last) const noexcept {
+    auto slice(size_t first, size_t last) const noexcept {
         return slice(*this, first, last);
     }
 
@@ -245,7 +245,7 @@ public:
      * \return a vector containing several results of the expression
      */
     template <typename VV = default_vec>
-    vec_type<VV> load(std::size_t i) const noexcept {
+    vec_type<VV> load(size_t i) const noexcept {
         return VV::loadu(memory_start() + i);
     }
 
@@ -256,7 +256,7 @@ public:
      * \return a vector containing several results of the expression
      */
     template <typename VV = default_vec>
-    vec_type<VV> loadu(std::size_t i) const noexcept {
+    vec_type<VV> loadu(size_t i) const noexcept {
         return VV::loadu(memory_start() + i);
     }
 

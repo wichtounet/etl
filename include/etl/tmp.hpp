@@ -12,49 +12,49 @@ namespace etl {
 /*!
  * \brief Traits to test if T is a specialization of TT<T, size_t>
  */
-template <template <typename, std::size_t> class TT, typename T>
+template <template <typename, size_t> class TT, typename T>
 struct is_2 : std::false_type {};
 
 /*!
  * \copydoc is_2
  */
-template <template <typename, std::size_t> class TT, typename V1, std::size_t R>
+template <template <typename, size_t> class TT, typename V1, size_t R>
 struct is_2<TT, TT<V1, R>> : std::true_type {};
 
 /*!
  * \brief Traits to test if T is a specialization of TT<T, size_t, size_t>
  */
-template <template <typename, std::size_t, std::size_t> class TT, typename T>
+template <template <typename, size_t, size_t> class TT, typename T>
 struct is_3 : std::false_type {};
 
 /*!
  * \copydoc is_3
  */
-template <template <typename, std::size_t, std::size_t> class TT, typename V1, std::size_t R1, std::size_t R2>
+template <template <typename, size_t, size_t> class TT, typename V1, size_t R1, size_t R2>
 struct is_3<TT, TT<V1, R1, R2>> : std::true_type {};
 
 /*!
  * \brief Traits to test if T is a specialization of TT<T, size_t...>
  */
-template <template <typename, std::size_t...> class TT, typename T>
+template <template <typename, size_t...> class TT, typename T>
 struct is_var : std::false_type {};
 
 /*!
  * \copydoc is_var
  */
-template <template <typename, std::size_t...> class TT, typename V1, std::size_t... R>
+template <template <typename, size_t...> class TT, typename V1, size_t... R>
 struct is_var<TT, TT<V1, R...>> : std::true_type {};
 
 /*!
  * \brief Traits to test if T is a specialization of TT<T1, T2, size_t...>
  */
-template <template <typename, typename, std::size_t...> class TT, typename T>
+template <template <typename, typename, size_t...> class TT, typename T>
 struct is_var_2 : std::false_type {};
 
 /*!
  * \copydoc is_var_2
  */
-template <template <typename, typename, std::size_t...> class TT, typename V1, typename V2, std::size_t... R>
+template <template <typename, typename, size_t...> class TT, typename V1, typename V2, size_t... R>
 struct is_var_2<TT, TT<V1, V2, R...>> : std::true_type {};
 
 /*!
@@ -98,21 +98,21 @@ using const_memory_t = typename std::decay_t<S>::const_memory_type;
 /*!
  * \brief Value traits to compute the multiplication of all the given values
  */
-template <std::size_t F, std::size_t... Dims>
-struct mul_all final : std::integral_constant<std::size_t, F * mul_all<Dims...>::value> {};
+template <size_t F, size_t... Dims>
+struct mul_all final : std::integral_constant<size_t, F * mul_all<Dims...>::value> {};
 
 /*!
  * \copydoc mul_all
  */
-template <std::size_t F>
-struct mul_all<F> final : std::integral_constant<std::size_t, F> {};
+template <size_t F>
+struct mul_all<F> final : std::integral_constant<size_t, F> {};
 
 /*!
  * \brief Traits to get the Sth dimension in Dims..
  * \tparam S The searched dimension
  * \tparam I The current index (start at zero)
  */
-template <std::size_t S, std::size_t I, std::size_t F, std::size_t... Dims>
+template <size_t S, size_t I, size_t F, size_t... Dims>
 struct nth_size final {
     /*!
      * \brief Helper traits to get the S2th dimension in Dims... (of
@@ -120,8 +120,8 @@ struct nth_size final {
      * \tparam S2 The searched dimension
      * \tparam I2 The current index (start at zero)
      */
-    template <std::size_t S2, std::size_t I2, typename Enable = void>
-    struct nth_size_int : std::integral_constant<std::size_t, nth_size<S, I + 1, Dims...>::value> {};
+    template <size_t S2, size_t I2, typename Enable = void>
+    struct nth_size_int : std::integral_constant<size_t, nth_size<S, I + 1, Dims...>::value> {};
 
     /*!
      * \brief Helper traits to get the S2th dimension in Dims... (of
@@ -129,10 +129,10 @@ struct nth_size final {
      * \tparam S2 The searched dimension
      * \tparam I2 The current index (start at zero)
      */
-    template <std::size_t S2, std::size_t I2>
-    struct nth_size_int<S2, I2, std::enable_if_t<S2 == I2>> : std::integral_constant<std::size_t, F> {};
+    template <size_t S2, size_t I2>
+    struct nth_size_int<S2, I2, std::enable_if_t<S2 == I2>> : std::integral_constant<size_t, F> {};
 
-    static constexpr std::size_t value = nth_size_int<S, I>::value; ///< The result value
+    static constexpr size_t value = nth_size_int<S, I>::value; ///< The result value
 };
 
 /*!
@@ -140,8 +140,8 @@ struct nth_size final {
  * \tparam D The list of dimensions
  * \param d The index of the dimension to get
  */
-template <std::size_t... D, cpp_enable_if(sizeof...(D) == 0)>
-std::size_t dyn_nth_size(std::size_t d) {
+template <size_t... D, cpp_enable_if(sizeof...(D) == 0)>
+size_t dyn_nth_size(size_t d) {
     cpp_unused(d);
     cpp_assert(false, "Should never be called");
     return 0;
@@ -150,8 +150,8 @@ std::size_t dyn_nth_size(std::size_t d) {
 /*!
  * \copydoc dyn_nth_size
  */
-template <std::size_t D1, std::size_t... D>
-std::size_t dyn_nth_size(std::size_t i) {
+template <size_t D1, size_t... D>
+size_t dyn_nth_size(size_t i) {
     return i == 0
                ? D1
                : dyn_nth_size<D...>(i - 1);
@@ -172,21 +172,21 @@ struct sequence_equal<std::index_sequence<>, std::index_sequence<>> : std::true_
 /*!
  * \copydoc sequence_equal
  */
-template <std::size_t... I1, std::size_t... I2>
+template <size_t... I1, size_t... I2>
 struct sequence_equal<std::index_sequence<I1...>, std::index_sequence<I2...>,
                       std::enable_if_t<sizeof...(I1) != sizeof...(I2)>> : std::false_type {};
 
 /*!
  * \copydoc sequence_equal
  */
-template <std::size_t I, std::size_t... I1, std::size_t... I2>
+template <size_t I, size_t... I1, size_t... I2>
 struct sequence_equal<std::index_sequence<I, I1...>, std::index_sequence<I, I2...>,
                       std::enable_if_t<sizeof...(I1) == sizeof...(I2)>> : sequence_equal<std::index_sequence<I1...>, std::index_sequence<I2...>> {};
 
 /*!
  * \copydoc sequence_equal
  */
-template <std::size_t I11, std::size_t I21, std::size_t... I1, std::size_t... I2>
+template <size_t I11, size_t I21, size_t... I1, size_t... I2>
 struct sequence_equal<std::index_sequence<I11, I1...>, std::index_sequence<I21, I2...>,
                       cpp::disable_if_t<I11 == I21>> : std::false_type {};
 
@@ -205,17 +205,17 @@ template <typename Int, Int Begin, Int End>
 using make_integer_range = typename integer_range_impl<Int, std::make_integer_sequence<Int, End - Begin>, Begin>::type;
 
 /*!
- * \brief Helper to create an integer_range of std::size_t numbers
+ * \brief Helper to create an integer_range of size_t numbers
  */
-template <std::size_t Begin, std::size_t End>
-using make_index_range = make_integer_range<std::size_t, Begin, End>;
+template <size_t Begin, size_t End>
+using make_index_range = make_integer_range<size_t, Begin, End>;
 
 /*!
  * \brief Returns a string representation of the given dimensions
  */
 template <typename... Dims>
 std::string concat_sizes(Dims... sizes) {
-    std::array<std::size_t, sizeof...(Dims)> tmp{{sizes...}};
+    std::array<size_t, sizeof...(Dims)> tmp{{sizes...}};
     std::string result;
     std::string sep;
     for (auto& v : tmp) {

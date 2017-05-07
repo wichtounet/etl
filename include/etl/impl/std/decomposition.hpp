@@ -35,21 +35,21 @@ void lu(const AT& A, LT& L, UT& U, PT& P) {
 
     // 1. Create the pivot matrix
 
-    for(std::size_t i = 0; i < n; ++i){
+    for(size_t i = 0; i < n; ++i){
         P(i, i) = 1;
     }
 
-    for(std::size_t i = 0; i < n; ++i){
+    for(size_t i = 0; i < n; ++i){
         auto max_j = i;
 
-        for(std::size_t j = i; j < n; ++j){
+        for(size_t j = i; j < n; ++j){
             if(std::abs(A(j, i)) > A(max_j, i)){
                 max_j = j;
             }
         }
 
         if(max_j != i){
-            for(std::size_t k = 0; k < n; ++k){
+            for(size_t k = 0; k < n; ++k){
                 using std::swap;
                 swap(P(i, k), P(max_j, k));
             }
@@ -58,15 +58,15 @@ void lu(const AT& A, LT& L, UT& U, PT& P) {
 
     auto Ap = etl::force_temporary(P * A);
 
-    for(std::size_t i = 0; i < n; ++i){
+    for(size_t i = 0; i < n; ++i){
         L(i, i) = 1;
     }
 
-    for (std::size_t i = 0; i < n; ++i) {
-        for (std::size_t j = 0; j < n; ++j) {
+    for (size_t i = 0; i < n; ++i) {
+        for (size_t j = 0; j < n; ++j) {
             if (j <= i) {
                 value_t<AT> s = 0;
-                for (std::size_t k = 0; k < j; ++k) {
+                for (size_t k = 0; k < j; ++k) {
                     s += L(j, k) * U(k, i);
                 }
 
@@ -75,7 +75,7 @@ void lu(const AT& A, LT& L, UT& U, PT& P) {
 
             if (j >= i) {
                 value_t<AT> s = 0;
-                for (std::size_t k = 0; k < i; ++k) {
+                for (size_t k = 0; k < i; ++k) {
                     s += L(j, k) * U(k, i);
                 }
 

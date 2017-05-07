@@ -1385,7 +1385,7 @@ auto conv_deep_full(A&& a, B&& b, C&& c) {
  * \return a matrix expression for convolution
  */
 template <typename A>
-auto convmtx(A&& a, std::size_t h) -> detail::stable_transform_helper<A, dyn_convmtx_transformer> {
+auto convmtx(A&& a, size_t h) -> detail::stable_transform_helper<A, dyn_convmtx_transformer> {
     static_assert(is_etl_expr<A>::value, "Convolution matrices only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 1, "Convolutional matrix only works in 1D");
 
@@ -1400,7 +1400,7 @@ auto convmtx(A&& a, std::size_t h) -> detail::stable_transform_helper<A, dyn_con
  * \return a matrix expression for convolution
  */
 template <typename A>
-auto convmtx2(A&& a, std::size_t k1, std::size_t k2) -> detail::stable_transform_helper<A, dyn_convmtx2_transformer> {
+auto convmtx2(A&& a, size_t k1, size_t k2) -> detail::stable_transform_helper<A, dyn_convmtx2_transformer> {
     static_assert(is_etl_expr<A>::value, "Convolution matrices only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2, "Convolutional matrix only works in 2D");
 
@@ -1414,7 +1414,7 @@ auto convmtx2(A&& a, std::size_t k1, std::size_t k2) -> detail::stable_transform
  * \tparam K2 The second dimension of the kernel
  * \return a matrix expression for convolution
  */
-template <std::size_t K1, std::size_t K2, typename A>
+template <size_t K1, size_t K2, typename A>
 convmtx_2d_expr<A, K1, K2> convmtx2_direct(A&& a) {
     static_assert(is_etl_expr<A>::value, "Convolution matrices only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2, "Convolutional matrix only works in 2D");

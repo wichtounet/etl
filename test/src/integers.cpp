@@ -14,7 +14,7 @@ TEMPLATE_TEST_CASE_4("integers/init_1", "[integers][fast]", Z, int8_t, int16_t, 
 
     REQUIRE_EQUALS(test_vector.size(), 4UL);
 
-    for (std::size_t i = 0; i < test_vector.size(); ++i) {
+    for (size_t i = 0; i < test_vector.size(); ++i) {
         REQUIRE_EQUALS(test_vector[i], 3);
     }
 }
@@ -26,7 +26,7 @@ TEMPLATE_TEST_CASE_4("integers/init_2", "[integers][fast]", Z, int8_t, int16_t, 
 
     REQUIRE_EQUALS(test_vector.size(), 4UL);
 
-    for (std::size_t i = 0; i < test_vector.size(); ++i) {
+    for (size_t i = 0; i < test_vector.size(); ++i) {
         REQUIRE_EQUALS(test_vector[i], 3);
     }
 }
@@ -46,7 +46,7 @@ TEMPLATE_TEST_CASE_4("integers/init_4", "[integers][dyn]", Z, int8_t, int16_t, i
 
     REQUIRE_EQUALS(test_vector.size(), 4UL);
 
-    for (std::size_t i = 0; i < test_vector.size(); ++i) {
+    for (size_t i = 0; i < test_vector.size(); ++i) {
         REQUIRE_EQUALS(test_vector[i], 3);
         REQUIRE_EQUALS(test_vector(i), 3);
     }
@@ -59,7 +59,7 @@ TEMPLATE_TEST_CASE_4("integers/init_5", "[integers][dyn]", Z, int8_t, int16_t, i
 
     REQUIRE_EQUALS(test_vector.size(), 4UL);
 
-    for (std::size_t i = 0; i < test_vector.size(); ++i) {
+    for (size_t i = 0; i < test_vector.size(); ++i) {
         REQUIRE_EQUALS(test_vector[i], 3);
         REQUIRE_EQUALS(test_vector(i), 3);
     }

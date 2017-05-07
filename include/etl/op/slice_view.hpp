@@ -45,8 +45,8 @@ struct slice_view  <T, std::enable_if_t<!fast_slice_view_able<T>::value>>
 
 private:
     T sub;                   ///< The Sub expression
-    const std::size_t first; ///< The index
-    const std::size_t last;  ///< The last index
+    const size_t first; ///< The index
+    const size_t last;  ///< The last index
 
     friend struct etl_traits<slice_view>;
 
@@ -58,7 +58,7 @@ public:
      * \param first The first index
      * \param last The last index
      */
-    slice_view(sub_type sub, std::size_t first, std::size_t last)
+    slice_view(sub_type sub, size_t first, size_t last)
             : sub(sub), first(first), last(last) {}
 
     /*!
@@ -66,7 +66,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    const_return_type operator[](std::size_t j) const {
+    const_return_type operator[](size_t j) const {
         if(decay_traits<sub_type>::storage_order == order::RowMajor){
             return sub[first * (size(sub) / dim<0>(sub)) + j];
         } else {
@@ -81,7 +81,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    return_type operator[](std::size_t j) {
+    return_type operator[](size_t j) {
         if(decay_traits<sub_type>::storage_order == order::RowMajor){
             return sub[first * (size(sub) / dim<0>(sub)) + j];
         } else {
@@ -97,7 +97,7 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t j) const noexcept {
+    value_type read_flat(size_t j) const noexcept {
         if(decay_traits<sub_type>::storage_order == order::RowMajor){
             return sub.read_flat(first * (size(sub) / dim<0>(sub)) + j);
         } else {
@@ -113,8 +113,8 @@ public:
      * \return a reference to the element at the given position.
      */
     template <typename... S, cpp_enable_if((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
-    const_return_type operator()(std::size_t i, S... args) const {
-        return sub(i + first, static_cast<std::size_t>(args)...);
+    const_return_type operator()(size_t i, S... args) const {
+        return sub(i + first, static_cast<size_t>(args)...);
     }
 
     /*!
@@ -123,8 +123,8 @@ public:
      * \return a reference to the element at the given position.
      */
     template <typename... S, cpp_enable_if((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
-    return_type operator()(std::size_t i, S... args) {
-        return sub(i + first, static_cast<std::size_t>(args)...);
+    return_type operator()(size_t i, S... args) {
+        return sub(i + first, static_cast<size_t>(args)...);
     }
 
     /*!
@@ -133,7 +133,7 @@ public:
      * \return a sub view of the matrix at position x.
      */
     template <typename TT = sub_type, cpp_enable_if((decay_traits<TT>::dimensions() > 1))>
-    auto operator()(std::size_t x) const {
+    auto operator()(size_t x) const {
         return etl::sub(*this, x);
     }
 
@@ -144,7 +144,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto load(std::size_t x) const noexcept {
+    auto load(size_t x) const noexcept {
         return sub.template loadu<V>(x + first * (etl::size(sub) / etl::dim<0>(sub)));
     }
 
@@ -155,7 +155,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto loadu(std::size_t x) const noexcept {
+    auto loadu(size_t x) const noexcept {
         return sub.template loadu<V>(x + first * (etl::size(sub) / etl::dim<0>(sub)));
     }
 
@@ -304,7 +304,7 @@ public:
      * \param first The first index
      * \param last The last index
      */
-    slice_view(sub_type sub, std::size_t first, std::size_t last)
+    slice_view(sub_type sub, size_t first, size_t last)
             : sub(sub), first(first), last(last), sub_size((size(sub) / etl::dim<0>(sub)) * (last - first)) {
         if (!decay_traits<sub_type>::needs_evaluator_visitor) {
             this->memory = sub.memory_start() + first * (size(sub) / etl::dim<0>(sub));
@@ -348,7 +348,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    const_return_type operator[](std::size_t j) const {
+    const_return_type operator[](size_t j) const {
         ensure_cpu_up_to_date();
         return memory[j];
     }
@@ -358,7 +358,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    return_type operator[](std::size_t j) {
+    return_type operator[](size_t j) {
         ensure_cpu_up_to_date();
         invalidate_gpu();
         return memory[j];
@@ -370,7 +370,7 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t j) const noexcept {
+    value_type read_flat(size_t j) const noexcept {
         ensure_cpu_up_to_date();
         return memory[j];
     }
@@ -381,7 +381,7 @@ public:
      * \return a reference to the element at the given position.
      */
     template <typename... S, cpp_enable_if((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
-    const_return_type operator()(std::size_t i, S... args) const {
+    const_return_type operator()(size_t i, S... args) const {
         ensure_cpu_up_to_date();
         return memory[dyn_index(*this, i, args...)];
     }
@@ -392,7 +392,7 @@ public:
      * \return a reference to the element at the given position.
      */
     template <typename... S, cpp_enable_if((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
-    return_type operator()(std::size_t i, S... args) {
+    return_type operator()(size_t i, S... args) {
         ensure_cpu_up_to_date();
         invalidate_gpu();
         return memory[dyn_index(*this, i, args...)];
@@ -404,7 +404,7 @@ public:
      * \return a sub view of the matrix at position x.
      */
     template <typename TT = sub_type, cpp_enable_if((decay_traits<TT>::dimensions() > 1))>
-    auto operator()(std::size_t x) const {
+    auto operator()(size_t x) const {
         return etl::sub(*this, x);
     }
 
@@ -415,7 +415,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto load(std::size_t x) const noexcept {
+    auto load(size_t x) const noexcept {
         return V::loadu(memory + x);
     }
 
@@ -426,7 +426,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void store(vec_type<V> in, std::size_t x) noexcept {
+    void store(vec_type<V> in, size_t x) noexcept {
         return V::storeu(memory + x, in);
     }
 
@@ -437,7 +437,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void storeu(vec_type<V> in, std::size_t x) noexcept {
+    void storeu(vec_type<V> in, size_t x) noexcept {
         return V::storeu(memory + x, in);
     }
 
@@ -448,7 +448,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t x) noexcept {
+    void stream(vec_type<V> in, size_t x) noexcept {
         //TODO If the slice view is aligned (at compile-time), use stream store here
         return V::storeu(memory + x, in);
     }
@@ -460,7 +460,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto loadu(std::size_t x) const noexcept {
+    auto loadu(size_t x) const noexcept {
         return V::loadu(memory + x);
     }
 
@@ -778,7 +778,7 @@ struct etl_traits<etl::slice_view<T>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static size_t size(const expr_t& v) {
         return (sub_traits::size(v.sub) / sub_traits::dim(v.sub, 0)) * (v.last - v.first);
     }
 
@@ -788,7 +788,7 @@ struct etl_traits<etl::slice_view<T>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         if (d == 0) {
             return v.last - v.first;
         } else {
@@ -800,7 +800,7 @@ struct etl_traits<etl::slice_view<T>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return sub_traits::dimensions();
     }
 };

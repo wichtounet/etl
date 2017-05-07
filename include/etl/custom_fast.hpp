@@ -21,7 +21,7 @@ namespace etl {
  *
  * The matrix support an arbitrary number of dimensions.
  */
-template <typename T, typename ST, order SO, std::size_t... Dims>
+template <typename T, typename ST, order SO, size_t... Dims>
 struct custom_fast_matrix_impl final :
         fast_matrix_base<custom_fast_matrix_impl<T, ST, SO, Dims...>, T, ST, SO, Dims...>,
         inplace_assignable<custom_fast_matrix_impl<T, ST, SO, Dims...>>,
@@ -32,8 +32,8 @@ struct custom_fast_matrix_impl final :
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
-    static constexpr std::size_t n_dimensions = sizeof...(Dims);                      ///< The number of dimensions
-    static constexpr std::size_t etl_size     = mul_all<Dims...>::value;              ///< The size of the matrix
+    static constexpr size_t n_dimensions = sizeof...(Dims);                      ///< The number of dimensions
+    static constexpr size_t etl_size     = mul_all<Dims...>::value;              ///< The size of the matrix
     static constexpr order storage_order      = SO;                                   ///< The storage order
     static constexpr bool array_impl          = !matrix_detail::is_vector<ST>::value; ///< true if the storage is an std::arraw, false otherwise
 
@@ -108,7 +108,7 @@ public:
      * \param rhs The fast matrix to copy from
      * \return a reference to the fast matrix
      */
-    template <std::size_t... SDims>
+    template <size_t... SDims>
     custom_fast_matrix_impl& operator=(const custom_fast_matrix_impl<T, ST, SO, SDims...>& rhs) noexcept {
         validate_assign(*this, rhs);
         rhs.assign_to(*this);
@@ -184,7 +184,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void store(vec_type<V> in, std::size_t i) noexcept {
+    void store(vec_type<V> in, size_t i) noexcept {
         V::storeu(memory_start() + i, in);
     }
 
@@ -195,7 +195,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void storeu(vec_type<V> in, std::size_t i) noexcept {
+    void storeu(vec_type<V> in, size_t i) noexcept {
         V::storeu(memory_start() + i, in);
     }
 
@@ -206,7 +206,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t i) noexcept {
+    void stream(vec_type<V> in, size_t i) noexcept {
         V::storeu(memory_start() + i, in);
     }
 
@@ -217,7 +217,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    vec_type<V> load(std::size_t i) const noexcept {
+    vec_type<V> load(size_t i) const noexcept {
         return V::loadu(memory_start() + i);
     }
 
@@ -228,7 +228,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    vec_type<V> loadu(std::size_t i) const noexcept {
+    vec_type<V> loadu(size_t i) const noexcept {
         return V::loadu(memory_start() + i);
     }
 
@@ -386,7 +386,7 @@ static_assert(std::is_nothrow_destructible<fast_vector<double, 2>>::value, "fast
  * \param lhs The first matrix to swap
  * \param rhs The second matrix to swap
  */
-template <typename T, typename ST, order SO, std::size_t... Dims>
+template <typename T, typename ST, order SO, size_t... Dims>
 void swap(custom_fast_matrix_impl<T, ST, SO, Dims...>& lhs, custom_fast_matrix_impl<T, ST, SO, Dims...>& rhs) {
     lhs.swap(rhs);
 }

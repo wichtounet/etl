@@ -114,17 +114,17 @@ void pad_3d_input(const F1& in, F2&& out, size_t p1, size_t p2) {
  * \param last The end of the range of the input to consider
  */
 template <typename T>
-void left_same_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out, std::size_t first, std::size_t last) {
+void left_same_kernel(const T* in, const size_t n, const T* kernel, size_t m, T* out, size_t first, size_t last) {
     cpp_unused(n);
 
-    std::size_t left  = (m - 1) / 2;
-    std::size_t right = m / 2;
+    size_t left  = (m - 1) / 2;
+    size_t right = m / 2;
 
     //Left invalid part
-    for (std::size_t j = first; j < std::min(last, left); ++j) {
+    for (size_t j = first; j < std::min(last, left); ++j) {
         T temp = 0.0;
 
-        for (std::size_t l = 0; l <= j + right; ++l) {
+        for (size_t l = 0; l <= j + right; ++l) {
             temp += in[l] * kernel[j - l + right];
         }
 
@@ -143,16 +143,16 @@ void left_same_kernel(const T* in, const std::size_t n, const T* kernel, std::si
  * \param last The end of the range of the input to consider
  */
 template <typename T>
-void right_same_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out, std::size_t first, std::size_t last) {
-    std::size_t left  = (m - 1) / 2;
-    std::size_t right = m / 2;
+void right_same_kernel(const T* in, const size_t n, const T* kernel, size_t m, T* out, size_t first, size_t last) {
+    size_t left  = (m - 1) / 2;
+    size_t right = m / 2;
 
     //Right invalid part
-    for (std::size_t j = std::max(first, n - right); j < std::min(last, n); ++j) {
+    for (size_t j = std::max(first, n - right); j < std::min(last, n); ++j) {
         T temp = 0.0;
 
-        std::size_t hi = std::min<int>(n - 1, j + right);
-        for (std::size_t l = j - left; l <= hi; ++l) {
+        size_t hi = std::min<int>(n - 1, j + right);
+        for (size_t l = j - left; l <= hi; ++l) {
             temp += in[l] * kernel[j - l + m / 2];
         }
 
@@ -171,16 +171,16 @@ void right_same_kernel(const T* in, const std::size_t n, const T* kernel, std::s
  * \param last The end of the range of the input to consider
  */
 template <typename T>
-void left_full_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out, std::size_t first, std::size_t last) {
-    std::size_t left = m - 1;
+void left_full_kernel(const T* in, const size_t n, const T* kernel, size_t m, T* out, size_t first, size_t last) {
+    size_t left = m - 1;
 
     //Left invalid part
-    for (std::size_t i = first; i < std::min(last, left); ++i) {
+    for (size_t i = first; i < std::min(last, left); ++i) {
         const auto hi = i < n - 1 ? i : n - 1;
 
         T temp = 0.0;
 
-        for (std::size_t j = 0; j <= hi; ++j) {
+        for (size_t j = 0; j <= hi; ++j) {
             temp += in[j] * kernel[i - j];
         }
 
@@ -199,19 +199,19 @@ void left_full_kernel(const T* in, const std::size_t n, const T* kernel, std::si
  * \param last The end of the range of the input to consider
  */
 template <typename T>
-void right_full_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out, std::size_t first, std::size_t last) {
-    std::size_t right = m - 1;
+void right_full_kernel(const T* in, const size_t n, const T* kernel, size_t m, T* out, size_t first, size_t last) {
+    size_t right = m - 1;
 
     auto c = n + m - 1;
 
     //Right invalid part
-    for (std::size_t i = std::max(first, c - right); i < std::min(last, c); ++i) {
+    for (size_t i = std::max(first, c - right); i < std::min(last, c); ++i) {
         const auto lo = i >= m - 1 ? i - (m - 1) : 0;
         const auto hi = i < n - 1 ? i : n - 1;
 
         T temp = 0.0;
 
-        for (std::size_t j = lo; j <= hi; ++j) {
+        for (size_t j = lo; j <= hi; ++j) {
             temp += in[j] * kernel[i - j];
         }
 

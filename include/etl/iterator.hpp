@@ -24,7 +24,7 @@ template <typename Expr>
 struct iterator : public std::iterator<std::random_access_iterator_tag, value_t<Expr>> {
 private:
     Expr* expr;    ///< Pointer to the expression
-    std::size_t i; ///< Current index
+    size_t i; ///< Current index
 
 public:
     using base_iterator_t = std::iterator<std::random_access_iterator_tag, value_t<Expr>>; ///< The base iterator type
@@ -38,7 +38,7 @@ public:
      * \param expr The expr to iterate over.
      * \param i The starting position
      */
-    iterator(Expr& expr, std::size_t i)
+    iterator(Expr& expr, size_t i)
             : expr(&expr), i(i) {}
 
     /*!

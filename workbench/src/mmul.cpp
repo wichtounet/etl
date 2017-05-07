@@ -39,7 +39,7 @@ void randomize(T1& container, TT&... containers){
     randomize(containers...);
 }
 
-std::string duration_str(std::size_t duration_us){
+std::string duration_str(size_t duration_us){
     double duration = duration_us;
 
     if(duration > 1000 * 1000){
@@ -53,14 +53,14 @@ std::string duration_str(std::size_t duration_us){
 
 template<typename Functor, typename... T>
 void measure(const std::string& title, const std::string& reference, Functor&& functor, T&... references){
-    for(std::size_t i = 0; i < 100; ++i){
+    for(size_t i = 0; i < 100; ++i){
         randomize(references...);
         functor();
     }
 
-    std::size_t duration_acc = 0;
+    size_t duration_acc = 0;
 
-    for(std::size_t i = 0; i < 100; ++i){
+    for(size_t i = 0; i < 100; ++i){
         randomize(references...);
         auto start_time = timer_clock::now();
         functor();
@@ -72,7 +72,7 @@ void measure(const std::string& title, const std::string& reference, Functor&& f
     std::cout << title << " took " << duration_str(duration_acc) << " (reference: " << reference << ")\n";
 }
 
-template<std::size_t D1, std::size_t D2, std::size_t D3>
+template<size_t D1, size_t D2, size_t D3>
 void bench_direct(const std::string& reference){
     etl::fast_matrix<double, D1, D2> a;
     etl::fast_matrix<double, D2, D3> b;
@@ -83,7 +83,7 @@ void bench_direct(const std::string& reference){
     }, a, b);
 }
 
-template<std::size_t D1, std::size_t D2, std::size_t D3>
+template<size_t D1, size_t D2, size_t D3>
 void bench_standard(const std::string& reference){
     etl::fast_matrix<double, D1, D2> a;
     etl::fast_matrix<double, D2, D3> b;
@@ -95,7 +95,7 @@ void bench_standard(const std::string& reference){
     }, a, b);
 }
 
-template<std::size_t D1, std::size_t D2, std::size_t D3>
+template<size_t D1, size_t D2, size_t D3>
 void bench_new(const std::string& reference){
     etl::fast_matrix<double, D1, D2> a;
     etl::fast_matrix<double, D2, D3> b;
@@ -107,7 +107,7 @@ void bench_new(const std::string& reference){
 }
 
 
-template<std::size_t D1, std::size_t D2, std::size_t D3>
+template<size_t D1, size_t D2, size_t D3>
 void bench_strassen_direct(const std::string& reference){
     etl::fast_matrix<double, D1, D2> a;
     etl::fast_matrix<double, D2, D3> b;
@@ -117,7 +117,7 @@ void bench_strassen_direct(const std::string& reference){
         etl::strassen_mmul(a,b,c);
     }, a, b);
 }
-template<std::size_t D1, std::size_t D2, std::size_t D3>
+template<size_t D1, size_t D2, size_t D3>
 double bench_lazy(const std::string& reference){
     etl::fast_matrix<double, D1, D2> a(0.0);
     etl::fast_matrix<double, D2, D3> b(0.0);

@@ -20,9 +20,9 @@ CONV4_FULL_TEST_CASE("conv/4d/full/1", "[conv][conv4][full]") {
 
     SELECTED_SECTION(etl::conv_impl::STD) {
         ref = 0.0;
-        for (std::size_t i = 0; i < etl::dim<0>(I); ++i) {
-            for (std::size_t c = 0; c < etl::dim<1>(K); ++c) {
-                for (std::size_t k = 0; k < etl::dim<0>(K); ++k) {
+        for (size_t i = 0; i < etl::dim<0>(I); ++i) {
+            for (size_t c = 0; c < etl::dim<1>(K); ++c) {
+                for (size_t k = 0; k < etl::dim<0>(K); ++k) {
                     ref(i)(c) += conv_2d_full(I(i)(k), K(k)(c));
                 }
             }
@@ -31,7 +31,7 @@ CONV4_FULL_TEST_CASE("conv/4d/full/1", "[conv][conv4][full]") {
 
     Impl::apply(I, K, c);
 
-    for (std::size_t i = 0; i < ref.size(); ++i) {
+    for (size_t i = 0; i < ref.size(); ++i) {
         REQUIRE_EQUALS_APPROX_E(c[i], ref[i], base_eps * 100000);
     }
 }
@@ -48,9 +48,9 @@ CONV4_FULL_TEST_CASE("conv/4d/full/2", "[conv][conv4][full]") {
 
     SELECTED_SECTION(etl::conv_impl::STD) {
         ref = 0.0;
-        for (std::size_t i = 0; i < etl::dim<0>(I); ++i) {
-            for (std::size_t c = 0; c < etl::dim<1>(K); ++c) {
-                for (std::size_t k = 0; k < etl::dim<0>(K); ++k) {
+        for (size_t i = 0; i < etl::dim<0>(I); ++i) {
+            for (size_t c = 0; c < etl::dim<1>(K); ++c) {
+                for (size_t k = 0; k < etl::dim<0>(K); ++k) {
                     ref(i)(c) += conv_2d_full(I(i)(k), K(k)(c));
                 }
             }
@@ -59,7 +59,7 @@ CONV4_FULL_TEST_CASE("conv/4d/full/2", "[conv][conv4][full]") {
 
     Impl::apply(I, K, c);
 
-    for (std::size_t i = 0; i < ref.size(); ++i) {
+    for (size_t i = 0; i < ref.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], ref[i]);
     }
 }
@@ -76,9 +76,9 @@ CONV4_FULL_TEST_CASE("conv/4d/full/3", "[conv][conv4][full]") {
 
     SELECTED_SECTION(etl::conv_impl::STD) {
         ref = 0.0;
-        for (std::size_t i = 0; i < etl::dim<0>(I); ++i) {
-            for (std::size_t c = 0; c < etl::dim<1>(K); ++c) {
-                for (std::size_t k = 0; k < etl::dim<0>(K); ++k) {
+        for (size_t i = 0; i < etl::dim<0>(I); ++i) {
+            for (size_t c = 0; c < etl::dim<1>(K); ++c) {
+                for (size_t k = 0; k < etl::dim<0>(K); ++k) {
                     ref(i)(c) += conv_2d_full(I(i)(k), K(k)(c));
                 }
             }
@@ -87,7 +87,7 @@ CONV4_FULL_TEST_CASE("conv/4d/full/3", "[conv][conv4][full]") {
 
     Impl::apply(I, K, c);
 
-    for (std::size_t i = 0; i < ref.size(); ++i) {
+    for (size_t i = 0; i < ref.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], ref[i]);
     }
 }
@@ -104,9 +104,9 @@ CONV4_FULL_FLIPPED_TEST_CASE("conv/4d/full/flipped/1", "[conv][conv4][full]") {
 
     SELECTED_SECTION(etl::conv_impl::STD) {
         ref = 0.0;
-        for (std::size_t i = 0; i < etl::dim<0>(I); ++i) {
-            for (std::size_t c = 0; c < etl::dim<1>(K); ++c) {
-                for (std::size_t k = 0; k < etl::dim<0>(K); ++k) {
+        for (size_t i = 0; i < etl::dim<0>(I); ++i) {
+            for (size_t c = 0; c < etl::dim<1>(K); ++c) {
+                for (size_t k = 0; k < etl::dim<0>(K); ++k) {
                     ref(i)(c) += conv_2d_full(I(i)(k), fflip(K(k)(c)));
                 }
             }
@@ -115,7 +115,7 @@ CONV4_FULL_FLIPPED_TEST_CASE("conv/4d/full/flipped/1", "[conv][conv4][full]") {
 
     Impl::apply(I, K, c);
 
-    for (std::size_t i = 0; i < ref.size(); ++i) {
+    for (size_t i = 0; i < ref.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], ref[i]);
     }
 }
@@ -132,9 +132,9 @@ CONV4_FULL_FLIPPED_TEST_CASE("conv/4d/full/flipped/2", "[conv][conv4][full]") {
 
     SELECTED_SECTION(etl::conv_impl::STD) {
         ref = 0.0;
-        for (std::size_t i = 0; i < etl::dim<0>(I); ++i) {
-            for (std::size_t c = 0; c < etl::dim<1>(K); ++c) {
-                for (std::size_t k = 0; k < etl::dim<0>(K); ++k) {
+        for (size_t i = 0; i < etl::dim<0>(I); ++i) {
+            for (size_t c = 0; c < etl::dim<1>(K); ++c) {
+                for (size_t k = 0; k < etl::dim<0>(K); ++k) {
                     ref(i)(c) += conv_2d_full(I(i)(k), fflip(K(k)(c)));
                 }
             }
@@ -143,7 +143,7 @@ CONV4_FULL_FLIPPED_TEST_CASE("conv/4d/full/flipped/2", "[conv][conv4][full]") {
 
     Impl::apply(I, K, c);
 
-    for (std::size_t i = 0; i < ref.size(); ++i) {
+    for (size_t i = 0; i < ref.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], ref[i]);
     }
 }

@@ -66,7 +66,7 @@ struct inplace_assignable {
     derived_t& deep_fflip_inplace() {
         decltype(auto) mat = as_derived();
 
-        for (std::size_t i = 0; i < etl::dim<0>(mat); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
             mat(i).deep_fflip_inplace();
         }
 
@@ -80,7 +80,7 @@ struct inplace_assignable {
     derived_t& deep_fflip_inplace() {
         decltype(auto) mat = as_derived();
 
-        for (std::size_t i = 0; i < etl::dim<0>(mat); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
             mat(i).fflip_inplace();
         }
 
@@ -94,11 +94,11 @@ struct inplace_assignable {
     derived_t& deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
-        for (std::size_t i = 0; i < etl::dim<0>(mat); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
             mat(i).direct_deep_transpose_inplace();
         }
 
-        static constexpr std::size_t d = etl_traits<S>::dimensions();
+        static constexpr size_t d = etl_traits<S>::dimensions();
 
         using std::swap;
         swap(mat.unsafe_dimension_access(d - 1), mat.unsafe_dimension_access(d - 2));
@@ -113,11 +113,11 @@ struct inplace_assignable {
     derived_t& deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
-        for (std::size_t i = 0; i < etl::dim<0>(mat); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
             mat(i).direct_transpose_inplace();
         }
 
-        static constexpr std::size_t d = etl_traits<S>::dimensions();
+        static constexpr size_t d = etl_traits<S>::dimensions();
 
         using std::swap;
         swap(mat.unsafe_dimension_access(d - 1), mat.unsafe_dimension_access(d - 2));
@@ -132,7 +132,7 @@ struct inplace_assignable {
     derived_t& deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
-        for (std::size_t i = 0; i < etl::dim<0>(mat); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
             mat(i).deep_transpose_inplace();
         }
 
@@ -146,7 +146,7 @@ struct inplace_assignable {
     derived_t& deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
-        for (std::size_t i = 0; i < etl::dim<0>(mat); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
             mat(i).transpose_inplace();
         }
 
@@ -160,7 +160,7 @@ struct inplace_assignable {
     derived_t& direct_deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
-        for (std::size_t i = 0; i < etl::dim<0>(mat); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
             mat(i).direct_deep_transpose_inplace();
         }
 
@@ -174,7 +174,7 @@ struct inplace_assignable {
     derived_t& direct_deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
-        for (std::size_t i = 0; i < etl::dim<0>(mat); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
             mat(i).direct_transpose_inplace();
         }
 

@@ -12,7 +12,7 @@ namespace etl {
 namespace detail {
 
 template <typename V>
-V compute(std::size_t n, std::size_t i, std::size_t j) {
+V compute(size_t n, size_t i, size_t j) {
     if (n == 1) {
         return 1;
     } else if (n == 2) {
@@ -36,12 +36,12 @@ template <typename V>
 struct magic_view {
     using value_type = V; ///< The value type in the matrix
 
-    const std::size_t n; ///< The dimensions of the magic matrix
+    const size_t n; ///< The dimensions of the magic matrix
 
     /*!
      * \brief Construct a new magic_view with the given dimension
      */
-    explicit magic_view(std::size_t n)
+    explicit magic_view(size_t n)
             : n(n) {}
 
     /*!
@@ -49,7 +49,7 @@ struct magic_view {
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type operator[](std::size_t i) {
+    value_type operator[](size_t i) {
         return detail::compute<value_type>(n, i / n, i % n);
     }
 
@@ -58,7 +58,7 @@ struct magic_view {
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type operator[](std::size_t i) const {
+    value_type operator[](size_t i) const {
         return detail::compute<value_type>(n, i / n, i % n);
     }
 
@@ -68,7 +68,7 @@ struct magic_view {
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const {
+    value_type read_flat(size_t i) const {
         return detail::compute<value_type>(n, i / n, i % n);
     }
 
@@ -78,7 +78,7 @@ struct magic_view {
      * \param j The second index
      * \return The value at the position (i, j)
      */
-    value_type operator()(std::size_t i, std::size_t j) {
+    value_type operator()(size_t i, size_t j) {
         return detail::compute<value_type>(n, i, j);
     }
 
@@ -88,7 +88,7 @@ struct magic_view {
      * \param j The second index
      * \return The value at the position (i, j)
      */
-    value_type operator()(std::size_t i, std::size_t j) const {
+    value_type operator()(size_t i, size_t j) const {
         return detail::compute<value_type>(n, i, j);
     }
 
@@ -117,7 +117,7 @@ struct magic_view {
 /*!
  * \brief A view (virtual) of a static magic matrix
  */
-template <typename V, std::size_t N>
+template <typename V, size_t N>
 struct fast_magic_view {
     using value_type = V; ///< The value type
 
@@ -126,7 +126,7 @@ struct fast_magic_view {
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type operator[](std::size_t i) {
+    value_type operator[](size_t i) {
         return detail::compute<value_type>(N, i / N, i % N);
     }
 
@@ -135,7 +135,7 @@ struct fast_magic_view {
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type operator[](std::size_t i) const {
+    value_type operator[](size_t i) const {
         return detail::compute<value_type>(N, i / N, i % N);
     }
 
@@ -145,7 +145,7 @@ struct fast_magic_view {
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const {
+    value_type read_flat(size_t i) const {
         return detail::compute<value_type>(N, i / N, i % N);
     }
 
@@ -155,7 +155,7 @@ struct fast_magic_view {
      * \param j The second index
      * \return The value at the position (i, j)
      */
-    value_type operator()(std::size_t i, std::size_t j) {
+    value_type operator()(size_t i, size_t j) {
         return detail::compute<value_type>(N, i, j);
     }
 
@@ -165,7 +165,7 @@ struct fast_magic_view {
      * \param j The second index
      * \return The value at the position (i, j)
      */
-    value_type operator()(std::size_t i, std::size_t j) const {
+    value_type operator()(size_t i, size_t j) const {
         return detail::compute<value_type>(N, i, j);
     }
 
@@ -227,7 +227,7 @@ struct etl_traits<etl::magic_view<V>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static size_t size(const expr_t& v) {
         return v.n * v.n;
     }
 
@@ -237,7 +237,7 @@ struct etl_traits<etl::magic_view<V>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         cpp_unused(d);
         return v.n;
     }
@@ -246,7 +246,7 @@ struct etl_traits<etl::magic_view<V>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 2;
     }
 };
@@ -254,7 +254,7 @@ struct etl_traits<etl::magic_view<V>> {
 /*!
  * \brief traits speciflization for fast_magic_view
  */
-template <std::size_t N, typename V>
+template <size_t N, typename V>
 struct etl_traits<etl::fast_magic_view<V, N>> {
     using expr_t     = etl::fast_magic_view<V, N>; ///< The inspected expression type
     using value_type = V;                          ///< The value type of the expression
@@ -286,7 +286,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
      * \brief Returns the size of an expression of this fast type.
      * \returns the size of an expression of this fast type.
      */
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return N * N;
     }
 
@@ -295,7 +295,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static constexpr std::size_t size(const expr_t& v) {
+    static constexpr size_t size(const expr_t& v) {
         return (void)v, N * N;
     }
 
@@ -304,8 +304,8 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
      * \tparam D The dimension to get
      * \return the D2th dimension of an expression of this type
      */
-    template <std::size_t D>
-    static constexpr std::size_t dim() {
+    template <size_t D>
+    static constexpr size_t dim() {
         return N;
     }
 
@@ -315,7 +315,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static constexpr std::size_t dim(const expr_t& e, std::size_t d) {
+    static constexpr size_t dim(const expr_t& e, size_t d) {
         return (void)e, (void)d, N;
     }
 
@@ -323,7 +323,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 2;
     }
 };

@@ -50,7 +50,7 @@ TEMPLATE_TEST_CASE_2("direct_access/fast_matrix", "direct_access", Z, double, fl
     REQUIRE_DIRECT(std::is_pointer<decltype(it)>::value);
     REQUIRE_DIRECT(std::is_pointer<decltype(end)>::value);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE_EQUALS(test_matrix[i], *it);
         REQUIRE_DIRECT(it != end);
         ++it;
@@ -71,7 +71,7 @@ TEMPLATE_TEST_CASE_2("direct_access/dyn_matrix", "direct_access", Z, double, flo
     REQUIRE_DIRECT(std::is_pointer<decltype(it)>::value);
     REQUIRE_DIRECT(std::is_pointer<decltype(end)>::value);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE_EQUALS(test_matrix[i], *it);
         REQUIRE_DIRECT(it != end);
         ++it;
@@ -92,7 +92,7 @@ TEMPLATE_TEST_CASE_2("direct_access/sub_view", "direct_access", Z, double, float
     REQUIRE_DIRECT(std::is_pointer<decltype(it)>::value);
     REQUIRE_DIRECT(std::is_pointer<decltype(end)>::value);
 
-    for (std::size_t i = 0; i < etl::size(v); ++i) {
+    for (size_t i = 0; i < etl::size(v); ++i) {
         REQUIRE_EQUALS(v[i], *it);
         REQUIRE_DIRECT(it != end);
         ++it;
@@ -113,7 +113,7 @@ TEMPLATE_TEST_CASE_2("direct_access/reshape", "direct_access", Z, double, float)
     REQUIRE_DIRECT(std::is_pointer<decltype(it)>::value);
     REQUIRE_DIRECT(std::is_pointer<decltype(end)>::value);
 
-    for (std::size_t i = 0; i < etl::size(v); ++i) {
+    for (size_t i = 0; i < etl::size(v); ++i) {
         REQUIRE_EQUALS(v[i], *it);
         REQUIRE_DIRECT(it != end);
         ++it;
@@ -134,7 +134,7 @@ TEMPLATE_TEST_CASE_2("direct_access/reshape_dyn", "direct_access", Z, double, fl
     REQUIRE_DIRECT(std::is_pointer<decltype(it)>::value);
     REQUIRE_DIRECT(std::is_pointer<decltype(end)>::value);
 
-    for (std::size_t i = 0; i < etl::size(v); ++i) {
+    for (size_t i = 0; i < etl::size(v); ++i) {
         REQUIRE_EQUALS(v[i], *it);
         REQUIRE_DIRECT(it != end);
         ++it;
@@ -155,7 +155,7 @@ TEMPLATE_TEST_CASE_2("direct_access/dim_view", "direct_access", Z, double, float
     REQUIRE_DIRECT(std::is_pointer<decltype(it)>::value);
     REQUIRE_DIRECT(std::is_pointer<decltype(end)>::value);
 
-    for (std::size_t i = 0; i < etl::size(v); ++i) {
+    for (size_t i = 0; i < etl::size(v); ++i) {
         REQUIRE_EQUALS(v[i], *it);
         REQUIRE_DIRECT(it != end);
         ++it;

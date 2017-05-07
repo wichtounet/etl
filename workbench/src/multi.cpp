@@ -12,10 +12,10 @@
 #include "etl/etl.hpp"
 
 template <typename A, typename M>
-void im2col_direct_tr_multi(M& m, A&& sub, std::size_t k1, std::size_t k2) {
-    const std::size_t N  = etl::dim<0>(sub);
-    const std::size_t i1 = etl::dim<1>(sub);
-    const std::size_t i2 = etl::dim<2>(sub);
+void im2col_direct_tr_multi(M& m, A&& sub, size_t k1, size_t k2) {
+    const size_t N  = etl::dim<0>(sub);
+    const size_t i1 = etl::dim<1>(sub);
+    const size_t i2 = etl::dim<2>(sub);
 
     const auto height = i1 - k1 + 1;
     const auto width  = i2 - k2 + 1;
@@ -23,15 +23,15 @@ void im2col_direct_tr_multi(M& m, A&& sub, std::size_t k1, std::size_t k2) {
     const auto mm = m.memory_start();
     const auto ss = sub.memory_start();
 
-    for (std::size_t w = 0; w < k1 * k2; ++w) {
-        const std::size_t w_source = w % k2;
-        const std::size_t h_source = (w / k2) % k1;
-        const std::size_t c_source = w / (k1 * k2);
+    for (size_t w = 0; w < k1 * k2; ++w) {
+        const size_t w_source = w % k2;
+        const size_t h_source = (w / k2) % k1;
+        const size_t c_source = w / (k1 * k2);
 
-        for (std::size_t i = 0; i < N; ++i) {
-            for (std::size_t h = 0; h < height; ++h) {
-                const std::size_t block_source = ((c_source * i1 + h + h_source) * i2 + w_source) + (i) * (i1 * i2);
-                const std::size_t block_target = (w * N + i) * (height * width) + h * width;
+        for (size_t i = 0; i < N; ++i) {
+            for (size_t h = 0; h < height; ++h) {
+                const size_t block_source = ((c_source * i1 + h + h_source) * i2 + w_source) + (i) * (i1 * i2);
+                const size_t block_target = (w * N + i) * (height * width) + h * width;
 
                 etl::direct_copy_n(ss + block_source, mm + block_target, width);
             }

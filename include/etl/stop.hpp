@@ -31,7 +31,7 @@ struct build_matrix_type;
 /*!
  * \copydoc build_matrix_type
  */
-template <typename M, std::size_t... I>
+template <typename M, size_t... I>
 struct build_matrix_type<M, std::index_sequence<I...>> {
     using type = fast_dyn_matrix<value_t<M>, etl_traits<M>::template dim<I>()...>; ///< The fast matrix type
 };

@@ -76,7 +76,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::standard_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
-        for (std::size_t i = 0; i < etl::size(result); ++i) {
+        for (size_t i = 0; i < etl::size(result); ++i) {
             result[i] = expr.read_flat(i);
         }
     }
@@ -153,7 +153,7 @@ namespace standard_evaluator {
 
             auto batch = n / threads;
 
-            for (std::size_t t = 0; t < threads - 1; ++t) {
+            for (size_t t = 0; t < threads - 1; ++t) {
                 thread_engine::schedule(Fun<RS, ES>(memory_slice(result, t * batch, (t + 1) * batch), memory_slice(expr, t * batch, (t + 1) * batch)));
             }
 
@@ -195,7 +195,7 @@ namespace standard_evaluator {
 
             auto batch = n / threads;
 
-            for (std::size_t t = 0; t < threads - 1; ++t) {
+            for (size_t t = 0; t < threads - 1; ++t) {
                 thread_engine::schedule(Fun<V, RS, ES>(memory_slice(result, t * batch, (t + 1) * batch), memory_slice(expr, t * batch, (t + 1) * batch)));
             }
 
@@ -264,7 +264,7 @@ namespace standard_evaluator {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
 
-        for (std::size_t i = 0; i < etl::size(result); ++i) {
+        for (size_t i = 0; i < etl::size(result); ++i) {
             result[i] += expr[i];
         }
 
@@ -332,7 +332,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        for (std::size_t i = 0; i < etl::size(result); ++i) {
+        for (size_t i = 0; i < etl::size(result); ++i) {
             result[i] -= expr[i];
         }
 
@@ -400,7 +400,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        for (std::size_t i = 0; i < etl::size(result); ++i) {
+        for (size_t i = 0; i < etl::size(result); ++i) {
             result[i] *= expr[i];
         }
 
@@ -468,7 +468,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        for (std::size_t i = 0; i < etl::size(result); ++i) {
+        for (size_t i = 0; i < etl::size(result); ++i) {
             result[i] /= expr[i];
         }
 
@@ -536,7 +536,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        for (std::size_t i = 0; i < etl::size(result); ++i) {
+        for (size_t i = 0; i < etl::size(result); ++i) {
             result[i] %= expr[i];
         }
 

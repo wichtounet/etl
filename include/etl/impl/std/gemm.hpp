@@ -26,17 +26,17 @@ static void mm_mul(A&& a, B&& b, C&& c) {
     c = 0;
 
     if (row_major) {
-        for (std::size_t i = 0; i < rows(a); i++) {
-            for (std::size_t k = 0; k < columns(a); k++) {
-                for (std::size_t j = 0; j < columns(b); j++) {
+        for (size_t i = 0; i < rows(a); i++) {
+            for (size_t k = 0; k < columns(a); k++) {
+                for (size_t j = 0; j < columns(b); j++) {
                     c(i, j) += a(i, k) * b(k, j);
                 }
             }
         }
     } else {
-        for (std::size_t j = 0; j < columns(b); j++) {
-            for (std::size_t k = 0; k < columns(a); k++) {
-                for (std::size_t i = 0; i < rows(a); i++) {
+        for (size_t j = 0; j < columns(b); j++) {
+            for (size_t k = 0; k < columns(a); k++) {
+                for (size_t i = 0; i < rows(a); i++) {
                     c(i, j) += a(i, k) * b(k, j);
                 }
             }
@@ -109,15 +109,15 @@ static void vm_mul(A&& a, B&& b, C&& c) {
     c = 0;
 
     if (row_major) {
-        for (std::size_t k = 0; k < etl::dim<0>(a); k++) {
-            for (std::size_t j = 0; j < columns(b); j++) {
+        for (size_t k = 0; k < etl::dim<0>(a); k++) {
+            for (size_t j = 0; j < columns(b); j++) {
                 //optimized compound add of the multiplication
                 add_mul(c(j), a(k), b(k, j));
             }
         }
     } else {
-        for (std::size_t j = 0; j < columns(b); j++) {
-            for (std::size_t k = 0; k < etl::dim<0>(a); k++) {
+        for (size_t j = 0; j < columns(b); j++) {
+            for (size_t k = 0; k < etl::dim<0>(a); k++) {
                 //optimized compound add of the multiplication
                 add_mul(c(j), a(k), b(k, j));
             }
@@ -138,15 +138,15 @@ static void mv_mul(A&& a, B&& b, C&& c) {
     c = 0;
 
     if (row_major) {
-        for (std::size_t i = 0; i < rows(a); i++) {
-            for (std::size_t k = 0; k < columns(a); k++) {
+        for (size_t i = 0; i < rows(a); i++) {
+            for (size_t k = 0; k < columns(a); k++) {
                 //optimized compound add of the multiplication
                 add_mul(c(i), a(i, k), b(k));
             }
         }
     } else {
-        for (std::size_t k = 0; k < columns(a); k++) {
-            for (std::size_t i = 0; i < rows(a); i++) {
+        for (size_t k = 0; k < columns(a); k++) {
+            for (size_t i = 0; i < rows(a); i++) {
                 //optimized compound add of the multiplication
                 add_mul(c(i), a(i, k), b(k));
             }

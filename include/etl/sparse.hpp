@@ -26,9 +26,9 @@ struct sparse_reference {
     using const_raw_reference_type = std::add_const_t<value_type>&;    ///< A raw const reference type
 
     matrix_type& matrix;  ///< Reference to the matrix
-    std::size_t i;        ///< The first index
-    std::size_t j;        ///< The second index
-    std::size_t n;        ///< hint
+    size_t i;        ///< The first index
+    size_t j;        ///< The second index
+    size_t n;        ///< hint
     raw_pointer_type ptr; ///< Pointer to the element
 
     /*!
@@ -37,7 +37,7 @@ struct sparse_reference {
      * \param i The index i of the first dimension
      * \param j The index j of the second dimension
      */
-    sparse_reference(matrix_type& matrix, std::size_t i, std::size_t j)
+    sparse_reference(matrix_type& matrix, size_t i, size_t j)
             : matrix(matrix), i(i), j(j) {
         n = matrix.find_n(i, j);
         matrix.unsafe_set_hint(i, j, n, matrix.get_hint(i, j, n));
@@ -202,7 +202,7 @@ bool is_non_zero(T value) {
  * \tparam SS The storage type
  * \tparam D The number of dimensions
  */
-template <typename T, sparse_storage SS, std::size_t D>
+template <typename T, sparse_storage SS, size_t D>
 struct sparse_matrix_impl;
 
 /*!
@@ -210,22 +210,22 @@ struct sparse_matrix_impl;
  * \tparam T The type of value
  * \tparam D The number of dimensions
  */
-template <typename T, std::size_t D>
+template <typename T, size_t D>
 struct sparse_matrix_impl<T, sparse_storage::COO, D> final : dyn_base<T, D> {
-    static constexpr std::size_t n_dimensions      = D;                                      ///< The number of dimensions
+    static constexpr size_t n_dimensions      = D;                                      ///< The number of dimensions
     static constexpr sparse_storage storage_format = sparse_storage::COO;                    ///< The sparse storage scheme
     static constexpr order storage_order           = order::RowMajor;                        ///< The storage order
-    static constexpr std::size_t alignment         = default_intrinsic_traits<T>::alignment; ///< The alignment
+    static constexpr size_t alignment         = default_intrinsic_traits<T>::alignment; ///< The alignment
 
     using base_type              = dyn_base<T, D>;                                   ///< The base type
     using this_type              = sparse_matrix_impl<T, sparse_storage::COO, D>;    ///< this type
     using reference_type         = sparse_detail::sparse_reference<this_type>;       ///< The type of reference returned by the functions
     using const_reference_type   = sparse_detail::sparse_reference<const this_type>; ///< The type of const reference returned by the functions
     using value_type             = T;                                                ///< The type of value returned by the function
-    using dimension_storage_impl = std::array<std::size_t, n_dimensions>;            ///< The type used to store the dimensions
+    using dimension_storage_impl = std::array<size_t, n_dimensions>;            ///< The type used to store the dimensions
     using memory_type            = value_type*;                                      ///< The memory type
     using const_memory_type      = const value_type*;                                ///< The const memory type
-    using index_type             = std::size_t;                                      ///< The type used to store the COO index
+    using index_type             = size_t;                                      ///< The type used to store the COO index
     using index_memory_type      = index_type*;                                      ///< The memory type to the COO index
 
     friend struct sparse_detail::sparse_reference<this_type>;
@@ -239,7 +239,7 @@ private:
     memory_type _memory;          ///< The memory
     index_memory_type _row_index; ///< The row index
     index_memory_type _col_index; ///< The column index
-    std::size_t nnz;              ///< The number of nonzeros in the matrix
+    size_t nnz;              ///< The number of nonzeros in the matrix
 
     using base_type::release;
     using base_type::allocate;
@@ -265,10 +265,10 @@ private:
             _col_index = base_type::template allocate<index_type>(nnz);
 
             auto it       = iterable.begin();
-            std::size_t n = 0;
+            size_t n = 0;
 
-            for (std::size_t i = 0; i < rows(); ++i) {
-                for (std::size_t j = 0; j < columns(); ++j) {
+            for (size_t i = 0; i < rows(); ++i) {
+                for (size_t j = 0; j < columns(); ++j) {
                     if (sparse_detail::is_non_zero(*it)) {
                         _memory[n]    = *it;
                         _row_index[n] = i;
@@ -285,7 +285,7 @@ private:
     /*!
      * \brief Reserve enough space to put a value in position hint
      */
-    void reserve_hint(std::size_t hint) {
+    void reserve_hint(size_t hint) {
         cpp_assert(hint < nnz + 1, "Invalid hint for reserve_hint");
 
         if (_memory) {
@@ -331,7 +331,7 @@ private:
     /*!
      * \brief Erase the value in position n
      */
-    void erase_hint(std::size_t n) {
+    void erase_hint(size_t n) {
         cpp_assert(nnz > 0, "Invalid erase_hint call (no non-zero elements");
 
         if (nnz == 1) {
@@ -378,8 +378,8 @@ private:
      * if the position is not found. Can also return a position
      * already taken if its place of insertion is already taken.
      */
-    std::size_t find_n(std::size_t i, std::size_t j) const noexcept {
-        for (std::size_t n = 0; n < nnz; ++n) {
+    size_t find_n(size_t i, size_t j) const noexcept {
+        for (size_t n = 0; n < nnz; ++n) {
             //The value exists, modify it
             if (_row_index[n] == i && _col_index[n] == j) {
                 return n;
@@ -398,7 +398,7 @@ private:
      * \brief Set the value at index (i,j) and position n
      * \param value The new value to set
      */
-    void unsafe_set_hint(std::size_t i, std::size_t j, std::size_t n, value_type value) {
+    void unsafe_set_hint(size_t i, size_t j, size_t n, value_type value) {
         //The value exists, modify it
         if (n < nnz && _row_index[n] == i && _col_index[n] == j) {
             _memory[n] = value;
@@ -416,7 +416,7 @@ private:
      * \brief Get the value at index (i,j) and position n
      */
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
-    value_type get_hint(std::size_t i, std::size_t j, std::size_t n) const noexcept {
+    value_type get_hint(size_t i, size_t j, size_t n) const noexcept {
         if (n < nnz && _row_index[n] == i && _col_index[n] == j) {
             return _memory[n];
         }
@@ -427,7 +427,7 @@ private:
     /*!
      * \brief Set the value at index (i,j) and position n.
      */
-    void set_hint(std::size_t i, std::size_t j, std::size_t n, value_type value) {
+    void set_hint(size_t i, size_t j, size_t n, value_type value) {
         if (n < nnz) {
             if (_row_index[n] == i && _col_index[n] == j) {
                 //At this point, there is already a value for (i,j)
@@ -456,14 +456,14 @@ private:
     /*!
      * \brief Get a direct reference to the element at position n
      */
-    value_type& unsafe_ref_hint(std::size_t n) {
+    value_type& unsafe_ref_hint(size_t n) {
         return _memory[n];
     }
 
     /*!
      * \brief Get a direct const reference to the element at position n
      */
-    const value_type& unsafe_ref_hint(std::size_t n) const {
+    const value_type& unsafe_ref_hint(size_t n) const {
         return _memory[n];
     }
 
@@ -488,9 +488,9 @@ public:
      */
     template <typename... S, cpp_enable_if(
                                  (sizeof...(S) == D),
-                                 cpp::all_convertible_to<std::size_t, S...>::value,
+                                 cpp::all_convertible_to<size_t, S...>::value,
                                  cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value)>
-    explicit sparse_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<std::size_t>(sizes)...}}),
+    explicit sparse_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<size_t>(sizes)...}}),
                                                        _memory(nullptr),
                                                        _row_index(nullptr),
                                                        _col_index(nullptr),
@@ -549,7 +549,7 @@ public:
      *
      * \return The value at the (i,j) position.
      */
-    value_type get(std::size_t i, std::size_t j) const noexcept(assert_nothrow) {
+    value_type get(size_t i, size_t j) const noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
@@ -563,7 +563,7 @@ public:
      * \param j The second index
      * \return a sparse reference (proxy reference) to the element at position (i,j)
      */
-    reference_type operator()(std::size_t i, std::size_t j) noexcept(assert_nothrow) {
+    reference_type operator()(size_t i, size_t j) noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
@@ -576,7 +576,7 @@ public:
      * \param j The second index
      * \return a sparse reference (proxy reference) to the element at position (i,j)
      */
-    const_reference_type operator()(std::size_t i, std::size_t j) const noexcept(assert_nothrow) {
+    const_reference_type operator()(size_t i, size_t j) const noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
@@ -590,7 +590,7 @@ public:
      * \param n The index
      * \return a reference to the element at the given index.
      */
-    reference_type operator[](std::size_t n) noexcept(assert_nothrow) {
+    reference_type operator[](size_t n) noexcept(assert_nothrow) {
         cpp_assert(n < size(), "Out of bounds");
 
         return {*this, n / columns(), n % columns()};
@@ -603,7 +603,7 @@ public:
      * \param n The index
      * \return a reference to the element at the given index.
      */
-    const_reference_type operator[](std::size_t n) const noexcept(assert_nothrow) {
+    const_reference_type operator[](size_t n) const noexcept(assert_nothrow) {
         cpp_assert(n < size(), "Out of bounds");
 
         return {*this, n / columns(), n % columns()};
@@ -616,7 +616,7 @@ public:
      * \return the value at the given index.
      */
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
-    value_type read_flat(std::size_t n) const noexcept {
+    value_type read_flat(size_t n) const noexcept {
         return get(n / columns(), n % columns());
     }
 
@@ -627,7 +627,7 @@ public:
      *
      * \return The number of non zeros entries in the sparse matrix.
      */
-    std::size_t non_zeros() const noexcept {
+    size_t non_zeros() const noexcept {
         return nnz;
     }
 
@@ -637,7 +637,7 @@ public:
      * \param j The second index
      * \param value The new value
      */
-    void set(std::size_t i, std::size_t j, value_type value) {
+    void set(size_t i, size_t j, value_type value) {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
@@ -656,7 +656,7 @@ public:
      * \param j The second index
      * \param value The new value
      */
-    void unsafe_set(std::size_t i, std::size_t j, value_type value) {
+    void unsafe_set(size_t i, size_t j, value_type value) {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
@@ -670,7 +670,7 @@ public:
      * \param i The first index
      * \param j The second index
      */
-    void erase(std::size_t i, std::size_t j) {
+    void erase(size_t i, size_t j) {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
@@ -732,7 +732,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const sparse_matrix_impl& matrix) {
         os << "SM[" << matrix.dim(0);
 
-        for (std::size_t i = 1; i < D; ++i) {
+        for (size_t i = 1; i < D; ++i) {
             os << "," << matrix.dim(i);
         }
 

@@ -53,7 +53,7 @@ public:
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type operator[](std::size_t i) const {
+    value_type operator[](size_t i) const {
         cpp_unused(i);
         return generator();
     }
@@ -64,7 +64,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const {
+    value_type read_flat(size_t i) const {
         cpp_unused(i);
         return generator();
     }
@@ -206,7 +206,7 @@ struct etl_traits<etl::generator_expr<Generator>> {
     /*!
      * \brief Return the size of the expression
      */
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return 0;
     }
 };

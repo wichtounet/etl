@@ -975,8 +975,8 @@ auto relu_derivative(const E& value) -> detail::unary_helper<E, relu_derivative_
  * \tparam D The dimension to consider
  * \return a view representing the ith Dth dimension.
  */
-template <std::size_t D, typename E>
-auto dim(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, D>> {
+template <size_t D, typename E>
+auto dim(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, D>> {
     static_assert(is_etl_expr<E>::value, "etl::dim can only be used on ETL expressions");
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, D>>{{value, i}};
 }
@@ -988,7 +988,7 @@ auto dim(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail
  * \return a view expression representing the ith row of the given expression
  */
 template <typename E>
-auto row(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 1>> {
+auto row(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 1>> {
     static_assert(is_etl_expr<E>::value, "etl::row can only be used on ETL expressions");
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 1>>{{value, i}};
 }
@@ -1000,7 +1000,7 @@ auto row(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail
  * \return a view expression representing the ith column of the given expression
  */
 template <typename E>
-auto col(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 2>> {
+auto col(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 2>> {
     static_assert(is_etl_expr<E>::value, "etl::col can only be used on ETL expressions");
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 2>>{{value, i}};
 }
@@ -1012,7 +1012,7 @@ auto col(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail
  * \return a view expression representing a sub dimensional view of the given expression
  */
 template <typename E>
-auto sub(E&& value, std::size_t i) -> sub_view<detail::build_identity_type<E>, false> {
+auto sub(E&& value, size_t i) -> sub_view<detail::build_identity_type<E>, false> {
     static_assert(is_etl_expr<E>::value, "etl::sub can only be used on ETL expressions");
     static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Cannot use sub on vector");
     return {value, i};
@@ -1026,7 +1026,7 @@ auto sub(E&& value, std::size_t i) -> sub_view<detail::build_identity_type<E>, f
  * \return a view expression representing a sub dimensional view of the given expression
  */
 template <typename E>
-auto slice(E&& value, std::size_t first, std::size_t last) -> slice_view<detail::build_identity_type<E>> {
+auto slice(E&& value, size_t first, size_t last) -> slice_view<detail::build_identity_type<E>> {
     static_assert(is_etl_expr<E>::value, "etl::slice can only be used on ETL expressions");
     return {value, first, last};
 }
@@ -1039,7 +1039,7 @@ auto slice(E&& value, std::size_t first, std::size_t last) -> slice_view<detail:
  * \return a view expression representing a sub dimensional view of the given expression
  */
 template <typename E>
-auto memory_slice(E&& value, std::size_t first, std::size_t last) -> detail::identity_helper<E, memory_slice_view<detail::build_identity_type<E>>> {
+auto memory_slice(E&& value, size_t first, size_t last) -> detail::identity_helper<E, memory_slice_view<detail::build_identity_type<E>>> {
     static_assert(is_etl_expr<E>::value, "etl::memory_slice can only be used on ETL expressions");
     return detail::identity_helper<E, memory_slice_view<detail::build_identity_type<E>>>{{value, first, last}};
 }
@@ -1050,7 +1050,7 @@ auto memory_slice(E&& value, std::size_t first, std::size_t last) -> detail::ide
  * \tparam Dims the reshape dimensions
  * \return a view expression representing the same expression with a different shape
  */
-template <std::size_t... Dims, typename E>
+template <size_t... Dims, typename E>
 auto reshape(E&& value) -> fast_matrix_view<detail::build_identity_type<E>, all_dma<E>::value, Dims...> {
     static_assert(is_etl_expr<E>::value, "etl::reshape can only be used on ETL expressions");
     cpp_assert(decay_traits<E>::is_generator || size(value) == mul_all<Dims...>::value, "Invalid size for reshape");
@@ -1084,7 +1084,7 @@ auto reshape(E&& value, S... sizes) -> dyn_matrix_view<detail::build_identity_ty
  * \return a virtual view expression representing the square magic matrix
  */
 template <typename D = double>
-auto magic(std::size_t i) -> detail::virtual_helper<D, magic_view<D>> {
+auto magic(size_t i) -> detail::virtual_helper<D, magic_view<D>> {
     return detail::virtual_helper<D, magic_view<D>>{magic_view<D>{i}};
 }
 
@@ -1093,7 +1093,7 @@ auto magic(std::size_t i) -> detail::virtual_helper<D, magic_view<D>> {
  * \tparam N The size of the matrix (one side)
  * \return a virtual view expression representing the square magic matrix
  */
-template <std::size_t N, typename D = double>
+template <size_t N, typename D = double>
 auto magic() -> detail::virtual_helper<D, fast_magic_view<D, N>> {
     return detail::virtual_helper<D, fast_magic_view<D, N>>{{}};
 }
@@ -1107,7 +1107,7 @@ auto magic() -> detail::virtual_helper<D, fast_magic_view<D, N>> {
  * \tparam D The remaining repeated dimensions
  * \return an expression representing the repeated expression
  */
-template <std::size_t D1, std::size_t... D, typename E>
+template <size_t D1, size_t... D, typename E>
 auto rep(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep can only be used on ETL expressions");
     return unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_r_transformer<detail::build_type<E>, D1, D...>(value)};
@@ -1120,7 +1120,7 @@ auto rep(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<detail::build_ty
  * \tparam D The remaining repeated dimensions
  * \return an expression representing the repeated expression
  */
-template <std::size_t D1, std::size_t... D, typename E>
+template <size_t D1, size_t... D, typename E>
 auto rep_r(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep_r can only be used on ETL expressions");
     return unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_r_transformer<detail::build_type<E>, D1, D...>(value)};
@@ -1133,7 +1133,7 @@ auto rep_r(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<detail::build_
  * \tparam D The remaining repeated dimensions
  * \return an expression representing the repeated expression
  */
-template <std::size_t D1, std::size_t... D, typename E>
+template <size_t D1, size_t... D, typename E>
 auto rep_l(E&& value) -> unary_expr<value_t<E>, rep_l_transformer<detail::build_type<E>, D1, D...>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep_l can only be used on ETL expressions");
     return unary_expr<value_t<E>, rep_l_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_l_transformer<detail::build_type<E>, D1, D...>(value)};
@@ -1147,10 +1147,10 @@ auto rep_l(E&& value) -> unary_expr<value_t<E>, rep_l_transformer<detail::build_
  * \return an expression representing the repeated expression
  */
 template <typename... D, typename E>
-auto rep(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
+auto rep(E&& value, size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep can only be used on ETL expressions");
     return unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
-        dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
+        dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<size_t>(d)...}})};
 }
 
 /*!
@@ -1161,10 +1161,10 @@ auto rep(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_
  * \return an expression representing the repeated expression
  */
 template <typename... D, typename E>
-auto rep_r(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
+auto rep_r(E&& value, size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep_r can only be used on ETL expressions");
     return unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
-        dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
+        dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<size_t>(d)...}})};
 }
 
 /*!
@@ -1175,10 +1175,10 @@ auto rep_r(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_
  * \return an expression representing the repeated expression
  */
 template <typename... D, typename E>
-auto rep_l(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
+auto rep_l(E&& value, size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep_l can only be used on ETL expressions");
     return unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
-        dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
+        dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<size_t>(d)...}})};
 }
 
 /*!

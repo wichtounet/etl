@@ -24,7 +24,7 @@ TEMPLATE_TEST_CASE_2("column_major/1", "[fast][cm]", Z, int, long) {
     REQUIRE_EQUALS(test_matrix.dim(0), 2UL);
     REQUIRE_EQUALS(test_matrix.dim(1), 3UL);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         test_matrix[i] = i + 1;
     }
 
@@ -48,7 +48,7 @@ TEMPLATE_TEST_CASE_2("column_major/2", "[dyn][cm]", Z, int, long) {
     REQUIRE_EQUALS(test_matrix.dim(0), 2UL);
     REQUIRE_EQUALS(test_matrix.dim(1), 3UL);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         test_matrix[i] = i + 1;
     }
 
@@ -63,7 +63,7 @@ TEMPLATE_TEST_CASE_2("column_major/2", "[dyn][cm]", Z, int, long) {
 TEMPLATE_TEST_CASE_2("column_major/3", "[fast][cm]", Z, int, long) {
     etl::fast_matrix_cm<Z, 2, 3, 4> test_matrix;
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         test_matrix[i] = i + 1;
     }
 
@@ -96,7 +96,7 @@ TEMPLATE_TEST_CASE_2("column_major/3", "[fast][cm]", Z, int, long) {
 TEMPLATE_TEST_CASE_2("column_major/4", "[dyn][cm]", Z, int, long) {
     etl::dyn_matrix_cm<Z, 3> test_matrix(2, 3, 4);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         test_matrix[i] = i + 1;
     }
 
@@ -242,9 +242,9 @@ GEMM_TEST_CASE("column_major/gemm/1", "[cm][gevm]") {
 
     c_ref = 0;
 
-    for (std::size_t j = 0; j < 64; j++) {
-        for (std::size_t k = 0; k < 64; k++) {
-            for (std::size_t i = 0; i < 64; i++) {
+    for (size_t j = 0; j < 64; j++) {
+        for (size_t k = 0; k < 64; k++) {
+            for (size_t i = 0; i < 64; i++) {
                 c_ref(i, j) += a(i, k) * b(k, j);
             }
         }

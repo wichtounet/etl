@@ -106,7 +106,7 @@ public:
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type operator[](std::size_t i) const {
+    value_type operator[](size_t i) const {
         return result()[i];
     }
 
@@ -116,7 +116,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const {
+    value_type read_flat(size_t i) const {
         return result().read_flat(i);
     }
 
@@ -127,7 +127,7 @@ public:
      */
     template <typename... S, cpp_enable_if(sizeof...(S) == safe_dimensions<derived_t>::value)>
     value_type operator()(S... args) const {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
         return result()(args...);
     }
@@ -138,7 +138,7 @@ public:
      * \return a sub view of the matrix at position i.
      */
     template <typename DD = D, cpp_enable_if((safe_dimensions<DD>::value > 1))>
-    auto operator()(std::size_t i) const {
+    auto operator()(size_t i) const {
         return sub(as_derived(), i);
     }
 
@@ -148,7 +148,7 @@ public:
      * \param last The last index to use
      * \return a slice view of the matrix at position i.
      */
-    auto slice(std::size_t first, std::size_t last) noexcept {
+    auto slice(size_t first, size_t last) noexcept {
         return etl::slice(*this, first, last);
     }
 
@@ -158,7 +158,7 @@ public:
      * \param last The last index to use
      * \return a slice view of the matrix at position i.
      */
-    auto slice(std::size_t first, std::size_t last) const noexcept {
+    auto slice(size_t first, size_t last) const noexcept {
         return etl::slice(*this, first, last);
     }
 
@@ -169,7 +169,7 @@ public:
      * \return a vector containing several results of the expression
      */
     template <typename VV = default_vec>
-    vec_type<VV> load(std::size_t i) const noexcept {
+    vec_type<VV> load(size_t i) const noexcept {
         return VV::loadu(memory_start() + i);
     }
 
@@ -180,7 +180,7 @@ public:
      * \return a vector containing several results of the expression
      */
     template <typename VV = default_vec>
-    vec_type<VV> loadu(std::size_t i) const noexcept {
+    vec_type<VV> loadu(size_t i) const noexcept {
         return VV::loadu(memory_start() + i);
     }
 
@@ -756,7 +756,7 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static size_t size(const expr_t& v) {
         return Op::size(v.a(), v.b());
     }
 
@@ -766,7 +766,7 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         return Op::dim(v.a(), v.b(), d);
     }
 
@@ -774,7 +774,7 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
      * \brief Returns the size of an expression of this fast type.
      * \returns the size of an expression of this fast type.
      */
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return Op::template size<a_t, b_t>();
     }
 
@@ -783,8 +783,8 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
      * \tparam D The dimension to get
      * \return the Dth dimension of an expression of this type
      */
-    template <std::size_t D>
-    static constexpr std::size_t dim() {
+    template <size_t D>
+    static constexpr size_t dim() {
         return Op::template dim<a_t, b_t, D>();
     }
 
@@ -792,7 +792,7 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return Op::dimensions();
     }
 };
@@ -836,7 +836,7 @@ struct etl_traits<etl::temporary_binary_expr_state<T, A, B, Op>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static size_t size(const expr_t& v) {
         return v.op.size(v.a(), v.b());
     }
 
@@ -846,7 +846,7 @@ struct etl_traits<etl::temporary_binary_expr_state<T, A, B, Op>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         return v.op.dim(v.a(), v.b(), d);
     }
 
@@ -854,7 +854,7 @@ struct etl_traits<etl::temporary_binary_expr_state<T, A, B, Op>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return Op::dimensions();
     }
 };

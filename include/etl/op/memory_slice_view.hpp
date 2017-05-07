@@ -30,8 +30,8 @@ struct memory_slice_view {
 private:
 
     T sub;                   ///< The Sub expression
-    const std::size_t first; ///< The index
-    const std::size_t last;  ///< The last index
+    const size_t first; ///< The index
+    const size_t last;  ///< The last index
 
     friend struct etl_traits<memory_slice_view>;
 
@@ -49,7 +49,7 @@ public:
      * \param first The first index
      * \param last The last index
      */
-    memory_slice_view(sub_type sub, std::size_t first, std::size_t last)
+    memory_slice_view(sub_type sub, size_t first, size_t last)
             : sub(sub), first(first), last(last) {}
 
     /*!
@@ -57,7 +57,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    const_return_type operator[](std::size_t j) const {
+    const_return_type operator[](size_t j) const {
         return sub[first + j];
     }
 
@@ -66,7 +66,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    return_type operator[](std::size_t j) {
+    return_type operator[](size_t j) {
         return sub[first + j];
     }
 
@@ -76,7 +76,7 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t j) const noexcept {
+    value_type read_flat(size_t j) const noexcept {
         return sub[first + j];
     }
 
@@ -87,7 +87,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto load(std::size_t x) const noexcept {
+    auto load(size_t x) const noexcept {
         return sub.template loadu<V>(x + first );
     }
 
@@ -98,7 +98,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto loadu(std::size_t x) const noexcept {
+    auto loadu(size_t x) const noexcept {
         return sub.template loadu<V>(x + first );
     }
 
@@ -109,7 +109,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void store(vec_type<V> in, std::size_t i) noexcept {
+    void store(vec_type<V> in, size_t i) noexcept {
         sub.template storeu<V>(in, first + i);
     }
 
@@ -120,7 +120,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void storeu(vec_type<V> in, std::size_t i) noexcept {
+    void storeu(vec_type<V> in, size_t i) noexcept {
         sub.template storeu<V>(in, first + i);
     }
 
@@ -131,7 +131,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t i) noexcept {
+    void stream(vec_type<V> in, size_t i) noexcept {
         sub.template storeu<V>(in, first + i);
     }
 
@@ -300,7 +300,7 @@ struct etl_traits<etl::memory_slice_view<T>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static size_t size(const expr_t& v) {
         return v.last - v.first;
     }
 
@@ -310,7 +310,7 @@ struct etl_traits<etl::memory_slice_view<T>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         cpp_unused(d);
         return v.last - v.first;
     }
@@ -319,7 +319,7 @@ struct etl_traits<etl::memory_slice_view<T>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 1;
     }
 };

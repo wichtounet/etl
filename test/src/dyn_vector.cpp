@@ -20,7 +20,7 @@ TEMPLATE_TEST_CASE_2("dyn_vector/init_1", "dyn_vector::dyn_vector(T)", Z, double
 
     REQUIRE_EQUALS(test_vector.size(), 4UL);
 
-    for (std::size_t i = 0; i < test_vector.size(); ++i) {
+    for (size_t i = 0; i < test_vector.size(); ++i) {
         REQUIRE_EQUALS(test_vector[i], Z(3.3));
         REQUIRE_EQUALS(test_vector(i), Z(3.3));
     }
@@ -33,7 +33,7 @@ TEMPLATE_TEST_CASE_2("dyn_vector/init_2", "dyn_vector::operator=(T)", Z, double,
 
     REQUIRE_EQUALS(test_vector.size(), 4UL);
 
-    for (std::size_t i = 0; i < test_vector.size(); ++i) {
+    for (size_t i = 0; i < test_vector.size(); ++i) {
         REQUIRE_EQUALS(test_vector[i], Z(3.3));
         REQUIRE_EQUALS(test_vector(i), Z(3.3));
     }

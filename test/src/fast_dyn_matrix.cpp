@@ -13,7 +13,7 @@ TEMPLATE_TEST_CASE_2("fast_dyn_matrix/init_1", "fast_dyn_matrix::fast_dyn_matrix
 
     REQUIRE_EQUALS(test_matrix.size(), 4UL);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE_EQUALS(test_matrix[i], Z(3.3));
     }
 }
@@ -25,7 +25,7 @@ TEMPLATE_TEST_CASE_2("fast_dyn_matrix/init_2", "fast_dyn_matrix::operator=(T)", 
 
     REQUIRE_EQUALS(test_matrix.size(), 4UL);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE_EQUALS(test_matrix[i], Z(3.3));
     }
 }
@@ -195,7 +195,7 @@ TEMPLATE_TEST_CASE_2("fast_dyn_matrix/special_1", "", Z, float, double) {
 
     REQUIRE_EQUALS(a.size(), 4UL);
 
-    for (std::size_t i = 0; i < a.size(); ++i) {
+    for (size_t i = 0; i < a.size(); ++i) {
         REQUIRE_EQUALS(a[i], Z(4.4));
     }
 
@@ -203,7 +203,7 @@ TEMPLATE_TEST_CASE_2("fast_dyn_matrix/special_1", "", Z, float, double) {
 
     b = a;
 
-    for (std::size_t i = 0; i < a.size(); ++i) {
+    for (size_t i = 0; i < a.size(); ++i) {
         REQUIRE_EQUALS(b[i], Z(3.3));
     }
 }
@@ -216,7 +216,7 @@ TEMPLATE_TEST_CASE_2("fast_dyn_matrix/special_2", "", Z, float, double) {
 
     REQUIRE_EQUALS(a.size(), 12UL);
 
-    for (std::size_t i = 0; i < a.size(); ++i) {
+    for (size_t i = 0; i < a.size(); ++i) {
         REQUIRE_EQUALS(a[i], Z(4.4));
     }
 
@@ -224,7 +224,7 @@ TEMPLATE_TEST_CASE_2("fast_dyn_matrix/special_2", "", Z, float, double) {
 
     b = a;
 
-    for (std::size_t i = 0; i < b.size(); ++i) {
+    for (size_t i = 0; i < b.size(); ++i) {
         REQUIRE_EQUALS(b[i], Z(3.3));
     }
 }

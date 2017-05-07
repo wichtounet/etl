@@ -21,7 +21,7 @@ std::string to_string(T&& m) {
     etl::force(m);
 
     std::string v = "[";
-    for (std::size_t i = 0; i < etl::dim<0>(m); ++i) {
+    for (size_t i = 0; i < etl::dim<0>(m); ++i) {
         v += to_string(sub(m, i));
 
         if (i < etl::dim<0>(m) - 1) {
@@ -56,7 +56,7 @@ std::string to_octave(T&& m) {
         v = "[";
     }
 
-    for (std::size_t i = 0; i < etl::dim<0>(m); ++i) {
+    for (size_t i = 0; i < etl::dim<0>(m); ++i) {
         v += to_octave<true>(sub(m, i));
 
         if (i < etl::dim<0>(m) - 1) {
@@ -86,7 +86,7 @@ std::string to_octave(T&& m) {
     }
 
     std::string comma;
-    for (std::size_t j = 0; j < etl::dim<0>(m); ++j) {
+    for (size_t j = 0; j < etl::dim<0>(m); ++j) {
         v += comma + std::to_string(m(j));
         comma = ",";
     }

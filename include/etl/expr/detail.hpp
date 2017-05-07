@@ -34,7 +34,7 @@ struct fast_result_type_builder;
 /*!
  * \copydoc fast_result_type_builder
  */
-template <typename E, typename T, std::size_t... I, typename... Subs>
+template <typename E, typename T, size_t... I, typename... Subs>
 struct fast_result_type_builder<E, T, std::index_sequence<I...>, Subs...> {
     using value_type = T; ///< The value type
 
@@ -122,7 +122,7 @@ struct impl_expr {
      * \param subs The sub expressions
      * \return a pointer to the temporary
      */
-    template <typename... Subs, std::size_t... I>
+    template <typename... Subs, size_t... I>
     static result_type<Subs...>* dyn_allocate(std::index_sequence<I...> /*seq*/, Subs&&... subs) {
         return new result_type<Subs...>(derived_t::dim(subs..., I)...);
     }
@@ -173,7 +173,7 @@ struct dyn_impl_expr {
      * \param subs The sub expressions
      * \return a pointer to the temporary
      */
-    template <typename... Subs, std::size_t... I>
+    template <typename... Subs, size_t... I>
     result_type<Subs...>* dyn_allocate(std::index_sequence<I...> /*seq*/, Subs&&... subs) const {
         return new result_type<Subs...>(as_derived().dim(subs..., I)...);
     }

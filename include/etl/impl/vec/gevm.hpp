@@ -659,8 +659,8 @@ void gevm(A&& a, B&& b, C&& c) {
 
     c = 0;
 
-    for (std::size_t j = 0; j < columns(b); j++) {
-        for (std::size_t k = 0; k < etl::dim<0>(a); k++) {
+    for (size_t j = 0; j < columns(b); j++) {
+        for (size_t k = 0; k < etl::dim<0>(a); k++) {
             c(j) += a(k) * b(k, j);
         }
     }

@@ -32,7 +32,7 @@ void direct_copy(const S* first, const S* last, T* target) {
  * \param n The number of elements to copy
  */
 template <typename S, typename T>
-void direct_copy_n(const S* source, T* target, std::size_t n) {
+void direct_copy_n(const S* source, T* target, size_t n) {
     std::copy_n(source, n, target);
 }
 
@@ -54,7 +54,7 @@ void direct_fill(S* first, S* last, T value) {
  * \param value The value to fill the memory with
  */
 template <typename S, typename T>
-void direct_fill_n(S* first, std::size_t n, T value) {
+void direct_fill_n(S* first, size_t n, T value) {
     std::fill_n(first, n, value);
 }
 

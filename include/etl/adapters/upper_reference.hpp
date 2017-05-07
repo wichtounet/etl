@@ -30,8 +30,8 @@ struct upper_reference {
     using expr_t                   = M;                                ///< The upper triangular matrix
 
     matrix_type& matrix;   ///< Reference to the matrix
-    std::size_t i;         ///< The first index
-    std::size_t j;         ///< The second index
+    size_t i;         ///< The first index
+    size_t j;         ///< The second index
     value_type& value;     ///< Reference to the value
 
     /*!
@@ -40,7 +40,7 @@ struct upper_reference {
      * \param i The index i of the first dimension
      * \param j The index j of the second dimension
      */
-    upper_reference(matrix_type& matrix, std::size_t i, std::size_t j)
+    upper_reference(matrix_type& matrix, size_t i, size_t j)
             : matrix(matrix), i(i), j(j), value(matrix(i, j)) {
         //Nothing else to init
     }

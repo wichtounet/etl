@@ -58,7 +58,7 @@ struct temporary_binary_expr;
 template <typename T, typename AExpr, typename BExpr, typename Op>
 struct temporary_binary_expr_state;
 
-template <typename T, std::size_t D>
+template <typename T, size_t D>
 struct dim_view;
 
 template <typename T, bool Aligned, typename Enable = void>
@@ -70,7 +70,7 @@ struct slice_view;
 template <typename T>
 struct memory_slice_view;
 
-template <typename T, bool DMA, std::size_t... Dims>
+template <typename T, bool DMA, size_t... Dims>
 struct fast_matrix_view;
 
 template <typename T, size_t D, typename Enable = void>

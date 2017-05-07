@@ -29,8 +29,8 @@ struct hermitian_reference {
     using expr_t                   = M;                                ///< The hermitian matrix
 
     matrix_type& matrix;   ///< Reference to the matrix
-    std::size_t i;         ///< The first index
-    std::size_t j;         ///< The second index
+    size_t i;         ///< The first index
+    size_t j;         ///< The second index
     value_type& value;     ///< Reference to the value
     value_type& sym_value; ///< Reference to the symmetric value
 
@@ -40,7 +40,7 @@ struct hermitian_reference {
      * \param i The index i of the first dimension
      * \param j The index j of the second dimension
      */
-    hermitian_reference(matrix_type& matrix, std::size_t i, std::size_t j)
+    hermitian_reference(matrix_type& matrix, size_t i, size_t j)
             : matrix(matrix), i(i), j(j), value(matrix(i, j)), sym_value(matrix(j, i)) {
         //Nothing else to init
     }

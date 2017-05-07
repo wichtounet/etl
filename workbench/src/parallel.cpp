@@ -39,7 +39,7 @@ void randomize(T1& container, TT&... containers){
     randomize(containers...);
 }
 
-std::string duration_str(std::size_t duration_us){
+std::string duration_str(size_t duration_us){
     double duration = duration_us;
 
     if(duration > 1000 * 1000){
@@ -53,14 +53,14 @@ std::string duration_str(std::size_t duration_us){
 
 template<typename Functor, typename... T>
 void measure(const std::string& title, const std::string& reference, Functor&& functor, T&... references){
-    for(std::size_t i = 0; i < 100; ++i){
+    for(size_t i = 0; i < 100; ++i){
         randomize(references...);
         functor();
     }
 
-    std::size_t duration_acc = 0;
+    size_t duration_acc = 0;
 
-    for(std::size_t i = 0; i < 100; ++i){
+    for(size_t i = 0; i < 100; ++i){
         randomize(references...);
         auto start_time = timer_clock::now();
         functor();
@@ -72,20 +72,20 @@ void measure(const std::string& title, const std::string& reference, Functor&& f
     std::cout << title << " took " << duration_str(duration_acc) << " (reference: " << reference << ")\n";
 }
 
-void bench(std::size_t n){
+void bench(size_t n){
     etl::dyn_matrix<double, 1> a(n), b(n), c(n);
 
     randomize(a, b, c);
 
-    std::size_t duration_acc = 0;
+    size_t duration_acc = 0;
 
     auto steps = 100UL;
     auto rpt = 1000UL;
 
-    for(std::size_t i = 0; i < steps; ++i){
+    for(size_t i = 0; i < steps; ++i){
         auto start_time = timer_clock::now();
 
-        for(std::size_t i = 0; i < rpt; ++i){
+        for(size_t i = 0; i < rpt; ++i){
             c = a + b;
         }
 
@@ -102,7 +102,7 @@ void bench(std::size_t n){
 } //end of anonymous namespace
 
 int main(){
-    for(std::size_t n = 90000; n <= 110000; n += 10000){
+    for(size_t n = 90000; n <= 110000; n += 10000){
         bench( n );
     }
 

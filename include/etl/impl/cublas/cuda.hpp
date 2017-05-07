@@ -166,7 +166,7 @@ private:
  * \tparam E The type of the elements
  */
 template <typename E>
-auto cuda_allocate_only(std::size_t size) -> cuda_memory<E> {
+auto cuda_allocate_only(size_t size) -> cuda_memory<E> {
     E* memory;
 
     auto cuda_status = cudaMalloc(&memory, size * sizeof(E));
@@ -221,7 +221,7 @@ auto cuda_allocate_copy(const E& expr) -> cuda_memory<value_t<E>> {
  * \tparam E The type of the elements
  */
 template <typename E>
-auto cuda_allocate(E* ptr, std::size_t n, bool copy = false) -> cuda_memory<E> {
+auto cuda_allocate(E* ptr, size_t n, bool copy = false) -> cuda_memory<E> {
     E* memory;
 
     auto cuda_status = cudaMalloc(&memory, n * sizeof(E));
@@ -246,7 +246,7 @@ auto cuda_allocate(E* ptr, std::size_t n, bool copy = false) -> cuda_memory<E> {
  * \tparam E The type of the elements
  */
 template <typename T>
-auto cuda_allocate_copy(T* ptr, std::size_t n) -> cuda_memory<T> {
+auto cuda_allocate_copy(T* ptr, size_t n) -> cuda_memory<T> {
     return cuda_allocate(ptr, n, true);
 }
 

@@ -41,7 +41,7 @@ struct scalar {
      * \param d The index
      * \return a reference to the element at the given index.
      */
-    constexpr T operator[](std::size_t d) const noexcept {
+    constexpr T operator[](size_t d) const noexcept {
         return (void)d, value;
     }
 
@@ -51,7 +51,7 @@ struct scalar {
      * \param d The index
      * \return the value at the given index.
      */
-    constexpr T read_flat(std::size_t d) const noexcept {
+    constexpr T read_flat(size_t d) const noexcept {
         return (void)d, value;
     }
 
@@ -62,7 +62,7 @@ struct scalar {
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    constexpr vec_type<V> load(std::size_t d) const noexcept {
+    constexpr vec_type<V> load(size_t d) const noexcept {
         return (void)d, V::set(value);
     }
 
@@ -73,7 +73,7 @@ struct scalar {
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    constexpr vec_type<V> loadu(std::size_t d) const noexcept {
+    constexpr vec_type<V> loadu(size_t d) const noexcept {
         return (void)d, V::set(value);
     }
 
@@ -84,7 +84,7 @@ struct scalar {
      */
     template <typename... S>
     constexpr T operator()(__attribute__((unused)) S... args) const noexcept {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
         return value;
     }
@@ -209,7 +209,7 @@ struct etl_traits<etl::scalar<T>, void> {
     /*!
      * \brief Return the size of the expression
      */
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return 0;
     }
 };

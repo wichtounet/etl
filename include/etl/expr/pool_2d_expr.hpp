@@ -144,8 +144,8 @@ struct etl_traits<etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>> {
      * \brief Returns the DDth dimension of the expression
      * \return the DDth dimension of the expression
      */
-    template <std::size_t DD>
-    static constexpr std::size_t dim() {
+    template <size_t DD>
+    static constexpr size_t dim() {
         return DD == D - 2 ? (decay_traits<A>::template dim<DD>() - C1 + 2 * P1) / S1 + 1
              : DD == D - 1 ? (decay_traits<A>::template dim<DD>() - C2 + 2 * P2) / S2 + 1
                            : decay_traits<A>::template dim<DD>();
@@ -157,7 +157,7 @@ struct etl_traits<etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>> {
      * \param d The dimension to get
      * \return the dth dimension of the expression
      */
-    static std::size_t dim(const expr_t& e, std::size_t d) {
+    static size_t dim(const expr_t& e, size_t d) {
         if (d == D - 2) {
             return (etl::dim(e._a, d) - C1 + 2 * P1) / S1 + 1;
         } else if (d == D - 1){
@@ -172,7 +172,7 @@ struct etl_traits<etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>> {
      * \param e The sub expression
      * \return the size of the expression
      */
-    static std::size_t size(const expr_t& e) {
+    static size_t size(const expr_t& e) {
         size_t acc = 1;
         for (size_t i = 0; i < D; ++i) {
             acc *= dim(e, i);
@@ -193,7 +193,7 @@ struct etl_traits<etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>> {
      * \brief Returns the size of the expression
      * \return the size of the expression
      */
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return size_mul(std::make_index_sequence<D>());
     }
 
@@ -201,7 +201,7 @@ struct etl_traits<etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>> {
      * \brief Returns the number of dimensions of the expression
      * \return the number of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return D;
     }
 };

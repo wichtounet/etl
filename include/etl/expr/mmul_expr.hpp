@@ -172,7 +172,7 @@ struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>, T> {
      * \return the size of the expression
      */
     template <typename A, typename B>
-    static std::size_t size(const A& a, const B& b) {
+    static size_t size(const A& a, const B& b) {
         return etl::dim<0>(a) * etl::dim<1>(b);
     }
 
@@ -184,7 +184,7 @@ struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>, T> {
      * \return the dth dimension of the expression
      */
     template <typename A, typename B>
-    static std::size_t dim(const A& a, const B& b, std::size_t d) {
+    static size_t dim(const A& a, const B& b, size_t d) {
         if (d == 0) {
             return etl::dim<0>(a);
         } else {
@@ -197,7 +197,7 @@ struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>, T> {
      * \return the size of the expression
      */
     template <typename A, typename B>
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return etl_traits<A>::template dim<0>() * etl_traits<B>::template dim<1>();
     }
 
@@ -214,8 +214,8 @@ struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>, T> {
      * \brief Returns the Dth dimension of the expression
      * \return the Dth dimension of the expression
      */
-    template <typename A, typename B, std::size_t D>
-    static constexpr std::size_t dim() {
+    template <typename A, typename B, size_t D>
+    static constexpr size_t dim() {
         return D == 0 ? decay_traits<A>::template dim<0>() : decay_traits<B>::template dim<1>();
     }
 
@@ -223,7 +223,7 @@ struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>, T> {
      * \brief Returns the number of dimensions of the expression
      * \return the number of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 2;
     }
 };
@@ -293,7 +293,7 @@ struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>, T> {
      * \return the size of the expression
      */
     template <typename A, typename B>
-    static std::size_t size(const A& a, const B& b) {
+    static size_t size(const A& a, const B& b) {
         cpp_unused(a);
         return etl::dim<1>(b);
     }
@@ -306,7 +306,7 @@ struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>, T> {
      * \return the dth dimension of the expression
      */
     template <typename A, typename B>
-    static std::size_t dim(const A& a, const B& b, std::size_t d) {
+    static size_t dim(const A& a, const B& b, size_t d) {
         cpp_unused(a);
         cpp_unused(d);
         return etl::dim<1>(b);
@@ -317,7 +317,7 @@ struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>, T> {
      * \return the size of the expression
      */
     template <typename A, typename B>
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return etl_traits<B>::template dim<1>();
     }
 
@@ -334,8 +334,8 @@ struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>, T> {
      * \brief Returns the Dth dimension of the expression
      * \return the Dth dimension of the expression
      */
-    template <typename A, typename B, std::size_t D>
-    static constexpr std::size_t dim() {
+    template <typename A, typename B, size_t D>
+    static constexpr size_t dim() {
         return decay_traits<B>::template dim<1>();
     }
 
@@ -343,7 +343,7 @@ struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>, T> {
      * \brief Returns the number of dimensions of the expression
      * \return the number of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 1;
     }
 };
@@ -405,7 +405,7 @@ struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>, T> {
      * \return the size of the expression
      */
     template <typename A, typename B>
-    static std::size_t size(const A& a, const B& /*b*/) {
+    static size_t size(const A& a, const B& /*b*/) {
         return etl::dim<0>(a);
     }
 
@@ -417,7 +417,7 @@ struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>, T> {
      * \return the dth dimension of the expression
      */
     template <typename A, typename B>
-    static std::size_t dim(const A& a, const B& b, std::size_t d) {
+    static size_t dim(const A& a, const B& b, size_t d) {
         cpp_unused(b);
         cpp_unused(d);
         return etl::dim<0>(a);
@@ -428,7 +428,7 @@ struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>, T> {
      * \return the size of the expression
      */
     template <typename A, typename B>
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return etl_traits<A>::template dim<0>();
     }
 
@@ -445,8 +445,8 @@ struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>, T> {
      * \brief Returns the Dth dimension of the expression
      * \return the Dth dimension of the expression
      */
-    template <typename A, typename B, std::size_t D>
-    static constexpr std::size_t dim() {
+    template <typename A, typename B, size_t D>
+    static constexpr size_t dim() {
         return decay_traits<A>::template dim<0>();
     }
 
@@ -454,7 +454,7 @@ struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>, T> {
      * \brief Returns the number of dimensions of the expression
      * \return the number of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 1;
     }
 };

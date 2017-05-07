@@ -228,8 +228,8 @@ struct etl_traits<etl::transpose_expr<A>> {
      * \brief Returns the DDth dimension of the expression
      * \return the DDth dimension of the expression
      */
-    template <std::size_t DD>
-    static constexpr std::size_t dim() {
+    template <size_t DD>
+    static constexpr size_t dim() {
         return DD == 0 ? decay_traits<A>::template dim<1>() : decay_traits<A>::template dim<0>();
     }
 
@@ -239,7 +239,7 @@ struct etl_traits<etl::transpose_expr<A>> {
      * \param d The dimension to get
      * \return the dth dimension of the expression
      */
-    static std::size_t dim(const expr_t& e, std::size_t d) {
+    static size_t dim(const expr_t& e, size_t d) {
         return d == 0 ? etl::dim<1>(e._a) : etl::dim<0>(e._a);
     }
 
@@ -248,7 +248,7 @@ struct etl_traits<etl::transpose_expr<A>> {
      * \param e The sub expression
      * \return the size of the expression
      */
-    static std::size_t size(const expr_t& e) {
+    static size_t size(const expr_t& e) {
         return etl::size(e._a);
     }
 
@@ -256,7 +256,7 @@ struct etl_traits<etl::transpose_expr<A>> {
      * \brief Returns the size of the expression
      * \return the size of the expression
      */
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return decay_traits<A>::size();
     }
 
@@ -264,7 +264,7 @@ struct etl_traits<etl::transpose_expr<A>> {
      * \brief Returns the number of dimensions of the expression
      * \return the number of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 2;
     }
 };

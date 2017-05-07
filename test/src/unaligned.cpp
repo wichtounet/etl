@@ -57,7 +57,7 @@ struct unaligned_ptr {
 };
 
 template <typename T>
-unaligned_ptr<T> get_unaligned_memory(std::size_t n) {
+unaligned_ptr<T> get_unaligned_memory(size_t n) {
     auto required_bytes = (1 + sizeof(T)) * n;
     auto orig           = static_cast<T*>(malloc(required_bytes));
 
@@ -91,7 +91,7 @@ TEMPLATE_TEST_CASE_2("unaligned/assign", "[unaligned][assign]", Z, double, float
 
     c = a + b;
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], Z(a[i] + b[i]));
     }
 }
@@ -111,7 +111,7 @@ TEMPLATE_TEST_CASE_2("unaligned/add", "[unaligned][add]", Z, double, float) {
 
     c += a + b;
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], Z(1200.0) + (a[i] + b[i]));
     }
 }
@@ -131,7 +131,7 @@ TEMPLATE_TEST_CASE_2("unaligned/sub", "[unaligned][add]", Z, double, float) {
 
     c -= a + b;
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], Z(1200.0) - (a[i] + b[i]));
     }
 }
@@ -151,7 +151,7 @@ TEMPLATE_TEST_CASE_2("unaligned/mul", "[unaligned][add]", Z, double, float) {
 
     c *= a + b;
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], Z(1200.0) * (a[i] + b[i]));
     }
 }
@@ -171,7 +171,7 @@ TEMPLATE_TEST_CASE_2("unaligned/div", "[unaligned][add]", Z, double, float) {
 
     c /= a + b;
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], Z(1200.0) / (a[i] + b[i]));
     }
 }

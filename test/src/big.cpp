@@ -21,7 +21,7 @@ TEMPLATE_TEST_CASE_2("big/add", "[big][add]", Z, double, float) {
 
     c = a + b;
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], Z(a[i] + b[i]));
     }
 }
@@ -36,7 +36,7 @@ TEMPLATE_TEST_CASE_2("big/sub", "[big][sub]", Z, double, float) {
 
     c = a - b;
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], Z(a[i] - b[i]));
     }
 }
@@ -51,7 +51,7 @@ TEMPLATE_TEST_CASE_2("big/mul", "[big][sub]", Z, double, float) {
 
     c = a >> b;
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], Z(a[i] * b[i]));
     }
 }
@@ -67,7 +67,7 @@ TEMPLATE_TEST_CASE_2("big/compound/add", "[big][add]", Z, double, float) {
 
     c += a + b;
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX_E(c[i], Z(120.0) + a[i] + b[i], base_eps * 10);
     }
 }
@@ -83,7 +83,7 @@ TEMPLATE_TEST_CASE_2("big/compound/sub", "[big][add]", Z, double, float) {
 
     c -= a + b;
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], Z(1200.0 - (a[i] + b[i])));
     }
 }
@@ -99,7 +99,7 @@ TEMPLATE_TEST_CASE_2("big/compound/mul", "[big][add]", Z, double, float) {
 
     c *= a + b;
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], Z(1200.0 * (a[i] + b[i])));
     }
 }
@@ -115,7 +115,7 @@ TEMPLATE_TEST_CASE_2("big/compound/div", "[big][add]", Z, double, float) {
 
     c /= a + b;
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], Z(1200.0 / (a[i] + b[i])));
     }
 }
@@ -149,7 +149,7 @@ TEMPLATE_TEST_CASE_2("big/exp", "[big][exp]", Z, double, float) {
     a = etl::uniform_generator(10.0, 50.0);
     c = etl::exp(a);
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], std::exp(a[i]));
     }
 }
@@ -161,7 +161,7 @@ TEMPLATE_TEST_CASE_2("big/log", "[big][log]", Z, double, float) {
     a = etl::uniform_generator(10.0, 50.0);
     c = etl::log(a);
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], std::log(a[i]));
     }
 }
@@ -173,7 +173,7 @@ TEMPLATE_TEST_CASE_2("big/cos", "[big][cos]", Z, double, float) {
     a = etl::uniform_generator(0.0, 360.0);
     c = etl::cos(a);
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], std::cos(a[i]));
     }
 }
@@ -185,7 +185,7 @@ TEMPLATE_TEST_CASE_2("big/sin", "[big][sin]", Z, double, float) {
     a = etl::uniform_generator(0.0, 360.0);
     c = etl::sin(a);
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], std::sin(a[i]));
     }
 }
@@ -197,7 +197,7 @@ TEMPLATE_TEST_CASE_2("big/relu_derivative", "[big][add]", Z, double, float) {
     a = etl::uniform_generator(0.0, 5000.0);
     c = relu_derivative(a);
 
-    for (std::size_t i = 0; i < c.size(); ++i) {
+    for (size_t i = 0; i < c.size(); ++i) {
         REQUIRE_EQUALS_APPROX(c[i], (a[i] > 0.0 ? Z(1.0) : Z(0.0)));
     }
 }

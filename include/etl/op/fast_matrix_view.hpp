@@ -16,7 +16,7 @@
 
 namespace etl {
 
-template <typename T, bool DMA, std::size_t... Dims>
+template <typename T, bool DMA, size_t... Dims>
 struct fast_matrix_view;
 
 /*!
@@ -24,7 +24,7 @@ struct fast_matrix_view;
  * \tparam T The type of expression on which the view is made
  * \tparam Dims The dimensios of the view
  */
-template <typename T, std::size_t... Dims>
+template <typename T, size_t... Dims>
 struct fast_matrix_view <T, false, Dims...> final :
     iterable<fast_matrix_view<T, false, Dims...>, false>,
     value_testable<fast_matrix_view<T, false, Dims...>>,
@@ -53,7 +53,7 @@ struct fast_matrix_view <T, false, Dims...> final :
 private:
     sub_type sub; ///< The Sub expression
 
-    static constexpr std::size_t n_dimensions = sizeof...(Dims); ///< The number of dimensions of the view
+    static constexpr size_t n_dimensions = sizeof...(Dims); ///< The number of dimensions of the view
 
     friend struct etl_traits<fast_matrix_view>;
 
@@ -70,7 +70,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    const_return_type operator[](std::size_t j) const {
+    const_return_type operator[](size_t j) const {
         return sub[j];
     }
 
@@ -79,7 +79,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    return_type operator[](std::size_t j) {
+    return_type operator[](size_t j) {
         return sub[j];
     }
 
@@ -89,7 +89,7 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t j) const noexcept {
+    value_type read_flat(size_t j) const noexcept {
         return sub.read_flat(j);
     }
 
@@ -100,9 +100,9 @@ public:
      */
     template <typename... S, cpp_enable_if((sizeof...(S) == sizeof...(Dims)))>
     return_type operator()(S... args) noexcept {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
-        return sub[etl::fast_index<this_type>(static_cast<std::size_t>(args)...)];
+        return sub[etl::fast_index<this_type>(static_cast<size_t>(args)...)];
     }
 
     /*!
@@ -112,9 +112,9 @@ public:
      */
     template <typename... S, cpp_enable_if((sizeof...(S) == sizeof...(Dims)))>
     const_return_type operator()(S... args) const noexcept {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
-        return sub[etl::fast_index<this_type>(static_cast<std::size_t>(args)...)];
+        return sub[etl::fast_index<this_type>(static_cast<size_t>(args)...)];
     }
 
     /*!
@@ -144,7 +144,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto load(std::size_t x) const noexcept {
+    auto load(size_t x) const noexcept {
         return sub.template load<V>(x);
     }
 
@@ -155,7 +155,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto loadu(std::size_t x) const noexcept {
+    auto loadu(size_t x) const noexcept {
         return sub.template loadu<V>(x);
     }
 
@@ -166,7 +166,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void store(vec_type<V> in, std::size_t i) noexcept {
+    void store(vec_type<V> in, size_t i) noexcept {
         sub.template store<V>(in, i);
     }
 
@@ -177,7 +177,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void storeu(vec_type<V> in, std::size_t i) noexcept {
+    void storeu(vec_type<V> in, size_t i) noexcept {
         sub.template storeu<V>(in, i);
     }
 
@@ -188,7 +188,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t i) noexcept {
+    void stream(vec_type<V> in, size_t i) noexcept {
         sub.template stream<V>(in, i);
     }
 
@@ -303,7 +303,7 @@ public:
  * \tparam T The type of expression on which the view is made
  * \tparam Dims The dimensios of the view
  */
-template <typename T, std::size_t... Dims>
+template <typename T, size_t... Dims>
 struct fast_matrix_view <T, true, Dims...> final :
     iterable<fast_matrix_view<T, true, Dims...>, true>,
     value_testable<fast_matrix_view<T, true, Dims...>>,
@@ -334,7 +334,7 @@ private:
 
     mutable memory_type memory; ///< Pointer to the memory of expression
 
-    static constexpr std::size_t n_dimensions = sizeof...(Dims); ///< The number of dimensions of the view
+    static constexpr size_t n_dimensions = sizeof...(Dims); ///< The number of dimensions of the view
 
     friend struct etl_traits<fast_matrix_view>;
 
@@ -358,7 +358,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    const_return_type operator[](std::size_t j) const {
+    const_return_type operator[](size_t j) const {
         cpp_assert(memory, "Memory has not been initialized");
         ensure_cpu_up_to_date();
         return memory[j];
@@ -369,7 +369,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    return_type operator[](std::size_t j) {
+    return_type operator[](size_t j) {
         cpp_assert(memory, "Memory has not been initialized");
         ensure_cpu_up_to_date();
         invalidate_gpu();
@@ -382,7 +382,7 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t j) const noexcept {
+    value_type read_flat(size_t j) const noexcept {
         cpp_assert(memory, "Memory has not been initialized");
         ensure_cpu_up_to_date();
         return memory[j];
@@ -395,11 +395,11 @@ public:
      */
     template <typename... S, cpp_enable_if((sizeof...(S) == sizeof...(Dims)))>
     return_type operator()(S... args) noexcept {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
         cpp_assert(memory, "Memory has not been initialized");
         ensure_cpu_up_to_date();
         invalidate_gpu();
-        return memory[etl::fast_index<this_type>(static_cast<std::size_t>(args)...)];
+        return memory[etl::fast_index<this_type>(static_cast<size_t>(args)...)];
     }
 
     /*!
@@ -409,10 +409,10 @@ public:
      */
     template <typename... S, cpp_enable_if((sizeof...(S) == sizeof...(Dims)))>
     const_return_type operator()(S... args) const noexcept {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
         cpp_assert(memory, "Memory has not been initialized");
         ensure_cpu_up_to_date();
-        return memory[etl::fast_index<this_type>(static_cast<std::size_t>(args)...)];
+        return memory[etl::fast_index<this_type>(static_cast<size_t>(args)...)];
     }
 
     /*!
@@ -442,7 +442,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto load(std::size_t x) const noexcept {
+    auto load(size_t x) const noexcept {
         return V::loadu(memory + x);
     }
 
@@ -453,7 +453,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto loadu(std::size_t x) const noexcept {
+    auto loadu(size_t x) const noexcept {
         return V::loadu(memory + x);
     }
 
@@ -464,7 +464,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t i) noexcept {
+    void stream(vec_type<V> in, size_t i) noexcept {
         return V::stream(memory + i, in);
     }
 
@@ -475,7 +475,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void store(vec_type<V> in, std::size_t i) noexcept {
+    void store(vec_type<V> in, size_t i) noexcept {
         sub.template store<V>(in, i);
     }
 
@@ -486,7 +486,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void storeu(vec_type<V> in, std::size_t i) noexcept {
+    void storeu(vec_type<V> in, size_t i) noexcept {
         return V::storeu(memory + i, in);
     }
 
@@ -727,7 +727,7 @@ public:
 /*!
  * \brief Specialization for fast_matrix_view.
  */
-template <typename T, bool DMA, std::size_t... Dims>
+template <typename T, bool DMA, size_t... Dims>
 struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
     using expr_t     = etl::fast_matrix_view<T, DMA, Dims...>; ///< The expression type
     using sub_expr_t = std::decay_t<T>;                        ///< The sub expression type
@@ -762,7 +762,7 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static cpp14_constexpr std::size_t size(const expr_t& v) {
+    static cpp14_constexpr size_t size(const expr_t& v) {
         cpp_unused(v);
         return mul_all<Dims...>::value;
     }
@@ -773,7 +773,7 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         cpp_unused(v);
         return dyn_nth_size<Dims...>(d);
     }
@@ -782,7 +782,7 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
      * \brief Returns the size of an expression of this fast type.
      * \returns the size of an expression of this fast type.
      */
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return mul_all<Dims...>::value;
     }
 
@@ -791,8 +791,8 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
      * \tparam D The dimension to get
      * \return the Dth dimension of an expression of this type
      */
-    template <std::size_t D>
-    static constexpr std::size_t dim() {
+    template <size_t D>
+    static constexpr size_t dim() {
         return nth_size<D, 0, Dims...>::value;
     }
 
@@ -800,7 +800,7 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return sizeof...(Dims);
     }
 };

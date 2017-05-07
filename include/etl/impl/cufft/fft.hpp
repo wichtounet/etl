@@ -61,7 +61,7 @@ inline cufftResult cufft_exec_c2c(cufftHandle plan, cufftDoubleComplex* idata, c
  * \param n The size of the transform
  */
 template <typename T>
-void inplace_fft1_kernel(T&& a, std::size_t n) {
+void inplace_fft1_kernel(T&& a, size_t n) {
     decltype(auto) handle = start_cufft();
 
     a.ensure_gpu_up_to_date();
@@ -79,7 +79,7 @@ void inplace_fft1_kernel(T&& a, std::size_t n) {
  * \param n The size of the transform
  */
 template <typename T>
-void inplace_fft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
+void inplace_fft1_many_kernel(T&& a, size_t batch, size_t n) {
     decltype(auto) handle = start_cufft();
 
     int dims[] = {int(n)};
@@ -103,7 +103,7 @@ void inplace_fft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
  * \param n The size of the transform
  */
 template <typename T>
-void inplace_ifft1_kernel(T&& a, std::size_t n) {
+void inplace_ifft1_kernel(T&& a, size_t n) {
     decltype(auto) handle = start_cufft();
 
     a.ensure_gpu_up_to_date();
@@ -121,7 +121,7 @@ void inplace_ifft1_kernel(T&& a, std::size_t n) {
  * \param n The size of the transform
  */
 template <typename T>
-void inplace_ifft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
+void inplace_ifft1_many_kernel(T&& a, size_t batch, size_t n) {
     decltype(auto) handle = start_cufft();
 
     int dims[] = {int(n)};
@@ -145,7 +145,7 @@ void inplace_ifft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
  * \param d2 The second dimension of the transform
  */
 template <typename T>
-inline void inplace_fft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
+inline void inplace_fft2_kernel(T&& a, size_t d1, size_t d2) {
     decltype(auto) handle = start_cufft();
 
     a.ensure_gpu_up_to_date();
@@ -164,7 +164,7 @@ inline void inplace_fft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
  * \param d2 The second dimension of the transform
  */
 template <typename T>
-void inplace_fft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
+void inplace_fft2_many_kernel(T&& a, size_t batch, size_t d1, size_t d2) {
     decltype(auto) handle = start_cufft();
 
     int dims[] = {int(d1), int(d2)};
@@ -188,7 +188,7 @@ void inplace_fft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::siz
  * \param d2 The second dimension of the transform
  */
 template <typename T>
-void inplace_ifft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
+void inplace_ifft2_kernel(T&& a, size_t d1, size_t d2) {
     decltype(auto) handle = start_cufft();
 
     a.ensure_gpu_up_to_date();
@@ -207,7 +207,7 @@ void inplace_ifft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
  * \param d2 The second dimension of the transform
  */
 template <typename T>
-void inplace_ifft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
+void inplace_ifft2_many_kernel(T&& a, size_t batch, size_t d1, size_t d2) {
     decltype(auto) handle = start_cufft();
 
     int dims[] = {int(d1), int(d2)};
@@ -225,21 +225,21 @@ void inplace_ifft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::si
 }
 
 template <typename T>
-void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, std::size_t n1, std::size_t n2, T* c, T beta) {
-    const std::size_t s1 = m1 + n1 - 1;
-    const std::size_t s2 = m2 + n2 - 1;
-    const std::size_t size = s1 * s2;
+void conv2_full_kernel(const T* a, size_t m1, size_t m2, const T* b, size_t n1, size_t n2, T* c, T beta) {
+    const size_t s1 = m1 + n1 - 1;
+    const size_t s2 = m2 + n2 - 1;
+    const size_t size = s1 * s2;
 
     decltype(auto) handle = start_cufft();
 
     dyn_vector<etl::complex<T>> a_padded(size);
     dyn_vector<etl::complex<T>> b_padded(size);
 
-    for (std::size_t i = 0; i < m1; ++i) {
+    for (size_t i = 0; i < m1; ++i) {
         direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
     }
 
-    for (std::size_t i = 0; i < n1; ++i) {
+    for (size_t i = 0; i < n1; ++i) {
         direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
     }
 
@@ -266,11 +266,11 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
     a_padded.ensure_cpu_up_to_date();
 
     if(beta == T(0.0)){
-        for (std::size_t i = 0; i < size; ++i) {
+        for (size_t i = 0; i < size; ++i) {
             c[i] = a_padded[i].real * (T(1.0) / size);
         }
     } else {
-        for (std::size_t i = 0; i < size; ++i) {
+        for (size_t i = 0; i < size; ++i) {
             c[i] = beta * c[i] + a_padded[i].real * (T(1.0) / size);
         }
     }
@@ -317,10 +317,10 @@ void fft1(A&& a, C&& c) {
  */
 template <typename A, typename C, cpp_enable_if(!all_complex<A>::value)>
 void fft1_many(A&& a, C&& c) {
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
+    static constexpr size_t N = decay_traits<A>::dimensions();
 
-    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch = etl::size(a) / n;   //Number of batch
+    size_t n     = etl::dim<N - 1>(a); //Size of the transform
+    size_t batch = etl::size(a) / n;   //Number of batch
 
     c = a;
 
@@ -336,10 +336,10 @@ void fft1_many(A&& a, C&& c) {
  */
 template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
 void fft1_many(A&& a, C&& c) {
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
+    static constexpr size_t N = decay_traits<A>::dimensions();
 
-    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch = etl::size(a) / n;   //Number of batch
+    size_t n     = etl::dim<N - 1>(a); //Size of the transform
+    size_t batch = etl::size(a) / n;   //Number of batch
 
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
@@ -435,7 +435,7 @@ void scale_back_real(A&& a, C&& c) {
 
     cuda_check(cudaMemcpy(tmp.get(), a.gpu_memory(), etl::size(c) * sizeof(value_t<A>), cudaMemcpyDeviceToHost));
 
-    for (std::size_t i = 0; i < etl::size(a); ++i) {
+    for (size_t i = 0; i < etl::size(a); ++i) {
         c[i] = tmp[i].real() / etl::size(a);
     }
 
@@ -472,7 +472,7 @@ void scale_back_real(A&& a, C&& c) {
 
     cuda_check(cudaMemcpy(tmp.get(), a.gpu_memory(), etl::size(c) * sizeof(value_t<A>), cudaMemcpyDeviceToHost));
 
-    for (std::size_t i = 0; i < etl::size(a); ++i) {
+    for (size_t i = 0; i < etl::size(a); ++i) {
         c[i] = tmp[i].real() / etl::size(a);
     }
 
@@ -521,10 +521,10 @@ void ifft1_real(A&& a, C&& c) {
  */
 template <typename A, typename C>
 void ifft1_many(A&& a, C&& c) {
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
+    static constexpr size_t N = decay_traits<A>::dimensions();
 
-    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch = etl::size(a) / n;   //Number of batch
+    size_t n     = etl::dim<N - 1>(a); //Size of the transform
+    size_t batch = etl::size(a) / n;   //Number of batch
 
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
@@ -547,7 +547,7 @@ void conv1_full(A&& a, B&& b, C&& c) {
 
     decltype(auto) handle = start_cufft();
 
-    const std::size_t size     = etl::size(c);
+    const size_t size     = etl::size(c);
 
     //Note: use of value_t to make the type dependent!
     dyn_vector<etl::complex<type>> a_padded(size);
@@ -578,7 +578,7 @@ void conv1_full(A&& a, B&& b, C&& c) {
 
     a_padded.ensure_cpu_up_to_date();
 
-    for (std::size_t i = 0; i < size; ++i) {
+    for (size_t i = 0; i < size; ++i) {
         c[i] = a_padded[i].real * (1.0 / size);
     }
 
@@ -654,11 +654,11 @@ void ifft2_real(A&& a, C&& c) {
  */
 template <typename A, typename C, cpp_enable_if(!all_complex<A>::value)>
 void fft2_many(A&& a, C&& c) {
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
+    static constexpr size_t N = decay_traits<A>::dimensions();
 
-    std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
-    std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
-    std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
+    size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
+    size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
+    size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
     c = a;
 
@@ -674,11 +674,11 @@ void fft2_many(A&& a, C&& c) {
  */
 template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
 void fft2_many(A&& a, C&& c) {
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
+    static constexpr size_t N = decay_traits<A>::dimensions();
 
-    std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
-    std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
-    std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
+    size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
+    size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
+    size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
@@ -696,11 +696,11 @@ void fft2_many(A&& a, C&& c) {
  */
 template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
+    static constexpr size_t N = decay_traits<A>::dimensions();
 
-    std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
-    std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
-    std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
+    size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
+    size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
+    size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
@@ -859,9 +859,9 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
         const auto n1 = etl::dim<2>(kernel);
         const auto n2 = etl::dim<3>(kernel);
 
-        const std::size_t s1   = m1 + n1 - 1;
-        const std::size_t s2   = m2 + n2 - 1;
-        const std::size_t size = s1 * s2;
+        const size_t s1   = m1 + n1 - 1;
+        const size_t s2   = m2 + n2 - 1;
+        const size_t size = s1 * s2;
 
         std::fill(conv.memory_start(), conv.memory_end(), 0);
 
@@ -879,11 +879,11 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
 
         // Fully pad the inputs
 
-        for (std::size_t i = 0; i < N; ++i) {
-            for (std::size_t k = 0; k < K; ++k) {
+        for (size_t i = 0; i < N; ++i) {
+            for (size_t k = 0; k < K; ++k) {
                 const T* a = input.memory_start() + i * input_i_inc + k * input_k_inc;    // input(i)(k)
 
-                for (std::size_t ii = 0; ii < m1; ++ii) {
+                for (size_t ii = 0; ii < m1; ++ii) {
                     direct_copy_n(a + ii * m2, a_padded(i)(k).memory_start() + ii * s2, m2);
                 }
             }
@@ -891,11 +891,11 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
 
         // Fully pad the kernels
 
-        for (std::size_t k = 0; k < etl::dim<0>(kernel); ++k) {
-            for (std::size_t c = 0; c < etl::dim<1>(kernel); ++c) {
+        for (size_t k = 0; k < etl::dim<0>(kernel); ++k) {
+            for (size_t c = 0; c < etl::dim<1>(kernel); ++c) {
                 const T* b = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc; // kernel(k)(c)
 
-                for (std::size_t i = 0; i < n1; ++i) {
+                for (size_t i = 0; i < n1; ++i) {
                     direct_copy_n(b + i * n2, b_padded(k)(c).memory_start() + i * s2, n2);
                 }
             }
@@ -921,9 +921,9 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
 
         dyn_matrix<etl::complex<T>, 3> tmp(C, K, size);
 
-        for (std::size_t i = 0; i < N; ++i) {
-            for (std::size_t c = 0; c < C; ++c) {
-                for (std::size_t k = 0; k < K; ++k) {
+        for (size_t i = 0; i < N; ++i) {
+            for (size_t c = 0; c < C; ++c) {
+                for (size_t k = 0; k < K; ++k) {
                     tmp(c)(k) = a_padded(i)(k) >> b_padded(k)(c);
                 }
             }
@@ -934,11 +934,11 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
             //  Need the CPU for scaling back
             tmp.ensure_cpu_up_to_date();
 
-            for (std::size_t c = 0; c < C; ++c) {
-                for (std::size_t k = 0; k < K; ++k) {
+            for (size_t c = 0; c < C; ++c) {
+                for (size_t k = 0; k < K; ++k) {
                     T* cc = conv.memory_start() + i * conv_i_inc + c * conv_c_inc; // conv(i)(c)
 
-                    for (std::size_t i = 0; i < size; ++i) {
+                    for (size_t i = 0; i < size; ++i) {
                         cc[i] += tmp(c, k, i).real * (T(1.0) / size);
                     }
                 }

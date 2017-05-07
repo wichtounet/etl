@@ -44,8 +44,8 @@ inline void pmp_h_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& 
 
             auto p = T(0);
 
-            for (std::size_t mm = start_mm; mm < start_mm + C1; ++mm) {
-                for (std::size_t nn = start_nn; nn < start_nn + C2; ++nn) {
+            for (size_t mm = start_mm; mm < start_mm + C1; ++mm) {
+                for (size_t nn = start_nn; nn < start_nn + C2; ++nn) {
                     p += exp_sub(mm, nn);
                 }
             }
@@ -68,8 +68,8 @@ inline void pmp_h_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& 
 
             auto p = T(0);
 
-            for (std::size_t mm = start_mm; mm < start_mm + c1; ++mm) {
-                for (std::size_t nn = start_nn; nn < start_nn + c2; ++nn) {
+            for (size_t mm = start_mm; mm < start_mm + c1; ++mm) {
+                for (size_t nn = start_nn; nn < start_nn + c2; ++nn) {
                     p += exp_sub(mm, nn);
                 }
             }
@@ -369,8 +369,8 @@ inline void pmp_p_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& 
 
             auto p = T(0);
 
-            for (std::size_t mm = start_mm; mm < start_mm + C1; ++mm) {
-                for (std::size_t nn = start_nn; nn < start_nn + C2; ++nn) {
+            for (size_t mm = start_mm; mm < start_mm + C1; ++mm) {
+                for (size_t nn = start_nn; nn < start_nn + C2; ++nn) {
                     p += exp_sub(mm, nn);
                 }
             }
@@ -393,8 +393,8 @@ inline void pmp_p_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& 
 
             auto p = T(0);
 
-            for (std::size_t mm = start_mm; mm < start_mm + c1; ++mm) {
-                for (std::size_t nn = start_nn; nn < start_nn + c2; ++nn) {
+            for (size_t mm = start_mm; mm < start_mm + c1; ++mm) {
+                for (size_t nn = start_nn; nn < start_nn + c2; ++nn) {
                     p += exp_sub(mm, nn);
                 }
             }

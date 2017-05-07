@@ -46,9 +46,9 @@ struct symmetric_matrix final : adapter<Matrix>, iterable<const symmetric_matrix
     static_assert(etl_traits<matrix_t>::dimensions() == 2, "Symmetric matrix must be two-dimensional");
     static_assert(is_square_matrix<matrix_t>::value, "Symmetric matrix must be square");
 
-    static constexpr std::size_t n_dimensions = etl_traits<matrix_t>::dimensions();  ///< The number of dimensions
+    static constexpr size_t n_dimensions = etl_traits<matrix_t>::dimensions();  ///< The number of dimensions
     static constexpr order storage_order      = etl_traits<matrix_t>::storage_order; ///< The storage order
-    static constexpr std::size_t alignment    = matrix_t::alignment;                 ///< The memory alignment
+    static constexpr size_t alignment    = matrix_t::alignment;                 ///< The memory alignment
 
     using value_type        = value_t<matrix_t>;                 ///< The value type
     using memory_type       = value_type*;                       ///< The memory type
@@ -92,7 +92,7 @@ public:
      * \brief Construct a new sym matrix and fill it with zeros
      * \param dim The dimension of the matrix
      */
-    explicit symmetric_matrix(std::size_t dim) noexcept : base_type(dim) {
+    explicit symmetric_matrix(size_t dim) noexcept : base_type(dim) {
         //Nothing else to init
     }
 
@@ -102,7 +102,7 @@ public:
      * \param value The value to fill the matrix with
      * \param dim The dimension of the matrix
      */
-    symmetric_matrix(std::size_t dim, value_type value) noexcept : base_type(dim, value) {
+    symmetric_matrix(size_t dim, value_type value) noexcept : base_type(dim, value) {
         //Nothing else to init
     }
 
@@ -322,7 +322,7 @@ public:
      *
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
-    sym_detail::symmetric_reference<matrix_t> operator()(std::size_t i, std::size_t j) noexcept {
+    sym_detail::symmetric_reference<matrix_t> operator()(size_t i, size_t j) noexcept {
         return {value, i, j};
     }
 

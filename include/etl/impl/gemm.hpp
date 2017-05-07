@@ -29,7 +29,7 @@ namespace detail {
  * \return The implementation to use
  */
 template <typename A, typename B, typename C>
-inline cpp14_constexpr gemm_impl select_default_gemm_impl(const std::size_t n1, const std::size_t n2, const std::size_t n3) {
+inline cpp14_constexpr gemm_impl select_default_gemm_impl(const size_t n1, const size_t n2, const size_t n3) {
     static_assert(all_dma<A, B, C>::value, "DMA should be enforced by temporary expr");
 
     cpp_unused(n2);
@@ -69,7 +69,7 @@ inline cpp14_constexpr gemm_impl select_default_gemm_impl(const std::size_t n1, 
  * \return The implementation to use
  */
 template <typename A, typename B, typename C>
-inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, const std::size_t n3) {
+inline gemm_impl select_gemm_impl(const size_t n1, const size_t n2, const size_t n3) {
     auto def = select_default_gemm_impl<A, B, C>(n1, n2, n3);
 
     if (local_context().gemm_selector.forced) {
@@ -119,7 +119,7 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
  * \return The implementation to use
  */
 template <typename A, typename B, typename C>
-inline cpp14_constexpr gemm_impl select_default_gemv_impl(const std::size_t n1, const std::size_t n2) {
+inline cpp14_constexpr gemm_impl select_default_gemv_impl(const size_t n1, const size_t n2) {
     static_assert(all_dma<A, B, C>::value, "DMA should be enforced by temporary expr");
 
     using T = value_t<A>;
@@ -146,7 +146,7 @@ inline cpp14_constexpr gemm_impl select_default_gemv_impl(const std::size_t n1, 
  * \return The implementation to use
  */
 template <typename A, typename B, typename C>
-inline gemm_impl select_gemv_impl(const std::size_t n1, const std::size_t n2) {
+inline gemm_impl select_gemv_impl(const size_t n1, const size_t n2) {
     if (local_context().gemm_selector.forced) {
         auto forced = local_context().gemm_selector.impl;
 
@@ -194,7 +194,7 @@ inline gemm_impl select_gemv_impl(const std::size_t n1, const std::size_t n2) {
  * \return The implementation to use
  */
 template <typename A, typename B, typename C>
-inline cpp14_constexpr gemm_impl select_default_gevm_impl(const std::size_t n1, const std::size_t n2) {
+inline cpp14_constexpr gemm_impl select_default_gevm_impl(const size_t n1, const size_t n2) {
     static_assert(all_dma<A, B, C>::value, "DMA should be enforced by temporary expr");
 
     using T = value_t<A>;
@@ -221,7 +221,7 @@ inline cpp14_constexpr gemm_impl select_default_gevm_impl(const std::size_t n1, 
  * \return The implementation to use
  */
 template <typename A, typename B, typename C>
-inline gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
+inline gemm_impl select_gevm_impl(const size_t n1, const size_t n2) {
     if (local_context().gemm_selector.forced) {
         auto forced = local_context().gemm_selector.impl;
 

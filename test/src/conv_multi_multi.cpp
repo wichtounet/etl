@@ -28,7 +28,7 @@ CONV2_VALID_MULTI_MULTI_TEST_CASE("conv_2d/valid/multi_multi/1", "[conv][conv2][
 
     Impl::apply(I, K, C);
 
-    for (std::size_t i = 0; i < etl::size(C_ref); ++i) {
+    for (size_t i = 0; i < etl::size(C_ref); ++i) {
         REQUIRE_EQUALS_APPROX(C[i], C_ref[i]);
     }
 }
@@ -53,7 +53,7 @@ CONV2_VALID_MULTI_MULTI_TEST_CASE("conv_2d/valid/multi_multi/2", "[conv][conv2][
 
     Impl::apply(I, K, C);
 
-    for (std::size_t i = 0; i < etl::size(C_ref); ++i) {
+    for (size_t i = 0; i < etl::size(C_ref); ++i) {
         REQUIRE_EQUALS_APPROX(C[i], C_ref[i]);
     }
 }
@@ -78,7 +78,7 @@ CONV2_VALID_MULTI_MULTI_TEST_CASE("conv_2d/valid/multi_multi/3", "[conv][conv2][
 
     Impl::apply(I, K, C);
 
-    for (std::size_t i = 0; i < etl::size(C_ref); ++i) {
+    for (size_t i = 0; i < etl::size(C_ref); ++i) {
         REQUIRE_EQUALS_APPROX(C[i], C_ref[i]);
     }
 }
@@ -103,7 +103,7 @@ CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE("conv_2d/valid/multi_multi_flipped/1",
 
     Impl::apply(I, K, C);
 
-    for (std::size_t i = 0; i < etl::size(C_ref); ++i) {
+    for (size_t i = 0; i < etl::size(C_ref); ++i) {
         REQUIRE_EQUALS_APPROX(C[i], C_ref[i]);
     }
 }
@@ -128,7 +128,7 @@ CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE("conv_2d/valid/multi_multi_flipped/2",
 
     Impl::apply(I, K, C);
 
-    for (std::size_t i = 0; i < etl::size(C_ref); ++i) {
+    for (size_t i = 0; i < etl::size(C_ref); ++i) {
         REQUIRE_EQUALS_APPROX(C[i], C_ref[i]);
     }
 }
@@ -153,7 +153,7 @@ CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE("conv_2d/valid/multi_multi_flipped/3",
 
     Impl::apply(I, K, C);
 
-    for (std::size_t i = 0; i < etl::size(C_ref); ++i) {
+    for (size_t i = 0; i < etl::size(C_ref); ++i) {
         REQUIRE_EQUALS_APPROX(C[i], C_ref[i]);
     }
 }

@@ -15,7 +15,7 @@ namespace etl {
 /*!
  * \brief Base class for all 3D pooling derivative expressions
  */
-template <typename T, size_t D, std::size_t C1, std::size_t C2, std::size_t C3, typename Impl>
+template <typename T, size_t D, size_t C1, size_t C2, size_t C3, typename Impl>
 struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T, D, C1, C2, C3, Impl>, T> {
     using value_type = T;                                                  ///< The type of values of this expression
     using this_type  = basic_pool_derivative_3d_expr<T, D, C1, C2, C3, Impl>; ///< The type of this expression
@@ -61,8 +61,8 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
      * \tparam DD The dimension number
      * \return The DDth dimension of the epxression
      */
-    template <typename A, typename B, std::size_t DD>
-    static constexpr std::size_t dim() {
+    template <typename A, typename B, size_t DD>
+    static constexpr size_t dim() {
         return decay_traits<A>::template dim<DD>();
     }
 
@@ -74,7 +74,7 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
      * \return The dth dimension
      */
     template <typename A, typename B>
-    static std::size_t dim(const A& a, const B& b, std::size_t d) {
+    static size_t dim(const A& a, const B& b, size_t d) {
         cpp_unused(b);
         return etl::dim(a, d);
     }
@@ -86,7 +86,7 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
      * \return the size of the expression given the input
      */
     template <typename A, typename B>
-    static std::size_t size(const A& a, const B& b) {
+    static size_t size(const A& a, const B& b) {
         cpp_unused(b);
         return etl::size(a);
     }
@@ -98,7 +98,7 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
      * \return the size of the expression given the input types
      */
     template <typename A, typename B>
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return decay_traits<A>::size();
     }
 
@@ -115,7 +115,7 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
      * \brief Return the number of dimensions of the expression
      * \return the nubmer of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return D;
     }
 };
@@ -123,13 +123,13 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
 /*!
  * \brief Max Pooling Derivate 2D expression
  */
-template <typename T, size_t D, std::size_t C1, std::size_t C2>
+template <typename T, size_t D, size_t C1, size_t C2>
 using max_pool_derivative_2d_expr = basic_pool_derivative_3d_expr<T, D, C1, C2, 0, impl::max_pool_derivative_2d>;
 
 /*!
  * \brief Max Pooling Derivate 3D expression
  */
-template <typename T, size_t D, std::size_t C1, std::size_t C2, std::size_t C3>
+template <typename T, size_t D, size_t C1, size_t C2, size_t C3>
 using max_pool_derivative_3d_expr = basic_pool_derivative_3d_expr<T, D, C1, C2, C3, impl::max_pool_derivative_3d>;
 
 /*!
@@ -149,9 +149,9 @@ struct basic_dyn_pool_derivative_3d_expr : dyn_impl_expr<basic_dyn_pool_derivati
 
     static constexpr bool is_gpu = false; ///< no GPU implementation
 
-    const std::size_t c1; ///< First dimension pooling ratio
-    const std::size_t c2; ///< Second dimension pooling ratio
-    const std::size_t c3; ///< Third dimension pooling ratio
+    const size_t c1; ///< First dimension pooling ratio
+    const size_t c2; ///< Second dimension pooling ratio
+    const size_t c3; ///< Third dimension pooling ratio
 
     /*!
      * \brief Construct a new basic_dyn_pool_derivative_3d_expr
@@ -159,7 +159,7 @@ struct basic_dyn_pool_derivative_3d_expr : dyn_impl_expr<basic_dyn_pool_derivati
      * \param c2 The second dimension pooling ratio
      * \param c3 The third dimension pooling ratio
      */
-    basic_dyn_pool_derivative_3d_expr(std::size_t c1, std::size_t c2, std::size_t c3 = 0) : c1(c1), c2(c2), c3(c3) {
+    basic_dyn_pool_derivative_3d_expr(size_t c1, size_t c2, size_t c3 = 0) : c1(c1), c2(c2), c3(c3) {
         // Nothing else to init
     }
 
@@ -197,7 +197,7 @@ struct basic_dyn_pool_derivative_3d_expr : dyn_impl_expr<basic_dyn_pool_derivati
      * \return The dth dimension
      */
     template <typename A, typename B>
-    static std::size_t dim(const A& a, const B& b, std::size_t d) {
+    static size_t dim(const A& a, const B& b, size_t d) {
         cpp_unused(b);
         return etl::dim(a, d);
     }
@@ -209,7 +209,7 @@ struct basic_dyn_pool_derivative_3d_expr : dyn_impl_expr<basic_dyn_pool_derivati
      * \return the size of the expression given the input
      */
     template <typename A, typename B>
-    static std::size_t size(const A& a, const B& b) {
+    static size_t size(const A& a, const B& b) {
         cpp_unused(b);
         return etl::size(a);
     }
@@ -227,7 +227,7 @@ struct basic_dyn_pool_derivative_3d_expr : dyn_impl_expr<basic_dyn_pool_derivati
      * \brief Return the number of dimensions of the expression
      * \return the nubmer of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return D;
     }
 };

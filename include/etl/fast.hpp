@@ -21,7 +21,7 @@ namespace etl {
  *
  * The matrix support an arbitrary number of dimensions.
  */
-template <typename T, typename ST, order SO, std::size_t... Dims>
+template <typename T, typename ST, order SO, size_t... Dims>
 struct fast_matrix_impl final :
         fast_matrix_base<fast_matrix_impl<T, ST, SO, Dims...>, T, ST, SO, Dims...>,
         inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>,
@@ -32,11 +32,11 @@ struct fast_matrix_impl final :
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
-    static constexpr std::size_t n_dimensions = sizeof...(Dims);                        ///< The number of dimensions
-    static constexpr std::size_t etl_size     = mul_all<Dims...>::value;                ///< The size of the matrix
+    static constexpr size_t n_dimensions = sizeof...(Dims);                        ///< The number of dimensions
+    static constexpr size_t etl_size     = mul_all<Dims...>::value;                ///< The size of the matrix
     static constexpr order storage_order      = SO;                                     ///< The storage order
     static constexpr bool array_impl          = !matrix_detail::is_vector<ST>::value;   ///< true if the storage is an std::arraw, false otherwise
-    static constexpr std::size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
+    static constexpr size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
 
     using this_type          = fast_matrix_impl<T, ST, SO, Dims...>;            ///< this type
     using base_type          = fast_matrix_base<this_type, T, ST, SO, Dims...>; ///< The base type
@@ -166,7 +166,7 @@ public:
      * \param rhs The fast matrix to copy from
      * \return a reference to the fast matrix
      */
-    template <std::size_t... SDims>
+    template <size_t... SDims>
     fast_matrix_impl& operator=(const fast_matrix_impl<T, ST, SO, SDims...>& rhs) noexcept {
         validate_assign(*this, rhs);
         rhs.assign_to(*this);
@@ -240,7 +240,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void store(vec_type<V> in, std::size_t i) noexcept {
+    void store(vec_type<V> in, size_t i) noexcept {
         V::store(memory_start() + i, in);
     }
 
@@ -251,7 +251,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void storeu(vec_type<V> in, std::size_t i) noexcept {
+    void storeu(vec_type<V> in, size_t i) noexcept {
         V::storeu(memory_start() + i, in);
     }
 
@@ -262,7 +262,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t i) noexcept {
+    void stream(vec_type<V> in, size_t i) noexcept {
         V::stream(memory_start() + i, in);
     }
 
@@ -273,7 +273,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    vec_type<V> load(std::size_t i) const noexcept {
+    vec_type<V> load(size_t i) const noexcept {
         return V::load(memory_start() + i);
     }
 
@@ -284,7 +284,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    vec_type<V> loadu(std::size_t i) const noexcept {
+    vec_type<V> loadu(size_t i) const noexcept {
         return V::loadu(memory_start() + i);
     }
 
@@ -444,7 +444,7 @@ static_assert(std::is_nothrow_destructible<fast_vector<double, 2>>::value, "fast
  *
  * The memory must be large enough to hold the matrix
  */
-template <std::size_t... Dims, typename T>
+template <size_t... Dims, typename T>
 fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...> fast_matrix_over(T* memory) {
     return fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...>(cpp::array_wrapper<T>(memory, mul_all<Dims...>::value));
 }
@@ -454,7 +454,7 @@ fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...> fast_matrix
  * \param lhs The first matrix to swap
  * \param rhs The second matrix to swap
  */
-template <typename T, typename ST, order SO, std::size_t... Dims>
+template <typename T, typename ST, order SO, size_t... Dims>
 void swap(fast_matrix_impl<T, ST, SO, Dims...>& lhs, fast_matrix_impl<T, ST, SO, Dims...>& rhs) {
     lhs.swap(rhs);
 }
@@ -464,7 +464,7 @@ void swap(fast_matrix_impl<T, ST, SO, Dims...>& lhs, fast_matrix_impl<T, ST, SO,
  * \param os The serializer
  * \param matrix The matrix to serialize
  */
-template <typename Stream, typename T, typename ST, order SO, std::size_t... Dims>
+template <typename Stream, typename T, typename ST, order SO, size_t... Dims>
 void serialize(serializer<Stream>& os, const fast_matrix_impl<T, ST, SO, Dims...>& matrix) {
     for (const auto& value : matrix) {
         os << value;
@@ -476,7 +476,7 @@ void serialize(serializer<Stream>& os, const fast_matrix_impl<T, ST, SO, Dims...
  * \param os The deserializer
  * \param matrix The matrix to deserialize
  */
-template <typename Stream, typename T, typename ST, order SO, std::size_t... Dims>
+template <typename Stream, typename T, typename ST, order SO, size_t... Dims>
 void deserialize(deserializer<Stream>& os, fast_matrix_impl<T, ST, SO, Dims...>& matrix) {
     for (auto& value : matrix) {
         os >> value;

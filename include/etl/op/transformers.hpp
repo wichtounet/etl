@@ -45,8 +45,8 @@ struct mm_mul_transformer {
      * \param i The index
      * \return the value at the given index.
      */
-    value_type operator[](std::size_t i) const {
-        std::size_t i_i, i_j;
+    value_type operator[](size_t i) const {
+        size_t i_i, i_j;
         std::tie(i_i, i_j) = index_to_2d(left, i);
         return operator()(i_i, i_j);
     }
@@ -57,8 +57,8 @@ struct mm_mul_transformer {
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const {
-        std::size_t i_i, i_j;
+    value_type read_flat(size_t i) const {
+        size_t i_i, i_j;
         std::tie(i_i, i_j) = index_to_2d(left, i);
         return operator()(i_i, i_j);
     }
@@ -69,10 +69,10 @@ struct mm_mul_transformer {
      * \param j The second index
      * \return The value at the position (i, j)
      */
-    value_type operator()(std::size_t i, std::size_t j) const {
+    value_type operator()(size_t i, size_t j) const {
         value_type c = 0;
 
-        for (std::size_t k = 0; k < columns(left); k++) {
+        for (size_t k = 0; k < columns(left); k++) {
             c += left(i, k) * right(k, j);
         }
 
@@ -164,14 +164,14 @@ struct dyn_convmtx_transformer {
     static_assert(decay_traits<T>::dimensions() == 1, "convmtx can only be applied on vectors");
 
     sub_type sub;  ///< The subexpression
-    std::size_t h; ///< The convmtx transformation size
+    size_t h; ///< The convmtx transformation size
 
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      * \param h The convmtx transformation size
      */
-    dyn_convmtx_transformer(sub_type expr, std::size_t h)
+    dyn_convmtx_transformer(sub_type expr, size_t h)
             : sub(expr), h(h) {}
 
     /*!
@@ -179,14 +179,14 @@ struct dyn_convmtx_transformer {
      * \param i The index
      * \return the value at the given index.
      */
-    value_type operator[](std::size_t i) const {
+    value_type operator[](size_t i) const {
         if (decay_traits<sub_type>::storage_order == order::RowMajor) {
-            std::size_t i_i = i / (etl::size(sub) + h - 1);
-            std::size_t i_j = i % (etl::size(sub) + h - 1);
+            size_t i_i = i / (etl::size(sub) + h - 1);
+            size_t i_j = i % (etl::size(sub) + h - 1);
             return operator()(i_i, i_j);
         } else {
-            std::size_t i_i = i % h;
-            std::size_t i_j = i / h;
+            size_t i_i = i % h;
+            size_t i_j = i / h;
             return operator()(i_i, i_j);
         }
     }
@@ -197,7 +197,7 @@ struct dyn_convmtx_transformer {
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const {
+    value_type read_flat(size_t i) const {
         return operator[](i);
     }
 
@@ -207,7 +207,7 @@ struct dyn_convmtx_transformer {
      * \param j The second index
      * \return The value at the position (i, j)
      */
-    value_type operator()(std::size_t i, std::size_t j) const {
+    value_type operator()(size_t i, size_t j) const {
         if (j < i) {
             return value_type(0);
         } else if (j >= etl::size(sub) + i) {
@@ -269,20 +269,20 @@ struct dyn_convmtx2_transformer {
     static_assert(decay_traits<T>::dimensions() == 2, "convmtx2 can only be applied on matrices");
 
     sub_type sub;               ///< The subexpression
-    const std::size_t k1;       ///< The first dimension of the kernel
-    const std::size_t k2;       ///< The second dimension of the kernel
-    std::size_t i1;             ///< The first dimension of the input
-    std::size_t i2;             ///< The second dimension of the input
-    std::size_t inner_paddings; ///< The inner padding sum
-    std::size_t inner_padding;  ///< The inner padding
+    const size_t k1;       ///< The first dimension of the kernel
+    const size_t k2;       ///< The second dimension of the kernel
+    size_t i1;             ///< The first dimension of the input
+    size_t i2;             ///< The second dimension of the input
+    size_t inner_paddings; ///< The inner padding sum
+    size_t inner_padding;  ///< The inner padding
 
-    dyn_convmtx2_transformer(sub_type sub, std::size_t k1, std::size_t k2)
+    dyn_convmtx2_transformer(sub_type sub, size_t k1, size_t k2)
             : sub(sub), k1(k1), k2(k2) {
         i1 = etl::dim<0>(sub);
         i2 = etl::dim<1>(sub);
 
-        std::size_t c_height = (i1 + k1 - 1) * (i2 + k2 - 1);
-        std::size_t c_width  = k1 * k2;
+        size_t c_height = (i1 + k1 - 1) * (i2 + k2 - 1);
+        size_t c_width  = k1 * k2;
 
         auto max_fill  = c_height - ((i1 + k1 - 1) * ((c_width - 1) / k1) + (c_width - 1) % k1);
         inner_paddings = max_fill - (i1 * i2);
@@ -294,9 +294,9 @@ struct dyn_convmtx2_transformer {
      * \param i The index
      * \return the value at the given index.
      */
-    value_type operator[](std::size_t i) const {
-        std::size_t i_i = i / (k1 * k2);
-        std::size_t i_j = i % (k1 * k2);
+    value_type operator[](size_t i) const {
+        size_t i_i = i / (k1 * k2);
+        size_t i_j = i % (k1 * k2);
         return (*this)(i_i, i_j);
     }
 
@@ -306,9 +306,9 @@ struct dyn_convmtx2_transformer {
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const noexcept {
-        std::size_t i_i = i / (k1 * k2);
-        std::size_t i_j = i % (k1 * k2);
+    value_type read_flat(size_t i) const noexcept {
+        size_t i_i = i / (k1 * k2);
+        size_t i_j = i % (k1 * k2);
         return (*this)(i_i, i_j);
     }
 
@@ -318,7 +318,7 @@ struct dyn_convmtx2_transformer {
      * \param j The second index
      * \return The value at the position (i, j)
      */
-    value_type operator()(std::size_t i, std::size_t j) const {
+    value_type operator()(size_t i, size_t j) const {
         auto top_padding = (i1 + k1 - 1) * (j / k1) + j % k1;
 
         if (i < top_padding || i >= top_padding + (i1 * i2) + inner_paddings) {
@@ -386,12 +386,12 @@ struct dyn_convmtx2_transformer {
  * \param k2 The second dimension of ther kernel
  */
 template <typename A, typename M>
-void convmtx2_direct_t(M& m, A&& sub, std::size_t k1, std::size_t k2) {
-    const std::size_t i1 = etl::dim<0>(sub);
-    const std::size_t i2 = etl::dim<1>(sub);
+void convmtx2_direct_t(M& m, A&& sub, size_t k1, size_t k2) {
+    const size_t i1 = etl::dim<0>(sub);
+    const size_t i2 = etl::dim<1>(sub);
 
-    const std::size_t c_height = (i1 + k1 - 1) * (i2 + k2 - 1);
-    const std::size_t c_width  = k1 * k2;
+    const size_t c_height = (i1 + k1 - 1) * (i2 + k2 - 1);
+    const size_t c_width  = k1 * k2;
 
     const auto max_fill       = c_height - ((i1 + k1 - 1) * ((c_width - 1) / k1) + (c_width - 1) % k1);
     const auto inner_paddings = max_fill - (i1 * i2);
@@ -402,11 +402,11 @@ void convmtx2_direct_t(M& m, A&& sub, std::size_t k1, std::size_t k2) {
 
     std::fill(mm, mm + etl::size(m), 0.0);
 
-    for (std::size_t j = 0; j < c_width; ++j) {
-        std::size_t big_i = (i1 + k1 - 1) * (j / k1) + j % k1;
+    for (size_t j = 0; j < c_width; ++j) {
+        size_t big_i = (i1 + k1 - 1) * (j / k1) + j % k1;
 
-        for (std::size_t ii = 0; ii < etl::dim<1>(sub); ++ii) {
-            for (std::size_t jj = 0; jj < etl::dim<0>(sub); ++jj) {
+        for (size_t ii = 0; ii < etl::dim<1>(sub); ++ii) {
+            for (size_t jj = 0; jj < etl::dim<0>(sub); ++jj) {
                 mm[j * c_width + big_i] = ss[jj * i2 + ii];
                 ++big_i;
             }
@@ -425,18 +425,18 @@ void convmtx2_direct_t(M& m, A&& sub, std::size_t k1, std::size_t k2) {
  * \param k2 The second dimension of ther kernel
  */
 template <typename A, typename M, cpp_disable_if(all_dma<A, M>::value)>
-void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
-    const std::size_t i1 = etl::dim<0>(sub);
-    const std::size_t i2 = etl::dim<1>(sub);
+void im2col_direct(M& m, A&& sub, size_t k1, size_t k2) {
+    const size_t i1 = etl::dim<0>(sub);
+    const size_t i2 = etl::dim<1>(sub);
 
-    const std::size_t m_width = (i1 - k1 + 1) * (i2 - k2 + 1);
+    const size_t m_width = (i1 - k1 + 1) * (i2 - k2 + 1);
 
-    for (std::size_t b = 0; b < m_width; ++b) {
+    for (size_t b = 0; b < m_width; ++b) {
         auto s_i = b % (i1 - k1 + 1);
         auto s_j = b / (i1 - k1 + 1);
 
-        for (std::size_t b_i = 0; b_i < k1; ++b_i) {
-            for (std::size_t b_j = 0; b_j < k2; ++b_j) {
+        for (size_t b_i = 0; b_i < k1; ++b_i) {
+            for (size_t b_j = 0; b_j < k2; ++b_j) {
                 m(b_j * k1 + b_i, b) = sub(s_i + b_i, s_j + b_j);
             }
         }
@@ -454,21 +454,21 @@ void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
  * \param k2 The second dimension of ther kernel
  */
 template <typename A, typename M, cpp_enable_if(all_dma<A, M>::value)>
-void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
-    const std::size_t i1 = etl::dim<0>(sub);
-    const std::size_t i2 = etl::dim<1>(sub);
+void im2col_direct(M& m, A&& sub, size_t k1, size_t k2) {
+    const size_t i1 = etl::dim<0>(sub);
+    const size_t i2 = etl::dim<1>(sub);
 
     const auto m_width = (i1 - k1 + 1) * (i2 - k2 + 1);
 
     const auto mm = m.memory_start();
     const auto ss = sub.memory_start();
 
-    for (std::size_t b = 0; b < m_width; ++b) {
+    for (size_t b = 0; b < m_width; ++b) {
         auto s_i = b % (i1 - k1 + 1);
         auto s_j = b / (i1 - k1 + 1);
 
-        for (std::size_t b_i = 0; b_i < k1; ++b_i) {
-            for (std::size_t b_j = 0; b_j < k2; ++b_j) {
+        for (size_t b_i = 0; b_i < k1; ++b_i) {
+            for (size_t b_j = 0; b_j < k2; ++b_j) {
                 mm[(b_j * k1 + b_i) * m_width + b] = ss[(s_i + b_i) * i2 + s_j + b_j];
             }
         }
@@ -488,11 +488,11 @@ void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
  * \param k2 The second dimension of ther kernel
  */
 template <typename A, typename M>
-void im2col_direct_tr(M& m, A&& sub, std::size_t k1, std::size_t k2) {
+void im2col_direct_tr(M& m, A&& sub, size_t k1, size_t k2) {
     static_assert(all_dma<A, M>::value, "im2col_direct_tr has only been implemented for direct memory access");
 
-    const std::size_t i1 = etl::dim<0>(sub);
-    const std::size_t i2 = etl::dim<1>(sub);
+    const size_t i1 = etl::dim<0>(sub);
+    const size_t i2 = etl::dim<1>(sub);
 
     const auto height = i1 - k1 + 1;
     const auto width  = i2 - k2 + 1;
@@ -500,14 +500,14 @@ void im2col_direct_tr(M& m, A&& sub, std::size_t k1, std::size_t k2) {
     const auto mm = m.memory_start();
     const auto ss = sub.memory_start();
 
-    for (std::size_t c = 0; c < k1 * k2; ++c) {
-        const std::size_t w_source = c % k2;
-        const std::size_t h_source = (c / k2) % k1;
-        const std::size_t c_source = c / (k1 * k2);
+    for (size_t c = 0; c < k1 * k2; ++c) {
+        const size_t w_source = c % k2;
+        const size_t h_source = (c / k2) % k1;
+        const size_t c_source = c / (k1 * k2);
 
-        for (std::size_t h = 0; h < height; ++h) {
-            const std::size_t block_source = (c_source * i1 + h + h_source) * i2 + w_source;
-            const std::size_t block_target = (c * height + h) * width;
+        for (size_t h = 0; h < height; ++h) {
+            const size_t block_source = (c_source * i1 + h + h_source) * i2 + w_source;
+            const size_t block_target = (c * height + h) * width;
 
             direct_copy_n(ss + block_source, mm + block_target, width);
         }
@@ -525,7 +525,7 @@ void im2col_direct_tr(M& m, A&& sub, std::size_t k1, std::size_t k2) {
  * \param k2 The second dimension of ther kernel
  */
 template <typename A, typename M>
-void im2col_direct_tr_multi(M& m, A&& sub, std::size_t k1, std::size_t k2) {
+void im2col_direct_tr_multi(M& m, A&& sub, size_t k1, size_t k2) {
     static_assert(all_dma<A, M>::value, "im2col_direct_tr has only been implemented for direct memory access");
 
     const auto N  = etl::dim<0>(sub);
@@ -538,13 +538,13 @@ void im2col_direct_tr_multi(M& m, A&& sub, std::size_t k1, std::size_t k2) {
     const auto mm = m.memory_start();
     const auto ss = sub.memory_start();
 
-    for (std::size_t w = 0; w < k1 * k2; ++w) {
+    for (size_t w = 0; w < k1 * k2; ++w) {
         const auto w_source = w % k2;
         const auto h_source = (w / k2) % k1;
         const auto c_source = w / (k1 * k2);
 
-        for (std::size_t i = 0; i < N; ++i) {
-            for (std::size_t h = 0; h < height; ++h) {
+        for (size_t i = 0; i < N; ++i) {
+            for (size_t h = 0; h < height; ++h) {
                 const auto block_source = ((c_source * i1 + h + h_source) * i2 + w_source) + (i) * (i1 * i2);
                 const auto block_target = (w * N + i) * (height * width) + h * width;
 
@@ -593,7 +593,7 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static size_t size(const expr_t& v) {
         return dim(v, 0) * dim(v, 1);
     }
 
@@ -603,7 +603,7 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         if (d == 0) {
             return etl::dim(v.left, 0);
         } else {
@@ -617,7 +617,7 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
      * \brief Returns the size of an expression of this fast type.
      * \returns the size of an expression of this fast type.
      */
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return etl_traits<left_expr_t>::template dim<0>() * etl_traits<right_expr_t>::template dim<1>();
     }
 
@@ -626,8 +626,8 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
      * \tparam D The dimension to get
      * \return the Dth dimension of an expression of this type
      */
-    template <std::size_t D>
-    static constexpr std::size_t dim() {
+    template <size_t D>
+    static constexpr size_t dim() {
         static_assert(D < 2, "Only 2D mmul are supported");
 
         return D == 0 ? etl_traits<left_expr_t>::template dim<0>() : etl_traits<right_expr_t>::template dim<1>();
@@ -637,7 +637,7 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 2;
     }
 };
@@ -679,7 +679,7 @@ struct etl_traits<dyn_convmtx_transformer<E>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static size_t size(const expr_t& v) {
         return v.h * (etl::size(v.sub) + v.h - 1);
     }
 
@@ -689,7 +689,7 @@ struct etl_traits<dyn_convmtx_transformer<E>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         if (d == 0) {
             return v.h;
         } else {
@@ -701,7 +701,7 @@ struct etl_traits<dyn_convmtx_transformer<E>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 2;
     }
 };
@@ -743,7 +743,7 @@ struct etl_traits<dyn_convmtx2_transformer<E>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static size_t size(const expr_t& v) {
         auto c_height = (etl::dim<0>(v.sub) + v.k1 - 1) * (etl::dim<1>(v.sub) + v.k2 - 1);
         auto c_width  = v.k1 * v.k2;
         return c_height * c_width;
@@ -755,7 +755,7 @@ struct etl_traits<dyn_convmtx2_transformer<E>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         if (d == 0) {
             return (etl::dim<0>(v.sub) + v.k1 - 1) * (etl::dim<1>(v.sub) + v.k2 - 1);
         } else {
@@ -767,7 +767,7 @@ struct etl_traits<dyn_convmtx2_transformer<E>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 2;
     }
 };

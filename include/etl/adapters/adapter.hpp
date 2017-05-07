@@ -60,7 +60,7 @@ public:
      * \brief Construct a new adapter matrix and fill it with zeros
      * \param dim The dimension of the matrix
      */
-    explicit adapter(std::size_t dim) noexcept : value(dim, dim, value_type()) {
+    explicit adapter(size_t dim) noexcept : value(dim, dim, value_type()) {
         //Nothing else to init
     }
 
@@ -70,7 +70,7 @@ public:
      * \param value The value to fill the matrix with
      * \param dim The dimension of the matrix
      */
-    adapter(std::size_t dim, value_type value) noexcept : value(dim, dim, value) {
+    adapter(size_t dim, value_type value) noexcept : value(dim, dim, value) {
         //Nothing else to init
     }
 
@@ -108,7 +108,7 @@ public:
      *
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
-    const value_type& operator()(std::size_t i, std::size_t j) const noexcept {
+    const value_type& operator()(size_t i, size_t j) const noexcept {
         return value(i, j);
     }
 
@@ -117,7 +117,7 @@ public:
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    const value_type& operator[](std::size_t i) const noexcept {
+    const value_type& operator[](size_t i) const noexcept {
         return value[i];
     }
 
@@ -126,7 +126,7 @@ public:
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type& operator[](std::size_t i) noexcept {
+    value_type& operator[](size_t i) noexcept {
         return value[i];
     }
 
@@ -136,7 +136,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const noexcept {
+    value_type read_flat(size_t i) const noexcept {
         return value.read_flat(i);
     }
 
@@ -191,7 +191,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template<typename V = default_vec>
-    vec_type<V> load(std::size_t i) const noexcept {
+    vec_type<V> load(size_t i) const noexcept {
         return value.template load<V>(i);
     }
 
@@ -202,7 +202,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template<typename V = default_vec>
-    vec_type<V> loadu(std::size_t i) const noexcept {
+    vec_type<V> loadu(size_t i) const noexcept {
         return value.template loadu<V>(i);
     }
 
@@ -213,7 +213,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t i) noexcept {
+    void stream(vec_type<V> in, size_t i) noexcept {
         value.template stream<V>(in, i);
     }
 
@@ -224,7 +224,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void store(vec_type<V> in, std::size_t i) noexcept {
+    void store(vec_type<V> in, size_t i) noexcept {
         value.template store<V>(in, i);
     }
 
@@ -235,7 +235,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void storeu(vec_type<V> in, std::size_t i) noexcept {
+    void storeu(vec_type<V> in, size_t i) noexcept {
         value.template storeu<V>(in, i);
     }
 
@@ -425,7 +425,7 @@ public:
      * \brief Returns the number of dimensions of the matrix
      * \return the number of dimensions of the matrix
      */
-    static constexpr std::size_t dimensions() noexcept {
+    static constexpr size_t dimensions() noexcept {
         return 2;
     }
 };

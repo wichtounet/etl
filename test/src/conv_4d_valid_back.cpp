@@ -20,9 +20,9 @@ CONV4_VALID_BACK_TEST_CASE("conv/4d/valid/back/1", "[conv][conv4][back][valid]")
 
     SELECTED_SECTION(etl::conv_impl::STD) {
         ref = 0.0;
-        for (std::size_t i = 0; i < etl::dim<0>(I); ++i) {
-            for (std::size_t c = 0; c < etl::dim<1>(K); ++c) {
-                for (std::size_t k = 0; k < etl::dim<0>(K); ++k) {
+        for (size_t i = 0; i < etl::dim<0>(I); ++i) {
+            for (size_t c = 0; c < etl::dim<1>(K); ++c) {
+                for (size_t k = 0; k < etl::dim<0>(K); ++k) {
                     ref(i)(c) += conv_2d_valid(I(i)(k), K(k)(c));
                 }
             }
@@ -31,7 +31,7 @@ CONV4_VALID_BACK_TEST_CASE("conv/4d/valid/back/1", "[conv][conv4][back][valid]")
 
     Impl::apply(I, K, c);
 
-    for (std::size_t i = 0; i < ref.size(); ++i) {
+    for (size_t i = 0; i < ref.size(); ++i) {
         REQUIRE_EQUALS_APPROX_E(c[i], ref[i], base_eps * 10);
     }
 }
@@ -48,9 +48,9 @@ CONV4_VALID_BACK_TEST_CASE("conv/4d/valid/back/2", "[conv][conv4][back][valid]")
 
     SELECTED_SECTION(etl::conv_impl::STD) {
         ref = 0.0;
-        for (std::size_t i = 0; i < etl::dim<0>(I); ++i) {
-            for (std::size_t c = 0; c < etl::dim<1>(K); ++c) {
-                for (std::size_t k = 0; k < etl::dim<0>(K); ++k) {
+        for (size_t i = 0; i < etl::dim<0>(I); ++i) {
+            for (size_t c = 0; c < etl::dim<1>(K); ++c) {
+                for (size_t k = 0; k < etl::dim<0>(K); ++k) {
                     ref(i)(c) += etl::conv_2d_valid<1, 1, 1, 1>(I(i)(k), K(k)(c));
                 }
             }
@@ -59,7 +59,7 @@ CONV4_VALID_BACK_TEST_CASE("conv/4d/valid/back/2", "[conv][conv4][back][valid]")
 
     Impl::template apply<1, 1, 1, 1>(I, K, c);
 
-    for (std::size_t i = 0; i < ref.size(); ++i) {
+    for (size_t i = 0; i < ref.size(); ++i) {
         REQUIRE_EQUALS_APPROX_E(c[i], ref[i], base_eps * 10);
     }
 }
@@ -76,9 +76,9 @@ DYN_CONV4_VALID_BACK_TEST_CASE("conv/4d/valid/back/3", "[conv][conv4][back][vali
 
     SELECTED_SECTION(etl::conv_impl::STD) {
         ref = 0.0;
-        for (std::size_t i = 0; i < etl::dim<0>(I); ++i) {
-            for (std::size_t c = 0; c < etl::dim<1>(K); ++c) {
-                for (std::size_t k = 0; k < etl::dim<0>(K); ++k) {
+        for (size_t i = 0; i < etl::dim<0>(I); ++i) {
+            for (size_t c = 0; c < etl::dim<1>(K); ++c) {
+                for (size_t k = 0; k < etl::dim<0>(K); ++k) {
                     ref(i)(c) += etl::conv_2d_valid<1, 1, 1, 1>(I(i)(k), K(k)(c));
                 }
             }
@@ -87,7 +87,7 @@ DYN_CONV4_VALID_BACK_TEST_CASE("conv/4d/valid/back/3", "[conv][conv4][back][vali
 
     Impl::apply(I, K, c, 1, 1, 1, 1);
 
-    for (std::size_t i = 0; i < ref.size(); ++i) {
+    for (size_t i = 0; i < ref.size(); ++i) {
         REQUIRE_EQUALS_APPROX_E(c[i], ref[i], base_eps * 10);
     }
 }
@@ -104,9 +104,9 @@ CONV4_VALID_BACK_FLIPPED_TEST_CASE("conv/4d/valid/back/flipped/1", "[conv][conv4
 
     SELECTED_SECTION(etl::conv_impl::STD) {
         ref = 0.0;
-        for (std::size_t i = 0; i < etl::dim<0>(I); ++i) {
-            for (std::size_t c = 0; c < etl::dim<1>(K); ++c) {
-                for (std::size_t k = 0; k < etl::dim<0>(K); ++k) {
+        for (size_t i = 0; i < etl::dim<0>(I); ++i) {
+            for (size_t c = 0; c < etl::dim<1>(K); ++c) {
+                for (size_t k = 0; k < etl::dim<0>(K); ++k) {
                     ref(i)(c) += conv_2d_valid_flipped(I(i)(k), K(k)(c));
                 }
             }
@@ -115,7 +115,7 @@ CONV4_VALID_BACK_FLIPPED_TEST_CASE("conv/4d/valid/back/flipped/1", "[conv][conv4
 
     Impl::apply(I, K, c);
 
-    for (std::size_t i = 0; i < ref.size(); ++i) {
+    for (size_t i = 0; i < ref.size(); ++i) {
         REQUIRE_EQUALS_APPROX_E(c[i], ref[i], base_eps * 10);
     }
 }

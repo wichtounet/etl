@@ -39,9 +39,9 @@ void inv(A&& a, C&& c) {
         c = 0;
 
         // The column in c
-        for (std::size_t s = 0; s < n; ++s) {
+        for (size_t s = 0; s < n; ++s) {
             // The row in a
-            for (std::size_t row = 0; row < n; ++row) {
+            for (size_t row = 0; row < n; ++row) {
                 auto b = row == s ? 1.0 : 0.0;
 
                 if (row == 0) {
@@ -50,7 +50,7 @@ void inv(A&& a, C&& c) {
                     value_t<A> acc(0);
 
                     // The column in a
-                    for (std::size_t col = 0; col < row; ++col) {
+                    for (size_t col = 0; col < row; ++col) {
                         acc += a(row, col) * c(col, s);
                     }
 

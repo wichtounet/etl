@@ -26,8 +26,8 @@ namespace standard {
  */
 template <typename A, typename B, typename C>
 void outer(const A& a, const B& b, C&& c) {
-    for (std::size_t i = 0; i < etl::dim<0>(c); ++i) {
-        for (std::size_t j = 0; j < etl::dim<1>(c); ++j) {
+    for (size_t i = 0; i < etl::dim<0>(c); ++i) {
+        for (size_t j = 0; j < etl::dim<1>(c); ++j) {
             c(i, j) = a(i) * b(j);
         }
     }
@@ -43,9 +43,9 @@ template <typename A, typename B, typename C>
 void batch_outer(const A& lhs, const B& rhs, C&& c) {
     c = 0;
 
-    for (std::size_t b = 0; b < etl::dim<0>(lhs); ++b) {
-        for (std::size_t i = 0; i < etl::dim<0>(c); ++i) {
-            for (std::size_t j = 0; j < etl::dim<1>(c); ++j) {
+    for (size_t b = 0; b < etl::dim<0>(lhs); ++b) {
+        for (size_t i = 0; i < etl::dim<0>(c); ++i) {
+            for (size_t j = 0; j < etl::dim<1>(c); ++j) {
                 c(i, j) += lhs(b, i) * rhs(b, j);
             }
         }

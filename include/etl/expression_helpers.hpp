@@ -129,7 +129,7 @@ using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>,
  * operation that takes a number of dimensions as input template
  * type.
  */
-template <typename A, typename B, template <typename, std::size_t> class OP, std::size_t D>
+template <typename A, typename B, template <typename, size_t> class OP, size_t D>
 using dim_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>, D>>;
 
 /*!

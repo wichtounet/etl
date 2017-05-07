@@ -123,7 +123,7 @@ struct sum_impl {
         //TODO Make it so that dispatching aligns the sub parts
 
         if (impl == etl::sum_impl::VEC) {
-            engine_dispatch_1d_acc<value_t<E>>([&e](std::size_t first, std::size_t last) -> value_t<E> {
+            engine_dispatch_1d_acc<value_t<E>>([&e](size_t first, size_t last) -> value_t<E> {
                 return impl::vec::sum(e, first, last);
             }, acc_functor, 0, size(e), sum_parallel_threshold);
         } else if(impl == etl::sum_impl::BLAS){
@@ -131,7 +131,7 @@ struct sum_impl {
         } else if(impl == etl::sum_impl::CUBLAS){
             return impl::cublas::sum(e);
         } else {
-            engine_dispatch_1d_acc<value_t<E>>([&e](std::size_t first, std::size_t last) -> value_t<E> {
+            engine_dispatch_1d_acc<value_t<E>>([&e](size_t first, size_t last) -> value_t<E> {
                 return impl::standard::sum(e, first, last);
             }, acc_functor, 0, size(e), sum_parallel_threshold);
         }
@@ -181,7 +181,7 @@ struct asum_impl {
         //TODO Make it so that dispatching aligns the sub parts
 
         if (impl == etl::sum_impl::VEC) {
-            engine_dispatch_1d_acc<value_t<E>>([&e](std::size_t first, std::size_t last) -> value_t<E> {
+            engine_dispatch_1d_acc<value_t<E>>([&e](size_t first, size_t last) -> value_t<E> {
                 return impl::vec::asum(e, first, last);
             }, acc_functor, 0, size(e), sum_parallel_threshold);
         } else if(impl == etl::sum_impl::BLAS){
@@ -189,7 +189,7 @@ struct asum_impl {
         } else if(impl == etl::sum_impl::CUBLAS){
             return impl::cublas::asum(e);
         } else {
-            engine_dispatch_1d_acc<value_t<E>>([&e](std::size_t first, std::size_t last) -> value_t<E> {
+            engine_dispatch_1d_acc<value_t<E>>([&e](size_t first, size_t last) -> value_t<E> {
                 return impl::standard::asum(e, first, last);
             }, acc_functor, 0, size(e), sum_parallel_threshold);
         }

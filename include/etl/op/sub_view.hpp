@@ -75,7 +75,7 @@ public:
      * \param sub_expr The sub expression
      * \param i The sub index
      */
-    sub_view(sub_type sub_expr, std::size_t i)
+    sub_view(sub_type sub_expr, size_t i)
             : sub_expr(sub_expr), i(i), sub_offset(i * subsize(sub_expr)) {}
 
     /*!
@@ -83,7 +83,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    const_return_type operator[](std::size_t j) const {
+    const_return_type operator[](size_t j) const {
         return storage_order == order::RowMajor
                    ? sub_expr[sub_offset + j]
                    : sub_expr[i + dim<0>(sub_expr) * j];
@@ -94,7 +94,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    return_type operator[](std::size_t j) {
+    return_type operator[](size_t j) {
         return storage_order == order::RowMajor
                    ? sub_expr[sub_offset + j]
                    : sub_expr[i + dim<0>(sub_expr) * j];
@@ -106,7 +106,7 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t j) const noexcept {
+    value_type read_flat(size_t j) const noexcept {
         return storage_order == order::RowMajor
                    ? sub_expr.read_flat(sub_offset + j)
                    : sub_expr.read_flat(i + dim<0>(sub_expr) * j);
@@ -119,7 +119,7 @@ public:
      */
     template <typename... S, cpp_enable_if((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
     ETL_STRONG_INLINE(const_return_type) operator()(S... args) const {
-        return sub_expr(i, static_cast<std::size_t>(args)...);
+        return sub_expr(i, static_cast<size_t>(args)...);
     }
 
     /*!
@@ -129,7 +129,7 @@ public:
      */
     template <typename... S, cpp_enable_if((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
     ETL_STRONG_INLINE(return_type) operator()(S... args) {
-        return sub_expr(i, static_cast<std::size_t>(args)...);
+        return sub_expr(i, static_cast<size_t>(args)...);
     }
 
     /*!
@@ -138,7 +138,7 @@ public:
      * \return a sub view of the matrix at position x.
      */
     template <typename TT = sub_type, cpp_enable_if((decay_traits<TT>::dimensions() > 2))>
-    auto operator()(std::size_t x) const {
+    auto operator()(size_t x) const {
         return sub(*this, x);
     }
 
@@ -149,7 +149,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void store(vec_type<V> in, std::size_t x) noexcept {
+    void store(vec_type<V> in, size_t x) noexcept {
         return sub_expr.template storeu<V>(in, x + sub_offset);
     }
 
@@ -160,7 +160,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void storeu(vec_type<V> in, std::size_t x) noexcept {
+    void storeu(vec_type<V> in, size_t x) noexcept {
         return sub_expr.template storeu<V>(in, x + sub_offset);
     }
 
@@ -171,7 +171,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t x) noexcept {
+    void stream(vec_type<V> in, size_t x) noexcept {
         return sub_expr.template storeu<V>(in, x + sub_offset);
     }
 
@@ -182,7 +182,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(vec_type<V>) load(std::size_t x) const noexcept {
+    ETL_STRONG_INLINE(vec_type<V>) load(size_t x) const noexcept {
         return sub_expr.template loadu<V>(x + sub_offset);
     }
 
@@ -193,7 +193,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(vec_type<V>) loadu(std::size_t x) const noexcept {
+    ETL_STRONG_INLINE(vec_type<V>) loadu(size_t x) const noexcept {
         return sub_expr.template loadu<V>(x + sub_offset);
     }
 
@@ -214,7 +214,7 @@ public:
      *
      * \return a refernece to the ith dimension value.
      */
-    std::size_t& unsafe_dimension_access(std::size_t x) {
+    size_t& unsafe_dimension_access(size_t x) {
         return sub_expr.unsafe_dimension_access(x + 1);
     }
 
@@ -372,7 +372,7 @@ public:
      * \param sub_expr The sub expression
      * \param i The sub index
      */
-    sub_view(sub_type sub_expr, std::size_t i) : sub_expr(sub_expr), i(i), sub_size(subsize(sub_expr)) {
+    sub_view(sub_type sub_expr, size_t i) : sub_expr(sub_expr), i(i), sub_size(subsize(sub_expr)) {
         if(!decay_traits<sub_type>::needs_evaluator_visitor){
             this->memory = sub_expr.memory_start() + i * sub_size;
 
@@ -412,7 +412,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    const_return_type operator[](std::size_t j) const {
+    const_return_type operator[](size_t j) const {
         ensure_cpu_up_to_date();
         return memory[j];
     }
@@ -422,7 +422,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    return_type operator[](std::size_t j) {
+    return_type operator[](size_t j) {
         ensure_cpu_up_to_date();
         invalidate_gpu();
         return memory[j];
@@ -434,7 +434,7 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t j) const noexcept {
+    value_type read_flat(size_t j) const noexcept {
         ensure_cpu_up_to_date();
         return memory[j];
     }
@@ -465,7 +465,7 @@ public:
      * \return a sub view of the matrix at position x.
      */
     template <cpp_enable_if_cst((n_dimensions > 1))>
-    auto operator()(std::size_t x) const {
+    auto operator()(size_t x) const {
         return sub(*this, x);
     }
 
@@ -476,7 +476,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void store(vec_type<V> in, std::size_t x) noexcept {
+    void store(vec_type<V> in, size_t x) noexcept {
         return V::storeu(memory + x, in);
     }
 
@@ -487,7 +487,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void storeu(vec_type<V> in, std::size_t x) noexcept {
+    void storeu(vec_type<V> in, size_t x) noexcept {
         return V::storeu(memory + x, in);
     }
 
@@ -498,7 +498,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t x) noexcept {
+    void stream(vec_type<V> in, size_t x) noexcept {
         //TODO If the sub view is aligned (at compile-time), use stream store here
         return V::storeu(memory + x, in);
     }
@@ -510,7 +510,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    vec_type<V> load(std::size_t x) const noexcept {
+    vec_type<V> load(size_t x) const noexcept {
         return V::loadu(memory + x);
     }
 
@@ -521,7 +521,7 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    vec_type<V> loadu(std::size_t x) const noexcept {
+    vec_type<V> loadu(size_t x) const noexcept {
         return V::loadu(memory + x);
     }
 
@@ -584,7 +584,7 @@ public:
      *
      * \return a refernece to the ith dimension value.
      */
-    std::size_t& unsafe_dimension_access(std::size_t x) {
+    size_t& unsafe_dimension_access(size_t x) {
         return sub_expr.unsafe_dimension_access(x + 1);
     }
 
@@ -592,8 +592,8 @@ public:
      * \brief Returns all the Ith... dimensions in array
      * \return an array containing the Ith... dimensions of the expression.
      */
-    template<std::size_t... I>
-    std::array<std::size_t, decay_traits<this_type>::dimensions()> dim_array(std::index_sequence<I...>) const {
+    template<size_t... I>
+    std::array<size_t, decay_traits<this_type>::dimensions()> dim_array(std::index_sequence<I...>) const {
         return {{decay_traits<this_type>::dim(*this, I)...}};
     }
 
@@ -869,7 +869,7 @@ struct etl_traits<etl::sub_view<T, Aligned>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) noexcept {
+    static size_t size(const expr_t& v) noexcept {
         return sub_traits::size(v.sub_expr) / sub_traits::dim(v.sub_expr, 0);
     }
 
@@ -879,7 +879,7 @@ struct etl_traits<etl::sub_view<T, Aligned>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) noexcept {
+    static size_t dim(const expr_t& v, size_t d) noexcept {
         return sub_traits::dim(v.sub_expr, d + 1);
     }
 
@@ -887,7 +887,7 @@ struct etl_traits<etl::sub_view<T, Aligned>> {
      * \brief Returns the size of an expression of this fast type.
      * \returns the size of an expression of this fast type.
      */
-    static constexpr std::size_t size() noexcept {
+    static constexpr size_t size() noexcept {
         return sub_traits::size() / sub_traits::template dim<0>();
     }
 
@@ -896,8 +896,8 @@ struct etl_traits<etl::sub_view<T, Aligned>> {
      * \tparam D The dimension to get
      * \return the Dth dimension of an expression of this type
      */
-    template <std::size_t D>
-    static constexpr std::size_t dim() noexcept {
+    template <size_t D>
+    static constexpr size_t dim() noexcept {
         return sub_traits::template dim<D + 1>();
     }
 
@@ -905,7 +905,7 @@ struct etl_traits<etl::sub_view<T, Aligned>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() noexcept {
+    static constexpr size_t dimensions() noexcept {
         return sub_traits::dimensions() - 1;
     }
 };

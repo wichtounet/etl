@@ -7,7 +7,7 @@
 
 #ifdef ETL_FAST_CATCH
 
-inline void evaluate_result_direct(const char* file, std::size_t line, const char* exp, bool value){
+inline void evaluate_result_direct(const char* file, size_t line, const char* exp, bool value){
     Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
     result.setResultType(value);
     result.setLhs(value ? "true" : "false");
@@ -17,7 +17,7 @@ inline void evaluate_result_direct(const char* file, std::size_t line, const cha
 }
 
 template<typename L, typename R>
-void evaluate_result(const char* file, std::size_t line, const char* exp, L lhs, R rhs){
+void evaluate_result(const char* file, size_t line, const char* exp, L lhs, R rhs){
     Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
     result.setResultType(lhs == rhs);
     result.setLhs(Catch::toString(lhs));
@@ -28,7 +28,7 @@ void evaluate_result(const char* file, std::size_t line, const char* exp, L lhs,
 }
 
 template<typename L>
-void evaluate_result_approx(const char* file, std::size_t line, const char* exp, L lhs, decltype(lhs) rhs, double eps = base_eps){
+void evaluate_result_approx(const char* file, size_t line, const char* exp, L lhs, decltype(lhs) rhs, double eps = base_eps){
     Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
     result.setResultType(std::abs(lhs - rhs) < eps * (1.0 + std::max(std::abs(lhs), std::abs(rhs))));
     result.setLhs(Catch::toString(lhs));

@@ -14,37 +14,37 @@ namespace traits_detail {
 template <typename T>
 struct is_fast_matrix_impl : std::false_type {};
 
-template <typename V1, typename V2, order V3, std::size_t... R>
+template <typename V1, typename V2, order V3, size_t... R>
 struct is_fast_matrix_impl<fast_matrix_impl<V1, V2, V3, R...>> : std::true_type {};
 
 template <typename T>
 struct is_custom_fast_matrix_impl : std::false_type {};
 
-template <typename V1, typename V2, order V3, std::size_t... R>
+template <typename V1, typename V2, order V3, size_t... R>
 struct is_custom_fast_matrix_impl<custom_fast_matrix_impl<V1, V2, V3, R...>> : std::true_type {};
 
 template <typename T>
 struct is_dyn_matrix_impl : std::false_type {};
 
-template <typename V1, order V2, std::size_t V3>
+template <typename V1, order V2, size_t V3>
 struct is_dyn_matrix_impl<dyn_matrix_impl<V1, V2, V3>> : std::true_type {};
 
 template <typename T>
 struct is_custom_dyn_matrix_impl : std::false_type {};
 
-template <typename V1, order V2, std::size_t V3>
+template <typename V1, order V2, size_t V3>
 struct is_custom_dyn_matrix_impl<custom_dyn_matrix_impl<V1, V2, V3>> : std::true_type {};
 
 template <typename T>
 struct is_sparse_matrix_impl : std::false_type {};
 
-template <typename V1, sparse_storage V2, std::size_t V3>
+template <typename V1, sparse_storage V2, size_t V3>
 struct is_sparse_matrix_impl<sparse_matrix_impl<V1, V2, V3>> : std::true_type {};
 
 template <typename T>
 struct is_dyn_matrix_view : std::false_type {};
 
-template <typename E, std::size_t D, typename Enable>
+template <typename E, size_t D, typename Enable>
 struct is_dyn_matrix_view<dyn_matrix_view<E, D, Enable>> : std::true_type {};
 
 template <typename T>
@@ -762,7 +762,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
      * \param v The expression to get the size from
      * \return the size of the given expressio
      */
-    static std::size_t size(const T& v) {
+    static size_t size(const T& v) {
         return v.size();
     }
 
@@ -772,7 +772,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
      * \param d The dimension to get
      * \return the dth dimension of the given expressio
      */
-    static std::size_t dim(const T& v, std::size_t d) {
+    static size_t dim(const T& v, size_t d) {
         return v.dim(d);
     }
 
@@ -780,7 +780,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
      * \brief Return the size of an expression of the given type
      * \return the size of an expression of the given type
      */
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         static_assert(is_fast, "Only fast_matrix have compile-time access to the dimensions");
 
         return T::size();
@@ -791,8 +791,8 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
      * \tparam D The dimension to get
      * \return the Dth dimension of the given expressio
      */
-    template <std::size_t D>
-    static constexpr std::size_t dim() {
+    template <size_t D>
+    static constexpr size_t dim() {
         static_assert(is_fast, "Only fast_matrix have compile-time access to the dimensions");
 
         return T::template dim<D>();
@@ -802,7 +802,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
      * \brief Return the number of dimensions of an expression of the given type
      * \return the number of dimensions of an expression of the given type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return T::n_dimensions;
     }
 };
@@ -813,7 +813,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
  * \return The number of dimensions of the given expression.
  */
 template <typename E>
-constexpr std::size_t dimensions(const E& expr) noexcept {
+constexpr size_t dimensions(const E& expr) noexcept {
     return (void)expr, etl_traits<E>::dimensions();
 }
 
@@ -823,7 +823,7 @@ constexpr std::size_t dimensions(const E& expr) noexcept {
  * \return The number of dimensions of the given type.
  */
 template <typename E>
-constexpr std::size_t dimensions() noexcept {
+constexpr size_t dimensions() noexcept {
     return decay_traits<E>::dimensions();
 }
 
@@ -833,7 +833,7 @@ constexpr std::size_t dimensions() noexcept {
  * \return The number of rows of the given expression.
  */
 template <typename E, cpp_disable_if(decay_traits<E>::is_fast)>
-std::size_t rows(const E& expr) {
+size_t rows(const E& expr) {
     return etl_traits<E>::dim(expr, 0);
 }
 
@@ -843,7 +843,7 @@ std::size_t rows(const E& expr) {
  * \return The number of rows of the given expression.
  */
 template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
-constexpr std::size_t rows(const E& expr) noexcept {
+constexpr size_t rows(const E& expr) noexcept {
     return (void)expr, etl_traits<E>::template dim<0>();
 }
 
@@ -853,7 +853,7 @@ constexpr std::size_t rows(const E& expr) noexcept {
  * \return The number of columns of the given expression.
  */
 template <typename E, cpp_disable_if(decay_traits<E>::is_fast)>
-std::size_t columns(const E& expr) {
+size_t columns(const E& expr) {
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
     return etl_traits<E>::dim(expr, 1);
 }
@@ -864,7 +864,7 @@ std::size_t columns(const E& expr) {
  * \return The number of columns of the given expression.
  */
 template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
-constexpr std::size_t columns(const E& expr) noexcept {
+constexpr size_t columns(const E& expr) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
     return (void)expr, etl_traits<E>::template dim<1>();
 }
@@ -875,7 +875,7 @@ constexpr std::size_t columns(const E& expr) noexcept {
  * \return The size of the given expression.
  */
 template <typename E, cpp_disable_if(decay_traits<E>::is_fast)>
-std::size_t size(const E& expr) {
+size_t size(const E& expr) {
     return etl_traits<E>::size(expr);
 }
 
@@ -885,7 +885,7 @@ std::size_t size(const E& expr) {
  * \return The size of the given expression.
  */
 template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
-constexpr std::size_t size(const E& expr) noexcept {
+constexpr size_t size(const E& expr) noexcept {
     return (void)expr, etl_traits<E>::size();
 }
 
@@ -895,7 +895,7 @@ constexpr std::size_t size(const E& expr) noexcept {
  * \return The sub-size of the given expression.
  */
 template <typename E, cpp_disable_if(decay_traits<E>::is_fast)>
-std::size_t subsize(const E& expr) {
+size_t subsize(const E& expr) {
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return etl_traits<E>::size(expr) / etl_traits<E>::dim(expr, 0);
 }
@@ -906,7 +906,7 @@ std::size_t subsize(const E& expr) {
  * \return The sub-size of the given expression.
  */
 template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
-constexpr std::size_t subsize(const E& expr) noexcept {
+constexpr size_t subsize(const E& expr) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return (void)expr, etl_traits<E>::size() / etl_traits<E>::template dim<0>();
 }
@@ -917,8 +917,8 @@ constexpr std::size_t subsize(const E& expr) noexcept {
  * \tparam D The dimension to get
  * \return the Dth dimension of e
  */
-template <std::size_t D, typename E, cpp_disable_if(decay_traits<E>::is_fast)>
-std::size_t dim(const E& e) noexcept {
+template <size_t D, typename E, cpp_disable_if(decay_traits<E>::is_fast)>
+size_t dim(const E& e) noexcept {
     return etl_traits<E>::dim(e, D);
 }
 
@@ -929,7 +929,7 @@ std::size_t dim(const E& e) noexcept {
  * \return the dth dimension of e
  */
 template <typename E>
-std::size_t dim(const E& e, std::size_t d) noexcept {
+size_t dim(const E& e, size_t d) noexcept {
     return etl_traits<E>::dim(e, d);
 }
 
@@ -939,8 +939,8 @@ std::size_t dim(const E& e, std::size_t d) noexcept {
  * \tparam D The dimension to get
  * \return the Dth dimension of e
  */
-template <std::size_t D, typename E, cpp_enable_if(decay_traits<E>::is_fast)>
-constexpr std::size_t dim(const E& e) noexcept {
+template <size_t D, typename E, cpp_enable_if(decay_traits<E>::is_fast)>
+constexpr size_t dim(const E& e) noexcept {
     return (void)e, etl_traits<E>::template dim<D>();
 }
 
@@ -948,8 +948,8 @@ constexpr std::size_t dim(const E& e) noexcept {
  * \brief Return the D dimension of E
  * \return the Dth dimension of E
  */
-template <std::size_t D, typename E, cpp_enable_if(decay_traits<E>::is_fast)>
-constexpr std::size_t dim() noexcept {
+template <size_t D, typename E, cpp_enable_if(decay_traits<E>::is_fast)>
+constexpr size_t dim() noexcept {
     return decay_traits<E>::template dim<D>();
 }
 
@@ -978,7 +978,7 @@ struct safe_dimensions<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std:
  * \return a pair of indices for the equivalent 2D index
  */
 template <typename E>
-constexpr std::pair<std::size_t, std::size_t> index_to_2d(E&& sub, std::size_t i) {
+constexpr std::pair<size_t, size_t> index_to_2d(E&& sub, size_t i) {
     return decay_traits<E>::storage_order == order::RowMajor
                ? std::make_pair(i / dim<0>(sub), i % dim<0>(sub))
                : std::make_pair(i % dim<0>(sub), i / dim<0>(sub));
@@ -990,7 +990,7 @@ constexpr std::pair<std::size_t, std::size_t> index_to_2d(E&& sub, std::size_t i
  * \return the row stride of the given ETL matrix expression
  */
 template <typename E>
-std::size_t row_stride(E&& expr) {
+size_t row_stride(E&& expr) {
     static_assert(decay_traits<E>::dimensions() == 2, "row_stride() only makes sense on 2D matrices");
     return decay_traits<E>::storage_order == order::RowMajor
                ? etl::dim<1>(expr)
@@ -1003,7 +1003,7 @@ std::size_t row_stride(E&& expr) {
  * \return the column stride of the given ETL matrix expression
  */
 template <typename E>
-std::size_t col_stride(E&& expr) {
+size_t col_stride(E&& expr) {
     static_assert(decay_traits<E>::dimensions() == 2, "col_stride() only makes sense on 2D matrices");
     return decay_traits<E>::storage_order == order::RowMajor
                ? 1
@@ -1016,7 +1016,7 @@ std::size_t col_stride(E&& expr) {
  * \return the minor stride of the given ETL matrix expression
  */
 template <typename E>
-std::size_t minor_stride(E&& expr) {
+size_t minor_stride(E&& expr) {
     static_assert(decay_traits<E>::dimensions() == 2, "minor_stride() only makes sense on 2D matrices");
     return decay_traits<E>::storage_order == order::RowMajor
                ? etl::dim<0>(expr)
@@ -1029,7 +1029,7 @@ std::size_t minor_stride(E&& expr) {
  * \return the major stride of the given ETL matrix expression
  */
 template <typename E>
-std::size_t major_stride(E&& expr) {
+size_t major_stride(E&& expr) {
     static_assert(decay_traits<E>::dimensions() == 2, "major_stride() only makes sense on 2D matrices");
     return decay_traits<E>::storage_order == order::RowMajor
                ? etl::dim<1>(expr)

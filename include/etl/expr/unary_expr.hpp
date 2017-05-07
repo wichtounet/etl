@@ -133,7 +133,7 @@ public:
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type operator[](std::size_t i) const {
+    value_type operator[](size_t i) const {
         return UnaryOp::apply(value[i]);
     }
 
@@ -143,7 +143,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const noexcept {
+    value_type read_flat(size_t i) const noexcept {
         return UnaryOp::apply(value.read_flat(i));
     }
 
@@ -154,7 +154,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    vec_type<V> load(std::size_t i) const {
+    vec_type<V> load(size_t i) const {
         return UnaryOp::template load<V>(value.template load<V>(i));
     }
 
@@ -165,7 +165,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    vec_type<V> loadu(std::size_t i) const {
+    vec_type<V> loadu(size_t i) const {
         return UnaryOp::template load<V>(value.template loadu<V>(i));
     }
 
@@ -176,7 +176,7 @@ public:
      */
     template <typename... S>
     value_type operator()(S... args) const {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
         return UnaryOp::apply(value(args...));
     }
@@ -370,7 +370,7 @@ public:
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    return_type operator[](std::size_t i) {
+    return_type operator[](size_t i) {
         return value[i];
     }
 
@@ -379,7 +379,7 @@ public:
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    const_return_type operator[](std::size_t i) const {
+    const_return_type operator[](size_t i) const {
         return value[i];
     }
 
@@ -389,7 +389,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const noexcept {
+    value_type read_flat(size_t i) const noexcept {
         return value.read_flat(i);
     }
 
@@ -400,7 +400,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void store(vec_type<V> in, std::size_t i) noexcept {
+    void store(vec_type<V> in, size_t i) noexcept {
         return value.template store<V>(in, i);
     }
 
@@ -411,7 +411,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void storeu(vec_type<V> in, std::size_t i) noexcept {
+    void storeu(vec_type<V> in, size_t i) noexcept {
         return value.template storeu<V>(in, i);
     }
 
@@ -422,7 +422,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t i) noexcept {
+    void stream(vec_type<V> in, size_t i) noexcept {
         return value.template stream<V>(in, i);
     }
 
@@ -433,7 +433,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(vec_type<V>) load(std::size_t i) const noexcept {
+    ETL_STRONG_INLINE(vec_type<V>) load(size_t i) const noexcept {
         return value.template load<V>(i);
     }
 
@@ -444,7 +444,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(vec_type<V>) loadu(std::size_t i) const noexcept {
+    ETL_STRONG_INLINE(vec_type<V>) loadu(size_t i) const noexcept {
         return value.template loadu<V>(i);
     }
 
@@ -455,7 +455,7 @@ public:
      *
      * \return a refernece to the ith dimension value.
      */
-    std::size_t& unsafe_dimension_access(std::size_t i) {
+    size_t& unsafe_dimension_access(size_t i) {
         return value.unsafe_dimension_access(i);
     }
 
@@ -465,7 +465,7 @@ public:
      * \return a sub view of the matrix at position i.
      */
     template <bool B = (safe_dimensions<this_type>::value > 1), cpp_enable_if(B)>
-    auto operator()(std::size_t i) {
+    auto operator()(size_t i) {
         return sub(*this, i);
     }
 
@@ -475,7 +475,7 @@ public:
      * \return a sub view of the matrix at position i.
      */
     template <bool B = (safe_dimensions<this_type>::value > 1), cpp_enable_if(B)>
-    auto operator()(std::size_t i) const {
+    auto operator()(size_t i) const {
         return sub(*this, i);
     }
 
@@ -485,7 +485,7 @@ public:
      * \param last The last index to use
      * \return a slice view of the matrix at position i.
      */
-    auto slice(std::size_t first, std::size_t last) noexcept {
+    auto slice(size_t first, size_t last) noexcept {
         return etl::slice(*this, first, last);
     }
 
@@ -495,7 +495,7 @@ public:
      * \param last The last index to use
      * \return a slice view of the matrix at position i.
      */
-    auto slice(std::size_t first, std::size_t last) const noexcept {
+    auto slice(size_t first, size_t last) const noexcept {
         return etl::slice(*this, first, last);
     }
 
@@ -506,7 +506,7 @@ public:
      */
     template <typename... S, cpp_enable_if((sizeof...(S) == safe_dimensions<this_type>::value))>
     ETL_STRONG_INLINE(return_type) operator()(S... args) noexcept(noexcept(value(args...))) {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
         return value(args...);
     }
@@ -518,7 +518,7 @@ public:
      */
     template <typename... S, cpp_enable_if((sizeof...(S) == safe_dimensions<this_type>::value))>
     ETL_STRONG_INLINE(const_return_type) operator()(S... args) const noexcept(noexcept(value(args...))) {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
         return value(args...);
     }
@@ -583,8 +583,8 @@ public:
      * \brief Returns the DDth dimension of the matrix
      * \return The DDth dimension of the matrix
      */
-    template <std::size_t DD, typename TT = this_type, cpp_enable_if(all_fast<TT>::value)>
-    static constexpr std::size_t dim() {
+    template <size_t DD, typename TT = this_type, cpp_enable_if(all_fast<TT>::value)>
+    static constexpr size_t dim() {
         return etl_traits<TT>::template dim<DD>();
     }
 
@@ -592,8 +592,8 @@ public:
      * \brief Returns the DDth dimension of the matrix
      * \return The DDth dimension of the matrix
      */
-    template <std::size_t DD, typename TT = this_type, cpp_disable_if(all_fast<TT>::value)>
-    std::size_t dim() const {
+    template <size_t DD, typename TT = this_type, cpp_disable_if(all_fast<TT>::value)>
+    size_t dim() const {
         return etl_traits<TT>::dim(*this, DD);
     }
 
@@ -601,8 +601,8 @@ public:
      * \brief Returns all the Ith... dimensions in array
      * \return an array containing the Ith... dimensions of the expression.
      */
-    template<std::size_t... I>
-    std::array<std::size_t, decay_traits<this_type>::dimensions()> dim_array(std::index_sequence<I...>) const {
+    template<size_t... I>
+    std::array<size_t, decay_traits<this_type>::dimensions()> dim_array(std::index_sequence<I...>) const {
         return {{this->template dim<I>()...}};
     }
 
@@ -819,7 +819,7 @@ private:
      */
     template<cpp_enable_if_cst(!all_dma<Expr>::value)>
     void memory_set(const value_type& e){
-        for (std::size_t i = 0; i < size(*this); ++i) {
+        for (size_t i = 0; i < size(*this); ++i) {
             (*this)[i] = e;
         }
     }
@@ -873,7 +873,7 @@ public:
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type operator[](std::size_t i) const {
+    value_type operator[](size_t i) const {
         return value[i];
     }
 
@@ -883,7 +883,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const noexcept {
+    value_type read_flat(size_t i) const noexcept {
         return value.read_flat(i);
     }
 
@@ -893,7 +893,7 @@ public:
      * \return a sub view of the matrix at position i.
      */
     template <bool B = (safe_dimensions<this_type>::value > 1), cpp_enable_if(B)>
-    auto operator()(std::size_t i) const {
+    auto operator()(size_t i) const {
         return sub(*this, i);
     }
 
@@ -904,7 +904,7 @@ public:
      */
     template <typename... S>
     std::enable_if_t<sizeof...(S) == safe_dimensions<this_type>::value, value_type> operator()(S... args) const {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
         return value(args...);
     }
@@ -1074,7 +1074,7 @@ public:
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type operator[](std::size_t i) const {
+    value_type operator[](size_t i) const {
         return op.apply(value[i]);
     }
 
@@ -1084,7 +1084,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const {
+    value_type read_flat(size_t i) const {
         return op.apply(value.read_flat(i));
     }
 
@@ -1095,7 +1095,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    vec_type<V> load(std::size_t i) const {
+    vec_type<V> load(size_t i) const {
         return op.template load<V>(value.template load<V>(i));
     }
 
@@ -1106,7 +1106,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    vec_type<V> loadu(std::size_t i) const {
+    vec_type<V> loadu(size_t i) const {
         return op.template load<V>(value.template loadu<V>(i));
     }
 
@@ -1117,7 +1117,7 @@ public:
      */
     template <typename... S>
     std::enable_if_t<sizeof...(S) == safe_dimensions<this_type>::value, value_type> operator()(S... args) const {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
         return op.apply(value(args...));
     }
@@ -1266,7 +1266,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static size_t size(const expr_t& v) {
         return etl_traits<sub_expr_t>::size(v.value);
     }
 
@@ -1276,7 +1276,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         return etl_traits<sub_expr_t>::dim(v.value, d);
     }
 
@@ -1284,7 +1284,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
      * \brief Returns the size of an expression of this fast type.
      * \returns the size of an expression of this fast type.
      */
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return etl_traits<sub_expr_t>::size();
     }
 
@@ -1293,8 +1293,8 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
      * \tparam D The dimension to get
      * \return the Dth dimension of an expression of this type
      */
-    template <std::size_t D>
-    static constexpr std::size_t dim() {
+    template <size_t D>
+    static constexpr size_t dim() {
         return etl_traits<sub_expr_t>::template dim<D>();
     }
 
@@ -1302,7 +1302,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return etl_traits<sub_expr_t>::dimensions();
     }
 };

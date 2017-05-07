@@ -71,10 +71,10 @@ using const_iterator_t = typename iterator_type<T>::const_iterator;
 
 } //end of namespace matrix_detail
 
-template <typename D, typename T, typename ST, order SO, std::size_t... Dims>
+template <typename D, typename T, typename ST, order SO, size_t... Dims>
 struct fast_matrix_base {
-    static constexpr std::size_t n_dimensions = sizeof...(Dims);         ///< The number of dimensions
-    static constexpr std::size_t etl_size     = mul_all<Dims...>::value; ///< The size of the matrix
+    static constexpr size_t n_dimensions = sizeof...(Dims);         ///< The number of dimensions
+    static constexpr size_t etl_size     = mul_all<Dims...>::value; ///< The size of the matrix
 
     using value_type        = T;                 ///< The type of value
     using derived_t         = D;                 ///< The derived type
@@ -95,7 +95,7 @@ protected:
      * \return The 1D index inside the storage container
      */
     template <typename... S>
-    static constexpr std::size_t index(S... args) {
+    static constexpr size_t index(S... args) {
         return etl::fast_index<derived_t>(args...);
     }
 
@@ -186,7 +186,7 @@ public:
      * \brief Returns the size of the matrix, in O(1)
      * \return The size of the matrix
      */
-    static constexpr std::size_t size() noexcept {
+    static constexpr size_t size() noexcept {
         return etl_size;
     }
 
@@ -194,7 +194,7 @@ public:
      * \brief Returns the number of rows of the matrix (the first dimension), in O(1)
      * \return The number of rows of the matrix
      */
-    static constexpr std::size_t rows() noexcept {
+    static constexpr size_t rows() noexcept {
         return dim<0>();
     }
 
@@ -202,7 +202,7 @@ public:
      * \brief Returns the number of columns of the matrix (the second dimension), in O(1)
      * \return The number of columns of the matrix
      */
-    static constexpr std::size_t columns() noexcept {
+    static constexpr size_t columns() noexcept {
         static_assert(n_dimensions > 1, "columns() can only be used on 2D+ matrices");
 
         return dim<1>();
@@ -212,7 +212,7 @@ public:
      * \brief Returns the number of dimensions of the matrix
      * \return the number of dimensions of the matrix
      */
-    static constexpr std::size_t dimensions() noexcept {
+    static constexpr size_t dimensions() noexcept {
         return n_dimensions;
     }
 
@@ -220,8 +220,8 @@ public:
      * \brief Returns the Dth dimension of the matrix
      * \return The Dth dimension of the matrix
      */
-    template <std::size_t DD>
-    static constexpr std::size_t dim() noexcept {
+    template <size_t DD>
+    static constexpr size_t dim() noexcept {
         return nth_size<DD, 0, Dims...>::value;
     }
 
@@ -230,7 +230,7 @@ public:
      * \param d The dimension to get
      * \return The Dth dimension of the matrix
      */
-    std::size_t dim(std::size_t d) const noexcept {
+    size_t dim(size_t d) const noexcept {
         return dyn_nth_size<Dims...>(d);
     }
 
@@ -240,7 +240,7 @@ public:
      * \return a sub view of the matrix at position i.
      */
     template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
-    auto operator()(std::size_t i) noexcept {
+    auto operator()(size_t i) noexcept {
         return sub(as_derived(), i);
     }
 
@@ -250,7 +250,7 @@ public:
      * \return a sub view of the matrix at position i.
      */
     template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
-    auto operator()(std::size_t i) const noexcept {
+    auto operator()(size_t i) const noexcept {
         return sub(as_derived(), i);
     }
 
@@ -260,7 +260,7 @@ public:
      * \param last The last index to use
      * \return a slice view of the matrix at position i.
      */
-    auto slice(std::size_t first, std::size_t last) noexcept {
+    auto slice(size_t first, size_t last) noexcept {
         return etl::slice(as_derived(), first, last);
     }
 
@@ -270,7 +270,7 @@ public:
      * \param last The last index to use
      * \return a slice view of the matrix at position i.
      */
-    auto slice(std::size_t first, std::size_t last) const noexcept {
+    auto slice(size_t first, size_t last) const noexcept {
         return etl::slice(as_derived(), first, last);
     }
 
@@ -281,9 +281,9 @@ public:
      */
     template <typename... S, cpp_enable_if(sizeof...(S) == sizeof...(Dims))>
     value_type& operator()(S... args) noexcept(assert_nothrow) {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
-        return access(static_cast<std::size_t>(args)...);
+        return access(static_cast<size_t>(args)...);
     }
 
     /*!
@@ -293,9 +293,9 @@ public:
      */
     template <typename... S, cpp_enable_if(sizeof...(S) == sizeof...(Dims))>
     const value_type& operator()(S... args) const noexcept(assert_nothrow) {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
-        return access(static_cast<std::size_t>(args)...);
+        return access(static_cast<size_t>(args)...);
     }
 
     /*!
@@ -303,7 +303,7 @@ public:
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    const value_type& operator[](std::size_t i) const noexcept(assert_nothrow) {
+    const value_type& operator[](size_t i) const noexcept(assert_nothrow) {
         cpp_assert(i < size(), "Out of bounds");
 
         ensure_cpu_up_to_date();
@@ -316,7 +316,7 @@ public:
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type& operator[](std::size_t i) noexcept(assert_nothrow) {
+    value_type& operator[](size_t i) noexcept(assert_nothrow) {
         cpp_assert(i < size(), "Out of bounds");
 
         ensure_cpu_up_to_date();
@@ -331,7 +331,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const noexcept(assert_nothrow) {
+    value_type read_flat(size_t i) const noexcept(assert_nothrow) {
         cpp_assert(i < size(), "Out of bounds");
 
         ensure_cpu_up_to_date();

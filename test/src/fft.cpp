@@ -480,11 +480,11 @@ TEMPLATE_TEST_CASE_2("fft_1d_many/5", "[fast][fft]", Z, float, double) {
 
     c_1 = etl::fft_1d_many(a);
 
-    for(std::size_t i = 0; i < 18; ++i){
+    for(size_t i = 0; i < 18; ++i){
         c_2(i) = etl::fft_1d(a(i));
     }
 
-    for(std::size_t i = 0; i < a.size(); ++i){
+    for(size_t i = 0; i < a.size(); ++i){
         REQUIRE_EQUALS(c_1[i], c_2[i]);
     }
 }
@@ -496,11 +496,11 @@ TEMPLATE_TEST_CASE_2("fft_1d_many/6", "[fast][fft]", Z, float, double) {
 
     c_1 = etl::fft_1d_many(a);
 
-    for(std::size_t i = 0; i < 18; ++i){
+    for(size_t i = 0; i < 18; ++i){
         c_2(i) = etl::fft_1d(a(i));
     }
 
-    for(std::size_t i = 0; i < a.size(); ++i){
+    for(size_t i = 0; i < a.size(); ++i){
         REQUIRE_EQUALS(c_1[i], c_2[i]);
     }
 }

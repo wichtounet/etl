@@ -20,13 +20,13 @@ struct convmtx2_direct {
      * \param sub The sub expression
      * \param m The output matrix
      */
-    template <std::size_t K1, std::size_t K2, typename A, typename M>
+    template <size_t K1, size_t K2, typename A, typename M>
     static void apply(A&& sub, M& m) {
-        const std::size_t i1 = etl::dim<0>(sub);
-        const std::size_t i2 = etl::dim<1>(sub);
+        const size_t i1 = etl::dim<0>(sub);
+        const size_t i2 = etl::dim<1>(sub);
 
-        const std::size_t c_height          = etl::dim<0>(m);
-        constexpr std::size_t c_width = K1 * K2;
+        const size_t c_height          = etl::dim<0>(m);
+        constexpr size_t c_width = K1 * K2;
 
         cpp_assert(c_height == ((i1 + K1 - 1) * (i2 + K2 - 1)), "Invalid input height");
         cpp_assert(c_width == etl::dim<1>(m), "Invalid input width");
@@ -37,11 +37,11 @@ struct convmtx2_direct {
 
         m = 0;
 
-        for (std::size_t j = 0; j < c_width; ++j) {
+        for (size_t j = 0; j < c_width; ++j) {
             auto top_padding    = (i1 + K1 - 1) * (j / K1) + j % K1;
             auto bottom_padding = top_padding + (i1 * i2) + inner_paddings;
 
-            for (std::size_t i = top_padding; i < bottom_padding; ++i) {
+            for (size_t i = top_padding; i < bottom_padding; ++i) {
                 auto inner = i - top_padding;
                 auto block = inner / (i1 + inner_padding);
                 auto col   = inner % (i1 + inner_padding);

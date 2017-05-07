@@ -75,7 +75,7 @@ inline fft_impl select_forced_fft_impl(Functor func, Args&&... args) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline cpp14_constexpr fft_impl select_default_fft1_impl(const std::size_t n) {
+inline cpp14_constexpr fft_impl select_default_fft1_impl(const size_t n) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
@@ -118,9 +118,9 @@ inline cpp14_constexpr fft_impl select_default_fft1_impl(const std::size_t n) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline fft_impl select_fft1_impl(const std::size_t n) {
+inline fft_impl select_fft1_impl(const size_t n) {
     if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([](std::size_t n) { return select_default_fft1_impl(n); }, n);
+        return select_forced_fft_impl([](size_t n) { return select_default_fft1_impl(n); }, n);
     }
 
     return select_default_fft1_impl(n);
@@ -135,7 +135,7 @@ inline fft_impl select_fft1_impl(const std::size_t n) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline cpp14_constexpr fft_impl select_default_fft1_many_impl(const std::size_t batch, const std::size_t n) {
+inline cpp14_constexpr fft_impl select_default_fft1_many_impl(const size_t batch, const size_t n) {
     cpp_unused(batch);
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
@@ -163,9 +163,9 @@ inline cpp14_constexpr fft_impl select_default_fft1_many_impl(const std::size_t 
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline fft_impl select_fft1_many_impl(const std::size_t batch, const std::size_t n) {
+inline fft_impl select_fft1_many_impl(const size_t batch, const size_t n) {
     if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([](std::size_t batch, std::size_t n) { return select_default_fft1_many_impl(batch, n); }, batch, n);
+        return select_forced_fft_impl([](size_t batch, size_t n) { return select_default_fft1_many_impl(batch, n); }, batch, n);
     }
 
     return select_default_fft1_many_impl(batch, n);
@@ -179,7 +179,7 @@ inline fft_impl select_fft1_many_impl(const std::size_t batch, const std::size_t
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline cpp14_constexpr fft_impl select_default_ifft1_impl(const std::size_t n) {
+inline cpp14_constexpr fft_impl select_default_ifft1_impl(const size_t n) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
@@ -216,9 +216,9 @@ inline cpp14_constexpr fft_impl select_default_ifft1_impl(const std::size_t n) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline fft_impl select_ifft1_impl(const std::size_t n) {
+inline fft_impl select_ifft1_impl(const size_t n) {
     if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([](std::size_t n) { return select_default_ifft1_impl(n); }, n);
+        return select_forced_fft_impl([](size_t n) { return select_default_ifft1_impl(n); }, n);
     }
 
     return select_default_ifft1_impl(n);
@@ -233,7 +233,7 @@ inline fft_impl select_ifft1_impl(const std::size_t n) {
  * \param n2 The second dimension of the operation
  * \return The implementation to use
  */
-inline cpp14_constexpr fft_impl select_default_fft2_impl(const std::size_t n1, std::size_t n2) {
+inline cpp14_constexpr fft_impl select_default_fft2_impl(const size_t n1, size_t n2) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
@@ -271,9 +271,9 @@ inline cpp14_constexpr fft_impl select_default_fft2_impl(const std::size_t n1, s
  * \param n2 The second dimension of the operation
  * \return The implementation to use
  */
-inline fft_impl select_fft2_impl(const std::size_t n1, std::size_t n2) {
+inline fft_impl select_fft2_impl(const size_t n1, size_t n2) {
     if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([](std::size_t n1, std::size_t n2) { return select_default_fft2_impl(n1, n2); }, n1, n2);
+        return select_forced_fft_impl([](size_t n1, size_t n2) { return select_default_fft2_impl(n1, n2); }, n1, n2);
     }
 
     return select_default_fft2_impl(n1, n2);
@@ -289,7 +289,7 @@ inline fft_impl select_fft2_impl(const std::size_t n1, std::size_t n2) {
  * \param n2 The second dimension of the operation
  * \return The implementation to use
  */
-inline cpp14_constexpr fft_impl select_default_fft2_many_impl(const std::size_t batch, const std::size_t n1, const std::size_t n2) {
+inline cpp14_constexpr fft_impl select_default_fft2_many_impl(const size_t batch, const size_t n1, const size_t n2) {
     cpp_unused(batch);
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
@@ -318,9 +318,9 @@ inline cpp14_constexpr fft_impl select_default_fft2_many_impl(const std::size_t 
  * \param n2 The second dimension of the operation
  * \return The implementation to use
  */
-inline fft_impl select_fft2_many_impl(const std::size_t batch, const std::size_t n1, const std::size_t n2) {
+inline fft_impl select_fft2_many_impl(const size_t batch, const size_t n1, const size_t n2) {
     if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([](std::size_t batch, std::size_t n1, std::size_t n2) {
+        return select_forced_fft_impl([](size_t batch, size_t n1, size_t n2) {
             return select_default_fft2_many_impl(batch, n1, n2);
         }, batch, n1, n2);
     }
@@ -489,7 +489,7 @@ struct fft1_many_impl {
 
         if (impl == fft_impl::STD) {
             if (parallel_dispatch) {
-                engine_dispatch_1d([&](std::size_t first, std::size_t last) {
+                engine_dispatch_1d([&](size_t first, size_t last) {
                     etl::impl::standard::fft1_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms, parallel_dispatch);
             } else {
@@ -497,7 +497,7 @@ struct fft1_many_impl {
             }
         } else if (impl == fft_impl::MKL) {
             if (parallel_dispatch) {
-                engine_dispatch_1d([&](std::size_t first, std::size_t last) {
+                engine_dispatch_1d([&](size_t first, size_t last) {
                     etl::impl::blas::fft1_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms, parallel_dispatch);
             } else {
@@ -533,8 +533,8 @@ struct fft2_many_impl {
 
 //CPP17: if constexpr
 #ifdef ETL_PARALLEL_SUPPORT
-        const std::size_t transforms = etl::dim<0>(c);
-        const std::size_t n          = etl::size(c) / transforms;
+        const size_t transforms = etl::dim<0>(c);
+        const size_t n          = etl::size(c) / transforms;
 
         bool parallel_dispatch = select_parallel_2d(transforms, fft2_many_threshold_transforms, n, fft2_many_threshold_n);
 
@@ -542,7 +542,7 @@ struct fft2_many_impl {
             etl::impl::standard::fft2_many(a, c);
         } else if (impl == fft_impl::MKL) {
             if (parallel_dispatch) {
-                engine_dispatch_1d([&](std::size_t first, std::size_t last) {
+                engine_dispatch_1d([&](size_t first, size_t last) {
                     etl::impl::blas::fft2_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms, parallel_dispatch);
             } else {

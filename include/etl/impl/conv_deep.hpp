@@ -28,7 +28,7 @@ struct conv_deep_valid_impl {
      */
     template <typename I, typename K, typename C, cpp_enable_if(decay_traits<I>::dimensions() == 3)>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        for (std::size_t i = 0; i < etl::dim<0>(input); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(input); ++i) {
             conv(i) = conv_2d_valid(input(i), kernel(i));
         }
     }
@@ -41,7 +41,7 @@ struct conv_deep_valid_impl {
      */
     template <typename I, typename K, typename C, cpp_enable_if((decay_traits<I>::dimensions() > 3))>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        for (std::size_t i = 0; i < etl::dim<0>(input); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(input); ++i) {
             apply(input(i), kernel(i), conv(i));
         }
     }
@@ -125,7 +125,7 @@ struct conv_deep_same_impl {
      */
     template <typename I, typename K, typename C, cpp_enable_if(decay_traits<I>::dimensions() == 3)>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        for (std::size_t i = 0; i < etl::dim<0>(input); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(input); ++i) {
             conv(i) = conv_2d_same(input(i), kernel(i));
         }
     }
@@ -138,7 +138,7 @@ struct conv_deep_same_impl {
      */
     template <typename I, typename K, typename C, cpp_enable_if((decay_traits<I>::dimensions() > 3))>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        for (std::size_t i = 0; i < etl::dim<0>(input); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(input); ++i) {
             apply(input(i), kernel(i), conv(i));
         }
     }
@@ -218,7 +218,7 @@ struct conv_deep_full_impl {
      */
     template <typename I, typename K, typename C, cpp_enable_if(decay_traits<I>::dimensions() == 3)>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        for (std::size_t i = 0; i < etl::dim<0>(input); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(input); ++i) {
             conv(i) = conv_2d_full(input(i), kernel(i));
         }
     }
@@ -231,7 +231,7 @@ struct conv_deep_full_impl {
      */
     template <typename I, typename K, typename C, cpp_enable_if((decay_traits<I>::dimensions() > 3))>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        for (std::size_t i = 0; i < etl::dim<0>(input); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(input); ++i) {
             apply(input(i), kernel(i), conv(i));
         }
     }

@@ -37,7 +37,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type operator[](std::size_t i) const {
+    value_type operator[](size_t i) const {
         return max_index(sub(i));
     }
 
@@ -47,7 +47,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const {
+    value_type read_flat(size_t i) const {
         return max_index(sub(i));
     }
 
@@ -55,7 +55,7 @@ public:
      * \brief Returns the value at the given position (i, sizes...)
      */
     template <typename... Sizes>
-    value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
+    value_type operator()(size_t i, Sizes... /*sizes*/) const {
         return max_index(sub(i));
     }
 
@@ -119,7 +119,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type operator[](std::size_t i) const {
+    value_type operator[](size_t i) const {
         return min_index(sub(i));
     }
 
@@ -129,7 +129,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const {
+    value_type read_flat(size_t i) const {
         return min_index(sub(i));
     }
 
@@ -137,7 +137,7 @@ public:
      * \brief Returns the value at the given position (i, sizes...)
      */
     template <typename... Sizes>
-    value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
+    value_type operator()(size_t i, Sizes... /*sizes*/) const {
         return min_index(sub(i));
     }
 
@@ -200,7 +200,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type operator[](std::size_t i) const {
+    value_type operator[](size_t i) const {
         return sum(sub(i));
     }
 
@@ -210,7 +210,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const {
+    value_type read_flat(size_t i) const {
         return sum(sub(i));
     }
 
@@ -218,7 +218,7 @@ public:
      * \brief Returns the value at the given position (i, sizes...)
      */
     template <typename... Sizes>
-    value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
+    value_type operator()(size_t i, Sizes... /*sizes*/) const {
         return sum(sub(i));
     }
 
@@ -281,7 +281,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type operator[](std::size_t i) const {
+    value_type operator[](size_t i) const {
         return mean(sub(i));
     }
 
@@ -291,7 +291,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const {
+    value_type read_flat(size_t i) const {
         return mean(sub(i));
     }
 
@@ -299,7 +299,7 @@ public:
      * \brief Returns the value at the given position (i, sizes...)
      */
     template <typename... Sizes>
-    value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
+    value_type operator()(size_t i, Sizes... /*sizes*/) const {
         return mean(sub(i));
     }
 
@@ -362,10 +362,10 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type operator[](std::size_t j) const {
+    value_type operator[](size_t j) const {
         value_type m = 0.0;
 
-        for (std::size_t i = 0; i < dim<0>(sub); ++i) {
+        for (size_t i = 0; i < dim<0>(sub); ++i) {
             m += sub[j + i * (size(sub) / dim<0>(sub))];
         }
 
@@ -378,10 +378,10 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t j) const noexcept {
+    value_type read_flat(size_t j) const noexcept {
         value_type m = 0.0;
 
-        for (std::size_t i = 0; i < dim<0>(sub); ++i) {
+        for (size_t i = 0; i < dim<0>(sub); ++i) {
             m += sub.read_flat(j + i * (size(sub) / dim<0>(sub)));
         }
 
@@ -395,10 +395,10 @@ public:
      * \return The value at the position (j, sizes...)
      */
     template <typename... Sizes>
-    value_type operator()(std::size_t j, Sizes... sizes) const {
+    value_type operator()(size_t j, Sizes... sizes) const {
         value_type m = 0.0;
 
-        for (std::size_t i = 0; i < dim<0>(sub); ++i) {
+        for (size_t i = 0; i < dim<0>(sub); ++i) {
             m += sub(i, j, sizes...);
         }
 
@@ -464,10 +464,10 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type operator[](std::size_t j) const {
+    value_type operator[](size_t j) const {
         value_type m = 0.0;
 
-        for (std::size_t i = 0; i < dim<0>(sub); ++i) {
+        for (size_t i = 0; i < dim<0>(sub); ++i) {
             m += sub[j + i * (size(sub) / dim<0>(sub))];
         }
 
@@ -480,10 +480,10 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t j) const noexcept {
+    value_type read_flat(size_t j) const noexcept {
         value_type m = 0.0;
 
-        for (std::size_t i = 0; i < dim<0>(sub); ++i) {
+        for (size_t i = 0; i < dim<0>(sub); ++i) {
             m += sub.read_flat(j + i * (size(sub) / dim<0>(sub)));
         }
 
@@ -497,10 +497,10 @@ public:
      * \return The value at the position (j, sizes...)
      */
     template <typename... Sizes>
-    value_type operator()(std::size_t j, Sizes... sizes) const {
+    value_type operator()(size_t j, Sizes... sizes) const {
         value_type m = 0.0;
 
-        for (std::size_t i = 0; i < dim<0>(sub); ++i) {
+        for (size_t i = 0; i < dim<0>(sub); ++i) {
             m += sub(i, j, sizes...);
         }
 
@@ -580,7 +580,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static size_t size(const expr_t& v) {
         return etl::dim<0>(v.sub);
     }
 
@@ -590,7 +590,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         cpp_unused(d);
         return etl::dim<0>(v.sub);
     }
@@ -599,7 +599,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
      * \brief Returns the size of an expression of this fast type.
      * \returns the size of an expression of this fast type.
      */
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return etl_traits<sub_expr_t>::template dim<0>();
     }
 
@@ -608,8 +608,8 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
      * \tparam D The dimension to get
      * \return the Dth dimension of an expression of this type
      */
-    template <std::size_t D>
-    static constexpr std::size_t dim() {
+    template <size_t D>
+    static constexpr size_t dim() {
         return etl_traits<sub_expr_t>::template dim<0>();
     }
 
@@ -617,7 +617,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 1;
     }
 };
@@ -661,7 +661,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static size_t size(const expr_t& v) {
         return etl::size(v.sub) / etl::dim<0>(v.sub);
     }
 
@@ -671,7 +671,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         return etl::dim(v.sub, d + 1);
     }
 
@@ -679,7 +679,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
      * \brief Returns the size of an expression of this fast type.
      * \returns the size of an expression of this fast type.
      */
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return etl_traits<sub_expr_t>::size() / etl_traits<sub_expr_t>::template dim<0>();
     }
 
@@ -688,8 +688,8 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
      * \tparam D The dimension to get
      * \return the Dth dimension of an expression of this type
      */
-    template <std::size_t D>
-    static constexpr std::size_t dim() {
+    template <size_t D>
+    static constexpr size_t dim() {
         return etl_traits<sub_expr_t>::template dim<D + 1>();
     }
 
@@ -697,7 +697,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return etl_traits<sub_expr_t>::dimensions() - 1;
     }
 };

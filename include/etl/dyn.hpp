@@ -21,22 +21,22 @@ namespace etl {
  *
  * The matrix support an arbitrary number of dimensions.
  */
-template <typename T, order SO, std::size_t D>
+template <typename T, order SO, size_t D>
 struct dyn_matrix_impl final : dense_dyn_base<dyn_matrix_impl<T, SO, D>, T, SO, D>,
                                inplace_assignable<dyn_matrix_impl<T, SO, D>>,
                                expression_able<dyn_matrix_impl<T, SO, D>>,
                                value_testable<dyn_matrix_impl<T, SO, D>>,
                                iterable<dyn_matrix_impl<T, SO, D>, SO == order::RowMajor>,
                                dim_testable<dyn_matrix_impl<T, SO, D>> {
-    static constexpr std::size_t n_dimensions = D;                                      ///< The number of dimensions
+    static constexpr size_t n_dimensions = D;                                      ///< The number of dimensions
     static constexpr order storage_order      = SO;                                     ///< The storage order
-    static constexpr std::size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
+    static constexpr size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
 
     using this_type              = dyn_matrix_impl<T, SO, D>;                       ///< The type of this expression
     using base_type              = dense_dyn_base<this_type, T, SO, D>;             ///< The base type
     using iterable_base_type     = iterable<this_type, SO == order::RowMajor>;      ///< The iterable base type
     using value_type             = T;                                               ///< The value type
-    using dimension_storage_impl = std::array<std::size_t, n_dimensions>;           ///< The type used to store the dimensions
+    using dimension_storage_impl = std::array<size_t, n_dimensions>;           ///< The type used to store the dimensions
     using memory_type            = value_type*;                                     ///< The memory type
     using const_memory_type      = const value_type*;                               ///< The const memory type
 
@@ -117,9 +117,9 @@ public:
      */
     template <typename... S, cpp_enable_if(
                                  (sizeof...(S) == D),
-                                 cpp::all_convertible_to<std::size_t, S...>::value
+                                 cpp::all_convertible_to<size_t, S...>::value
                                  )>
-    explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<std::size_t>(sizes)...}}) {
+    explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<size_t>(sizes)...}}) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
     }
 
@@ -144,8 +144,8 @@ public:
      */
     template <typename... S, cpp_enable_if(
                                  (sizeof...(S) == D),
-                                 cpp::is_specialization_of<values_t, typename cpp::last_type<std::size_t, S...>::type>::value)>
-    explicit dyn_matrix_impl(std::size_t s1, S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
+                                 cpp::is_specialization_of<values_t, typename cpp::last_type<size_t, S...>::type>::value)>
+    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                               dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
@@ -161,9 +161,9 @@ public:
      */
     template <typename... S, cpp_enable_if(
                                               (sizeof...(S) == D),
-                                              !cpp::is_specialization_of<values_t, typename cpp::last_type<std::size_t, S...>::type>::value
+                                              !cpp::is_specialization_of<values_t, typename cpp::last_type<size_t, S...>::type>::value
                                               )>
-    explicit dyn_matrix_impl(std::size_t s1, S... sizes) noexcept : base_type(
+    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept : base_type(
                                                                dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)
                                                             ){
@@ -249,12 +249,12 @@ public:
      * \param dimensions The new dimensions
      */
     void resize_arr(const dimension_storage_impl& dimensions){
-        auto new_size = std::accumulate(dimensions.begin(), dimensions.end(), std::size_t(1), std::multiplies<std::size_t>());
+        auto new_size = std::accumulate(dimensions.begin(), dimensions.end(), size_t(1), std::multiplies<size_t>());
 
         if(_memory){
             auto new_memory = allocate(alloc_size_mat<T>(new_size, (dimensions.back())));
 
-            for (std::size_t i = 0; i < std::min(_size, new_size); ++i) {
+            for (size_t i = 0; i < std::min(_size, new_size); ++i) {
                 new_memory[i] = _memory[i];
             }
 
@@ -282,7 +282,7 @@ public:
         if(_memory){
             auto new_memory = allocate(alloc_size_mat<T>(new_size, cpp::last_value(sizes...)));
 
-            for (std::size_t i = 0; i < std::min(_size, new_size); ++i) {
+            for (size_t i = 0; i < std::min(_size, new_size); ++i) {
                 new_memory[i] = _memory[i];
             }
 
@@ -390,7 +390,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(void) store(const vec_type<V> in, std::size_t i) noexcept {
+    ETL_STRONG_INLINE(void) store(const vec_type<V> in, size_t i) noexcept {
         V::store(_memory + i, in);
     }
 
@@ -401,7 +401,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(void) storeu(const vec_type<V> in, std::size_t i) noexcept {
+    ETL_STRONG_INLINE(void) storeu(const vec_type<V> in, size_t i) noexcept {
         V::storeu(_memory + i, in);
     }
 
@@ -412,7 +412,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(void) stream(const vec_type<V> in, std::size_t i) noexcept {
+    ETL_STRONG_INLINE(void) stream(const vec_type<V> in, size_t i) noexcept {
         V::stream(_memory + i, in);
     }
 
@@ -423,7 +423,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template<typename V = default_vec>
-    ETL_STRONG_INLINE(vec_type<V>) load(std::size_t i) const noexcept {
+    ETL_STRONG_INLINE(vec_type<V>) load(size_t i) const noexcept {
         return V::load(_memory + i);
     }
 
@@ -434,7 +434,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template<typename V = default_vec>
-    ETL_STRONG_INLINE(vec_type<V>) loadu(std::size_t i) const noexcept {
+    ETL_STRONG_INLINE(vec_type<V>) loadu(size_t i) const noexcept {
         return V::loadu(_memory + i);
     }
 
@@ -445,7 +445,7 @@ public:
      *
      * \return a refernece to the ith dimension value.
      */
-    std::size_t& unsafe_dimension_access(std::size_t i) {
+    size_t& unsafe_dimension_access(size_t i) {
         cpp_assert(i < n_dimensions, "Out of bounds");
         return _dimensions[i];
     }
@@ -613,7 +613,7 @@ private:
 
         // Compute the size and new dimensions
         _size = 1;
-        for (std::size_t d = 0; d < n_dimensions; ++d) {
+        for (size_t d = 0; d < n_dimensions; ++d) {
             _dimensions[d] = etl::dim(e, d);
             _size *= _dimensions[d];
         }
@@ -635,7 +635,7 @@ private:
 
         os << "M[" << mat.dim(0);
 
-        for (std::size_t i = 1; i < D; ++i) {
+        for (size_t i = 1; i < D; ++i) {
             os << "," << mat.dim(i);
         }
 
@@ -670,7 +670,7 @@ etl::dyn_matrix<T, sizeof...(Sizes)> make_dyn_matrix(Sizes... sizes){
  * \param lhs The first matrix
  * \param rhs The second matrix
  */
-template <typename T, order SO, std::size_t D>
+template <typename T, order SO, size_t D>
 void swap(dyn_matrix_impl<T, SO, D>& lhs, dyn_matrix_impl<T, SO, D>& rhs) {
     lhs.swap(rhs);
 }
@@ -680,9 +680,9 @@ void swap(dyn_matrix_impl<T, SO, D>& lhs, dyn_matrix_impl<T, SO, D>& rhs) {
  * \param os The serializer
  * \param matrix The matrix to serialize
  */
-template <typename Stream, typename T, order SO, std::size_t D>
+template <typename Stream, typename T, order SO, size_t D>
 void serialize(serializer<Stream>& os, const dyn_matrix_impl<T, SO, D>& matrix){
-    for(std::size_t i = 0; i < etl::dimensions(matrix); ++i){
+    for(size_t i = 0; i < etl::dimensions(matrix); ++i){
         os << matrix.dim(i);
     }
 
@@ -696,7 +696,7 @@ void serialize(serializer<Stream>& os, const dyn_matrix_impl<T, SO, D>& matrix){
  * \param is The deserializer
  * \param matrix The matrix to deserialize
  */
-template <typename Stream, typename T, order SO, std::size_t D>
+template <typename Stream, typename T, order SO, size_t D>
 void deserialize(deserializer<Stream>& is, dyn_matrix_impl<T, SO, D>& matrix){
     typename std::decay_t<decltype(matrix)>::dimension_storage_impl new_dimensions;
 

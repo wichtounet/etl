@@ -81,9 +81,9 @@ TEMPLATE_TEST_CASE_2("batch_outer/1", "[outer]", Z, float, double) {
 
     c_ref = 0;
 
-    for (std::size_t bb = 0; bb < 2; ++bb) {
-        for (std::size_t i = 0; i < 3; ++i) {
-            for (std::size_t j = 0; j < 3; ++j) {
+    for (size_t bb = 0; bb < 2; ++bb) {
+        for (size_t i = 0; i < 3; ++i) {
+            for (size_t j = 0; j < 3; ++j) {
 
                 c_ref(i, j) += a(bb, i) * b(bb, j);
             }
@@ -109,9 +109,9 @@ TEMPLATE_TEST_CASE_2("batch_outer/2", "[outer]", Z, float, double) {
 
     c_ref = 0;
 
-    for (std::size_t bb = 0; bb < 32; ++bb) {
-        for (std::size_t i = 0; i < 31; ++i) {
-            for (std::size_t j = 0; j < 23; ++j) {
+    for (size_t bb = 0; bb < 32; ++bb) {
+        for (size_t i = 0; i < 31; ++i) {
+            for (size_t j = 0; j < 23; ++j) {
 
                 c_ref(i, j) += a(bb, i) * b(bb, j);
             }
@@ -137,9 +137,9 @@ TEMPLATE_TEST_CASE_2("batch_outer/3", "[outer]", Z, float, double) {
 
     c_ref = 0;
 
-    for (std::size_t bb = 0; bb < 32; ++bb) {
-        for (std::size_t i = 0; i < 24; ++i) {
-            for (std::size_t j = 0; j < 33; ++j) {
+    for (size_t bb = 0; bb < 32; ++bb) {
+        for (size_t i = 0; i < 24; ++i) {
+            for (size_t j = 0; j < 33; ++j) {
 
                 c_ref(i, j) += a(bb, i) * b(bb, j);
             }

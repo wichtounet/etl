@@ -19,7 +19,7 @@ namespace etl {
  * \tparam T The type of expression on which the view is made
  * \tparam D The dimension to show
  */
-template <typename T, std::size_t D>
+template <typename T, size_t D>
 struct dim_view {
     static_assert(D == 1 || D == 2, "Invalid dimension");
 
@@ -33,7 +33,7 @@ struct dim_view {
 private:
 
     T sub;               ///< The Sub expression
-    const std::size_t i; ///< The index
+    const size_t i; ///< The index
 
     friend struct etl_traits<dim_view>;
 
@@ -44,7 +44,7 @@ public:
      * \param sub The sub expression
      * \param i The sub index
      */
-    dim_view(sub_type sub, std::size_t i)
+    dim_view(sub_type sub, size_t i)
             : sub(sub), i(i) {}
 
     /*!
@@ -52,7 +52,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    const_return_type operator[](std::size_t j) const {
+    const_return_type operator[](size_t j) const {
         if (D == 1) {
             return sub(i, j);
         } else { //D == 2
@@ -65,7 +65,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    return_type operator[](std::size_t j) {
+    return_type operator[](size_t j) {
         if (D == 1) {
             return sub(i, j);
         } else { //D == 2
@@ -79,7 +79,7 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t j) const noexcept {
+    value_type read_flat(size_t j) const noexcept {
         if (D == 1) {
             return sub(i, j);
         } else { //D == 2
@@ -92,7 +92,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    const_return_type operator()(std::size_t j) const {
+    const_return_type operator()(size_t j) const {
         if (D == 1) {
             return sub(i, j);
         } else { //D == 2
@@ -105,7 +105,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given index.
      */
-    return_type operator()(std::size_t j) {
+    return_type operator()(size_t j) {
         if (D == 1) {
             return sub(i, j);
         } else { //D == 2
@@ -258,7 +258,7 @@ public:
 /*!
  * \brief Specialization for dim_view
  */
-template <typename T, std::size_t D>
+template <typename T, size_t D>
 struct etl_traits<etl::dim_view<T, D>> {
     using expr_t     = etl::dim_view<T, D>; ///< The expression type
     using sub_expr_t = std::decay_t<T>;     ///< The sub expression type
@@ -292,7 +292,7 @@ struct etl_traits<etl::dim_view<T, D>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static size_t size(const expr_t& v) {
         if (D == 1) {
             return etl_traits<sub_expr_t>::dim(v.sub, 1);
         } else {
@@ -306,7 +306,7 @@ struct etl_traits<etl::dim_view<T, D>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         cpp_assert(d == 0, "Invalid dimension");
         cpp_unused(d);
 
@@ -317,7 +317,7 @@ struct etl_traits<etl::dim_view<T, D>> {
      * \brief Returns the size of an expression of this fast type.
      * \returns the size of an expression of this fast type.
      */
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return D == 1 ? etl_traits<sub_expr_t>::template dim<1>() : etl_traits<sub_expr_t>::template dim<0>();
     }
 
@@ -326,8 +326,8 @@ struct etl_traits<etl::dim_view<T, D>> {
      * \tparam D2 The dimension to get
      * \return the D2th dimension of an expression of this type
      */
-    template <std::size_t D2>
-    static constexpr std::size_t dim() {
+    template <size_t D2>
+    static constexpr size_t dim() {
         static_assert(D2 == 0, "Invalid dimension");
 
         return size();
@@ -337,7 +337,7 @@ struct etl_traits<etl::dim_view<T, D>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 1;
     }
 };

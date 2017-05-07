@@ -21,22 +21,22 @@ namespace etl {
  *
  * The matrix support an arbitrary number of dimensions.
  */
-template <typename T, order SO, std::size_t D>
+template <typename T, order SO, size_t D>
 struct custom_dyn_matrix_impl final : dense_dyn_base<custom_dyn_matrix_impl<T, SO, D>, T, SO, D>,
                                       inplace_assignable<custom_dyn_matrix_impl<T, SO, D>>,
                                       expression_able<custom_dyn_matrix_impl<T, SO, D>>,
                                       value_testable<custom_dyn_matrix_impl<T, SO, D>>,
                                       iterable<custom_dyn_matrix_impl<T, SO, D>, SO == order::RowMajor>,
                                       dim_testable<custom_dyn_matrix_impl<T, SO, D>> {
-    static constexpr std::size_t n_dimensions = D;  ///< The number of dimensions
+    static constexpr size_t n_dimensions = D;  ///< The number of dimensions
     static constexpr order storage_order      = SO; ///< The storage order
-    static constexpr std::size_t alignment    = 1;  ///< The memory alignment
+    static constexpr size_t alignment    = 1;  ///< The memory alignment
 
     using this_type              = custom_dyn_matrix_impl<T, SO, D>;                           ///< The type of this expression
     using iterable_base_type     = iterable<this_type, SO == order::RowMajor>;                 ///< The iterable base type
     using base_type              = dense_dyn_base<custom_dyn_matrix_impl<T, SO, D>, T, SO, D>; ///< The base type
     using value_type             = T;                                                          ///< The value type
-    using dimension_storage_impl = std::array<std::size_t, n_dimensions>;                      ///< The type used to store the dimensions
+    using dimension_storage_impl = std::array<size_t, n_dimensions>;                      ///< The type used to store the dimensions
     using memory_type            = value_type*;                                                ///< The memory type
     using const_memory_type      = const value_type*;                                          ///< The const memory type
 
@@ -96,7 +96,7 @@ public:
      * released once the matrix is destructed.
      */
     template <typename... S, cpp_enable_if((sizeof...(S) == D))>
-    explicit custom_dyn_matrix_impl(value_type* memory, S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<std::size_t>(sizes)...}})
+    explicit custom_dyn_matrix_impl(value_type* memory, S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<size_t>(sizes)...}})
                                                     {
         _memory = memory;
         //Nothing else to init
@@ -213,7 +213,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void store(vec_type<V> in, std::size_t i) noexcept {
+    void store(vec_type<V> in, size_t i) noexcept {
         V::storeu(memory_start() + i, in);
     }
 
@@ -224,7 +224,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void storeu(vec_type<V> in, std::size_t i) noexcept {
+    void storeu(vec_type<V> in, size_t i) noexcept {
         V::storeu(memory_start() + i, in);
     }
 
@@ -235,7 +235,7 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t i) noexcept {
+    void stream(vec_type<V> in, size_t i) noexcept {
         V::storeu(memory_start() + i, in);
     }
 
@@ -246,7 +246,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template<typename V = default_vec>
-    vec_type<V> load(std::size_t i) const noexcept {
+    vec_type<V> load(size_t i) const noexcept {
         return V::loadu(_memory + i);
     }
 
@@ -257,7 +257,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template<typename V = default_vec>
-    vec_type<V> loadu(std::size_t i) const noexcept {
+    vec_type<V> loadu(size_t i) const noexcept {
         return V::loadu(_memory + i);
     }
 
@@ -399,7 +399,7 @@ public:
 
         os << "CM[" << mat.dim(0);
 
-        for (std::size_t i = 1; i < D; ++i) {
+        for (size_t i = 1; i < D; ++i) {
             os << "," << mat.dim(i);
         }
 
@@ -416,7 +416,7 @@ static_assert(std::is_nothrow_destructible<dyn_vector<double>>::value, "dyn_vect
  * \param lhs The first matrix
  * \param rhs The second matrix
  */
-template <typename T, order SO, std::size_t D>
+template <typename T, order SO, size_t D>
 void swap(custom_dyn_matrix_impl<T, SO, D>& lhs, custom_dyn_matrix_impl<T, SO, D>& rhs) {
     lhs.swap(rhs);
 }

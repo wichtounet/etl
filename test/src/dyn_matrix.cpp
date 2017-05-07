@@ -17,7 +17,7 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/init_1", "dyn_matrix::dyn_matrix(T)", Z, double
     REQUIRE_EQUALS(test_matrix.columns(), 2UL);
     REQUIRE_EQUALS(test_matrix.size(), 6UL);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE_EQUALS_APPROX(test_matrix[i], 3.3);
     }
 }
@@ -31,7 +31,7 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/init_2", "dyn_matrix::operator=(T)", Z, double,
     REQUIRE_EQUALS(test_matrix.columns(), 2UL);
     REQUIRE_EQUALS(test_matrix.size(), 6UL);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE_EQUALS_APPROX(test_matrix[i], 3.3);
     }
 }
@@ -116,7 +116,7 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/init_8", "dyn_matrix::dyn_matrix(T)", Z, double
     REQUIRE_EQUALS(test_matrix.rows(), 6UL);
     REQUIRE_EQUALS(test_matrix.size(), 6UL);
 
-    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
+    for (size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE_EQUALS(test_matrix[i], Z(3.3));
         REQUIRE_EQUALS(test_matrix(i), Z(3.3));
     }
@@ -871,7 +871,7 @@ ETL_TEST_CASE("dyn_matrix/default_constructor_1", "") {
 ETL_TEST_CASE("dyn_matrix/resize/1", "[dyn][resize]") {
     etl::dyn_matrix<float> a(10, 2);
 
-    for (std::size_t i = 0; i < 20; ++i) {
+    for (size_t i = 0; i < 20; ++i) {
         a[i] = i * 5.0;
     }
 
@@ -885,7 +885,7 @@ ETL_TEST_CASE("dyn_matrix/resize/1", "[dyn][resize]") {
     REQUIRE_EQUALS(etl::dim<0>(a), 4UL);
     REQUIRE_EQUALS(etl::dim<1>(a), 4UL);
 
-    for (std::size_t i = 0; i < 16; ++i) {
+    for (size_t i = 0; i < 16; ++i) {
         REQUIRE_EQUALS(a[i], i * 5.0);
     }
 }
@@ -895,7 +895,7 @@ ETL_TEST_CASE("dyn_matrix/resize/2", "[dyn][resize]") {
 
     a.resize(10, 2);
 
-    for (std::size_t i = 0; i < 20; ++i) {
+    for (size_t i = 0; i < 20; ++i) {
         a[i] = i * 5.0;
     }
 
@@ -907,7 +907,7 @@ ETL_TEST_CASE("dyn_matrix/resize/2", "[dyn][resize]") {
 ETL_TEST_CASE("dyn_matrix/resize/3", "[dyn][resize]") {
     etl::dyn_matrix<float> a(10, 2);
 
-    for (std::size_t i = 0; i < 20; ++i) {
+    for (size_t i = 0; i < 20; ++i) {
         a[i] = i * 5.0;
     }
 
@@ -921,7 +921,7 @@ ETL_TEST_CASE("dyn_matrix/resize/3", "[dyn][resize]") {
     REQUIRE_EQUALS(etl::dim<0>(a), 5UL);
     REQUIRE_EQUALS(etl::dim<1>(a), 5UL);
 
-    for (std::size_t i = 0; i < 20; ++i) {
+    for (size_t i = 0; i < 20; ++i) {
         REQUIRE_EQUALS(a[i], i * 5.0);
     }
 }
@@ -929,7 +929,7 @@ ETL_TEST_CASE("dyn_matrix/resize/3", "[dyn][resize]") {
 ETL_TEST_CASE("dyn_matrix/resize_array/1", "[dyn][resize]") {
     etl::dyn_matrix<float> a(10, 2);
 
-    for (std::size_t i = 0; i < 20; ++i) {
+    for (size_t i = 0; i < 20; ++i) {
         a[i] = i * 5.0;
     }
 
@@ -937,14 +937,14 @@ ETL_TEST_CASE("dyn_matrix/resize_array/1", "[dyn][resize]") {
     REQUIRE_EQUALS(etl::dim<0>(a), 10UL);
     REQUIRE_EQUALS(etl::dim<1>(a), 2UL);
 
-    std::array<std::size_t, 2> dims{{4, 4}};
+    std::array<size_t, 2> dims{{4, 4}};
     a.resize_arr(dims);
 
     REQUIRE_EQUALS(a.size(), 16UL);
     REQUIRE_EQUALS(etl::dim<0>(a), 4UL);
     REQUIRE_EQUALS(etl::dim<1>(a), 4UL);
 
-    for (std::size_t i = 0; i < 16; ++i) {
+    for (size_t i = 0; i < 16; ++i) {
         REQUIRE_EQUALS(a[i], i * 5.0);
     }
 }
@@ -952,9 +952,9 @@ ETL_TEST_CASE("dyn_matrix/resize_array/1", "[dyn][resize]") {
 ETL_TEST_CASE("dyn_matrix/resize_array/2", "[dyn][resize]") {
     etl::dyn_matrix<float> a;
 
-    a.resize_arr(std::array<std::size_t, 2>{{10, 2}});
+    a.resize_arr(std::array<size_t, 2>{{10, 2}});
 
-    for (std::size_t i = 0; i < 20; ++i) {
+    for (size_t i = 0; i < 20; ++i) {
         a[i] = i * 5.0;
     }
 
@@ -966,7 +966,7 @@ ETL_TEST_CASE("dyn_matrix/resize_array/2", "[dyn][resize]") {
 ETL_TEST_CASE("dyn_matrix/resize_array/3", "[dyn][resize]") {
     etl::dyn_matrix<float> a(10, 2);
 
-    for (std::size_t i = 0; i < 20; ++i) {
+    for (size_t i = 0; i < 20; ++i) {
         a[i] = i * 5.0;
     }
 
@@ -974,13 +974,13 @@ ETL_TEST_CASE("dyn_matrix/resize_array/3", "[dyn][resize]") {
     REQUIRE_EQUALS(etl::dim<0>(a), 10UL);
     REQUIRE_EQUALS(etl::dim<1>(a), 2UL);
 
-    a.resize_arr(std::array<std::size_t, 2>{{5, 5}});
+    a.resize_arr(std::array<size_t, 2>{{5, 5}});
 
     REQUIRE_EQUALS(a.size(), 25UL);
     REQUIRE_EQUALS(etl::dim<0>(a), 5UL);
     REQUIRE_EQUALS(etl::dim<1>(a), 5UL);
 
-    for (std::size_t i = 0; i < 20; ++i) {
+    for (size_t i = 0; i < 20; ++i) {
         REQUIRE_EQUALS(a[i], i * 5.0);
     }
 }

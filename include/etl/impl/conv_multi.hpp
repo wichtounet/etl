@@ -17,7 +17,7 @@ namespace etl {
 /*!
  * \brief Constexpr min between two values
  */
-template<std::size_t A, std::size_t B>
+template<size_t A, size_t B>
 struct c_min {
     static constexpr size_t value = A < B ? A : B; ///< The resulting value
 };
@@ -29,8 +29,8 @@ struct c_min {
  *
  * \return the Dth dimension of E
  */
-template <std::size_t D, typename E>
-constexpr std::size_t safe_dim() noexcept {
+template <size_t D, typename E>
+constexpr size_t safe_dim() noexcept {
     return decay_traits<E>::template dim<c_min<D, etl::dimensions<E>() - 1>::value>();
 }
 
@@ -329,10 +329,10 @@ struct conv2_valid_multi_multi_flipped_impl : conv2_valid_multi_multi_impl<S1, S
  * \brief The functor impl for 2D valid conv, with multiple kernels
  */
 struct dyn_conv2_valid_multi_impl {
-    const std::size_t s1; ///< The first dimension stride
-    const std::size_t s2; ///< The second dimension stride
-    const std::size_t p1; ///< The first dimension padding
-    const std::size_t p2; ///< The second dimension padding
+    const size_t s1; ///< The first dimension stride
+    const size_t s2; ///< The second dimension stride
+    const size_t p1; ///< The first dimension padding
+    const size_t p2; ///< The second dimension padding
 
     /*!
      * \brief Construct a new dyn_conv2_valid_multi_impl
@@ -341,7 +341,7 @@ struct dyn_conv2_valid_multi_impl {
      * \param p1 The first dimension padding
      * \param p2 The second dimension padding
      */
-    dyn_conv2_valid_multi_impl(std::size_t s1, std::size_t s2, std::size_t p1, std::size_t p2) : s1(s1), s2(s2), p1(p1), p2(p2) {
+    dyn_conv2_valid_multi_impl(size_t s1, size_t s2, size_t p1, size_t p2) : s1(s1), s2(s2), p1(p1), p2(p2) {
         //Nothing else to init
     }
 
@@ -427,7 +427,7 @@ struct dyn_conv2_valid_multi_flipped_impl : dyn_conv2_valid_multi_impl {
      * \param p1 The first dimension padding
      * \param p2 The second dimension padding
      */
-    dyn_conv2_valid_multi_flipped_impl(std::size_t s1, std::size_t s2, std::size_t p1, std::size_t p2) : dyn_conv2_valid_multi_impl(s1, s2, p1, p2) {
+    dyn_conv2_valid_multi_flipped_impl(size_t s1, size_t s2, size_t p1, size_t p2) : dyn_conv2_valid_multi_impl(s1, s2, p1, p2) {
         //Nothing else to init
     }
 
@@ -470,10 +470,10 @@ struct dyn_conv2_valid_multi_flipped_impl : dyn_conv2_valid_multi_impl {
  * \brief The functor impl for 2D valid conv, with multiple kernels
  */
 struct dyn_conv2_valid_multi_multi_impl {
-    const std::size_t s1; ///< The first dimension stride
-    const std::size_t s2; ///< The second dimension stride
-    const std::size_t p1; ///< The first dimension padding
-    const std::size_t p2; ///< The second dimension padding
+    const size_t s1; ///< The first dimension stride
+    const size_t s2; ///< The second dimension stride
+    const size_t p1; ///< The first dimension padding
+    const size_t p2; ///< The second dimension padding
 
     /*!
      * \brief Construct a new dyn_conv2_valid_multi_multi_impl
@@ -482,7 +482,7 @@ struct dyn_conv2_valid_multi_multi_impl {
      * \param p1 The first dimension padding
      * \param p2 The second dimension padding
      */
-    dyn_conv2_valid_multi_multi_impl(std::size_t s1, std::size_t s2, std::size_t p1, std::size_t p2) : s1(s1), s2(s2), p1(p1), p2(p2) {
+    dyn_conv2_valid_multi_multi_impl(size_t s1, size_t s2, size_t p1, size_t p2) : s1(s1), s2(s2), p1(p1), p2(p2) {
         //Nothing else to init
     }
 
@@ -567,7 +567,7 @@ struct dyn_conv2_valid_multi_multi_flipped_impl : dyn_conv2_valid_multi_multi_im
      * \param p1 The first dimension padding
      * \param p2 The second dimension padding
      */
-    dyn_conv2_valid_multi_multi_flipped_impl(std::size_t s1, std::size_t s2, std::size_t p1, std::size_t p2) : dyn_conv2_valid_multi_multi_impl(s1, s2, p1, p2) {
+    dyn_conv2_valid_multi_multi_flipped_impl(size_t s1, size_t s2, size_t p1, size_t p2) : dyn_conv2_valid_multi_multi_impl(s1, s2, p1, p2) {
         //Nothing else to init
     }
 

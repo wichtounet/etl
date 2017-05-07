@@ -18,7 +18,7 @@ struct outer {
     int special;
 
     outer() : inner() {}
-    outer(std::size_t n) : inner(n){}
+    outer(size_t n) : inner(n){}
 };
 
 } // end of anonymous namespace

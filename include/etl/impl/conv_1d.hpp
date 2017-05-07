@@ -35,11 +35,11 @@ struct conv1_full_impl {
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::VEC) {
-            engine_dispatch_1d([&](std::size_t first, std::size_t last) {
+            engine_dispatch_1d([&](size_t first, size_t last) {
                 impl::vec::conv1_full(input, kernel, conv, first, last);
             }, 0, size(conv), parallel_dispatch);
         } else if (impl == etl::conv_impl::STD) {
-            engine_dispatch_1d([&](std::size_t first, std::size_t last) {
+            engine_dispatch_1d([&](size_t first, size_t last) {
                 impl::standard::conv1_full(input, kernel, conv, first, last);
             }, 0, size(conv), parallel_dispatch);
         } else if (impl == etl::conv_impl::FFT_STD) {
@@ -145,11 +145,11 @@ struct conv1_same_impl {
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::VEC) {
-            engine_dispatch_1d([&](std::size_t first, std::size_t last) {
+            engine_dispatch_1d([&](size_t first, size_t last) {
                 impl::vec::conv1_same(input, kernel, conv, first, last);
             }, 0, size(conv), parallel_dispatch);
         } else if (impl == etl::conv_impl::STD) {
-            engine_dispatch_1d([&](std::size_t first, std::size_t last) {
+            engine_dispatch_1d([&](size_t first, size_t last) {
                 impl::standard::conv1_same(input, kernel, conv, first, last);
             }, 0, size(conv), parallel_dispatch);
         } else {
@@ -244,11 +244,11 @@ struct conv1_valid_impl {
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::VEC) {
-            engine_dispatch_1d([&](std::size_t first, std::size_t last) {
+            engine_dispatch_1d([&](size_t first, size_t last) {
                 impl::vec::conv1_valid(input, kernel, conv, first, last);
             }, 0, size(conv), parallel_dispatch);
         } else if (impl == etl::conv_impl::STD) {
-            engine_dispatch_1d([&](std::size_t first, std::size_t last) {
+            engine_dispatch_1d([&](size_t first, size_t last) {
                 impl::standard::conv1_valid(input, kernel, conv, first, last);
             }, 0, size(conv), parallel_dispatch);
         } else {

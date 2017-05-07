@@ -81,8 +81,8 @@ using avx_simd_long = simd_pack<vector_mode_t::AVX, int64_t, __m256i>;
 template <typename T>
 struct avx_intrinsic_traits {
     static constexpr bool vectorizable     = false;      ///< Boolean flag indicating if the type is vectorizable or not
-    static constexpr std::size_t size      = 1;          ///< Numbers of elements done at once
-    static constexpr std::size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
+    static constexpr size_t size      = 1;          ///< Numbers of elements done at once
+    static constexpr size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
 
     using intrinsic_type = T; ///< The vector type
 };
@@ -93,8 +93,8 @@ struct avx_intrinsic_traits {
 template <>
 struct avx_intrinsic_traits<float> {
     static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr std::size_t size      = 8; ///< Numbers of elements in a vector
-    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
+    static constexpr size_t size      = 8; ///< Numbers of elements in a vector
+    static constexpr size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_float; ///< The vector type
 };
@@ -105,8 +105,8 @@ struct avx_intrinsic_traits<float> {
 template <>
 struct avx_intrinsic_traits<double> {
     static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr std::size_t size      = 4; ///< Numbers of elements in a vector
-    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
+    static constexpr size_t size      = 4; ///< Numbers of elements in a vector
+    static constexpr size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_double; ///< The vector type
 };
@@ -117,8 +117,8 @@ struct avx_intrinsic_traits<double> {
 template <>
 struct avx_intrinsic_traits<std::complex<float>> {
     static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr std::size_t size      = 4; ///< Numbers of elements in a vector
-    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
+    static constexpr size_t size      = 4; ///< Numbers of elements in a vector
+    static constexpr size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_complex_float<std::complex<float>>; ///< The vector type
 };
@@ -129,8 +129,8 @@ struct avx_intrinsic_traits<std::complex<float>> {
 template <>
 struct avx_intrinsic_traits<std::complex<double>> {
     static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
-    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
+    static constexpr size_t size      = 2; ///< Numbers of elements in a vector
+    static constexpr size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_complex_double<std::complex<double>>; ///< The vector type
 };
@@ -141,8 +141,8 @@ struct avx_intrinsic_traits<std::complex<double>> {
 template <>
 struct avx_intrinsic_traits<etl::complex<float>> {
     static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr std::size_t size      = 4; ///< Numbers of elements in a vector
-    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
+    static constexpr size_t size      = 4; ///< Numbers of elements in a vector
+    static constexpr size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_complex_float<etl::complex<float>>; ///< The vector type
 };
@@ -153,8 +153,8 @@ struct avx_intrinsic_traits<etl::complex<float>> {
 template <>
 struct avx_intrinsic_traits<etl::complex<double>> {
     static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
-    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
+    static constexpr size_t size      = 2; ///< Numbers of elements in a vector
+    static constexpr size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_complex_double<etl::complex<double>>; ///< The vector type
 };
@@ -165,8 +165,8 @@ struct avx_intrinsic_traits<etl::complex<double>> {
 template <>
 struct avx_intrinsic_traits<int8_t> {
     static constexpr bool vectorizable     = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
-    static constexpr std::size_t size      = 32;            ///< Numbers of elements in a vector
-    static constexpr std::size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
+    static constexpr size_t size      = 32;            ///< Numbers of elements in a vector
+    static constexpr size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_byte; ///< The vector type
 };
@@ -177,8 +177,8 @@ struct avx_intrinsic_traits<int8_t> {
 template <>
 struct avx_intrinsic_traits<int16_t> {
     static constexpr bool vectorizable     = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
-    static constexpr std::size_t size      = 16;            ///< Numbers of elements in a vector
-    static constexpr std::size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
+    static constexpr size_t size      = 16;            ///< Numbers of elements in a vector
+    static constexpr size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_short; ///< The vector type
 };
@@ -189,8 +189,8 @@ struct avx_intrinsic_traits<int16_t> {
 template <>
 struct avx_intrinsic_traits<int32_t> {
     static constexpr bool vectorizable     = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
-    static constexpr std::size_t size      = 8;            ///< Numbers of elements in a vector
-    static constexpr std::size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
+    static constexpr size_t size      = 8;            ///< Numbers of elements in a vector
+    static constexpr size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_int; ///< The vector type
 };
@@ -201,8 +201,8 @@ struct avx_intrinsic_traits<int32_t> {
 template <>
 struct avx_intrinsic_traits<int64_t> {
     static constexpr bool vectorizable     = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
-    static constexpr std::size_t size      = 4;            ///< Numbers of elements in a vector
-    static constexpr std::size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
+    static constexpr size_t size      = 4;            ///< Numbers of elements in a vector
+    static constexpr size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_long; ///< The vector type
 };

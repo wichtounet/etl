@@ -22,7 +22,7 @@ namespace detail {
  * \brief Limit on the number of factors of the prime factorization
  * of the FFT size
  */
-constexpr std::size_t MAX_FACTORS = 32;
+constexpr size_t MAX_FACTORS = 32;
 
 /*!
  * \brief Transform module for a FFT with 2 points
@@ -33,21 +33,21 @@ constexpr std::size_t MAX_FACTORS = 32;
  * \param twiddle The first twiddle factors
  */
 template <typename T>
-void fft_2_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle) {
-    static constexpr std::size_t factor = 2;
+void fft_2_point(const etl::complex<T>* in, etl::complex<T>* out, const size_t product, const size_t n, const etl::complex<T>* twiddle) {
+    static constexpr size_t factor = 2;
 
-    const std::size_t m      = n / factor;
-    const std::size_t offset = product / factor;
-    const std::size_t inc    = (factor - 1) * offset;
+    const size_t m      = n / factor;
+    const size_t offset = product / factor;
+    const size_t inc    = (factor - 1) * offset;
 
-    for (std::size_t k = 0, i = 0, j = 0; k < n / product; ++k, j += inc) {
+    for (size_t k = 0, i = 0, j = 0; k < n / product; ++k, j += inc) {
         etl::complex<T> w(1.0, 0.0);
 
         if (k > 0) {
             w = twiddle[k - 1];
         }
 
-        for (std::size_t k1 = 0; k1 < offset; ++k1, ++i, ++j) {
+        for (size_t k1 = 0; k1 < offset; ++k1, ++i, ++j) {
             etl::complex<T> z0 = in[i];
             etl::complex<T> z1 = in[i + m];
 
@@ -67,16 +67,16 @@ void fft_2_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
  * \param twiddle2 The second twiddle factors
  */
 template <typename T>
-void fft_3_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2) {
-    static constexpr std::size_t factor = 3;
+void fft_3_point(const etl::complex<T>* in, etl::complex<T>* out, const size_t product, const size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2) {
+    static constexpr size_t factor = 3;
 
-    const std::size_t m      = n / factor;
-    const std::size_t offset = product / factor;
-    const std::size_t inc    = (factor - 1) * offset;
+    const size_t m      = n / factor;
+    const size_t offset = product / factor;
+    const size_t inc    = (factor - 1) * offset;
 
     static const T tau = std::sqrt(3.0) / 2.0;
 
-    for (std::size_t k = 0, i = 0, j = 0; k < n / product; k++, j += inc) {
+    for (size_t k = 0, i = 0, j = 0; k < n / product; k++, j += inc) {
         etl::complex<T> w1(1.0, 0.0);
         etl::complex<T> w2(1.0, 0.0);
 
@@ -85,7 +85,7 @@ void fft_3_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
             w2 = twiddle2[k - 1];
         }
 
-        for (std::size_t k1 = 0; k1 < offset; ++k1, ++i, ++j) {
+        for (size_t k1 = 0; k1 < offset; ++k1, ++i, ++j) {
             etl::complex<T> z0 = in[i];
             etl::complex<T> z1 = in[i + m];
             etl::complex<T> z2 = in[i + 2 * m];
@@ -112,14 +112,14 @@ void fft_3_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
  * \param twiddle3 The third twiddle factors
  */
 template <typename T>
-void fft_4_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3) {
-    static constexpr std::size_t factor = 4;
+void fft_4_point(const etl::complex<T>* in, etl::complex<T>* out, const size_t product, const size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3) {
+    static constexpr size_t factor = 4;
 
-    const std::size_t m      = n / factor;
-    const std::size_t offset = product / factor;
-    const std::size_t inc    = (factor - 1) * offset;
+    const size_t m      = n / factor;
+    const size_t offset = product / factor;
+    const size_t inc    = (factor - 1) * offset;
 
-    for (std::size_t k = 0, i = 0, j = 0; k < n / product; k++, j += inc) {
+    for (size_t k = 0, i = 0, j = 0; k < n / product; k++, j += inc) {
         etl::complex<T> w1(1.0, 0.0);
         etl::complex<T> w2(1.0, 0.0);
         etl::complex<T> w3(1.0, 0.0);
@@ -130,7 +130,7 @@ void fft_4_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
             w3 = twiddle3[k - 1];
         }
 
-        for (std::size_t k1 = 0; k1 < offset; ++k1, ++i, ++j) {
+        for (size_t k1 = 0; k1 < offset; ++k1, ++i, ++j) {
             etl::complex<T> z0 = in[i];
             etl::complex<T> z1 = in[i + 1 * m];
             etl::complex<T> z2 = in[i + 2 * m];
@@ -161,17 +161,17 @@ void fft_4_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
  * \param twiddle4 The fourth twiddle factors
  */
 template <typename T>
-void fft_5_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3, const etl::complex<T>* twiddle4) {
-    static constexpr std::size_t factor = 5;
+void fft_5_point(const etl::complex<T>* in, etl::complex<T>* out, const size_t product, const size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3, const etl::complex<T>* twiddle4) {
+    static constexpr size_t factor = 5;
 
-    const std::size_t m      = n / factor;
-    const std::size_t offset = product / factor;
-    const std::size_t inc    = (factor - 1) * offset;
+    const size_t m      = n / factor;
+    const size_t offset = product / factor;
+    const size_t inc    = (factor - 1) * offset;
 
     static const T theta_1 = -1.0 * std::sin(2.0 * M_PI / 5.0);
     static const T theta_2 = -1.0 * std::sin(2.0 * M_PI / 10.0);
 
-    for (std::size_t k = 0, i = 0, j = 0; k < n / product; ++k, j += inc) {
+    for (size_t k = 0, i = 0, j = 0; k < n / product; ++k, j += inc) {
         etl::complex<T> w1(1.0, 0.0);
         etl::complex<T> w2(1.0, 0.0);
         etl::complex<T> w3(1.0, 0.0);
@@ -184,7 +184,7 @@ void fft_5_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
             w4 = twiddle4[k - 1];
         }
 
-        for (std::size_t k1 = 0; k1 < offset; ++k1, ++i, ++j) {
+        for (size_t k1 = 0; k1 < offset; ++k1, ++i, ++j) {
             etl::complex<T> z0 = in[i];
             etl::complex<T> z1 = in[i + m];
             etl::complex<T> z2 = in[i + 2 * m];
@@ -226,12 +226,12 @@ void fft_5_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
  * \param twiddle6 The sixth twiddle factors
  */
 template <typename T>
-void fft_7_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3, const etl::complex<T>* twiddle4, const etl::complex<T>* twiddle5, const etl::complex<T>* twiddle6) {
-    static constexpr std::size_t factor = 7;
+void fft_7_point(const etl::complex<T>* in, etl::complex<T>* out, const size_t product, const size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3, const etl::complex<T>* twiddle4, const etl::complex<T>* twiddle5, const etl::complex<T>* twiddle6) {
+    static constexpr size_t factor = 7;
 
-    const std::size_t m      = n / factor;
-    const std::size_t offset = product / factor;
-    const std::size_t inc    = (factor - 1) * offset;
+    const size_t m      = n / factor;
+    const size_t offset = product / factor;
+    const size_t inc    = (factor - 1) * offset;
 
     static constexpr T theta_0 = 2.0 * M_PI / 7.0;
 
@@ -245,7 +245,7 @@ void fft_7_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
     static const T theta_7 = (std::sin(theta_0) - 2.0 * std::sin(2.0 * theta_0) - std::sin(3.0 * theta_0)) / 3.0;
     static const T theta_8 = (std::sin(theta_0) + std::sin(2.0 * theta_0) + 2.0 * std::sin(3.0 * theta_0)) / 3.0;
 
-    for (std::size_t k = 0, i = 0, j = 0; k < n / product; ++k, j += inc) {
+    for (size_t k = 0, i = 0, j = 0; k < n / product; ++k, j += inc) {
         etl::complex<T> w1(1.0, 0.0);
         etl::complex<T> w2(1.0, 0.0);
         etl::complex<T> w3(1.0, 0.0);
@@ -262,7 +262,7 @@ void fft_7_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
             w6 = twiddle6[k - 1];
         }
 
-        for (std::size_t k1 = 0; k1 < offset; k1++, ++i, ++j) {
+        for (size_t k1 = 0; k1 < offset; k1++, ++i, ++j) {
             etl::complex<T> z0 = in[i];
             etl::complex<T> z1 = in[i + m];
             etl::complex<T> z2 = in[i + 2 * m];
@@ -315,38 +315,38 @@ void fft_7_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
  * \param twiddle The twiddle factors
  */
 template <typename T>
-void fft_n_point(etl::complex<T>* in, etl::complex<T>* out, const std::size_t factor, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle) {
-    const std::size_t m            = n / factor;
-    const std::size_t q            = n / product;
-    const std::size_t offset       = product / factor;
-    const std::size_t inc          = (factor - 1) * offset;
-    const std::size_t factor_limit = (factor - 1) / 2 + 1;
+void fft_n_point(etl::complex<T>* in, etl::complex<T>* out, const size_t factor, const size_t product, const size_t n, const etl::complex<T>* twiddle) {
+    const size_t m            = n / factor;
+    const size_t q            = n / product;
+    const size_t offset       = product / factor;
+    const size_t inc          = (factor - 1) * offset;
+    const size_t factor_limit = (factor - 1) / 2 + 1;
 
     std::copy_n(in, m, out);
 
-    for (std::size_t i = 1; i < (factor - 1) / 2 + 1; i++) {
+    for (size_t i = 1; i < (factor - 1) / 2 + 1; i++) {
         std::transform(in + i * m, in + i * m + m, in + (factor - i) * m, out + i * m, std::plus<etl::complex<T>>());
         std::transform(in + i * m, in + i * m + m, in + (factor - i) * m, out + (factor - i) * m, std::minus<etl::complex<T>>());
     }
 
     std::copy_n(out, m, in);
 
-    for (std::size_t i = 1; i < factor_limit; i++) {
+    for (size_t i = 1; i < factor_limit; i++) {
         std::transform(in, in + m, out + i * m, in, std::plus<etl::complex<T>>());
     }
 
-    for (std::size_t e = 1; e < factor_limit; e++) {
+    for (size_t e = 1; e < factor_limit; e++) {
         std::copy_n(out, m, in + e * m);
         std::copy_n(out, m, in + (factor - e) * m);
 
-        for (std::size_t k = 1, j = e * q; k < (factor - 1) / 2 + 1; k++) {
+        for (size_t k = 1, j = e * q; k < (factor - 1) / 2 + 1; k++) {
             etl::complex<T> w(1.0, 0.0);
 
             if (j > 0) {
                 w = twiddle[j - 1];
             }
 
-            for (std::size_t i = 0; i < m; i++) {
+            for (size_t i = 0; i < m; i++) {
                 etl::complex<T> xp = out[i + k * m];
                 etl::complex<T> xm = out[i + (factor - k) * m];
 
@@ -360,17 +360,17 @@ void fft_n_point(etl::complex<T>* in, etl::complex<T>* out, const std::size_t fa
 
     std::copy_n(in, offset, out);
 
-    for (std::size_t i = 1; i < factor; i++) {
+    for (size_t i = 1; i < factor; i++) {
         std::copy_n(in + i * m, offset, out + i * offset);
     }
 
-    for (std::size_t i = offset, j = product; i < offset + (q - 1) * offset; i += offset, j += offset + inc) {
+    for (size_t i = offset, j = product; i < offset + (q - 1) * offset; i += offset, j += offset + inc) {
         std::copy_n(in + i, offset, out + j);
     }
 
-    for (std::size_t k = 1, i = offset, j = product; k < q; ++k, j += inc) {
-        for (std::size_t k1 = 0; k1 < offset; ++k1, ++i, ++j) {
-            for (std::size_t e = 1; e < factor; e++) {
+    for (size_t k = 1, i = offset, j = product; k < q; ++k, j += inc) {
+        for (size_t k1 = 0; k1 < offset; ++k1, ++i, ++j) {
+            for (size_t e = 1; e < factor; e++) {
                 //out = w * x
                 out[j + e * offset] = twiddle[(e - 1) * q + k - 1] * in[i + e * m];
             }
@@ -384,7 +384,7 @@ void fft_n_point(etl::complex<T>* in, etl::complex<T>* out, const std::size_t fa
  * \param factors The output factors
  * \param n_factors The number of factors
  */
-inline void fft_factorize(std::size_t n, std::size_t* factors, std::size_t& n_factors) {
+inline void fft_factorize(size_t n, size_t* factors, size_t& n_factors) {
     //0. Favour the factors with implemented transform modules
 
     while (n > 1) {
@@ -411,7 +411,7 @@ inline void fft_factorize(std::size_t n, std::size_t* factors, std::size_t& n_fa
 
     //1. Search for prime factors
 
-    std::size_t prime_factor = 11;
+    size_t prime_factor = 11;
 
     while (n > 1) {
         //Search for the next prime factor
@@ -433,24 +433,24 @@ inline void fft_factorize(std::size_t n, std::size_t* factors, std::size_t& n_fa
  * \return an array containing all the twiddle factors
  */
 template <typename T>
-std::unique_ptr<etl::complex<T>[]> twiddle_compute(const std::size_t n, std::size_t* factors, std::size_t n_factors, etl::complex<T>** twiddle) {
+std::unique_ptr<etl::complex<T>[]> twiddle_compute(const size_t n, size_t* factors, size_t n_factors, etl::complex<T>** twiddle) {
     std::unique_ptr<etl::complex<T>[]> trig = etl::allocate<etl::complex<T>>(n);
 
     const T d_theta = -2.0 * M_PI / (static_cast<T>(n));
 
-    std::size_t t       = 0;
-    std::size_t product = 1;
+    size_t t       = 0;
+    size_t product = 1;
 
-    for (std::size_t i = 0; i < n_factors; i++) {
-        std::size_t factor = factors[i];
+    for (size_t i = 0; i < n_factors; i++) {
+        size_t factor = factors[i];
         twiddle[i]         = &trig[0] + t;
 
-        std::size_t prev_product = product;
+        size_t prev_product = product;
         product *= factor;
 
-        for (std::size_t j = 1; j < factor; j++) {
-            std::size_t m = 0;
-            for (std::size_t k = 1; k <= n / product; k++) {
+        for (size_t j = 1; j < factor; j++) {
+            size_t m = 0;
+            for (size_t k = 1; k <= n / product; k++) {
                 m = (m + j * prev_product) % n;
 
                 T theta = d_theta * m;
@@ -475,7 +475,7 @@ std::unique_ptr<etl::complex<T>[]> twiddle_compute(const std::size_t n, std::siz
  * \param twiddle The output twiddle factors (pointers inside the main twiddle factors array)
  */
 template <typename In, typename T>
-void fft_perform(const In* r_in, etl::complex<T>* r_out, const std::size_t n, std::size_t* factors, std::size_t n_factors, etl::complex<T>** twiddle) {
+void fft_perform(const In* r_in, etl::complex<T>* r_out, const size_t n, size_t* factors, size_t n_factors, etl::complex<T>** twiddle) {
     auto tmp = etl::allocate<etl::complex<T>>(n);
 
     std::copy_n(r_in, n, tmp.get());
@@ -483,10 +483,10 @@ void fft_perform(const In* r_in, etl::complex<T>* r_out, const std::size_t n, st
     auto* in  = tmp.get();
     auto* out = r_out;
 
-    std::size_t product = 1;
+    size_t product = 1;
 
-    for (std::size_t i = 0; i < n_factors; i++) {
-        std::size_t factor = factors[i];
+    for (size_t i = 0; i < n_factors; i++) {
+        size_t factor = factors[i];
 
         if (i > 0) {
             std::swap(in, out);
@@ -494,7 +494,7 @@ void fft_perform(const In* r_in, etl::complex<T>* r_out, const std::size_t n, st
 
         product *= factor;
 
-        std::size_t offset = n / product;
+        size_t offset = n / product;
 
         if (factor == 2) {
             fft_2_point(in, out, product, n, twiddle[i]);
@@ -523,11 +523,11 @@ void fft_perform(const In* r_in, etl::complex<T>* r_out, const std::size_t n, st
  * \param n The size of the tranform
  */
 template <typename In, typename T>
-void fft_n(const In* r_in, etl::complex<T>* r_out, const std::size_t n) {
+void fft_n(const In* r_in, etl::complex<T>* r_out, const size_t n) {
     //0. Factorize
 
-    std::size_t factors[MAX_FACTORS];
-    std::size_t n_factors = 0;
+    size_t factors[MAX_FACTORS];
+    size_t n_factors = 0;
 
     fft_factorize(n, factors, n_factors);
 
@@ -550,13 +550,13 @@ void fft_n(const In* r_in, etl::complex<T>* r_out, const std::size_t n) {
  * \param n The size of the tranform
  */
 template <typename In, typename T>
-void fft_n_many(const In* r_in, etl::complex<T>* r_out, const std::size_t batch, const std::size_t n) {
-    const std::size_t distance = n; //in/out distance between samples
+void fft_n_many(const In* r_in, etl::complex<T>* r_out, const size_t batch, const size_t n) {
+    const size_t distance = n; //in/out distance between samples
 
     //0. Factorize
 
-    std::size_t factors[MAX_FACTORS];
-    std::size_t n_factors = 0;
+    size_t factors[MAX_FACTORS];
+    size_t n_factors = 0;
 
     fft_factorize(n, factors, n_factors);
 
@@ -569,7 +569,7 @@ void fft_n_many(const In* r_in, etl::complex<T>* r_out, const std::size_t batch,
     //2. Perform all the FFT itself
 
     auto batch_fun_b = [&](const size_t first, const size_t last) {
-        for (std::size_t b = first; b < last; ++b) {
+        for (size_t b = first; b < last; ++b) {
             fft_perform(r_in + b * distance, r_out + b * distance, n, factors, n_factors, twiddle);
         }
     };
@@ -578,16 +578,16 @@ void fft_n_many(const In* r_in, etl::complex<T>* r_out, const std::size_t batch,
 }
 
 template <typename T>
-void inplace_radix2_fft1(etl::complex<T>* x, std::size_t N) {
+void inplace_radix2_fft1(etl::complex<T>* x, size_t N) {
     using complex_t = etl::complex<T>;
 
     //Decimate
-    for (std::size_t a = 0, b = 0; a < N; ++a) {
+    for (size_t a = 0, b = 0; a < N; ++a) {
         if (b > a) {
             std::swap(x[a], x[b]);
         }
 
-        std::size_t bit = N;
+        size_t bit = N;
         do {
             bit >>= 1;
             b ^= bit;
@@ -598,12 +598,12 @@ void inplace_radix2_fft1(etl::complex<T>* x, std::size_t N) {
 
     const auto NN = size_t(1) << size_t(std::log2(N));
 
-    for (std::size_t s = 1; s <= std::log2(N); ++s) {
+    for (size_t s = 1; s <= std::log2(N); ++s) {
         auto m = size_t(1) << s;
         complex_t w(1.0, 0.0);
         complex_t wm(cos(2 * -pi / m), sin(2 * -pi / m));
-        for (std::size_t j = 0; j < m / 2; ++j) {
-            for (std::size_t k = j; k < NN; k += m) {
+        for (size_t j = 0; j < m / 2; ++j) {
+            for (size_t k = j; k < NN; k += m) {
                 auto t = w * x[k + m / 2];
 
                 complex_t u  = x[k];
@@ -624,7 +624,7 @@ void inplace_radix2_fft1(etl::complex<T>* x, std::size_t N) {
  * \param c The output signal
  */
 template <typename T1, typename T>
-void fft1_kernel(const T1* a, std::size_t n, std::complex<T>* c) {
+void fft1_kernel(const T1* a, size_t n, std::complex<T>* c) {
     if (n <= 131072 && math::is_power_of_two(n)) {
         std::copy_n(a, n, c);
 
@@ -642,12 +642,12 @@ void fft1_kernel(const T1* a, std::size_t n, std::complex<T>* c) {
  * \param c The output signal
  */
 template <typename T>
-void ifft1_kernel(const std::complex<T>* a, std::size_t n, std::complex<T>* c) {
+void ifft1_kernel(const std::complex<T>* a, size_t n, std::complex<T>* c) {
     using complex_t = std::complex<T>;
 
     if (n <= 131072 && math::is_power_of_two(n)) {
         //Conjugate the complex numbers
-        for (std::size_t i = 0; i < n; ++i) {
+        for (size_t i = 0; i < n; ++i) {
             c[i] = std::conj(a[i]);
         }
 
@@ -658,7 +658,7 @@ void ifft1_kernel(const std::complex<T>* a, std::size_t n, std::complex<T>* c) {
         auto x         = a_complex.get();
 
         //Conjugate the complex numbers
-        for (std::size_t i = 0; i < n; ++i) {
+        for (size_t i = 0; i < n; ++i) {
             x[i] = std::conj(a[i]);
         }
 
@@ -667,12 +667,12 @@ void ifft1_kernel(const std::complex<T>* a, std::size_t n, std::complex<T>* c) {
     }
 
     //Conjugate the complex numbers again
-    for (std::size_t i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         c[i] = std::conj(c[i]);
     }
 
     //Scale the numbers
-    for (std::size_t i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         c[i] /= double(n);
     }
 }
@@ -686,8 +686,8 @@ void ifft1_kernel(const std::complex<T>* a, std::size_t n, std::complex<T>* c) {
  * \param c The output
  */
 template<typename T>
-void conv1_full_kernel(const T* a, std::size_t m, const T* b, std::size_t n, T* c){
-    const std::size_t size = m + n - 1;
+void conv1_full_kernel(const T* a, size_t m, const T* b, size_t n, T* c){
+    const size_t size = m + n - 1;
 
     dyn_matrix<etl::complex<T>, 1> a_padded(size);
     dyn_matrix<etl::complex<T>, 1> b_padded(size);
@@ -702,7 +702,7 @@ void conv1_full_kernel(const T* a, std::size_t m, const T* b, std::size_t n, T* 
 
     detail::ifft1_kernel(reinterpret_cast<std::complex<T>*>(a_padded.memory_start()), size, reinterpret_cast<std::complex<T>*>(a_padded.memory_start()));
 
-    for (std::size_t i = 0; i < size; ++i) {
+    for (size_t i = 0; i < size; ++i) {
         c[i] = a_padded[i].real;
     }
 }
@@ -719,21 +719,21 @@ void conv1_full_kernel(const T* a, std::size_t m, const T* b, std::size_t n, T* 
  * \param beta Indicates how the output is modified c = beta * c + o
  */
 template<typename T>
-void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, std::size_t n1, std::size_t n2, T* c, T beta){
-    const std::size_t s1 = m1 + n1 - 1;
-    const std::size_t s2 = m2 + n2 - 1;
-    const std::size_t n = s1 * s2;
+void conv2_full_kernel(const T* a, size_t m1, size_t m2, const T* b, size_t n1, size_t n2, T* c, T beta){
+    const size_t s1 = m1 + n1 - 1;
+    const size_t s2 = m2 + n2 - 1;
+    const size_t n = s1 * s2;
 
     // 0. Pad a and b to the size of c
 
     dyn_matrix<etl::complex<T>, 2> a_padded(s1, s2);
     dyn_matrix<etl::complex<T>, 2> b_padded(s1, s2);
 
-    for (std::size_t i = 0; i < m1; ++i) {
+    for (size_t i = 0; i < m1; ++i) {
         direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
     }
 
-    for (std::size_t i = 0; i < n1; ++i) {
+    for (size_t i = 0; i < n1; ++i) {
         direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
     }
 
@@ -771,11 +771,11 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
     // c = real(conj(a) / n)
     // Note: Since the conjugate does not change the real part, it is not necessary
     if(beta == T(0.0)){
-        for (std::size_t i = 0; i < n; ++i) {
+        for (size_t i = 0; i < n; ++i) {
             c[i] = a_padded[i].real / T(n);
         }
     } else {
-        for (std::size_t i = 0; i < n; ++i) {
+        for (size_t i = 0; i < n; ++i) {
             c[i] = beta * c[i] + a_padded[i].real / T(n);
         }
     }
@@ -822,7 +822,7 @@ template <typename A, typename C>
 void ifft1_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
-    for (std::size_t k = 0; k < etl::dim<0>(a); ++k) {
+    for (size_t k = 0; k < etl::dim<0>(a); ++k) {
         detail::ifft1_kernel(a(k).memory_start(), etl::dim<1>(a), c(k).memory_start());
     }
 
@@ -840,7 +840,7 @@ void ifft1_real(A&& a, C&& c) {
 
     a.ensure_cpu_up_to_date();
 
-    std::size_t n = etl::size(a);
+    size_t n = etl::size(a);
 
     auto c_complex = allocate<complex_t>(n);
     auto cc        = c_complex.get();
@@ -863,7 +863,7 @@ void ifft1_real(A&& a, C&& c) {
  */
 template<typename A, typename C>
 void fft1_many_kernel(const A* a, C* c, size_t batch, size_t n) {
-    std::size_t distance = n; //Distance between samples
+    size_t distance = n; //Distance between samples
 
     if (n <= 65536 && math::is_power_of_two(n)) {
         //Copy a -> c (if not aliasing)
@@ -872,7 +872,7 @@ void fft1_many_kernel(const A* a, C* c, size_t batch, size_t n) {
         }
 
         auto batch_fun_b = [&](const size_t first, const size_t last) {
-            for (std::size_t i = first; i < last; ++i) {
+            for (size_t i = first; i < last; ++i) {
                 detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<typename C::value_type>*>(c + i * distance), n);
             }
         };
@@ -936,7 +936,7 @@ template <typename A, typename C>
 void ifft2(A&& a, C&& c) {
     using T = typename value_t<C>::value_type;
 
-    std::size_t n = etl::size(a);
+    size_t n = etl::size(a);
 
     //Conjugate the complex numbers
     c = conj(a);
@@ -969,7 +969,7 @@ template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
     using T = typename value_t<C>::value_type;
 
-    static constexpr std::size_t D = etl::dimensions<A>();
+    static constexpr size_t D = etl::dimensions<A>();
 
     auto n = etl::dim<D - 2>(a) * etl::dim<D -1>(a);
 
@@ -1107,7 +1107,7 @@ void conv2_full_multi_fft(II&& input, KK&& kernel, CC&& conv) {
 
         dyn_matrix<etl::complex<T>, 2> a_padded(s1, s2);
 
-        for (std::size_t i = 0; i < m1; ++i) {
+        for (size_t i = 0; i < m1; ++i) {
             direct_copy_n(input.memory_start() + i * m2, a_padded.memory_start() + i * s2, m2);
         }
 
@@ -1119,7 +1119,7 @@ void conv2_full_multi_fft(II&& input, KK&& kernel, CC&& conv) {
 
         auto batch_fun_k = [&](const size_t first, const size_t last) {
             SERIAL_SECTION {
-                for (std::size_t k = first; k < last; ++k) {
+                for (size_t k = first; k < last; ++k) {
                     const T* b = kernel.memory_start() + k * k_s;
                     T* c       = conv.memory_start() + k * c_s;
 
@@ -1127,7 +1127,7 @@ void conv2_full_multi_fft(II&& input, KK&& kernel, CC&& conv) {
 
                     dyn_matrix<etl::complex<T>, 2> b_padded(s1, s2);
 
-                    for (std::size_t i = 0; i < n1; ++i) {
+                    for (size_t i = 0; i < n1; ++i) {
                         direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
                     }
 
@@ -1159,7 +1159,7 @@ void conv2_full_multi_fft(II&& input, KK&& kernel, CC&& conv) {
                     // c = real(conj(a) / n)
                     // Note: Since the conjugate does not change the real part, it is not necessary
 
-                    for (std::size_t i = 0; i < etl::size(b_padded); ++i){
+                    for (size_t i = 0; i < etl::size(b_padded); ++i){
                         c[i] = b_padded[i].real / T(n);
                     }
                 }
@@ -1222,19 +1222,19 @@ void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
         const auto n1 = etl::dim<2>(kernel);
         const auto n2 = etl::dim<3>(kernel);
 
-        const std::size_t s1 = m1 + n1 - 1;
-        const std::size_t s2 = m2 + n2 - 1;
-        const std::size_t n  = s1 * s2;
+        const size_t s1 = m1 + n1 - 1;
+        const size_t s2 = m2 + n2 - 1;
+        const size_t n  = s1 * s2;
 
-        const std::size_t N = etl::dim<0>(input);
+        const size_t N = etl::dim<0>(input);
 
         std::fill(conv.memory_start(), conv.memory_end(), 0);
 
         auto batch_fun_n = [&](const size_t first, const size_t last) {
             if (last - first) {
                 SERIAL_SECTION {
-                    for (std::size_t i = first; i < last; ++i) {
-                        for (std::size_t k = 0; k < etl::dim<0>(kernel); ++k) {
+                    for (size_t i = first; i < last; ++i) {
+                        for (size_t k = 0; k < etl::dim<0>(kernel); ++k) {
                             const T* a = input.memory_start() + i * input_i_inc + k * input_k_inc; //input(i)(k)
 
                             dyn_matrix<etl::complex<T>, 2> a_padded(s1, s2);
@@ -1243,7 +1243,7 @@ void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
 
                             a_padded = 0;
 
-                            for (std::size_t i = 0; i < m1; ++i) {
+                            for (size_t i = 0; i < m1; ++i) {
                                 direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
                             }
 
@@ -1253,14 +1253,14 @@ void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
                             detail::fft_n_many(a_padded.memory_start(), a_padded.memory_start(), s2, s1);
                             a_padded.transpose_inplace();
 
-                            for (std::size_t c = 0; c < etl::dim<1>(kernel); ++c) {
+                            for (size_t c = 0; c < etl::dim<1>(kernel); ++c) {
                                 const T* b = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc; //kernel(k)(c)
                                 T* cc      = conv.memory_start() + i * conv_i_inc + c * conv_c_inc;       //conv(i)(c)
 
                                 // 0. Pad a and b to the size of cc
 
                                 b_padded = 0;
-                                for (std::size_t i = 0; i < n1; ++i) {
+                                for (size_t i = 0; i < n1; ++i) {
                                     direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
                                 }
 
@@ -1279,7 +1279,7 @@ void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
                                 // 3. Inverse FFT of a
 
                                 // a = conj(a)
-                                for (std::size_t i = 0; i < n; ++i) {
+                                for (size_t i = 0; i < n; ++i) {
                                     tmp[i] = etl::conj(tmp[i]);
                                 }
 
@@ -1291,7 +1291,7 @@ void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
 
                                 // 4. Keep only the real part of the inverse FFT
 
-                                for (std::size_t i = 0; i < n; ++i) {
+                                for (size_t i = 0; i < n; ++i) {
                                     cc[i] += tmp[i].real / T(n);
                                 }
                             }

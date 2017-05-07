@@ -29,7 +29,7 @@ namespace mkl_detail {
  * \param s The size of the vector
  * \param out The output vector
  */
-inline void fft_kernel(const std::complex<float>* in, std::size_t s, std::complex<float>* out) {
+inline void fft_kernel(const std::complex<float>* in, size_t s, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     void* in_ptr = const_cast<void*>(static_cast<const void*>(in));
@@ -47,7 +47,7 @@ inline void fft_kernel(const std::complex<float>* in, std::size_t s, std::comple
  * \param s The size of the vector
  * \param out The output vector
  */
-inline void fft_kernel(const std::complex<double>* in, std::size_t s, std::complex<double>* out) {
+inline void fft_kernel(const std::complex<double>* in, size_t s, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     void* in_ptr = const_cast<void*>(static_cast<const void*>(in));
@@ -66,7 +66,7 @@ inline void fft_kernel(const std::complex<double>* in, std::size_t s, std::compl
  * \param n The size of the inner vector
  * \param out The output vectors
  */
-inline void fft_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t n, std::complex<float>* out) {
+inline void fft_many_kernel(const std::complex<float>* in, size_t batch, size_t n, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     void* in_ptr = const_cast<void*>(static_cast<const void*>(in));
@@ -88,7 +88,7 @@ inline void fft_many_kernel(const std::complex<float>* in, std::size_t batch, st
  * \param n The size of the inner vector
  * \param out The output vectors
  */
-inline void fft_many_kernel(const std::complex<double>* in, std::size_t batch, std::size_t n, std::complex<double>* out) {
+inline void fft_many_kernel(const std::complex<double>* in, size_t batch, size_t n, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     void* in_ptr = const_cast<void*>(static_cast<const void*>(in));
@@ -108,7 +108,7 @@ inline void fft_many_kernel(const std::complex<double>* in, std::size_t batch, s
  * \param in The input vector
  * \param s The size of the vector
  */
-inline void inplace_fft_kernel(std::complex<float>* in, std::size_t s) {
+inline void inplace_fft_kernel(std::complex<float>* in, size_t s) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     void* in_ptr = static_cast<void*>(in);
@@ -124,7 +124,7 @@ inline void inplace_fft_kernel(std::complex<float>* in, std::size_t s) {
  * \param in The input vector
  * \param s The size of the vector
  */
-inline void inplace_fft_kernel(std::complex<double>* in, std::size_t s) {
+inline void inplace_fft_kernel(std::complex<double>* in, size_t s) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     void* in_ptr = static_cast<void*>(in);
@@ -141,7 +141,7 @@ inline void inplace_fft_kernel(std::complex<double>* in, std::size_t s) {
  * \param s The size of the vector
  * \param out The output vector
  */
-inline void ifft_kernel(const std::complex<float>* in, std::size_t s, std::complex<float>* out) {
+inline void ifft_kernel(const std::complex<float>* in, size_t s, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     void* in_ptr = const_cast<void*>(static_cast<const void*>(in));
@@ -160,7 +160,7 @@ inline void ifft_kernel(const std::complex<float>* in, std::size_t s, std::compl
  * \param s The size of the vector
  * \param out The output vector
  */
-inline void ifft_kernel(const std::complex<double>* in, std::size_t s, std::complex<double>* out) {
+inline void ifft_kernel(const std::complex<double>* in, size_t s, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     void* in_ptr = const_cast<void*>(static_cast<const void*>(in));
@@ -180,7 +180,7 @@ inline void ifft_kernel(const std::complex<double>* in, std::size_t s, std::comp
  * \param s The size of the vector
  * \param out The output vectors
  */
-inline void ifft_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t s, std::complex<float>* out) {
+inline void ifft_many_kernel(const std::complex<float>* in, size_t batch, size_t s, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     void* in_ptr = const_cast<void*>(static_cast<const void*>(in));
@@ -203,7 +203,7 @@ inline void ifft_many_kernel(const std::complex<float>* in, std::size_t batch, s
  * \param s The size of the vector
  * \param out The output vectors
  */
-inline void ifft_many_kernel(const std::complex<double>* in, std::size_t batch, std::size_t s, std::complex<double>* out) {
+inline void ifft_many_kernel(const std::complex<double>* in, size_t batch, size_t s, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     void* in_ptr = const_cast<void*>(static_cast<const void*>(in));
@@ -224,7 +224,7 @@ inline void ifft_many_kernel(const std::complex<double>* in, std::size_t batch, 
  * \param in The input vector
  * \param s The size of the vector
  */
-inline void inplace_ifft_kernel(std::complex<float>* in, std::size_t s) {
+inline void inplace_ifft_kernel(std::complex<float>* in, size_t s) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     void* in_ptr = static_cast<void*>(in);
@@ -241,7 +241,7 @@ inline void inplace_ifft_kernel(std::complex<float>* in, std::size_t s) {
  * \param in The input vector
  * \param s The size of the vector
  */
-inline void inplace_ifft_kernel(std::complex<double>* in, std::size_t s) {
+inline void inplace_ifft_kernel(std::complex<double>* in, size_t s) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     void* in_ptr = static_cast<void*>(in);
@@ -260,7 +260,7 @@ inline void inplace_ifft_kernel(std::complex<double>* in, std::size_t s) {
  * \param d2 The second dimension of the matrix
  * \param out The output matrix
  */
-inline void fft2_kernel(const std::complex<float>* in, std::size_t d1, std::size_t d2, std::complex<float>* out) {
+inline void fft2_kernel(const std::complex<float>* in, size_t d1, size_t d2, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -281,7 +281,7 @@ inline void fft2_kernel(const std::complex<float>* in, std::size_t d1, std::size
  * \param d2 The second dimension of the matrix
  * \param out The output matrix
  */
-inline void fft2_kernel(const std::complex<double>* in, std::size_t d1, std::size_t d2, std::complex<double>* out) {
+inline void fft2_kernel(const std::complex<double>* in, size_t d1, size_t d2, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -302,7 +302,7 @@ inline void fft2_kernel(const std::complex<double>* in, std::size_t d1, std::siz
  * \param d2 The second dimension of the matrix
  * \param out The output matrix
  */
-inline void fft2_kernel(const etl::complex<float>* in, std::size_t d1, std::size_t d2, etl::complex<float>* out) {
+inline void fft2_kernel(const etl::complex<float>* in, size_t d1, size_t d2, etl::complex<float>* out) {
     fft2_kernel(reinterpret_cast<const std::complex<float>*>(in), d1, d2, reinterpret_cast<std::complex<float>*>(out));
 }
 
@@ -313,7 +313,7 @@ inline void fft2_kernel(const etl::complex<float>* in, std::size_t d1, std::size
  * \param d2 The second dimension of the matrix
  * \param out The output matrix
  */
-inline void fft2_kernel(const etl::complex<double>* in, std::size_t d1, std::size_t d2, etl::complex<double>* out) {
+inline void fft2_kernel(const etl::complex<double>* in, size_t d1, size_t d2, etl::complex<double>* out) {
     fft2_kernel(reinterpret_cast<const std::complex<double>*>(in), d1, d2, reinterpret_cast<std::complex<double>*>(out));
 }
 
@@ -324,7 +324,7 @@ inline void fft2_kernel(const etl::complex<double>* in, std::size_t d1, std::siz
  * \param d1 The first dimension of the matrix
  * \param d2 The second dimension of the matrix
  */
-inline void inplace_fft2_many_kernel(std::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2) {
+inline void inplace_fft2_many_kernel(std::complex<float>* in, size_t batch, size_t d1, size_t d2) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -348,7 +348,7 @@ inline void inplace_fft2_many_kernel(std::complex<float>* in, std::size_t batch,
  * \param d1 The first dimension of the matrix
  * \param d2 The second dimension of the matrix
  */
-inline void inplace_fft2_many_kernel(std::complex<double>* in, std::size_t batch, std::size_t d1, std::size_t d2) {
+inline void inplace_fft2_many_kernel(std::complex<double>* in, size_t batch, size_t d1, size_t d2) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -373,7 +373,7 @@ inline void inplace_fft2_many_kernel(std::complex<double>* in, std::size_t batch
  * \param d2 The second dimension of the matrix
  * \param out The output matrix
  */
-inline void fft2_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2, std::complex<float>* out) {
+inline void fft2_many_kernel(const std::complex<float>* in, size_t batch, size_t d1, size_t d2, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -398,7 +398,7 @@ inline void fft2_many_kernel(const std::complex<float>* in, std::size_t batch, s
  * \param d2 The second dimension of the matrix
  * \param out The output matrix
  */
-inline void fft2_many_kernel(const std::complex<double>* in, std::size_t batch, std::size_t d1, std::size_t d2, std::complex<double>* out) {
+inline void fft2_many_kernel(const std::complex<double>* in, size_t batch, size_t d1, size_t d2, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -423,7 +423,7 @@ inline void fft2_many_kernel(const std::complex<double>* in, std::size_t batch, 
  * \param d2 The second dimension of the matrix
  * \param out The output matrix
  */
-inline void fft2_many_kernel(const etl::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2, etl::complex<float>* out) {
+inline void fft2_many_kernel(const etl::complex<float>* in, size_t batch, size_t d1, size_t d2, etl::complex<float>* out) {
     fft2_many_kernel(reinterpret_cast<const std::complex<float>*>(in), batch, d1, d2, reinterpret_cast<std::complex<float>*>(out));
 }
 
@@ -435,7 +435,7 @@ inline void fft2_many_kernel(const etl::complex<float>* in, std::size_t batch, s
  * \param d2 The second dimension of the matrix
  * \param out The output matrix
  */
-inline void fft2_many_kernel(const etl::complex<double>* in, std::size_t batch, std::size_t d1, std::size_t d2, etl::complex<double>* out) {
+inline void fft2_many_kernel(const etl::complex<double>* in, size_t batch, size_t d1, size_t d2, etl::complex<double>* out) {
     fft2_many_kernel(reinterpret_cast<const std::complex<double>*>(in), batch, d1, d2, reinterpret_cast<std::complex<double>*>(out));
 }
 
@@ -445,7 +445,7 @@ inline void fft2_many_kernel(const etl::complex<double>* in, std::size_t batch, 
  * \param d1 The first dimension of the matrix
  * \param d2 The second dimension of the matrix
  */
-inline void inplace_fft2_kernel(std::complex<float>* in, std::size_t d1, std::size_t d2) {
+inline void inplace_fft2_kernel(std::complex<float>* in, size_t d1, size_t d2) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -464,7 +464,7 @@ inline void inplace_fft2_kernel(std::complex<float>* in, std::size_t d1, std::si
  * \param d1 The first dimension of the matrix
  * \param d2 The second dimension of the matrix
  */
-inline void inplace_fft2_kernel(std::complex<double>* in, std::size_t d1, std::size_t d2) {
+inline void inplace_fft2_kernel(std::complex<double>* in, size_t d1, size_t d2) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -483,7 +483,7 @@ inline void inplace_fft2_kernel(std::complex<double>* in, std::size_t d1, std::s
  * \param d1 The first dimension of the matrix
  * \param d2 The second dimension of the matrix
  */
-inline void ifft2_kernel(const std::complex<float>* in, std::size_t d1, std::size_t d2, std::complex<float>* out) {
+inline void ifft2_kernel(const std::complex<float>* in, size_t d1, size_t d2, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -504,7 +504,7 @@ inline void ifft2_kernel(const std::complex<float>* in, std::size_t d1, std::siz
  * \param d1 The first dimension of the matrix
  * \param d2 The second dimension of the matrix
  */
-inline void ifft2_kernel(const std::complex<double>* in, std::size_t d1, std::size_t d2, std::complex<double>* out) {
+inline void ifft2_kernel(const std::complex<double>* in, size_t d1, size_t d2, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -526,7 +526,7 @@ inline void ifft2_kernel(const std::complex<double>* in, std::size_t d1, std::si
  * \param d1 The first dimension of the matrix
  * \param d2 The second dimension of the matrix
  */
-inline void inplace_ifft2_many_kernel(std::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2) {
+inline void inplace_ifft2_many_kernel(std::complex<float>* in, size_t batch, size_t d1, size_t d2) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -551,7 +551,7 @@ inline void inplace_ifft2_many_kernel(std::complex<float>* in, std::size_t batch
  * \param d1 The first dimension of the matrix
  * \param d2 The second dimension of the matrix
  */
-inline void inplace_ifft2_many_kernel(std::complex<double>* in, std::size_t batch, std::size_t d1, std::size_t d2) {
+inline void inplace_ifft2_many_kernel(std::complex<double>* in, size_t batch, size_t d1, size_t d2) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -577,7 +577,7 @@ inline void inplace_ifft2_many_kernel(std::complex<double>* in, std::size_t batc
  * \param d2 The second dimension of the matrix
  * \param out The output matrix
  */
-inline void ifft2_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2, std::complex<float>* out) {
+inline void ifft2_many_kernel(const std::complex<float>* in, size_t batch, size_t d1, size_t d2, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -603,7 +603,7 @@ inline void ifft2_many_kernel(const std::complex<float>* in, std::size_t batch, 
  * \param d2 The second dimension of the matrix
  * \param out The output matrix
  */
-inline void ifft2_many_kernel(const std::complex<double>* in, std::size_t batch, std::size_t d1, std::size_t d2, std::complex<double>* out) {
+inline void ifft2_many_kernel(const std::complex<double>* in, size_t batch, size_t d1, size_t d2, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -627,7 +627,7 @@ inline void ifft2_many_kernel(const std::complex<double>* in, std::size_t batch,
  * \param d1 The first dimension of the matrix
  * \param d2 The second dimension of the matrix
  */
-inline void inplace_ifft2_kernel(std::complex<float>* in, std::size_t d1, std::size_t d2) {
+inline void inplace_ifft2_kernel(std::complex<float>* in, size_t d1, size_t d2) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -647,7 +647,7 @@ inline void inplace_ifft2_kernel(std::complex<float>* in, std::size_t d1, std::s
  * \param d1 The first dimension of the matrix
  * \param d2 The second dimension of the matrix
  */
-inline void inplace_ifft2_kernel(std::complex<double>* in, std::size_t d1, std::size_t d2) {
+inline void inplace_ifft2_kernel(std::complex<double>* in, size_t d1, size_t d2) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
@@ -673,19 +673,19 @@ inline void inplace_ifft2_kernel(std::complex<double>* in, std::size_t d1, std::
  * \param beta The multiplier for the previous value of c
  */
 template <typename T>
-void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, std::size_t n1, std::size_t n2, T* c, T beta) {
-    const std::size_t s1 = m1 + n1 - 1;
-    const std::size_t s2 = m2 + n2 - 1;
-    const std::size_t size = s1 * s2;
+void conv2_full_kernel(const T* a, size_t m1, size_t m2, const T* b, size_t n1, size_t n2, T* c, T beta) {
+    const size_t s1 = m1 + n1 - 1;
+    const size_t s2 = m2 + n2 - 1;
+    const size_t size = s1 * s2;
 
     dyn_vector<etl::complex<T>> a_padded(size);
     dyn_vector<etl::complex<T>> b_padded(size);
 
-    for (std::size_t i = 0; i < m1; ++i) {
+    for (size_t i = 0; i < m1; ++i) {
         direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
     }
 
-    for (std::size_t i = 0; i < n1; ++i) {
+    for (size_t i = 0; i < n1; ++i) {
         direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
     }
 
@@ -697,11 +697,11 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
     inplace_ifft2_kernel(safe_cast(a_padded.memory_start()), s1, s2);
 
     if (beta == T(0.0)) {
-        for (std::size_t i = 0; i < size; ++i) {
+        for (size_t i = 0; i < size; ++i) {
             c[i] = a_padded[i].real;
         }
     } else {
-        for (std::size_t i = 0; i < size; ++i) {
+        for (size_t i = 0; i < size; ++i) {
             c[i] = beta * c[i] + a_padded[i].real;
         }
     }
@@ -786,7 +786,7 @@ void ifft1_real(A&& a, C&& c) {
 
     mkl_detail::ifft_kernel(a.memory_start(), etl::size(a), c_complex.get());
 
-    for (std::size_t i = 0; i < etl::size(a); ++i) {
+    for (size_t i = 0; i < etl::size(a); ++i) {
         c[i] = c_complex[i].real();
     }
 
@@ -806,7 +806,7 @@ void ifft1_real(A&& a, C&& c) {
 
     mkl_detail::ifft_kernel(a.memory_start(), etl::size(a), c_complex.get());
 
-    for (std::size_t i = 0; i < etl::size(a); ++i) {
+    for (size_t i = 0; i < etl::size(a); ++i) {
         c[i] = c_complex[i].real();
     }
 
@@ -824,10 +824,10 @@ template<typename A, typename C, cpp_enable_if(!all_complex<A>::value && all_com
 void fft1_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
-    static constexpr std::size_t N = etl::dimensions<C>();
+    static constexpr size_t N = etl::dimensions<C>();
 
-    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch = etl::size(a) / n;   //Number of batch
+    size_t n     = etl::dim<N - 1>(a); //Size of the transform
+    size_t batch = etl::size(a) / n;   //Number of batch
 
     auto a_complex = allocate<value_t<C>>(etl::size(a));
 
@@ -849,10 +849,10 @@ template<typename A, typename C, cpp_enable_if(all_complex<A, C>::value)>
 void fft1_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
-    static constexpr std::size_t N = etl::dimensions<C>();
+    static constexpr size_t N = etl::dimensions<C>();
 
-    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch = etl::size(a) / n;   //Number of batch
+    size_t n     = etl::dim<N - 1>(a); //Size of the transform
+    size_t batch = etl::size(a) / n;   //Number of batch
 
     mkl_detail::fft_many_kernel(a.memory_start(), batch, n, c.memory_start());
 
@@ -870,10 +870,10 @@ template <typename A, typename C>
 void ifft1_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
-    static constexpr std::size_t N = etl::dimensions<A>();
+    static constexpr size_t N = etl::dimensions<A>();
 
-    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch = etl::size(a) / n;   //Number of batch
+    size_t n     = etl::dim<N - 1>(a); //Size of the transform
+    size_t batch = etl::size(a) / n;   //Number of batch
 
     mkl_detail::ifft_many_kernel(a.memory_start(), batch, n, c.memory_start());
 
@@ -893,9 +893,9 @@ void conv1_full(A&& a, B&& b, C&& c) {
 
     using type = value_t<A>;
 
-    const std::size_t m    = etl::size(a);
-    const std::size_t n    = etl::size(b);
-    const std::size_t size = m + n - 1;
+    const size_t m    = etl::size(a);
+    const size_t n    = etl::size(b);
+    const size_t size = m + n - 1;
 
     //Note: use of value_t to make the type dependent!
     dyn_vector<etl::complex<type>> a_padded(etl::size(c));
@@ -911,7 +911,7 @@ void conv1_full(A&& a, B&& b, C&& c) {
 
     mkl_detail::inplace_ifft_kernel(reinterpret_cast<std::complex<type>*>(a_padded.memory_start()), size);
 
-    for (std::size_t i = 0; i < size; ++i) {
+    for (size_t i = 0; i < size; ++i) {
         c[i] = a_padded[i].real;
     }
 
@@ -979,11 +979,11 @@ template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
+    static constexpr size_t N = decay_traits<A>::dimensions();
 
-    std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
-    std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
-    std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
+    size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
+    size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
+    size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
@@ -1005,11 +1005,11 @@ template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
+    static constexpr size_t N = decay_traits<A>::dimensions();
 
-    std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
-    std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
-    std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
+    size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
+    size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
+    size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
     auto a_complex = allocate<std::complex<double>>(etl::size(a));
 
@@ -1031,11 +1031,11 @@ template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
 void fft2_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
+    static constexpr size_t N = decay_traits<A>::dimensions();
 
-    std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
-    std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
-    std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
+    size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
+    size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
+    size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
     mkl_detail::fft2_many_kernel(a.memory_start(), batch, n1, n2, c.memory_start());
 
@@ -1053,11 +1053,11 @@ template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
+    static constexpr size_t N = decay_traits<A>::dimensions();
 
-    std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
-    std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
-    std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
+    size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
+    size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
+    size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
     mkl_detail::ifft2_many_kernel(safe_cast(a.memory_start()), batch, n1, n2, safe_cast(c.memory_start()));
 
@@ -1091,7 +1091,7 @@ void ifft2_real(A&& a, C&& c) {
 
     mkl_detail::ifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c_complex.get());
 
-    for (std::size_t i = 0; i < etl::size(a); ++i) {
+    for (size_t i = 0; i < etl::size(a); ++i) {
         c[i] = c_complex[i].real();
     }
 
@@ -1163,13 +1163,13 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
         const auto n1 = etl::dim<1>(kernel);
         const auto n2 = etl::dim<2>(kernel);
 
-        const std::size_t s1   = m1 + n1 - 1;
-        const std::size_t s2   = m2 + n2 - 1;
-        const std::size_t size = s1 * s2;
+        const size_t s1   = m1 + n1 - 1;
+        const size_t s2   = m2 + n2 - 1;
+        const size_t size = s1 * s2;
 
         dyn_vector<etl::complex<T>> a_padded(size);
 
-        for (std::size_t i = 0; i < m1; ++i) {
+        for (size_t i = 0; i < m1; ++i) {
             direct_copy_n(input.memory_start() + i * m2, a_padded.memory_start() + i * s2, m2);
         }
 
@@ -1177,13 +1177,13 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
 
         auto batch_fun_k = [&](const size_t first, const size_t last) {
             SERIAL_SECTION {
-                for (std::size_t k = first; k < last; ++k) {
+                for (size_t k = first; k < last; ++k) {
                     const T* b = kernel.memory_start() + k * k_s;
                     T* c       = conv.memory_start() + k * c_s;
 
                     dyn_vector<etl::complex<T>> b_padded(size);
 
-                    for (std::size_t i = 0; i < n1; ++i) {
+                    for (size_t i = 0; i < n1; ++i) {
                         direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
                     }
 
@@ -1193,7 +1193,7 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
 
                     mkl_detail::inplace_ifft2_kernel(reinterpret_cast<std::complex<T>*>(b_padded.memory_start()), s1, s2);
 
-                    for (std::size_t i = 0; i < size; ++i) {
+                    for (size_t i = 0; i < size; ++i) {
                         c[i] = b_padded[i].real;
                     }
                 }
@@ -1283,14 +1283,14 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
         auto batch_fun_kc = [&](const size_t first, const size_t last) {
             if (last - first) {
                 SERIAL_SECTION {
-                    for (std::size_t kc = first; kc < last; ++kc) {
+                    for (size_t kc = first; kc < last; ++kc) {
                         size_t k = kc / C;
                         size_t c = kc % C;
 
                         const T* b = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc; // kernel(k)(c)
 
                         b_padded(k)(c) = 0;
-                        for (std::size_t i = 0; i < n1; ++i) {
+                        for (size_t i = 0; i < n1; ++i) {
                             direct_copy_n(b + i * n2, b_padded(k)(c).memory_start() + i * s2, n2);
                         }
 
@@ -1308,25 +1308,25 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
                     dyn_vector<etl::complex<T>> a_padded(size);
                     dyn_vector<etl::complex<T>> tmp(size);
 
-                    for (std::size_t i = first; i < last; ++i) {
-                        for (std::size_t k = 0; k < K; ++k) {
+                    for (size_t i = first; i < last; ++i) {
+                        for (size_t k = 0; k < K; ++k) {
                             const T* a = input.memory_start() + i * input_i_inc + k * input_k_inc; // input(i)(k)
 
                             a_padded = 0;
-                            for (std::size_t i = 0; i < m1; ++i) {
+                            for (size_t i = 0; i < m1; ++i) {
                                 direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
                             }
 
                             mkl_detail::inplace_fft2_kernel(safe_cast(a_padded.memory_start()), s1, s2);
 
-                            for (std::size_t c = 0; c < C; ++c) {
+                            for (size_t c = 0; c < C; ++c) {
                                 T* cc      = conv.memory_start() + i * conv_i_inc + c * conv_c_inc;       // conv(i)(c)
 
                                 tmp = a_padded >> b_padded(k)(c);
 
                                 mkl_detail::inplace_ifft2_kernel(safe_cast(tmp.memory_start()), s1, s2);
 
-                                for (std::size_t i = 0; i < size; ++i) {
+                                for (size_t i = 0; i < size; ++i) {
                                     cc[i] += tmp[i].real;
                                 }
                             }
@@ -1431,7 +1431,7 @@ void conv4_full_flipped(II&& input, KK&& kernel, CC&& conv) {
                     dyn_vector<etl::complex<T>> a_padded(size);
                     dyn_vector<etl::complex<T>> tmp(size);
 
-                    for (std::size_t i = first; i < last; ++i) {
+                    for (size_t i = first; i < last; ++i) {
                         // k = 0
 
                         const T* a = input.memory_start() + i * input_i_inc + 0 * input_k_inc; // input(i)(0)
@@ -1450,31 +1450,31 @@ void conv4_full_flipped(II&& input, KK&& kernel, CC&& conv) {
 
                             mkl_detail::inplace_ifft2_kernel(safe_cast(tmp.memory_start()), s1, s2);
 
-                            for (std::size_t i = 0; i < size; ++i) {
+                            for (size_t i = 0; i < size; ++i) {
                                 cc[i] = tmp[i].real;
                             }
                         }
 
                         // k = [1,K]
 
-                        for (std::size_t k = 1; k < K; ++k) {
+                        for (size_t k = 1; k < K; ++k) {
                             const T* a = input.memory_start() + i * input_i_inc + k * input_k_inc; // input(i)(k)
 
                             a_padded = 0;
-                            for (std::size_t i = 0; i < m1; ++i) {
+                            for (size_t i = 0; i < m1; ++i) {
                                 direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
                             }
 
                             mkl_detail::inplace_fft2_kernel(safe_cast(a_padded.memory_start()), s1, s2);
 
-                            for (std::size_t c = 0; c < C; ++c) {
+                            for (size_t c = 0; c < C; ++c) {
                                 T* cc      = conv.memory_start() + i * conv_i_inc + c * conv_c_inc;       // conv(i)(c)
 
                                 tmp = a_padded >> b_padded(k)(c);
 
                                 mkl_detail::inplace_ifft2_kernel(safe_cast(tmp.memory_start()), s1, s2);
 
-                                for (std::size_t i = 0; i < size; ++i) {
+                                for (size_t i = 0; i < size; ++i) {
                                     cc[i] += tmp[i].real;
                                 }
                             }

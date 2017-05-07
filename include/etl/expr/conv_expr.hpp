@@ -18,7 +18,7 @@ namespace etl {
  * \tparam D The dimensions of convolution
  * \tparam Impl The implementation class
  */
-template <typename T, std::size_t D, typename Impl>
+template <typename T, size_t D, typename Impl>
 struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>, T> {
     static_assert(D > 0, "0D convolution is not valid");
 
@@ -91,8 +91,8 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>, T> {
      * \brief Returns the DDth dimension of the expression
      * \return the DDth dimension of the expression
      */
-    template <typename A, typename B, std::size_t DD>
-    static constexpr std::size_t dim() {
+    template <typename A, typename B, size_t DD>
+    static constexpr size_t dim() {
         return Impl::template dim<DD, A, B>();
     }
 
@@ -104,7 +104,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>, T> {
      * \return the dth dimension of the expression
      */
     template <typename A, typename B>
-    static std::size_t dim(const A& a, const B& b, std::size_t d) {
+    static size_t dim(const A& a, const B& b, size_t d) {
         return Impl::dim(d, a, b);
     }
 
@@ -115,9 +115,9 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>, T> {
      * \return the size of the expression
      */
     template <typename A, typename B>
-    static std::size_t size(const A& a, const B& b) {
-        std::size_t acc = 1;
-        for (std::size_t i = 0; i < dimensions(); ++i) {
+    static size_t size(const A& a, const B& b) {
+        size_t acc = 1;
+        for (size_t i = 0; i < dimensions(); ++i) {
             acc *= this_type::dim(a, b, i);
         }
         return acc;
@@ -127,8 +127,8 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>, T> {
      * \brief Returns the multiplicative sum of the dimensions at the given indices
      * \return the multiplicative sum of the dimensions at the given indices
      */
-    template <typename A, typename B, std::size_t... I>
-    static constexpr std::size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
+    template <typename A, typename B, size_t... I>
+    static constexpr size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
         return mul_all<this_type::dim<A, B, I>()...>::value;
     }
 
@@ -137,7 +137,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>, T> {
      * \return the size of the expression
      */
     template <typename A, typename B>
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return size_mul<A, B>(std::make_index_sequence<dimensions()>());
     }
 
@@ -154,7 +154,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>, T> {
      * \brief Returns the number of dimensions of the expression
      * \return the number of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return D;
     }
 };
@@ -165,7 +165,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>, T> {
  * \tparam D The dimensions of convolution
  * \tparam Impl The implementation class
  */
-template <typename T, std::size_t D, typename Impl>
+template <typename T, size_t D, typename Impl>
 struct dyn_basic_conv_expr : dyn_impl_expr<dyn_basic_conv_expr<T, D, Impl>, T> {
     static_assert(D > 0, "0D convolution is not valid");
 
@@ -225,7 +225,7 @@ struct dyn_basic_conv_expr : dyn_impl_expr<dyn_basic_conv_expr<T, D, Impl>, T> {
      * \return the dth dimension of the expression
      */
     template <typename A, typename B>
-    std::size_t dim(const A& a, const B& b, std::size_t d) const noexcept {
+    size_t dim(const A& a, const B& b, size_t d) const noexcept {
         return impl.dim(d, a, b);
     }
 
@@ -236,9 +236,9 @@ struct dyn_basic_conv_expr : dyn_impl_expr<dyn_basic_conv_expr<T, D, Impl>, T> {
      * \return the size of the expression
      */
     template <typename A, typename B>
-    std::size_t size(const A& a, const B& b) const {
-        std::size_t acc = 1;
-        for (std::size_t i = 0; i < dimensions(); ++i) {
+    size_t size(const A& a, const B& b) const {
+        size_t acc = 1;
+        for (size_t i = 0; i < dimensions(); ++i) {
             acc *= this_type::dim(a, b, i);
         }
         return acc;
@@ -257,7 +257,7 @@ struct dyn_basic_conv_expr : dyn_impl_expr<dyn_basic_conv_expr<T, D, Impl>, T> {
      * \brief Returns the number of dimensions of the expression
      * \return the number of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return D;
     }
 };
@@ -493,19 +493,19 @@ using conv2_full_flipped_expr = basic_conv_expr<T, 2, detail::conv2_full_flipped
 /*!
  * \brief Expression for >2D valid convolution
  */
-template <typename T, std::size_t D>
+template <typename T, size_t D>
 using conv_deep_valid_expr = basic_conv_expr<T, D, detail::conv_deep_valid_impl>;
 
 /*!
  * \brief Expression for >2D same convolution
  */
-template <typename T, std::size_t D>
+template <typename T, size_t D>
 using conv_deep_same_expr = basic_conv_expr<T, D, detail::conv_deep_same_impl>;
 
 /*!
  * \brief Expression for >2D full convolution
  */
-template <typename T, std::size_t D>
+template <typename T, size_t D>
 using conv_deep_full_expr = basic_conv_expr<T, D, detail::conv_deep_full_impl>;
 
 } //end of namespace etl

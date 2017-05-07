@@ -28,7 +28,7 @@ TEMPLATE_TEST_CASE_2("stop/fast_vector_1", "stop<unary<fast_vec>>", Z, float, do
     constexpr const auto size_2 = etl::size(r);
     REQUIRE_EQUALS(size_2, 4UL);
 
-    for (std::size_t i = 0; i < r.size(); ++i) {
+    for (size_t i = 0; i < r.size(); ++i) {
         REQUIRE_EQUALS_APPROX(r[i], std::log(Z(3.3)));
         REQUIRE_EQUALS_APPROX(r(i), std::log(Z(3.3)));
     }
@@ -62,7 +62,7 @@ TEMPLATE_TEST_CASE_2("stop/fast_matrix_1", "stop<unary<fast_mat>>", Z, float, do
     REQUIRE_EQUALS(rows_2, 3UL);
     REQUIRE_EQUALS(columns_2, 2UL);
 
-    for (std::size_t i = 0; i < r.size(); ++i) {
+    for (size_t i = 0; i < r.size(); ++i) {
         REQUIRE_EQUALS_APPROX(r[i], std::log(Z(3.3)));
     }
 }
@@ -95,7 +95,7 @@ TEMPLATE_TEST_CASE_2("stop/fast_matrix_2", "stop<binary<fast_mat>>", Z, float, d
     REQUIRE_EQUALS(rows_2, 3UL);
     REQUIRE_EQUALS(columns_2, 2UL);
 
-    for (std::size_t i = 0; i < r.size(); ++i) {
+    for (size_t i = 0; i < r.size(); ++i) {
         REQUIRE_EQUALS(r[i], Z(6.6));
     }
 }
@@ -114,7 +114,7 @@ TEMPLATE_TEST_CASE_2("stop/dyn_vector_1", "stop<unary<dyn_vec>>", Z, float, doub
     REQUIRE_DIRECT(etl::etl_traits<type>::is_value);
     REQUIRE_DIRECT(!etl::etl_traits<type>::is_fast);
 
-    for (std::size_t i = 0; i < r.size(); ++i) {
+    for (size_t i = 0; i < r.size(); ++i) {
         REQUIRE_EQUALS_APPROX(r[i], std::log(Z(3.3)));
         REQUIRE_EQUALS_APPROX(r(i), std::log(Z(3.3)));
     }
@@ -136,7 +136,7 @@ TEMPLATE_TEST_CASE_2("stop/dyn_matrix_1", "stop<unary<dyn_mat>>", Z, float, doub
     REQUIRE_DIRECT(etl::etl_traits<type>::is_value);
     REQUIRE_DIRECT(!etl::etl_traits<type>::is_fast);
 
-    for (std::size_t i = 0; i < r.size(); ++i) {
+    for (size_t i = 0; i < r.size(); ++i) {
         REQUIRE_EQUALS_APPROX(r[i], std::log(Z(3.3)));
     }
 }
@@ -157,7 +157,7 @@ TEMPLATE_TEST_CASE_2("stop/dyn_matrix_2", "stop<binary<dyn_mat>>", Z, float, dou
     REQUIRE_DIRECT(etl::etl_traits<type>::is_value);
     REQUIRE_DIRECT(!etl::etl_traits<type>::is_fast);
 
-    for (std::size_t i = 0; i < r.size(); ++i) {
+    for (size_t i = 0; i < r.size(); ++i) {
         REQUIRE_EQUALS(r[i], Z(6.6));
     }
 }

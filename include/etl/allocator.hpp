@@ -23,7 +23,7 @@ namespace etl {
  * \brief Use of this type in the parameter with the size of
  * a vector type fakes mangling
  */
-template<std::size_t T>
+template<size_t T>
 struct mangling_faker {};
 
 /*!
@@ -42,15 +42,15 @@ using is_mangle_able = cpp::or_c<
  * \brief Allocated for aligned memory
  * \tparam A The alignment
  */
-template <std::size_t A>
+template <size_t A>
 struct aligned_allocator {
     /*!
      * \brief Allocate a block of memory of *size* elements
      * \param size The number of elements
      * \return A pointer to the allocated memory
      */
-    template <typename T, std::size_t S = sizeof(T)>
-    static T* allocate(std::size_t size, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
+    template <typename T, size_t S = sizeof(T)>
+    static T* allocate(size_t size, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
         auto required_bytes = sizeof(T) * size;
         auto offset         = (A - 1) + sizeof(uintptr_t);
         auto orig           = malloc(required_bytes + offset);
@@ -68,7 +68,7 @@ struct aligned_allocator {
      * \brief Release the memory
      * \param ptr The pointer to the memory to be released
      */
-    template <typename T, std::size_t S = sizeof(T)>
+    template <typename T, size_t S = sizeof(T)>
     static void release(T* ptr, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
         //Note the const_cast is only to allow compilation
         free((reinterpret_cast<void**>(const_cast<std::remove_const_t<T>*>(ptr)))[-1]);
@@ -80,8 +80,8 @@ struct aligned_allocator {
  * \param size The number of elements
  * \return An unique pointer to the memory
  */
-template <typename T, std::size_t S = sizeof(T)>
-auto allocate(std::size_t size, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
+template <typename T, size_t S = sizeof(T)>
+auto allocate(size_t size, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
     static_assert(is_mangle_able<T>::value, "allocate does not work with vector types");
     return std::make_unique<T[]>(size);
 }
@@ -91,8 +91,8 @@ auto allocate(std::size_t size, mangling_faker<S> /*unused*/ = mangling_faker<S>
  * \param size The number of elements
  * \return A pointer to the aligned memory
  */
-template <typename T, std::size_t S = sizeof(T)>
-T* aligned_allocate(std::size_t size, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
+template <typename T, size_t S = sizeof(T)>
+T* aligned_allocate(size_t size, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
     return aligned_allocator<32>::allocate<T>(size);
 }
 
@@ -100,7 +100,7 @@ T* aligned_allocate(std::size_t size, mangling_faker<S> /*unused*/ = mangling_fa
  * \brief Release some aligned memory
  * \param ptr The ptr to the aligned memory
  */
-template <typename T, std::size_t S = sizeof(T)>
+template <typename T, size_t S = sizeof(T)>
 void aligned_release(T* ptr, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
     return aligned_allocator<32>::release<T>(ptr);
 }
@@ -108,7 +108,7 @@ void aligned_release(T* ptr, mangling_faker<S> /*unused*/ = mangling_faker<S>())
 /*!
  * \brief RAII wrapper for allocated aligned memory
  */
-template <typename T, std::size_t S = sizeof(T)>
+template <typename T, size_t S = sizeof(T)>
 struct aligned_ptr {
     T* ptr; ///< The raw pointer
 
@@ -146,14 +146,14 @@ struct aligned_ptr {
     /*!
      * \brief Returns a reference to the element at psition i
      */
-    inline T& operator[](std::size_t i) {
+    inline T& operator[](size_t i) {
         return ptr[i];
     }
 
     /*!
      * \brief Returns a reference to the element at psition i
      */
-    inline const T& operator[](std::size_t i) const {
+    inline const T& operator[](size_t i) const {
         return ptr[i];
     }
 
@@ -179,8 +179,8 @@ struct aligned_ptr {
  * \param size The number of elements
  * \return A pointer to the aligned memory
  */
-template <typename T, std::size_t S = sizeof(T)>
-aligned_ptr<T> aligned_allocate_auto(std::size_t size, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
+template <typename T, size_t S = sizeof(T)>
+aligned_ptr<T> aligned_allocate_auto(size_t size, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
     return aligned_ptr<T>{aligned_allocate<T>(size)};
 }
 

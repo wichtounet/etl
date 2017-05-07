@@ -94,8 +94,8 @@ bool is_symmetric(E&& expr) {
     }
 
     if (is_square(expr)) {
-        for (std::size_t i = 0; i < etl::dim<0>(expr) - 1; ++i) {
-            for (std::size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
+        for (size_t i = 0; i < etl::dim<0>(expr) - 1; ++i) {
+            for (size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
                 if (expr(i, j) != expr(j, i)) {
                     return false;
                 }
@@ -136,8 +136,8 @@ bool is_lower_triangular(E&& expr) {
     }
 
     if (is_square(expr)) {
-        for (std::size_t i = 0; i < etl::dim<0>(expr) - 1; ++i) {
-            for (std::size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
+        for (size_t i = 0; i < etl::dim<0>(expr) - 1; ++i) {
+            for (size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
                 if (expr(i, j) != 0.0) {
                     return false;
                 }
@@ -163,12 +163,12 @@ bool is_uni_lower_triangular(E&& expr) {
     }
 
     if (is_square(expr)) {
-        for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
             if (expr(i, i) != 1.0) {
                 return false;
             }
 
-            for (std::size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
+            for (size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
                 if (expr(i, j) != 0.0) {
                     return false;
                 }
@@ -194,8 +194,8 @@ bool is_strictly_lower_triangular(E&& expr) {
     }
 
     if (is_square(expr)) {
-        for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
-            for (std::size_t j = i; j < etl::dim<0>(expr); ++j) {
+        for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
+            for (size_t j = i; j < etl::dim<0>(expr); ++j) {
                 if (expr(i, j) != 0.0) {
                     return false;
                 }
@@ -236,8 +236,8 @@ bool is_upper_triangular(E&& expr) {
     }
 
     if (is_square(expr)) {
-        for (std::size_t i = 1; i < etl::dim<0>(expr); ++i) {
-            for (std::size_t j = 0; j < i; ++j) {
+        for (size_t i = 1; i < etl::dim<0>(expr); ++i) {
+            for (size_t j = 0; j < i; ++j) {
                 if (expr(i, j) != 0.0) {
                     return false;
                 }
@@ -263,12 +263,12 @@ bool is_uni_upper_triangular(E&& expr) {
     }
 
     if (is_square(expr)) {
-        for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
             if(expr(i, i) != 1.0){
                 return false;
             }
 
-            for (std::size_t j = 0; j < i; ++j) {
+            for (size_t j = 0; j < i; ++j) {
                 if (expr(i, j) != 0.0) {
                     return false;
                 }
@@ -294,8 +294,8 @@ bool is_strictly_upper_triangular(E&& expr) {
     }
 
     if (is_square(expr)) {
-        for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
-            for (std::size_t j = 0; j <= i; ++j) {
+        for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
+            for (size_t j = 0; j <= i; ++j) {
                 if (expr(i, j) != 0.0) {
                     return false;
                 }
@@ -331,8 +331,8 @@ bool is_diagonal(E&& expr) {
     }
 
     if (is_square(expr)) {
-        for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
-            for (std::size_t j = 0; j < etl::dim<0>(expr); ++j) {
+        for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
+            for (size_t j = 0; j < etl::dim<0>(expr); ++j) {
                 if (i != j && expr(i, j) != 0.0) {
                     return false;
                 }
@@ -383,9 +383,9 @@ bool is_permutation_matrix(E&& expr){
     //b) Every row must have one 1
     //c) Every column must have one 1
 
-    for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
+    for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
         auto sum = value_t<E>(0);
-        for (std::size_t j = 0; j < etl::dim<0>(expr); ++j) {
+        for (size_t j = 0; j < etl::dim<0>(expr); ++j) {
             if(expr(i, j) != value_t<E>(0) && expr(i, j) != value_t<E>(1)){
                 return false;
             }
@@ -398,9 +398,9 @@ bool is_permutation_matrix(E&& expr){
         }
     }
 
-    for (std::size_t j = 0; j < etl::dim<0>(expr); ++j) {
+    for (size_t j = 0; j < etl::dim<0>(expr); ++j) {
         auto sum = value_t<E>(0);
-        for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
+        for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
             sum += expr(i, j);
         }
 
@@ -428,8 +428,8 @@ bool is_hermitian(E&& expr){
         return false;
     }
 
-    for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
-        for (std::size_t j = 0; j < etl::dim<0>(expr); ++j) {
+    for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
+        for (size_t j = 0; j < etl::dim<0>(expr); ++j) {
             if(i != j && expr(i, j) != get_conj(expr(j, i))){
                 return false;
             }
@@ -544,7 +544,7 @@ value_t<E> trace(E&& expr) {
 
     auto value = value_t<E>();
 
-    for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
+    for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
         value += expr(i, i);
     }
 

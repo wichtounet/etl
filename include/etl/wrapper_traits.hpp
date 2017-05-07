@@ -50,7 +50,7 @@ struct wrapper_traits {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static size_t size(const expr_t& v) {
         return sub_traits::size(v.value);
     }
 
@@ -60,7 +60,7 @@ struct wrapper_traits {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static size_t dim(const expr_t& v, size_t d) {
         return sub_traits::dim(v.value, d);
     }
 
@@ -68,7 +68,7 @@ struct wrapper_traits {
      * \brief Returns the size of an expression of this fast type.
      * \returns the size of an expression of this fast type.
      */
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return sub_traits::size();
     }
 
@@ -77,8 +77,8 @@ struct wrapper_traits {
      * \tparam D The dimension to get
      * \return the Dth dimension of an expression of this type
      */
-    template <std::size_t D>
-    static constexpr std::size_t dim() {
+    template <size_t D>
+    static constexpr size_t dim() {
         return sub_traits::template dim<D>();
     }
 
@@ -86,7 +86,7 @@ struct wrapper_traits {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return sub_traits::dimensions();
     }
 };

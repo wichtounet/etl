@@ -203,7 +203,7 @@ void conv2_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
         *output_tensor, CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
 
     // Prepare the workspace
-    std::size_t workspace_size = 0;
+    size_t workspace_size = 0;
     cudnn_check(cudnnGetConvolutionForwardWorkspaceSize(handle.get(), *input_tensor, *filter, convolution, *output_tensor, conv_algo, &workspace_size));
 
     impl::cuda::cuda_memory<type> workspace;
@@ -295,7 +295,7 @@ void conv4_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
         *output_tensor, CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
 
     // Prepare the workspace
-    std::size_t workspace_size = 0;
+    size_t workspace_size = 0;
     cudnn_check(cudnnGetConvolutionForwardWorkspaceSize(handle.get(), *input_tensor, *filter, convolution, *output_tensor, conv_algo, &workspace_size));
 
     impl::cuda::cuda_memory<type> workspace;
@@ -380,7 +380,7 @@ void conv4_valid_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s
         *filter, CUDNN_CONVOLUTION_BWD_FILTER_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
 
     // Prepare the workspace
-    std::size_t workspace_size = 0;
+    size_t workspace_size = 0;
     cudnn_check(cudnnGetConvolutionBackwardFilterWorkspaceSize(handle.get(), *input_tensor, *output_tensor, convolution, *filter, conv_algo, &workspace_size));
 
     impl::cuda::cuda_memory<type> workspace;
@@ -467,7 +467,7 @@ void conv2_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
         *output_tensor, CUDNN_CONVOLUTION_BWD_DATA_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
 
     // Prepare the workspace
-    std::size_t workspace_size = 0;
+    size_t workspace_size = 0;
     cudnn_check(cudnnGetConvolutionBackwardDataWorkspaceSize(handle.get(), *filter, *input_tensor, convolution, *output_tensor, conv_algo, &workspace_size));
 
     impl::cuda::cuda_memory<type> workspace;
@@ -550,7 +550,7 @@ void conv4_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
         *output_tensor, CUDNN_CONVOLUTION_BWD_DATA_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
 
     // Prepare the workspace
-    std::size_t workspace_size = 0;
+    size_t workspace_size = 0;
     cudnn_check(cudnnGetConvolutionBackwardDataWorkspaceSize(handle.get(), *filter, *input_tensor, convolution, *output_tensor, conv_algo, &workspace_size));
 
     impl::cuda::cuda_memory<type> workspace;
@@ -645,7 +645,7 @@ void conv2_valid_multi_set(I& input, K&& kernel, C&& conv, size_t s1, size_t s2,
         output_tensor, CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
 
     // Prepare the workspace
-    std::size_t workspace_size = 0;
+    size_t workspace_size = 0;
     cudnn_check(cudnnGetConvolutionForwardWorkspaceSize(handle.get(), input_tensor, filter, convolution, output_tensor, conv_algo, &workspace_size));
 
     impl::cuda::cuda_memory<type> workspace;
@@ -713,7 +713,7 @@ void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_
  */
 template <typename I, typename K, typename C>
 void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
-    for(std::size_t i = 0; i < etl::dim<0>(kernel); ++i){
+    for(size_t i = 0; i < etl::dim<0>(kernel); ++i){
         conv2_full(input, kernel(i), conv(i));
     }
 }
@@ -726,7 +726,7 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
-    for(std::size_t i = 0; i < etl::dim<0>(kernel); ++i){
+    for(size_t i = 0; i < etl::dim<0>(kernel); ++i){
         conv2_full_flipped(input, kernel(i), conv(i));
     }
 }
@@ -768,7 +768,7 @@ void conv2_full_multi_real_set(const I& input, const K& kernel, C&& conv, cudnnC
         output_tensor, CUDNN_CONVOLUTION_BWD_DATA_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
 
     // Prepare the workspace
-    std::size_t workspace_size = 0;
+    size_t workspace_size = 0;
     cudnn_check(cudnnGetConvolutionBackwardDataWorkspaceSize(handle.get(), filter, input_tensor, convolution, output_tensor, conv_algo, &workspace_size));
 
     impl::cuda::cuda_memory<type> workspace;

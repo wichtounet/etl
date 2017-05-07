@@ -37,11 +37,11 @@ inline void inc_counter(const char* name){
 
 namespace etl {
 
-constexpr const std::size_t max_counters = 64;
+constexpr const size_t max_counters = 64;
 
 struct counter_t {
     const char* name;
-    std::atomic<std::size_t> count;
+    std::atomic<size_t> count;
 
     counter_t()
             : name(nullptr), count(0) {}

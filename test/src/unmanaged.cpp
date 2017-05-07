@@ -14,7 +14,7 @@ TEMPLATE_TEST_CASE_2("unmanaged/dyn_1", "[dyn][unmanaged]", Z, double, float) {
 
     vector = 3.3;
 
-    for (std::size_t i = 0; i < vector.size(); ++i) {
+    for (size_t i = 0; i < vector.size(); ++i) {
         REQUIRE_EQUALS(vector[i], Z(3.3));
         REQUIRE_EQUALS(vector(i), Z(3.3));
     }
@@ -66,7 +66,7 @@ TEMPLATE_TEST_CASE_2("unmanaged/fast_1", "[dyn][unmanaged]", Z, double, float) {
 
     vector = 3.3;
 
-    for (std::size_t i = 0; i < vector.size(); ++i) {
+    for (size_t i = 0; i < vector.size(); ++i) {
         REQUIRE_EQUALS(vector[i], Z(3.3));
         REQUIRE_EQUALS(vector(i), Z(3.3));
     }

@@ -146,7 +146,7 @@ struct etl_traits<etl::dyn_upsample_2d_expr<A, Impl>> {
      * \param d The dimension to get
      * \return the dth dimension of the expression
      */
-    static std::size_t dim(const expr_t& e, std::size_t d) {
+    static size_t dim(const expr_t& e, size_t d) {
         if (d == D - 2) {
             return etl::dim(e._a, d) * e.c1;
         } else if (d == D - 1){
@@ -161,7 +161,7 @@ struct etl_traits<etl::dyn_upsample_2d_expr<A, Impl>> {
      * \param e The sub expression
      * \return the size of the expression
      */
-    static std::size_t size(const expr_t& e) {
+    static size_t size(const expr_t& e) {
         size_t acc = 1;
         for (size_t i = 0; i < D; ++i) {
             acc *= dim(e, i);
@@ -173,7 +173,7 @@ struct etl_traits<etl::dyn_upsample_2d_expr<A, Impl>> {
      * \brief Returns the number of dimensions of the expression
      * \return the number of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return D;
     }
 };
