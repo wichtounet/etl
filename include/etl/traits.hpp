@@ -981,7 +981,7 @@ template <typename E>
 constexpr std::pair<size_t, size_t> index_to_2d(E&& sub, size_t i) {
     return decay_traits<E>::storage_order == order::RowMajor
                ? std::make_pair(i / dim<0>(sub), i % dim<0>(sub))
-               : std::make_pair(i % dim<0>(sub), i / dim<0>(sub));
+               : std::make_pair(i / dim<1>(sub), i % dim<1>(sub));
 }
 
 /*!
