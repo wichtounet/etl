@@ -577,6 +577,13 @@ template <typename T>
 using fast_sub_view_able = cpp::and_u<has_direct_access<T>::value, decay_traits<T>::storage_order == order::RowMajor>;
 
 /*!
+ * \brief Simple utility traits indicating if a light sub_matrix can be created out
+ * of this type.
+ */
+template <typename T>
+using fast_sub_matrix_able = has_direct_access<T>;
+
+/*!
  * \brief Simple utility traits indicating if a light slice view can be created out
  * of this type.
  */

@@ -83,6 +83,7 @@
 #include "etl/op/slice_view.hpp"
 #include "etl/op/memory_slice_view.hpp"
 #include "etl/op/sub_view.hpp"
+#include "etl/op/sub_matrix_2d.hpp"
 #include "etl/op/dyn_matrix_view.hpp"
 #include "etl/op/fast_matrix_view.hpp"
 #include "etl/expr/binary_expr.hpp"
