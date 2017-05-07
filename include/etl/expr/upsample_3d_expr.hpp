@@ -38,19 +38,19 @@ struct upsample_3d_expr : base_temporary_expr_un<upsample_3d_expr<A, C1, C2, C3,
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template<typename C>
-    void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, C>::value, "upsample_3d only supported for ETL expressions");
-        static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "upsample_3d must be applied on matrices of same dimensionality");
+    template<typename L>
+    void assign_to(L&& lhs)  const {
+        static_assert(all_etl_expr<A, L>::value, "upsample_3d only supported for ETL expressions");
+        static_assert(etl::dimensions<A>() == etl::dimensions<L>(), "upsample_3d must be applied on matrices of same dimensionality");
 
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_lhs(c);
+        standard_evaluator::pre_assign_lhs(lhs);
 
         Impl::template apply<C1, C2, C3>(
             make_temporary(a),
-            std::forward<C>(c));
+            std::forward<L>(lhs));
     }
 
     /*!

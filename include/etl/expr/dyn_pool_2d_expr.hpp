@@ -43,7 +43,7 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
 
     /*!
      * \brief Assign to a matrix of the same storage order
-     * \param lhs The expression to which assign
+     * \param c The expression to which assign
      */
     template<typename C>
     void assign_to(C&& c)  const {

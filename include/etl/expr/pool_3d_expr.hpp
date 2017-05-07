@@ -36,7 +36,7 @@ struct pool_3d_expr : base_temporary_expr_un<pool_3d_expr<A, C1, C2, C3, S1, S2,
 
     /*!
      * \brief Assign to a matrix of the same storage order
-     * \param lhs The expression to which assign
+     * \param c The expression to which assign
      */
     template<typename C>
     void assign_to(C&& c)  const {

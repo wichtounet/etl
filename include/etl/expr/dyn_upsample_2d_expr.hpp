@@ -41,19 +41,19 @@ struct dyn_upsample_2d_expr : base_temporary_expr_un<dyn_upsample_2d_expr<A, Imp
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template<typename C>
-    void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, C>::value, "max_pool_2d only supported for ETL expressions");
-        static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
+    template<typename L>
+    void assign_to(L&& lhs)  const {
+        static_assert(all_etl_expr<A, L>::value, "max_pool_2d only supported for ETL expressions");
+        static_assert(etl::dimensions<A>() == etl::dimensions<L>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_lhs(c);
+        standard_evaluator::pre_assign_lhs(lhs);
 
         Impl::template apply<>(
             make_temporary(a),
-            std::forward<C>(c),
+            std::forward<L>(lhs),
             c1, c2);
     }
 
