@@ -45,19 +45,19 @@ value_t<L> selected_sum(const L& lhs) {
     auto r4 = vec_type::template zero<T>();
 
     for (; i + (vec_size * 4) - 1 < n; i += 4 * vec_size) {
-        r1 = vec_type::add(lhs.template loadu<vec_type>(i + 0 * vec_size), r1);
-        r2 = vec_type::add(lhs.template loadu<vec_type>(i + 1 * vec_size), r2);
-        r3 = vec_type::add(lhs.template loadu<vec_type>(i + 2 * vec_size), r3);
-        r4 = vec_type::add(lhs.template loadu<vec_type>(i + 3 * vec_size), r4);
+        r1 = vec_type::add(lhs.template load<vec_type>(i + 0 * vec_size), r1);
+        r2 = vec_type::add(lhs.template load<vec_type>(i + 1 * vec_size), r2);
+        r3 = vec_type::add(lhs.template load<vec_type>(i + 2 * vec_size), r3);
+        r4 = vec_type::add(lhs.template load<vec_type>(i + 3 * vec_size), r4);
     }
 
     for (; i + (vec_size * 2) - 1 < n; i += 2 * vec_size) {
-        r1 = vec_type::add(lhs.template loadu<vec_type>(i + 0 * vec_size), r1);
-        r2 = vec_type::add(lhs.template loadu<vec_type>(i + 1 * vec_size), r2);
+        r1 = vec_type::add(lhs.template load<vec_type>(i + 0 * vec_size), r1);
+        r2 = vec_type::add(lhs.template load<vec_type>(i + 1 * vec_size), r2);
     }
 
     for (; i + vec_size - 1 < n; i += vec_size) {
-        r1 = vec_type::add(lhs.template loadu<vec_type>(i + 0 * vec_size), r1);
+        r1 = vec_type::add(lhs.template load<vec_type>(i + 0 * vec_size), r1);
     }
 
     auto p1 = vec_type::hadd(r1) + vec_type::hadd(r2) + vec_type::hadd(r3) + vec_type::hadd(r4);
@@ -105,10 +105,10 @@ value_t<L> selected_asum(const L& lhs) {
     auto r4 = vec_type::template zero<T>();
 
     for (; i + (vec_size * 4) - 1 < n; i += 4 * vec_size) {
-        auto v1 = lhs.template loadu<vec_type>(i + 0 * vec_size);
-        auto v2 = lhs.template loadu<vec_type>(i + 1 * vec_size);
-        auto v3 = lhs.template loadu<vec_type>(i + 2 * vec_size);
-        auto v4 = lhs.template loadu<vec_type>(i + 3 * vec_size);
+        auto v1 = lhs.template load<vec_type>(i + 0 * vec_size);
+        auto v2 = lhs.template load<vec_type>(i + 1 * vec_size);
+        auto v3 = lhs.template load<vec_type>(i + 2 * vec_size);
+        auto v4 = lhs.template load<vec_type>(i + 3 * vec_size);
 
         auto x1 = vec_type::max(v1, vec_type::sub(vec_type::template zero<T>(), v1));
         auto x2 = vec_type::max(v2, vec_type::sub(vec_type::template zero<T>(), v2));
@@ -122,8 +122,8 @@ value_t<L> selected_asum(const L& lhs) {
     }
 
     for (; i + (vec_size * 2) - 1 < n; i += 2 * vec_size) {
-        auto v1 = lhs.template loadu<vec_type>(i + 0 * vec_size);
-        auto v2 = lhs.template loadu<vec_type>(i + 1 * vec_size);
+        auto v1 = lhs.template load<vec_type>(i + 0 * vec_size);
+        auto v2 = lhs.template load<vec_type>(i + 1 * vec_size);
 
         auto x1 = vec_type::max(v1, vec_type::sub(vec_type::template zero<T>(), v1));
         auto x2 = vec_type::max(v2, vec_type::sub(vec_type::template zero<T>(), v2));
@@ -133,7 +133,7 @@ value_t<L> selected_asum(const L& lhs) {
     }
 
     for (; i + vec_size - 1 < n; i += vec_size) {
-        auto v1 = lhs.template loadu<vec_type>(i + 0 * vec_size);
+        auto v1 = lhs.template load<vec_type>(i + 0 * vec_size);
         auto x1 = vec_type::max(v1, vec_type::sub(vec_type::template zero<T>(), v1));
         r1 = vec_type::add(x1, r1);
     }
