@@ -38,4 +38,18 @@ constexpr bool assert_nothrow = true;
 #endif
 #endif
 
+/*!
+ * \brief Alignment flag to aligned expressions
+ *
+ * This can be used to make expressions more clear.
+ */
+constexpr bool aligned = false;
+
+/*!
+ * \brief Alignment flag to unaligned expressions.
+ *
+ * This can be used to make expressions more clear.
+ */
+constexpr bool unaligned = false;
+
 } //end of namespace etl
