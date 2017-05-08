@@ -104,6 +104,7 @@
 #include "etl/expr/outer_product_expr.hpp"
 #include "etl/expr/batch_outer_product_expr.hpp"
 #include "etl/expr/inv_expr.hpp"
+#include "etl/expr/conv_1d_valid_expr.hpp"
 #include "etl/expr/conv_expr.hpp"
 
 // The expressions building

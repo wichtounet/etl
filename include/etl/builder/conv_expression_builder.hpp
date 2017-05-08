@@ -23,10 +23,10 @@ namespace etl {
  * \return an expression representing the valid 1D convolution of a and b
  */
 template <typename A, typename B>
-auto conv_1d_valid(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv1_valid_expr> {
+conv_1d_valid_expr<A, B> conv_1d_valid(A&& a, B&& b) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
 
-    return {a, b};
+    return conv_1d_valid_expr<A, B>{a, b};
 }
 
 /*!

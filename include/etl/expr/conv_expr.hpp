@@ -265,12 +265,6 @@ struct dyn_basic_conv_expr : dyn_impl_expr<dyn_basic_conv_expr<T, D, Impl>, T> {
 //1D convolution
 
 /*!
- * \brief Expression for 1D valid convolution
- */
-template <typename T>
-using conv1_valid_expr = basic_conv_expr<T, 1, detail::conv1_valid_impl>;
-
-/*!
  * \brief Expression for 1D same convolution
  */
 template <typename T>
