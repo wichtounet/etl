@@ -185,8 +185,8 @@ auto strassen_mul(A&& a, B&& b, C&& c) {
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <typename A, typename B>
-auto outer(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, outer_product_expr> {
-    return {a, b};
+outer_product_expr<A, B> outer(A&& a, B&& b) {
+    return outer_product_expr<A, B>{a, b};
 }
 
 /*!
@@ -209,8 +209,8 @@ auto outer(A&& a, B&& b, C&& c){
  * \return An expression representing the outer product multiplication of a and b
  */
 template <typename A, typename B>
-auto batch_outer(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, batch_outer_product_expr> {
-    return {a, b};
+batch_outer_product_expr<A, B> batch_outer(A&& a, B&& b) {
+    return batch_outer_product_expr<A, B>{a, b};
 }
 
 /*!

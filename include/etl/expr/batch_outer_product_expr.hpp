@@ -19,9 +19,9 @@ namespace etl {
  * \tparam A The transposed type
  */
 template <typename A, typename B>
-struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A, B> {
+struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_expr<A, B>, A, B> {
     using value_type  = value_t<A>;                              ///< The type of value of the expression
-    using this_type   = outer_product_expr<A, B>;                   ///< The type of this expression
+    using this_type   = batch_outer_product_expr<A, B>;                   ///< The type of this expression
     using base_type   = base_temporary_expr_bin<this_type, A, B>; ///< The base type
     using left_traits = decay_traits<A>;                         ///< The traits of the sub type
 
@@ -31,7 +31,7 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    explicit outer_product_expr(A a, B b) : base_type(a, b) {
+    explicit batch_outer_product_expr(A a, B b) : base_type(a, b) {
         //Nothing else to init
     }
 
@@ -52,7 +52,7 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
         standard_evaluator::pre_assign_rhs(b);
         standard_evaluator::pre_assign_lhs(c);
 
-        detail::outer_product_impl::apply(a, b, c);
+        detail::batch_outer_product_impl::apply(a, b, c);
     }
 
     /*!
@@ -106,8 +106,8 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
  * \tparam A The transposed sub type
  */
 template <typename A, typename B>
-struct etl_traits<etl::outer_product_expr<A, B>> {
-    using expr_t       = etl::outer_product_expr<A, B>; ///< The expression type
+struct etl_traits<etl::batch_outer_product_expr<A, B>> {
+    using expr_t       = etl::batch_outer_product_expr<A, B>; ///< The expression type
     using left_expr_t  = std::decay_t<A>;                     ///< The left sub expression type
     using right_expr_t = std::decay_t<B>;                     ///< The right sub expression type
     using left_traits  = etl_traits<left_expr_t>;             ///< The left sub traits
@@ -144,8 +144,8 @@ struct etl_traits<etl::outer_product_expr<A, B>> {
      */
     template <size_t DD>
     static constexpr size_t dim() {
-        return DD == 0 ? decay_traits<A>::template dim<0>()
-                       : decay_traits<B>::template dim<0>();
+        return DD == 0 ? decay_traits<A>::template dim<1>()
+                       : decay_traits<B>::template dim<1>();
     }
 
     /*!
@@ -156,9 +156,9 @@ struct etl_traits<etl::outer_product_expr<A, B>> {
      */
     static size_t dim(const expr_t& e, size_t d) {
         if (d == 0){
-            return etl::dim(e._a, 0);
+            return etl::dim(e._a, 1);
         } else {
-            return etl::dim(e._b, 0);
+            return etl::dim(e._b, 1);
         }
     }
 
@@ -168,7 +168,7 @@ struct etl_traits<etl::outer_product_expr<A, B>> {
      * \return the size of the expression
      */
     static size_t size(const expr_t& e) {
-        return etl::dim(e._a, 0) * etl::dim(e._b, 0);
+        return etl::dim(e._a, 1) * etl::dim(e._b, 1);
     }
 
     /*!
@@ -176,7 +176,7 @@ struct etl_traits<etl::outer_product_expr<A, B>> {
      * \return the size of the expression
      */
     static constexpr size_t size() {
-        return decay_traits<A>::template dim<0>() * decay_traits<B>::template dim<0>();
+        return decay_traits<A>::template dim<1>() * decay_traits<B>::template dim<1>();
     }
 
     /*!
