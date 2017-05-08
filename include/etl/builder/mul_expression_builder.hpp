@@ -25,11 +25,11 @@ namespace etl {
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_2d<B>::value)>
-auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mm_mul_expr> {
+gemm_expr<A, B, detail::mm_mul_impl> operator*(A&& a, B&& b) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
-    return {a, b};
+    return gemm_expr<A, B, detail::mm_mul_impl>{a, b};
 }
 
 /*!
@@ -63,11 +63,11 @@ auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mv_mul_exp
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_2d<B>::value)>
-auto mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mm_mul_expr> {
+gemm_expr<A, B, detail::mm_mul_impl> mul(A&& a, B&& b) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
-    return {a, b};
+    return gemm_expr<A, B, detail::mm_mul_impl>{a, b};
 }
 
 /*!
@@ -155,11 +155,11 @@ auto mul(A&& a, B&& b, C&& c) {
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <typename A, typename B>
-auto strassen_mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, strassen_mm_mul_expr> {
+gemm_expr<A, B, detail::strassen_mm_mul_impl> strassen_mul(A&& a, B&& b) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
-    return {a, b};
+    return gemm_expr<A, B, detail::strassen_mm_mul_impl>{a, b};
 }
 
 /*!

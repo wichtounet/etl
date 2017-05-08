@@ -341,7 +341,6 @@ TEMPLATE_TEST_CASE_2("etl_traits/has_direct_access", "has_direct_access", Z, flo
     REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::fft_1d(b(1)(0)(0)))>::value);
 
     //Temporary binary expressions have direct access
-    REQUIRE_DIRECT(etl::is_temporary_binary_expr<decltype(a(0)(0) * a(0)(0))>::value);
     REQUIRE_DIRECT(etl::has_direct_access<decltype(a(0)(0) * a(0)(0))>::value);
     REQUIRE_DIRECT(etl::has_direct_access<decltype(b(0)(0) * b(0)(0))>::value);
 
