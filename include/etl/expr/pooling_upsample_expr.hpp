@@ -486,8 +486,8 @@ struct dyn_max_pool_upsample_2d_expr : base_temporary_expr_tern<dyn_max_pool_ups
 
 private:
 
-    const size_t c1;
-    const size_t c2;
+    const size_t c1; ///< The pooling ratio for the first dimension
+    const size_t c2; ///< The pooling ratio for the second dimension
 
     friend struct etl_traits<dyn_max_pool_upsample_2d_expr>;
 
@@ -676,9 +676,9 @@ struct dyn_max_pool_upsample_3d_expr : base_temporary_expr_tern<dyn_max_pool_ups
 
 private:
 
-    const size_t c1;
-    const size_t c2;
-    const size_t c3;
+    const size_t c1; ///< The pooling ratio for the first dimension
+    const size_t c2; ///< The pooling ratio for the second dimension
+    const size_t c3; ///< The pooling ratio for the third dimension
 
     friend struct etl_traits<dyn_max_pool_upsample_3d_expr>;
 

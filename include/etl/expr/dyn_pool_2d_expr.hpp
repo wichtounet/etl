@@ -24,12 +24,12 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
 
-    size_t c1;
-    size_t c2;
-    size_t s1;
-    size_t s2;
-    size_t p1;
-    size_t p2;
+    const size_t c1; ///< The pooling ratio for the first dimension
+    const size_t c2; ///< The pooling ratio for the second dimension
+    const size_t s1; ///< The stride for the first dimension
+    const size_t s2; ///< The stride for the second dimension
+    const size_t p1; ///< The padding for the first dimension
+    const size_t p2; ///< The padding for the second dimension
 
     /*!
      * \brief Construct a new expression

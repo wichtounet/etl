@@ -24,8 +24,8 @@ struct dyn_upsample_2d_expr : base_temporary_expr_un<dyn_upsample_2d_expr<A, Imp
 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
 
-    size_t c1;
-    size_t c2;
+    const size_t c1; ///< The pooling ratio for the first dimension
+    const size_t c2; ///< The pooling ratio for the second dimension
 
     /*!
      * \brief Construct a new expression

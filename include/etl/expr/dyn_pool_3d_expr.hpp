@@ -24,15 +24,15 @@ struct dyn_pool_3d_expr : base_temporary_expr_un<dyn_pool_3d_expr<A, Impl>, A> {
 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
 
-    const size_t c1;
-    const size_t c2;
-    const size_t c3;
-    const size_t s1;
-    const size_t s2;
-    const size_t s3;
-    const size_t p1;
-    const size_t p2;
-    const size_t p3;
+    const size_t c1; ///< The pooling ratio for the first dimension
+    const size_t c2; ///< The pooling ratio for the second dimension
+    const size_t c2; ///< The pooling ratio for the third dimension
+    const size_t s1; ///< The stride for the first dimension
+    const size_t s2; ///< The stride for the second dimension
+    const size_t s3; ///< The stride for the third dimension
+    const size_t p1; ///< The padding for the first dimension
+    const size_t p2; ///< The padding for the second dimension
+    const size_t p3; ///< The padding for the third dimension
 
     /*!
      * \brief Construct a new expression
