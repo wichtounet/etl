@@ -263,6 +263,87 @@ inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, 
     }
 }
 
+/*!
+ * \brief Dispatch the elements of an ETL container in a parallel manner and use an accumulator functor to accumulate the results.
+ *
+ * The functors will be called with slices of the original expression.
+ *
+ * \param epxr The expression to slice
+ * \param functor The functor to execute
+ * \param acc_functor The functor to accumulate results
+ * \param threshold The threshold for paralellization
+ */
+template <typename E, typename Functor, typename AccFunctor>
+inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor&& acc_functor, size_t threshold) {
+    using TT = value_t<E>;
+
+    static constexpr size_t S = default_intrinsic_traits<TT>::size;
+
+    const size_t n = size(expr);
+
+    if(n){
+        if (engine_select_parallel(n, threshold)) {
+            const size_t T = std::min(n, etl::threads);
+
+            std::vector<TT> futures(T);
+
+            auto sub_functor = [&futures, &functor](size_t t, auto&& sub_expr) {
+                futures[t] = functor(sub_expr);
+            };
+
+            ETL_PARALLEL_SESSION {
+                thread_engine::acquire();
+
+                if /*constexpr*/ (decay_traits<E>::is_aligned && S > 1){
+                    if(n >= T * S){
+                        // In case there is enough data, we align it
+
+                        const size_t n_aligned = (n + (S - 1)) & ~(S - 1);
+                        const size_t blocks = n_aligned / S;
+                        const size_t blocks_per_thread = blocks / T;
+                        const size_t batch = blocks_per_thread * S;
+
+                        for (size_t t = 0; t < T - 1; ++t) {
+                            thread_engine::schedule(sub_functor, t, memory_slice(expr, t * batch, (t + 1) * batch));
+                        }
+
+                        thread_engine::schedule(sub_functor, T - 1, memory_slice(expr, (T - 1) * batch, n));
+                    } else {
+                        // Not enough data to consider aligning
+
+                        const size_t batch = n / T;
+
+                        for (size_t t = 0; t < T - 1; ++t) {
+                            thread_engine::schedule(sub_functor, t, memory_slice(expr, t * batch, (t + 1) * batch));
+                        }
+
+                        thread_engine::schedule(sub_functor, T - 1, memory_slice(expr, (T - 1) * batch, n));
+                    }
+                } else {
+                    // If the data is not aligned in the first, don't make any effort to align it
+
+                    const size_t batch = n / T;
+
+                    for (size_t t = 0; t < T - 1; ++t) {
+                        thread_engine::schedule(sub_functor, t, memory_slice(expr, t * batch, (t + 1) * batch));
+                    }
+
+                    thread_engine::schedule(sub_functor, T - 1, memory_slice(expr, (T - 1) * batch, n));
+                }
+
+                thread_engine::wait();
+            }
+
+            // Accumulate the results
+            for (auto fut : futures) {
+                acc_functor(fut);
+            }
+        } else {
+            acc_functor(functor(expr));
+        }
+    }
+}
+
 #else
 
 /*!
@@ -339,6 +420,23 @@ inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, 
     if (n) {
         acc_functor(functor(first, last));
     }
+}
+
+/*!
+ * \brief Dispatch the elements of an ETL container in a parallel manner and use an accumulator functor to accumulate the results.
+ *
+ * The functors will be called with slices of the original expression.
+ *
+ * \param epxr The expression to slice
+ * \param functor The functor to execute
+ * \param acc_functor The functor to accumulate results
+ * \param threshold The threshold for paralellization
+ */
+template <typename E, typename Functor, typename AccFunctor>
+inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor&& acc_functor, size_t threshold) {
+    cpp_unused(threshold);
+
+    acc_functor(functor(expr));
 }
 
 #endif
