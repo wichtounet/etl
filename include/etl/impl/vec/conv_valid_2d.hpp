@@ -214,14 +214,13 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
             const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
             auto padded_input  = common::pad_right(input, pad);
-            auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
-
-            // TODO Test if it is better to do the padding of the kernel inside each thread
 
             if (detail::prefer_sse<T>(k2 + pad)) {
                 auto fun_k = [&](const size_t first, const size_t last) {
                     for (size_t k = first; k < last; ++k) {
-                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, 0.0);
+                        auto padded_kernel = common::pad_right_flip(kernel(k), pad);
+
+                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv(k), s1, s2, p1, p2, 0.0);
                     }
                 };
 
@@ -229,7 +228,9 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
             } else {
                 auto fun_k = [&](const size_t first, const size_t last) {
                     for (size_t k = first; k < last; ++k) {
-                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, 0.0);
+                        auto padded_kernel = common::pad_right_flip(kernel(k), pad);
+
+                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel, conv(k), s1, s2, p1, p2, 0.0);
                     }
                 };
 
@@ -292,14 +293,13 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
             const size_t pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
             auto padded_input  = common::pad_right(input, pad);
-            auto padded_kernel = common::pad_right_multi(kernel, pad);
-
-            // TODO Test if it is better to do the padding of the kernel inside each thread
 
             if (detail::prefer_sse<T>(k2 + pad)) {
                 auto fun_k = [&](const size_t first, const size_t last) {
                     for (size_t k = first; k < last; ++k) {
-                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, T(0));
+                        auto padded_kernel = common::pad_right(kernel(k), pad);
+
+                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv(k), s1, s2, p1, p2, T(0));
                     }
                 };
 
@@ -307,7 +307,9 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
             } else {
                 auto fun_k = [&](const size_t first, const size_t last) {
                     for (size_t k = first; k < last; ++k) {
-                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, T(0));
+                        auto padded_kernel = common::pad_right(kernel(k), pad);
+
+                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel, conv(k), s1, s2, p1, p2, T(0));
                     }
                 };
 
@@ -463,8 +465,6 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
 
             auto padded_input  = common::pad_right_multi(input, pad);
             auto padded_kernel = common::pad_right_multi(kernel, pad);
-
-            // TODO Test if it is better to do the padding of the kernel inside each thread
 
             if (detail::prefer_sse<T>(k2 + pad)) {
                 auto fun_kn = [&](const size_t first, const size_t last) {
