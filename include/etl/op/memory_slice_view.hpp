@@ -28,8 +28,7 @@ struct memory_slice_view {
     using const_return_type = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
 
 private:
-
-    T sub;                   ///< The Sub expression
+    T sub;              ///< The Sub expression
     const size_t first; ///< The index
     const size_t last;  ///< The last index
 
