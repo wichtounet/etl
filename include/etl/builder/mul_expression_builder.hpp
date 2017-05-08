@@ -39,8 +39,8 @@ gemm_expr<A, B, detail::mm_mul_impl> operator*(A&& a, B&& b) {
  * \return An expression representing the vector-matrix multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_1d<A>::value, is_2d<B>::value)>
-auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, vm_mul_expr> {
-    return {a, b};
+gevm_expr<A, B, detail::vm_mul_impl> operator*(A&& a, B&& b) {
+    return gevm_expr<A, B, detail::vm_mul_impl>{a, b};
 }
 
 /*!
@@ -107,8 +107,8 @@ auto lazy_mul(A&& a, B&& b) -> detail::stable_transform_binary_helper<A, B, mm_m
  * \return An expression representing the vector-matrix multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_1d<A>::value, is_2d<B>::value)>
-auto mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, vm_mul_expr> {
-    return {a, b};
+gevm_expr<A, B, detail::vm_mul_impl> mul(A&& a, B&& b) {
+    return gevm_expr<A, B, detail::vm_mul_impl>{a, b};
 }
 
 /*!
