@@ -165,20 +165,7 @@ struct etl_traits<etl::prob_pool_2d_expr<A, C1, C2, Impl>> {
      * \return the size of the expression
      */
     static size_t size(const expr_t& e) {
-        size_t acc = 1;
-        for (size_t i = 0; i < D; ++i) {
-            acc *= dim(e, i);
-        }
-        return acc;
-    }
-
-    /*!
-     * \brief Returns the multiplicative sum of the dimensions at the given indices
-     * \return the multiplicative sum of the dimensions at the given indices
-     */
-    template <size_t... I>
-    static constexpr size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
-        return mul_all<dim<I>()...>::value;
+        return etl::size(e._a);
     }
 
     /*!
@@ -186,7 +173,7 @@ struct etl_traits<etl::prob_pool_2d_expr<A, C1, C2, Impl>> {
      * \return the size of the expression
      */
     static constexpr size_t size() {
-        return size_mul(std::make_index_sequence<D>());
+        return sub_traits::size();
     }
 
     /*!
