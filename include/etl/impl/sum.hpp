@@ -112,28 +112,28 @@ struct sum_impl {
      */
     template <typename E>
     static value_t<E> apply(const E& e) {
+        using T = value_t<E>;
+
         auto impl = select_sum_impl<E>(safe_is_gpu_up_to_date(e));
 
-        value_t<E> acc(0);
+        T acc(0);
 
-        auto acc_functor = [&acc](value_t<E> value) {
+        auto acc_functor = [&acc](T value) {
             acc += value;
         };
 
-        //TODO Make it so that dispatching aligns the sub parts
-
         if (impl == etl::sum_impl::VEC) {
-            engine_dispatch_1d_acc<value_t<E>>([&e](size_t first, size_t last) -> value_t<E> {
-                return impl::vec::sum(e, first, last);
-            }, acc_functor, 0, size(e), sum_parallel_threshold);
+            engine_dispatch_1d_acc_slice(e, [](auto& sub_expr) -> T {
+                return impl::vec::sum(sub_expr);
+            }, acc_functor, sum_parallel_threshold);
         } else if(impl == etl::sum_impl::BLAS){
             return impl::blas::sum(e);
         } else if(impl == etl::sum_impl::CUBLAS){
             return impl::cublas::sum(e);
         } else {
-            engine_dispatch_1d_acc<value_t<E>>([&e](size_t first, size_t last) -> value_t<E> {
-                return impl::standard::sum(e, first, last);
-            }, acc_functor, 0, size(e), sum_parallel_threshold);
+            engine_dispatch_1d_acc_slice(e, [](auto& sub_expr) -> T {
+                return impl::standard::sum(sub_expr);
+            }, acc_functor, sum_parallel_threshold);
         }
 
         return acc;
@@ -147,13 +147,13 @@ struct sum_impl {
         const auto impl = select_sum_impl<E>(safe_is_gpu_up_to_date(e));
 
         if (impl == etl::sum_impl::VEC) {
-            return impl::vec::sum(e, 0, size(e));
+            return impl::vec::sum(e);
         } else if(impl == etl::sum_impl::BLAS){
             return impl::blas::sum(e);
         } else if(impl == etl::sum_impl::CUBLAS){
             return impl::cublas::sum(e);
         } else {
-            return impl::standard::sum(e, 0, size(e));
+            return impl::standard::sum(e);
         }
     }
 #endif
@@ -170,28 +170,28 @@ struct asum_impl {
      */
     template <typename E>
     static value_t<E> apply(const E& e) {
+        using T = value_t<E>;
+
         auto impl = select_sum_impl<E>(safe_is_gpu_up_to_date(e));
 
-        value_t<E> acc(0);
+        T acc(0);
 
-        auto acc_functor = [&acc](value_t<E> value) {
+        auto acc_functor = [&acc](T value) {
             acc += value;
         };
 
-        //TODO Make it so that dispatching aligns the sub parts
-
         if (impl == etl::sum_impl::VEC) {
-            engine_dispatch_1d_acc<value_t<E>>([&e](size_t first, size_t last) -> value_t<E> {
-                return impl::vec::asum(e, first, last);
-            }, acc_functor, 0, size(e), sum_parallel_threshold);
+            engine_dispatch_1d_acc_slice(e, [](auto& sub_expr) -> T {
+                return impl::vec::asum(sub_expr);
+            }, acc_functor, sum_parallel_threshold);
         } else if(impl == etl::sum_impl::BLAS){
             return impl::blas::asum(e);
         } else if(impl == etl::sum_impl::CUBLAS){
             return impl::cublas::asum(e);
         } else {
-            engine_dispatch_1d_acc<value_t<E>>([&e](size_t first, size_t last) -> value_t<E> {
-                return impl::standard::asum(e, first, last);
-            }, acc_functor, 0, size(e), sum_parallel_threshold);
+            engine_dispatch_1d_acc_slice(e, [](auto& sub_expr) -> T {
+                return impl::standard::asum(sub_expr);
+            }, acc_functor, sum_parallel_threshold);
         }
 
         return acc;
@@ -205,13 +205,13 @@ struct asum_impl {
         const auto impl = select_sum_impl<E>(safe_is_gpu_up_to_date(e));
 
         if (impl == etl::sum_impl::VEC) {
-            return impl::vec::asum(e, 0, size(e));
+            return impl::vec::asum(e);
         } else if(impl == etl::sum_impl::BLAS){
             return impl::blas::asum(e);
         } else if(impl == etl::sum_impl::CUBLAS){
             return impl::cublas::asum(e);
         } else {
-            return impl::standard::asum(e, 0, size(e));
+            return impl::standard::asum(e);
         }
     }
 #endif

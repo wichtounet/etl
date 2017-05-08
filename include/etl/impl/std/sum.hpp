@@ -26,10 +26,10 @@ namespace standard {
  * \return the sum
  */
 template <typename E>
-value_t<E> sum(const E& input, size_t first, size_t last) {
+value_t<E> sum(const E& input) {
     value_t<E> acc(0);
 
-    for (size_t i = first; i < last; ++i) {
+    for (size_t i = 0; i < size(input); ++i) {
         acc += input[i];
     }
 
@@ -44,10 +44,10 @@ value_t<E> sum(const E& input, size_t first, size_t last) {
  * \return the absolute sum
  */
 template <typename E>
-value_t<E> asum(const E& input, size_t first, size_t last) {
+value_t<E> asum(const E& input) {
     value_t<E> acc(0);
 
-    for (size_t i = first; i < last; ++i) {
+    for (size_t i = 0; i < size(input); ++i) {
         using std::abs;
         acc += abs(input[i]);
     }
