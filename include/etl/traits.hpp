@@ -955,8 +955,9 @@ constexpr size_t dim(const E& e) noexcept {
  * \brief Return the D dimension of E
  * \return the Dth dimension of E
  */
-template <size_t D, typename E, cpp_enable_if(decay_traits<E>::is_fast)>
+template <size_t D, typename E>
 constexpr size_t dim() noexcept {
+    static_assert(all_fast<E>::value, "dim<D, E>() can only be used on statically-sized ETL expression");
     return decay_traits<E>::template dim<D>();
 }
 
