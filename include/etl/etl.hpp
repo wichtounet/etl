@@ -69,6 +69,10 @@
 #include "etl/crtp/dim_testable.hpp"
 #include "etl/crtp/iterable.hpp"
 
+// Expressions helpers
+#include "etl/checks.hpp"
+#include "etl/expression_helpers.hpp"
+
 // The complex expressions
 #include "etl/expr/detail.hpp"
 #include "etl/expr/transpose_expr.hpp"
@@ -96,7 +100,6 @@
 #include "etl/expr/inv_expr.hpp"
 
 // The expressions building
-#include "etl/checks.hpp"
 #include "etl/builder/expression_builder.hpp"
 
 // The expressions

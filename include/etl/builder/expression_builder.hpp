@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "etl/expression_helpers.hpp"
-
 //Include implementations
 #include "etl/impl/dot.hpp"
 #include "etl/impl/scalar_op.hpp"
