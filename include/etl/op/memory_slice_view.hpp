@@ -18,7 +18,7 @@ namespace etl {
  * \brief View that shows a slice of an expression
  * \tparam T The type of expression on which the view is made
  */
-template <typename T>
+template <typename T, bool Aligned>
 struct memory_slice_view {
     using sub_type          = T;                                                                    ///< The sub type
     using value_type        = value_t<sub_type>;                                                    ///< The value contained in the expression
@@ -79,13 +79,26 @@ public:
         return sub[first + j];
     }
 
+    //Note(CPP17): Use if constexpr for alignment
+
     /*!
      * \brief Load several elements of the expression at once
      * \param x The position at which to start.
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the expression
      */
-    template <typename V = default_vec>
+    template <typename V = default_vec, bool A = Aligned, cpp_enable_if(A)>
+    auto load(size_t x) const noexcept {
+        return sub.template load<V>(x + first );
+    }
+
+    /*!
+     * \brief Load several elements of the expression at once
+     * \param x The position at which to start.
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the expression
+     */
+    template <typename V = default_vec, bool A = Aligned, cpp_disable_if(A)>
     auto load(size_t x) const noexcept {
         return sub.template loadu<V>(x + first );
     }
@@ -107,7 +120,18 @@ public:
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
      */
-    template <typename V = default_vec>
+    template <typename V = default_vec, bool A = Aligned, cpp_enable_if(A)>
+    void store(vec_type<V> in, size_t i) noexcept {
+        sub.template store<V>(in, first + i);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     */
+    template <typename V = default_vec, bool A = Aligned, cpp_disable_if(A)>
     void store(vec_type<V> in, size_t i) noexcept {
         sub.template storeu<V>(in, first + i);
     }
@@ -265,9 +289,9 @@ public:
 /*!
  * \brief Specialization for memory_slice_view
  */
-template <typename T>
-struct etl_traits<etl::memory_slice_view<T>> {
-    using expr_t     = etl::memory_slice_view<T>; ///< The expression type
+template <typename T, bool Aligned>
+struct etl_traits<etl::memory_slice_view<T, Aligned>> {
+    using expr_t     = etl::memory_slice_view<T, Aligned>; ///< The expression type
     using sub_expr_t = std::decay_t<T>;    ///< The sub expression type
     using value_type = typename etl_traits<sub_expr_t>::value_type; ///< The value type
 
@@ -282,7 +306,7 @@ struct etl_traits<etl::memory_slice_view<T>> {
     static constexpr bool is_direct       = etl_traits<sub_expr_t>::is_direct;       ///< Indicates if the expression has direct memory access
     static constexpr bool is_generator    = false;                                   ///< Indicates if the expression is a generator
     static constexpr bool is_padded       = false;                                   ///< Indicates if the expression is padded
-    static constexpr bool is_aligned      = false;                                   ///< Indicates if the expression is padded
+    static constexpr bool is_aligned      = Aligned;                                   ///< Indicates if the expression is padded
     static constexpr bool needs_evaluator = etl_traits<sub_expr_t>::needs_evaluator; ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr order storage_order  = etl_traits<sub_expr_t>::storage_order;   ///< The expression's storage order
 

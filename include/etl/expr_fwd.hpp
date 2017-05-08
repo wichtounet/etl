@@ -70,7 +70,7 @@ struct sub_matrix_2d;
 template <typename T, typename Enable = void>
 struct slice_view;
 
-template <typename T>
+template <typename T, bool Aligned>
 struct memory_slice_view;
 
 template <typename T, bool DMA, size_t... Dims>
