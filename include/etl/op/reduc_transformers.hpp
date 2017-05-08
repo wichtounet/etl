@@ -564,7 +564,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generated
     static constexpr bool is_padded               = false;                                           ///< Indicates if the expression is padded
     static constexpr bool is_aligned              = false;                                           ///< Indicates if the expression is padded
-    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr bool needs_evaluator = etl_traits<sub_expr_t>::needs_evaluator; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
     /*!
@@ -645,7 +645,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generated
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr bool needs_evaluator = etl_traits<sub_expr_t>::needs_evaluator; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
     /*!
