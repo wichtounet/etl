@@ -34,8 +34,8 @@ struct fast_matrix_impl final :
 public:
     static constexpr size_t n_dimensions = sizeof...(Dims);                        ///< The number of dimensions
     static constexpr size_t etl_size     = mul_all<Dims...>::value;                ///< The size of the matrix
-    static constexpr order storage_order      = SO;                                     ///< The storage order
-    static constexpr bool array_impl          = !matrix_detail::is_vector<ST>::value;   ///< true if the storage is an std::arraw, false otherwise
+    static constexpr order storage_order = SO;                                     ///< The storage order
+    static constexpr bool array_impl     = !matrix_detail::is_vector<ST>::value;   ///< true if the storage is an std::arraw, false otherwise
     static constexpr size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
 
     using this_type          = fast_matrix_impl<T, ST, SO, Dims...>;            ///< this type
