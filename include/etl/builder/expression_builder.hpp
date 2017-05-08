@@ -1488,18 +1488,6 @@ value_t<E> stddev(E&& values) {
     return std::sqrt(std / etl::size(values));
 }
 
-/*!
- * \brief Returns the transpose of the given expression.
- * \param value The expression
- * \return The transpose of the given expression.
- */
-template <typename E>
-auto bias_batch_mean(const E& value) -> bias_batch_mean_expr<detail::build_type<E>> {
-    static_assert(is_etl_expr<E>::value, "etl::bias_batch_mean can only be used on ETL expressions");
-    static_assert(decay_traits<E>::dimensions() == 4, "etl::bias_batch_mean is only defined for 4D input");
-    return bias_batch_mean_expr<detail::build_type<E>>{value};
-}
-
 namespace detail {
 
 /*!
