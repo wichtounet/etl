@@ -62,16 +62,22 @@
 // The evaluator
 #include "etl/evaluator.hpp"
 
+// Expressions helpers
+#include "etl/checks.hpp"
+#include "etl/expression_helpers.hpp"
+
+// The simple views
+#include "etl/op/memory_slice_view.hpp"
+
+// The parallel utilies
+#include "etl/parallel_support.hpp"
+
 // CRTP classes
 #include "etl/crtp/assignable.hpp"
 #include "etl/crtp/inplace_assignable.hpp"
 #include "etl/crtp/value_testable.hpp"
 #include "etl/crtp/dim_testable.hpp"
 #include "etl/crtp/iterable.hpp"
-
-// Expressions helpers
-#include "etl/checks.hpp"
-#include "etl/expression_helpers.hpp"
 
 // The complex expressions
 #include "etl/expr/detail.hpp"
@@ -98,6 +104,7 @@
 #include "etl/expr/outer_product_expr.hpp"
 #include "etl/expr/batch_outer_product_expr.hpp"
 #include "etl/expr/inv_expr.hpp"
+#include "etl/expr/conv_expr.hpp"
 
 // The expressions building
 #include "etl/builder/expression_builder.hpp"
@@ -105,7 +112,6 @@
 // The expressions
 #include "etl/op/dim_view.hpp"
 #include "etl/op/slice_view.hpp"
-#include "etl/op/memory_slice_view.hpp"
 #include "etl/op/sub_view.hpp"
 #include "etl/op/sub_matrix_2d.hpp"
 #include "etl/op/dyn_matrix_view.hpp"
@@ -120,9 +126,6 @@
 #include "etl/expr/parallel_expr.hpp"
 #include "etl/expr/timed_expr.hpp"
 
-// The complex expressions
-#include "etl/expr/conv_expr.hpp"
-
 // The expressions building
 #include "etl/builder/mul_expression_builder.hpp"
 #include "etl/builder/conv_expression_builder.hpp"
@@ -132,9 +135,6 @@
 
 // The optimizer
 #include "etl/optimizer.hpp"
-
-// The parallel utilies
-#include "etl/parallel_support.hpp"
 
 // Necessary for the matrices
 #include "etl/impl/direct_op.hpp"
