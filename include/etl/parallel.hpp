@@ -304,20 +304,20 @@ inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor
                         const size_t batch = blocks_per_thread * S;
 
                         for (size_t t = 0; t < T - 1; ++t) {
-                            thread_engine::schedule(sub_functor, t, memory_slice(expr, t * batch, (t + 1) * batch));
+                            thread_engine::schedule(sub_functor, t, memory_slice<aligned>(expr, t * batch, (t + 1) * batch));
                         }
 
-                        thread_engine::schedule(sub_functor, T - 1, memory_slice(expr, (T - 1) * batch, n));
+                        thread_engine::schedule(sub_functor, T - 1, memory_slice<aligned>(expr, (T - 1) * batch, n));
                     } else {
                         // Not enough data to consider aligning
 
                         const size_t batch = n / T;
 
                         for (size_t t = 0; t < T - 1; ++t) {
-                            thread_engine::schedule(sub_functor, t, memory_slice(expr, t * batch, (t + 1) * batch));
+                            thread_engine::schedule(sub_functor, t, memory_slice<unaligned>(expr, t * batch, (t + 1) * batch));
                         }
 
-                        thread_engine::schedule(sub_functor, T - 1, memory_slice(expr, (T - 1) * batch, n));
+                        thread_engine::schedule(sub_functor, T - 1, memory_slice<unaligned>(expr, (T - 1) * batch, n));
                     }
                 } else {
                     // If the data is not aligned in the first, don't make any effort to align it
@@ -325,10 +325,10 @@ inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor
                     const size_t batch = n / T;
 
                     for (size_t t = 0; t < T - 1; ++t) {
-                        thread_engine::schedule(sub_functor, t, memory_slice(expr, t * batch, (t + 1) * batch));
+                        thread_engine::schedule(sub_functor, t, memory_slice<unaligned>(expr, t * batch, (t + 1) * batch));
                     }
 
-                    thread_engine::schedule(sub_functor, T - 1, memory_slice(expr, (T - 1) * batch, n));
+                    thread_engine::schedule(sub_functor, T - 1, memory_slice<unaligned>(expr, (T - 1) * batch, n));
                 }
 
                 thread_engine::wait();
