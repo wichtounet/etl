@@ -62,9 +62,9 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Impl>, A, B> {
     template <typename C, cpp_enable_if(all_fast<A, B, C>::value)>
     static void check(const A& a, const B& b, const C& c) {
         static_assert(
-            decay_traits<A>::template dim<1>() == decay_traits<B>::template dim<0>()         //interior dimensions
-                && decay_traits<A>::template dim<0>() == decay_traits<C>::template dim<0>()  //exterior dimension 1
-                && decay_traits<B>::template dim<1>() == decay_traits<C>::template dim<1>(), //exterior dimension 2
+            dim<1, A>() == dim<0, B>()         //interior dimensions
+                && dim<0, A>() == dim<0, C>()  //exterior dimension 1
+                && dim<1, B>() == dim<1, C>(), //exterior dimension 2
             "Invalid sizes for multiplication");
         cpp_unused(a);
         cpp_unused(b);
