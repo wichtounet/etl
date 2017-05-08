@@ -20,9 +20,15 @@ using conv_2d_small_policy = NARY_POLICY(
     VALUES_POLICY(5,  9,  5,  9,  5,  9,  5,  9,  5,  9,  17, 16, 24));
 
 using conv_2d_multi_policy = NARY_POLICY(
-    VALUES_POLICY(32, 32, 32, 32, 32, 32, 32, 32, 32, 32),
-    VALUES_POLICY(16, 16, 16, 16, 16, 16, 16, 16, 16, 16),
-    VALUES_POLICY(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
+    /* I */ VALUES_POLICY(32, 32, 32, 32, 32, 32, 32, 32, 32, 32),
+    /* K */ VALUES_POLICY(16, 16, 16, 16, 16, 16, 16, 16, 16, 16),
+    /* N */ VALUES_POLICY(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
+    );
+
+using conv_2d_multi_policy_pad = NARY_POLICY(
+    /* I */ VALUES_POLICY(30, 30, 30, 30, 30, 30, 30, 30, 30, 30),
+    /* K */ VALUES_POLICY(11, 11, 11, 11, 11, 11, 11, 11, 11, 11),
+    /* N */ VALUES_POLICY(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
     );
 
 using conv_2d_multi_multi_policy = NARY_POLICY(

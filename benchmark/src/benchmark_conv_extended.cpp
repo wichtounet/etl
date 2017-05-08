@@ -13,6 +13,19 @@
 #define sdm_t1 etl::dyn_vector
 #define fdm_t1 etl::fast_dyn_matrix
 
+// Version with some padding (image and kernel are not multiple of 8)
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_valid_multi_2 [conv][conv2]", conv_2d_multi_policy_pad,
+    FLOPS([](size_t d1, size_t d2, size_t d3){ return 2 * d1 * d1 * d2 * d2 * d3; }),
+    CPM_SECTION_INIT([](size_t d1, size_t d2, size_t d3){ return std::make_tuple(smat(d1,d1), smat3(d3,d2,d2), smat3(d3,d1 - d2 + 1, d1 - d2 + 1)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat& a, smat3& b, smat3& r){ r = etl::conv_2d_valid_multi(a, b); }),
+    CPM_SECTION_FUNCTOR("std", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::STD, etl::conv_2d_valid_multi(a, b)); })
+    VEC_SECTION_FUNCTOR("vec", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::VEC, etl::conv_2d_valid_multi(a, b)); })
+    MKL_SECTION_FUNCTOR("fft", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::VALID_FFT_MKL, etl::conv_2d_valid_multi(a, b)); })
+    VEC_SECTION_FUNCTOR("blas_vec", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::BLAS_VEC, etl::conv_2d_valid_multi(a, b)); })
+    BLAS_SECTION_FUNCTOR("blas_mkl", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::BLAS_MKL, etl::conv_2d_valid_multi(a, b)); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::CUDNN, etl::conv_2d_valid_multi(a, b)); })
+)
+
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_valid_dyn_1 [conv][conv1]", fast_policy,
     FLOPS([](size_t){ return 2 * 10000 * 5000; }),
     CPM_SECTION_INIT([](size_t){ return std::make_tuple(sdm_t1<float>(10000), sdm_t1<float>(5000), sdm_t1<float>(5001)); }),
