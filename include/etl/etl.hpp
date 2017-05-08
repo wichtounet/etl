@@ -130,6 +130,9 @@
 // The optimizer
 #include "etl/optimizer.hpp"
 
+// The parallel utilies
+#include "etl/parallel_support.hpp"
+
 // Necessary for the matrices
 #include "etl/impl/direct_op.hpp"
 

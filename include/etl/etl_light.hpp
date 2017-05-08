@@ -78,6 +78,9 @@
 #include "etl/checks.hpp"
 #include "etl/builder/expression_builder.hpp"
 
+// The parallel utilies
+#include "etl/parallel_support.hpp"
+
 // The expressions
 #include "etl/op/dim_view.hpp"
 #include "etl/op/slice_view.hpp"
