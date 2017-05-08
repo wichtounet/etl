@@ -251,9 +251,8 @@ auto avg_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t 
  * \return A expression representing the Derivative of 2D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, typename E, typename F>
-auto max_pool_derivative_2d(E&& input, F&& output) {
-    using detail::build_type;
-    return temporary_binary_expr<value_t<E>, build_type<E>, build_type<F>, max_pool_derivative_2d_expr<value_t<E>, decay_traits<E>::dimensions(), C1, C2>>{input, output};
+pool_derivative_expr<E, F, C1, C2, 0, impl::max_pool_derivative_2d> max_pool_derivative_2d(E&& input, F&& output) {
+    return pool_derivative_expr<E, F, C1, C2, 0, impl::max_pool_derivative_2d>{input, output};
 }
 
 /*!
@@ -265,9 +264,8 @@ auto max_pool_derivative_2d(E&& input, F&& output) {
  * \return A expression representing the Derivative of 2D Max Pooling of the input expression.
  */
 template <typename E, typename F>
-auto max_pool_derivative_2d(E&& input, F&& output, size_t c1, size_t c2) {
-    using detail::build_type;
-    return temporary_binary_expr_state<value_t<E>, build_type<E>, build_type<F>, dyn_max_pool_derivative_2d_expr<value_t<E>, decay_traits<E>::dimensions()>>{{c1, c2}, input, output};
+dyn_pool_derivative_expr<E, F, impl::max_pool_derivative_2d> max_pool_derivative_2d(E&& input, F&& output, size_t c1, size_t c2) {
+    return dyn_pool_derivative_expr<E, F, impl::max_pool_derivative_2d>{input, output, c1, c2, 0};
 }
 
 /* Max Pool 3D Derivative */
@@ -283,8 +281,7 @@ auto max_pool_derivative_2d(E&& input, F&& output, size_t c1, size_t c2) {
  */
 template <size_t C1, size_t C2, size_t C3, typename E, typename F>
 auto max_pool_derivative_3d(E&& input, F&& output) {
-    using detail::build_type;
-    return temporary_binary_expr<value_t<E>, build_type<E>, build_type<F>, max_pool_derivative_3d_expr<value_t<E>, decay_traits<E>::dimensions(), C1, C2, C3>>{input, output};
+    return pool_derivative_expr<E, F, C1, C2, C3, impl::max_pool_derivative_3d>{input, output};
 }
 
 /*!
@@ -297,9 +294,8 @@ auto max_pool_derivative_3d(E&& input, F&& output) {
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <typename E, typename F>
-auto max_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t c3) {
-    using detail::build_type;
-    return temporary_binary_expr_state<value_t<E>, build_type<E>, build_type<F>, dyn_max_pool_derivative_3d_expr<value_t<E>, decay_traits<E>::dimensions()>>{{c1, c2, c3}, input, output};
+dyn_pool_derivative_expr<E, F, impl::max_pool_derivative_3d> max_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t c3) {
+    return dyn_pool_derivative_expr<E, F, impl::max_pool_derivative_3d>{input, output, c1, c2, c3};
 }
 
 /* Max Pool 2D Upsample */

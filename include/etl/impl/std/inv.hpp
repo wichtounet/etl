@@ -28,7 +28,7 @@ template <typename A, typename C>
 void inv(A&& a, C&& c) {
     // The inverse of a permutation matrix is its transpose
     if(is_permutation_matrix(a)){
-        c = etl::transpose(a);
+        c = transpose(a);
         return;
     }
 

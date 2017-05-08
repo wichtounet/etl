@@ -74,6 +74,8 @@
 #include "etl/expr/transpose_expr.hpp"
 #include "etl/expr/bias_batch_mean_expr.hpp"
 #include "etl/expr/pooling_upsample_expr.hpp"
+#include "etl/expr/pool_derivative_expr.hpp"
+#include "etl/expr/dyn_pool_derivative_expr.hpp"
 #include "etl/expr/pool_2d_expr.hpp"
 #include "etl/expr/dyn_pool_2d_expr.hpp"
 #include "etl/expr/pool_3d_expr.hpp"
@@ -91,6 +93,7 @@
 #include "etl/expr/gevm_expr.hpp"
 #include "etl/expr/outer_product_expr.hpp"
 #include "etl/expr/batch_outer_product_expr.hpp"
+#include "etl/expr/inv_expr.hpp"
 
 // The expressions building
 #include "etl/checks.hpp"
@@ -115,9 +118,7 @@
 #include "etl/expr/timed_expr.hpp"
 
 // The complex expressions
-#include "etl/expr/inv_expr.hpp"
 #include "etl/expr/conv_expr.hpp"
-#include "etl/expr/pooling_derivative_expr.hpp"
 
 // The expressions building
 #include "etl/builder/mul_expression_builder.hpp"
