@@ -50,8 +50,8 @@ auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, vm_mul_exp
  * \return An expression representing the matrix-vector multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_1d<B>::value)>
-auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mv_mul_expr> {
-    return {a, b};
+gemv_expr<A, B, detail::mv_mul_impl> operator*(A&& a, B&& b) {
+    return gemv_expr<A, B, detail::mv_mul_impl>{a, b};
 }
 
 #endif
@@ -131,8 +131,8 @@ auto mul(A&& a, B&& b, C&& c){
  * \return An expression representing the matrix-vector multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_1d<B>::value)>
-auto mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mv_mul_expr> {
-    return {a, b};
+gemv_expr<A, B, detail::mv_mul_impl> mul(A&& a, B&& b){
+    return gemv_expr<A, B, detail::mv_mul_impl>{a, b};
 }
 
 /*!

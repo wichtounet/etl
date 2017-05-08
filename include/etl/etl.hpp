@@ -87,6 +87,7 @@
 #include "etl/expr/convmtx_2d_expr.hpp"
 #include "etl/expr/fft_expr.hpp"
 #include "etl/expr/gemm_expr.hpp"
+#include "etl/expr/gemv_expr.hpp"
 
 // The expressions building
 #include "etl/checks.hpp"
