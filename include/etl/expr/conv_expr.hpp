@@ -396,18 +396,6 @@ using dyn_conv2_valid_multi_multi_expr = dyn_basic_conv_expr<T, 3, detail::dyn_c
 template<typename T>
 using dyn_conv2_valid_multi_multi_flipped_expr = dyn_basic_conv_expr<T, 3, detail::dyn_conv2_valid_multi_multi_flipped_impl>;
 
-/*!
- * \brief Expression for 2D same convolution, with multiple kernels
- */
-template <typename T>
-using conv2_same_multi_expr = basic_conv_expr<T, 3, detail::conv2_same_multi_impl>;
-
-/*!
- * \brief Expression for 2D same convolution, with multiple flipped kernels
- */
-template <typename T>
-using conv2_same_multi_flipped_expr = basic_conv_expr<T, 3, detail::conv2_same_multi_flipped_impl>;
-
 //>2D convolutions
 
 /*!
