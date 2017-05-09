@@ -229,7 +229,7 @@ struct etl_traits<etl::conv_1d_valid_expr<A, B>> {
  */
 template <typename A, typename B>
 conv_1d_valid_expr<A, B> conv_1d_valid(A&& a, B&& b) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return conv_1d_valid_expr<A, B>{a, b};
 }
@@ -243,9 +243,10 @@ conv_1d_valid_expr<A, B> conv_1d_valid(A&& a, B&& b) {
  */
 template <typename A, typename B, typename C>
 auto conv_1d_valid(A&& a, B&& b, C&& c){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(is_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_1d_valid(a, b);
+
     return c;
 }
 
