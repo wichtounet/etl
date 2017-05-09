@@ -114,6 +114,7 @@
 #include "etl/expr/conv_2d_same_expr.hpp"
 #include "etl/expr/conv_2d_full_expr.hpp"
 #include "etl/expr/dyn_conv_2d_valid_expr.hpp"
+#include "etl/expr/conv_2d_full_multi_expr.hpp"
 #include "etl/expr/conv_expr.hpp"
 
 // The expressions building
