@@ -26,7 +26,7 @@ namespace etl {
  * \param rhs The right hand side expression
  * \return An expression representing the subtraction of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(all_etl_expr<LE, RE>::value)>
 auto operator-(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, minus_binary_op> {
     validate_expression(lhs, rhs);
 
@@ -39,7 +39,7 @@ auto operator-(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, minus_b
  * \param rhs The right hand side expression
  * \return An expression representing the addition of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(all_etl_expr<LE, RE>::value)>
 auto operator+(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, plus_binary_op> {
     validate_expression(lhs, rhs);
 
@@ -54,7 +54,7 @@ auto operator+(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, plus_bi
  * \param rhs The right hand side expression
  * \return An expression representing the scalar multiplication of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(all_etl_expr<LE, RE>::value)>
 auto operator*(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_op> {
     validate_expression(lhs, rhs);
 
@@ -69,7 +69,7 @@ auto operator*(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_bin
  * \param rhs The right hand side expression
  * \return An expression representing the scalar multipliation of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(all_etl_expr<LE, RE>::value)>
 auto operator>>(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_op> {
     validate_expression(lhs, rhs);
 
@@ -95,7 +95,7 @@ auto scale(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_
  * \param rhs The right hand side expression
  * \return An expression representing the division of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(all_etl_expr<LE, RE>::value)>
 auto operator/(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, div_binary_op> {
     validate_expression(lhs, rhs);
 
@@ -108,7 +108,7 @@ auto operator/(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, div_bin
  * \param rhs The right hand side expression
  * \return An expression representing the modulo of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(all_etl_expr<LE, RE>::value)>
 auto operator%(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mod_binary_op> {
     validate_expression(lhs, rhs);
 

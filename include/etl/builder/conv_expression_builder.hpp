@@ -24,7 +24,7 @@ namespace etl {
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 auto conv_2d_valid(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv2_valid_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -38,7 +38,7 @@ auto conv_2d_valid(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, con
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_2d_valid(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid<S1, S2, P1, P2>(a, b);
     return c;
@@ -56,7 +56,7 @@ auto conv_2d_valid(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_2d_valid(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     using op_t = dyn_conv2_valid_expr<value_t<A>>;
     return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
@@ -75,7 +75,7 @@ auto conv_2d_valid(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 
  */
 template <typename A, typename B, typename C>
 auto conv_2d_valid(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid(a, b, s1, s2, p1, p2);
     return c;
@@ -89,7 +89,7 @@ auto conv_2d_valid(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1 = 0, siz
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 auto conv_2d_valid_flipped(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv2_valid_flipped_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -103,7 +103,7 @@ auto conv_2d_valid_flipped(A&& a, B&& b) -> detail::temporary_binary_helper_op<A
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_2d_valid_flipped(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_flipped<S1, S2, P1, P2>(a, b);
     return c;
@@ -121,7 +121,7 @@ auto conv_2d_valid_flipped(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_2d_valid_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     using op_t = dyn_conv2_valid_flipped_expr<value_t<A>>;
     return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
@@ -140,7 +140,7 @@ auto conv_2d_valid_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, si
  */
 template <typename A, typename B, typename C>
 auto conv_2d_valid_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_flipped(a, b, s1, s2, p1, p2);
     return c;
@@ -154,7 +154,7 @@ auto conv_2d_valid_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1 
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 auto conv_2d_valid_multi(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv2_valid_multi_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -168,7 +168,7 @@ auto conv_2d_valid_multi(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, 
  */
 template <typename A, typename B, typename C>
 auto conv_2d_valid_multi(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi(a, b);
     return c;
@@ -186,7 +186,7 @@ auto conv_2d_valid_multi(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_2d_valid_multi(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     using op_t = dyn_conv2_valid_multi_expr<value_t<A>>;
     return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
@@ -205,7 +205,7 @@ auto conv_2d_valid_multi(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size
  */
 template <typename A, typename B, typename C>
 auto conv_2d_valid_multi(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi(a, b, s1, s2, p1, p2);
     return c;
@@ -219,7 +219,7 @@ auto conv_2d_valid_multi(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, s
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 auto conv_2d_valid_multi_flipped(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv2_valid_multi_flipped_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -233,7 +233,7 @@ auto conv_2d_valid_multi_flipped(A&& a, B&& b) -> detail::temporary_binary_helpe
  */
 template <typename A, typename B, typename C>
 auto conv_2d_valid_multi_flipped(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_flipped(a, b);
     return c;
@@ -251,7 +251,7 @@ auto conv_2d_valid_multi_flipped(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_2d_valid_multi_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     using op_t = dyn_conv2_valid_multi_flipped_expr<value_t<A>>;
     return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
@@ -270,7 +270,7 @@ auto conv_2d_valid_multi_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1 =
  */
 template <typename A, typename B, typename C>
 auto conv_2d_valid_multi_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_flipped(a, b, s1, s2, p1, p2);
     return c;
@@ -284,7 +284,7 @@ auto conv_2d_valid_multi_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 auto conv_2d_valid_multi_multi(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv2_valid_multi_multi_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -297,7 +297,7 @@ auto conv_2d_valid_multi_multi(A&& a, B&& b) -> detail::temporary_binary_helper_
  */
 template <typename A, typename B, typename C>
 auto conv_2d_valid_multi_multi(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_multi(a, b);
     return c;
@@ -311,7 +311,7 @@ auto conv_2d_valid_multi_multi(A&& a, B&& b, C&& c) {
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv2_valid_multi_multi_flipped_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -324,7 +324,7 @@ auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b) -> detail::temporary_binary
  */
 template <typename A, typename B, typename C>
 auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_multi_flipped(a, b);
     return c;
@@ -342,7 +342,7 @@ auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_2d_valid_multi_multi(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     using op_t = dyn_conv2_valid_multi_multi_expr<value_t<A>>;
     return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
@@ -361,7 +361,7 @@ auto conv_2d_valid_multi_multi(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0
  */
 template <typename A, typename B, typename C>
 auto conv_2d_valid_multi_multi(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_multi(a, b, s1, s2, p1, p2);
     return c;
@@ -379,7 +379,7 @@ auto conv_2d_valid_multi_multi(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t
  */
 template <typename A, typename B>
 auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     using op_t = dyn_conv2_valid_multi_multi_flipped_expr<value_t<A>>;
     return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
@@ -398,7 +398,7 @@ auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b, size_t s1, size_t s2, size_
  */
 template <typename A, typename B, typename C>
 auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_multi_flipped(a, b, s1, s2, p1, p2);
     return c;
@@ -417,7 +417,7 @@ auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 auto conv_4d_valid(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv4_valid_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -437,7 +437,7 @@ auto conv_4d_valid(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, con
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_4d_valid(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid<S1, S2, P1, P2>(a, b);
     return c;
@@ -456,7 +456,7 @@ auto conv_4d_valid(A&& a, B&& b, C&& c) {
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 auto conv_4d_valid_flipped(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv4_valid_flipped_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -476,7 +476,7 @@ auto conv_4d_valid_flipped(A&& a, B&& b) -> detail::temporary_binary_helper_op<A
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_4d_valid_flipped(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_flipped<S1, S2, P1, P2>(a, b);
     return c;
@@ -495,7 +495,7 @@ auto conv_4d_valid_flipped(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_4d_valid(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     using op_t = dyn_conv4_valid_expr<value_t<A>>;
     return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
@@ -516,7 +516,7 @@ auto conv_4d_valid(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2) {
  */
 template <typename A, typename B, typename C>
 auto conv_4d_valid(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid(a, b, s1, s2, p1, p2);
     return c;
@@ -535,7 +535,7 @@ auto conv_4d_valid(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t 
  */
 template <typename A, typename B>
 auto conv_4d_valid_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     using op_t = dyn_conv4_valid_flipped_expr<value_t<A>>;
     return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
@@ -556,7 +556,7 @@ auto conv_4d_valid_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t
  */
 template <typename A, typename B, typename C>
 auto conv_4d_valid_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_flipped(a, b, s1, s2, p1, p2);
     return c;
@@ -576,7 +576,7 @@ auto conv_4d_valid_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1,
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 auto conv_4d_valid_back(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv4_valid_back_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -596,7 +596,7 @@ auto conv_4d_valid_back(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_4d_valid_back(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_back<S1, S2, P1, P2>(a, b);
     return c;
@@ -616,7 +616,7 @@ auto conv_4d_valid_back(A&& a, B&& b, C&& c) {
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 auto conv_4d_valid_back_flipped(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv4_valid_back_flipped_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -636,7 +636,7 @@ auto conv_4d_valid_back_flipped(A&& a, B&& b) -> detail::temporary_binary_helper
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_4d_valid_back_flipped(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_back_flipped<S1, S2, P1, P2>(a, b);
     return c;
@@ -655,7 +655,7 @@ auto conv_4d_valid_back_flipped(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_4d_valid_back(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     using op_t = dyn_conv4_valid_back_expr<value_t<A>>;
     return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
@@ -676,7 +676,7 @@ auto conv_4d_valid_back(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2
  */
 template <typename A, typename B, typename C>
 auto conv_4d_valid_back(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_back(a, b, s1, s2, p1, p2);
     return c;
@@ -695,7 +695,7 @@ auto conv_4d_valid_back(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, si
  */
 template <typename A, typename B>
 auto conv_4d_valid_back_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     using op_t = dyn_conv4_valid_back_flipped_expr<value_t<A>>;
     return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
@@ -716,7 +716,7 @@ auto conv_4d_valid_back_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1, s
  */
 template <typename A, typename B, typename C>
 auto conv_4d_valid_back_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_back_flipped(a, b, s1, s2, p1, p2);
     return c;
@@ -736,7 +736,7 @@ auto conv_4d_valid_back_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_
  */
 template <typename A, typename B>
 auto conv_4d_full(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv4_full_expr> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -756,7 +756,7 @@ auto conv_4d_full(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv4_f
  */
 template <typename A, typename B, typename C>
 auto conv_4d_full(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_full(a, b);
     return c;
@@ -777,7 +777,7 @@ auto conv_4d_full(A&& a, B&& b, C&& c) {
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 auto conv_4d_valid_filter(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv4_valid_filter_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -798,7 +798,7 @@ auto conv_4d_valid_filter(A&& a, B&& b) -> detail::temporary_binary_helper_op<A,
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_4d_valid_filter(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_filter<S1, S2, P1, P2>(a, b);
     return c;
@@ -819,7 +819,7 @@ auto conv_4d_valid_filter(A&& a, B&& b, C&& c) {
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 auto conv_4d_valid_filter_flipped(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv4_valid_filter_flipped_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -840,7 +840,7 @@ auto conv_4d_valid_filter_flipped(A&& a, B&& b) -> detail::temporary_binary_help
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_4d_valid_filter_flipped(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_filter_flipped<S1, S2, P1, P2>(a, b);
     return c;
@@ -859,7 +859,7 @@ auto conv_4d_valid_filter_flipped(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_4d_valid_filter(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     using op_t = dyn_conv4_valid_filter_expr<value_t<A>>;
     return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
@@ -880,7 +880,7 @@ auto conv_4d_valid_filter(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t 
  */
 template <typename A, typename B, typename C>
 auto conv_4d_valid_filter(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_filter(a, b, s1, s2, p1, p2);
     return c;
@@ -899,7 +899,7 @@ auto conv_4d_valid_filter(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, 
  */
 template <typename A, typename B>
 auto conv_4d_valid_filter_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     using op_t = dyn_conv4_valid_filter_flipped_expr<value_t<A>>;
     return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
@@ -920,7 +920,7 @@ auto conv_4d_valid_filter_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1,
  */
 template <typename A, typename B, typename C>
 auto conv_4d_valid_filter_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_filter_flipped(a, b, s1, s2, p1, p2);
     return c;
@@ -939,7 +939,7 @@ auto conv_4d_valid_filter_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, siz
  */
 template <typename A, typename B>
 auto conv_4d_full_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv4_full_flipped_expr> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -959,7 +959,7 @@ auto conv_4d_full_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B,
  */
 template <typename A, typename B, typename C>
 auto conv_4d_full_flipped(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_4d_full_flipped(a, b);
     return c;
@@ -973,7 +973,7 @@ auto conv_4d_full_flipped(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_2d_same(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_same_expr> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -987,7 +987,7 @@ auto conv_2d_same(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_s
  */
 template <typename A, typename B, typename C>
 auto conv_2d_same(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_same(a, b);
     return c;
@@ -1002,7 +1002,7 @@ auto conv_2d_same(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_2d_same_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_same_flipped_expr> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -1016,7 +1016,7 @@ auto conv_2d_same_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B,
  */
 template <typename A, typename B, typename C>
 auto conv_2d_same_flipped(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_same_flipped(a, b);
     return c;
@@ -1030,7 +1030,7 @@ auto conv_2d_same_flipped(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_2d_same_multi(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_same_multi_expr> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -1044,7 +1044,7 @@ auto conv_2d_same_multi(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, c
  */
 template <typename A, typename B, typename C>
 auto conv_2d_same_multi(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_same_multi(a, b);
     return c;
@@ -1058,7 +1058,7 @@ auto conv_2d_same_multi(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_2d_same_multi_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_same_multi_flipped_expr> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -1072,7 +1072,7 @@ auto conv_2d_same_multi_flipped(A&& a, B&& b) -> detail::temporary_binary_helper
  */
 template <typename A, typename B, typename C>
 auto conv_2d_same_multi_flipped(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_same_multi_flipped(a, b);
     return c;
@@ -1086,7 +1086,7 @@ auto conv_2d_same_multi_flipped(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_2d_full(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_full_expr> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -1100,7 +1100,7 @@ auto conv_2d_full(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_f
  */
 template <typename A, typename B, typename C>
 auto conv_2d_full(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_full(a, b);
     return c;
@@ -1114,7 +1114,7 @@ auto conv_2d_full(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_2d_full_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_full_flipped_expr> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -1128,7 +1128,7 @@ auto conv_2d_full_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B,
  */
 template <typename A, typename B, typename C>
 auto conv_2d_full_flipped(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_full_flipped(a, b);
     return c;
@@ -1142,7 +1142,7 @@ auto conv_2d_full_flipped(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_2d_full_multi(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_full_multi_expr> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -1156,7 +1156,7 @@ auto conv_2d_full_multi(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, c
  */
 template <typename A, typename B, typename C>
 auto conv_2d_full_multi(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_full_multi(a, b);
     return c;
@@ -1170,7 +1170,7 @@ auto conv_2d_full_multi(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_2d_full_multi_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_full_multi_flipped_expr> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -1184,7 +1184,7 @@ auto conv_2d_full_multi_flipped(A&& a, B&& b) -> detail::temporary_binary_helper
  */
 template <typename A, typename B, typename C>
 auto conv_2d_full_multi_flipped(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_full_multi_flipped(a, b);
     return c;
@@ -1201,7 +1201,7 @@ auto conv_2d_full_multi_flipped(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_deep_valid(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, conv_deep_valid_expr, decay_traits<A>::dimensions()> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -1218,7 +1218,7 @@ auto conv_deep_valid(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, 
  */
 template <typename A, typename B, typename C>
 auto conv_deep_valid(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_deep_valid(a, b);
     return c;
@@ -1235,7 +1235,7 @@ auto conv_deep_valid(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_deep_same(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, conv_deep_same_expr, decay_traits<A>::dimensions()> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -1252,7 +1252,7 @@ auto conv_deep_same(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, c
  */
 template <typename A, typename B, typename C>
 auto conv_deep_same(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_deep_same(a, b);
     return c;
@@ -1269,7 +1269,7 @@ auto conv_deep_same(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto conv_deep_full(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, conv_deep_full_expr, decay_traits<A>::dimensions()> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
 }
@@ -1286,7 +1286,7 @@ auto conv_deep_full(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, c
  */
 template <typename A, typename B, typename C>
 auto conv_deep_full(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_deep_full(a, b);
     return c;

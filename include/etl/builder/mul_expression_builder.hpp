@@ -26,7 +26,7 @@ namespace etl {
  */
 template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_2d<B>::value)>
 gemm_expr<A, B, detail::mm_mul_impl> operator*(A&& a, B&& b) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
     return gemm_expr<A, B, detail::mm_mul_impl>{a, b};
@@ -64,7 +64,7 @@ gemv_expr<A, B, detail::mv_mul_impl> operator*(A&& a, B&& b) {
  */
 template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_2d<B>::value)>
 gemm_expr<A, B, detail::mm_mul_impl> mul(A&& a, B&& b) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
     return gemm_expr<A, B, detail::mm_mul_impl>{a, b};
@@ -79,7 +79,7 @@ gemm_expr<A, B, detail::mm_mul_impl> mul(A&& a, B&& b) {
  */
 template <typename A, typename B, typename C, cpp_enable_if(is_2d<A>::value, is_2d<B>::value, is_2d<C>::value)>
 auto mul(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
     c = mul(a, b);
@@ -94,7 +94,7 @@ auto mul(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 auto lazy_mul(A&& a, B&& b) -> detail::stable_transform_binary_helper<A, B, mm_mul_transformer> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
     return detail::stable_transform_binary_helper<A, B, mm_mul_transformer>{mm_mul_transformer<detail::build_type<A>, detail::build_type<B>>(a, b)};
@@ -156,7 +156,7 @@ auto mul(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B>
 gemm_expr<A, B, detail::strassen_mm_mul_impl> strassen_mul(A&& a, B&& b) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
     return gemm_expr<A, B, detail::strassen_mm_mul_impl>{a, b};
@@ -171,7 +171,7 @@ gemm_expr<A, B, detail::strassen_mm_mul_impl> strassen_mul(A&& a, B&& b) {
  */
 template <typename A, typename B, typename C>
 auto strassen_mul(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
     c = mul(a,b);
