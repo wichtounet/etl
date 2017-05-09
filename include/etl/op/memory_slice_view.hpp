@@ -153,7 +153,18 @@ public:
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
      */
-    template <typename V = default_vec>
+    template <typename V = default_vec, bool A = Aligned, cpp_enable_if(A)>
+    void stream(vec_type<V> in, size_t i) noexcept {
+        sub.template stream<V>(in, first + i);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once, using non-temporal store
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     */
+    template <typename V = default_vec, bool A = Aligned, cpp_disable_if(A)>
     void stream(vec_type<V> in, size_t i) noexcept {
         sub.template storeu<V>(in, first + i);
     }
