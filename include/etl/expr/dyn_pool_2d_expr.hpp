@@ -105,6 +105,16 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
     void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
+
+    /*!
+     * \brief Print a representation of the expression on the given stream
+     * \param os The output stream
+     * \param expr The expression to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const dyn_pool_2d_expr& expr) {
+        return os << "pool2(" << expr._a << ")";
+    }
 };
 
 /*!

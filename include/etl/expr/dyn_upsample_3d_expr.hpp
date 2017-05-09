@@ -102,6 +102,16 @@ struct dyn_upsample_3d_expr : base_temporary_expr_un<dyn_upsample_3d_expr<A, Imp
     void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
+
+    /*!
+     * \brief Print a representation of the expression on the given stream
+     * \param os The output stream
+     * \param expr The expression to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const dyn_upsample_3d_expr& expr) {
+        return os << "upsample3(" << expr._a << ")";
+    }
 };
 
 /*!

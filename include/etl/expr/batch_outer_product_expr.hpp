@@ -99,6 +99,16 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
     void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
+
+    /*!
+     * \brief Print a representation of the expression on the given stream
+     * \param os The output stream
+     * \param expr The expression to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const batch_outer_product_expr& expr) {
+        return os << "batch_outer(" << expr._a << ", " << expr._b << ")";
+    }
 };
 
 /*!

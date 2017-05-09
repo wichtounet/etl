@@ -100,6 +100,16 @@ struct convmtx_2d_expr : base_temporary_expr_un<convmtx_2d_expr<A, K1, K2>, A> {
     void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
+
+    /*!
+     * \brief Print a representation of the expression on the given stream
+     * \param os The output stream
+     * \param expr The expression to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const convmtx_2d_expr& expr) {
+        return os << "convmtx2(" << expr._a << ")";
+    }
 };
 
 /*!

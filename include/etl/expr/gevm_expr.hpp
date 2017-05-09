@@ -138,6 +138,16 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B, Impl>, A, B> {
     void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
+
+    /*!
+     * \brief Print a representation of the expression on the given stream
+     * \param os The output stream
+     * \param expr The expression to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const gevm_expr& expr) {
+        return os << expr._a << " * " << expr._b;
+    }
 };
 
 /*!

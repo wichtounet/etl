@@ -97,6 +97,16 @@ struct pool_3d_expr : base_temporary_expr_un<pool_3d_expr<A, C1, C2, C3, S1, S2,
     void assign_mod_to(L&& lhs)  const {
         std_mod_evaluate(*this, lhs);
     }
+
+    /*!
+     * \brief Print a representation of the expression on the given stream
+     * \param os The output stream
+     * \param expr The expression to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const pool_3d_expr& expr) {
+        return os << "pool3(" << expr._a << ")";
+    }
 };
 
 /*!

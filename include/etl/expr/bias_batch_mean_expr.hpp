@@ -299,6 +299,16 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
 
         engine_dispatch_1d(batch_fun_k, 0, K, 2UL);
     }
+
+    /*!
+     * \brief Print a representation of the expression on the given stream
+     * \param os The output stream
+     * \param expr The expression to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const bias_batch_mean_expr& expr) {
+        return os << "bias_batch_mean(" << expr._a << ")";
+    }
 };
 
 /*!
