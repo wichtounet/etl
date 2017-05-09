@@ -20,34 +20,6 @@ namespace etl {
  * \brief Creates an expression representing the valid 2D convolution of a and b
  * \param a The input expression
  * \param b The kernel expression
- * \return an expression representing the valid 2D convolution of a and b
- */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
-auto conv_2d_valid(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv2_valid_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
-
-    return {a, b};
-}
-
-/*!
- * \brief Creates an expression representing the valid 2D convolution of a and b, the result will be stored in c
- * \param a The input expression
- * \param b The kernel expression
- * \param c The result
- * \return an expression representing the valid 2D convolution of a and b
- */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
-auto conv_2d_valid(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
-
-    c = conv_2d_valid<S1, S2, P1, P2>(a, b);
-    return c;
-}
-
-/*!
- * \brief Creates an expression representing the valid 2D convolution of a and b
- * \param a The input expression
- * \param b The kernel expression
  * \param s1 The first dimension stride
  * \param s2 The second dimension stride
  * \param p1 The first dimension padding (left and right)
@@ -78,34 +50,6 @@ auto conv_2d_valid(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1 = 0, siz
     static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid(a, b, s1, s2, p1, p2);
-    return c;
-}
-
-/*!
- * \brief Creates an expression representing the valid 2D convolution of a and b
- * \param a The input expression
- * \param b The kernel expression
- * \return an expression representing the valid 2D convolution of a and b
- */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
-auto conv_2d_valid_flipped(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv2_valid_flipped_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
-
-    return {a, b};
-}
-
-/*!
- * \brief Creates an expression representing the valid 2D convolution of a and b, the result will be stored in c
- * \param a The input expression
- * \param b The kernel expression
- * \param c The result
- * \return an expression representing the valid 2D convolution of a and b
- */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
-auto conv_2d_valid_flipped(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
-
-    c = conv_2d_valid_flipped<S1, S2, P1, P2>(a, b);
     return c;
 }
 
