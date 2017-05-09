@@ -19,9 +19,9 @@ namespace etl {
  * \tparam A The transposed type
  */
 template <typename A, typename B>
-struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A, B> {
+struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
-    using this_type   = conv_1d_valid_expr<A, B>;                 ///< The type of this expression
+    using this_type   = conv_1d_full_expr<A, B>;                 ///< The type of this expression
     using base_type   = base_temporary_expr_bin<this_type, A, B>; ///< The base type
     using left_traits = decay_traits<A>;                          ///< The traits of the sub type
 
@@ -31,7 +31,7 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    explicit conv_1d_valid_expr(A a, B b) : base_type(a, b) {
+    explicit conv_1d_full_expr(A a, B b) : base_type(a, b) {
         //Nothing else to init
     }
 
@@ -42,12 +42,12 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
      */
     template <typename I, typename K, typename C, cpp_disable_if(all_fast<A, B, C>::value)>
     static void check(const I& input, const K& kernel, const C& conv){
-        static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_valid");
-        static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_valid");
-        static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_valid");
+        static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_full");
+        static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_full");
+        static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_full");
 
-        cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0) - etl::dim(kernel, 0) + 1, "Invalid dimensions for conv1_valid");
-        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv1_valid");
+        cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0) + etl::dim(kernel, 0) - 1, "Invalid dimensions for conv1_full");
+        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv1_full");
 
         cpp_unused(input);
         cpp_unused(kernel);
@@ -59,12 +59,12 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
      */
     template <typename I, typename K, typename C, cpp_enable_if(all_fast<A, B, C>::value)>
     static void check(const I& input, const K& kernel, const C& conv){
-        static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_valid");
-        static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_valid");
-        static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_valid");
+        static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_full");
+        static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_full");
+        static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_full");
 
-        static_assert(etl::dim<0, C>() == etl::dim<0, I>() - etl::dim<0, K>() + 1, "Invalid dimensions for conv1_valid");
-        static_assert(etl::dim<0, I>() >= etl::dim<0, K>(), "Invalid dimensions for conv1_valid");
+        static_assert(etl::dim<0, C>() == etl::dim<0, I>() + etl::dim<0, K>() - 1, "Invalid dimensions for conv1_full");
+        static_assert(etl::dim<0, I>() >= etl::dim<0, K>(), "Invalid dimensions for conv1_full");
 
         cpp_unused(input);
         cpp_unused(kernel);
@@ -77,7 +77,7 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
      */
     template<typename C>
     void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, B, C>::value, "conv1_valid only supported for ETL expressions");
+        static_assert(all_etl_expr<A, B, C>::value, "conv1_full only supported for ETL expressions");
 
         auto& a = this->a();
         auto& b = this->b();
@@ -88,7 +88,7 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
         standard_evaluator::pre_assign_rhs(b);
         standard_evaluator::pre_assign_lhs(c);
 
-        detail::conv1_valid_impl::apply(make_temporary(a), make_temporary(b), c);
+        detail::conv1_full_impl::apply(make_temporary(a), make_temporary(b), c);
     }
 
     /*!
@@ -142,8 +142,8 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
  * \tparam A The transposed sub type
  */
 template <typename A, typename B>
-struct etl_traits<etl::conv_1d_valid_expr<A, B>> {
-    using expr_t       = etl::conv_1d_valid_expr<A, B>; ///< The expression type
+struct etl_traits<etl::conv_1d_full_expr<A, B>> {
+    using expr_t       = etl::conv_1d_full_expr<A, B>; ///< The expression type
     using left_expr_t  = std::decay_t<A>;               ///< The left sub expression type
     using right_expr_t = std::decay_t<B>;               ///< The right sub expression type
     using left_traits  = etl_traits<left_expr_t>;       ///< The left sub traits
@@ -180,7 +180,7 @@ struct etl_traits<etl::conv_1d_valid_expr<A, B>> {
      */
     template <size_t DD>
     static constexpr size_t dim() {
-        return etl::dim<0, A>() - etl::dim<0, B>() + 1;
+        return etl::dim<0, A>() + etl::dim<0, B>() - 1;
     }
 
     /*!
@@ -192,7 +192,7 @@ struct etl_traits<etl::conv_1d_valid_expr<A, B>> {
     static size_t dim(const expr_t& e, size_t d) {
         cpp_unused(d);
 
-        return etl::dim(e._a, 0) - etl::dim(e._b, 0) + 1;
+        return etl::dim(e._a, 0) + etl::dim(e._b, 0) - 1;
     }
 
     /*!
@@ -201,7 +201,7 @@ struct etl_traits<etl::conv_1d_valid_expr<A, B>> {
      * \return the size of the expression
      */
     static size_t size(const expr_t& e) {
-        return etl::dim(e._a, 0) - etl::dim(e._b, 0) + 1;
+        return etl::dim(e._a, 0) + etl::dim(e._b, 0) - 1;
     }
 
     /*!
@@ -209,7 +209,7 @@ struct etl_traits<etl::conv_1d_valid_expr<A, B>> {
      * \return the size of the expression
      */
     static constexpr size_t size() {
-        return etl::dim<0, A>() - etl::dim<0, B>() + 1;
+        return etl::dim<0, A>() + etl::dim<0, B>() - 1;
     }
 
     /*!
@@ -228,10 +228,10 @@ struct etl_traits<etl::conv_1d_valid_expr<A, B>> {
  * \return an expression representing the valid 1D convolution of a and b
  */
 template <typename A, typename B>
-conv_1d_valid_expr<A, B> conv_1d_valid(A&& a, B&& b) {
+conv_1d_full_expr<A, B> conv_1d_full(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
-    return conv_1d_valid_expr<A, B>{a, b};
+    return conv_1d_full_expr<A, B>{a, b};
 }
 
 /*!
@@ -242,11 +242,10 @@ conv_1d_valid_expr<A, B> conv_1d_valid(A&& a, B&& b) {
  * \return an expression representing the valid 1D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_1d_valid(A&& a, B&& b, C&& c){
+auto conv_1d_full(A&& a, B&& b, C&& c){
     static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
-    c = conv_1d_valid(a, b);
-
+    c = conv_1d_full(a, b);
     return c;
 }
 

@@ -67,63 +67,6 @@ struct conv1_full_impl {
         }
 #endif
     }
-
-    /*!
-     * \brief Returns the description of the operation
-     */
-    static constexpr const char* desc(){
-        return "conv1_full";
-    }
-
-    /*!
-     * \brief Assert that the convolution is done on correct dimensions
-     */
-    template <typename I, typename K, typename C>
-    static void check(const I& input, const K& kernel, const C& conv){
-        static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_full");
-        static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_full");
-        static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_full");
-
-        cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0) + etl::dim(kernel, 0) - 1, "Invalid dimensions for conv1_full");
-        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv1_full");
-
-        cpp_unused(input);
-        cpp_unused(kernel);
-        cpp_unused(conv);
-    }
-
-    /*!
-     * \brief Assert that the convolution is done on correct dimensions
-     */
-    template <typename I, typename K, typename C>
-    static void check(){
-        static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_full");
-        static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_full");
-        static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_full");
-
-        static_assert(etl::dim<0, C>() == etl::dim<0, I>() + etl::dim<0, K>() - 1, "Invalid dimensions for conv1_full");
-        static_assert(etl::dim<0, I>() >= etl::dim<0, K>(), "Invalid dimensions for conv1_full");
-    }
-
-    /*!
-     * \brief Returns the dth dimension of the result of the convolution
-     */
-    template <typename I, typename K>
-    static size_t dim(size_t d, const I& input, const K& kernel){
-        cpp_assert(d == 0, "Invalid dimensions access");
-
-        return etl::dim(input, d) + etl::dim(kernel, d) - 1;
-    }
-
-    /*!
-     * \brief Returns the Dth dimension of the result of the convolution
-     */
-    template <size_t D, typename I, typename K>
-    static constexpr size_t dim(){
-        static_assert(D == 0, "Invalid dimension access");
-
-        return etl::dim<0, I>() + etl::dim<0, K>() - 1;
-    }
 };
 
 /*!
@@ -164,64 +107,6 @@ struct conv1_same_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
 #endif
-    }
-
-    /*!
-     * \brief Returns the description of the operation
-     */
-    static constexpr const char* desc(){
-        return "conv1_same";
-    }
-
-    /*!
-     * \brief Assert that the convolution is done on correct dimensions
-     */
-    template <typename I, typename K, typename C>
-    static void check(const I& input, const K& kernel, const C& conv){
-        static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_same");
-        static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_same");
-        static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_same");
-
-        cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0), "Invalid dimensions for conv1_same");
-        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv1_same");
-
-        cpp_unused(input);
-        cpp_unused(kernel);
-        cpp_unused(conv);
-    }
-
-    /*!
-     * \brief Assert that the convolution is done on correct dimensions
-     */
-    template <typename I, typename K, typename C>
-    static void check(){
-        static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_same");
-        static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_same");
-        static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_same");
-
-        static_assert(etl::dim<0, C>() == etl::dim<0, I>(), "Invalid dimensions for conv1_same");
-        static_assert(etl::dim<0, I>() >= etl::dim<0, K>(), "Invalid dimensions for conv1_same");
-    }
-
-    /*!
-     * \brief Returns the dth dimension of the result of the convolution
-     */
-    template <typename I, typename K>
-    static size_t dim(size_t d, const I& input, const K& kernel){
-        cpp_assert(d == 0, "Invalid dimensions access");
-        cpp_unused(kernel);
-
-        return etl::dim(input, d);
-    }
-
-    /*!
-     * \brief Returns the Dth dimension of the result of the convolution
-     */
-    template <size_t D, typename I, typename K>
-    static constexpr size_t dim(){
-        static_assert(D == 0, "Invalid dimension access");
-
-        return etl::dim<0, I>();
     }
 };
 
