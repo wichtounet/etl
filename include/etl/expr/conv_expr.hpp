@@ -444,30 +444,6 @@ using conv2_full_multi_expr = basic_conv_expr<T, 3, detail::conv2_full_multi_imp
 template <typename T>
 using conv2_full_multi_flipped_expr = basic_conv_expr<T, 3, detail::conv2_full_multi_flipped_impl>;
 
-/*!
- * \brief Expression for 2D same convolution
- */
-template <typename T>
-using conv2_same_expr = basic_conv_expr<T, 2, detail::conv2_same_impl>;
-
-/*!
- * \brief Expression for 2D same convolution
- */
-template <typename T>
-using conv2_same_flipped_expr = basic_conv_expr<T, 2, detail::conv2_same_flipped_impl>;
-
-/*!
- * \brief Expression for 2D full convolution
- */
-template <typename T>
-using conv2_full_expr = basic_conv_expr<T, 2, detail::conv2_full_impl>;
-
-/*!
- * \brief Expression for 2D full convolution
- */
-template <typename T>
-using conv2_full_flipped_expr = basic_conv_expr<T, 2, detail::conv2_full_flipped_impl>;
-
 //>2D convolutions
 
 /*!

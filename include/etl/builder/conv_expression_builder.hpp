@@ -966,63 +966,6 @@ auto conv_4d_full_flipped(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Creates an expression representing the same 2D convolution of a and b
- * \param a The input expression
- * \param b The kernel expression
- * \return an expression representing the same 2D convolution of a and b
- */
-template <typename A, typename B>
-auto conv_2d_same(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_same_expr> {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
-
-    return {a, b};
-}
-
-/*!
- * \brief Creates an expression representing the same 2D convolution of a and b, the result will be stored in c
- * \param a The input expression
- * \param b The kernel expression
- * \param c The result
- * \return an expression representing the same 2D convolution of a and b
- */
-template <typename A, typename B, typename C>
-auto conv_2d_same(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
-
-    c = conv_2d_same(a, b);
-    return c;
-}
-
-/*!
- * \brief Creates an expression representing the same 2D convolution of a and b,
- * with flipped kernels.
- * \param a The input expression
- * \param b The kernel expression
- * \return an expression representing the same 2D convolution of a and b
- */
-template <typename A, typename B>
-auto conv_2d_same_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_same_flipped_expr> {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
-
-    return {a, b};
-}
-
-/*!
- * \brief Creates an expression representing the same 2D convolution of a and b, the result will be stored in c, with flipped kernels.
- * \param a The input expression
- * \param b The kernel expression
- * \param c The result
- * \return an expression representing the same 2D convolution of a and b
- */
-template <typename A, typename B, typename C>
-auto conv_2d_same_flipped(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
-
-    c = conv_2d_same_flipped(a, b);
-    return c;
-}
-
-/*!
  * \brief Creates an expression representing the same 2D convolution of a and multiple kernels from b
  * \param a The input expression
  * \param b The kernel expression
@@ -1075,62 +1018,6 @@ auto conv_2d_same_multi_flipped(A&& a, B&& b, C&& c) {
     static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_same_multi_flipped(a, b);
-    return c;
-}
-
-/*!
- * \brief Creates an expression representing the full 2D convolution of a and b
- * \param a The input expression
- * \param b The kernel expression
- * \return an expression representing the full 2D convolution of a and b
- */
-template <typename A, typename B>
-auto conv_2d_full(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_full_expr> {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
-
-    return {a, b};
-}
-
-/*!
- * \brief Creates an expression representing the full 2D convolution of a and b, the result will be stored in c
- * \param a The input expression
- * \param b The kernel expression
- * \param c The result
- * \return an expression representing the full 2D convolution of a and b
- */
-template <typename A, typename B, typename C>
-auto conv_2d_full(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
-
-    c = conv_2d_full(a, b);
-    return c;
-}
-
-/*!
- * \brief Creates an expression representing the full 2D convolution of a and b
- * \param a The input expression
- * \param b The kernel expression
- * \return an expression representing the full 2D convolution of a and b
- */
-template <typename A, typename B>
-auto conv_2d_full_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_full_flipped_expr> {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
-
-    return {a, b};
-}
-
-/*!
- * \brief Creates an expression representing the full 2D convolution of a and b, the result will be stored in c
- * \param a The input expression
- * \param b The kernel expression
- * \param c The result
- * \return an expression representing the full 2D convolution of a and b
- */
-template <typename A, typename B, typename C>
-auto conv_2d_full_flipped(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
-
-    c = conv_2d_full_flipped(a, b);
     return c;
 }
 

@@ -110,6 +110,8 @@
 #include "etl/expr/conv_1d_valid_expr.hpp"
 #include "etl/expr/conv_1d_same_expr.hpp"
 #include "etl/expr/conv_1d_full_expr.hpp"
+#include "etl/expr/conv_2d_same_expr.hpp"
+#include "etl/expr/conv_2d_full_expr.hpp"
 #include "etl/expr/conv_expr.hpp"
 
 // The expressions building
