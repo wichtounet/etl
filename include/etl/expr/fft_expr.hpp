@@ -50,7 +50,7 @@ struct fft_expr : base_temporary_expr_un<fft_expr<A, T, Impl>, A> {
 
         Impl::apply(
             make_temporary(a),
-            std::forward<C>(c));
+            c);
     }
 
     /*!

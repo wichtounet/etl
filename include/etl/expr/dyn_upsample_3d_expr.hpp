@@ -54,7 +54,7 @@ struct dyn_upsample_3d_expr : base_temporary_expr_un<dyn_upsample_3d_expr<A, Imp
 
         Impl::template apply<>(
             make_temporary(a),
-            std::forward<L>(lhs),
+            lhs,
             c1, c2, c3);
     }
 

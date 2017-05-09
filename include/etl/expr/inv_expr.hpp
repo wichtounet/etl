@@ -53,7 +53,7 @@ struct inv_expr : base_temporary_expr_un<inv_expr<A>, A> {
 
         detail::inv_impl::apply(
             make_temporary(a),
-            std::forward<C>(c));
+            c);
     }
 
     /*!

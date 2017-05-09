@@ -54,7 +54,7 @@ struct prob_pool_2d_expr : base_temporary_expr_un<prob_pool_2d_expr<A, C1, C2, I
 
         Impl::template apply<C1, C2, C1, C2, 0, 0>(
             make_temporary(a),
-            std::forward<C>(c));
+            c);
     }
 
     /*!

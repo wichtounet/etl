@@ -54,7 +54,7 @@ struct pool_2d_expr : base_temporary_expr_un<pool_2d_expr<A, C1, C2, S1, S2, P1,
 
         Impl::template apply<C1, C2, S1, S2, P1, P2>(
             make_temporary(a),
-            std::forward<C>(c));
+            c);
     }
 
     /*!

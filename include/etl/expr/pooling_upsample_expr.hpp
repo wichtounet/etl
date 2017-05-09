@@ -111,7 +111,7 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
             make_temporary(a),
             make_temporary(b),
             make_temporary(c),
-            std::forward<R>(result));
+            result);
     }
 
     /*!
@@ -340,7 +340,7 @@ struct max_pool_upsample_3d_expr : base_temporary_expr_tern<max_pool_upsample_3d
             make_temporary(a),
             make_temporary(b),
             make_temporary(c),
-            std::forward<R>(result));
+            result);
     }
 
     /*!
@@ -546,7 +546,7 @@ public:
             make_temporary(a),
             make_temporary(b),
             make_temporary(c),
-            std::forward<R>(result),
+            result,
             c1, c2);
     }
 
@@ -738,7 +738,7 @@ public:
             make_temporary(a),
             make_temporary(b),
             make_temporary(c),
-            std::forward<R>(result),
+            result,
             c1, c2, c3);
     }
 

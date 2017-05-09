@@ -93,7 +93,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B, Impl>, A, B> {
         Impl::apply(
             make_temporary(a),
             make_temporary(b),
-            std::forward<C>(c));
+            c);
     }
 
     /*!

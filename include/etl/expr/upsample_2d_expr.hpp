@@ -53,7 +53,7 @@ struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2, Imp
 
         Impl::template apply<C1, C2>(
             make_temporary(a),
-            std::forward<C>(c));
+            c);
     }
 
     /*!

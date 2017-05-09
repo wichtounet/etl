@@ -60,7 +60,7 @@ struct dyn_pool_3d_expr : base_temporary_expr_un<dyn_pool_3d_expr<A, Impl>, A> {
 
         Impl::template apply<>(
             make_temporary(a),
-            std::forward<L>(lhs),
+            lhs,
             c1, c2, c3, s1, s2, s3, p1, p2, p3);
     }
 

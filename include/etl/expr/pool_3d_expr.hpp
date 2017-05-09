@@ -50,7 +50,7 @@ struct pool_3d_expr : base_temporary_expr_un<pool_3d_expr<A, C1, C2, C3, S1, S2,
 
         Impl::template apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(
             make_temporary(a),
-            std::forward<C>(c));
+            c);
     }
 
     /*!

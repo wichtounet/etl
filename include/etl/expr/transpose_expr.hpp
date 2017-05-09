@@ -131,7 +131,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
 
         check(a, c);
 
-        detail::transpose::apply(make_temporary(a), std::forward<C>(c));
+        detail::transpose::apply(make_temporary(a), c);
     }
 
     /*!

@@ -52,8 +52,8 @@ struct convmtx_2d_expr : base_temporary_expr_un<convmtx_2d_expr<A, K1, K2>, A> {
         standard_evaluator::pre_assign_lhs(c);
 
         detail::convmtx2_direct::template apply<K1, K2>(
-            make_temporary(std::forward<A>(a)),
-            std::forward<C>(c));
+            make_temporary(a),
+            c);
     }
 
     /*!
