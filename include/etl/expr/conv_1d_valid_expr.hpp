@@ -221,4 +221,32 @@ struct etl_traits<etl::conv_1d_valid_expr<A, B>> {
     }
 };
 
+/*!
+ * \brief Creates an expression representing the valid 1D convolution of a and b
+ * \param a The input expression
+ * \param b The kernel expression
+ * \return an expression representing the valid 1D convolution of a and b
+ */
+template <typename A, typename B>
+conv_1d_valid_expr<A, B> conv_1d_valid(A&& a, B&& b) {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return conv_1d_valid_expr<A, B>{a, b};
+}
+
+/*!
+ * \brief Creates an expression representing the valid 1D convolution of a and b, the result will be stored in c
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The result
+ * \return an expression representing the valid 1D convolution of a and b
+ */
+template <typename A, typename B, typename C>
+auto conv_1d_valid(A&& a, B&& b, C&& c){
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    c = conv_1d_valid(a, b);
+    return c;
+}
+
 } //end of namespace etl
