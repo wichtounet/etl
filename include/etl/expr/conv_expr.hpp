@@ -268,18 +268,6 @@ struct dyn_basic_conv_expr : dyn_impl_expr<dyn_basic_conv_expr<T, D, Impl>, T> {
  * \brief Expression for 4D valid convolution
  */
 template<typename T>
-using dyn_conv4_valid_expr = dyn_basic_conv_expr<T, 4, detail::dyn_conv4_valid_impl>;
-
-/*!
- * \brief Expression for 4D valid convolution
- */
-template<typename T>
-using dyn_conv4_valid_flipped_expr = dyn_basic_conv_expr<T, 4, detail::dyn_conv4_valid_flipped_impl>;
-
-/*!
- * \brief Expression for 4D valid convolution
- */
-template<typename T>
 using dyn_conv4_valid_back_expr = dyn_basic_conv_expr<T, 4, detail::dyn_conv4_valid_back_impl>;
 
 /*!
