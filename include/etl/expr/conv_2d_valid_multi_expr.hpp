@@ -44,7 +44,7 @@ struct conv_2d_valid_multi_expr : base_temporary_expr_bin<conv_2d_valid_multi_ex
     static void check(const I& input, const K& kernel, const C& conv){
         static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_valid");
         static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_valid");
-        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_valid");
+        static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_valid");
 
         cpp_assert(etl::dim(conv, 0) == etl::dim(kernel, 0), "Invalid dimensions for conv2_valid");
         cpp_assert(etl::dim(conv, 1) == (etl::dim(input, 0) - etl::dim(kernel, 1) + 2 * P1) / S1 + 1, "Invalid dimensions for conv2_valid");
