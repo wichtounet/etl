@@ -19,7 +19,7 @@ namespace detail {
 /*!
  * \brief The functor impl for 2D+ conv.
  */
-struct conv_deep_valid_impl {
+struct conv2_valid_deep_impl {
     /*!
      * \brief Apply the convolution
      * \param input The input expression
@@ -116,7 +116,7 @@ struct conv_deep_valid_impl {
 /*!
  * \brief The functor impl for 2D+ conv.
  */
-struct conv_deep_same_impl {
+struct conv2_same_deep_impl {
     /*!
      * \brief Apply the convolution
      * \param input The input expression
@@ -209,7 +209,7 @@ struct conv_deep_same_impl {
 /*!
  * \brief The functor impl for 2D+ conv.
  */
-struct conv_deep_full_impl {
+struct conv2_full_deep_impl {
     /*!
      * \brief Apply the convolution
      * \param input The input expression
