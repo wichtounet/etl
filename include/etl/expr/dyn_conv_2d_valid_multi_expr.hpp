@@ -31,10 +31,10 @@ struct dyn_conv_2d_valid_multi_expr : base_temporary_expr_bin<dyn_conv_2d_valid_
 
     static constexpr auto storage_order = left_traits::storage_order; ///< The sub storage order
 
-    const size_t s1;
-    const size_t s2;
-    const size_t p1;
-    const size_t p2;
+    const size_t s1; ///< The stride of the first dimension
+    const size_t s2; ///< The stride of the second dimension
+    const size_t p1; ///< The padding of the first dimension
+    const size_t p2; ///< The padding of the second dimension
 
     /*!
      * \brief Construct a new expression
