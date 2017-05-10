@@ -263,7 +263,7 @@ etl::dyn_matrix<value_t<I>, 2> pad_right_flip(const I& input, size_t pad){
     padded_input = 0;
 
     for(size_t i = 0; i < etl::dim<0>(flipped); ++i){
-        direct_copy_n(flipped.memory_start() + i * flipped.dim(1), padded_input.memory_start() + i * etl::dim<1>(padded_input), flipped.dim(1));
+        direct_copy_n(flipped.memory_start() + i * etl::dim<1>(flipped), padded_input.memory_start() + i * etl::dim<1>(padded_input), etl::dim<1>(flipped));
     }
 
     return padded_input;
@@ -404,7 +404,7 @@ etl::dyn_matrix<value_t<I>, 3> pad_right_flip_multi(const I& input, size_t pad){
     for(size_t i = 0; i < etl::dim<0>(input); ++i){
         for(size_t j = 0; j < etl::dim<1>(input); ++j){
             direct_copy_n(
-                flipped.memory_start() + i * flipped.dim(1) * flipped.dim(2) + j * flipped.dim(2),
+                flipped.memory_start() + i * etl::dim<1>(flipped) * etl::dim<2>(flipped) + j * etl::dim<2>(flipped),
                 padded_input.memory_start() + i * etl::dim<1>(padded_input) * etl::dim<2>(padded_input) + j * etl::dim<2>(padded_input),
                 etl::dim<2>(input));
         }

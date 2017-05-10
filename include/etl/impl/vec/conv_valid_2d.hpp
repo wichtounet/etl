@@ -241,7 +241,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
         }
     }
 
-    if (detail::prefer_sse<T>(kernel.dim(2))) {
+    if (detail::prefer_sse<T>(etl::dim<2>(kernel))) {
         auto fun_k = [&](const size_t first, const size_t last) {
             for (size_t k = first; k < last; ++k) {
                 detail::conv2_valid_micro_kernel<detail::safe_sse_vec>(input, kernel(k), conv(k), s1, s2, p1, p2, 0.0);
@@ -404,7 +404,7 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
         }
     }
 
-    if (detail::prefer_sse<T>(kernel.dim(2))) {
+    if (detail::prefer_sse<T>(etl::dim<2>(kernel))) {
         auto fun_kn = [&](const size_t first, const size_t last) {
             for (size_t kn = first; kn < last; ++kn) {
                 size_t k = kn / N;
@@ -494,7 +494,7 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
         }
     }
 
-    if (detail::prefer_sse<T>(kernel.dim(2))) {
+    if (detail::prefer_sse<T>(etl::dim<2>(kernel))) {
         auto fun_kn = [&](const size_t first, const size_t last) {
             for (size_t kn = first; kn < last; ++kn) {
                 size_t k = kn / N;
