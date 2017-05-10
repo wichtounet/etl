@@ -42,12 +42,12 @@ struct conv_2d_valid_expr : base_temporary_expr_bin<conv_2d_valid_expr<A, B, S1,
      */
     template <typename I, typename K, typename C, cpp_disable_if(all_fast<A, B, C>::value)>
     static void check(const I& input, const K& kernel, const C& conv){
-        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_full");
-        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_full");
-        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_full");
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_valid");
+        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_valid");
+        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_valid");
 
-        cpp_assert(etl::dim(conv, 0) == (etl::dim(input, 0) - etl::dim(kernel, 0) + 2 * P1) / S1 + 1, "Invalid dimensions for conv2_full");
-        cpp_assert(etl::dim(conv, 1) == (etl::dim(input, 1) - etl::dim(kernel, 1) + 2 * P2) / S2 + 1, "Invalid dimensions for conv2_full");
+        cpp_assert(etl::dim(conv, 0) == (etl::dim(input, 0) - etl::dim(kernel, 0) + 2 * P1) / S1 + 1, "Invalid dimensions for conv2_valid");
+        cpp_assert(etl::dim(conv, 1) == (etl::dim(input, 1) - etl::dim(kernel, 1) + 2 * P2) / S2 + 1, "Invalid dimensions for conv2_valid");
 
         cpp_unused(input);
         cpp_unused(kernel);
@@ -59,12 +59,12 @@ struct conv_2d_valid_expr : base_temporary_expr_bin<conv_2d_valid_expr<A, B, S1,
      */
     template <typename I, typename K, typename C, cpp_enable_if(all_fast<A, B, C>::value)>
     static void check(const I& input, const K& kernel, const C& conv){
-        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_full");
-        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_full");
-        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_full");
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_valid");
+        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_valid");
+        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_valid");
 
-        static_assert(etl::dim<0, C>() == (etl::dim<0, I>() - etl::dim<0, K>() + 2 * P1) / S1 + 1, "Invalid dimensions for conv2_full");
-        static_assert(etl::dim<1, C>() == (etl::dim<1, I>() - etl::dim<1, K>() + 2 * P2) / S2 + 1, "Invalid dimensions for conv2_full");
+        static_assert(etl::dim<0, C>() == (etl::dim<0, I>() - etl::dim<0, K>() + 2 * P1) / S1 + 1, "Invalid dimensions for conv2_valid");
+        static_assert(etl::dim<1, C>() == (etl::dim<1, I>() - etl::dim<1, K>() + 2 * P2) / S2 + 1, "Invalid dimensions for conv2_valid");
 
         cpp_unused(input);
         cpp_unused(kernel);
@@ -72,12 +72,12 @@ struct conv_2d_valid_expr : base_temporary_expr_bin<conv_2d_valid_expr<A, B, S1,
     }
 
     /*!
-     * \brief Assign to a matrix of the full storage order
+     * \brief Assign to a matrix
      * \param c The expression to which assign
      */
     template<typename C>
     void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, B, C>::value, "conv2_full only supported for ETL expressions");
+        static_assert(all_etl_expr<A, B, C>::value, "conv2_valid only supported for ETL expressions");
 
         auto& a = this->a();
         auto& b = this->b();
@@ -241,12 +241,12 @@ struct etl_traits<etl::conv_2d_valid_expr<A, B, S1, S2, P1, P2, Flipped>> {
 };
 
 /*!
- * \brief Creates an expression representing the 'full' 1D convolution of a and b.
+ * \brief Creates an expression representing the 'valid' 1D convolution of a and b.
  *
  * \param a The input expression
  * \param b The kernel expression
  *
- * \return an expression representing the 'full' 1D convolution of a and b
+ * \return an expression representing the 'valid' 1D convolution of a and b
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 conv_2d_valid_expr<A, B, S1, S2, P1, P1, false> conv_2d_valid(A&& a, B&& b) {
@@ -256,13 +256,13 @@ conv_2d_valid_expr<A, B, S1, S2, P1, P1, false> conv_2d_valid(A&& a, B&& b) {
 }
 
 /*!
- * \brief Creates an expression representing the 'full' 1D convolution of a and b, the result will be stored in c
+ * \brief Creates an expression representing the 'valid' 1D convolution of a and b, the result will be stored in c
  *
  * \param a The input expression
  * \param b The kernel expression
  * \param c The result
  *
- * \return an expression representing the 'full' 1D convolution of a and b
+ * \return an expression representing the 'valid' 1D convolution of a and b
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_2d_valid(A&& a, B&& b, C&& c){
@@ -274,12 +274,12 @@ auto conv_2d_valid(A&& a, B&& b, C&& c){
 }
 
 /*!
- * \brief Creates an expression representing the 'full' 1D convolution of a and flipped b.
+ * \brief Creates an expression representing the 'valid' 1D convolution of a and flipped b.
  *
  * \param a The input expression
  * \param b The kernel expression
  *
- * \return an expression representing the 'full' 1D convolution of a and b
+ * \return an expression representing the 'valid' 1D convolution of a and b
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 conv_2d_valid_expr<A, B, S1, S2, P1, P1, true> conv_2d_valid_flipped(A&& a, B&& b) {
@@ -289,13 +289,13 @@ conv_2d_valid_expr<A, B, S1, S2, P1, P1, true> conv_2d_valid_flipped(A&& a, B&& 
 }
 
 /*!
- * \brief Creates an expression representing the 'full' 1D convolution of a and flipped b, the result will be stored in c
+ * \brief Creates an expression representing the 'valid' 1D convolution of a and flipped b, the result will be stored in c
  *
  * \param a The input expression
  * \param b The kernel expression
  * \param c The result
  *
- * \return an expression representing the 'full' 1D convolution of a and b
+ * \return an expression representing the 'valid' 1D convolution of a and b
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_2d_valid_flipped(A&& a, B&& b, C&& c){
