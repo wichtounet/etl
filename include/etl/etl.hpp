@@ -121,6 +121,7 @@
 #include "etl/expr/conv_2d_valid_multi_multi_expr.hpp"
 #include "etl/expr/dyn_conv_2d_valid_multi_multi_expr.hpp"
 #include "etl/expr/conv_4d_full_expr.hpp"
+#include "etl/expr/conv_4d_valid_expr.hpp"
 #include "etl/expr/conv_expr.hpp"
 
 // The expressions building
