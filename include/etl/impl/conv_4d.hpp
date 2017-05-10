@@ -241,93 +241,13 @@ struct conv4_valid_filter_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
-
-    /*!
-     * \brief Returns the description of the operation
-     */
-    static constexpr const char* desc(){
-        return "conv4_valid_filter";
-    }
-
-    /*!
-     * \brief Assert that the convolution is done on correct dimensions
-     */
-    template <typename I, typename K, typename C>
-    static void check(const I& input, const K& kernel, const C& conv){
-        static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_valid");
-        static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_valid");
-        static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_valid");
-
-        cpp_assert(etl::dim(conv, 0) == etl::dim(kernel, 1), "Invalid dimensions for conv4_valid");
-        cpp_assert(etl::dim(conv, 1) == etl::dim(input, 1), "Invalid dimensions for conv4_valid");
-        cpp_assert(etl::dim(input, 0) == etl::dim(kernel, 0), "Invalid dimensions for conv4_valid");
-
-        cpp_assert(etl::dim(conv, 2) == (etl::dim(input, 2) - etl::dim(kernel, 2) + 2 * P1) / S1 + 1, "Invalid dimensions for conv4_valid");
-        cpp_assert(etl::dim(conv, 3) == (etl::dim(input, 3) - etl::dim(kernel, 3) + 2 * P2) / S2 + 1, "Invalid dimensions for conv4_valid");
-        cpp_assert(etl::dim(input, 2) >= etl::dim(kernel, 2), "Invalid dimensions for conv4_valid");
-        cpp_assert(etl::dim(input, 3) >= etl::dim(kernel, 3), "Invalid dimensions for conv4_valid");
-
-        cpp_unused(input);
-        cpp_unused(kernel);
-        cpp_unused(conv);
-    }
-
-    /*!
-     * \brief Assert that the convolution is done on correct dimensions
-     */
-    template <typename I, typename K, typename C>
-    static void check(){
-        static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_valid");
-        static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_valid");
-        static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_valid");
-
-        static_assert(etl::dim<0,C>() == etl::dim<1,K>(), "Invalid dimensions for conv4_valid");
-        static_assert(etl::dim<1,C>() == etl::dim<1,I>(), "Invalid dimensions for conv4_valid");
-        static_assert(etl::dim<0,I>() == etl::dim<0,K>(), "Invalid dimensions for conv4_valid");
-
-        static_assert(etl::dim<2,C>() == (etl::dim<2,I>() - etl::dim<2,K>() + 2 * P1) / S1 + 1, "Invalid dimensions for conv4_valid");
-        static_assert(etl::dim<3,C>() == (etl::dim<3,I>() - etl::dim<3,K>() + 2 * P2) / S2 + 1, "Invalid dimensions for conv4_valid");
-        static_assert(etl::dim<2,I>() >= etl::dim<2,K>(), "Invalid dimensions for conv4_valid");
-        static_assert(etl::dim<3,I>() >= etl::dim<3,K>(), "Invalid dimensions for conv4_valid");
-    }
-
-    /*!
-     * \brief Returns the dth dimension of the result of the convolution
-     */
-    template <typename I, typename K>
-    static size_t dim(size_t d, const I& input, const K& kernel){
-        cpp_assert(d < 4, "Invalid dimensions access");
-
-        if(d == 0){
-            return etl::dim(kernel, 1);
-        } else if(d == 1){
-            return etl::dim(input, 1);
-        } else if(d == 2){
-            return (etl::dim(input, d) - etl::dim(kernel, d) + 2 * P1) / S1 + 1;
-        } else {
-            return (etl::dim(input, d) - etl::dim(kernel, d) + 2 * P2) / S2 + 1;
-        }
-    }
-
-    /*!
-     * \brief Returns the Dth dimension of the result of the convolution
-     */
-    template <size_t D, typename I, typename K>
-    static constexpr size_t dim(){
-        static_assert(D < 4, "Invalid dimension access");
-
-        return D == 0 ? etl::dim<1,K>()
-            :  D == 1 ? etl::dim<1,I>()
-            :  D == 2 ? (etl::dim<D,I>() - etl::dim<D,K>() + 2 * P1) / S1 + 1
-            : (etl::dim<D,I>() - etl::dim<D,K>() + 2 * P2) / S2 + 1;
-    }
 };
 
 /*!
  * \brief The functor impl for 4D valid conv
  */
 template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
-struct conv4_valid_filter_flipped_impl : conv4_valid_filter_impl<S1, S2, P1, P2> {
+struct conv4_valid_filter_flipped_impl {
     /*!
      * \brief Apply the convolution
      * \param input The input expression
@@ -362,13 +282,6 @@ struct conv4_valid_filter_flipped_impl : conv4_valid_filter_impl<S1, S2, P1, P2>
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
-    }
-
-    /*!
-     * \brief Returns the description of the operation
-     */
-    static constexpr const char* desc(){
-        return "conv4_valid_filter_flipped";
     }
 };
 
