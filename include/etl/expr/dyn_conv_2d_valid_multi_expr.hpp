@@ -15,15 +15,19 @@
 namespace etl {
 
 /*!
- * \brief A transposition expression.
- * \tparam A The transposed type
+ * \brief Expression for the 'valid' convolution of several kernels
+ * with one input image.
+ *
+ * \tparam A The input type
+ * \tparam B The kernel type
+ * \tparam Flipped Indicates if the kernels are already flipped
  */
 template <typename A, typename B, bool Flipped>
-struct dyn_conv_2d_valid_expr : base_temporary_expr_bin<dyn_conv_2d_valid_expr<A, B, Flipped>, A, B> {
-    using value_type  = value_t<A>;                               ///< The type of value of the expression
-    using this_type   = dyn_conv_2d_valid_expr<A, B, Flipped>;    ///< The type of this expression
-    using base_type   = base_temporary_expr_bin<this_type, A, B>; ///< The base type
-    using left_traits = decay_traits<A>;                          ///< The traits of the sub type
+struct dyn_conv_2d_valid_multi_expr : base_temporary_expr_bin<dyn_conv_2d_valid_multi_expr<A, B, Flipped>, A, B> {
+    using value_type  = value_t<A>;                                  ///< The type of value of the expression
+    using this_type   = dyn_conv_2d_valid_multi_expr<A, B, Flipped>; ///< The type of this expression
+    using base_type   = base_temporary_expr_bin<this_type, A, B>;    ///< The base type
+    using left_traits = decay_traits<A>;                             ///< The traits of the sub type
 
     static constexpr auto storage_order = left_traits::storage_order; ///< The sub storage order
 
@@ -36,7 +40,7 @@ struct dyn_conv_2d_valid_expr : base_temporary_expr_bin<dyn_conv_2d_valid_expr<A
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    explicit dyn_conv_2d_valid_expr(A a, B b, size_t s1, size_t s2, size_t p1, size_t p2) : base_type(a, b), s1(s1), s2(s2), p1(p1), p2(p2) {
+    explicit dyn_conv_2d_valid_multi_expr(A a, B b, size_t s1, size_t s2, size_t p1, size_t p2) : base_type(a, b), s1(s1), s2(s2), p1(p1), p2(p2) {
         //Nothing else to init
     }
 
@@ -47,12 +51,13 @@ struct dyn_conv_2d_valid_expr : base_temporary_expr_bin<dyn_conv_2d_valid_expr<A
      */
     template <typename I, typename K, typename C>
     void check(const I& input, const K& kernel, const C& conv) const {
-        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_full");
-        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_full");
-        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_full");
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv_2d_valid_multi");
+        static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv_2d_valid_multi");
+        static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv_2d_valid_multi");
 
-        cpp_assert(etl::dim(conv, 0) == (etl::dim(input, 0) - etl::dim(kernel, 0) + 2 * p1) / s1 + 1, "Invalid dimensions for conv2_full");
-        cpp_assert(etl::dim(conv, 1) == (etl::dim(input, 1) - etl::dim(kernel, 1) + 2 * p2) / s2 + 1, "Invalid dimensions for conv2_full");
+        cpp_assert(etl::dim(conv, 0) == etl::dim(kernel, 0), "Invalid dimensions for conv_2d_valid_multi");
+        cpp_assert(etl::dim(conv, 1) == (etl::dim(input, 0) - etl::dim(kernel, 1) + 2 * p1) / s1 + 1, "Invalid dimensions for conv_2d_valid_multi");
+        cpp_assert(etl::dim(conv, 2) == (etl::dim(input, 1) - etl::dim(kernel, 2) + 2 * p2) / s2 + 1, "Invalid dimensions for conv_2d_valid_multi");
 
         cpp_unused(input);
         cpp_unused(kernel);
@@ -65,7 +70,7 @@ struct dyn_conv_2d_valid_expr : base_temporary_expr_bin<dyn_conv_2d_valid_expr<A
      */
     template<typename C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, B, C>::value, "conv2_full only supported for ETL expressions");
+        static_assert(all_etl_expr<A, B, C>::value, "conv_2d_valid_multi only supported for ETL expressions");
 
         auto& a = this->a();
         auto& b = this->b();
@@ -77,9 +82,9 @@ struct dyn_conv_2d_valid_expr : base_temporary_expr_bin<dyn_conv_2d_valid_expr<A
         standard_evaluator::pre_assign_lhs(c);
 
         if /* constexpr */ (Flipped){
-            detail::dyn_conv2_valid_flipped_impl::apply(make_temporary(a), make_temporary(b), c, s1, s2, p1, p2);
+            detail::dyn_conv2_valid_multi_flipped_impl::apply(make_temporary(a), make_temporary(b), c, s1, s2, p1, p2);
         } else {
-            detail::dyn_conv2_valid_impl::apply(make_temporary(a), make_temporary(b), c, s1, s2, p1, p2);
+            detail::dyn_conv2_valid_multi_impl::apply(make_temporary(a), make_temporary(b), c, s1, s2, p1, p2);
         }
     }
 
@@ -134,8 +139,8 @@ struct dyn_conv_2d_valid_expr : base_temporary_expr_bin<dyn_conv_2d_valid_expr<A
      * \param expr The expression to print
      * \return the output stream
      */
-    friend std::ostream& operator<<(std::ostream& os, const dyn_conv_2d_valid_expr& expr) {
-        return os << "conv2_valid(" << expr._a << ", " << expr._b << ")";
+    friend std::ostream& operator<<(std::ostream& os, const dyn_conv_2d_valid_multi_expr& expr) {
+        return os << "conv2_valid_multi(" << expr._a << ", " << expr._b << ")";
     }
 };
 
@@ -144,13 +149,13 @@ struct dyn_conv_2d_valid_expr : base_temporary_expr_bin<dyn_conv_2d_valid_expr<A
  * \tparam A The transposed sub type
  */
 template <typename A, typename B, bool Flipped>
-struct etl_traits<etl::dyn_conv_2d_valid_expr<A, B, Flipped>> {
-    using expr_t       = etl::dyn_conv_2d_valid_expr<A, B, Flipped>; ///< The expression type
-    using left_expr_t  = std::decay_t<A>;                        ///< The left sub expression type
-    using right_expr_t = std::decay_t<B>;                        ///< The right sub expression type
-    using left_traits  = etl_traits<left_expr_t>;                ///< The left sub traits
-    using right_traits = etl_traits<right_expr_t>;               ///< The right sub traits
-    using value_type   = value_t<A>;                             ///< The value type of the expression
+struct etl_traits<etl::dyn_conv_2d_valid_multi_expr<A, B, Flipped>> {
+    using expr_t       = etl::dyn_conv_2d_valid_multi_expr<A, B, Flipped>; ///< The expression type
+    using left_expr_t  = std::decay_t<A>;                                  ///< The left sub expression type
+    using right_expr_t = std::decay_t<B>;                                  ///< The right sub expression type
+    using left_traits  = etl_traits<left_expr_t>;                          ///< The left sub traits
+    using right_traits = etl_traits<right_expr_t>;                         ///< The right sub traits
+    using value_type   = value_t<A>;                                       ///< The value type of the expression
 
     static constexpr bool is_etl          = true;                       ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer  = false;                      ///< Indicates if the type is a transformer
@@ -184,9 +189,11 @@ struct etl_traits<etl::dyn_conv_2d_valid_expr<A, B, Flipped>> {
      */
     static size_t dim(const expr_t& e, size_t d) {
         if (d == 0){
-            return (etl::dim(e._a, 0) - etl::dim(e._b, 0) + 2 * e.p1) / e.s1 + 1;
+            return etl::dim(e._b, 0);
+        } else if (d == 1){
+            return (etl::dim(e._a, 0) - etl::dim(e._b, 1) + 2 * e.p1) / e.s1 + 1;
         } else {
-            return (etl::dim(e._a, 1) - etl::dim(e._b, 1) + 2 * e.p2) / e.s2 + 1;
+            return (etl::dim(e._a, 1) - etl::dim(e._b, 2) + 2 * e.p2) / e.s2 + 1;
         }
     }
 
@@ -196,8 +203,9 @@ struct etl_traits<etl::dyn_conv_2d_valid_expr<A, B, Flipped>> {
      * \return the size of the expression
      */
     static size_t size(const expr_t& e) {
-        return ((etl::dim(e._a, 0) - etl::dim(e._b, 0) + 2 * e.p1) / e.s1 + 1)
-            *  ((etl::dim(e._a, 1) - etl::dim(e._b, 1) + 2 * e.p2) / e.s2 + 1);
+        return (etl::dim(e._b, 0))
+            *  ((etl::dim(e._a, 0) - etl::dim(e._b, 1) + 2 * e.p1) / e.s1 + 1)
+            *  ((etl::dim(e._a, 1) - etl::dim(e._b, 2) + 2 * e.p2) / e.s2 + 1);
     }
 
     /*!
@@ -205,7 +213,7 @@ struct etl_traits<etl::dyn_conv_2d_valid_expr<A, B, Flipped>> {
      * \return the number of dimensions of the expression
      */
     static constexpr size_t dimensions() {
-        return 2;
+        return 3;
     }
 };
 
@@ -220,10 +228,10 @@ struct etl_traits<etl::dyn_conv_2d_valid_expr<A, B, Flipped>> {
  * \return an expression representing the valid 2D convolution of a and b
  */
 template <typename A, typename B>
-dyn_conv_2d_valid_expr<A, B, false> conv_2d_valid(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
+dyn_conv_2d_valid_multi_expr<A, B, false> conv_2d_valid_multi(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
     static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
-    return dyn_conv_2d_valid_expr<A, B, false>{a, b, s1, s2, p1, p2};
+    return dyn_conv_2d_valid_multi_expr<A, B, false>{a, b, s1, s2, p1, p2};
 }
 
 /*!
@@ -238,10 +246,10 @@ dyn_conv_2d_valid_expr<A, B, false> conv_2d_valid(A&& a, B&& b, size_t s1, size_
  * \return an expression representing the valid 2D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_2d_valid(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2){
+auto conv_2d_valid_multi(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2){
     static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
-    c = conv_2d_valid(a, b, s1, s2, p1, p2);
+    c = conv_2d_valid_multi(a, b, s1, s2, p1, p2);
 
     return c;
 }
@@ -257,10 +265,10 @@ auto conv_2d_valid(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t 
  * \return an expression representing the valid 2D convolution of a and b
  */
 template <typename A, typename B>
-dyn_conv_2d_valid_expr<A, B, true> conv_2d_valid_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
+dyn_conv_2d_valid_multi_expr<A, B, true> conv_2d_valid_multi_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
     static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
-    return dyn_conv_2d_valid_expr<A, B, true>{a, b, s1, s2, p1, p2};
+    return dyn_conv_2d_valid_multi_expr<A, B, true>{a, b, s1, s2, p1, p2};
 }
 
 /*!
@@ -275,10 +283,10 @@ dyn_conv_2d_valid_expr<A, B, true> conv_2d_valid_flipped(A&& a, B&& b, size_t s1
  * \return an expression representing the valid 2D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_2d_valid_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2){
+auto conv_2d_valid_multi_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2){
     static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
-    c = conv_2d_valid_flipped(a, b, s1, s2, p1, p2);
+    c = conv_2d_valid_multi_flipped(a, b, s1, s2, p1, p2);
 
     return c;
 }
