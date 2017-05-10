@@ -51,6 +51,7 @@ struct conf_thread_engine {
         get_pool().wait();
     }
 
+private:
     /*!
      * \brief Returns a reference to the thread pool
      * \return The unique thread pool.
@@ -65,17 +66,39 @@ using thread_engine = conf_thread_engine<cpp::default_thread_pool<>>;
 
 #else
 
+/*!
+ * \brief The default thread engine.
+ * \tparam Pool The thread pool implementation
+ *
+ * This should only be used by ETL internals such as the evaluator
+ * and the engine_dispatch functions.
+ */
 struct thread_engine {
+    /*!
+     * \brief Acquire the thread engine.
+     *
+     * This function must be called before tasks are being
+     * scheduled. It is mostly to ensure that selection is done
+     * correctly and that the thread engine is used correclty.
+     */
     static void acquire(){
         cpp_unreachable("thread_engine can only be used if paralle support is enabled");
     }
 
+    /*!
+     * \brief Schedule a new task
+     * \param fun The functor to execute
+     * \param args The arguments to pass to the functor
+     */
     template <class Functor, typename... Args>
     static void schedule(Functor&& fun, Args&&... /*args*/) {
         cpp_unreachable("thread_engine can only be used if paralle support is enabled");
         cpp_unused(fun);
     }
 
+    /*!
+     * \brief Wait for all the scheduled threads to finish their task
+     */
     static void wait(){
         cpp_unreachable("thread_engine can only be used if paralle support is enabled");
     }
