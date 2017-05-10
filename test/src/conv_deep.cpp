@@ -16,7 +16,7 @@ TEMPLATE_TEST_CASE_2("convolution_3d/full_1", "convolution_deep_full", Z, float,
     etl::fast_matrix<Z, 2, 2, 2> b = {2.0, 1.0, 0.5, 0.5, 1.0, 2.0, 1.0, 2.0};
     etl::fast_matrix<Z, 2, 3, 3> c;
 
-    *etl::conv_deep_full(a, b, c);
+    *etl::conv_full_2d_deep(a, b, c);
 
     REQUIRE_EQUALS_APPROX_E(c(0, 0, 0), 2.0, base_eps / 10);
     REQUIRE_EQUALS_APPROX_E(c(0, 0, 1), 5.0, base_eps / 10);
@@ -48,7 +48,7 @@ TEMPLATE_TEST_CASE_2("convolution_4d/full_1", "convolution_deep_full", Z, float,
     etl::fast_matrix<Z, 1, 2, 2, 2> b = {2.0, 1.0, 0.5, 0.5, 1.0, 2.0, 1.0, 2.0};
     etl::fast_matrix<Z, 1, 2, 3, 3> c;
 
-    c = etl::conv_deep_full(a, b);
+    c = etl::conv_full_2d_deep(a, b);
 
     REQUIRE_EQUALS_APPROX_E(c(0, 0, 0, 0), 2.0, base_eps / 10);
     REQUIRE_EQUALS_APPROX_E(c(0, 0, 0, 1), 5.0, base_eps / 10);
