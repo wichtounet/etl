@@ -20,10 +20,10 @@ namespace etl {
  */
 template <typename A, typename B, size_t S1, size_t S2, size_t P1, size_t P2, bool Flipped>
 struct conv_2d_valid_multi_expr : base_temporary_expr_bin<conv_2d_valid_multi_expr<A, B, S1, S2, P1, P2, Flipped>, A, B> {
-    using value_type  = value_t<A>;                               ///< The type of value of the expression
-    using this_type   = conv_2d_valid_multi_expr<A, B, S1, S2, P1, P2, Flipped>;         ///< The type of this expression
-    using base_type   = base_temporary_expr_bin<this_type, A, B>; ///< The base type
-    using left_traits = decay_traits<A>;                          ///< The traits of the sub type
+    using value_type  = value_t<A>;                                              ///< The type of value of the expression
+    using this_type   = conv_2d_valid_multi_expr<A, B, S1, S2, P1, P2, Flipped>; ///< The type of this expression
+    using base_type   = base_temporary_expr_bin<this_type, A, B>;                ///< The base type
+    using left_traits = decay_traits<A>;                                         ///< The traits of the sub type
 
     static constexpr auto storage_order = left_traits::storage_order; ///< The sub storage order
 
