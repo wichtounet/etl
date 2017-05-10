@@ -212,7 +212,9 @@ struct etl_traits<etl::conv_2d_full_multi_expr<A, B, Flipped>> {
             return etl::dim(e._b, 0);
         } else if(d == 1){
             return etl::dim(e._a, 0) + etl::dim(e._b, 1) - 1;
-        } else if(d == 2){
+        } else {
+            cpp_assert(d == 2, "Invalid access to conv_2d_full_multi dimension");
+
             return etl::dim(e._a, 1) + etl::dim(e._b, 2) - 1;
         }
     }
