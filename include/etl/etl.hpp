@@ -127,6 +127,9 @@
 #include "etl/expr/dyn_conv_4d_valid_expr.hpp"
 #include "etl/expr/dyn_conv_4d_valid_filter_expr.hpp"
 #include "etl/expr/dyn_conv_4d_valid_back_expr.hpp"
+#include "etl/expr/conv_2d_full_deep_expr.hpp"
+#include "etl/expr/conv_2d_same_deep_expr.hpp"
+#include "etl/expr/conv_2d_valid_deep_expr.hpp"
 #include "etl/expr/conv_expr.hpp"
 
 // The expressions building

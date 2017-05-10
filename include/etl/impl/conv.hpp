@@ -32,5 +32,4 @@
 #include "etl/impl/conv_1d.hpp"
 #include "etl/impl/conv_2d.hpp"
 #include "etl/impl/conv_4d.hpp"
-#include "etl/impl/conv_deep.hpp"
 #include "etl/impl/conv_multi.hpp"

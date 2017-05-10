@@ -262,24 +262,4 @@ struct dyn_basic_conv_expr : dyn_impl_expr<dyn_basic_conv_expr<T, D, Impl>, T> {
     }
 };
 
-//>2D convolutions
-
-/*!
- * \brief Expression for >2D valid convolution
- */
-template <typename T, size_t D>
-using conv_deep_valid_expr = basic_conv_expr<T, D, detail::conv2_valid_deep_impl>;
-
-/*!
- * \brief Expression for >2D same convolution
- */
-template <typename T, size_t D>
-using conv_deep_same_expr = basic_conv_expr<T, D, detail::conv2_same_deep_impl>;
-
-/*!
- * \brief Expression for >2D full convolution
- */
-template <typename T, size_t D>
-using conv_deep_full_expr = basic_conv_expr<T, D, detail::conv2_full_deep_impl>;
-
 } //end of namespace etl
