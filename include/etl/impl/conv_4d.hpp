@@ -17,7 +17,7 @@ namespace detail {
 /*!
  * \brief The functor impl for 4D valid conv
  */
-template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
+template<size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv4_valid_impl {
     /*!
      * \brief Apply the convolution
@@ -48,7 +48,7 @@ struct conv4_valid_impl {
 /*!
  * \brief The functor impl for 4D valid conv
  */
-template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
+template<size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv4_valid_flipped_impl {
     /*!
      * \brief Apply the convolution
@@ -139,7 +139,7 @@ struct dyn_conv4_valid_flipped_impl {
 /*!
  * \brief The functor impl for 4D valid conv
  */
-template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
+template<size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv4_valid_filter_impl {
     /*!
      * \brief Apply the convolution
@@ -170,7 +170,7 @@ struct conv4_valid_filter_impl {
 /*!
  * \brief The functor impl for 4D valid conv
  */
-template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
+template<size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv4_valid_filter_flipped_impl {
     /*!
      * \brief Apply the convolution
@@ -283,7 +283,7 @@ struct dyn_conv4_valid_filter_flipped_impl {
 /*!
  * \brief The functor impl for 4D valid_back conv
  */
-template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
+template<size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv4_valid_back_impl {
     /*!
      * \brief Apply the convolution
@@ -312,7 +312,7 @@ struct conv4_valid_back_impl {
 /*!
  * \brief The functor impl for 4D valid_back conv
  */
-template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
+template<size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv4_valid_back_flipped_impl {
     /*!
      * \brief Apply the convolution

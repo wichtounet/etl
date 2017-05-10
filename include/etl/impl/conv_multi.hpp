@@ -39,7 +39,7 @@ namespace detail {
 /*!
  * \brief The functor impl for 2D valid conv, with multiple kernels
  */
-template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
+template<size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv2_valid_multi_impl {
     /*!
      * \brief Apply the convolution
@@ -72,7 +72,7 @@ struct conv2_valid_multi_impl {
 /*!
  * \brief The functor impl for 2D valid conv, with multiple kernels
  */
-template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
+template<size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv2_valid_multi_flipped_impl {
     /*!
      * \brief Apply the convolution
@@ -105,7 +105,7 @@ struct conv2_valid_multi_flipped_impl {
 /*!
  * \brief The functor impl for 2D valid conv, with multiple kernels
  */
-template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
+template<size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv2_valid_multi_multi_impl {
     /*!
      * \brief Apply the convolution
@@ -136,7 +136,7 @@ struct conv2_valid_multi_multi_impl {
 /*!
  * \brief The functor impl for 2D valid conv, with multiple kernels
  */
-template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
+template<size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv2_valid_multi_multi_flipped_impl {
     /*!
      * \brief Apply the convolution
