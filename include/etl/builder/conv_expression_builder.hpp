@@ -17,34 +17,6 @@
 namespace etl {
 
 /*!
- * \brief Creates an expression representing the valid 2D convolution of a and multiple kernels from b
- * \param a The input expression
- * \param b The kernel expression
- * \return an expression representing the valid 2D convolution of a and multiple kernels from b
- */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
-auto conv_2d_valid_multi(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv2_valid_multi_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
-
-    return {a, b};
-}
-
-/*!
- * \brief Creates an expression representing the valid 2D convolution of a and multiple kernels from b, the result will be stored in c
- * \param a The input expression
- * \param b The kernel expressions
- * \param c The result
- * \return an expression representing the valid 2D convolution of a and multiple kernels from b
- */
-template <typename A, typename B, typename C>
-auto conv_2d_valid_multi(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
-
-    c = conv_2d_valid_multi(a, b);
-    return c;
-}
-
-/*!
  * \brief Creates an expression representing the valid 2D convolution of a and b
  * \param a The input expression
  * \param b The kernel expression
@@ -78,34 +50,6 @@ auto conv_2d_valid_multi(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, s
     static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi(a, b, s1, s2, p1, p2);
-    return c;
-}
-
-/*!
- * \brief Creates an expression representing the valid 2D convolution of a and multiple flipped kernels from b
- * \param a The input expression
- * \param b The kernel expression
- * \return an expression representing the valid 2D convolution of a and multiple kernels from b
- */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
-auto conv_2d_valid_multi_flipped(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv2_valid_multi_flipped_expr<value_t<A>, S1, S2, P1, P2>> {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
-
-    return {a, b};
-}
-
-/*!
- * \brief Creates an expression representing the valid 2D convolution of a and multiple flipped kernels from b, the result will be stored in c
- * \param a The input expression
- * \param b The kernel expressions
- * \param c The result
- * \return an expression representing the valid 2D convolution of a and multiple kernels from b
- */
-template <typename A, typename B, typename C>
-auto conv_2d_valid_multi_flipped(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
-
-    c = conv_2d_valid_multi_flipped(a, b);
     return c;
 }
 
