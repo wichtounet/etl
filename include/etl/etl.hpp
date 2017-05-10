@@ -147,7 +147,6 @@
 #include "etl/builder/mul_expression_builder.hpp"
 #include "etl/builder/conv_expression_builder.hpp"
 #include "etl/builder/fft_expression_builder.hpp"
-#include "etl/builder/inv_expression_builder.hpp"
 #include "etl/builder/pooling_expression_builder.hpp"
 
 // The optimizer

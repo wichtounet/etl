@@ -194,4 +194,16 @@ struct etl_traits<etl::inv_expr<A>> {
     }
 };
 
+/*!
+ * \brief Creates an expression representing the Inverse of the given expression
+ * \param a The input expression
+ * \return an expression representing the 1D FFT of a
+ */
+template <typename A>
+inv_expr<A> inv(A&& a) {
+    static_assert(is_etl_expr<A>::value, "Inverse only supported for ETL expressions");
+
+    return inv_expr<A>{a};
+}
+
 } //end of namespace etl
