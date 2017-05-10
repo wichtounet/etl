@@ -126,6 +126,7 @@
 #include "etl/expr/conv_4d_valid_back_expr.hpp"
 #include "etl/expr/dyn_conv_4d_valid_expr.hpp"
 #include "etl/expr/dyn_conv_4d_valid_filter_expr.hpp"
+#include "etl/expr/dyn_conv_4d_valid_back_expr.hpp"
 #include "etl/expr/conv_expr.hpp"
 
 // The expressions building
