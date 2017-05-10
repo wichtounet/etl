@@ -46,23 +46,6 @@ auto operator+(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, plus_bi
     return {lhs, rhs};
 }
 
-#ifdef ETL_ELEMENT_WISE_MULTIPLICATION
-
-/*!
- * \brief Builds an expression representing the scalar multiplication of lhs and rhs
- * \param lhs The left hand side expression
- * \param rhs The right hand side expression
- * \return An expression representing the scalar multiplication of lhs and rhs
- */
-template <typename LE, typename RE, cpp_enable_if(all_etl_expr<LE, RE>::value)>
-auto operator*(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_op> {
-    validate_expression(lhs, rhs);
-
-    return {lhs, rhs};
-}
-
-#endif
-
 /*!
  * \brief Builds an expression representing the scalar multipliation of lhs and rhs
  * \param lhs The left hand side expression

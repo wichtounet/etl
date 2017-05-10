@@ -142,12 +142,6 @@ static_assert(false, "EGBLAS is only intended to work with CUBLAS, not alone");
 #define ETL_EGBLAS_MODE_BOOL false
 #endif
 
-#ifdef ETL_ELEMENT_WISE_MULTIPLICATION
-#define ETL_ELEMENT_WISE_MULTIPLICATION_BOOL true
-#else
-#define ETL_ELEMENT_WISE_MULTIPLICATION_BOOL false
-#endif
-
 #ifdef ETL_STRICT_DIV
 #define ETL_STRICT_DIV_BOOL true
 #else

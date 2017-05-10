@@ -16,8 +16,6 @@
 
 namespace etl {
 
-#ifndef ETL_ELEMENT_WISE_MULTIPLICATION
-
 /*!
  * \brief Multiply two matrices together
  * \param a The left hand side matrix
@@ -53,8 +51,6 @@ template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_1d<B>::value
 gemv_expr<A, B, detail::mv_mul_impl> operator*(A&& a, B&& b) {
     return gemv_expr<A, B, detail::mv_mul_impl>{a, b};
 }
-
-#endif
 
 /*!
  * \brief Multiply two matrices together

@@ -96,12 +96,6 @@ constexpr bool cudnn_enabled = ETL_CUDNN_MODE_BOOL;
 constexpr bool egblas_enabled = ETL_EGBLAS_MODE_BOOL;
 
 /*!
- * \brief Boolean flag indicating if multiplication of two expression
- * means matrix multiplication (false) or element-wise multiplication (true)
- */
-constexpr bool is_element_wise_mul_default = ETL_ELEMENT_WISE_MULTIPLICATION_BOOL;
-
-/*!
  * \brief Boolean flag indicating if division can be done by
  * multiplication (false) or not (true)
  */
