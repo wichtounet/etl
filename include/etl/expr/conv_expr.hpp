@@ -348,18 +348,6 @@ using conv4_full_expr = basic_conv_expr<T, 4, detail::conv4_full_impl>;
 template <typename T>
 using conv4_full_flipped_expr = basic_conv_expr<T, 4, detail::conv4_full_flipped_impl>;
 
-/*!
- * \brief Expression for 2D valid convolution
- */
-template<typename T>
-using dyn_conv2_valid_multi_multi_expr = dyn_basic_conv_expr<T, 3, detail::dyn_conv2_valid_multi_multi_impl>;
-
-/*!
- * \brief Expression for 2D valid convolution
- */
-template<typename T>
-using dyn_conv2_valid_multi_multi_flipped_expr = dyn_basic_conv_expr<T, 3, detail::dyn_conv2_valid_multi_multi_flipped_impl>;
-
 //>2D convolutions
 
 /*!
