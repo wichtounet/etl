@@ -113,8 +113,8 @@ void pad_3d_input(const F1& in, F2&& out, size_t p1, size_t p2) {
  * \param first The beginning of the range of the input to consider
  * \param last The end of the range of the input to consider
  */
-template <typename T>
-void left_same_kernel(const T* in, const size_t n, const T* kernel, size_t m, T* out, size_t first, size_t last) {
+template <typename I_T, typename K_T, typename C_T>
+void left_same_kernel(const I_T* in, const size_t n, const K_T* kernel, size_t m, C_T* out, size_t first, size_t last) {
     cpp_unused(n);
 
     size_t left  = (m - 1) / 2;
@@ -122,7 +122,7 @@ void left_same_kernel(const T* in, const size_t n, const T* kernel, size_t m, T*
 
     //Left invalid part
     for (size_t j = first; j < std::min(last, left); ++j) {
-        T temp = 0.0;
+        C_T temp(0);
 
         for (size_t l = 0; l <= j + right; ++l) {
             temp += in[l] * kernel[j - l + right];
@@ -142,14 +142,14 @@ void left_same_kernel(const T* in, const size_t n, const T* kernel, size_t m, T*
  * \param first The beginning of the range of the input to consider
  * \param last The end of the range of the input to consider
  */
-template <typename T>
-void right_same_kernel(const T* in, const size_t n, const T* kernel, size_t m, T* out, size_t first, size_t last) {
+template <typename I_T, typename K_T, typename C_T>
+void right_same_kernel(const I_T* in, const size_t n, const K_T* kernel, size_t m, C_T* out, size_t first, size_t last) {
     size_t left  = (m - 1) / 2;
     size_t right = m / 2;
 
     //Right invalid part
     for (size_t j = std::max(first, n - right); j < std::min(last, n); ++j) {
-        T temp = 0.0;
+        C_T temp(0);
 
         size_t hi = std::min<int>(n - 1, j + right);
         for (size_t l = j - left; l <= hi; ++l) {
@@ -170,15 +170,15 @@ void right_same_kernel(const T* in, const size_t n, const T* kernel, size_t m, T
  * \param first The beginning of the range of the input to consider
  * \param last The end of the range of the input to consider
  */
-template <typename T>
-void left_full_kernel(const T* in, const size_t n, const T* kernel, size_t m, T* out, size_t first, size_t last) {
+template <typename I_T, typename K_T, typename C_T>
+void left_full_kernel(const I_T* in, const size_t n, const K_T* kernel, size_t m, C_T* out, size_t first, size_t last) {
     size_t left = m - 1;
 
     //Left invalid part
     for (size_t i = first; i < std::min(last, left); ++i) {
         const auto hi = i < n - 1 ? i : n - 1;
 
-        T temp = 0.0;
+        C_T temp(0);
 
         for (size_t j = 0; j <= hi; ++j) {
             temp += in[j] * kernel[i - j];
@@ -198,8 +198,8 @@ void left_full_kernel(const T* in, const size_t n, const T* kernel, size_t m, T*
  * \param first The beginning of the range of the input to consider
  * \param last The end of the range of the input to consider
  */
-template <typename T>
-void right_full_kernel(const T* in, const size_t n, const T* kernel, size_t m, T* out, size_t first, size_t last) {
+template <typename I_T, typename K_T, typename C_T>
+void right_full_kernel(const I_T* in, const size_t n, const K_T* kernel, size_t m, C_T* out, size_t first, size_t last) {
     size_t right = m - 1;
 
     auto c = n + m - 1;
@@ -209,7 +209,7 @@ void right_full_kernel(const T* in, const size_t n, const T* kernel, size_t m, T
         const auto lo = i >= m - 1 ? i - (m - 1) : 0;
         const auto hi = i < n - 1 ? i : n - 1;
 
-        T temp = 0.0;
+        C_T temp(0);
 
         for (size_t j = lo; j <= hi; ++j) {
             temp += in[j] * kernel[i - j];
