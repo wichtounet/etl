@@ -280,6 +280,14 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("r = batch_outer(a,b) (s)", outer_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](smat& a, smat& b, smat& c){ c = selected_helper(etl::outer_impl::CUBLAS, etl::batch_outer(a, b)); })
 )
 
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sbias_add", bias_add_policy,
+    FLOPS([](size_t d1, size_t d2, size_t d3, size_t d4){ return d1 * d2 * d3 * d4; }),
+    CPM_SECTION_INIT([](size_t d1, size_t d2, size_t d3, size_t d4){ return std::make_tuple(smat4(d1, d2, d3, d4), svec(d2), smat4(d1, d2, d3, d4)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat4& a, svec& b, smat4& c){ c = etl::bias_add_4d(a, b); }),
+    CPM_SECTION_FUNCTOR("std", [](smat4& a, svec& b, smat4& c){ c = selected_helper(etl::bias_add_impl::STD, etl::bias_add_4d(a, b)); })
+    VEC_SECTION_FUNCTOR("vec", [](smat4& a, svec& b, smat4& c){ c = selected_helper(etl::bias_add_impl::VEC, etl::bias_add_4d(a, b)); })
+)
+
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("r = a dot b (s)", dot_policy,
     FLOPS([](size_t d1){ return 2 * d1; }),
     CPM_SECTION_INIT([](size_t d1){ return std::make_tuple(svec(d1), svec(d1)); }),
