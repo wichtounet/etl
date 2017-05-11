@@ -1570,6 +1570,22 @@ void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t 
 }
 
 /*!
+ * \brief MKL FFT implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void fft_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    auto kernels_f = etl::force_temporary(kernels);
+
+    kernels_f.deep_fflip_inplace();
+
+    // TODO It would be faster to do the flip while padding
+    fft_conv2_valid_multi(input, kernels_f, conv, s1, s2, p1, p2);
+}
+
+/*!
  * \brief FFT implementation of a 2D 'valid' convolution C = I * K, with multiple kernels.
  *
  * This works by doing a full convolution by FFT and then extracting
@@ -1637,22 +1653,6 @@ void fft_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, s
     }
 
     conv.invalidate_gpu();
-}
-
-/*!
- * \brief MKL FFT implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
- * \param input The input matrix
- * \param kernels The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K_T, typename C>
-void fft_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    auto kernels_f = etl::force_temporary(kernels);
-
-    kernels_f.deep_fflip_inplace();
-
-    // TODO It would be faster to do the flip while padding
-    fft_conv2_valid_multi(input, kernels_f, conv, s1, s2, p1, p2);
 }
 
 /*!
