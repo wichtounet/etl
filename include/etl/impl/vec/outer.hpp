@@ -89,15 +89,6 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
                     auto a17 = rhs.template loadu<vec_type>(b7 * N + j + 0 * vec_size);
                     auto a18 = rhs.template loadu<vec_type>(b8 * N + j + 0 * vec_size);
 
-                    auto a21 = rhs.template loadu<vec_type>(b1 * N + j + 1 * vec_size);
-                    auto a22 = rhs.template loadu<vec_type>(b2 * N + j + 1 * vec_size);
-                    auto a23 = rhs.template loadu<vec_type>(b3 * N + j + 1 * vec_size);
-                    auto a24 = rhs.template loadu<vec_type>(b4 * N + j + 1 * vec_size);
-                    auto a25 = rhs.template loadu<vec_type>(b5 * N + j + 1 * vec_size);
-                    auto a26 = rhs.template loadu<vec_type>(b6 * N + j + 1 * vec_size);
-                    auto a27 = rhs.template loadu<vec_type>(b7 * N + j + 1 * vec_size);
-                    auto a28 = rhs.template loadu<vec_type>(b8 * N + j + 1 * vec_size);
-
                     r11 = vec_type::fmadd(f1, a11, r11);
                     r11 = vec_type::fmadd(f2, a12, r11);
                     r11 = vec_type::fmadd(f3, a13, r11);
@@ -106,6 +97,15 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
                     r11 = vec_type::fmadd(f6, a16, r11);
                     r11 = vec_type::fmadd(f7, a17, r11);
                     r11 = vec_type::fmadd(f8, a18, r11);
+
+                    auto a21 = rhs.template loadu<vec_type>(b1 * N + j + 1 * vec_size);
+                    auto a22 = rhs.template loadu<vec_type>(b2 * N + j + 1 * vec_size);
+                    auto a23 = rhs.template loadu<vec_type>(b3 * N + j + 1 * vec_size);
+                    auto a24 = rhs.template loadu<vec_type>(b4 * N + j + 1 * vec_size);
+                    auto a25 = rhs.template loadu<vec_type>(b5 * N + j + 1 * vec_size);
+                    auto a26 = rhs.template loadu<vec_type>(b6 * N + j + 1 * vec_size);
+                    auto a27 = rhs.template loadu<vec_type>(b7 * N + j + 1 * vec_size);
+                    auto a28 = rhs.template loadu<vec_type>(b8 * N + j + 1 * vec_size);
 
                     r21 = vec_type::fmadd(f1, a21, r21);
                     r21 = vec_type::fmadd(f2, a22, r21);
