@@ -42,17 +42,53 @@ struct max_pool_upsample_2d {
     }
 
     /*!
-     * \brief Apply the functor on sub and store the result in m
+     * \brief Pool a block of the sub expression
      * \param in The sub expression
+     * \param out The out matrix
      * \param m The storage matrix
+     * \param i The first index of the block
+     * \param j The second index of the block
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_if(is_2d<A>::value)>
-    static void apply(A&& in, B&& out, C&& errors, M&& m) {
-        for (size_t i = 0; i < etl::dim<0>(out); ++i) {
-            for (size_t j = 0; j < etl::dim<1>(out); ++j) {
-                pool_block_2d<C1, C2>(in, out, errors, m, i, j);
+    template <size_t C1, size_t C2, typename A, typename B, typename C, typename M>
+    static void pool_block_3d(const A& in, const B& out, const C& errors, M& m, size_t q, size_t i, size_t j) {
+        auto max = out(q, i, j);
+        auto error = errors(q, i, j);
+
+        for (size_t ii = 0; ii < C1; ++ii) {
+            for (size_t jj = 0; jj < C2; ++jj) {
+                if (max == in(q, i * C1 + ii, j * C2 + jj)) {
+                    m(q, i * C1 + ii, j * C2 + jj) = error;
+                } else {
+                    m(q, i * C1 + ii, j * C2 + jj) = 0.0;
+                }
+            }
+        }
+    }
+
+    /*!
+     * \brief Pool a block of the sub expression
+     * \param in The sub expression
+     * \param out The out matrix
+     * \param m The storage matrix
+     * \param i The first index of the block
+     * \param j The second index of the block
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
+    template <size_t C1, size_t C2, typename A, typename B, typename C, typename M>
+    static void pool_block_4d(const A& in, const B& out, const C& errors, M& m, size_t p, size_t q, size_t i, size_t j) {
+        auto max = out(p, q, i, j);
+        auto error = errors(p, q, i, j);
+
+        for (size_t ii = 0; ii < C1; ++ii) {
+            for (size_t jj = 0; jj < C2; ++jj) {
+                if (max == in(p, q, i * C1 + ii, j * C2 + jj)) {
+                    m(p, q, i * C1 + ii, j * C2 + jj) = error;
+                } else {
+                    m(p, q, i * C1 + ii, j * C2 + jj) = 0.0;
+                }
             }
         }
     }
@@ -84,6 +120,76 @@ struct max_pool_upsample_2d {
     }
 
     /*!
+     * \brief Pool a block of the sub expression
+     * \param in The sub expression
+     * \param out The out matrix
+     * \param m The storage matrix
+     * \param i The first index of the block
+     * \param j The second index of the block
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename A, typename B, typename C, typename M>
+    static void pool_block_3d(const A& in, const B& out, const C& errors, M& m, size_t q, size_t i, size_t j, size_t c1, size_t c2) {
+        auto max = out(q, i, j);
+        auto error = errors(q, i, j);
+
+        for (size_t ii = 0; ii < c1; ++ii) {
+            for (size_t jj = 0; jj < c2; ++jj) {
+                if (max == in(q, i * c1 + ii, j * c2 + jj)) {
+                    m(q, i * c1 + ii, j * c2 + jj) = error;
+                } else {
+                    m(q, i * c1 + ii, j * c2 + jj) = 0.0;
+                }
+            }
+        }
+    }
+
+    /*!
+     * \brief Pool a block of the sub expression
+     * \param in The sub expression
+     * \param out The out matrix
+     * \param m The storage matrix
+     * \param i The first index of the block
+     * \param j The second index of the block
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename A, typename B, typename C, typename M>
+    static void pool_block_3d(const A& in, const B& out, const C& errors, M& m, size_t p, size_t q, size_t i, size_t j, size_t c1, size_t c2) {
+        auto max = out(p, q, i, j);
+        auto error = errors(p, q, i, j);
+
+        for (size_t ii = 0; ii < c1; ++ii) {
+            for (size_t jj = 0; jj < c2; ++jj) {
+                if (max == in(p, q, i * c1 + ii, j * c2 + jj)) {
+                    m(p, q, i * c1 + ii, j * c2 + jj) = error;
+                } else {
+                    m(p, q, i * c1 + ii, j * c2 + jj) = 0.0;
+                }
+            }
+        }
+    }
+
+    // 2D Handling
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param in The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
+    template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_if(is_2d<A>::value)>
+    static void apply(A&& in, B&& out, C&& errors, M&& m) {
+        for (size_t i = 0; i < etl::dim<0>(out); ++i) {
+            for (size_t j = 0; j < etl::dim<1>(out); ++j) {
+                pool_block_2d<C1, C2>(in, out, errors, m, i, j);
+            }
+        }
+    }
+
+    /*!
      * \brief Apply the functor on sub and store the result in m
      * \param in The sub expression
      * \param m The storage matrix
@@ -99,6 +205,126 @@ struct max_pool_upsample_2d {
         }
     }
 
+    // 3D Handling
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param in The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
+    template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_if(is_3d<A>::value)>
+    static void apply(A&& in, B&& out, C&& errors, M&& m) {
+        auto batch_fun = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    for (size_t q = first; q < last; ++q) {
+                        for (size_t i = 0; i < etl::dim<1>(out); ++i) {
+                            for (size_t j = 0; j < etl::dim<2>(out); ++j) {
+                                pool_block_3d<C1, C2>(in, out, errors, m, q, i, j);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const size_t N = etl::dim<0>(out);
+
+        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+    }
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param in The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename A, typename B, typename C, typename M, cpp_enable_if(is_3d<A>::value)>
+    static void apply(A&& in, B&& out, C&& errors, M&& m, size_t c1, size_t c2) {
+        auto batch_fun = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    for (size_t q = first; q < last; ++q) {
+                        for (size_t i = 0; i < etl::dim<1>(out); ++i) {
+                            for (size_t j = 0; j < etl::dim<2>(out); ++j) {
+                                pool_block_3d(in, out, errors, m, q, i, j, c1, c2);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const size_t N = etl::dim<0>(out);
+
+        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+    }
+
+    // 4D Handling
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param in The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
+    template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_if(is_4d<A>::value)>
+    static void apply(A&& in, B&& out, C&& errors, M&& m) {
+        auto batch_fun = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    for (size_t p = first; p < last; ++p) {
+                        for (size_t q = 0; q < etl::dim<1>(out); ++q) {
+                            for (size_t i = 0; i < etl::dim<2>(out); ++i) {
+                                for (size_t j = 0; j < etl::dim<3>(out); ++j) {
+                                    pool_block_4d<C1, C2>(in, out, errors, m, p, q, i, j);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const size_t N = etl::dim<0>(out);
+
+        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+    }
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param in The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename A, typename B, typename C, typename M, cpp_enable_if(is_4d<A>::value)>
+    static void apply(A&& in, B&& out, C&& errors, M&& m, size_t c1, size_t c2) {
+        auto batch_fun = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    for (size_t p = first; p < last; ++p) {
+                        for (size_t q = 0; q < etl::dim<1>(out); ++q) {
+                            for (size_t i = 0; i < etl::dim<2>(out); ++i) {
+                                for (size_t j = 0; j < etl::dim<3>(out); ++j) {
+                                    pool_block_4d(in, out, errors, m, p, q, i, j, c1, c2);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const size_t N = etl::dim<0>(out);
+
+        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+    }
+
     // Deep handling
 
     /*!
@@ -108,7 +334,7 @@ struct max_pool_upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_if(!is_2d<A>::value)>
+    template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_if((decay_traits<A>::dimensions() > 4))>
     static void apply(A&& in, B&& out, C&& errors, M& m) {
         for(size_t i = 0; i < etl::dim<0>(in); ++i){
             apply<C1, C2>(in(i), out(i), errors(i), m(i));
@@ -122,7 +348,7 @@ struct max_pool_upsample_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename B, typename C, typename M, cpp_enable_if(!is_2d<A>::value)>
+    template <typename A, typename B, typename C, typename M, cpp_enable_if((decay_traits<A>::dimensions() > 4))>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
         for(size_t i = 0; i < etl::dim<0>(in); ++i){
             apply(in(i), out(i), errors(i), m(i), c1, c2);
