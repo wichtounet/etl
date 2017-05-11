@@ -45,19 +45,4 @@ auto convmtx2(A&& a, size_t k1, size_t k2) -> detail::stable_transform_helper<A,
     return detail::stable_transform_helper<A, dyn_convmtx2_transformer>{dyn_convmtx2_transformer<detail::build_type<A>>(a, k1, k2)};
 }
 
-/*!
- * \brief Construct a matrix to compute a 2D convolution by matrix-matrix multiplication
- * \param a The 2D matrix to transform (the input of the convolution)
- * \tparam K1 The first dimension of the kernel
- * \tparam K2 The second dimension of the kernel
- * \return a matrix expression for convolution
- */
-template <size_t K1, size_t K2, typename A>
-convmtx_2d_expr<detail::build_type<A>, K1, K2> convmtx2_direct(A&& a) {
-    static_assert(is_etl_expr<A>::value, "Convolution matrices only supported for ETL expressions");
-    static_assert(decay_traits<A>::dimensions() == 2, "Convolutional matrix only works in 2D");
-
-    return convmtx_2d_expr<detail::build_type<A>, K1, K2>{a};
-}
-
 } //end of namespace etl
