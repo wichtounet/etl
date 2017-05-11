@@ -95,29 +95,6 @@ template <typename S1, typename S2, typename... S>
 struct is_initializer_list_constructor<S1, S2, S...> : cpp::is_specialization_of<std::initializer_list, typename cpp::last_type<S2, S...>::type> {};
 
 /*!
- * \brief Returns the size of a matrix given its dimensions
- */
-inline size_t size(size_t first) {
-    return first;
-}
-
-/*!
- * \brief Returns the size of a matrix given its dimensions
- */
-template <typename... T>
-inline size_t size(size_t first, T... args) {
-    return first * size(args...);
-}
-
-/*!
- * \brief Returns the size of a matrix given its dimensions
- */
-template <size_t... I, typename... T>
-inline size_t size(const std::index_sequence<I...>& /*i*/, const T&... args) {
-    return size((cpp::nth_value<I>(args...))...);
-}
-
-/*!
  * \brief Returns a collection of dimensions of the matrix.
  */
 template <size_t... I, typename... T>

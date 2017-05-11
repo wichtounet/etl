@@ -36,6 +36,7 @@
 #include "etl/allocator.hpp"
 #include "etl/iterator.hpp"
 #include "etl/util/counters.hpp"
+#include "etl/util/variadic.hpp"
 
 //Forward declarations
 #include "etl/value_fwd.hpp"

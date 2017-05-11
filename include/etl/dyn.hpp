@@ -119,7 +119,7 @@ public:
                                  (sizeof...(S) == D),
                                  cpp::all_convertible_to<size_t, S...>::value
                                  )>
-    explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<size_t>(sizes)...}}) {
+    explicit dyn_matrix_impl(S... sizes) noexcept : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}}) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
     }
 
@@ -128,7 +128,7 @@ public:
      * \param sizes The dimensions of the matrix followed by an initializer_list
      */
     template <typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
-    explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...),
+    explicit dyn_matrix_impl(S... sizes) noexcept : base_type(util::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...),
                                                               dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
@@ -145,7 +145,7 @@ public:
     template <typename... S, cpp_enable_if(
                                  (sizeof...(S) == D),
                                  cpp::is_specialization_of<values_t, typename cpp::last_type<size_t, S...>::type>::value)>
-    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
+    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                               dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
@@ -164,7 +164,7 @@ public:
                                               !cpp::is_specialization_of<values_t, typename cpp::last_type<size_t, S...>::type>::value
                                               )>
     explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept : base_type(
-                                                               dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
+                                                               util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)
                                                             ){
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
@@ -277,7 +277,7 @@ public:
     void resize(Sizes... sizes){
         static_assert(sizeof...(Sizes), "Cannot change number of dimensions");
 
-        auto new_size = dyn_detail::size(sizes...);
+        auto new_size = util::size(sizes...);
 
         if(_memory){
             auto new_memory = allocate(alloc_size_mat<T>(new_size, cpp::last_value(sizes...)));

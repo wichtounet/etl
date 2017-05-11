@@ -1054,8 +1054,7 @@ auto reshape(E&& value, S... sizes) -> dyn_matrix_view<detail::build_identity_ty
 
     using ret_type = dyn_matrix_view<detail::build_identity_type<E>, sizeof...(sizes)>;
 
-    //TODO This is dum... comput the size directly
-    cpp_assert(decay_traits<E>::is_generator || size(value) == size(ret_type{value, size_t(sizes)...}), "Invalid size for reshape");
+    cpp_assert(decay_traits<E>::is_generator || size(value) == util::size(sizes...), "Invalid size for reshape");
 
     return ret_type{value, size_t(sizes)...};
 }

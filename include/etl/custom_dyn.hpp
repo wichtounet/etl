@@ -96,7 +96,7 @@ public:
      * released once the matrix is destructed.
      */
     template <typename... S, cpp_enable_if((sizeof...(S) == D))>
-    explicit custom_dyn_matrix_impl(value_type* memory, S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<size_t>(sizes)...}})
+    explicit custom_dyn_matrix_impl(value_type* memory, S... sizes) noexcept : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}})
                                                     {
         _memory = memory;
         //Nothing else to init
