@@ -26,28 +26,12 @@ struct upsample_2d {
      * \tparam C2 The second dimension pooling ratio
      */
     template <size_t C1, size_t C2, typename A, typename M>
-    static void upsample_block(A&& in, M& m, size_t j, size_t k) {
+    static void upsample_block_2d(A&& in, M& m, size_t j, size_t k) {
         auto value = in(j, k);
 
         for (size_t jj = 0; jj < C1; ++jj) {
             for (size_t kk = 0; kk < C2; ++kk) {
                 m(j * C1 + jj, k * C2 + kk) = value;
-            }
-        }
-    }
-
-    /*!
-     * \brief Apply the functor on sub and store the result in m
-     * \param in The sub expression
-     * \param m The storage matrix
-     * \tparam C1 The first dimension pooling ratio
-     * \tparam C2 The second dimension pooling ratio
-     */
-    template <size_t C1, size_t C2, typename A, typename M, cpp_enable_if(is_2d<A>::value)>
-    static void apply(A&& in, M&& m) {
-        for (size_t j = 0; j < etl::dim<0>(in); ++j) {
-            for (size_t k = 0; k < etl::dim<1>(in); ++k) {
-                upsample_block<C1, C2>(in, m, j, k);
             }
         }
     }
@@ -61,12 +45,30 @@ struct upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename M>
-    static void upsample_block(A&& in, M& m, size_t j, size_t k, size_t c1, size_t c2) {
+    static void upsample_block_2d(A&& in, M& m, size_t j, size_t k, size_t c1, size_t c2) {
         auto value = in(j, k);
 
         for (size_t jj = 0; jj < c1; ++jj) {
             for (size_t kk = 0; kk < c2; ++kk) {
                 m(j * c1 + jj, k * c2 + kk) = value;
+            }
+        }
+    }
+
+    // 2D handling
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param in The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
+    template <size_t C1, size_t C2, typename A, typename M, cpp_enable_if(is_2d<A>::value)>
+    static void apply(A&& in, M&& m) {
+        for (size_t j = 0; j < etl::dim<0>(in); ++j) {
+            for (size_t k = 0; k < etl::dim<1>(in); ++k) {
+                upsample_block_2d<C1, C2>(in, m, j, k);
             }
         }
     }
@@ -82,7 +84,7 @@ struct upsample_2d {
     static void apply(A&& in, M&& m, size_t c1, size_t c2) {
         for (size_t j = 0; j < etl::dim<0>(in); ++j) {
             for (size_t k = 0; k < etl::dim<1>(in); ++k) {
-                upsample_block(in, m, j, k, c1, c2);
+                upsample_block_2d(in, m, j, k, c1, c2);
             }
         }
     }
@@ -134,32 +136,13 @@ struct upsample_3d {
      * \tparam C3 The third dimension pooling ratio
      */
     template <size_t C1, size_t C2, size_t C3, typename A, typename M>
-    static void upsample_block(A&& in, M& m, size_t i, size_t j, size_t k) {
+    static void upsample_block_3d(A&& in, M& m, size_t i, size_t j, size_t k) {
         auto value = in(i, j, k);
 
         for (size_t ii = 0; ii < C1; ++ii) {
             for (size_t jj = 0; jj < C2; ++jj) {
                 for (size_t kk = 0; kk < C3; ++kk) {
                     m(i * C1 + ii, j * C2 + jj, k * C3 + kk) = value;
-                }
-            }
-        }
-    }
-
-    /*!
-     * \brief Apply the functor on sub and store the result in m
-     * \param in The sub expression
-     * \param m The storage matrix
-     * \tparam C1 The first dimension pooling ratio
-     * \tparam C2 The second dimension pooling ratio
-     * \tparam C3 The third dimension pooling ratio
-     */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename M, cpp_enable_if(is_3d<A>::value)>
-    static void apply(A&& in, M&& m) {
-        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
-            for (size_t j = 0; j < etl::dim<1>(in); ++j) {
-                for (size_t k = 0; k < etl::dim<2>(in); ++k) {
-                    upsample_block<C1, C2, C3>(in, m, i, j, k);
                 }
             }
         }
@@ -177,13 +160,34 @@ struct upsample_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A, typename M>
-    static void upsample_block(A&& in, M& m, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3) {
+    static void upsample_block_3d(A&& in, M& m, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3) {
         auto value = in(i, j, k);
 
         for (size_t ii = 0; ii < c1; ++ii) {
             for (size_t jj = 0; jj < c2; ++jj) {
                 for (size_t kk = 0; kk < c3; ++kk) {
                     m(i * c1 + ii, j * c2 + jj, k * c3 + kk) = value;
+                }
+            }
+        }
+    }
+
+    // 3D Handling
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param in The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     * \tparam C3 The third dimension pooling ratio
+     */
+    template <size_t C1, size_t C2, size_t C3, typename A, typename M, cpp_enable_if(is_3d<A>::value)>
+    static void apply(A&& in, M&& m) {
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
+            for (size_t j = 0; j < etl::dim<1>(in); ++j) {
+                for (size_t k = 0; k < etl::dim<2>(in); ++k) {
+                    upsample_block_3d<C1, C2, C3>(in, m, i, j, k);
                 }
             }
         }
@@ -202,7 +206,7 @@ struct upsample_3d {
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             for (size_t j = 0; j < etl::dim<1>(in); ++j) {
                 for (size_t k = 0; k < etl::dim<2>(in); ++k) {
-                    upsample_block(in, m, i, j, k, c1, c2, c3);
+                    upsample_block_3d(in, m, i, j, k, c1, c2, c3);
                 }
             }
         }
