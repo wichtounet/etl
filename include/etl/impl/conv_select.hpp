@@ -43,26 +43,34 @@ inline etl::conv_impl select_default_conv1_impl_new() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
+    using I_T = value_t<I>;
+    using I_K = value_t<K>;
+    using I_C = value_t<C>;
+
+    static constexpr bool floating      = all_floating_t<I_T, I_K, I_C>::value;
+    static constexpr bool heterogeneous = !cpp::is_homogeneous<I_T, I_K, I_C>::value;
+
     static constexpr order input_order  = decay_traits<I>::storage_order;
     static constexpr order kernel_order = decay_traits<K>::storage_order;
     static constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
-    if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
+    if  /*constexpr*/ (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
         return etl::conv_impl::STD;
     }
 
-    static constexpr bool vec = vectorize_impl && vec_enabled;
-    static constexpr bool mkl = mkl_enabled;
-    static constexpr bool cufft = cufft_enabled;
+    // Only the standar dimplementation is able to handle heterogeneous types
+    if /*constexpr*/ (heterogeneous) {
+        return etl::conv_impl::STD;
+    }
 
-    if(cufft && TT == conv_type::FULL){
+    if(cufft_enabled && TT == conv_type::FULL && floating){
         //TODO This should only be done for some sizes
         return etl::conv_impl::FFT_CUFFT;
-    } else if(mkl && TT == conv_type::FULL){
+    } else if(mkl_enabled && TT == conv_type::FULL && floating){
         //TODO This should only be done for some sizes
         return etl::conv_impl::FFT_MKL;
-    } else if (vec) {
+    } else if (vectorize_impl && vec_enabled && all_vectorizable<vector_mode, I, K, C>::value) {
         return etl::conv_impl::VEC;
     } else {
         return etl::conv_impl::STD;
@@ -78,16 +86,23 @@ inline etl::conv_impl select_default_conv1_impl_new() {
  */
 template <conv_type TT, typename I, typename K, typename C>
 inline etl::conv_impl select_conv1_impl_new() {
+    using I_T = value_t<I>;
+    using I_K = value_t<K>;
+    using I_C = value_t<C>;
+
     auto default_impl = select_default_conv1_impl_new<TT, I, K, C>();
 
     //COVERAGE_EXCLUDE_BEGIN
     if (local_context().conv_selector.forced) {
         auto forced = local_context().conv_selector.impl;
 
+        static constexpr bool floating    = all_floating_t<I_T, I_K, I_C>::value;
+        static constexpr bool homogeneous = cpp::is_homogeneous<I_T, I_K, I_C>::value;
+
         switch (forced) {
             //MKL cannot always be used
             case conv_impl::FFT_MKL:
-                if (!mkl_enabled) {
+                if (!mkl_enabled || !floating || !homogeneous) {
                     std::cerr << "Forced selection to MKL fft_conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
@@ -96,7 +111,7 @@ inline etl::conv_impl select_conv1_impl_new() {
 
             //CUFFT cannot always be used
             case conv_impl::FFT_CUFFT:
-                if (!cufft_enabled) {
+                if (!cufft_enabled || !floating || !homogeneous) {
                     std::cerr << "Forced selection to CUFFT fft_conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
@@ -105,7 +120,7 @@ inline etl::conv_impl select_conv1_impl_new() {
 
             //VEC cannot always be used
             case conv_impl::VEC:
-                if (!vec_enabled || !vectorize_impl) {
+                if (!vec_enabled || !vectorize_impl || !homogeneous || !all_vectorizable<vector_mode, I, K, C>::value) {
                     std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
