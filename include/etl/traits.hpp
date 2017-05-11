@@ -392,6 +392,13 @@ template <typename... E>
 using all_floating = cpp::and_c<is_floating<E>...>;
 
 /*!
+ * \brief Traits to test if all the given types are floating point numbers.
+ * \tparam E The types.
+ */
+template <typename... E>
+using all_floating_t = cpp::and_c<is_floating_t<E>...>;
+
+/*!
  * \brief Traits to test if a type is a complex number type
  * \tparam T The type to test.
  */
