@@ -34,6 +34,7 @@ struct context {
     forced_impl<conv4_impl> conv4_selector;           ///< Forced selector for conv4
     forced_impl<gemm_impl> gemm_selector;             ///< Forced selector for gemm
     forced_impl<outer_impl> outer_selector;           ///< Forced selector for outer product
+    forced_impl<bias_add_impl> bias_add_selector;           ///< Forced selector for bias_add product
     forced_impl<fft_impl> fft_selector;               ///< Forced selector for fft
 };
 
@@ -126,6 +127,14 @@ inline forced_impl<gemm_impl>& get_forced_impl() {
 template <>
 inline forced_impl<outer_impl>& get_forced_impl() {
     return local_context().outer_selector;
+}
+
+/*!
+ * \copydoc get_forced_impl
+ */
+template <>
+inline forced_impl<bias_add_impl>& get_forced_impl() {
+    return local_context().bias_add_selector;
 }
 
 /*!

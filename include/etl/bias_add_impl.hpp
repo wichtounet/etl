@@ -7,17 +7,20 @@
 
 /*!
  * \file
- * \brief Utility header including all enumerations headers
+ * \brief Enumeration for the bias_add implementations
  */
 
 #pragma once
 
-#include "scalar_impl.hpp"
-#include "sum_impl.hpp"
-#include "transpose_impl.hpp"
-#include "dot_impl.hpp"
-#include "conv_impl.hpp"
-#include "gemm_impl.hpp"
-#include "outer_impl.hpp"
-#include "bias_add_impl.hpp"
-#include "fft_impl.hpp"
+namespace etl {
+
+/*!
+ * \brief Enumeration describing the different implementations of
+ * bias_add
+ */
+enum class bias_add_impl {
+    STD, ///< Standard implementation
+    VEC  ///< VEC implementation
+};
+
+} //end of namespace etl
