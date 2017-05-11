@@ -96,7 +96,6 @@
 #include "etl/expr/binary_expr.hpp"
 #include "etl/expr/unary_expr.hpp"
 #include "etl/expr/generator_expr.hpp"
-#include "etl/expr/temporary_expr.hpp"
 #include "etl/expr/optimized_expr.hpp"
 #include "etl/expr/serial_expr.hpp"
 #include "etl/expr/selected_expr.hpp"

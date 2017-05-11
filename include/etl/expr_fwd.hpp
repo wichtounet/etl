@@ -52,12 +52,6 @@ struct timed_expr;
 template <typename D, typename T, typename A, typename B, typename R>
 struct temporary_expr_bin;
 
-template <typename T, typename AExpr, typename BExpr, typename Op>
-struct temporary_binary_expr;
-
-template <typename T, typename AExpr, typename BExpr, typename Op>
-struct temporary_binary_expr_state;
-
 template <typename T, size_t D>
 struct dim_view;
 

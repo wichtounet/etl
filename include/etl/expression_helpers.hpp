@@ -118,27 +118,6 @@ auto make_stateful_unary_expr(Args&&... args) {
     return unary_expr<value_t<E>, build_type<E>, stateful_op<OP>>(std::forward<Args>(args)...);
 }
 
-/*!
- * \brief Helper to create a temporary binary expression.
- */
-template <typename A, typename B, template <typename> class OP>
-using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>>;
-
-/*!
- * \brief Helper to create a temporary binary expression with an
- * operation that takes a number of dimensions as input template
- * type.
- */
-template <typename A, typename B, template <typename, size_t> class OP, size_t D>
-using dim_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>, D>>;
-
-/*!
- * \brief Helper to create a temporary binary expression with
- * a direct op.
- */
-template <typename A, typename B, typename OP>
-using temporary_binary_helper_op = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP>;
-
 } //end of namespace detail
 
 } //end of namespace etl

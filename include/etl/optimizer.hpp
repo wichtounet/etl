@@ -182,24 +182,6 @@ struct optimizable<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
 };
 
 /*!
- * \copydoc optimizable
- *
- * Specialization for temporary_binary_expr
- */
-template <typename T, typename A, typename B, typename Op>
-struct optimizable<etl::temporary_binary_expr<T, A, B, Op>> {
-    /*! \copydoc optimizable::is */
-    static bool is(const etl::temporary_binary_expr<T, A, B, Op>& /*unused*/) {
-        return false;
-    }
-
-    /*! \copydoc optimizable::is_deep */
-    static bool is_deep(const etl::temporary_binary_expr<T, A, B, Op>& expr) {
-        return is_optimizable_deep(expr.a()) || is_optimizable_deep(expr.b());
-    }
-};
-
-/*!
  * \brief Function to test if expr is optimizable
  * \param expr The expression to test
  * \return true if the expression is optimizable or not
@@ -419,36 +401,6 @@ struct optimizer<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
             };
 
             optimize(rhs_builder, expr.rhs);
-        } else {
-            parent_builder(expr);
-        }
-    }
-};
-
-/*!
- * \brief An optimizer for temporary binary expr
- */
-template <typename T, typename A, typename B, typename Op>
-struct optimizer<etl::temporary_binary_expr<T, A, B, Op>> {
-    /*!
-     * \brief Optimize the expression using the given builder
-     * \param parent_builder The builder to use
-     * \param expr The expression to optimize
-     */
-    template <typename Builder>
-    static void apply(Builder parent_builder, const etl::temporary_binary_expr<T, A, B, Op>& expr) {
-        if (is_optimizable_deep(expr.a())) {
-            auto lhs_builder = [&](auto&& new_lhs) {
-                parent_builder(etl::temporary_binary_expr<T, etl::detail::build_type<decltype(new_lhs)>, B, Op>(new_lhs));
-            };
-
-            optimize(lhs_builder, expr.a());
-        } else if (is_optimizable_deep(expr.b())) {
-            auto rhs_builder = [&](auto&& new_rhs) {
-                parent_builder(etl::temporary_binary_expr<T, A, etl::detail::build_type<decltype(new_rhs)>, Op>(new_rhs));
-            };
-
-            optimize(rhs_builder, expr.b());
         } else {
             parent_builder(expr);
         }
