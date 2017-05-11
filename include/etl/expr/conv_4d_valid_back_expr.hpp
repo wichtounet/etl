@@ -264,10 +264,10 @@ struct etl_traits<etl::conv_4d_valid_back_expr<A, B, S1, S2, P1, P2, Flipped>> {
  * \return an expression representing the 'valid' 1D convolution of a and b
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
-conv_4d_valid_back_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P1, false> conv_4d_valid_back(A&& a, B&& b) {
+conv_4d_valid_back_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, false> conv_4d_valid_back(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
-    return conv_4d_valid_back_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P1, false>{a, b};
+    return conv_4d_valid_back_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, false>{a, b};
 }
 
 /*!
@@ -304,10 +304,10 @@ auto conv_4d_valid_back(A&& a, B&& b, C&& c){
  * \return an expression representing the 'valid' 1D convolution of a and b
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
-conv_4d_valid_back_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P1, true> conv_4d_valid_back_flipped(A&& a, B&& b) {
+conv_4d_valid_back_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true> conv_4d_valid_back_flipped(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
-    return conv_4d_valid_back_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P1, true>{a, b};
+    return conv_4d_valid_back_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{a, b};
 }
 
 /*!
