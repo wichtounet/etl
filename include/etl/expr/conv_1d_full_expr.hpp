@@ -10,6 +10,7 @@
 #include "etl/expr/base_temporary_expr.hpp"
 
 //Get the implementations
+#include "etl/impl/conv_select.hpp"
 #include "etl/impl/conv.hpp"
 
 namespace etl {
@@ -76,19 +77,63 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
      * \param c The expression to which assign
      */
     template<typename C>
-    void assign_to(C&& c)  const {
+    void assign_to(C&& conv)  const {
         static_assert(all_etl_expr<A, B, C>::value, "conv1_full only supported for ETL expressions");
 
-        auto& a = this->a();
-        auto& b = this->b();
+        auto& input_raw = this->a();
+        auto& kernel_raw = this->b();
 
-        check(a, b, c);
+        check(input_raw, kernel_raw, conv);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
-        standard_evaluator::pre_assign_lhs(c);
+        standard_evaluator::pre_assign_rhs(input_raw);
+        standard_evaluator::pre_assign_rhs(kernel_raw);
+        standard_evaluator::pre_assign_lhs(conv);
 
-        detail::conv1_full_impl::apply(make_temporary(a), make_temporary(b), c);
+        // Make temporaries if necessary
+
+        decltype(auto) input = make_temporary(input_raw);
+        decltype(auto) kernel = make_temporary(kernel_raw);
+
+        // Execute the correct implementation
+
+        const auto impl = detail::select_conv1_impl_new<conv_type::FULL, A, B, C>();
+
+//CPP17: if constexpr
+#ifdef ETL_PARALLEL_SUPPORT
+        bool parallel_dispatch = detail::select_parallel(input, kernel, conv);
+
+        if (impl == etl::conv_impl::VEC) {
+            engine_dispatch_1d([&](size_t first, size_t last) {
+                impl::vec::conv1_full(input, kernel, conv, first, last);
+            }, 0, size(conv), parallel_dispatch);
+        } else if (impl == etl::conv_impl::STD) {
+            engine_dispatch_1d([&](size_t first, size_t last) {
+                impl::standard::conv1_full(input, kernel, conv, first, last);
+            }, 0, size(conv), parallel_dispatch);
+        } else if (impl == etl::conv_impl::FFT_STD) {
+            impl::standard::conv1_full_fft(input, kernel, conv);
+        } else if (impl == etl::conv_impl::FFT_MKL) {
+            impl::blas::conv1_full(input, kernel, conv);
+        } else if (impl == etl::conv_impl::FFT_CUFFT) {
+            impl::cufft::conv1_full(input, kernel, conv);
+        } else {
+            cpp_unreachable("Invalid conv implementation selection");
+        }
+#else
+        if (impl == etl::conv_impl::VEC) {
+            impl::vec::conv1_full(input, kernel, conv, 0, size(conv));
+        } else if (impl == etl::conv_impl::STD) {
+            impl::standard::conv1_full(input, kernel, conv, 0, size(conv));
+        } else if (impl == etl::conv_impl::FFT_STD) {
+            impl::standard::conv1_full_fft(input, kernel, conv);
+        } else if (impl == etl::conv_impl::FFT_MKL) {
+            impl::blas::conv1_full(input, kernel, conv);
+        } else if (impl == etl::conv_impl::FFT_CUFFT) {
+            impl::cufft::conv1_full(input, kernel, conv);
+        } else {
+            cpp_unreachable("Invalid conv implementation selection");
+        }
+#endif
     }
 
     /*!

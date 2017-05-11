@@ -29,7 +29,6 @@
 #include "etl/impl/conv_select.hpp" // The selection functions
 
 // All the descriptors
-#include "etl/impl/conv_1d.hpp"
 #include "etl/impl/conv_2d.hpp"
 #include "etl/impl/conv_4d.hpp"
 #include "etl/impl/conv_multi.hpp"
