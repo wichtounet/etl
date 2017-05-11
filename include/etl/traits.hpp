@@ -568,6 +568,13 @@ template <typename... E>
 using all_padded = cpp::and_u<decay_traits<E>::is_padded...>;
 
 /*!
+ * \brief Traits to test if all the given ETL expresion types are padded.
+ * \tparam E The ETL expression types.
+ */
+template <typename... E>
+using all_homogeneous = cpp::is_homogeneous<value_t<E>...>;
+
+/*!
  * \brief Simple utility traits indicating if a light subview can be created out
  * of this type.
  */
