@@ -329,6 +329,8 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t
     conv.invalidate_gpu();
 }
 
+// Note: CPP17 constexpr
+
 /*!
  * \brief Vectorized implementation of a 1D 'valid' convolution C = I * K
  * \param input The input matrix
@@ -337,12 +339,31 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t
  * \param first The index where to start in the output matrix
  * \param last The index where to stop in the output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_if(all_vectorizable<vector_mode, I, K, C>::value && all_homogeneous<I, K, C>::value)>
 void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
     conv1_valid<default_vec>(input, kernel, conv, first, last);
+}
+
+/*!
+ * \brief Vectorized implementation of a 1D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param first The index where to start in the output matrix
+ * \param last The index where to stop in the output matrix
+ */
+template <typename I, typename K, typename C, cpp_disable_if(all_vectorizable<vector_mode, I, K, C>::value && all_homogeneous<I, K, C>::value)>
+void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(first);
+    cpp_unused(last);
+
+    cpp_unreachable("Invalid call to vec::conv_1_valid");
 }
 
 } //end of namespace vec
