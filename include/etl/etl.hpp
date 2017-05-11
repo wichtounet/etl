@@ -156,6 +156,7 @@
 #include "etl/builder/conv_expression_builder.hpp"
 #include "etl/builder/fft_expression_builder.hpp"
 #include "etl/builder/pooling_expression_builder.hpp"
+#include "etl/builder/ml_expression_builder.hpp"
 
 // The optimizer
 #include "etl/optimizer.hpp"
