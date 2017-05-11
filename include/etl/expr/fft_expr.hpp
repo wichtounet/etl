@@ -169,7 +169,7 @@ struct etl_traits<etl::fft_expr<A, T, Impl>> {
      * \return the size of the expression
      */
     static size_t size(const expr_t& e) {
-        return sub_traits::size(e);
+        return sub_traits::size(e._a);
     }
 
     /*!
