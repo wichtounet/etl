@@ -180,6 +180,7 @@ $(eval $(call add_executable,parallel,workbench/src/parallel.cpp))
 $(eval $(call add_executable,multi,workbench/src/multi.cpp))
 $(eval $(call add_executable,locality,workbench/src/locality.cpp))
 $(eval $(call add_executable,counters,workbench/src/counters.cpp))
+$(eval $(call add_executable,verify_cpm,workbench/src/verify_cpm.cpp))
 $(eval $(call add_executable,benchmark,$(BENCH_FILES)))
 $(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
 
