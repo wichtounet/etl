@@ -83,6 +83,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv2_full [conv][conv2]", conv_2d_large_pol
     MKL_SECTION_FUNCTOR("fft_mkl", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::FFT_MKL, etl::conv_2d_full(a, b)); })
     CUFFT_SECTION_FUNCTOR("fft_cufft", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_2d_full(a, b)); })
 )
+
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_valid_multi_flipped [conv][conv2]", conv_2d_multi_policy,
     FLOPS([](size_t d1, size_t d2, size_t d3){ return 2 * d1 * d1 * d2 * d2 * d3; }),
     CPM_SECTION_INIT([](size_t d1, size_t d2, size_t d3){ return std::make_tuple(smat(d1,d1), smat3(d3,d2,d2), smat3(d3,d1 - d2 + 1, d1 - d2 + 1)); }),
