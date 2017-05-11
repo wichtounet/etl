@@ -1579,9 +1579,11 @@ template <typename I, typename K_T, typename C>
 void fft_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     auto kernels_f = etl::force_temporary(kernels);
 
+    // Note: The flip and padding are not combined because it is
+    // slightly faster to do the flip first on floating points
+    // rather than on complex numbers
     kernels_f.deep_fflip_inplace();
 
-    // TODO It would be faster to do the flip while padding
     fft_conv2_valid_multi(input, kernels_f, conv, s1, s2, p1, p2);
 }
 
@@ -1667,7 +1669,9 @@ void fft_conv2_valid_multi_multi_flipped(I&& input, K_T&& kernels, C&& conv, siz
 
     kernels_f.deep_fflip_inplace();
 
-    // TODO It would be faster to do the flip while padding
+    // Note: The flip and padding are not combined because it is
+    // slightly faster to do the flip first on floating points
+    // rather than on complex numbers
     fft_conv2_valid_multi_multi(input, kernels_f, conv, s1, s2, p1, p2);
 }
 
