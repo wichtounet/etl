@@ -26,8 +26,8 @@ namespace etl {
  * \return A expression representing the 2D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, typename E>
-pool_2d_expr<E, C1, C2, S1, S2, P1, P2, impl::max_pool_2d> max_pool_2d(E&& value) {
-    return pool_2d_expr<E, C1, C2, S1, S2, P1, P2, impl::max_pool_2d>{value};
+pool_2d_expr<detail::build_type<E>, C1, C2, S1, S2, P1, P2, impl::max_pool_2d> max_pool_2d(E&& value) {
+    return pool_2d_expr<detail::build_type<E>, C1, C2, S1, S2, P1, P2, impl::max_pool_2d>{value};
 }
 
 /*!
@@ -38,8 +38,8 @@ pool_2d_expr<E, C1, C2, S1, S2, P1, P2, impl::max_pool_2d> max_pool_2d(E&& value
  * \return A expression representing the 2D Max Pooling of the input expression.
  */
 template <typename E>
-dyn_pool_2d_expr<E, impl::max_pool_2d> max_pool_2d(E&& value, size_t c1, size_t c2) {
-    return dyn_pool_2d_expr<E, impl::max_pool_2d>{value, c1, c2, c1, c2, 0, 0};
+dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d> max_pool_2d(E&& value, size_t c1, size_t c2) {
+    return dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d>{value, c1, c2, c1, c2, 0, 0};
 }
 
 /*!
@@ -50,8 +50,8 @@ dyn_pool_2d_expr<E, impl::max_pool_2d> max_pool_2d(E&& value, size_t c1, size_t 
  * \return A expression representing the 2D Max Pooling of the input expression.
  */
 template <typename E>
-dyn_pool_2d_expr<E, impl::max_pool_2d> max_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
-    return dyn_pool_2d_expr<E, impl::max_pool_2d>{value, c1, c2, s1, s2, p1, p2};
+dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d> max_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
+    return dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d>{value, c1, c2, s1, s2, p1, p2};
 }
 
 /* AVG Pool 2D */
@@ -64,8 +64,8 @@ dyn_pool_2d_expr<E, impl::max_pool_2d> max_pool_2d(E&& value, size_t c1, size_t 
  * \return A expression representing the 2D Average Pooling of the input expression.
  */
 template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, typename E>
-pool_2d_expr<E, C1, C2, S1, S2, P1, P2, impl::avg_pool_2d> avg_pool_2d(E&& value) {
-    return pool_2d_expr<E, C1, C2, S1, S2, P1, P2, impl::avg_pool_2d>{value};
+pool_2d_expr<detail::build_type<E>, C1, C2, S1, S2, P1, P2, impl::avg_pool_2d> avg_pool_2d(E&& value) {
+    return pool_2d_expr<detail::build_type<E>, C1, C2, S1, S2, P1, P2, impl::avg_pool_2d>{value};
 }
 
 /*!
@@ -76,8 +76,8 @@ pool_2d_expr<E, C1, C2, S1, S2, P1, P2, impl::avg_pool_2d> avg_pool_2d(E&& value
  * \return A expression representing the 2D Average Pooling of the input expression.
  */
 template <typename E>
-dyn_pool_2d_expr<E, impl::avg_pool_2d> avg_pool_2d(E&& value, size_t c1, size_t c2) {
-    return dyn_pool_2d_expr<E, impl::avg_pool_2d>{value, c1, c2, c1, c2, 0, 0};
+dyn_pool_2d_expr<detail::build_type<E>, impl::avg_pool_2d> avg_pool_2d(E&& value, size_t c1, size_t c2) {
+    return dyn_pool_2d_expr<detail::build_type<E>, impl::avg_pool_2d>{value, c1, c2, c1, c2, 0, 0};
 }
 
 /*!
@@ -88,8 +88,8 @@ dyn_pool_2d_expr<E, impl::avg_pool_2d> avg_pool_2d(E&& value, size_t c1, size_t 
  * \return A expression representing the 2D Average Pooling of the input expression.
  */
 template <typename E>
-dyn_pool_2d_expr<E, impl::avg_pool_2d> avg_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
-    return dyn_pool_2d_expr<E, impl::avg_pool_2d>{value, c1, c2, s1, s2, p1, p2};
+dyn_pool_2d_expr<detail::build_type<E>, impl::avg_pool_2d> avg_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
+    return dyn_pool_2d_expr<detail::build_type<E>, impl::avg_pool_2d>{value, c1, c2, s1, s2, p1, p2};
 }
 
 /* Max Pool 3D */
@@ -103,8 +103,8 @@ dyn_pool_2d_expr<E, impl::avg_pool_2d> avg_pool_2d(E&& value, size_t c1, size_t 
  * \return A expression representing the 3D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, typename E>
-pool_3d_expr<E, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::max_pool_3d> max_pool_3d(E&& value) {
-    return pool_3d_expr<E, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::max_pool_3d>{value};
+pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::max_pool_3d> max_pool_3d(E&& value) {
+    return pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::max_pool_3d>{value};
 }
 
 /*!
@@ -116,8 +116,8 @@ pool_3d_expr<E, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::max_pool_3d> max_pool_
  * \return A expression representing the 3D Max Pooling of the input expression.
  */
 template <typename E>
-dyn_pool_3d_expr<E, impl::max_pool_3d> max_pool_3d(E&& value, size_t c1, size_t c2, size_t c3) {
-    return dyn_pool_3d_expr<E, impl::max_pool_3d>{value, c1, c2, c3, c1, c2, c3, 0, 0, 0};
+dyn_pool_3d_expr<detail::build_type<E>, impl::max_pool_3d> max_pool_3d(E&& value, size_t c1, size_t c2, size_t c3) {
+    return dyn_pool_3d_expr<detail::build_type<E>, impl::max_pool_3d>{value, c1, c2, c3, c1, c2, c3, 0, 0, 0};
 }
 
 /*!
@@ -129,8 +129,8 @@ dyn_pool_3d_expr<E, impl::max_pool_3d> max_pool_3d(E&& value, size_t c1, size_t 
  * \return A expression representing the 3D Max Pooling of the input expression.
  */
 template <typename E>
-dyn_pool_3d_expr<E, impl::max_pool_3d> max_pool_3d(E&& value, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1 = 0, size_t p2 = 0, size_t p3 = 0) {
-    return dyn_pool_3d_expr<E, impl::max_pool_3d>{value, c1, c2, c3, s1, s2, s3, p1, p2, p3};
+dyn_pool_3d_expr<detail::build_type<E>, impl::max_pool_3d> max_pool_3d(E&& value, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1 = 0, size_t p2 = 0, size_t p3 = 0) {
+    return dyn_pool_3d_expr<detail::build_type<E>, impl::max_pool_3d>{value, c1, c2, c3, s1, s2, s3, p1, p2, p3};
 }
 
 /* Avg Pool 3D */
@@ -144,8 +144,8 @@ dyn_pool_3d_expr<E, impl::max_pool_3d> max_pool_3d(E&& value, size_t c1, size_t 
  * \return A expression representing the 3D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, typename E>
-pool_3d_expr<E, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::avg_pool_3d> avg_pool_3d(E&& value) {
-    return pool_3d_expr<E, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::avg_pool_3d>{value};
+pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::avg_pool_3d> avg_pool_3d(E&& value) {
+    return pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::avg_pool_3d>{value};
 }
 
 /*!
@@ -157,8 +157,8 @@ pool_3d_expr<E, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::avg_pool_3d> avg_pool_
  * \return A expression representing the 3D Average Pooling of the input expression.
  */
 template <typename E>
-dyn_pool_3d_expr<E, impl::avg_pool_3d> avg_pool_3d(E&& value, size_t c1, size_t c2, size_t c3) {
-    return dyn_pool_3d_expr<E, impl::avg_pool_3d>{value, c1, c2, c3, c1, c2, c3, 0, 0, 0};
+dyn_pool_3d_expr<detail::build_type<E>, impl::avg_pool_3d> avg_pool_3d(E&& value, size_t c1, size_t c2, size_t c3) {
+    return dyn_pool_3d_expr<detail::build_type<E>, impl::avg_pool_3d>{value, c1, c2, c3, c1, c2, c3, 0, 0, 0};
 }
 
 /*!
@@ -170,8 +170,8 @@ dyn_pool_3d_expr<E, impl::avg_pool_3d> avg_pool_3d(E&& value, size_t c1, size_t 
  * \return A expression representing the 3D Average Pooling of the input expression.
  */
 template <typename E>
-dyn_pool_3d_expr<E, impl::avg_pool_3d> avg_pool_3d(E&& value, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1 = 0, size_t p2 = 0, size_t p3 = 0) {
-    return dyn_pool_3d_expr<E, impl::avg_pool_3d>{value, c1, c2, c3, s1, s2, s3, p1, p2, p3};
+dyn_pool_3d_expr<detail::build_type<E>, impl::avg_pool_3d> avg_pool_3d(E&& value, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1 = 0, size_t p2 = 0, size_t p3 = 0) {
+    return dyn_pool_3d_expr<detail::build_type<E>, impl::avg_pool_3d>{value, c1, c2, c3, s1, s2, s3, p1, p2, p3};
 }
 
 /* Avg Pool 2D Derivative */
@@ -251,8 +251,8 @@ auto avg_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t 
  * \return A expression representing the Derivative of 2D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, typename E, typename F>
-pool_derivative_expr<E, F, C1, C2, 0, impl::max_pool_derivative_2d> max_pool_derivative_2d(E&& input, F&& output) {
-    return pool_derivative_expr<E, F, C1, C2, 0, impl::max_pool_derivative_2d>{input, output};
+pool_derivative_expr<detail::build_type<E>, F, C1, C2, 0, impl::max_pool_derivative_2d> max_pool_derivative_2d(E&& input, F&& output) {
+    return pool_derivative_expr<detail::build_type<E>, F, C1, C2, 0, impl::max_pool_derivative_2d>{input, output};
 }
 
 /*!
@@ -264,8 +264,8 @@ pool_derivative_expr<E, F, C1, C2, 0, impl::max_pool_derivative_2d> max_pool_der
  * \return A expression representing the Derivative of 2D Max Pooling of the input expression.
  */
 template <typename E, typename F>
-dyn_pool_derivative_expr<E, F, impl::max_pool_derivative_2d> max_pool_derivative_2d(E&& input, F&& output, size_t c1, size_t c2) {
-    return dyn_pool_derivative_expr<E, F, impl::max_pool_derivative_2d>{input, output, c1, c2, 0};
+dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_2d> max_pool_derivative_2d(E&& input, F&& output, size_t c1, size_t c2) {
+    return dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_2d>{input, output, c1, c2, 0};
 }
 
 /* Max Pool 3D Derivative */
@@ -281,7 +281,7 @@ dyn_pool_derivative_expr<E, F, impl::max_pool_derivative_2d> max_pool_derivative
  */
 template <size_t C1, size_t C2, size_t C3, typename E, typename F>
 auto max_pool_derivative_3d(E&& input, F&& output) {
-    return pool_derivative_expr<E, F, C1, C2, C3, impl::max_pool_derivative_3d>{input, output};
+    return pool_derivative_expr<detail::build_type<E>, F, C1, C2, C3, impl::max_pool_derivative_3d>{input, output};
 }
 
 /*!
@@ -294,8 +294,8 @@ auto max_pool_derivative_3d(E&& input, F&& output) {
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <typename E, typename F>
-dyn_pool_derivative_expr<E, F, impl::max_pool_derivative_3d> max_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t c3) {
-    return dyn_pool_derivative_expr<E, F, impl::max_pool_derivative_3d>{input, output, c1, c2, c3};
+dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_3d> max_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t c3) {
+    return dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_3d>{input, output, c1, c2, c3};
 }
 
 /* Max Pool 2D Upsample */
@@ -311,7 +311,7 @@ dyn_pool_derivative_expr<E, F, impl::max_pool_derivative_3d> max_pool_derivative
 template <size_t C1, size_t C2, typename A, typename B, typename C>
 auto max_pool_upsample_2d(A&& input, B&& output, C&& errors) {
     using detail::build_type;
-    return max_pool_upsample_2d_expr<build_type<A>, build_type<B>, build_type<C>, C1, C2>{input, output, errors};
+    return max_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2>{input, output, errors};
 }
 
 /*!
@@ -325,7 +325,7 @@ auto max_pool_upsample_2d(A&& input, B&& output, C&& errors) {
 template <typename A, typename B, typename C>
 auto max_pool_upsample_2d(A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
     using detail::build_type;
-    return dyn_max_pool_upsample_2d_expr<build_type<A>, build_type<B>, build_type<C>>{input, output, errors, c1, c2};
+    return dyn_max_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>>{input, output, errors, c1, c2};
 }
 
 /* Max Pool 3D Upsample */
@@ -342,7 +342,7 @@ auto max_pool_upsample_2d(A&& input, B&& output, C&& errors, size_t c1, size_t c
 template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C>
 auto max_pool_upsample_3d(A&& input, B&& output, C&& errors) {
     using detail::build_type;
-    return max_pool_upsample_3d_expr<build_type<A>, build_type<B>, build_type<C>, C1, C2, C3>{input, output, errors};
+    return max_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3>{input, output, errors};
 }
 
 /*!
@@ -357,7 +357,7 @@ auto max_pool_upsample_3d(A&& input, B&& output, C&& errors) {
 template <typename A, typename B, typename C>
 auto max_pool_upsample_3d(A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t c3) {
     using detail::build_type;
-    return dyn_max_pool_upsample_3d_expr<build_type<A>, build_type<B>, build_type<C>>{input, output, errors, c1, c2, c3};
+    return dyn_max_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>>{input, output, errors, c1, c2, c3};
 }
 
 /* Upsample 2D */
@@ -370,8 +370,8 @@ auto max_pool_upsample_3d(A&& input, B&& output, C&& errors, size_t c1, size_t c
  * \return A expression representing the Upsampling of the given expression
  */
 template <size_t C1, size_t C2, typename E>
-upsample_2d_expr<E, C1, C2, impl::upsample_2d> upsample_2d(E&& value) {
-    return upsample_2d_expr<E, C1, C2, impl::upsample_2d>{value};
+upsample_2d_expr<detail::build_type<E>, C1, C2, impl::upsample_2d> upsample_2d(E&& value) {
+    return upsample_2d_expr<detail::build_type<E>, C1, C2, impl::upsample_2d>{value};
 }
 
 /*!
@@ -382,8 +382,8 @@ upsample_2d_expr<E, C1, C2, impl::upsample_2d> upsample_2d(E&& value) {
  * \return A expression representing the Upsampling of the given expression
  */
 template <typename E>
-dyn_upsample_2d_expr<E, impl::upsample_2d> upsample_2d(E&& value, size_t c1, size_t c2) {
-    return dyn_upsample_2d_expr<E, impl::upsample_2d>{value, c1, c2};
+dyn_upsample_2d_expr<detail::build_type<E>, impl::upsample_2d> upsample_2d(E&& value, size_t c1, size_t c2) {
+    return dyn_upsample_2d_expr<detail::build_type<E>, impl::upsample_2d>{value, c1, c2};
 }
 
 /* Upsample 3D */
@@ -397,8 +397,8 @@ dyn_upsample_2d_expr<E, impl::upsample_2d> upsample_2d(E&& value, size_t c1, siz
  * \return A expression representing the Upsampling of the given expression
  */
 template <size_t C1, size_t C2, size_t C3, typename E>
-upsample_3d_expr<E, C1, C2, C3, impl::upsample_3d> upsample_3d(E&& value) {
-    return upsample_3d_expr<E, C1, C2, C3, impl::upsample_3d>{value};
+upsample_3d_expr<detail::build_type<E>, C1, C2, C3, impl::upsample_3d> upsample_3d(E&& value) {
+    return upsample_3d_expr<detail::build_type<E>, C1, C2, C3, impl::upsample_3d>{value};
 }
 
 /*!
@@ -410,8 +410,8 @@ upsample_3d_expr<E, C1, C2, C3, impl::upsample_3d> upsample_3d(E&& value) {
  * \return A expression representing the Upsampling of the given expression
  */
 template <typename E>
-dyn_upsample_3d_expr<E, impl::upsample_3d> upsample_3d(E&& value, size_t c1, size_t c2, size_t c3) {
-    return dyn_upsample_3d_expr<E, impl::upsample_3d>{value, c1, c2, c3};
+dyn_upsample_3d_expr<detail::build_type<E>, impl::upsample_3d> upsample_3d(E&& value, size_t c1, size_t c2, size_t c3) {
+    return dyn_upsample_3d_expr<detail::build_type<E>, impl::upsample_3d>{value, c1, c2, c3};
 }
 
 /* Probabilistic Max Pooling (hidden) */
@@ -424,9 +424,9 @@ dyn_upsample_3d_expr<E, impl::upsample_3d> upsample_3d(E&& value, size_t c1, siz
  * \return A expression representing the Probabilistic Max Pooling of hidden units
  */
 template <size_t C1, size_t C2, typename E>
-prob_pool_2d_expr<E, C1, C2, impl::pmp_h_impl> p_max_pool_h(E&& value) {
+prob_pool_2d_expr<detail::build_type<E>, C1, C2, impl::pmp_h_impl> p_max_pool_h(E&& value) {
     validate_pmax_pooling<C1, C2>(value);
-    return prob_pool_2d_expr<E, C1, C2, impl::pmp_h_impl>{value};
+    return prob_pool_2d_expr<detail::build_type<E>, C1, C2, impl::pmp_h_impl>{value};
 }
 
 /*!
@@ -437,9 +437,9 @@ prob_pool_2d_expr<E, C1, C2, impl::pmp_h_impl> p_max_pool_h(E&& value) {
  * \return A expression representing the Probabilistic Max Pooling of hidden units
  */
 template <typename E>
-dyn_prob_pool_2d_expr<E, impl::dyn_pmp_h_impl> p_max_pool_h(E&& value, size_t c1, size_t c2) {
+dyn_prob_pool_2d_expr<detail::build_type<E>, impl::dyn_pmp_h_impl> p_max_pool_h(E&& value, size_t c1, size_t c2) {
     validate_pmax_pooling(value, c1, c2);
-    return dyn_prob_pool_2d_expr<E, impl::dyn_pmp_h_impl>{value, c1, c2};
+    return dyn_prob_pool_2d_expr<detail::build_type<E>, impl::dyn_pmp_h_impl>{value, c1, c2};
 }
 
 /* Probabilistic Max Pooling (pooling) */
@@ -452,9 +452,9 @@ dyn_prob_pool_2d_expr<E, impl::dyn_pmp_h_impl> p_max_pool_h(E&& value, size_t c1
  * \return A expression representing the Probabilistic Max Pooling of pooling units
  */
 template <size_t C1, size_t C2, typename E>
-pool_2d_expr<E, C1, C2, C1, C2, 0, 0, impl::pmp_p_impl> p_max_pool_p(E&& value) {
+pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::pmp_p_impl> p_max_pool_p(E&& value) {
     validate_pmax_pooling<C1, C2>(value);
-    return pool_2d_expr<E, C1, C2, C1, C2, 0, 0, impl::pmp_p_impl>{value};
+    return pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::pmp_p_impl>{value};
 }
 
 /*!
@@ -465,9 +465,9 @@ pool_2d_expr<E, C1, C2, C1, C2, 0, 0, impl::pmp_p_impl> p_max_pool_p(E&& value) 
  * \return A expression representing the Probabilistic Max Pooling of pooling units
  */
 template <typename E>
-dyn_pool_2d_expr<E, impl::dyn_pmp_p_impl> p_max_pool_p(E&& value, size_t c1, size_t c2) {
+dyn_pool_2d_expr<detail::build_type<E>, impl::dyn_pmp_p_impl> p_max_pool_p(E&& value, size_t c1, size_t c2) {
     validate_pmax_pooling(value, c1, c2);
-    return dyn_pool_2d_expr<E, impl::dyn_pmp_p_impl>{value, c1, c2, c1, c2, 0, 0};
+    return dyn_pool_2d_expr<detail::build_type<E>, impl::dyn_pmp_p_impl>{value, c1, c2, c1, c2, 0, 0};
 }
 
 } //end of namespace etl

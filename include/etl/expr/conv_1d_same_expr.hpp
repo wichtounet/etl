@@ -276,10 +276,10 @@ struct etl_traits<etl::conv_1d_same_expr<A, B>> {
  * \return an expression representing the 'same' 1D convolution of a and b
  */
 template <typename A, typename B>
-conv_1d_same_expr<A, B> conv_1d_same(A&& a, B&& b) {
+conv_1d_same_expr<detail::build_type<A>, detail::build_type<B>> conv_1d_same(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
-    return conv_1d_same_expr<A, B>{a, b};
+    return conv_1d_same_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
 
 /*!

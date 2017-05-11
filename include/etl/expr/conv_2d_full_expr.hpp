@@ -245,10 +245,10 @@ struct etl_traits<etl::conv_2d_full_expr<A, B, Flipped>> {
  * \return an expression representing the 'full' 1D convolution of a and b
  */
 template <typename A, typename B>
-conv_2d_full_expr<A, B, false> conv_2d_full(A&& a, B&& b) {
+conv_2d_full_expr<detail::build_type<A>, detail::build_type<B>, false> conv_2d_full(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
-    return conv_2d_full_expr<A, B, false>{a, b};
+    return conv_2d_full_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b};
 }
 
 /*!
@@ -284,10 +284,10 @@ auto conv_2d_full(A&& a, B&& b, C&& c){
  * \return an expression representing the 'full' 1D convolution of a and b
  */
 template <typename A, typename B>
-conv_2d_full_expr<A, B, true> conv_2d_full_flipped(A&& a, B&& b) {
+conv_2d_full_expr<detail::build_type<A>, detail::build_type<B>, true> conv_2d_full_flipped(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
-    return conv_2d_full_expr<A, B, true>{a, b};
+    return conv_2d_full_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b};
 }
 
 /*!

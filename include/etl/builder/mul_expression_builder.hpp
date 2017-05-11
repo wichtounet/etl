@@ -23,11 +23,11 @@ namespace etl {
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_2d<B>::value)>
-gemm_expr<A, B, detail::mm_mul_impl> operator*(A&& a, B&& b) {
+gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::mm_mul_impl> operator*(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
-    return gemm_expr<A, B, detail::mm_mul_impl>{a, b};
+    return gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::mm_mul_impl>{a, b};
 }
 
 /*!
@@ -37,8 +37,8 @@ gemm_expr<A, B, detail::mm_mul_impl> operator*(A&& a, B&& b) {
  * \return An expression representing the vector-matrix multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_1d<A>::value, is_2d<B>::value)>
-gevm_expr<A, B, detail::vm_mul_impl> operator*(A&& a, B&& b) {
-    return gevm_expr<A, B, detail::vm_mul_impl>{a, b};
+gevm_expr<detail::build_type<A>, detail::build_type<B>, detail::vm_mul_impl> operator*(A&& a, B&& b) {
+    return gevm_expr<detail::build_type<A>, detail::build_type<B>, detail::vm_mul_impl>{a, b};
 }
 
 /*!
@@ -48,8 +48,8 @@ gevm_expr<A, B, detail::vm_mul_impl> operator*(A&& a, B&& b) {
  * \return An expression representing the matrix-vector multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_1d<B>::value)>
-gemv_expr<A, B, detail::mv_mul_impl> operator*(A&& a, B&& b) {
-    return gemv_expr<A, B, detail::mv_mul_impl>{a, b};
+gemv_expr<detail::build_type<A>, detail::build_type<B>, detail::mv_mul_impl> operator*(A&& a, B&& b) {
+    return gemv_expr<detail::build_type<A>, detail::build_type<B>, detail::mv_mul_impl>{a, b};
 }
 
 /*!
@@ -59,11 +59,11 @@ gemv_expr<A, B, detail::mv_mul_impl> operator*(A&& a, B&& b) {
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_2d<B>::value)>
-gemm_expr<A, B, detail::mm_mul_impl> mul(A&& a, B&& b) {
+gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::mm_mul_impl> mul(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
-    return gemm_expr<A, B, detail::mm_mul_impl>{a, b};
+    return gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::mm_mul_impl>{a, b};
 }
 
 /*!
@@ -103,8 +103,8 @@ auto lazy_mul(A&& a, B&& b) -> detail::stable_transform_binary_helper<A, B, mm_m
  * \return An expression representing the vector-matrix multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_1d<A>::value, is_2d<B>::value)>
-gevm_expr<A, B, detail::vm_mul_impl> mul(A&& a, B&& b) {
-    return gevm_expr<A, B, detail::vm_mul_impl>{a, b};
+gevm_expr<detail::build_type<A>, detail::build_type<B>, detail::vm_mul_impl> mul(A&& a, B&& b) {
+    return gevm_expr<detail::build_type<A>, detail::build_type<B>, detail::vm_mul_impl>{a, b};
 }
 
 /*!
@@ -127,8 +127,8 @@ auto mul(A&& a, B&& b, C&& c){
  * \return An expression representing the matrix-vector multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_1d<B>::value)>
-gemv_expr<A, B, detail::mv_mul_impl> mul(A&& a, B&& b){
-    return gemv_expr<A, B, detail::mv_mul_impl>{a, b};
+gemv_expr<detail::build_type<A>, detail::build_type<B>, detail::mv_mul_impl> mul(A&& a, B&& b){
+    return gemv_expr<detail::build_type<A>, detail::build_type<B>, detail::mv_mul_impl>{a, b};
 }
 
 /*!
@@ -151,11 +151,11 @@ auto mul(A&& a, B&& b, C&& c) {
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <typename A, typename B>
-gemm_expr<A, B, detail::strassen_mm_mul_impl> strassen_mul(A&& a, B&& b) {
+gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::strassen_mm_mul_impl> strassen_mul(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
-    return gemm_expr<A, B, detail::strassen_mm_mul_impl>{a, b};
+    return gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::strassen_mm_mul_impl>{a, b};
 }
 
 /*!
@@ -181,8 +181,8 @@ auto strassen_mul(A&& a, B&& b, C&& c) {
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <typename A, typename B>
-outer_product_expr<A, B> outer(A&& a, B&& b) {
-    return outer_product_expr<A, B>{a, b};
+outer_product_expr<detail::build_type<A>, detail::build_type<B>> outer(A&& a, B&& b) {
+    return outer_product_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
 
 /*!
@@ -205,8 +205,8 @@ auto outer(A&& a, B&& b, C&& c){
  * \return An expression representing the outer product multiplication of a and b
  */
 template <typename A, typename B>
-batch_outer_product_expr<A, B> batch_outer(A&& a, B&& b) {
-    return batch_outer_product_expr<A, B>{a, b};
+batch_outer_product_expr<detail::build_type<A>, detail::build_type<B>> batch_outer(A&& a, B&& b) {
+    return batch_outer_product_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
 
 /*!
