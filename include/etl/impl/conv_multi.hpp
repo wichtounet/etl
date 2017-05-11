@@ -302,9 +302,7 @@ struct conv2_full_multi_impl {
     static void apply(I&& input, K&& kernel, C&& conv) {
         auto impl = select_conv_full_multi_impl<I, K, C>();
 
-        if (impl == etl::conv_multi_impl::CUDNN) {
-            impl::cudnn::conv2_full_multi(input, kernel, conv);
-        } else if (impl == etl::conv_multi_impl::VEC){
+        if (impl == etl::conv_multi_impl::VEC){
             impl::vec::conv2_full_multi(input, kernel, conv);
         } else if (impl == etl::conv_multi_impl::STD){
             impl::standard::conv2_full_multi(input, kernel, conv);
@@ -402,9 +400,7 @@ struct conv2_full_multi_flipped_impl {
     static void apply(I&& input, K&& kernel, C&& conv) {
         auto impl = select_conv_full_multi_impl<I, K, C>();
 
-        if (impl == etl::conv_multi_impl::CUDNN) {
-            impl::cudnn::conv2_full_multi_flipped(input, kernel, conv);
-        } else if (impl == etl::conv_multi_impl::VEC){
+        if (impl == etl::conv_multi_impl::VEC){
             impl::vec::conv2_full_multi_flipped(input, kernel, conv);
         } else if (impl == etl::conv_multi_impl::STD){
             impl::standard::conv2_full_multi_flipped(input, kernel, conv);

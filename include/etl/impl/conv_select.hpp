@@ -847,13 +847,6 @@ inline etl::conv_multi_impl select_default_conv_full_multi_impl() {
         return etl::conv_multi_impl::STD;
     }
 
-    static constexpr bool cudnn = cudnn_enabled;
-
-    if(cudnn && decay_traits<I>::dimensions() == 2){
-        //TODO Should only be used with (very?) large sizes
-        return etl::conv_multi_impl::CUDNN;
-    }
-
     if (vectorize_impl && vec_enabled) {
         return etl::conv_multi_impl::VEC;
     }
