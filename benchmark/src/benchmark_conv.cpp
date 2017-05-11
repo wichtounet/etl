@@ -289,7 +289,6 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_full_multi [conv][conv2]", conv_2d_mul
     ,CPM_SECTION_FUNCTOR("fft_std", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT_STD, etl::conv_2d_full_multi(a, b)); })
     MKL_SECTION_FUNCTOR("fft_mkl", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT_MKL, etl::conv_2d_full_multi(a, b)); })
     CUFFT_SECTION_FUNCTOR("fft_cufft", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT_CUFFT, etl::conv_2d_full_multi(a, b)); })
-    CUDNN_SECTION_FUNCTOR("cudnn", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::CUDNN, etl::conv_2d_full_multi(a, b)); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_full_multi_flipped [conv][conv2]", conv_2d_multi_policy,
@@ -301,7 +300,6 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_full_multi_flipped [conv][conv2]", con
     ,CPM_SECTION_FUNCTOR("fft_std", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT_STD, etl::conv_2d_full_multi_flipped(a, b)); })
     MKL_SECTION_FUNCTOR("fft_mkl", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT_MKL, etl::conv_2d_full_multi_flipped(a, b)); })
     CUFFT_SECTION_FUNCTOR("fft_cufft", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT_CUFFT, etl::conv_2d_full_multi_flipped(a, b)); })
-    CUDNN_SECTION_FUNCTOR("cudnn", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::CUDNN, etl::conv_2d_full_multi_flipped(a, b)); })
 )
 
 CONV4_BENCH("sconv4_valid [conv][conv4]", conv_4d_valid_policy, conv_4d_valid)
