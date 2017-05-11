@@ -39,6 +39,8 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
     rhs.ensure_cpu_up_to_date();
 
     // TODO Ideally, we would need a kernel for very small matrices
+    // TODO If N is a multiple of the vector size, this would only perform
+    // aligned loads and then we can use load/store instead of loadu/storeu
 
     result = 0;
 
