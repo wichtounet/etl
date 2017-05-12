@@ -492,6 +492,40 @@ etl::dyn_matrix<value_t<I>, 2> inner_pad(const I& in, size_t s1, size_t s2) {
     return result;
 }
 
+/*!
+ * \brief Returns a matrix corresponding to the input with some amount of inner
+ * padding.
+ *
+ * This should only be used for fractionally-strided convolution
+ *
+ * \param in The input matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ *
+ * \return A matrix containing the same elements as the input with some innner
+ * padding.
+ */
+template <typename I, cpp_enable_if((etl::dimensions<I>() == 4))>
+etl::dyn_matrix<value_t<I>, 4> inner_pad(const I& in, size_t s1, size_t s2) {
+    etl::dyn_matrix<value_t<I>, 4> result(etl::dim<0>(in), etl::dim<1>(in), (etl::dim<2>(in) - 1) * s1 + 1, (etl::dim<3>(in) - 1) * s2 + 1);
+
+    result = 0;
+
+    in.ensure_cpu_up_to_date();
+
+    for (size_t p = 0; p < etl::dim<0>(in); ++p) {
+        for (size_t q = 0; q < etl::dim<1>(in); ++q) {
+            for (size_t i = 0; i < etl::dim<2>(in); ++i) {
+                for (size_t j = 0; j < etl::dim<3>(in); ++j) {
+                    result(p, q, i * s1, j * s2) = in(p, q, i, j);
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
 } //end of namespace common
 } //end of namespace impl
 } //end of namespace etl
