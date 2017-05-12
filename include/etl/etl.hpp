@@ -134,6 +134,7 @@
 #include "etl/expr/conv_2d_backward_expr.hpp"
 #include "etl/expr/dyn_conv_2d_backward_expr.hpp"
 #include "etl/expr/conv_4d_backward_expr.hpp"
+#include "etl/expr/dyn_conv_4d_backward_expr.hpp"
 
 // The expressions building
 #include "etl/builder/expression_builder.hpp"

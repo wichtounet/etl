@@ -249,8 +249,8 @@ struct conv2_backward_impl {
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C& conv) {
         // Need K1 / K2 to compute transposed padding
-        const size_t K1 = etl::dim<0, K>();
-        const size_t K2 = etl::dim<1, K>();
+        const size_t K1 = etl::dim<0>(kernel);
+        const size_t K2 = etl::dim<1>(kernel);
 
         // 1. Handle unit strides
         if /* constexpr */ (S1 == 1 && S2 == 1){
