@@ -15,8 +15,16 @@
 namespace etl {
 
 /*!
- * \brief A transposition expression.
- * \tparam A The transposed type
+ * \brief Expression representing the 2D 'valid' convolution of an
+ * image with a kernel.
+ *
+ * \tparam A The input type
+ * \tparam B The kernel type
+ * \tparam S1 The stride of the first dimension
+ * \tparam S2 The stride of the second dimension
+ * \tparam P1 The padding of the first dimension
+ * \tparam P2 The padding of the second dimension
+ * \tparam Flipped Indicates if Flipped already or not or not
  */
 template <typename A, typename B, size_t S1, size_t S2, size_t P1, size_t P2, bool Flipped>
 struct conv_2d_valid_expr : base_temporary_expr_bin<conv_2d_valid_expr<A, B, S1, S2, P1, P2, Flipped>, A, B> {
