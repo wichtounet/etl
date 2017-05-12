@@ -131,6 +131,7 @@
 #include "etl/expr/conv_2d_full_deep_expr.hpp"
 #include "etl/expr/conv_2d_same_deep_expr.hpp"
 #include "etl/expr/conv_2d_valid_deep_expr.hpp"
+#include "etl/expr/conv_2d_backward_expr.hpp"
 
 // The expressions building
 #include "etl/builder/expression_builder.hpp"
