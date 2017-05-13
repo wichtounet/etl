@@ -232,7 +232,8 @@ struct etl_traits<etl::conv_4d_valid_filter_expr<A, B, S1, S2, P1, P2, Flipped>>
      * \return the size of the expression
      */
     static size_t size(const expr_t& e) {
-        return etl::dim(e._b, 1) * etl::dim(e._a, 1) * ((etl::dim(e._a, 2) - etl::dim(e._b, 2) + 2 * P1) / S1 + 1) * ((etl::dim(e._a, 3) - etl::dim(e._b, 3) + 2 * P2) / S2 + 1);
+        return etl::dim(e._b, 1) * etl::dim(e._a, 1) *
+               ((etl::dim(e._a, 2) - etl::dim(e._b, 2) + 2 * P1) / S1 + 1) * ((etl::dim(e._a, 3) - etl::dim(e._b, 3) + 2 * P2) / S2 + 1);
     }
 
     /*!
