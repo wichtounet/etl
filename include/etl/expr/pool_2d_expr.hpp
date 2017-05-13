@@ -216,4 +216,41 @@ struct etl_traits<etl::pool_2d_expr<A, C1, C2, S1, S2, P1, P2, Impl>> {
     }
 };
 
+/*!
+ * \brief 2D Max Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \return A expression representing the 2D Max Pooling of the input expression.
+ */
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, typename E>
+pool_2d_expr<detail::build_type<E>, C1, C2, S1, S2, P1, P2, impl::max_pool_2d> max_pool_2d(E&& value) {
+    return pool_2d_expr<detail::build_type<E>, C1, C2, S1, S2, P1, P2, impl::max_pool_2d>{value};
+}
+
+/*!
+ * \brief 2D Average Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \return A expression representing the 2D Average Pooling of the input expression.
+ */
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, typename E>
+pool_2d_expr<detail::build_type<E>, C1, C2, S1, S2, P1, P2, impl::avg_pool_2d> avg_pool_2d(E&& value) {
+    return pool_2d_expr<detail::build_type<E>, C1, C2, S1, S2, P1, P2, impl::avg_pool_2d>{value};
+}
+
+/*!
+ * \brief Probabilistic Max Pooling for pooling units
+ * \param value The input expression
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \return A expression representing the Probabilistic Max Pooling of pooling units
+ */
+template <size_t C1, size_t C2, typename E>
+pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::pmp_p_impl> p_max_pool_p(E&& value) {
+    validate_pmax_pooling<C1, C2>(value);
+    return pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::pmp_p_impl>{value};
+}
+
 } //end of namespace etl

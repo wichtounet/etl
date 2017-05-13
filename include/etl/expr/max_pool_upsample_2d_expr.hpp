@@ -250,4 +250,18 @@ struct etl_traits<etl::max_pool_upsample_2d_expr<A, B, C, C1, C2>> {
     }
 };
 
+/*!
+ * \brief Derivative of the 2D Max Pooling of the given matrix expression and upsampling.
+ * \param input The input
+ * \param output The output
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
+ */
+template <size_t C1, size_t C2, typename A, typename B, typename C>
+max_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2> max_pool_upsample_2d(A&& input, B&& output, C&& errors) {
+    using detail::build_type;
+    return max_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2>{input, output, errors};
+}
+
 } //end of namespace etl
