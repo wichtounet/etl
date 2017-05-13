@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "etl/expression_helpers.hpp"
-
 namespace etl {
 
 /* Avg Pool 2D Derivative */
