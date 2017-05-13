@@ -240,64 +240,6 @@ auto avg_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t 
     return 1.0 / (c1 * c2 * c3);
 }
 
-/* Max Pool 2D Derivative */
-
-/*!
- * \brief Derivative of the 2D Max Pooling of the given matrix expression
- * \param input The input
- * \param output The output
- * \tparam C1 The first pooling ratio
- * \tparam C2 The second pooling ratio
- * \return A expression representing the Derivative of 2D Max Pooling of the input expression.
- */
-template <size_t C1, size_t C2, typename E, typename F>
-pool_derivative_expr<detail::build_type<E>, F, C1, C2, 0, impl::max_pool_derivative_2d> max_pool_derivative_2d(E&& input, F&& output) {
-    return pool_derivative_expr<detail::build_type<E>, F, C1, C2, 0, impl::max_pool_derivative_2d>{input, output};
-}
-
-/*!
- * \brief Derivative of the 2D Max Pooling of the given matrix expression
- * \param input The input
- * \param output The output
- * \param c1 The first pooling ratio
- * \param c2 The second pooling ratio
- * \return A expression representing the Derivative of 2D Max Pooling of the input expression.
- */
-template <typename E, typename F>
-dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_2d> max_pool_derivative_2d(E&& input, F&& output, size_t c1, size_t c2) {
-    return dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_2d>{input, output, c1, c2, 0};
-}
-
-/* Max Pool 3D Derivative */
-
-/*!
- * \brief Derivative of the 3D Max Pooling of the given matrix expression
- * \param input The input
- * \param output The output
- * \tparam C1 The first pooling ratio
- * \tparam C2 The second pooling ratio
- * \tparam C3 The third pooling ratio
- * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
- */
-template <size_t C1, size_t C2, size_t C3, typename E, typename F>
-auto max_pool_derivative_3d(E&& input, F&& output) {
-    return pool_derivative_expr<detail::build_type<E>, F, C1, C2, C3, impl::max_pool_derivative_3d>{input, output};
-}
-
-/*!
- * \brief Derivative of the 3D Max Pooling of the given matrix expression
- * \param input The input
- * \param output The output
- * \param c1 The first pooling ratio
- * \param c2 The second pooling ratio
- * \param c3 The third pooling ratio
- * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
- */
-template <typename E, typename F>
-dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_3d> max_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t c3) {
-    return dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_3d>{input, output, c1, c2, c3};
-}
-
 /* Max Pool 2D Upsample */
 
 /*!
@@ -309,7 +251,7 @@ dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_3d>
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, typename A, typename B, typename C>
-auto max_pool_upsample_2d(A&& input, B&& output, C&& errors) {
+max_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2> max_pool_upsample_2d(A&& input, B&& output, C&& errors) {
     using detail::build_type;
     return max_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2>{input, output, errors};
 }
@@ -323,7 +265,7 @@ auto max_pool_upsample_2d(A&& input, B&& output, C&& errors) {
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <typename A, typename B, typename C>
-auto max_pool_upsample_2d(A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
+dyn_max_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>> max_pool_upsample_2d(A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
     using detail::build_type;
     return dyn_max_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>>{input, output, errors, c1, c2};
 }
@@ -340,7 +282,7 @@ auto max_pool_upsample_2d(A&& input, B&& output, C&& errors, size_t c1, size_t c
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C>
-auto max_pool_upsample_3d(A&& input, B&& output, C&& errors) {
+max_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3> max_pool_upsample_3d(A&& input, B&& output, C&& errors) {
     using detail::build_type;
     return max_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3>{input, output, errors};
 }
@@ -355,7 +297,7 @@ auto max_pool_upsample_3d(A&& input, B&& output, C&& errors) {
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <typename A, typename B, typename C>
-auto max_pool_upsample_3d(A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t c3) {
+dyn_max_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>> max_pool_upsample_3d(A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t c3) {
     using detail::build_type;
     return dyn_max_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>>{input, output, errors, c1, c2, c3};
 }
