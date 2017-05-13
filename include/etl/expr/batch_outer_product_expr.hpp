@@ -198,4 +198,28 @@ struct etl_traits<etl::batch_outer_product_expr<A, B>> {
     }
 };
 
+/*!
+ * \brief Batch Outer product multiplication of two matrices
+ * \param a The left hand side matrix
+ * \param b The right hand side matrix
+ * \return An expression representing the outer product multiplication of a and b
+ */
+template <typename A, typename B>
+batch_outer_product_expr<detail::build_type<A>, detail::build_type<B>> batch_outer(A&& a, B&& b) {
+    return batch_outer_product_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
+}
+
+/*!
+ * \brief Batch Outer product multiplication of two matrices and store the result in c
+ * \param a The left hand side matrix
+ * \param b The right hand side matrix
+ * \param c The expression used to store the result
+ * \return An expression representing the outer product multiplication of a and b
+ */
+template <typename A, typename B, typename C>
+auto batch_outer(A&& a, B&& b, C&& c){
+    c = batch_outer(a, b);
+    return c;
+}
+
 } //end of namespace etl

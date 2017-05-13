@@ -234,4 +234,39 @@ struct etl_traits<etl::gemv_expr<A, B, Impl>> {
     }
 };
 
+/*!
+ * \brief Multiply a matrix and a vector together
+ * \param a The left hand side matrix
+ * \param b The right hand side vector
+ * \return An expression representing the matrix-vector multiplication of a and b
+ */
+template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_1d<B>::value)>
+gemv_expr<detail::build_type<A>, detail::build_type<B>, detail::mv_mul_impl> operator*(A&& a, B&& b) {
+    return gemv_expr<detail::build_type<A>, detail::build_type<B>, detail::mv_mul_impl>{a, b};
+}
+
+/*!
+ * \brief Multiply a matrix and a vector together
+ * \param a The left hand side matrix
+ * \param b The right hand side vector
+ * \return An expression representing the matrix-vector multiplication of a and b
+ */
+template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_1d<B>::value)>
+gemv_expr<detail::build_type<A>, detail::build_type<B>, detail::mv_mul_impl> mul(A&& a, B&& b){
+    return gemv_expr<detail::build_type<A>, detail::build_type<B>, detail::mv_mul_impl>{a, b};
+}
+
+/*!
+ * \brief Multiply a matrix and a vector together and store the result in c
+ * \param a The left hand side matrix
+ * \param b The right hand side vector
+ * \param c The expression used to store the result
+ * \return An expression representing the matrix-vector multiplication of a and b
+ */
+template <typename A, typename B, typename C, cpp_enable_if(is_2d<A>::value, is_1d<B>::value)>
+auto mul(A&& a, B&& b, C&& c) {
+    c = mul(a, b);
+    return c;
+}
+
 } //end of namespace etl

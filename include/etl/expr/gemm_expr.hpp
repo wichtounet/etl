@@ -239,4 +239,78 @@ struct etl_traits<etl::gemm_expr<A, B, Impl>> {
     }
 };
 
+/*!
+ * \brief Multiply two matrices together
+ * \param a The left hand side matrix
+ * \param b The right hand side matrix
+ * \return An expression representing the matrix-matrix multiplication of a and b
+ */
+template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_2d<B>::value)>
+gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::mm_mul_impl> operator*(A&& a, B&& b) {
+    static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
+
+    return gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::mm_mul_impl>{a, b};
+}
+
+/*!
+ * \brief Multiply two matrices together
+ * \param a The left hand side matrix
+ * \param b The right hand side matrix
+ * \return An expression representing the matrix-matrix multiplication of a and b
+ */
+template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_2d<B>::value)>
+gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::mm_mul_impl> mul(A&& a, B&& b) {
+    static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
+
+    return gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::mm_mul_impl>{a, b};
+}
+
+/*!
+ * \brief Multiply two matrices together and store the result in c
+ * \param a The left hand side matrix
+ * \param b The right hand side matrix
+ * \param c The expression used to store the result
+ * \return An expression representing the matrix-matrix multiplication of a and b
+ */
+template <typename A, typename B, typename C, cpp_enable_if(is_2d<A>::value, is_2d<B>::value, is_2d<C>::value)>
+auto mul(A&& a, B&& b, C&& c) {
+    static_assert(all_etl_expr<A, B, C>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
+
+    c = mul(a, b);
+    return c;
+}
+
+/*!
+ * \brief Multiply two matrices together using strassen
+ * \param a The left hand side matrix
+ * \param b The right hand side matrix
+ * \return An expression representing the matrix-matrix multiplication of a and b
+ */
+template <typename A, typename B>
+gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::strassen_mm_mul_impl> strassen_mul(A&& a, B&& b) {
+    static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
+
+    return gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::strassen_mm_mul_impl>{a, b};
+}
+
+/*!
+ * \brief Multiply two matrices together using strassen and store the result in c
+ * \param a The left hand side matrix
+ * \param b The right hand side matrix
+ * \param c The expression used to store the result
+ * \return An expression representing the matrix-matrix multiplication of a and b
+ */
+template <typename A, typename B, typename C>
+auto strassen_mul(A&& a, B&& b, C&& c) {
+    static_assert(all_etl_expr<A, B, C>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
+
+    c = mul(a,b);
+    return c;
+}
+
 } //end of namespace etl
