@@ -16,8 +16,6 @@
 
 namespace etl {
 
-/* Max Pool 3D */
-
 /* Avg Pool 2D Derivative */
 
 /*!
@@ -82,34 +80,6 @@ auto avg_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t 
     cpp_unused(input);
     cpp_unused(output);
     return 1.0 / (c1 * c2 * c3);
-}
-
-/* Probabilistic Max Pooling (hidden) */
-
-/*!
- * \brief Probabilistic Max Pooling for hidden units
- * \param value The input expression
- * \tparam C1 The first pooling ratio
- * \tparam C2 The second pooling ratio
- * \return A expression representing the Probabilistic Max Pooling of hidden units
- */
-template <size_t C1, size_t C2, typename E>
-prob_pool_2d_expr<detail::build_type<E>, C1, C2, impl::pmp_h_impl> p_max_pool_h(E&& value) {
-    validate_pmax_pooling<C1, C2>(value);
-    return prob_pool_2d_expr<detail::build_type<E>, C1, C2, impl::pmp_h_impl>{value};
-}
-
-/*!
- * \brief Probabilistic Max Pooling for hidden units
- * \param value The input expression
- * \param c1 The first pooling ratio
- * \param c2 The second pooling ratio
- * \return A expression representing the Probabilistic Max Pooling of hidden units
- */
-template <typename E>
-dyn_prob_pool_2d_expr<detail::build_type<E>, impl::dyn_pmp_h_impl> p_max_pool_h(E&& value, size_t c1, size_t c2) {
-    validate_pmax_pooling(value, c1, c2);
-    return dyn_prob_pool_2d_expr<detail::build_type<E>, impl::dyn_pmp_h_impl>{value, c1, c2};
 }
 
 } //end of namespace etl

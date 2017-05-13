@@ -195,4 +195,17 @@ struct etl_traits<etl::prob_pool_2d_expr<A, C1, C2, Impl>> {
     }
 };
 
+/*!
+ * \brief Probabilistic Max Pooling for hidden units
+ * \param value The input expression
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \return A expression representing the Probabilistic Max Pooling of hidden units
+ */
+template <size_t C1, size_t C2, typename E>
+prob_pool_2d_expr<detail::build_type<E>, C1, C2, impl::pmp_h_impl> p_max_pool_h(E&& value) {
+    validate_pmax_pooling<C1, C2>(value);
+    return prob_pool_2d_expr<detail::build_type<E>, C1, C2, impl::pmp_h_impl>{value};
+}
+
 } //end of namespace etl
