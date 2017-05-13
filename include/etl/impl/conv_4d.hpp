@@ -824,6 +824,71 @@ struct conv4_backward_filter_flipped_impl {
     }
 };
 
+/*!
+ * \brief The functor impl for 2D tranposed conv
+ */
+struct dyn_conv4_backward_filter_impl {
+    /*!
+     * \brief Apply the backward convolution
+     *
+     * \param input The input expression
+     * \param kernel The kernel expression
+     * \param conv The output expression
+     */
+    template <typename I, typename K, typename C>
+    static void apply(const I& input, const K& kernel, C& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+        // Need K1 / K2 to compute transposed padding
+        const size_t k1 = etl::dim<2>(kernel);
+        const size_t k2 = etl::dim<3>(kernel);
+
+        // 1. Handle unit strides
+        if (s1 == 1 && s2 == 1){
+            // Unit strides -> Valid convolution with the correct padding
+            dyn_conv4_valid_filter_impl::apply(input, kernel, conv, 1, 1, k1 - p1 - 1, k2 - p2 - 1);
+        }
+        // 2. Handle non_unit strides
+        else {
+            // Fractionally-strided convolution needs inner padding of the input
+            auto strided_input = impl::common::inner_pad(input, s1, s2);
+
+            // Non-unit strides, zero padding -> Fractionally-strided Valid convolution with the correct padding
+            dyn_conv4_valid_filter_impl::apply(strided_input, kernel, conv, 1, 1, k1 - p1 - 1, k2 - p2 - 1);
+        }
+    }
+};
+
+/*!
+ * \brief The functor impl for 2D tranposed conv with flipped kernels
+ */
+struct dyn_conv4_backward_filter_flipped_impl {
+    /*!
+     * \brief Apply the backward convolution
+     *
+     * \param input The input expression
+     * \param kernel The kernel expression
+     * \param conv The output expression
+     */
+    template <typename I, typename K, typename C>
+    static void apply(const I& input, const K& kernel, C& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+        // Need K1 / K2 to compute transposed padding
+        const size_t k1 = etl::dim<2>(kernel);
+        const size_t k2 = etl::dim<3>(kernel);
+
+        // 1. Handle unit strides
+        if (s1 == 1 && s2 == 1){
+            // Unit strides, zero padding -> Valid convolution with the correct padding
+            dyn_conv4_valid_filter_flipped_impl::apply(input, kernel, conv, 1, 1, k1 - p1 - 1, k2 - p2 - 1);
+        }
+        // 2. Handle non_unit strides
+        else {
+            // Fractionally-strided convolution needs inner padding of the input
+            auto strided_input = impl::common::inner_pad(input, s1, s2);
+
+            // Non-unit strides, zero padding -> Fractionally-strided Valid convolution with the correct padding
+            dyn_conv4_valid_filter_flipped_impl::apply(strided_input, kernel, conv, 1, 1, k1 - p1 - 1, k2 - p2 - 1);
+        }
+    }
+};
 
 } //end of namespace detail
 
