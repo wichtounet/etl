@@ -302,60 +302,6 @@ dyn_max_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, deta
     return dyn_max_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>>{input, output, errors, c1, c2, c3};
 }
 
-/* Upsample 2D */
-
-/*!
- * \brief Upsample the given 2D matrix expression
- * \param value The input expression
- * \tparam C1 The first pooling ratio
- * \tparam C2 The second pooling ratio
- * \return A expression representing the Upsampling of the given expression
- */
-template <size_t C1, size_t C2, typename E>
-upsample_2d_expr<detail::build_type<E>, C1, C2, impl::upsample_2d> upsample_2d(E&& value) {
-    return upsample_2d_expr<detail::build_type<E>, C1, C2, impl::upsample_2d>{value};
-}
-
-/*!
- * \brief Upsample the given 2D matrix expression
- * \param value The input expression
- * \param c1 The first pooling ratio
- * \param c2 The second pooling ratio
- * \return A expression representing the Upsampling of the given expression
- */
-template <typename E>
-dyn_upsample_2d_expr<detail::build_type<E>, impl::upsample_2d> upsample_2d(E&& value, size_t c1, size_t c2) {
-    return dyn_upsample_2d_expr<detail::build_type<E>, impl::upsample_2d>{value, c1, c2};
-}
-
-/* Upsample 3D */
-
-/*!
- * \brief Upsample the given 3D matrix expression
- * \param value The input expression
- * \tparam C1 The first pooling ratio
- * \tparam C2 The second pooling ratio
- * \tparam C3 The third pooling ratio
- * \return A expression representing the Upsampling of the given expression
- */
-template <size_t C1, size_t C2, size_t C3, typename E>
-upsample_3d_expr<detail::build_type<E>, C1, C2, C3, impl::upsample_3d> upsample_3d(E&& value) {
-    return upsample_3d_expr<detail::build_type<E>, C1, C2, C3, impl::upsample_3d>{value};
-}
-
-/*!
- * \brief Upsample the given 3D matrix expression
- * \param value The input expression
- * \param c1 The first pooling ratio
- * \param c2 The second pooling ratio
- * \param c3 The third pooling ratio
- * \return A expression representing the Upsampling of the given expression
- */
-template <typename E>
-dyn_upsample_3d_expr<detail::build_type<E>, impl::upsample_3d> upsample_3d(E&& value, size_t c1, size_t c2, size_t c3) {
-    return dyn_upsample_3d_expr<detail::build_type<E>, impl::upsample_3d>{value, c1, c2, c3};
-}
-
 /* Probabilistic Max Pooling (hidden) */
 
 /*!

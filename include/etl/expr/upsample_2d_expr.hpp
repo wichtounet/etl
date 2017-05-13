@@ -215,4 +215,16 @@ struct etl_traits<etl::upsample_2d_expr<A, C1, C2, Impl>> {
     }
 };
 
+/*!
+ * \brief Upsample the given 2D matrix expression
+ * \param value The input expression
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \return A expression representing the Upsampling of the given expression
+ */
+template <size_t C1, size_t C2, typename E>
+upsample_2d_expr<detail::build_type<E>, C1, C2, impl::upsample_2d> upsample_2d(E&& value) {
+    return upsample_2d_expr<detail::build_type<E>, C1, C2, impl::upsample_2d>{value};
+}
+
 } //end of namespace etl

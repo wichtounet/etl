@@ -215,4 +215,17 @@ struct etl_traits<etl::upsample_3d_expr<A, C1, C2, C3, Impl>> {
     }
 };
 
+/*!
+ * \brief Upsample the given 3D matrix expression
+ * \param value The input expression
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \tparam C3 The third pooling ratio
+ * \return A expression representing the Upsampling of the given expression
+ */
+template <size_t C1, size_t C2, size_t C3, typename E>
+upsample_3d_expr<detail::build_type<E>, C1, C2, C3, impl::upsample_3d> upsample_3d(E&& value) {
+    return upsample_3d_expr<detail::build_type<E>, C1, C2, C3, impl::upsample_3d>{value};
+}
+
 } //end of namespace etl
