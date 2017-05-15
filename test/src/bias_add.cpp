@@ -46,3 +46,19 @@ TEMPLATE_TEST_CASE_2("bias_add/0", "[bias_add]", Z, float, double) {
     REQUIRE_EQUALS(c(1, 2, 1, 0), Z(a(1, 2, 1, 0) + 3));
     REQUIRE_EQUALS(c(1, 2, 1, 1), Z(a(1, 2, 1, 1) + 3));
 }
+
+TEMPLATE_TEST_CASE_2("bias_add/1", "[bias_add]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 3> a({1, 2, 3, 4, 5, 6});
+    etl::fast_matrix<Z, 3> b{1, 2, 3};
+    etl::fast_matrix<Z, 2, 3> c;
+
+    c = etl::bias_add_2d(a, b);
+
+    REQUIRE_EQUALS(c(0, 0), Z(a(0, 0) + 1));
+    REQUIRE_EQUALS(c(0, 1), Z(a(0, 1) + 2));
+    REQUIRE_EQUALS(c(0, 2), Z(a(0, 2) + 3));
+
+    REQUIRE_EQUALS(c(1, 0), Z(a(1, 0) + 1));
+    REQUIRE_EQUALS(c(1, 1), Z(a(1, 1) + 2));
+    REQUIRE_EQUALS(c(1, 2), Z(a(1, 2) + 3));
+}
