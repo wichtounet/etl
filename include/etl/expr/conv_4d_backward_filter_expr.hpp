@@ -50,8 +50,8 @@ struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_f
         cpp_assert(etl::dim(conv, 1) == etl::dim(input, 1), "Invalid dimensions for conv4_backward_filter");
         cpp_assert(etl::dim(input, 0) == etl::dim(kernel, 0), "Invalid dimensions for conv4_backward_filter");
 
-        cpp_assert(etl::dim(conv, 2) == S1 * (etl::dim(input, 2) - 1) + etl::dim(kernel, 2) - 2 * P1, "Invalid dimensions for conv2_backward");
-        cpp_assert(etl::dim(conv, 3) == S2 * (etl::dim(input, 3) - 1) + etl::dim(kernel, 3) - 2 * P2, "Invalid dimensions for conv2_backward");
+        cpp_assert(etl::dim(conv, 2) == etl::dim(input, 2) - (S1 * (etl::dim(kernel, 2) - 1) + 1) + 2 * P1 + 1, "Invalid dimensions for conv2_backward");
+        cpp_assert(etl::dim(conv, 3) == etl::dim(input, 3) - (S2 * (etl::dim(kernel, 3) - 1) + 1)  + 2 * P2 + 1, "Invalid dimensions for conv2_backward");
 
         cpp_unused(input);
         cpp_unused(kernel);
@@ -71,8 +71,8 @@ struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_f
         static_assert(etl::dim<1, C>() == etl::dim<1, I>(), "Invalid dimensions for conv4_backward_filter");
         static_assert(etl::dim<0, I>() == etl::dim<0, K>(), "Invalid dimensions for conv4_backward_filter");
 
-        static_assert(etl::dim<2, C>() == S1 * (etl::dim<2, I>() - 1) + etl::dim<2, K>() - 2 * P1, "Invalid dimensions for conv2_backward");
-        static_assert(etl::dim<3, C>() == S2 * (etl::dim<3, I>() - 1) + etl::dim<3, K>() - 2 * P2, "Invalid dimensions for conv2_backward");
+        static_assert(etl::dim<2, C>() == etl::dim<2, I>() - (S1 * (etl::dim<2, K>() - 1) + 1) + 2 * P1 + 1, "Invalid dimensions for conv2_backward");
+        static_assert(etl::dim<3, C>() == etl::dim<3, I>() - (S2 * (etl::dim<3, K>() - 1) + 1) + 2 * P2 + 1, "Invalid dimensions for conv2_backward");
 
         cpp_unused(input);
         cpp_unused(kernel);
@@ -204,8 +204,8 @@ struct etl_traits<etl::conv_4d_backward_filter_expr<A, B, S1, S2, P1, P2, Flippe
     static constexpr size_t dim() {
         return DD == 0 ? etl::dim<1, B>()
              : DD == 1 ? etl::dim<1, A>()
-             : DD == 2 ? (S1 * (etl::dim<2, A>() - 1) + etl::dim<2, B>() - 2 * P1)
-                       : (S2 * (etl::dim<3, A>() - 1) + etl::dim<3, B>() - 2 * P2);
+             : DD == 2 ? (etl::dim<2, A>() - (S1 * (etl::dim<2, B>() - 1) + 1) + 2 * P1 + 1)
+                       : (etl::dim<3, A>() - (S2 * (etl::dim<3, B>() - 1) + 1) + 2 * P2 + 1);
     }
 
     /*!
@@ -220,9 +220,9 @@ struct etl_traits<etl::conv_4d_backward_filter_expr<A, B, S1, S2, P1, P2, Flippe
         } else if (d == 1){
             return etl::dim(e._a, 1);
         } else if (d == 2){
-            return S1 * (etl::dim(e._a, 2) - 1) + etl::dim(e._b, 2) - 2 * P1;
+            return etl::dim(e._a, 2) - (S1 * (etl::dim(e._b, 2) - 1) + 1) + 2 * P1 + 1;
         } else {
-            return S2 * (etl::dim(e._a, 3) - 1) + etl::dim(e._b, 3) - 2 * P2;
+            return etl::dim(e._a, 3) - (S2 * (etl::dim(e._b, 3) - 1) + 1) + 2 * P2 + 1;
         }
     }
 
@@ -233,8 +233,8 @@ struct etl_traits<etl::conv_4d_backward_filter_expr<A, B, S1, S2, P1, P2, Flippe
      */
     static size_t size(const expr_t& e) {
         return etl::dim(e._b, 1) * etl::dim(e._a, 1) *
-               (S1 * (etl::dim(e._a, 2) - 1) + etl::dim(e._b, 2) - 2 * P1) *
-               (S2 * (etl::dim(e._a, 3) - 1) + etl::dim(e._b, 3) - 2 * P2);
+               (etl::dim(e._a, 2) - (S1 * (etl::dim(e._b, 2) - 1) + 1) + 2 * P1 + 1) *
+               (etl::dim(e._a, 3) - (S2 * (etl::dim(e._b, 3) - 1) + 1) + 2 * P2 + 1);
     }
 
     /*!
@@ -243,8 +243,8 @@ struct etl_traits<etl::conv_4d_backward_filter_expr<A, B, S1, S2, P1, P2, Flippe
      */
     static constexpr size_t size() {
         return etl::dim<1, B>() * etl::dim<1, A>() *
-               (S1 * (etl::dim<2, A>() - 1) + etl::dim<2, B>() - 2 * P1) *
-               (S2 * (etl::dim<3, A>() - 1) + etl::dim<3, B>() - 2 * P2);
+               (etl::dim<2, A>() - (S1 * (etl::dim<2, B>() - 1) + 1) + 2 * P1 + 1) *
+               (etl::dim<3, A>() - (S2 * (etl::dim<3, B>() - 1) + 1) + 2 * P2 + 1);
     }
 
     /*!
