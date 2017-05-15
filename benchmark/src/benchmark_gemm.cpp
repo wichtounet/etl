@@ -7,6 +7,7 @@
 
 #define CPM_LIB
 #include "benchmark.hpp"
+#include "benchmark_gemm.hpp"
 
 namespace {
 

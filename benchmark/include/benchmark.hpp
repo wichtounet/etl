@@ -107,23 +107,6 @@ using zvec_cm = etl::dyn_matrix_cm<std::complex<double>, 1>;
 using mat_policy = VALUES_POLICY(10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000,3000);
 using mat_policy_2d = NARY_POLICY(mat_policy, mat_policy);
 
-using outer_policy = NARY_POLICY(
-    VALUES_POLICY(10, 50, 100, 500, 1000, 2000, 3000),
-    VALUES_POLICY(10, 50, 100, 500, 1000, 2000, 3000)
-    );
-
-using bias_add_policy = NARY_POLICY(
-    VALUES_POLICY(10,  20,  30,  40,  50,  60,  70,  80,  90, 100),
-    VALUES_POLICY(128, 128, 128, 128, 128, 128, 128, 128, 128, 128),
-    VALUES_POLICY(100, 100, 100, 100, 100, 100, 100, 100, 100, 100),
-    VALUES_POLICY(100, 100, 100, 100, 100, 100, 100, 100, 100, 100)
-    );
-
-using bias_add_2d_policy = NARY_POLICY(
-    VALUES_POLICY(128, 128, 128, 128, 128, 128, 128, 128, 128, 128),
-    VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000)
-    );
-
 using dot_policy = VALUES_POLICY(100, 500, 1000, 10000, 100000, 1000000, 2000000, 3000000, 4000000, 5000000, 10000000);
 
 using large_vector_policy = VALUES_POLICY(10, 100, 1000, 10000, 1000000, 10000000, 100000000);
@@ -148,15 +131,6 @@ using fft_2d_many_policy = NARY_POLICY(
 using gemm_policy = NARY_POLICY(
     VALUES_POLICY(10, 20, 40, 60, 80, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000),
     VALUES_POLICY(10, 20, 40, 60, 80, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000));
-using square_policy = NARY_POLICY(
-    VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000),
-    VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000)); using small_square_policy = NARY_POLICY(
-    VALUES_POLICY(100, 150, 200, 250, 300, 350, 400, 450, 500),
-    VALUES_POLICY(100, 150, 200, 250, 300, 350, 400, 450, 500));
-
-using gemv_policy = NARY_POLICY(
-    VALUES_POLICY(50, 100, 250, 500, 750, 1000, 2000, 3000, 4000, 5000, 6000),
-    VALUES_POLICY(50, 100, 250, 500, 750, 1000, 2000, 3000, 4000, 5000, 6000));
 
 using trans_sub_policy = VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000);
 using trans_policy = NARY_POLICY(
