@@ -25,7 +25,7 @@ namespace standard {
  * \param c The c expression
  */
 template <typename A, typename B, typename C>
-void bias_add(const A& lhs, const B& rhs, C&& c) {
+void bias_add_4d(const A& lhs, const B& rhs, C&& c) {
     for (size_t i = 0; i < etl::dim<0>(lhs); ++i) {
         for (size_t j = 0; j < etl::dim<1>(lhs); ++j) {
             for (size_t k = 0; k < etl::dim<2>(lhs); ++k) {

@@ -20,9 +20,9 @@ namespace etl {
  * \tparam A The transposed type
  */
 template <typename A, typename B>
-struct bias_add_expr : base_temporary_expr_bin<bias_add_expr<A, B>, A, B> {
+struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> {
     using value_type = value_t<A>;                               ///< The type of value of the expression
-    using this_type  = bias_add_expr<A, B>;                      ///< The type of this expression
+    using this_type  = bias_add_4d_expr<A, B>;                      ///< The type of this expression
     using base_type  = base_temporary_expr_bin<this_type, A, B>; ///< The base type
     using sub_traits = decay_traits<A>;                          ///< The traits of the sub type
 
@@ -32,7 +32,7 @@ struct bias_add_expr : base_temporary_expr_bin<bias_add_expr<A, B>, A, B> {
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    explicit bias_add_expr(A a, B b) : base_type(a, b) {
+    explicit bias_add_4d_expr(A a, B b) : base_type(a, b) {
         //Nothing else to init
     }
 
@@ -102,9 +102,9 @@ struct bias_add_expr : base_temporary_expr_bin<bias_add_expr<A, B>, A, B> {
         auto impl = select_impl<L>();
 
         if(impl == bias_add_impl::VEC){
-            impl::vec::bias_add(make_temporary(a), make_temporary(b), lhs);
+            impl::vec::bias_add_4d(make_temporary(a), make_temporary(b), lhs);
         } else if(impl == bias_add_impl::STD){
-            impl::standard::bias_add(a, make_temporary(b), lhs);
+            impl::standard::bias_add_4d(a, make_temporary(b), lhs);
         } else {
             cpp_unreachable("Invalid bias_add selection");
         }
@@ -161,7 +161,7 @@ struct bias_add_expr : base_temporary_expr_bin<bias_add_expr<A, B>, A, B> {
      * \param expr The expression to print
      * \return the output stream
      */
-    friend std::ostream& operator<<(std::ostream& os, const bias_add_expr& expr) {
+    friend std::ostream& operator<<(std::ostream& os, const bias_add_4d_expr& expr) {
         return os << "bias_add(" << expr._a << "," << expr._b << ")";
     }
 
@@ -223,8 +223,8 @@ private:
  * \tparam B The biases type
  */
 template <typename A, typename B>
-struct etl_traits<etl::bias_add_expr<A, B>> {
-    using expr_t     = etl::bias_add_expr<A, B>; ///< The expression type
+struct etl_traits<etl::bias_add_4d_expr<A, B>> {
+    using expr_t     = etl::bias_add_4d_expr<A, B>; ///< The expression type
     using sub_expr_t = std::decay_t<A>;          ///< The sub expression type
     using sub_traits = etl_traits<sub_expr_t>;   ///< The sub traits
     using value_type = value_t<A>;               ///< The value type of the expression
@@ -305,12 +305,12 @@ struct etl_traits<etl::bias_add_expr<A, B>> {
  * \return The transpose of the given expression.
  */
 template <typename E, typename B>
-bias_add_expr<detail::build_type<E>, detail::build_type<B>> bias_add_4d(const E& x, const B& biases){
+bias_add_4d_expr<detail::build_type<E>, detail::build_type<B>> bias_add_4d(const E& x, const B& biases){
     static_assert(all_etl_expr<E, B>::value, "etl::bias_add can only be used on ETL expressions");
     static_assert(decay_traits<E>::dimensions() == 4, "etl::bias_add is only defined for 4D input");
     static_assert(decay_traits<B>::dimensions() == 1, "etl::bias_add is only defined for 1D bias vector");
 
-    return bias_add_expr<detail::build_type<E>, detail::build_type<B>>{x, biases};
+    return bias_add_4d_expr<detail::build_type<E>, detail::build_type<B>>{x, biases};
 }
 
 } //end of namespace etl

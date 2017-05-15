@@ -83,7 +83,7 @@
 // The complex expressions
 #include "etl/expr/transpose_expr.hpp"
 #include "etl/expr/bias_batch_mean_expr.hpp"
-#include "etl/expr/bias_add_expr.hpp"
+#include "etl/expr/bias_add_4d_expr.hpp"
 #include "etl/expr/max_pool_upsample_2d_expr.hpp"
 #include "etl/expr/max_pool_upsample_3d_expr.hpp"
 #include "etl/expr/dyn_max_pool_upsample_2d_expr.hpp"
