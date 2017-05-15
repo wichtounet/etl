@@ -19,7 +19,7 @@ namespace impl {
 namespace standard {
 
 /*!
- * \brief Compute the batch outer product of a and b and store the result in c
+ * \brief Compute the bias addition of a and b and store the result in c
  * \param lhs The a expression
  * \param rhs The b expression
  * \param c The c expression
@@ -33,6 +33,21 @@ void bias_add_4d(const A& lhs, const B& rhs, C&& c) {
                     c(i, j, k, l) = lhs(i, j, k, l) + rhs(j);
                 }
             }
+        }
+    }
+}
+
+/*!
+ * \brief Compute the bias addition of a and b and store the result in c
+ * \param lhs The a expression
+ * \param rhs The b expression
+ * \param c The c expression
+ */
+template <typename A, typename B, typename C>
+void bias_add_2d(const A& lhs, const B& rhs, C&& c) {
+    for (size_t i = 0; i < etl::dim<0>(lhs); ++i) {
+        for (size_t j = 0; j < etl::dim<1>(lhs); ++j) {
+            c(i, j) = lhs(i, j) + rhs(j);
         }
     }
 }

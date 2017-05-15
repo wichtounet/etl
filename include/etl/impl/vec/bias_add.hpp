@@ -136,9 +136,67 @@ void bias_add_4d(const L& x, const R& b, C&& y) {
  * \param b The b expression
  * \param y The c expression
  */
+template <typename V, typename L, typename R, typename C>
+void bias_add_2d(const L& x, const R& b, C&& y) {
+    using vec_type = V;
+    using T        = value_t<L>;
+
+    static constexpr size_t vec_size = vec_type::template traits<T>::size;
+
+    const auto B = etl::dim<0>(x);
+    const auto K = etl::dim<1>(x);
+
+    x.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    // Note: This kernel is particularly adapted for large inner (MN) dimensions
+
+    auto batch_fun = [&](size_t first, size_t last) {
+        auto b_s = b.memory_start();
+        auto x_s = x.memory_start();
+        auto y_s = y.memory_start();
+
+        for (size_t i = first; i < last; ++i) {
+            size_t j = 0;
+
+            for (; j + vec_size - 1 < K; j += vec_size) {
+                auto r1 = vec_type::loadu(b_s + j);
+                auto x1 = vec_type::loadu(x_s + i * K + j);
+                auto t1 = vec_type::add(r1, x1);
+                vec_type::storeu(y_s + i * K + j, t1);
+            }
+
+            for (; j < K; ++j) {
+                y(i, j) = x(i, j) + b(j);
+            }
+        }
+    };
+
+    batch_fun(0, B);
+
+    y.invalidate_gpu();
+}
+
+/*!
+ * \brief Compute the bias addition of b into x and store the result in y
+ * \param x The a expression
+ * \param b The b expression
+ * \param y The c expression
+ */
 template <typename A, typename B, typename C>
 void bias_add_4d(const A& x, const B& b, C&& y) {
     bias_add_4d<default_vec>(x, b, y);
+}
+
+/*!
+ * \brief Compute the bias addition of b into x and store the result in y
+ * \param x The a expression
+ * \param b The b expression
+ * \param y The c expression
+ */
+template <typename A, typename B, typename C>
+void bias_add_2d(const A& x, const B& b, C&& y) {
+    bias_add_2d<default_vec>(x, b, y);
 }
 
 } //end of namespace standard
