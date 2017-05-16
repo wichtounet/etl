@@ -22,8 +22,8 @@ namespace vec {
  * \param bb The rhs matrix
  * \param cc The result vector
  */
-template <typename V, typename T>
-void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
+template <typename V, typename T, typename C>
+void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, C&& c) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -62,14 +62,14 @@ void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
             r8 = vec_type::fmadd(a1, b8, r8);
         }
 
-        vec_type::storeu(cc + j + 0 * vec_size, r1);
-        vec_type::storeu(cc + j + 1 * vec_size, r2);
-        vec_type::storeu(cc + j + 2 * vec_size, r3);
-        vec_type::storeu(cc + j + 3 * vec_size, r4);
-        vec_type::storeu(cc + j + 4 * vec_size, r5);
-        vec_type::storeu(cc + j + 5 * vec_size, r6);
-        vec_type::storeu(cc + j + 6 * vec_size, r7);
-        vec_type::storeu(cc + j + 7 * vec_size, r8);
+        c.template store<vec_type>(r1, j + 0 * vec_size);
+        c.template store<vec_type>(r2, j + 1 * vec_size);
+        c.template store<vec_type>(r3, j + 2 * vec_size);
+        c.template store<vec_type>(r4, j + 3 * vec_size);
+        c.template store<vec_type>(r5, j + 4 * vec_size);
+        c.template store<vec_type>(r6, j + 5 * vec_size);
+        c.template store<vec_type>(r7, j + 6 * vec_size);
+        c.template store<vec_type>(r8, j + 7 * vec_size);
     }
 
     for (; j + vec_size * 4 - 1 < n; j += vec_size * 4) {
@@ -92,10 +92,10 @@ void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
             r4 = vec_type::fmadd(a1, b4, r4);
         }
 
-        vec_type::storeu(cc + j + 0 * vec_size, r1);
-        vec_type::storeu(cc + j + 1 * vec_size, r2);
-        vec_type::storeu(cc + j + 2 * vec_size, r3);
-        vec_type::storeu(cc + j + 3 * vec_size, r4);
+        c.template store<vec_type>(r1, j + 0 * vec_size);
+        c.template store<vec_type>(r2, j + 1 * vec_size);
+        c.template store<vec_type>(r3, j + 2 * vec_size);
+        c.template store<vec_type>(r4, j + 3 * vec_size);
     }
 
     for (; j + vec_size - 1 < n; j += vec_size) {
@@ -109,7 +109,7 @@ void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
             r1 = vec_type::fmadd(a1, b1, r1);
         }
 
-        vec_type::storeu(cc + j + 0 * vec_size, r1);
+        c.template store<vec_type>(r1, j + 0 * vec_size);
     }
 
     for (; j < n; j++) {
@@ -119,7 +119,7 @@ void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
             value += aa[k] * bb[k * n + j];
         }
 
-        cc[j] = value;
+        c[j] = value;
     }
 }
 
@@ -259,7 +259,7 @@ void gevm(A&& a, B&& b, C&& c) {
     const auto n = columns(b);
 
     if(etl::size(b) < gevm_rm_small_threshold){
-        gevm_small_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+        gevm_small_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c);
     } else {
         c = 0;
 
