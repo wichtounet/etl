@@ -74,7 +74,7 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
 
     /*!
      * \brief Assign to a matrix of the same storage order
-     * \param c The expression to which assign
+     * \param conv The expression to which assign
      */
     template<typename C>
     void assign_to(C&& conv)  const {

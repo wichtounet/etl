@@ -148,7 +148,8 @@ public:
 
     /*!
      * \brief Access to the element at the given (args...) position
-     * \param args The indices
+     * \param i The first index
+     * \param j The second index
      * \return a reference to the element at the given position.
      */
     ETL_STRONG_INLINE(const_return_type) operator()(size_t i, size_t j) const {
@@ -160,7 +161,8 @@ public:
 
     /*!
      * \brief Access to the element at the given (args...) position
-     * \param args The indices
+     * \param i The first index
+     * \param j The second index
      * \return a reference to the element at the given position.
      */
     ETL_STRONG_INLINE(return_type) operator()(size_t i, size_t j) {

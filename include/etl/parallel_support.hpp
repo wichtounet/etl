@@ -246,7 +246,7 @@ inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, 
  *
  * The functors will be called with slices of the original expression.
  *
- * \param epxr The expression to slice
+ * \param expr The expression to slice
  * \param functor The functor to execute
  * \param acc_functor The functor to accumulate results
  * \param threshold The threshold for paralellization
@@ -405,7 +405,7 @@ inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, 
  *
  * The functors will be called with slices of the original expression.
  *
- * \param epxr The expression to slice
+ * \param expr The expression to slice
  * \param functor The functor to execute
  * \param acc_functor The functor to accumulate results
  * \param threshold The threshold for paralellization

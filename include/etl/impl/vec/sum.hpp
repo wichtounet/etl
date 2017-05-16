@@ -78,10 +78,8 @@ value_t<L> selected_sum(const L& lhs) {
 /*!
  * \brief Vectorized absolute sum computation
  * \param lhs The expression to compute the sum from
- * \param first The first index
- * \param last The last index
  * \tparam V The vectorization type
- * \return The sbsolute um of the given range
+ * \return The absolute sum of the given range
  */
 template <typename V, typename L>
 value_t<L> selected_asum(const L& lhs) {

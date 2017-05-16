@@ -19,10 +19,8 @@ namespace impl {
 namespace standard {
 
 /*!
- * \brief Compute the sum of the input in the given range
+ * \brief Compute the sum of the input in the given expression
  * \param input The input expression
- * \param first The beginning of the range
- * \param last The end of the range
  * \return the sum
  */
 template <typename E>
@@ -37,10 +35,8 @@ value_t<E> sum(const E& input) {
 }
 
 /*!
- * \brief Compute the sum of the absolute values in the given range
+ * \brief Compute the sum of the absolute values in the given expression
  * \param input The input expression
- * \param first The beginning of the range
- * \param last The end of the range
  * \return the absolute sum
  */
 template <typename E>

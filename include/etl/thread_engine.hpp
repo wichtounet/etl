@@ -67,8 +67,7 @@ using thread_engine = conf_thread_engine<cpp::default_thread_pool<>>;
 #else
 
 /*!
- * \brief The default thread engine.
- * \tparam Pool The thread pool implementation
+ * \brief The default thread engine when auto-parallelization is not enabled
  *
  * This should only be used by ETL internals such as the evaluator
  * and the engine_dispatch functions.
