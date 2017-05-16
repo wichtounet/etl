@@ -28,9 +28,11 @@ void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, C&& c) {
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
+    const size_t j_end = n & size_t(-vec_size);
+
     size_t j = 0;
 
-    for (; j + vec_size * 8 - 1 < n; j += vec_size * 8) {
+    for (; j + vec_size * 7 < j_end; j += vec_size * 8) {
         auto r1 = vec_type::template zero<T>();
         auto r2 = vec_type::template zero<T>();
         auto r3 = vec_type::template zero<T>();
@@ -72,7 +74,7 @@ void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, C&& c) {
         c.template store<vec_type>(r8, j + 7 * vec_size);
     }
 
-    for (; j + vec_size * 4 - 1 < n; j += vec_size * 4) {
+    for (; j + vec_size * 3 < j_end; j += vec_size * 4) {
         auto r1 = vec_type::template zero<T>();
         auto r2 = vec_type::template zero<T>();
         auto r3 = vec_type::template zero<T>();
@@ -98,7 +100,7 @@ void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, C&& c) {
         c.template store<vec_type>(r4, j + 3 * vec_size);
     }
 
-    for (; j + vec_size - 1 < n; j += vec_size) {
+    for (; j < j_end; j += vec_size) {
         auto r1 = vec_type::template zero<T>();
 
         for (size_t k = 0; k < m; k++) {
@@ -129,8 +131,8 @@ void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, C&& c) {
  * \param bb The rhs matrix
  * \param cc The result vector
  */
-template <typename V, typename T>
-void gevm_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
+template <typename V, typename T, typename C>
+void gevm_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, C&& cc) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -138,15 +140,18 @@ void gevm_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
     const size_t n_block = (32 * 1024) / sizeof(T);
     const size_t m_block = n < n_block ? 8 : 4;
 
+    cc = 0;
+
     for (size_t block_j = 0; block_j < n; block_j += n_block) {
+        const size_t n_end = std::min(block_j + n_block, n) & size_t(-vec_size);
+
         for (size_t block_k = 0; block_k < m; block_k += m_block) {
             const size_t m_end = std::min(block_k + m_block, m);
-            const size_t n_end = std::min(block_j + n_block, n) & size_t(-vec_size);
 
             size_t j = block_j;
 
             // 8-Unrolled Vectorized loop
-            for (; j + vec_size * 8 - 1 < n_end; j += vec_size * 8) {
+            for (; j + vec_size * 7 < n_end; j += vec_size * 8) {
                 auto r1 = vec_type::template zero<T>();
                 auto r2 = vec_type::template zero<T>();
                 auto r3 = vec_type::template zero<T>();
@@ -178,18 +183,18 @@ void gevm_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
                     r8 = vec_type::fmadd(a1, b8, r8);
                 }
 
-                vec_type::storeu(cc + j + 0 * vec_size, vec_type::add(r1, vec_type::loadu(cc + j + 0 * vec_size)));
-                vec_type::storeu(cc + j + 1 * vec_size, vec_type::add(r2, vec_type::loadu(cc + j + 1 * vec_size)));
-                vec_type::storeu(cc + j + 2 * vec_size, vec_type::add(r3, vec_type::loadu(cc + j + 2 * vec_size)));
-                vec_type::storeu(cc + j + 3 * vec_size, vec_type::add(r4, vec_type::loadu(cc + j + 3 * vec_size)));
-                vec_type::storeu(cc + j + 4 * vec_size, vec_type::add(r5, vec_type::loadu(cc + j + 4 * vec_size)));
-                vec_type::storeu(cc + j + 5 * vec_size, vec_type::add(r6, vec_type::loadu(cc + j + 5 * vec_size)));
-                vec_type::storeu(cc + j + 6 * vec_size, vec_type::add(r7, vec_type::loadu(cc + j + 6 * vec_size)));
-                vec_type::storeu(cc + j + 7 * vec_size, vec_type::add(r8, vec_type::loadu(cc + j + 7 * vec_size)));
+                cc.template store<V>(vec_type::add(r1, cc.template load<V>(j + 0 * vec_size)), j + 0 * vec_size);
+                cc.template store<V>(vec_type::add(r2, cc.template load<V>(j + 1 * vec_size)), j + 1 * vec_size);
+                cc.template store<V>(vec_type::add(r3, cc.template load<V>(j + 2 * vec_size)), j + 2 * vec_size);
+                cc.template store<V>(vec_type::add(r4, cc.template load<V>(j + 3 * vec_size)), j + 3 * vec_size);
+                cc.template store<V>(vec_type::add(r5, cc.template load<V>(j + 4 * vec_size)), j + 4 * vec_size);
+                cc.template store<V>(vec_type::add(r6, cc.template load<V>(j + 5 * vec_size)), j + 5 * vec_size);
+                cc.template store<V>(vec_type::add(r7, cc.template load<V>(j + 6 * vec_size)), j + 6 * vec_size);
+                cc.template store<V>(vec_type::add(r8, cc.template load<V>(j + 7 * vec_size)), j + 7 * vec_size);
             }
 
             // 4-Unrolled vectorized loop
-            for (; j + vec_size * 4 - 1 < n_end; j += vec_size * 4) {
+            for (; j + vec_size * 3 < n_end; j += vec_size * 4) {
                 auto r1 = vec_type::template zero<T>();
                 auto r2 = vec_type::template zero<T>();
                 auto r3 = vec_type::template zero<T>();
@@ -209,14 +214,14 @@ void gevm_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
                     r4 = vec_type::fmadd(a1, b4, r4);
                 }
 
-                vec_type::storeu(cc + j + 0 * vec_size, vec_type::add(r1, vec_type::loadu(cc + j + 0 * vec_size)));
-                vec_type::storeu(cc + j + 1 * vec_size, vec_type::add(r2, vec_type::loadu(cc + j + 1 * vec_size)));
-                vec_type::storeu(cc + j + 2 * vec_size, vec_type::add(r3, vec_type::loadu(cc + j + 2 * vec_size)));
-                vec_type::storeu(cc + j + 3 * vec_size, vec_type::add(r4, vec_type::loadu(cc + j + 3 * vec_size)));
+                cc.template store<V>(vec_type::add(r1, cc.template load<V>(j + 0 * vec_size)), j + 0 * vec_size);
+                cc.template store<V>(vec_type::add(r2, cc.template load<V>(j + 1 * vec_size)), j + 1 * vec_size);
+                cc.template store<V>(vec_type::add(r3, cc.template load<V>(j + 2 * vec_size)), j + 2 * vec_size);
+                cc.template store<V>(vec_type::add(r4, cc.template load<V>(j + 3 * vec_size)), j + 3 * vec_size);
             }
 
             // Base vectorized loop
-            for (; j + vec_size - 1 < n_end; j += vec_size) {
+            for (; j < n_end; j += vec_size) {
                 auto r1 = vec_type::template zero<T>();
 
                 for (size_t k = block_k; k < m_end; ++k) {
@@ -225,7 +230,7 @@ void gevm_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
                     r1 = vec_type::fmadd(a1, b1, r1);
                 }
 
-                vec_type::storeu(cc + j + 0 * vec_size, vec_type::add(r1, vec_type::loadu(cc + j + 0 * vec_size)));
+                cc.template store<V>(vec_type::add(r1, cc.template load<V>(j + 0 * vec_size)), j + 0 * vec_size);
             }
 
             // Remainder non-vectorized loop
@@ -261,9 +266,7 @@ void gevm(A&& a, B&& b, C&& c) {
     if(etl::size(b) < gevm_rm_small_threshold){
         gevm_small_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c);
     } else {
-        c = 0;
-
-        gevm_large_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+        gevm_large_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c);
     }
 
     c.invalidate_gpu();
