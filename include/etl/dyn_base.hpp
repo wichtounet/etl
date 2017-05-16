@@ -305,7 +305,7 @@ struct dense_dyn_base : dyn_base<T, D> {
     using base_type::_size;
     using base_type::dim;
 
-    value_type* _memory = nullptr; ///< Pointer to the allocated memory
+    ETL_RESTRICT value_type* _memory = nullptr; ///< Pointer to the allocated memory
     gpu_memory_handler<T> _gpu;    ///< The GPU memory handler
 
     /*!
