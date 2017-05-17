@@ -87,8 +87,6 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      */
     template <typename AA, typename BB, typename C>
     static inline cpp14_constexpr gemm_impl select_default_gemm_impl(const size_t n1, const size_t n2, const size_t n3) {
-        static_assert(all_dma<AA, BB, C>::value, "DMA should be enforced by temporary expr");
-
         cpp_unused(n2);
 
         //Note since these boolean will be known at compile time, the conditions will be a lot simplified
@@ -111,7 +109,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
             return gemm_impl::BLAS;
         }
 
-        if(vec_enabled && all_vectorizable<vector_mode, AA, BB, C>::value){
+        if(vec_enabled && all_vectorizable_t<vector_mode, AA, BB, C>::value){
             return gemm_impl::VEC;
         }
 
