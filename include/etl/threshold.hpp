@@ -52,7 +52,7 @@ constexpr size_t gemm_cublas_min = 180 * 180; ///< The minimum number or element
 constexpr size_t gemm_rr_small_threshold = 10000;   ///< The number of elements of B after which we use BLAS-like kernel (for GEMM)
 constexpr size_t gemm_cc_small_threshold = 40000;   ///< The number of elements of B after which we use BLAS-like kernel (for GEMM)
 
-constexpr size_t gevm_rm_small_threshold = 62000;   ///< The number of elements of b after which we use BLAS-like kernel
+constexpr size_t gevm_rm_small_threshold = 72000;   ///< The number of elements of b after which we use BLAS-like kernel
 constexpr size_t gevm_cm_small_threshold = 4000000; ///< The number of elements of b after which we use BLAS-like kernel
 
 constexpr size_t gemv_rm_small_threshold = 4500000; ///< The number of elements of A after which we use BLAS-like kernel
