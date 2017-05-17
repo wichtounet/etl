@@ -20,7 +20,7 @@ namespace vec {
  * \brief Optimized version of small GEVM for row major version
  * \param aa The lhs vector
  * \param bb The rhs matrix
- * \param cc The result vector
+ * \param c The result vector
  */
 template <typename V, typename T, typename C>
 void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, C&& c) {

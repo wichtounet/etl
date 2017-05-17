@@ -34,10 +34,6 @@ namespace etl {
  *
  * \tparam A The input type
  * \tparam B The kernel type
- * \tparam S1 The stride of the first dimension
- * \tparam S2 The stride of the second dimension
- * \tparam P1 The padding of the first dimension
- * \tparam P2 The padding of the second dimension
  * \tparam Flipped Indicates if Flipped already or not or not
  */
 template <typename A, typename B, bool Flipped>
