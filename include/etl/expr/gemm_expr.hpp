@@ -178,12 +178,24 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
         auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
         if (impl == gemm_impl::STD) {
+            standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(b);
+
             etl::impl::standard::mm_mul(make_temporary(a), make_temporary(b), c);
         } else if (impl == gemm_impl::VEC) {
+            standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(b);
+
             etl::impl::vec::gemm(make_temporary(a), make_temporary(b), c);
         } else if (impl == gemm_impl::BLAS) {
+            standard_evaluator::pre_assign_rhs(a.a());
+            standard_evaluator::pre_assign_rhs(b.a());
+
             etl::impl::blas::gemm_tt(make_temporary(a.a()), make_temporary(b.a()), c);
         } else if (impl == gemm_impl::CUBLAS) {
+            standard_evaluator::pre_assign_rhs(a.a());
+            standard_evaluator::pre_assign_rhs(b.a());
+
             etl::impl::cublas::gemm_tt(make_temporary(a.a()), make_temporary(b.a()), c);
         } else {
             cpp_unreachable("Invalid selection of gemm");
@@ -201,12 +213,24 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
         auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
         if (impl == gemm_impl::STD) {
+            standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(b);
+
             etl::impl::standard::mm_mul(make_temporary(a), make_temporary(b), c);
         } else if (impl == gemm_impl::VEC) {
+            standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(b);
+
             etl::impl::vec::gemm(make_temporary(a), make_temporary(b), c);
         } else if (impl == gemm_impl::BLAS) {
+            standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(b.a());
+
             etl::impl::blas::gemm_nt(make_temporary(a), make_temporary(b.a()), c);
         } else if (impl == gemm_impl::CUBLAS) {
+            standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(b.a());
+
             etl::impl::cublas::gemm_nt(make_temporary(a), make_temporary(b.a()), c);
         } else {
             cpp_unreachable("Invalid selection of gemm");
@@ -224,12 +248,24 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
         auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
         if (impl == gemm_impl::STD) {
+            standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(b);
+
             etl::impl::standard::mm_mul(make_temporary(a), make_temporary(b), c);
         } else if (impl == gemm_impl::VEC) {
+            standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(b);
+
             etl::impl::vec::gemm(make_temporary(a), make_temporary(b), c);
         } else if (impl == gemm_impl::BLAS) {
+            standard_evaluator::pre_assign_rhs(a.a());
+            standard_evaluator::pre_assign_rhs(b);
+
             etl::impl::blas::gemm_tn(make_temporary(a.a()), make_temporary(b), c);
         } else if (impl == gemm_impl::CUBLAS) {
+            standard_evaluator::pre_assign_rhs(a.a());
+            standard_evaluator::pre_assign_rhs(b);
+
             etl::impl::cublas::gemm_tn(make_temporary(a.a()), make_temporary(b), c);
         } else {
             cpp_unreachable("Invalid selection of gemm");
@@ -246,14 +282,17 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
+        standard_evaluator::pre_assign_rhs(a);
+        standard_evaluator::pre_assign_rhs(b);
+
         if (impl == gemm_impl::STD) {
-            etl::impl::standard::mm_mul(a, b, c);
+            etl::impl::standard::mm_mul(make_temporary(a), make_temporary(b), c);
         } else if (impl == gemm_impl::VEC) {
-            etl::impl::vec::gemm(a, b, c);
+            etl::impl::vec::gemm(make_temporary(a), make_temporary(b), c);
         } else if (impl == gemm_impl::BLAS) {
-            etl::impl::blas::gemm(a, b, c);
+            etl::impl::blas::gemm(make_temporary(a), make_temporary(b), c);
         } else if (impl == gemm_impl::CUBLAS) {
-            etl::impl::cublas::gemm(a, b, c);
+            etl::impl::cublas::gemm(make_temporary(a), make_temporary(b), c);
         } else {
             cpp_unreachable("Invalid selection of gemm");
         }
@@ -272,13 +311,14 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
 
         check(a, b, c);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
         standard_evaluator::pre_assign_lhs(c);
 
         if /* constexpr */ (!Strassen){
-            apply_raw(make_temporary(a), make_temporary(b), c);
+            apply_raw(a, b, c);
         } else {
+            standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(b);
+
             etl::impl::standard::strassen_mm_mul(make_temporary(a), make_temporary(b), c);
         }
     }
