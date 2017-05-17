@@ -100,6 +100,24 @@ void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, C&& c) {
         c.template store<vec_type>(r4, j + 3 * vec_size);
     }
 
+    for (; j + vec_size < j_end; j += vec_size * 2) {
+        auto r1 = vec_type::template zero<T>();
+        auto r2 = vec_type::template zero<T>();
+
+        for (size_t k = 0; k < m; k++) {
+            auto a1 = vec_type::set(aa[k]);
+
+            auto b1 = vec_type::loadu(bb + k * n + j + 0 * vec_size);
+            auto b2 = vec_type::loadu(bb + k * n + j + 1 * vec_size);
+
+            r1 = vec_type::fmadd(a1, b1, r1);
+            r2 = vec_type::fmadd(a1, b2, r2);
+        }
+
+        c.template store<vec_type>(r1, j + 0 * vec_size);
+        c.template store<vec_type>(r2, j + 1 * vec_size);
+    }
+
     for (; j < j_end; j += vec_size) {
         auto r1 = vec_type::template zero<T>();
 
@@ -112,6 +130,19 @@ void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, C&& c) {
         }
 
         c.template store<vec_type>(r1, j + 0 * vec_size);
+    }
+
+    for (; j + 1 < n; j += 2) {
+        auto v1 = T();
+        auto v2 = T();
+
+        for (size_t k = 0; k < m; k++) {
+            v1 += aa[k] * bb[k * n + j + 0];
+            v2 += aa[k] * bb[k * n + j + 1];
+        }
+
+        c[j + 0] = v1;
+        c[j + 1] = v2;
     }
 
     for (; j < n; j++) {
