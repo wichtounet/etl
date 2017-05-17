@@ -9,8 +9,12 @@
 
 #include "etl/expr/base_temporary_expr.hpp"
 
-//Get the implementations
-#include "etl/impl/gemm.hpp"
+//The implementations
+#include "etl/impl/std/gemm.hpp"
+#include "etl/impl/blas/gemm.hpp"
+#include "etl/impl/vec/gevm.hpp"
+#include "etl/impl/vec/gemm_conv.hpp"
+#include "etl/impl/cublas/gemm.hpp"
 
 namespace etl {
 
@@ -18,10 +22,10 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B, typename Impl>
-struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B, Impl>, A, B> {
+template <typename A, typename B>
+struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
     using value_type  = value_t<A>;                              ///< The type of value of the expression
-    using this_type   = gevm_expr<A, B, Impl>;                   ///< The type of this expression
+    using this_type   = gevm_expr<A, B>;                         ///< The type of this expression
     using base_type   = base_temporary_expr_bin<this_type, A, B>; ///< The base type
     using left_traits = decay_traits<A>;                         ///< The traits of the sub type
 
@@ -72,6 +76,81 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B, Impl>, A, B> {
     // Assignment functions
 
     /*!
+     * \brief Select an implementation of GEVM, not considering local context
+     * \param n1 The left dimension of the  multiplication
+     * \param n2 The right dimension of the  multiplication
+     * \return The implementation to use
+     */
+    template <typename C>
+    static inline cpp14_constexpr gemm_impl select_default_gevm_impl(const size_t n1, const size_t n2) {
+        static_assert(all_dma<A, B, C>::value, "DMA should be enforced by temporary expr");
+
+        using T = value_t<A>;
+
+        if(cblas_enabled){
+            return gemm_impl::BLAS;
+        }
+
+        if(all_vectorizable<vector_mode, A, B, C>::value && vec_enabled){
+            return gemm_impl::VEC;
+        }
+
+        if (cublas_enabled && is_complex_single_t<T>::value && n1 * n2 > 1000 * 1000) {
+            return gemm_impl::CUBLAS;
+        }
+
+        return gemm_impl::STD;
+    }
+
+    /*!
+     * \brief Select an implementation of GEVM
+     * \param n1 The left dimension of the  multiplication
+     * \param n2 The right dimension of the  multiplication
+     * \return The implementation to use
+     */
+    template <typename C>
+    static inline gemm_impl select_gevm_impl(const size_t n1, const size_t n2) {
+        if (local_context().gemm_selector.forced) {
+            auto forced = local_context().gemm_selector.impl;
+
+            switch (forced) {
+                //CUBLAS cannot always be used
+                case gemm_impl::CUBLAS:
+                    if (!cublas_enabled) {                                                                                                //COVERAGE_EXCLUDE_LINE
+                        std::cerr << "Forced selection to CUBLAS gevm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                        return select_default_gevm_impl<C>(n1, n2);                                                                       //COVERAGE_EXCLUDE_LINE
+                    }                                                                                                                     //COVERAGE_EXCLUDE_LINE
+
+                    return forced;
+
+                //BLAS cannot always be used
+                case gemm_impl::BLAS:
+                    if (!cblas_enabled) {                                                                                               //COVERAGE_EXCLUDE_LINE
+                        std::cerr << "Forced selection to BLAS gevm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                        return select_default_gevm_impl<C>(n1, n2);                                                                     //COVERAGE_EXCLUDE_LINE
+                    }                                                                                                                   //COVERAGE_EXCLUDE_LINE
+
+                    return forced;
+
+                //VEC cannot always be used
+                case gemm_impl::VEC:
+                    if (!vec_enabled || !all_vectorizable<vector_mode, A, B, C>::value) {                                              //COVERAGE_EXCLUDE_LINE
+                        std::cerr << "Forced selection to VEC gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                        return select_default_gevm_impl<C>(n1, n2);                                                                  //COVERAGE_EXCLUDE_LINE
+                    }                                                                                                                  //COVERAGE_EXCLUDE_LINE
+
+                    return forced;
+
+                //In other cases, simply use the forced impl
+                default:
+                    return forced;
+            }
+        }
+
+        return select_default_gevm_impl<C>(n1, n2);
+    }
+
+    /*!
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
@@ -88,10 +167,19 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B, Impl>, A, B> {
         standard_evaluator::pre_assign_rhs(b);
         standard_evaluator::pre_assign_lhs(c);
 
-        Impl::apply(
-            make_temporary(a),
-            make_temporary(b),
-            std::forward<C>(c));
+        auto impl = select_gevm_impl<C>(etl::dim<0>(b), etl::dim<1>(b));
+
+        if (impl == gemm_impl::STD) {
+            etl::impl::standard::vm_mul(make_temporary(a), make_temporary(b), c);
+        } else if (impl == gemm_impl::BLAS) {
+            etl::impl::blas::gevm(make_temporary(a), make_temporary(b), c);
+        } else if (impl == gemm_impl::VEC) {
+            etl::impl::vec::gevm(make_temporary(a), make_temporary(b), c);
+        } else if (impl == gemm_impl::CUBLAS) {
+            etl::impl::cublas::gevm(make_temporary(a), make_temporary(b), c);
+        } else {
+            cpp_unreachable("Invalid selection for gevm");
+        }
     }
 
     /*!
@@ -154,14 +242,14 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B, Impl>, A, B> {
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, typename B, typename Impl>
-struct etl_traits<etl::gevm_expr<A, B, Impl>> {
-    using expr_t       = etl::gevm_expr<A, B, Impl>; ///< The expression type
-    using left_expr_t  = std::decay_t<A>;            ///< The left sub expression type
-    using right_expr_t = std::decay_t<B>;            ///< The right sub expression type
-    using left_traits  = etl_traits<left_expr_t>;    ///< The left sub traits
-    using right_traits = etl_traits<right_expr_t>;   ///< The right sub traits
-    using value_type   = value_t<A>;                 ///< The value type of the expression
+template <typename A, typename B>
+struct etl_traits<etl::gevm_expr<A, B>> {
+    using expr_t       = etl::gevm_expr<A, B>;     ///< The expression type
+    using left_expr_t  = std::decay_t<A>;          ///< The left sub expression type
+    using right_expr_t = std::decay_t<B>;          ///< The right sub expression type
+    using left_traits  = etl_traits<left_expr_t>;  ///< The left sub traits
+    using right_traits = etl_traits<right_expr_t>; ///< The right sub traits
+    using value_type   = value_t<A>;               ///< The value type of the expression
 
     static constexpr bool is_etl                  = true;                                          ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;                                         ///< Indicates if the type is a transformer
@@ -240,8 +328,8 @@ struct etl_traits<etl::gevm_expr<A, B, Impl>> {
  * \return An expression representing the vector-matrix multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_1d<A>::value, is_2d<B>::value)>
-gevm_expr<detail::build_type<A>, detail::build_type<B>, detail::vm_mul_impl> operator*(A&& a, B&& b) {
-    return gevm_expr<detail::build_type<A>, detail::build_type<B>, detail::vm_mul_impl>{a, b};
+gevm_expr<detail::build_type<A>, detail::build_type<B>> operator*(A&& a, B&& b) {
+    return gevm_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
 
 /*!
@@ -251,8 +339,8 @@ gevm_expr<detail::build_type<A>, detail::build_type<B>, detail::vm_mul_impl> ope
  * \return An expression representing the vector-matrix multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_1d<A>::value, is_2d<B>::value)>
-gevm_expr<detail::build_type<A>, detail::build_type<B>, detail::vm_mul_impl> mul(A&& a, B&& b) {
-    return gevm_expr<detail::build_type<A>, detail::build_type<B>, detail::vm_mul_impl>{a, b};
+gevm_expr<detail::build_type<A>, detail::build_type<B>> mul(A&& a, B&& b) {
+    return gevm_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
 
 /*!

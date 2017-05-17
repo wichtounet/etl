@@ -9,8 +9,13 @@
 
 #include "etl/expr/base_temporary_expr.hpp"
 
-//Get the implementations
-#include "etl/impl/gemm.hpp"
+//The implementations
+#include "etl/impl/std/gemm.hpp"
+#include "etl/impl/std/strassen_mmul.hpp"
+#include "etl/impl/blas/gemm.hpp"
+#include "etl/impl/vec/gemm.hpp"
+#include "etl/impl/vec/gemm_conv.hpp"
+#include "etl/impl/cublas/gemm.hpp"
 
 namespace etl {
 
@@ -18,12 +23,12 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B, typename Impl>
-struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Impl>, A, B> {
-    using value_type  = value_t<A>;                              ///< The type of value of the expression
-    using this_type   = gemm_expr<A, B, Impl>;                   ///< The type of this expression
+template <typename A, typename B, bool Strassen>
+struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
+    using value_type  = value_t<A>;                               ///< The type of value of the expression
+    using this_type   = gemm_expr<A, B, Strassen>;                ///< The type of this expression
     using base_type   = base_temporary_expr_bin<this_type, A, B>; ///< The base type
-    using left_traits = decay_traits<A>;                         ///< The traits of the sub type
+    using left_traits = decay_traits<A>;                          ///< The traits of the sub type
 
     static constexpr auto storage_order = left_traits::storage_order; ///< The sub storage order
 
@@ -74,6 +79,189 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Impl>, A, B> {
     // Assignment functions
 
     /*!
+     * \brief Select an implementation of GEMM, not considering local context
+     * \param n1 The left dimension of the multiplication
+     * \param n2 The inner dimension of the multiplication
+     * \param n3 The right dimension of the multiplication
+     * \return The implementation to use
+     */
+    template <typename AA, typename BB, typename C>
+    static inline cpp14_constexpr gemm_impl select_default_gemm_impl(const size_t n1, const size_t n2, const size_t n3) {
+        static_assert(all_dma<AA, BB, C>::value, "DMA should be enforced by temporary expr");
+
+        cpp_unused(n2);
+
+        //Note since these boolean will be known at compile time, the conditions will be a lot simplified
+        constexpr bool blas   = cblas_enabled;
+        constexpr bool cublas = cublas_enabled;
+
+        if (cublas) {
+            if (n1 * n3 < gemm_cublas_min) {
+                if (blas) {
+                    return gemm_impl::BLAS;
+                }
+
+                if (n1 * n3 < gemm_std_max) {
+                    return gemm_impl::STD;
+                }
+            }
+
+            return gemm_impl::CUBLAS;
+        } else if (blas) {
+            return gemm_impl::BLAS;
+        }
+
+        if(vec_enabled && all_vectorizable<vector_mode, AA, BB, C>::value){
+            return gemm_impl::VEC;
+        }
+
+        return gemm_impl::STD;
+    }
+
+    /*!
+     * \brief Select an implementation of GEMM
+     * \param n1 The left dimension of the  multiplication
+     * \param n2 The inner dimension of the  multiplication
+     * \param n3 The right dimension of the  multiplication
+     * \return The implementation to use
+     */
+    template <typename AA, typename BB, typename C>
+    static inline gemm_impl select_gemm_impl(const size_t n1, const size_t n2, const size_t n3) {
+        auto def = select_default_gemm_impl<AA, BB, C>(n1, n2, n3);
+
+        if (local_context().gemm_selector.forced) {
+            auto forced = local_context().gemm_selector.impl;
+
+            switch (forced) {
+                //CUBLAS cannot always be used
+                case gemm_impl::CUBLAS:
+                    if (!cublas_enabled) {                                                                                     //COVERAGE_EXCLUDE_LINE
+                        std::cerr << "Forced selection to CUBLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                        return def;                                                              //COVERAGE_EXCLUDE_LINE
+                    }                                                                                                                     //COVERAGE_EXCLUDE_LINE
+
+                    return forced;
+
+                //BLAS cannot always be used
+                case gemm_impl::BLAS:
+                    if (!cblas_enabled) {                                                                                    //COVERAGE_EXCLUDE_LINE
+                        std::cerr << "Forced selection to BLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                        return def;                                                            //COVERAGE_EXCLUDE_LINE
+                    }                                                                                                                   //COVERAGE_EXCLUDE_LINE
+
+                    return forced;
+
+                //VEC cannot always be used
+                case gemm_impl::VEC:
+                    if (!vec_enabled || !all_vectorizable<vector_mode, AA, BB, C>::value) {                                               //COVERAGE_EXCLUDE_LINE
+                        std::cerr << "Forced selection to VEC gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                        return def;                                                            //COVERAGE_EXCLUDE_LINE
+                    }                                                                                                                   //COVERAGE_EXCLUDE_LINE
+
+                    return forced;
+
+                //In other cases, simply use the forced impl
+                default:
+                    return forced;
+            }
+        }
+
+        return def;
+    }
+
+    /*!
+     * \brief Compute C = trans(A) * trans(B)
+     * \param a The A matrix
+     * \param b The B matrix
+     * \param c The C matrix (output)
+     */
+    template <typename AA, typename BB, typename C, cpp_enable_if((is_transpose_expr<AA>::value && is_transpose_expr<BB>::value))>
+    static void apply_raw(AA&& a, BB&& b, C&& c) {
+        auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
+
+        if (impl == gemm_impl::STD) {
+            etl::impl::standard::mm_mul(make_temporary(a), make_temporary(b), c);
+        } else if (impl == gemm_impl::VEC) {
+            etl::impl::vec::gemm(make_temporary(a), make_temporary(b), c);
+        } else if (impl == gemm_impl::BLAS) {
+            etl::impl::blas::gemm_tt(make_temporary(a.a()), make_temporary(b.a()), c);
+        } else if (impl == gemm_impl::CUBLAS) {
+            etl::impl::cublas::gemm_tt(make_temporary(a.a()), make_temporary(b.a()), c);
+        } else {
+            cpp_unreachable("Invalid selection of gemm");
+        }
+    }
+
+    /*!
+     * \brief Compute C = A * trans(B)
+     * \param a The A matrix
+     * \param b The B matrix
+     * \param c The C matrix (output)
+     */
+    template <typename AA, typename BB, typename C, cpp_enable_if((!is_transpose_expr<AA>::value && is_transpose_expr<BB>::value))>
+    static void apply_raw(AA&& a, BB&& b, C&& c) {
+        auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
+
+        if (impl == gemm_impl::STD) {
+            etl::impl::standard::mm_mul(make_temporary(a), make_temporary(b), c);
+        } else if (impl == gemm_impl::VEC) {
+            etl::impl::vec::gemm(make_temporary(a), make_temporary(b), c);
+        } else if (impl == gemm_impl::BLAS) {
+            etl::impl::blas::gemm_nt(make_temporary(a), make_temporary(b.a()), c);
+        } else if (impl == gemm_impl::CUBLAS) {
+            etl::impl::cublas::gemm_nt(make_temporary(a), make_temporary(b.a()), c);
+        } else {
+            cpp_unreachable("Invalid selection of gemm");
+        }
+    }
+
+    /*!
+     * \brief Compute C = trans(A) * trans(B)
+     * \param a The A matrix
+     * \param b The B matrix
+     * \param c The C matrix (output)
+     */
+    template <typename AA, typename BB, typename C, cpp_enable_if((is_transpose_expr<AA>::value && !is_transpose_expr<BB>::value))>
+    static void apply_raw(AA&& a, BB&& b, C&& c) {
+        auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
+
+        if (impl == gemm_impl::STD) {
+            etl::impl::standard::mm_mul(make_temporary(a), make_temporary(b), c);
+        } else if (impl == gemm_impl::VEC) {
+            etl::impl::vec::gemm(make_temporary(a), make_temporary(b), c);
+        } else if (impl == gemm_impl::BLAS) {
+            etl::impl::blas::gemm_tn(make_temporary(a.a()), make_temporary(b), c);
+        } else if (impl == gemm_impl::CUBLAS) {
+            etl::impl::cublas::gemm_tn(make_temporary(a.a()), make_temporary(b), c);
+        } else {
+            cpp_unreachable("Invalid selection of gemm");
+        }
+    }
+
+    /*!
+     * \brief Compute C = A * B
+     * \param a The A matrix
+     * \param b The B matrix
+     * \param c The C matrix (output)
+     */
+    template <typename AA, typename BB, typename C, cpp_enable_if((!is_transpose_expr<AA>::value && !is_transpose_expr<BB>::value))>
+    static void apply_raw(AA&& a, BB&& b, C&& c) {
+        auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
+
+        if (impl == gemm_impl::STD) {
+            etl::impl::standard::mm_mul(a, b, c);
+        } else if (impl == gemm_impl::VEC) {
+            etl::impl::vec::gemm(a, b, c);
+        } else if (impl == gemm_impl::BLAS) {
+            etl::impl::blas::gemm(a, b, c);
+        } else if (impl == gemm_impl::CUBLAS) {
+            etl::impl::cublas::gemm(a, b, c);
+        } else {
+            cpp_unreachable("Invalid selection of gemm");
+        }
+    }
+
+    /*!
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
@@ -90,10 +278,11 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Impl>, A, B> {
         standard_evaluator::pre_assign_rhs(b);
         standard_evaluator::pre_assign_lhs(c);
 
-        Impl::apply_raw(
-            make_temporary(a),
-            make_temporary(b),
-            c);
+        if /* constexpr */ (!Strassen){
+            apply_raw(make_temporary(a), make_temporary(b), c);
+        } else {
+            etl::impl::standard::strassen_mm_mul(make_temporary(a), make_temporary(b), c);
+        }
     }
 
     /*!
@@ -156,9 +345,9 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Impl>, A, B> {
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, typename B, typename Impl>
-struct etl_traits<etl::gemm_expr<A, B, Impl>> {
-    using expr_t       = etl::gemm_expr<A, B, Impl>; ///< The expression type
+template <typename A, typename B, bool Strassen>
+struct etl_traits<etl::gemm_expr<A, B, Strassen>> {
+    using expr_t       = etl::gemm_expr<A, B, Strassen>; ///< The expression type
     using left_expr_t  = std::decay_t<A>;            ///< The left sub expression type
     using right_expr_t = std::decay_t<B>;            ///< The right sub expression type
     using left_traits  = etl_traits<left_expr_t>;    ///< The left sub traits
@@ -246,11 +435,11 @@ struct etl_traits<etl::gemm_expr<A, B, Impl>> {
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_2d<B>::value)>
-gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::mm_mul_impl> operator*(A&& a, B&& b) {
+gemm_expr<detail::build_type<A>, detail::build_type<B>, false> operator*(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
-    return gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::mm_mul_impl>{a, b};
+    return gemm_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b};
 }
 
 /*!
@@ -260,11 +449,11 @@ gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::mm_mul_impl> ope
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_2d<B>::value)>
-gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::mm_mul_impl> mul(A&& a, B&& b) {
+gemm_expr<detail::build_type<A>, detail::build_type<B>, false> mul(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
-    return gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::mm_mul_impl>{a, b};
+    return gemm_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b};
 }
 
 /*!
@@ -290,11 +479,11 @@ auto mul(A&& a, B&& b, C&& c) {
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <typename A, typename B>
-gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::strassen_mm_mul_impl> strassen_mul(A&& a, B&& b) {
+gemm_expr<detail::build_type<A>, detail::build_type<B>, true> strassen_mul(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
-    return gemm_expr<detail::build_type<A>, detail::build_type<B>, detail::strassen_mm_mul_impl>{a, b};
+    return gemm_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b};
 }
 
 /*!
