@@ -539,6 +539,20 @@ template <vector_mode_t V, typename... E>
 using all_vectorizable = cpp::and_u<decay_traits<E>::template vectorizable<V>::value...>;
 
 /*!
+ * \brief Traits to test if the given ETL expresion type contain vectorizable types.
+ * \tparam E The ETL expression type.
+ */
+template <vector_mode_t V, typename E>
+using vectorizable_t = cpp::bool_constant<get_intrinsic_traits<V>::template type<value_t<E>>::vectorizable>;
+
+/*!
+ * \brief Traits to test if all the given ETL expresion types contain vectorizable types.
+ * \tparam E The ETL expression types.
+ */
+template <vector_mode_t V, typename... E>
+using all_vectorizable_t = cpp::and_u<vectorizable_t<V, E>::value...>;
+
+/*!
  * \brief Traits to test if all the given ETL expresion types are
  * thread safe.
  * \tparam E The ETL expression types.
