@@ -28,9 +28,11 @@ void gemm_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
+    const auto j_end = N & (size_t(-vec_size));
+
     size_t j = 0;
 
-    for (; j + vec_size * 8 - 1 < N; j += vec_size * 8) {
+    for (; j + vec_size * 7 < j_end; j += vec_size * 8) {
         for (size_t i = 0; i < M; ++i) {
             auto r1 = vec_type::template zero<T>();
             auto r2 = vec_type::template zero<T>();
@@ -74,7 +76,7 @@ void gemm_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size
         }
     }
 
-    for (; j + (4 * vec_size) - 1 < N; j += 4 * vec_size) {
+    for (; j + vec_size * 3 < j_end; j += 4 * vec_size) {
         size_t i = 0;
 
         for (; i + 1 < M; i += 2){
@@ -91,13 +93,13 @@ void gemm_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size
             auto r42 = vec_type::template zero<T>();
 
             for (size_t k = 0; k < K; ++k) {
+                auto a1 = vec_type::set(a[(i + 0) * K + k]);
+                auto a2 = vec_type::set(a[(i + 1) * K + k]);
+
                 auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
                 auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
                 auto b3 = vec_type::loadu(b + k * N + j + vec_size * 2);
                 auto b4 = vec_type::loadu(b + k * N + j + vec_size * 3);
-
-                auto a1 = vec_type::set(a[(i + 0) * K + k]);
-                auto a2 = vec_type::set(a[(i + 1) * K + k]);
 
                 r11 = vec_type::fmadd(a1, b1, r11);
                 r12 = vec_type::fmadd(a2, b1, r12);
@@ -113,15 +115,13 @@ void gemm_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size
             }
 
             vec_type::storeu(c + (i+0) * N + j + 0 * vec_size, r11);
-            vec_type::storeu(c + (i+1) * N + j + 0 * vec_size, r12);
-
             vec_type::storeu(c + (i+0) * N + j + 1 * vec_size, r21);
-            vec_type::storeu(c + (i+1) * N + j + 1 * vec_size, r22);
-
             vec_type::storeu(c + (i+0) * N + j + 2 * vec_size, r31);
-            vec_type::storeu(c + (i+1) * N + j + 2 * vec_size, r32);
-
             vec_type::storeu(c + (i+0) * N + j + 3 * vec_size, r41);
+
+            vec_type::storeu(c + (i+1) * N + j + 0 * vec_size, r12);
+            vec_type::storeu(c + (i+1) * N + j + 1 * vec_size, r22);
+            vec_type::storeu(c + (i+1) * N + j + 2 * vec_size, r32);
             vec_type::storeu(c + (i+1) * N + j + 3 * vec_size, r42);
         }
 
@@ -132,12 +132,12 @@ void gemm_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size
             auto r41 = vec_type::template zero<T>();
 
             for (size_t k = 0; k < K; ++k) {
+                auto a1 = vec_type::set(a[(i + 0) * K + k]);
+
                 auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
                 auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
                 auto b3 = vec_type::loadu(b + k * N + j + vec_size * 2);
                 auto b4 = vec_type::loadu(b + k * N + j + vec_size * 3);
-
-                auto a1 = vec_type::set(a[(i + 0) * K + k]);
 
                 r11 = vec_type::fmadd(a1, b1, r11);
                 r21 = vec_type::fmadd(a1, b2, r21);
@@ -152,7 +152,7 @@ void gemm_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size
         }
     }
 
-    for (; j + (2 * vec_size) - 1 < N; j += 2 * vec_size) {
+    for (; j + vec_size < j_end; j += 2 * vec_size) {
         size_t i = 0;
 
         for (; i + 3 < M; i += 4) {
@@ -167,13 +167,13 @@ void gemm_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size
             auto r24 = vec_type::template zero<T>();
 
             for (size_t k = 0; k < K; ++k) {
-                auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
-                auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
-
                 auto a1 = vec_type::set(a[(i + 0) * K + k]);
                 auto a2 = vec_type::set(a[(i + 1) * K + k]);
                 auto a3 = vec_type::set(a[(i + 2) * K + k]);
                 auto a4 = vec_type::set(a[(i + 3) * K + k]);
+
+                auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+                auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
 
                 r11 = vec_type::fmadd(a1, b1, r11);
                 r12 = vec_type::fmadd(a2, b1, r12);
@@ -187,13 +187,15 @@ void gemm_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size
             }
 
             vec_type::storeu(c + (i+0) * N + j + 0 * vec_size, r11);
-            vec_type::storeu(c + (i+1) * N + j + 0 * vec_size, r12);
-            vec_type::storeu(c + (i+2) * N + j + 0 * vec_size, r13);
-            vec_type::storeu(c + (i+3) * N + j + 0 * vec_size, r14);
-
             vec_type::storeu(c + (i+0) * N + j + 1 * vec_size, r21);
+
+            vec_type::storeu(c + (i+1) * N + j + 0 * vec_size, r12);
             vec_type::storeu(c + (i+1) * N + j + 1 * vec_size, r22);
+
+            vec_type::storeu(c + (i+2) * N + j + 0 * vec_size, r13);
             vec_type::storeu(c + (i+2) * N + j + 1 * vec_size, r23);
+
+            vec_type::storeu(c + (i+3) * N + j + 0 * vec_size, r14);
             vec_type::storeu(c + (i+3) * N + j + 1 * vec_size, r24);
         }
 
@@ -205,11 +207,11 @@ void gemm_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size
             auto r22 = vec_type::template zero<T>();
 
             for (size_t k = 0; k < K; ++k) {
-                auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
-                auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
-
                 auto a1 = vec_type::set(a[(i + 0) * K + k]);
                 auto a2 = vec_type::set(a[(i + 1) * K + k]);
+
+                auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+                auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
 
                 r11 = vec_type::fmadd(a1, b1, r11);
                 r12 = vec_type::fmadd(a2, b1, r12);
@@ -219,9 +221,9 @@ void gemm_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size
             }
 
             vec_type::storeu(c + (i+0) * N + j + 0 * vec_size, r11);
-            vec_type::storeu(c + (i+1) * N + j + 0 * vec_size, r12);
-
             vec_type::storeu(c + (i+0) * N + j + 1 * vec_size, r21);
+
+            vec_type::storeu(c + (i+1) * N + j + 0 * vec_size, r12);
             vec_type::storeu(c + (i+1) * N + j + 1 * vec_size, r22);
         }
 
@@ -244,7 +246,7 @@ void gemm_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size
         }
     }
 
-    for (; j + vec_size - 1 < N; j += vec_size) {
+    for (; j < j_end; j += vec_size) {
         size_t i = 0;
 
         for (; i + 1 < M; i += 2) {
@@ -263,7 +265,7 @@ void gemm_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size
 
             vec_type::storeu(c + (i+0) * N + j, r1);
             vec_type::storeu(c + (i+1) * N + j, r2);
-        }
+            }
 
         if (i < M) {
             auto r1 = vec_type::template zero<T>();
