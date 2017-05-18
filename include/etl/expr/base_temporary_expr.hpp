@@ -390,8 +390,8 @@ private:
      * \return a reference to the expression containing the result of the expression
      */
     result_type& result() {
-        cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
+        cpp_assert(evaluated, "The result has not been evaluated");
         return *_c;
     }
 
@@ -400,8 +400,8 @@ private:
      * \return a const reference to the expression containing the result of the expression
      */
     const result_type& result() const {
-        cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
+        cpp_assert(evaluated, "The result has not been evaluated");
         return *_c;
     }
 };
