@@ -298,15 +298,18 @@ public:
      */
     slice_view(sub_type sub, size_t first, size_t last)
             : sub(sub), first(first), last(last), sub_size((size(sub) / etl::dim<0>(sub)) * (last - first)) {
-        if (!decay_traits<sub_type>::is_temporary) {
-            this->memory = sub.memory_start() + first * (size(sub) / etl::dim<0>(sub));
-
-            // A sub view inherits the CPU/GPU from parent
-            this->cpu_up_to_date = sub.is_cpu_up_to_date();
-            this->gpu_up_to_date = sub.is_gpu_up_to_date();
-        } else {
-            this->memory = nullptr;
+        // Accessing the memory through fast sub views means evaluation
+        if /* constexpr */ (decay_traits<sub_type>::is_temporary){
+            standard_evaluator::pre_assign_rhs(*this);
         }
+
+        this->memory = this->sub.memory_start() + first * (size(this->sub) / etl::dim<0>(this->sub));
+
+        // A sub view inherits the CPU/GPU from parent
+        this->cpu_up_to_date = this->sub.is_cpu_up_to_date();
+        this->gpu_up_to_date = this->sub.is_gpu_up_to_date();
+
+        cpp_assert(this->memory, "Invalid memory");
     }
 
     /*!

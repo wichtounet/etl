@@ -350,11 +350,14 @@ public:
      */
     template<typename... S>
     explicit dyn_matrix_view(sub_type sub, S... dims) : sub(sub), dimensions{{dims...}}, _size(etl::size(sub)) {
-        if(!decay_traits<sub_type>::is_temporary){
-            this->memory = sub.memory_start();
-        } else {
-            this->memory = nullptr;
+        // Accessing the memory through fast sub views means evaluation
+        if /* constexpr */ (decay_traits<sub_type>::is_temporary){
+            standard_evaluator::pre_assign_rhs(*this);
         }
+
+        this->memory = this->sub.memory_start();
+
+        cpp_assert(this->memory, "Memory should have been evaluated");
     }
 
     /*!

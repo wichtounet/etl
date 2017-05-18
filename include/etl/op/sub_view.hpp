@@ -365,15 +365,18 @@ public:
      * \param i The sub index
      */
     sub_view(sub_type sub_expr, size_t i) : sub_expr(sub_expr), i(i), sub_size(subsize(sub_expr)) {
-        if(!decay_traits<sub_type>::is_temporary){
-            this->memory = sub_expr.memory_start() + i * sub_size;
-
-            // A sub view inherits the CPU/GPU from parent
-            this->cpu_up_to_date = sub_expr.is_cpu_up_to_date();
-            this->gpu_up_to_date = sub_expr.is_gpu_up_to_date();
-        } else {
-            this->memory = nullptr;
+        // Accessing the memory through fast sub views means evaluation
+        if /* constexpr */ (decay_traits<sub_type>::is_temporary){
+            standard_evaluator::pre_assign_rhs(*this);
         }
+
+        this->memory = this->sub_expr.memory_start() + i * sub_size;
+
+        // A sub view inherits the CPU/GPU from parent
+        this->cpu_up_to_date = this->sub_expr.is_cpu_up_to_date();
+        this->gpu_up_to_date = this->sub_expr.is_gpu_up_to_date();
+
+        cpp_assert(this->memory, "Invalid memory");
     }
 
     ~sub_view(){

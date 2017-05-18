@@ -337,12 +337,14 @@ public:
      * \param sub The sub expression
      */
     explicit fast_matrix_view(sub_type sub): sub(sub) {
-        if(!decay_traits<sub_type>::is_temporary){
-            this->memory = sub.memory_start();
-            cpp_assert(memory, "Memory from sub has not been initialized");
-        } else {
-            this->memory = nullptr;
+        // Accessing the memory through fast sub views means evaluation
+        if /* constexpr */ (decay_traits<sub_type>::is_temporary){
+            standard_evaluator::pre_assign_rhs(*this);
         }
+
+        this->memory = this->sub.memory_start();
+
+        cpp_assert(this->memory, "Invalid memory");
     }
 
     /*!
