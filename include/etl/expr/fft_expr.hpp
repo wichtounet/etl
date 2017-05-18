@@ -46,7 +46,6 @@ struct fft_expr : base_temporary_expr_un<fft_expr<A, T, Impl>, A> {
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_lhs(c);
 
         Impl::apply(
             make_temporary(a),

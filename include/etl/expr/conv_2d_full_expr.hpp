@@ -86,7 +86,6 @@ struct conv_2d_full_expr : base_temporary_expr_bin<conv_2d_full_expr<A, B, Flipp
 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
-        standard_evaluator::pre_assign_lhs(c);
 
         if /* constexpr */ (Flipped){
             detail::conv2_full_flipped_impl::apply(make_temporary(a), make_temporary(b), c);

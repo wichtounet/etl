@@ -49,7 +49,6 @@ struct convmtx_2d_expr : base_temporary_expr_un<convmtx_2d_expr<A, K1, K2>, A> {
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_lhs(c);
 
         detail::convmtx2_direct::template apply<K1, K2>(
             make_temporary(a),

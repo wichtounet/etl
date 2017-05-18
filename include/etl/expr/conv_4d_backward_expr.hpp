@@ -116,7 +116,6 @@ struct conv_4d_backward_expr : base_temporary_expr_bin<conv_4d_backward_expr<A, 
 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
-        standard_evaluator::pre_assign_lhs(c);
 
         if /* constexpr */ (Flipped){
             detail::conv4_backward_flipped_impl<S1, S2, P1, P2>::apply(make_temporary(a), make_temporary(b), c);

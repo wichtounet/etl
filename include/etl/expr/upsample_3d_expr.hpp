@@ -46,7 +46,6 @@ struct upsample_3d_expr : base_temporary_expr_un<upsample_3d_expr<A, C1, C2, C3,
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_lhs(lhs);
 
         Impl::template apply<C1, C2, C3>(
             make_temporary(a),

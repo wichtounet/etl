@@ -50,7 +50,6 @@ struct pool_2d_expr : base_temporary_expr_un<pool_2d_expr<A, C1, C2, S1, S2, P1,
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_lhs(c);
 
         Impl::template apply<C1, C2, S1, S2, P1, P2>(
             make_temporary(a),

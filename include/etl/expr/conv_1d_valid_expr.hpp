@@ -87,7 +87,6 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
 
         standard_evaluator::pre_assign_rhs(input_raw);
         standard_evaluator::pre_assign_rhs(kernel_raw);
-        standard_evaluator::pre_assign_lhs(conv);
 
         // Make temporaries if necessary
 

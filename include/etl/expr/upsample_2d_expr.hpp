@@ -49,7 +49,6 @@ struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2, Imp
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_lhs(c);
 
         Impl::template apply<C1, C2>(
             make_temporary(a),

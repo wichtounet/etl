@@ -311,8 +311,6 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
 
         check(a, b, c);
 
-        standard_evaluator::pre_assign_lhs(c);
-
         if /* constexpr */ (!Strassen){
             apply_raw(a, b, c);
         } else {

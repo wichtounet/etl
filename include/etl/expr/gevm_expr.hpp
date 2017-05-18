@@ -163,7 +163,6 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
-        standard_evaluator::pre_assign_lhs(c);
 
         auto impl = select_gevm_impl<C>(etl::dim<0>(b), etl::dim<1>(b));
 

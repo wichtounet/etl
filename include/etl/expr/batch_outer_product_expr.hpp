@@ -50,7 +50,6 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
-        standard_evaluator::pre_assign_lhs(c);
 
         detail::batch_outer_product_impl::apply(a, b, c);
     }

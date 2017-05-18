@@ -92,7 +92,6 @@ struct dyn_conv_2d_backward_expr : base_temporary_expr_bin<dyn_conv_2d_backward_
 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
-        standard_evaluator::pre_assign_lhs(c);
 
         if /* constexpr */ (Flipped){
             detail::dyn_conv2_backward_flipped_impl::apply(make_temporary(a), make_temporary(b), c, s1, s2, p1, p2);

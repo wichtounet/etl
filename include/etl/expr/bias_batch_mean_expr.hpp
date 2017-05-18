@@ -77,7 +77,6 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_lhs(lhs);
 
         const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);
@@ -116,7 +115,6 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_lhs(lhs);
 
         const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);
@@ -155,7 +153,6 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_lhs(lhs);
 
         const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);
@@ -194,7 +191,6 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_lhs(lhs);
 
         const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);
@@ -233,7 +229,6 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_lhs(lhs);
 
         const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);
@@ -272,7 +267,6 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_lhs(lhs);
 
         const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);

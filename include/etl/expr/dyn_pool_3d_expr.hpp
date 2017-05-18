@@ -56,7 +56,6 @@ struct dyn_pool_3d_expr : base_temporary_expr_un<dyn_pool_3d_expr<A, Impl>, A> {
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_lhs(lhs);
 
         Impl::template apply<>(
             make_temporary(a),

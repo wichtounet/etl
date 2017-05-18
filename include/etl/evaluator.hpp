@@ -54,15 +54,6 @@ namespace standard_evaluator {
         expr.visit(eval_visitor);
     }
 
-    /*!
-     * \brief Allocate temporaries and evaluate sub expressions in LHS
-     * \param expr The expr to be visited
-     */
-    template <typename E>
-    void pre_assign_lhs(E&& expr) {
-        cpp_unused(expr);
-    }
-
     //Standard assign version
 
     /*!
@@ -258,7 +249,6 @@ namespace standard_evaluator {
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
     void add_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         for (size_t i = 0; i < etl::size(result); ++i) {
             result[i] += expr[i];
@@ -275,7 +265,6 @@ namespace standard_evaluator {
     template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
     void add_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
@@ -299,7 +288,6 @@ namespace standard_evaluator {
         constexpr auto V = detail::select_vector_mode<E, R>();
 
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
@@ -323,7 +311,6 @@ namespace standard_evaluator {
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
     void sub_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
@@ -343,7 +330,6 @@ namespace standard_evaluator {
     template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
     void sub_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
@@ -367,7 +353,6 @@ namespace standard_evaluator {
         constexpr auto V = detail::select_vector_mode<E, R>();
 
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
@@ -391,7 +376,6 @@ namespace standard_evaluator {
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
     void mul_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
@@ -411,7 +395,6 @@ namespace standard_evaluator {
     template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
     void mul_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
@@ -435,7 +418,6 @@ namespace standard_evaluator {
         constexpr auto V = detail::select_vector_mode<E, R>();
 
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
@@ -459,7 +441,6 @@ namespace standard_evaluator {
     template <typename E, typename R, cpp_enable_if(detail::standard_compound_div<E, R>::value)>
     void div_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
@@ -479,7 +460,6 @@ namespace standard_evaluator {
     template <typename E, typename R, cpp_enable_if(detail::direct_compound_div<E, R>::value)>
     void div_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
@@ -503,7 +483,6 @@ namespace standard_evaluator {
         constexpr auto V = detail::select_vector_mode<E, R>();
 
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
@@ -527,7 +506,6 @@ namespace standard_evaluator {
     template <typename E, typename R>
     void mod_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
@@ -548,7 +526,6 @@ namespace standard_evaluator {
     void assign_evaluate(E&& expr, R&& result) {
         //Evaluate sub parts, if any
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         //Perform the real evaluation, selected by TMP
         assign_evaluate_impl(expr, result);
@@ -561,7 +538,6 @@ namespace standard_evaluator {
     void assign_evaluate(E&& expr, R&& result) {
         //Evaluate sub parts, if any
         pre_assign_rhs(expr);
-        pre_assign_lhs(result);
 
         if(result.alias(expr)){
             auto tmp_result = force_temporary(result);

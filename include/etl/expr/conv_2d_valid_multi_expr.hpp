@@ -89,7 +89,6 @@ struct conv_2d_valid_multi_expr : base_temporary_expr_bin<conv_2d_valid_multi_ex
 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
-        standard_evaluator::pre_assign_lhs(c);
 
         if /* constexpr */ (Flipped){
             detail::conv2_valid_multi_flipped_impl<S1, S2, P1, P2>::apply(make_temporary(a), make_temporary(b), c);

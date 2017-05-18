@@ -95,7 +95,6 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
-        standard_evaluator::pre_assign_lhs(lhs);
 
         auto impl = select_impl<L>();
 

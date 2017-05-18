@@ -54,7 +54,6 @@ struct dyn_pool_derivative_expr : base_temporary_expr_bin<dyn_pool_derivative_ex
 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
-        standard_evaluator::pre_assign_lhs(c);
 
         Impl::apply(a, b, c, c1, c2, c3);
     }

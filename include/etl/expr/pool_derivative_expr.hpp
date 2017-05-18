@@ -50,7 +50,6 @@ struct pool_derivative_expr : base_temporary_expr_bin<pool_derivative_expr<A, B,
 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
-        standard_evaluator::pre_assign_lhs(c);
 
         Impl::template apply<C1, C2, C3>(a, b, c);
     }

@@ -96,7 +96,6 @@ struct dyn_conv_4d_backward_filter_expr : base_temporary_expr_bin<dyn_conv_4d_ba
 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
-        standard_evaluator::pre_assign_lhs(c);
 
         if /* constexpr */ (Flipped){
             detail::dyn_conv4_backward_filter_flipped_impl::apply(make_temporary(a), make_temporary(b), c, s1, s2, p1, p2);

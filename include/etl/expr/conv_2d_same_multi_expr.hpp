@@ -88,7 +88,6 @@ struct conv_2d_same_multi_expr : base_temporary_expr_bin<conv_2d_same_multi_expr
 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
-        standard_evaluator::pre_assign_lhs(c);
 
         if /* constexpr */ (Flipped){
             detail::conv2_same_multi_flipped_impl::apply(make_temporary(a), make_temporary(b), c);
