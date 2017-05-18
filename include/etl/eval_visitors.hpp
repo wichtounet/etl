@@ -18,13 +18,6 @@ namespace etl {
 namespace detail {
 
 /*!
- * \brief Visitor to allocate temporary when needed
- */
-struct temporary_allocator_visitor {
-    // Simple tag
-};
-
-/*!
  * \brief Visitor to perform local evaluation when necessary
  */
 struct evaluator_visitor {

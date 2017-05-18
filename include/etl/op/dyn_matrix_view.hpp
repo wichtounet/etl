@@ -272,14 +272,6 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::temporary_allocator_visitor& visitor) const {
-        sub.visit(visitor);
-    }
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
     void visit(const detail::back_propagate_visitor& visitor) const {
         sub.visit(visitor);
     }
@@ -621,14 +613,6 @@ public:
     }
 
     // Internals
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
-    void visit(const detail::temporary_allocator_visitor& visitor) const {
-        sub.visit(visitor);
-    }
 
     /*!
      * \brief Apply the given visitor to this expression and its descendants.

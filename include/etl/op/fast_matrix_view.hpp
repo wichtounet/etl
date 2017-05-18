@@ -272,14 +272,6 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::temporary_allocator_visitor& visitor) const {
-        sub.visit(visitor);
-    }
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
     void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
@@ -602,14 +594,6 @@ public:
             this->memory = const_cast<memory_type>(sub.memory_start());
             cpp_assert(this->memory, "Memory from sub has not been initialized");
         }
-    }
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
-    void visit(const detail::temporary_allocator_visitor& visitor) const {
-        sub.visit(visitor);
     }
 
     /*!
