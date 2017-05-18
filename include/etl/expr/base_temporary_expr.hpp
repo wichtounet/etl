@@ -420,6 +420,8 @@ struct base_temporary_expr_un : base_temporary_expr<D, Fast> {
 
     A _a;                       ///< The sub expression reference
 
+    using base_type::evaluated;
+
     /*!
      * \brief Construct a new expression
      * \param a The sub expression
@@ -485,6 +487,12 @@ struct base_temporary_expr_un : base_temporary_expr<D, Fast> {
      * \param visitor The visitor to apply
      */
     void visit(detail::evaluator_visitor& visitor) const {
+        // If the expression is already evaluated, no need to
+        // recurse through the tree
+        if(evaluated){
+            return;
+        }
+
         this->allocate_temporary();
 
         bool old_need_value = visitor.need_value;
@@ -518,6 +526,8 @@ struct base_temporary_expr_bin : base_temporary_expr<D, Fast> {
 
     A _a;                       ///< The sub expression reference
     B _b;                       ///< The sub expression reference
+
+    using base_type::evaluated;
 
     /*!
      * \brief Construct a new expression
@@ -602,6 +612,12 @@ struct base_temporary_expr_bin : base_temporary_expr<D, Fast> {
      * \param visitor The visitor to apply
      */
     void visit(detail::evaluator_visitor& visitor) const {
+        // If the expression is already evaluated, no need to
+        // recurse through the tree
+        if(evaluated){
+            return;
+        }
+
         this->allocate_temporary();
 
         bool old_need_value = visitor.need_value;
@@ -642,6 +658,8 @@ private:
     A _a;                       ///< The first sub expression reference
     B _b;                       ///< The second sub expression reference
     C _c;                       ///< The third sub expression reference
+
+    using base_type::evaluated;
 
 public:
 
@@ -750,6 +768,12 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(detail::evaluator_visitor& visitor) const {
+        // If the expression is already evaluated, no need to
+        // recurse through the tree
+        if(evaluated){
+            return;
+        }
+
         this->allocate_temporary();
 
         bool old_need_value = visitor.need_value;
