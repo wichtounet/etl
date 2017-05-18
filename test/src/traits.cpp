@@ -300,11 +300,11 @@ TEMPLATE_TEST_CASE_2("etl_traits/binary_fast_mat", "etl_traits<binary<fast_mat, 
 }
 
 TEMPLATE_TEST_CASE_2("etl_traits/has_direct_access", "has_direct_access", Z, float, double) {
-    using mat_type_1 = etl::fast_matrix<Z, 3, 2, 4, 5>;
+    using mat_type_1 = etl::fast_matrix<Z, 3, 2, 4, 4>;
     mat_type_1 a(3.3);
 
     using mat_type_2 = etl::dyn_matrix<Z, 4>;
-    mat_type_2 b(3, 2, 4, 5);
+    mat_type_2 b(3, 2, 4, 4);
 
     //Values have direct access
     REQUIRE_DIRECT(etl::has_direct_access<mat_type_1>::value);
@@ -333,8 +333,8 @@ TEMPLATE_TEST_CASE_2("etl_traits/has_direct_access", "has_direct_access", Z, flo
     REQUIRE_DIRECT(etl::has_direct_access<decltype(b(1)(2)(0))>::value);
 
     //View have direct access
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape<4, 30>(a))>::value);
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape(b, 3, 40))>::value);
+    REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape<6, 16>(a))>::value);
+    REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape(b, 6, 16))>::value);
 
     //Temporary unary expressions have direct access
     REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::fft_1d(a(1)(0)(0)))>::value);
@@ -345,8 +345,8 @@ TEMPLATE_TEST_CASE_2("etl_traits/has_direct_access", "has_direct_access", Z, flo
     REQUIRE_DIRECT(etl::has_direct_access<decltype(b(0)(0) * b(0)(0))>::value);
 
     //Mixes should have direct access even as deep as possible
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape<5, 2>(etl::reshape<2, 10>(a(0)(0) * a(0)(0))(1))(0))>::value);
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape<5, 2>(etl::reshape<2, 10>(b(0)(0) * b(0)(0))(1))(0))>::value);
+    REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape<4, 2>(etl::reshape<2, 8>(a(0)(0) * a(0)(0))(1))(0))>::value);
+    REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape<4, 2>(etl::reshape<2, 8>(b(0)(0) * b(0)(0))(1))(0))>::value);
 
     //Binary do not have direct access
     REQUIRE_DIRECT(!etl::has_direct_access<decltype(a + b)>::value);
@@ -364,11 +364,11 @@ TEMPLATE_TEST_CASE_2("etl_traits/has_direct_access", "has_direct_access", Z, flo
 }
 
 TEMPLATE_TEST_CASE_2("etl_traits/vectorizable", "vectorizable", Z, float, double) {
-    using mat_type_1 = etl::fast_matrix<Z, 3, 2, 4, 5>;
+    using mat_type_1 = etl::fast_matrix<Z, 3, 2, 4, 4>;
     mat_type_1 a(3.3);
 
     using mat_type_2 = etl::dyn_matrix<Z, 4>;
-    mat_type_2 b(3, 2, 4, 5);
+    mat_type_2 b(3, 2, 4, 4);
 
     if(etl::vec_enabled){
         //Values have direct access
@@ -431,11 +431,11 @@ bool correct_type(E&& /*e*/) {
 }
 
 TEMPLATE_TEST_CASE_2("etl_traits/precision", "is_X_precision", Z, float, double) {
-    using mat_type_1 = etl::fast_matrix<Z, 3, 2, 4, 5>;
+    using mat_type_1 = etl::fast_matrix<Z, 3, 2, 4, 4>;
     mat_type_1 a(3.3);
 
     using mat_type_2 = etl::dyn_matrix<Z, 4>;
-    mat_type_2 b(3, 2, 4, 5);
+    mat_type_2 b(3, 2, 4, 4);
 
     REQUIRE_DIRECT(correct_type<Z>(a));
     REQUIRE_DIRECT(correct_type<Z>(b));
@@ -446,17 +446,17 @@ TEMPLATE_TEST_CASE_2("etl_traits/precision", "is_X_precision", Z, float, double)
     REQUIRE_DIRECT(correct_type<Z>(a(0)(1)));
     REQUIRE_DIRECT(correct_type<Z>(b(2)(0)));
 
-    REQUIRE_DIRECT(correct_type<Z>(etl::reshape<4, 30>(a)));
-    REQUIRE_DIRECT(correct_type<Z>(etl::reshape(b, 3, 40)));
+    REQUIRE_DIRECT(correct_type<Z>(etl::reshape<6, 16>(a)));
+    REQUIRE_DIRECT(correct_type<Z>(etl::reshape(b, 6, 16)));
 
     REQUIRE_DIRECT(correct_type<Z>(a(0)(0) * a(0)(0)));
     REQUIRE_DIRECT(correct_type<Z>(b(0)(0) * b(0)(0)));
 
-    REQUIRE_DIRECT(correct_type<Z>(etl::reshape(etl::reshape(a(0)(0) * a(0)(0), 2, 10)(1), 5, 2)(0)));
-    REQUIRE_DIRECT(correct_type<Z>(etl::reshape(etl::reshape(b(0)(0) * b(0)(0), 2, 10)(1), 5, 2)(0)));
+    REQUIRE_DIRECT(correct_type<Z>(etl::reshape(etl::reshape(a(0)(0) * a(0)(0), 2, 8)(1), 4, 2)(0)));
+    REQUIRE_DIRECT(correct_type<Z>(etl::reshape(etl::reshape(b(0)(0) * b(0)(0), 2, 8)(1), 4, 2)(0)));
 
-    REQUIRE_DIRECT(correct_type<Z>(etl::reshape<5, 2>(etl::reshape<2, 10>(a(0)(0) * a(0)(0))(1))(0)));
-    REQUIRE_DIRECT(correct_type<Z>(etl::reshape<5, 2>(etl::reshape<2, 10>(b(0)(0) * b(0)(0))(1))(0)));
+    REQUIRE_DIRECT(correct_type<Z>(etl::reshape<4, 2>(etl::reshape<2, 8>(a(0)(0) * a(0)(0))(1))(0)));
+    REQUIRE_DIRECT(correct_type<Z>(etl::reshape<4, 2>(etl::reshape<2, 8>(b(0)(0) * b(0)(0))(1))(0)));
 
     REQUIRE_DIRECT(correct_type<Z>(a + b));
     REQUIRE_DIRECT(correct_type<Z>(b + a));
