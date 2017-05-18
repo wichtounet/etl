@@ -27,6 +27,7 @@ float fake = 0;
  * Simple: 3 / 0 / 2 (Optimal!)
  * Basic: 15 / 0 / 3 (Optimal!)
  * Sub: 960 / 640 / 160
+ * ML: 960 / 640 / 160
  */
 
 void simple(){
@@ -120,12 +121,57 @@ void sub(){
     etl::dump_counters();
 }
 
+// Simulate forward propagation in a neural network (with some ops as DLL)
+void ml(){
+    etl::dyn_matrix<float, 4> I(32, 3, 28, 28);
+
+    etl::dyn_matrix<float, 4> W1(16, 3, 3, 3);
+    etl::dyn_matrix<float, 1> B1(16);
+    etl::dyn_matrix<float, 4> O1(32, 16, 28, 28);
+
+    etl::dyn_matrix<float, 4> P1(32, 16, 14, 14);
+
+    etl::dyn_matrix<float, 4> W2(16, 16, 3, 3);
+    etl::dyn_matrix<float, 1> B2(16);
+    etl::dyn_matrix<float, 4> O2(32, 16, 14, 14);
+
+    etl::dyn_matrix<float, 4> P2(32, 16, 7, 7);
+
+    etl::dyn_matrix<float, 2> W3(16 * 7 * 7, 500);
+    etl::dyn_matrix<float, 1> B3(500);
+    etl::dyn_matrix<float, 2> O3(32, 500);
+
+    etl::dyn_matrix<float, 2> W4(500, 10);
+    etl::dyn_matrix<float, 1> B4(10);
+    etl::dyn_matrix<float, 2> O4(32, 10);
+
+    etl::reset_counters();
+
+    std::cout << "ML" << std::endl;
+
+    for (size_t i = 0; i < 10; ++i) {
+        O1 = bias_add_4d(etl::ml::convolution_forward<1, 1, 1, 1>(I, W1), B1);
+        P1 = etl::max_pool_3d<1, 2, 2>(O1);
+
+        O2 = bias_add_4d(etl::ml::convolution_forward<1, 1, 1, 1>(P1, W2), B2);
+        P2 = etl::max_pool_3d<1, 2, 2>(O2);
+
+        O3 = bias_add_2d(etl::reshape<32, 16 * 7 * 7>(P2) * W3, B3);
+        O4 = bias_add_2d(O3 * W4, B4);
+
+        //TODO Add backward
+    }
+
+    etl::dump_counters();
+}
+
 int main(){
     auto start_time = timer_clock::now();
 
     simple();
     basic();
     sub();
+    ml();
 
     auto end_time = timer_clock::now();
     auto duration = std::chrono::duration_cast<milliseconds>(end_time - start_time);
