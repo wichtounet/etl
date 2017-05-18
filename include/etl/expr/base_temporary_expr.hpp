@@ -70,12 +70,8 @@ struct base_temporary_expr : value_testable<D>, dim_testable<D>, iterable<const 
     using const_memory_type = const value_type*;                    ///< The const memory type
 
 protected:
-    mutable bool evaluated = false; ///< Indicates if the expression has been evaluated
-
-    mutable std::shared_ptr<result_type> _c;           ///< The result reference
-
-private:
-    gpu_memory_handler<value_type> _gpu;                 ///< The GPU memory handler
+    mutable bool evaluated = false;          ///< Indicates if the expression has been evaluated
+    mutable std::shared_ptr<result_type> _c; ///< The result reference
 
 public:
     /*!
@@ -305,42 +301,42 @@ public:
      * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
      */
     value_type* gpu_memory() const noexcept {
-        return _gpu.gpu_memory();
+        return result().gpu_memory();
     }
 
     /*!
      * \brief Evict the expression from GPU.
      */
     void gpu_evict() const noexcept {
-        _gpu.gpu_evict();
+        result().gpu_evict();
     }
 
     /*!
      * \brief Invalidates the CPU memory
      */
     void invalidate_cpu() const noexcept {
-        _gpu.invalidate_cpu();
+        result().invalidate_cpu();
     }
 
     /*!
      * \brief Invalidates the GPU memory
      */
     void invalidate_gpu() const noexcept {
-        _gpu.invalidate_gpu();
+        result().invalidate_gpu();
     }
 
     /*!
      * \brief Validates the CPU memory
      */
     void validate_cpu() const noexcept {
-        _gpu.validate_cpu();
+        result().validate_cpu();
     }
 
     /*!
      * \brief Validates the GPU memory
      */
     void validate_gpu() const noexcept {
-        _gpu.validate_gpu();
+        result().validate_gpu();
     }
 
     /*!
@@ -348,14 +344,14 @@ public:
      * is up to date (to undefined value).
      */
     void ensure_gpu_allocated() const {
-        _gpu.ensure_gpu_allocated(etl::size(result()));
+        result().ensure_gpu_allocated();
     }
 
     /*!
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
      */
     void ensure_gpu_up_to_date() const {
-        _gpu.ensure_gpu_up_to_date(memory_start(), etl::size(result()));
+        result().ensure_gpu_up_to_date();
     }
 
     /*!
@@ -363,7 +359,7 @@ public:
      * necessary.
      */
     void ensure_cpu_up_to_date() const {
-        _gpu.ensure_cpu_up_to_date(memory_start(), etl::size(result()));
+        result().ensure_cpu_up_to_date();
     }
 
     /*!
@@ -371,7 +367,7 @@ public:
      * \param gpu_memory Pointer to CPU memory
      */
     void gpu_copy_from(const value_type* gpu_memory) const {
-        _gpu.gpu_copy_from(gpu_memory, etl::size(result()));
+        result().gpu_copy_from(gpu_memory);
     }
 
     /*!
@@ -379,7 +375,7 @@ public:
      * \return true if the CPU memory is up to date, false otherwise.
      */
     bool is_cpu_up_to_date() const noexcept {
-        return _gpu.is_cpu_up_to_date();
+        return result().is_cpu_up_to_date();
     }
 
     /*!
@@ -387,7 +383,7 @@ public:
      * \return true if the GPU memory is up to date, false otherwise.
      */
     bool is_gpu_up_to_date() const noexcept {
-        return _gpu.is_gpu_up_to_date();
+        return result().is_gpu_up_to_date();
     }
 
 private:
