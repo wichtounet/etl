@@ -70,7 +70,6 @@ struct base_temporary_expr : value_testable<D>, dim_testable<D>, iterable<const 
     using const_memory_type = const value_type*;                    ///< The const memory type
 
 protected:
-    mutable bool allocated = false; ///< Indicates if the temporary has been allocated
     mutable bool evaluated = false; ///< Indicates if the expression has been evaluated
 
     mutable std::shared_ptr<result_type> _c;           ///< The result reference
@@ -94,7 +93,7 @@ public:
      * The right hand side cannot be used anymore after ths move.
      * \param rhs The expression to move from.
      */
-    base_temporary_expr(base_temporary_expr&& rhs) : allocated(rhs.allocated), evaluated(rhs.evaluated), _c(std::move(rhs._c)) {
+    base_temporary_expr(base_temporary_expr&& rhs) : evaluated(rhs.evaluated), _c(std::move(rhs._c)) {
         rhs.evaluated = false;
     }
 
@@ -125,6 +124,15 @@ protected:
         return *static_cast<const derived_t*>(this);
     }
 
+    /*!
+     * \brief Indicates if the temporary has been allocated
+     * \return true if the temporary has been allocated, false
+     * otherwise
+     */
+    bool is_allocated() const noexcept {
+        return _c.get();
+    }
+
 protected:
     /*!
      * \brief Evaluate the expression, if not evaluated
@@ -133,7 +141,7 @@ protected:
      */
     void evaluate() const {
         if (!evaluated) {
-            cpp_assert(allocated, "The result has not been allocated");
+            cpp_assert(is_allocated(), "The result has not been allocated");
             as_derived().assign_to(*_c);
             evaluated = true;
         }
@@ -146,8 +154,6 @@ protected:
         if (!_c) {
             _c.reset(allocate());
         }
-
-        allocated = true;
     }
 
     /*!
@@ -390,7 +396,7 @@ private:
      * \return a reference to the expression containing the result of the expression
      */
     result_type& result() {
-        cpp_assert(allocated, "The result has not been allocated");
+        cpp_assert(is_allocated(), "The result has not been allocated");
         cpp_assert(evaluated, "The result has not been evaluated");
         return *_c;
     }
@@ -400,7 +406,7 @@ private:
      * \return a const reference to the expression containing the result of the expression
      */
     const result_type& result() const {
-        cpp_assert(allocated, "The result has not been allocated");
+        cpp_assert(is_allocated(), "The result has not been allocated");
         cpp_assert(evaluated, "The result has not been evaluated");
         return *_c;
     }
