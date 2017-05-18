@@ -12,6 +12,7 @@
 // Include the implementations
 #include "etl/impl/std/bias_add.hpp"
 #include "etl/impl/vec/bias_add.hpp"
+#include "etl/impl/cudnn/bias_add.hpp"
 
 namespace etl {
 
@@ -96,12 +97,14 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
-        auto impl = select_impl<L>();
+        auto impl = select_impl<L>(a.is_gpu_up_to_date());
 
         if(impl == bias_add_impl::VEC){
             impl::vec::bias_add_2d(make_temporary(a), make_temporary(b), lhs);
         } else if(impl == bias_add_impl::STD){
             impl::standard::bias_add_2d(a, make_temporary(b), lhs);
+        } else if(impl == bias_add_impl::CUDNN){
+            impl::cudnn::bias_add_2d(a, make_temporary(b), lhs);
         } else {
             cpp_unreachable("Invalid bias_add_2d selection");
         }
@@ -174,8 +177,15 @@ private:
      * \return The implementation to use
      */
     template <typename C>
-    static cpp14_constexpr etl::bias_add_impl select_default_impl() {
-        if(vec_enabled && vectorize_impl && all_vectorizable<vector_mode, A, B, C>::value && all_homogeneous<A, B, C>::value){
+    static cpp14_constexpr etl::bias_add_impl select_default_impl(bool gpu) {
+        static constexpr bool vec_possible = vec_enabled && vectorize_impl && all_vectorizable<vector_mode, A, B, C>::value && all_homogeneous<A, B, C>::value;
+        static constexpr bool cudnn_possible = cudnn_enabled && all_floating<A, B, C>::value && all_homogeneous<A, B, C>::value;
+
+        if (cudnn_possible && gpu) {
+            return etl::bias_add_impl::CUDNN;
+        }
+
+        if(vec_possible){
             return etl::bias_add_impl::VEC;
         }
 
@@ -188,13 +198,22 @@ private:
      * \return The implementation to use
      */
     template <typename C>
-    static etl::bias_add_impl select_impl() {
-        auto def = select_default_impl<C>();
+    static etl::bias_add_impl select_impl(bool gpu) {
+        auto def = select_default_impl<C>(gpu);
 
         if (local_context().bias_add_selector.forced) {
             auto forced = local_context().bias_add_selector.impl;
 
             switch (forced) {
+                //CUDNN cannot always be used
+                case bias_add_impl::CUDNN:
+                    if (!cudnn_enabled || !all_floating<A, B, C>::value || !all_homogeneous<A, B, C>::value) {
+                        std::cerr << "Forced selection to cUDNN bias_add implementation, but not possible for this expression" << std::endl;
+                        return def;
+                    }
+
+                    return forced;
+
                 //VEC cannot always be used
                 case bias_add_impl::VEC:
                     if (!vec_enabled || !vectorize_impl || !all_vectorizable<vector_mode, A, B, C>::value || !all_homogeneous<A, B, C>::value) {
