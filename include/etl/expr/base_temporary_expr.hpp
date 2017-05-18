@@ -70,14 +70,16 @@ struct base_temporary_expr : value_testable<D>, dim_testable<D>, iterable<const 
     using const_memory_type = const value_type*;                    ///< The const memory type
 
 protected:
-    mutable bool evaluated = false;          ///< Indicates if the expression has been evaluated
+    mutable std::shared_ptr<bool> evaluated; ///< Indicates if the expression has been evaluated
     mutable std::shared_ptr<result_type> _c; ///< The result reference
 
 public:
     /*!
      * \brief Construct a new base_temporary_expr
      */
-    base_temporary_expr() = default;
+    base_temporary_expr() : evaluated(std::make_shared<bool>(false)) {
+        // Nothing else to init
+    }
 
     /*!
      * \brief Copy construct a new base_temporary_expr
@@ -89,8 +91,8 @@ public:
      * The right hand side cannot be used anymore after ths move.
      * \param rhs The expression to move from.
      */
-    base_temporary_expr(base_temporary_expr&& rhs) : evaluated(rhs.evaluated), _c(std::move(rhs._c)) {
-        rhs.evaluated = false;
+    base_temporary_expr(base_temporary_expr&& rhs) : evaluated(std::move(rhs.evaluated)), _c(std::move(rhs._c)) {
+        //Nothing else to change
     }
 
     //Expressions are invariant
@@ -136,10 +138,10 @@ protected:
      * Will fail if not previously allocated
      */
     void evaluate() const {
-        if (!evaluated) {
+        if (!*evaluated) {
             cpp_assert(is_allocated(), "The result has not been allocated");
             as_derived().assign_to(*_c);
-            evaluated = true;
+            *evaluated = true;
         }
     }
 
@@ -393,7 +395,7 @@ private:
      */
     result_type& result() {
         cpp_assert(is_allocated(), "The result has not been allocated");
-        cpp_assert(evaluated, "The result has not been evaluated");
+        cpp_assert(*evaluated, "The result has not been evaluated");
         return *_c;
     }
 
@@ -403,7 +405,7 @@ private:
      */
     const result_type& result() const {
         cpp_assert(is_allocated(), "The result has not been allocated");
-        cpp_assert(evaluated, "The result has not been evaluated");
+        cpp_assert(*evaluated, "The result has not been evaluated");
         return *_c;
     }
 };
@@ -483,7 +485,7 @@ struct base_temporary_expr_un : base_temporary_expr<D, Fast> {
     void visit(detail::evaluator_visitor& visitor) const {
         // If the expression is already evaluated, no need to
         // recurse through the tree
-        if(evaluated){
+        if(*evaluated){
             return;
         }
 
@@ -599,7 +601,7 @@ struct base_temporary_expr_bin : base_temporary_expr<D, Fast> {
     void visit(detail::evaluator_visitor& visitor) const {
         // If the expression is already evaluated, no need to
         // recurse through the tree
-        if(evaluated){
+        if(*evaluated){
             return;
         }
 
@@ -745,7 +747,7 @@ public:
     void visit(detail::evaluator_visitor& visitor) const {
         // If the expression is already evaluated, no need to
         // recurse through the tree
-        if(evaluated){
+        if(*evaluated){
             return;
         }
 
