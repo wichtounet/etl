@@ -52,8 +52,6 @@ namespace standard_evaluator {
     void pre_assign_rhs(E&& expr) {
         detail::evaluator_visitor eval_visitor;
         expr.visit(eval_visitor);
-
-        expr.visit(detail::back_propagate_visitor{});
     }
 
     /*!
@@ -62,7 +60,7 @@ namespace standard_evaluator {
      */
     template <typename E>
     void pre_assign_lhs(E&& expr) {
-        expr.visit(detail::back_propagate_visitor{});
+        cpp_unused(expr);
     }
 
     //Standard assign version

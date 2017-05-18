@@ -24,13 +24,6 @@ struct evaluator_visitor {
     bool need_value = false; ///< Indicates if the value if necessary for the next visits
 };
 
-/*!
- * \brief Visitor to perform local evaluation when necessary
- */
-struct back_propagate_visitor {
-    // Simple tag
-};
-
 } //end of namespace detail
 
 } //end of namespace etl

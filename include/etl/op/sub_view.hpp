@@ -280,14 +280,6 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::back_propagate_visitor& visitor) const {
-        sub_expr.visit(visitor);
-    }
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
     void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
@@ -649,23 +641,6 @@ public:
     }
 
     // Internals
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
-    void visit(const detail::back_propagate_visitor& visitor) const {
-        sub_expr.visit(visitor);
-
-        // It's only interesting if the sub expression is not direct
-        if(decay_traits<sub_type>::is_temporary){
-            this->memory = const_cast<memory_type>(sub_expr.memory_start()) + i * sub_size;
-
-            // A sub view inherits the CPU/GPU from parent
-            this->cpu_up_to_date = sub_expr.is_cpu_up_to_date();
-            this->gpu_up_to_date = sub_expr.is_gpu_up_to_date();
-        }
-    }
 
     /*!
      * \brief Apply the given visitor to this expression and its descendants.

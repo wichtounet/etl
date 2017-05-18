@@ -272,14 +272,6 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::back_propagate_visitor& visitor) const {
-        sub.visit(visitor);
-    }
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
     void visit(detail::evaluator_visitor& visitor) const {
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
@@ -616,19 +608,6 @@ public:
     }
 
     // Internals
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
-    void visit(const detail::back_propagate_visitor& visitor) const {
-        sub.visit(visitor);
-
-        // It's only interesting if the sub expression is not direct
-        if(decay_traits<sub_type>::is_temporary){
-            this->memory = const_cast<memory_type>(sub.memory_start());
-        }
-    }
 
     /*!
      * \brief Apply the given visitor to this expression and its descendants.

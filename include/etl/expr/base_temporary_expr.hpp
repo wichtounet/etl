@@ -478,14 +478,6 @@ struct base_temporary_expr_un : base_temporary_expr<D, Fast> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::back_propagate_visitor& visitor) const {
-        _a.visit(visitor);
-    }
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
     void visit(detail::evaluator_visitor& visitor) const {
         // If the expression is already evaluated, no need to
         // recurse through the tree
@@ -597,15 +589,6 @@ struct base_temporary_expr_bin : base_temporary_expr<D, Fast> {
     }
 
     // Internals
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
-    void visit(const detail::back_propagate_visitor& visitor) const {
-        _a.visit(visitor);
-        _b.visit(visitor);
-    }
 
     /*!
      * \brief Apply the given visitor to this expression and its descendants.
@@ -752,16 +735,6 @@ protected:
 public:
 
     // Internals
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
-    void visit(const detail::back_propagate_visitor& visitor) const {
-        _a.visit(visitor);
-        _b.visit(visitor);
-        _c.visit(visitor);
-    }
 
     /*!
      * \brief Apply the given visitor to this expression and its descendants.
