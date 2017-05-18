@@ -701,3 +701,13 @@ TEST_CASE("etl_traits/vectorize/expr/2", "[traits]") {
         REQUIRE_DIRECT((etl::decay_traits<expr_2_t>::template vectorizable<etl::vector_mode_t::AVX>::value));
     }
 }
+
+TEST_CASE("etl_traits/is_temporary_expr", "[traits]") {
+    etl::dyn_matrix<float, 2> A(3, 3);
+
+    REQUIRE_DIRECT(!etl::is_temporary_expr<decltype(A)>::value);
+    REQUIRE_DIRECT(!etl::is_temporary_expr<decltype(A + A)>::value);
+    REQUIRE_DIRECT(etl::is_temporary_expr<decltype(A * A)>::value);
+    REQUIRE_DIRECT(etl::is_temporary_expr<decltype(trans(A))>::value);
+    REQUIRE_DIRECT(etl::is_temporary_expr<decltype(trans(A) * A)>::value);
+}

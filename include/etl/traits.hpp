@@ -59,6 +59,15 @@ struct is_selected_expr_impl : std::false_type {};
 template <typename Selector, Selector V, typename Expr>
 struct is_selected_expr_impl<selected_expr<Selector, V, Expr>> : std::true_type {};
 
+template <template <typename, bool> class BTE, typename T, bool B>
+std::true_type is_base_of_template_tb_impl(const BTE<T, B>*);
+
+template <template <typename, bool> class BTE>
+std::false_type is_base_of_template_tb_impl(...);
+
+template <typename T, template <typename, bool> class C>
+using is_base_of_template_tb = decltype(is_base_of_template_tb_impl<C>(std::declval<T*>()));
+
 } //end of namespace traits_detail
 
 /*!
@@ -291,6 +300,13 @@ using is_etl_expr = cpp::bool_constant<decay_traits<T>::is_etl>;
  */
 template <typename T>
 using is_transpose_expr = cpp::is_specialization_of<etl::transpose_expr, std::decay_t<T>>;
+
+/*!
+ * \brief Traits indicating if the given type is a temporary expression.
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_temporary_expr = traits_detail::is_base_of_template_tb<std::decay_t<T>, etl::base_temporary_expr>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a value type.

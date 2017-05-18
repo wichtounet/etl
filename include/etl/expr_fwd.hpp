@@ -76,4 +76,7 @@ struct dyn_matrix_view;
 template <typename A>
 struct transpose_expr;
 
+template <typename D, bool Fast>
+struct base_temporary_expr;
+
 } //end of namespace etl
