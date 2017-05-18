@@ -306,7 +306,7 @@ public:
      */
     slice_view(sub_type sub, size_t first, size_t last)
             : sub(sub), first(first), last(last), sub_size((size(sub) / etl::dim<0>(sub)) * (last - first)) {
-        if (!decay_traits<sub_type>::needs_evaluator) {
+        if (!decay_traits<sub_type>::is_temporary) {
             this->memory = sub.memory_start() + first * (size(sub) / etl::dim<0>(sub));
 
             // A sub view inherits the CPU/GPU from parent
@@ -582,7 +582,7 @@ public:
         sub.visit(visitor);
 
         // It's only interesting if the sub expression is not direct
-        if(decay_traits<sub_type>::needs_evaluator){
+        if(decay_traits<sub_type>::is_temporary){
             this->memory = const_cast<memory_type>(sub.memory_start()) + first * (size(sub) / etl::dim<0>(sub));
 
             // A sub view inherits the CPU/GPU from parent
@@ -762,7 +762,7 @@ struct etl_traits<etl::slice_view<T>> {
     static constexpr bool is_generator            = false;                               ///< Indicates if the expression is a generator
     static constexpr bool is_padded               = false;                               ///< Indicates if the expression is padded
     static constexpr bool is_aligned              = false;                               ///< Indicates if the expression is padded
-    static constexpr bool needs_evaluator = sub_traits::needs_evaluator; ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr bool is_temporary = sub_traits::is_temporary; ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr order storage_order          = sub_traits::storage_order;           ///< The expression's storage order
 
     /*!

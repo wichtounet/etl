@@ -322,7 +322,7 @@ struct etl_traits<etl::sub_matrix_2d<T, Aligned>> {
     static constexpr bool is_generator    = false;                       ///< Indicates if the expression is a generator
     static constexpr bool is_padded       = false;                       ///< Indicates if the expression is padded
     static constexpr bool is_aligned      = false;                       ///< Indicates if the expression is padded
-    static constexpr bool needs_evaluator = sub_traits::needs_evaluator; ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr bool is_temporary = sub_traits::is_temporary; ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr order storage_order  = sub_traits::storage_order;   ///< The expression's storage order
 
     /*!

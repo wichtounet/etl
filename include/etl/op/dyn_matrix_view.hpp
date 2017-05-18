@@ -358,7 +358,7 @@ public:
      */
     template<typename... S>
     explicit dyn_matrix_view(sub_type sub, S... dims) : sub(sub), dimensions{{dims...}}, _size(etl::size(sub)) {
-        if(!decay_traits<sub_type>::needs_evaluator){
+        if(!decay_traits<sub_type>::is_temporary){
             this->memory = sub.memory_start();
         } else {
             this->memory = nullptr;
@@ -638,7 +638,7 @@ public:
         sub.visit(visitor);
 
         // It's only interesting if the sub expression is not direct
-        if(decay_traits<sub_type>::needs_evaluator){
+        if(decay_traits<sub_type>::is_temporary){
             this->memory = const_cast<memory_type>(sub.memory_start());
         }
     }
@@ -777,7 +777,7 @@ struct etl_traits<etl::dyn_matrix_view<T, D>> {
     static constexpr bool is_generator            = false;                               ///< Indicates if the expression is a generator
     static constexpr bool is_padded               = false;                               ///< Indicates if the expression is padded
     static constexpr bool is_aligned              = false;                               ///< Indicates if the expression is padded
-    static constexpr bool needs_evaluator = sub_traits::needs_evaluator; ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr bool is_temporary = sub_traits::is_temporary; ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr order storage_order          = sub_traits::storage_order;           ///< The expression's storage order
 
     /*!
