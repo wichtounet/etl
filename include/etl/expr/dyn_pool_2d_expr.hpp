@@ -199,8 +199,8 @@ struct etl_traits<etl::dyn_pool_2d_expr<A, Impl>> {
  * \return A expression representing the 2D Max Pooling of the input expression.
  */
 template <typename E>
-dyn_pool_2d_expr<detail::build_type<E>, impl::standard::max_pool_2d> max_pool_2d(E&& value, size_t c1, size_t c2) {
-    return dyn_pool_2d_expr<detail::build_type<E>, impl::standard::max_pool_2d>{value, c1, c2, c1, c2, 0, 0};
+dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d> max_pool_2d(E&& value, size_t c1, size_t c2) {
+    return dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d>{value, c1, c2, c1, c2, 0, 0};
 }
 
 /*!
@@ -211,8 +211,8 @@ dyn_pool_2d_expr<detail::build_type<E>, impl::standard::max_pool_2d> max_pool_2d
  * \return A expression representing the 2D Max Pooling of the input expression.
  */
 template <typename E>
-dyn_pool_2d_expr<detail::build_type<E>, impl::standard::max_pool_2d> max_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
-    return dyn_pool_2d_expr<detail::build_type<E>, impl::standard::max_pool_2d>{value, c1, c2, s1, s2, p1, p2};
+dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d> max_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
+    return dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d>{value, c1, c2, s1, s2, p1, p2};
 }
 
 /*!
