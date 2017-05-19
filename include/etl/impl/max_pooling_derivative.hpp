@@ -52,11 +52,17 @@ struct max_pool_derivative_2d {
      */
     template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_if(is_2d<A>::value)>
     static void apply(A&& in, B&& out, M&& m) {
+        in.ensure_cpu_up_to_date();
+        out.ensure_cpu_up_to_date();
+
         for (size_t j = 0; j < etl::dim<0>(out); ++j) {
             for (size_t k = 0; k < etl::dim<1>(out); ++k) {
                 pool_derivative_block<C1, C2>(in, out, m, j, k);
             }
         }
+
+        m.invalidate_gpu();
+        m.validate_cpu();
     }
 
     /*!
@@ -94,6 +100,9 @@ struct max_pool_derivative_2d {
      */
     template <typename A, typename B, typename M, cpp_enable_if(is_2d<A>::value)>
     static void apply(A&& in, B&& out, M&& m, size_t c1, size_t c2, size_t c3) {
+        in.ensure_cpu_up_to_date();
+        out.ensure_cpu_up_to_date();
+
         cpp_unused(c3);
 
         for (size_t j = 0; j < etl::dim<0>(out); ++j) {
@@ -101,6 +110,9 @@ struct max_pool_derivative_2d {
                 pool_derivative_block(in, out, m, j, k, c1, c2);
             }
         }
+
+        m.invalidate_gpu();
+        m.validate_cpu();
     }
 
     // Deep handling
@@ -115,9 +127,15 @@ struct max_pool_derivative_2d {
      */
     template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_if(!is_2d<A>::value)>
     static void apply(A&& in, B&& out, M& m) {
+        in.ensure_cpu_up_to_date();
+        out.ensure_cpu_up_to_date();
+
         for(size_t i = 0; i < etl::dim<0>(in); ++i){
             apply<C1, C2, C3>(in(i), out(i), m(i));
         }
+
+        m.invalidate_gpu();
+        m.validate_cpu();
     }
 
     /*!
@@ -130,9 +148,15 @@ struct max_pool_derivative_2d {
      */
     template <typename A, typename B, typename M, cpp_enable_if(!is_2d<A>::value)>
     static void apply(A&& in, B&& out, M& m, size_t c1, size_t c2, size_t c3) {
+        in.ensure_cpu_up_to_date();
+        out.ensure_cpu_up_to_date();
+
         for(size_t i = 0; i < etl::dim<0>(in); ++i){
             apply(in(i), out(i), m(i), c1, c2, c3);
         }
+
+        m.invalidate_gpu();
+        m.validate_cpu();
     }
 };
 
@@ -179,6 +203,9 @@ struct max_pool_derivative_3d {
      */
     template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_if(is_3d<A>::value)>
     static void apply(A&& in, B&& out, M&& m) {
+        in.ensure_cpu_up_to_date();
+        out.ensure_cpu_up_to_date();
+
         for (size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (size_t j = 0; j < etl::dim<1>(out); ++j) {
                 for (size_t k = 0; k < etl::dim<2>(out); ++k) {
@@ -186,6 +213,9 @@ struct max_pool_derivative_3d {
                 }
             }
         }
+
+        m.invalidate_gpu();
+        m.validate_cpu();
     }
 
     /*!
@@ -227,6 +257,9 @@ struct max_pool_derivative_3d {
      */
     template <typename A, typename B, typename M, cpp_enable_if(is_3d<A>::value)>
     static void apply(A&& in, B&& out, M&& m, size_t c1, size_t c2, size_t c3) {
+        in.ensure_cpu_up_to_date();
+        out.ensure_cpu_up_to_date();
+
         for (size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (size_t j = 0; j < etl::dim<1>(out); ++j) {
                 for (size_t k = 0; k < etl::dim<2>(out); ++k) {
@@ -234,6 +267,9 @@ struct max_pool_derivative_3d {
                 }
             }
         }
+
+        m.invalidate_gpu();
+        m.validate_cpu();
     }
 
     // Deep handling
@@ -248,9 +284,15 @@ struct max_pool_derivative_3d {
      */
     template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_if(!is_3d<A>::value)>
     static void apply(A&& in, B&& out, M& m) {
+        in.ensure_cpu_up_to_date();
+        out.ensure_cpu_up_to_date();
+
         for(size_t i = 0; i < etl::dim<0>(in); ++i){
             apply<C1, C2, C3>(in(i), out(i), m(i));
         }
+
+        m.invalidate_gpu();
+        m.validate_cpu();
     }
 
     /*!
@@ -263,9 +305,15 @@ struct max_pool_derivative_3d {
      */
     template <typename A, typename B, typename M, cpp_enable_if(!is_3d<A>::value)>
     static void apply(A&& in, B&& out, M& m, size_t c1, size_t c2, size_t c3) {
+        in.ensure_cpu_up_to_date();
+        out.ensure_cpu_up_to_date();
+
         for(size_t i = 0; i < etl::dim<0>(in); ++i){
             apply(in(i), out(i), m(i), c1, c2, c3);
         }
+
+        m.invalidate_gpu();
+        m.validate_cpu();
     }
 };
 
