@@ -273,3 +273,88 @@ TEMPLATE_TEST_CASE_2("dyn_pooling/avg2/6", "[pooling]", Z, float, double) {
     REQUIRE_EQUALS(b(1, 1, 1, 1), 13.5);
 }
 
+TEMPLATE_TEST_CASE_2("dyn_pooling/avg2/7", "[pooling]", Z, float, double) {
+    etl::dyn_matrix<Z, 2> a(4, 4, etl::values(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0));
+    etl::dyn_matrix<Z, 2> b(3, 3);
+
+    b = (etl::avg_pool_2d(a, 2, 2, 1, 1));
+
+    REQUIRE_EQUALS(b(0, 0), 3.5);
+    REQUIRE_EQUALS(b(0, 1), 4.5);
+    REQUIRE_EQUALS(b(0, 2), 5.5);
+
+    REQUIRE_EQUALS(b(1, 0), 7.5);
+    REQUIRE_EQUALS(b(1, 1), 8.5);
+    REQUIRE_EQUALS(b(1, 2), 9.5);
+
+    REQUIRE_EQUALS(b(2, 0), 11.5);
+    REQUIRE_EQUALS(b(2, 1), 12.5);
+    REQUIRE_EQUALS(b(2, 2), 13.5);
+}
+
+TEMPLATE_TEST_CASE_2("dyn_pooling/avg2/8", "[pooling]", Z, float, double) {
+    etl::dyn_matrix<Z, 2> a(4, 4, etl::values(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0));
+    etl::dyn_matrix<Z, 2> b(2, 2);
+
+    b = (etl::avg_pool_2d(a, 3, 3, 1, 1));
+
+    REQUIRE_EQUALS(b(0, 0), 6.0);
+    REQUIRE_EQUALS(b(0, 1), 7.0);
+
+    REQUIRE_EQUALS(b(1, 0), 10.0);
+    REQUIRE_EQUALS(b(1, 1), 11.0);
+}
+
+TEMPLATE_TEST_CASE_2("dyn_pooling/avg2/9", "[pooling]", Z, float, double) {
+    etl::dyn_matrix<Z, 2> a(4, 4, etl::values(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0));
+    etl::dyn_matrix<Z, 2> b(1, 1);
+
+    b = (etl::avg_pool_2d(a, 4, 4, 1, 1));
+
+    REQUIRE_EQUALS(b(0, 0), 8.5);
+}
+
+TEMPLATE_TEST_CASE_2("dyn_pooling/avg2/10", "[pooling]", Z, float, double) {
+    etl::dyn_matrix<Z, 2> a(4, 4, etl::values(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0));
+    etl::dyn_matrix<Z, 2> b(2, 2);
+
+    b = (etl::avg_pool_2d(a, 1, 1, 2, 2));
+
+    REQUIRE_EQUALS(b(0, 0), 1.0);
+    REQUIRE_EQUALS(b(0, 1), 3.0);
+
+    REQUIRE_EQUALS(b(1, 0), 9.0);
+    REQUIRE_EQUALS(b(1, 1), 11.0);
+}
+
+TEMPLATE_TEST_CASE_2("dyn_pooling/avg2/11", "[pooling]", Z, float, double) {
+    etl::dyn_matrix<Z, 2> a(2, 2, etl::values(1.0, 2.0, 3.0, 4.0));
+    etl::dyn_matrix<Z, 2> b(2, 2);
+
+    b = (etl::avg_pool_2d(a, 2, 2, 2, 2, 1, 1));
+
+    REQUIRE_EQUALS(b(0, 0), 0.25);
+    REQUIRE_EQUALS(b(0, 1), 0.5);
+
+    REQUIRE_EQUALS(b(1, 0), 0.75);
+    REQUIRE_EQUALS(b(1, 1), 1.0);
+}
+
+TEMPLATE_TEST_CASE_2("dyn_pooling/avg2/12", "[pooling]", Z, float, double) {
+    etl::dyn_matrix<Z, 2> a(2, 2, etl::values(1.0, 2.0, 3.0, 4.0));
+    etl::dyn_matrix<Z, 2> b(3, 3);
+
+    b = (etl::avg_pool_2d(a, 2, 2, 1, 1, 1, 1));
+
+    REQUIRE_EQUALS(b(0, 0), 0.25);
+    REQUIRE_EQUALS(b(0, 1), 0.75);
+    REQUIRE_EQUALS(b(0, 2), 0.5);
+
+    REQUIRE_EQUALS(b(1, 0), 1.0);
+    REQUIRE_EQUALS(b(1, 1), 2.5);
+    REQUIRE_EQUALS(b(1, 2), 1.5);
+
+    REQUIRE_EQUALS(b(2, 0), 0.75);
+    REQUIRE_EQUALS(b(2, 1), 1.75);
+    REQUIRE_EQUALS(b(2, 2), 1.0);
+}
