@@ -15,6 +15,7 @@
 #ifdef ETL_CUDNN_MODE
 
 #include "etl/impl/cublas/cuda.hpp"
+#include "etl/impl/cublas/cublas.hpp"
 #include "etl/impl/cudnn/cudnn.hpp"
 
 #endif
@@ -77,6 +78,14 @@ void bias_add_4d(I&& x, K&& b, C&& y) {
     cudnn_check(cudnnDestroyTensorDescriptor(b_tensor));
 }
 
+inline void cublas_axpy(cublasHandle_t handle, size_t n, float* alpha, float* A , size_t lda, float* B , size_t ldb){
+    cublas_check(cublasSaxpy(handle, n, alpha, A, lda, B, ldb));
+}
+
+inline void cublas_axpy(cublasHandle_t handle, size_t n, double* alpha, double* A , size_t lda, double* B , size_t ldb){
+    cublas_check(cublasDaxpy(handle, n, alpha, A, lda, B, ldb));
+}
+
 /*!
  * \brief Compute the bias addition of b into x and store the result in y
  * \param x The a expression
@@ -100,7 +109,7 @@ void bias_add_2d(I&& x, K&& b, C&& y) {
 
     cudnnTensorDescriptor_t b_tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&b_tensor));
-    cudnn_check(cudnnSetTensor4dDescriptor(b_tensor, CUDNN_TENSOR_NCHW, data_type, 1, 1, etl::dim<0>(b), 1));
+    cudnn_check(cudnnSetTensor4dDescriptor(b_tensor, CUDNN_TENSOR_NCHW, data_type, 1, 1, 1, etl::dim<0>(b)));
 
     // Allocate GPU memory, if necessary
 
@@ -116,9 +125,21 @@ void bias_add_2d(I&& x, K&& b, C&& y) {
 
     // Add b -> y
 
-    cudnn_check(cudnnAddTensor(handle.get(),
-        alpha, b_tensor, b.gpu_memory(),
-        alpha, *y_tensor, y.gpu_memory()));
+    // This is highly retarded stuff :(
+    // Unfortunately cudnnAddTensor does not support 2D tensors :(
+
+    {
+        decltype(auto) handle = etl::impl::cublas::start_cublas();
+
+        for (size_t i = 0; i < etl::dim<0>(x); ++i) {
+            cublas_axpy(handle.get(), etl::dim<1>(y), alpha, b.gpu_memory(), 1, y.gpu_memory() + i * etl::dim<1>(y), 1);
+        }
+    }
+
+    // This should be used
+    //cudnn_check(cudnnAddTensor(handle.get(),
+        //alpha, b_tensor, b.gpu_memory(),
+        //alpha, *y_tensor, y.gpu_memory()));
 
     y.validate_gpu();
     y.invalidate_cpu();
