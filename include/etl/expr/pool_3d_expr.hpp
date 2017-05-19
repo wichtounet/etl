@@ -223,8 +223,8 @@ struct etl_traits<etl::pool_3d_expr<A, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>
  * \return A expression representing the 3D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, typename E>
-pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::standard::max_pool_3d> max_pool_3d(E&& value) {
-    return pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::standard::max_pool_3d>{value};
+pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::max_pool_3d> max_pool_3d(E&& value) {
+    return pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::max_pool_3d>{value};
 }
 
 /*!
@@ -236,8 +236,8 @@ pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::st
  * \return A expression representing the 3D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, typename E>
-pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::standard::avg_pool_3d> avg_pool_3d(E&& value) {
-    return pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::standard::avg_pool_3d>{value};
+pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::avg_pool_3d> avg_pool_3d(E&& value) {
+    return pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::avg_pool_3d>{value};
 }
 
 } //end of namespace etl

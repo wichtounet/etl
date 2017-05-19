@@ -226,6 +226,57 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
 }
 
 /*!
+ * \brief Create a CUDNN tensor for the given input matrix
+ * \param input The input matrix
+ * \return a cudnn_wrapper around a created CUDNN tensor
+ */
+template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 3)>
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_5d(I&& input){
+    using T = value_t<I>;
+
+    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+
+    const int D1 = etl::dim<0>(input);
+    const int D2 = etl::dim<1>(input);
+    const int D3 = etl::dim<2>(input);
+
+    int dims[]    = {1, 1, D1, D2, D3};
+    int strides[] = {D1 * D2 * D3, D1 * D2 * D3, D2 * D3, D3, 1};
+
+    cudnnTensorDescriptor_t tensor;
+    cudnn_check(cudnnCreateTensorDescriptor(&tensor));
+    cudnn_check(cudnnSetTensorNdDescriptor(tensor, data_type, 5, dims, strides));
+
+    return cudnn_wrapper<cudnnTensorDescriptor_t>{tensor};
+}
+
+/*!
+ * \brief Create a CUDNN tensor for the given input matrix
+ * \param input The input matrix
+ * \return a cudnn_wrapper around a created CUDNN tensor
+ */
+template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 4)>
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_5d(I&& input){
+    using T = value_t<I>;
+
+    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+
+    const int D1 = etl::dim<0>(input);
+    const int D2 = etl::dim<1>(input);
+    const int D3 = etl::dim<2>(input);
+    const int D4 = etl::dim<2>(input);
+
+    int dims[]    = {1, D1, D2, D3, D4};
+    int strides[] = {D1 * D2 * D3 * D4, D2 * D3 * D4, D3 * D4, D4, 1};
+
+    cudnnTensorDescriptor_t tensor;
+    cudnn_check(cudnnCreateTensorDescriptor(&tensor));
+    cudnn_check(cudnnSetTensorNdDescriptor(tensor, data_type, 5, dims, strides));
+
+    return cudnn_wrapper<cudnnTensorDescriptor_t>{tensor};
+}
+
+/*!
  * \brief Create a CUDNN filter tensor for the given input matrix
  * \param input The input matrix
  * \return a cudnn_wrapper around a created CUDNN filter tensor
