@@ -151,10 +151,10 @@ void ml(){
 
     for (size_t i = 0; i < 10; ++i) {
         O1 = bias_add_4d(etl::ml::convolution_forward<1, 1, 1, 1>(I, W1), B1);
-        P1 = etl::max_pool_3d<1, 2, 2>(O1);
+        P1 = etl::max_pool_2d<2, 2>(O1);
 
         O2 = bias_add_4d(etl::ml::convolution_forward<1, 1, 1, 1>(P1, W2), B2);
-        P2 = etl::max_pool_3d<1, 2, 2>(O2);
+        P2 = etl::max_pool_2d<2, 2>(O2);
 
         O3 = bias_add_2d(etl::reshape<32, 16 * 7 * 7>(P2) * W3, B3);
         O4 = bias_add_2d(O3 * W4, B4);
