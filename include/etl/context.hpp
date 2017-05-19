@@ -27,6 +27,7 @@ struct context {
 
     forced_impl<scalar_impl> scalar_selector;         ///< Force selector for scalar operations
     forced_impl<sum_impl> sum_selector;               ///< Forced selector for sum
+    forced_impl<pool_impl> pool_selector;             ///< Forced selector for pooling
     forced_impl<transpose_impl> transpose_selector;   ///< Forced selector for transpose
     forced_impl<dot_impl> dot_selector;               ///< Forced selector for dot
     forced_impl<conv_impl> conv_selector;             ///< Forced selector for conv
@@ -71,6 +72,14 @@ inline forced_impl<scalar_impl>& get_forced_impl() {
 template <>
 inline forced_impl<sum_impl>& get_forced_impl() {
     return local_context().sum_selector;
+}
+
+/*!
+ * \copydoc get_forced_impl
+ */
+template <>
+inline forced_impl<pool_impl>& get_forced_impl() {
+    return local_context().pool_selector;
 }
 
 /*!
