@@ -11,6 +11,8 @@ namespace etl {
 
 namespace impl {
 
+namespace standard {
+
 /*!
  * \brief Functor for 2D Average Pooling
  */
@@ -759,6 +761,8 @@ struct avg_pool_3d {
         }
     }
 };
+
+} //end of namespace standard
 
 } //end of namespace impl
 

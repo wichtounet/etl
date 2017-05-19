@@ -11,12 +11,12 @@
 
 #include "etl/impl/max_pooling_derivative.hpp"
 #include "etl/impl/max_pooling_upsample.hpp"
-#include "etl/impl/avg_pooling.hpp"
 #include "etl/impl/upsample.hpp"
 
 // Include the implementations
 
 #include "etl/impl/std/max_pooling.hpp"
+#include "etl/impl/std/avg_pooling.hpp"
 #include "etl/impl/cudnn/max_pooling.hpp"
 
 namespace etl {
@@ -129,6 +129,67 @@ struct max_pool_2d {
             etl::impl::standard::max_pool_2d::apply(x, y, c1, c2, s1, s2, p1, p2);
         } else if(impl == pool_impl::CUDNN){
             etl::impl::cudnn::max_pool_2d::apply(x, y, c1, c2, s1, s2, p1, p2);
+        } else {
+            cpp_unreachable("Invalid selection for pooling");
+        }
+    }
+};
+
+/*!
+ * \brief Functor for 2D Average Pooling
+ */
+struct avg_pool_2d {
+    /*!
+     * \brief Pool x into y
+     *
+     * \param x The expression to pol
+     * \param y The expression in which to store the result
+     *
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     *
+     * \tparam S1 The first dimension stride
+     * \tparam S2 The second dimension stride
+     *
+     * \tparam P1 The first dimension padding
+     * \tparam P2 The second dimension padding
+     */
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename X, typename Y>
+    static void apply(const X& x, Y&& y) {
+        const auto impl = select_pool_impl<X, Y>();
+
+        if(impl == pool_impl::STD){
+            etl::impl::standard::avg_pool_2d::apply<C1, C2, S1, S2, P1, P2>(x, y);
+        } else if(impl == pool_impl::CUDNN){
+            etl::impl::cudnn::avg_pool_2d::apply(x, y, C1, C2, S1, S2, P1, P2);
+        } else {
+            cpp_unreachable("Invalid selection for pooling");
+        }
+    }
+
+    /*!
+     * \brief Pool x into y
+     *
+     * \param x The expression to pol
+     * \param y The expression in which to store the result
+     *
+     * tparam C1 The first dimension pooling ratio
+     * tparam C2 The second dimension pooling ratio
+     *
+     * tparam S1 The first dimension stride
+     * tparam S2 The second dimension stride
+     *
+     * tparam P1 The first dimension padding
+     * tparam P2 The second dimension padding
+     */
+    template <typename X, typename Y>
+    static void apply(const X& x, Y&& y, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+        const auto impl = select_pool_impl<X, Y>();
+
+        if(impl == pool_impl::STD){
+            etl::impl::standard::avg_pool_2d::apply(x, y, c1, c2, s1, s2, p1, p2);
+        } else if(impl == pool_impl::CUDNN){
+            etl::impl::cudnn::avg_pool_2d::apply(x, y, c1, c2, s1, s2, p1, p2);
         } else {
             cpp_unreachable("Invalid selection for pooling");
         }
