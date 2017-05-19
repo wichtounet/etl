@@ -385,4 +385,3 @@ TEMPLATE_TEST_CASE_2("dyn_pooling/max3/12", "[pooling]", Z, float, double) {
     REQUIRE_EQUALS(b(2, 2, 1), 8.0);
     REQUIRE_EQUALS(b(2, 2, 2), 8.0);
 }
-
