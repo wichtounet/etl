@@ -254,7 +254,115 @@ struct avg_pool_3d {
 
 //COVERAGE_EXCLUDE_BEGIN
 
-//TODO
+/*!
+ * \brief Functor for 2D Max Pooling
+ */
+struct max_pool_2d {
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename X, typename Y>
+    static void apply(const X& x, Y&& y, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+        cpp_unused(x);
+        cpp_unused(y);
+        cpp_unused(c1);
+        cpp_unused(c2);
+        cpp_unused(s1);
+        cpp_unused(s2);
+        cpp_unused(p1);
+        cpp_unused(p2);
+
+        cpp_unreachable("Unsupported feature called: cudnn pool");
+    }
+};
+
+/*!
+ * \brief Functor for 2D Max Pooling
+ */
+struct avg_pool_2d {
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename X, typename Y>
+    static void apply(const X& x, Y&& y, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+        cpp_unused(x);
+        cpp_unused(y);
+        cpp_unused(c1);
+        cpp_unused(c2);
+        cpp_unused(s1);
+        cpp_unused(s2);
+        cpp_unused(p1);
+        cpp_unused(p2);
+
+        cpp_unreachable("Unsupported feature called: cudnn pool");
+    }
+};
+
+/*!
+ * \brief Functor for 2D Max Pooling
+ */
+struct max_pool_3d {
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename X, typename Y>
+    static void apply(const X& x, Y&& y, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
+        cpp_unused(x);
+        cpp_unused(y);
+        cpp_unused(c1);
+        cpp_unused(c2);
+        cpp_unused(c3);
+        cpp_unused(s1);
+        cpp_unused(s2);
+        cpp_unused(s3);
+        cpp_unused(p1);
+        cpp_unused(p2);
+        cpp_unused(p3);
+
+        cpp_unreachable("Unsupported feature called: cudnn pool");
+    }
+};
+
+/*!
+ * \brief Functor for 2D Max Pooling
+ */
+struct avg_pool_3d {
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename X, typename Y>
+    static void apply(const X& x, Y&& y, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
+        cpp_unused(x);
+        cpp_unused(y);
+        cpp_unused(c1);
+        cpp_unused(c2);
+        cpp_unused(c3);
+        cpp_unused(s1);
+        cpp_unused(s2);
+        cpp_unused(s3);
+        cpp_unused(p1);
+        cpp_unused(p2);
+        cpp_unused(p3);
+
+        cpp_unreachable("Unsupported feature called: cudnn pool");
+    }
+};
 
 //COVERAGE_EXCLUDE_END
 
