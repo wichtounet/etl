@@ -87,23 +87,15 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      */
     template <typename AA, typename BB, typename C>
     static inline cpp14_constexpr gemm_impl select_default_gemm_impl(const size_t n1, const size_t n2, const size_t n3) {
+        cpp_unused(n1);
         cpp_unused(n2);
+        cpp_unused(n3);
 
         //Note since these boolean will be known at compile time, the conditions will be a lot simplified
         constexpr bool blas   = cblas_enabled;
         constexpr bool cublas = cublas_enabled;
 
         if (cublas) {
-            if (n1 * n3 < gemm_cublas_min) {
-                if (blas) {
-                    return gemm_impl::BLAS;
-                }
-
-                if (n1 * n3 < gemm_std_max) {
-                    return gemm_impl::STD;
-                }
-            }
-
             return gemm_impl::CUBLAS;
         } else if (blas) {
             return gemm_impl::BLAS;
