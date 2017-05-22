@@ -19,6 +19,8 @@ namespace etl {
 
 namespace ml {
 
+// Convolution wrappers
+
 /*!
  * \brief Forward convolution for a batch of images with a set of kernels.
  *
@@ -185,6 +187,112 @@ convolution_backward_filter(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, s
     static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
 
     return dyn_conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
+}
+
+// Pooling Wrappers
+
+/*!
+ * \brief Forward Max Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \return A expression representing the 2D Forward Max Pooling of the input expression.
+ */
+template <size_t C1, size_t C2, typename E>
+pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::max_pool_2d> max_pool_forward(E&& value) {
+    return pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::max_pool_2d>{value};
+}
+
+/*!
+ * \brief 2D Max Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \return A expression representing the 2D Max Pooling of the input expression.
+ */
+template <typename E>
+dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d> max_pool_forward(E&& value, size_t c1, size_t c2) {
+    return dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d>{value, c1, c2, c1, c2, 0, 0};
+}
+
+/*!
+ * \brief Forward Average Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \return A expression representing the 2D Forward Average Pooling of the input expression.
+ */
+template <size_t C1, size_t C2, typename E>
+pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::avg_pool_2d> avg_pool_forward(E&& value) {
+    return pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::avg_pool_2d>{value};
+}
+
+/*!
+ * \brief 2D Average Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \return A expression representing the 2D Average Pooling of the input expression.
+ */
+template <typename E>
+dyn_pool_2d_expr<detail::build_type<E>, impl::avg_pool_2d> avg_pool_forward(E&& value, size_t c1, size_t c2) {
+    return dyn_pool_2d_expr<detail::build_type<E>, impl::avg_pool_2d>{value, c1, c2, c1, c2, 0, 0};
+}
+
+/*!
+ * \brief Derivative of the 2D Max Pooling of the given matrix expression and upsampling.
+ * \param input The input
+ * \param output The output
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
+ */
+template <size_t C1, size_t C2, typename A, typename B, typename C>
+pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, true>
+max_pool_backward(A&& input, B&& output, C&& errors) {
+    return {input, output, errors};
+}
+
+/*!
+ * \brief Derivative of the 2D Avg Pooling of the given matrix expression and upsampling.
+ * \param input The input
+ * \param output The output
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
+ */
+template <size_t C1, size_t C2, typename A, typename B, typename C>
+pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, false>
+avg_pool_backward(A&& input, B&& output, C&& errors) {
+    return {input, output, errors};
+}
+
+/*!
+ * \brief Derivative of the 2D Max Pooling of the given matrix expression and upsampling.
+ * \param input The input
+ * \param output The output
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
+ */
+template <typename A, typename B, typename C>
+dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, true>
+max_pool_backward(A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
+    return {input, output, errors, c1, c2};
+}
+
+/*!
+ * \brief Derivative of the 2D Average Pooling of the given matrix expression and upsampling.
+ * \param input The input
+ * \param output The output
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \return A expression representing the Derivative of 3D Average Pooling of the input expression.
+ */
+template <typename A, typename B, typename C>
+dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, false>
+avg_pool_backward(A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
+    return {input, output, errors, c1, c2};
 }
 
 } //end of namespace ml
