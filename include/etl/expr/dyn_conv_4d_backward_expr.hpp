@@ -83,24 +83,86 @@ struct dyn_conv_4d_backward_expr : base_temporary_expr_bin<dyn_conv_4d_backward_
 
     /*!
      * \brief Assign to a matrix
-     * \param c The expression to which assign
+     * \param conv The expression to which assign
      */
     template<typename C>
-    void assign_to(C&& c)  const {
+    void assign_to(C&& conv)  const {
         static_assert(all_etl_expr<A, B, C>::value, "conv4_backward only supported for ETL expressions");
 
-        auto& a = this->a();
-        auto& b = this->b();
+        auto& input = this->a();
+        auto& kernel = this->b();
 
-        check(a, b, c);
+        check(input, kernel, conv);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
+        standard_evaluator::pre_assign_rhs(input);
+        standard_evaluator::pre_assign_rhs(kernel);
 
-        if /* constexpr */ (Flipped){
-            detail::dyn_conv4_backward_flipped_impl::apply(make_temporary(a), make_temporary(b), c, s1, s2, p1, p2);
+        // Need K1 / K2 to compute transposed padding
+        const size_t k1 = etl::dim<2>(kernel);
+        const size_t k2 = etl::dim<3>(kernel);
+
+        if /* constexpr */ (Flipped) {
+            // The GPU implementation needs the real forward parameters, not the
+            // converted backward parameters
+            if /* constexpr*/ (cudnn_enabled && all_floating<A, B, C>::value) {
+                impl::cudnn::conv4_backward_flipped(make_temporary(input), make_temporary(kernel), conv, s1, s2, p1, p2);
+                return;
+            }
+
+            // 1. Handle unit strides
+            if (s1 == 1 && s2 == 1) {
+                if (p1 == 0 && p2 == 0) {
+                    // Unit strides, non-zero padding -> Full convolution
+                    detail::conv4_full_flipped_impl::apply(make_temporary(input), make_temporary(kernel), conv);
+                } else {
+                    // Unit strides, zero padding -> Valid convolution with the correct padding
+                    detail::dyn_conv4_valid_back_flipped_impl::apply(make_temporary(input), make_temporary(kernel), conv, 1, 1, k1 - p1 - 1, k2 - p2 - 1);
+                }
+            }
+            // 2. Handle non_unit strides
+            else {
+                // Fractionally-strided convolution needs inner padding of the input
+                auto strided_input = impl::common::inner_pad(make_temporary(input), s1, s2);
+
+                if (p1 == 0 && p2 == 0) {
+                    // Non-unit strides, non-zero padding -> Fractionally-strided full convolution
+                    detail::conv4_full_flipped_impl::apply(strided_input, make_temporary(kernel), conv);
+                } else {
+                    // Non-unit strides, zero padding -> Fractionally-strided Valid convolution with the correct padding
+                    detail::dyn_conv4_valid_back_flipped_impl::apply(strided_input, make_temporary(kernel), conv, 1, 1, k1 - p1 - 1, k2 - p2 - 1);
+                }
+            }
         } else {
-            detail::dyn_conv4_backward_impl::apply(make_temporary(a), make_temporary(b), c, s1, s2, p1, p2);
+            // The GPU implementation needs the real forward parameters, not the
+            // converted backward parameters
+            if /* constexpr*/ (cudnn_enabled && all_floating<A, B, C>::value) {
+                impl::cudnn::conv4_backward(make_temporary(input), make_temporary(kernel), conv, s1, s2, p1, p2);
+                return;
+            }
+
+            // 1. Handle unit strides
+            if (s1 == 1 && s2 == 1) {
+                if (p1 == 0 && p2 == 0) {
+                    // Unit strides, non-zero padding -> Full convolution
+                    detail::conv4_full_impl::apply(make_temporary(input), make_temporary(kernel), conv);
+                } else {
+                    // Unit strides, zero padding -> Valid convolution with the correct padding
+                    detail::dyn_conv4_valid_back_impl::apply(make_temporary(input), make_temporary(kernel), conv, 1, 1, k1 - p1 - 1, k2 - p2 - 1);
+                }
+            }
+            // 2. Handle non_unit strides
+            else {
+                // Fractionally-strided convolution needs inner padding of the input
+                auto strided_input = impl::common::inner_pad(make_temporary(input), s1, s2);
+
+                if (p1 == 0 && p2 == 0) {
+                    // Non-unit strides, non-zero padding -> Fractionally-strided full convolution
+                    detail::conv4_full_impl::apply(strided_input, make_temporary(kernel), conv);
+                } else {
+                    // Non-unit strides, zero padding -> Fractionally-strided Valid convolution with the correct padding
+                    detail::dyn_conv4_valid_back_impl::apply(strided_input, make_temporary(kernel), conv, 1, 1, k1 - p1 - 1, k2 - p2 - 1);
+                }
+            }
         }
     }
 
