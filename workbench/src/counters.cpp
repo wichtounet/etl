@@ -27,7 +27,7 @@ float fake = 0;
  * Simple: 3 / 0 / 2 (Optimal!)
  * Basic: 15 / 0 / 3 (Optimal!)
  * Sub: 163 / 160 / 480
- * ML: 55 / 0 / 9
+ * ML: 61 / 0 / 19
  */
 
 void simple(){
@@ -170,9 +170,9 @@ void ml(){
         FC2_E = L - FC2_O;                                            // Errors of last layer  (!GPU)
         FC1_E = FC2_E * trans(FC2_W);                                 // FC2 -> FC1
         etl::reshape<32, 16 * 7 * 7>(P2_E) = FC1_E * trans(FC1_W);    // FC1 -> MP2
-        C2_E = etl::max_pool_upsample_2d<2, 2>(C2_O, P2_O, P2_E);     // MP2 -> C2             (!GPU)
+        C2_E = etl::max_pool_upsample_2d<2, 2>(C2_O, P2_O, P2_E);     // MP2 -> C2
         P1_E = etl::ml::convolution_backward<1, 1, 1, 1>(C2_E, C2_W); // C2 -> MP1
-        C1_E = etl::max_pool_upsample_2d<2, 2>(C1_O, P1_O, P1_E);     // MP1 -> C1             (!GPU)
+        C1_E = etl::max_pool_upsample_2d<2, 2>(C1_O, P1_O, P1_E);     // MP1 -> C1
 
         //TODO Add backward
     }
