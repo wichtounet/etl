@@ -264,7 +264,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_5d(I&& input){
     const int D1 = etl::dim<0>(input);
     const int D2 = etl::dim<1>(input);
     const int D3 = etl::dim<2>(input);
-    const int D4 = etl::dim<2>(input);
+    const int D4 = etl::dim<3>(input);
 
     int dims[]    = {1, D1, D2, D3, D4};
     int strides[] = {D1 * D2 * D3 * D4, D2 * D3 * D4, D3 * D4, D4, 1};
