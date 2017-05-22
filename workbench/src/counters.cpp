@@ -183,9 +183,9 @@ void ml(){
 int main(){
     auto start_time = timer_clock::now();
 
-    //simple();
-    //basic();
-    //sub();
+    simple();
+    basic();
+    sub();
     ml();
 
     auto end_time = timer_clock::now();
