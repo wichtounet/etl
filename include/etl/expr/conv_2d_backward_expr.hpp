@@ -95,24 +95,72 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
 
     /*!
      * \brief Assign to a matrix
-     * \param c The expression to which assign
+     * \param conv The expression to which assign
      */
     template<typename C>
-    void assign_to(C&& c)  const {
+    void assign_to(C&& conv)  const {
         static_assert(all_etl_expr<A, B, C>::value, "conv2_backward only supported for ETL expressions");
 
-        auto& a = this->a();
-        auto& b = this->b();
+        auto& input = this->a();
+        auto& kernel = this->b();
 
-        check(a, b, c);
+        check(input, kernel, conv);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
+        standard_evaluator::pre_assign_rhs(input);
+        standard_evaluator::pre_assign_rhs(kernel);
 
-        if /* constexpr */ (Flipped){
-            detail::conv2_backward_flipped_impl<S1, S2, P1, P2>::apply(make_temporary(a), make_temporary(b), c);
+        // Need K1 / K2 to compute transposed padding
+        const size_t K1 = etl::dim<0>(kernel);
+        const size_t K2 = etl::dim<1>(kernel);
+
+        if /* constexpr */ (Flipped) {
+            // 1. Handle unit strides
+            if /* constexpr */ (S1 == 1 && S2 == 1) {
+                if /* constexpr */ (P1 == 0 && P2 == 0) {
+                    // Unit strides, non-zero padding -> Full convolution
+                    detail::conv2_full_flipped_impl::apply(make_temporary(input), make_temporary(kernel), conv);
+                } else {
+                    // Unit strides, zero padding -> Valid convolution with the correct padding
+                    detail::dyn_conv2_valid_flipped_impl::apply(make_temporary(input), make_temporary(kernel), conv, 1, 1, K1 - P1 - 1, K2 - P2 - 1);
+                }
+            }
+            // 2. Handle non_unit strides
+            else {
+                // Fractionally-strided convolution needs inner padding of the input
+                auto strided_input = impl::common::inner_pad(make_temporary(input), S1, S2);
+
+                if /* constexpr */ (P1 == 0 && P2 == 0) {
+                    // Non-unit strides, non-zero padding -> Fractionally-strided full convolution
+                    detail::conv2_full_flipped_impl::apply(strided_input, make_temporary(kernel), conv);
+                } else {
+                    // Non-unit strides, zero padding -> Fractionally-strided Valid convolution with the correct padding
+                    detail::dyn_conv2_valid_flipped_impl::apply(strided_input, make_temporary(kernel), conv, 1, 1, K1 - P1 - 1, K2 - P2 - 1);
+                }
+            }
         } else {
-            detail::conv2_backward_impl<S1, S2, P1, P2>::apply(make_temporary(a), make_temporary(b), c);
+            // 1. Handle unit strides
+            if /* constexpr */ (S1 == 1 && S2 == 1) {
+                if /* constexpr */ (P1 == 0 && P2 == 0) {
+                    // Unit strides, non-zero padding -> Full convolution
+                    detail::conv2_full_impl::apply(make_temporary(input), make_temporary(kernel), conv);
+                } else {
+                    // Unit strides, zero padding -> Valid convolution with the correct padding
+                    detail::dyn_conv2_valid_impl::apply(make_temporary(input), make_temporary(kernel), conv, 1, 1, K1 - P1 - 1, K2 - P2 - 1);
+                }
+            }
+            // 2. Handle non_unit strides
+            else {
+                // Fractionally-strided convolution needs inner padding of the input
+                auto strided_input = impl::common::inner_pad(make_temporary(input), S1, S2);
+
+                if /* constexpr */ (P1 == 0 && P2 == 0) {
+                    // Non-unit strides, non-zero padding -> Fractionally-strided full convolution
+                    detail::conv2_full_impl::apply(strided_input, make_temporary(kernel), conv);
+                } else {
+                    // Non-unit strides, zero padding -> Fractionally-strided Valid convolution with the correct padding
+                    detail::dyn_conv2_valid_impl::apply(strided_input, make_temporary(kernel), conv, 1, 1, K1 - P1 - 1, K2 - P2 - 1);
+                }
+            }
         }
     }
 
