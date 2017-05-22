@@ -314,6 +314,34 @@ cudnn_wrapper<cudnnFilterDescriptor_t> create_filter(I&& kernel){
     return cudnn_wrapper<cudnnFilterDescriptor_t>{filter};
 }
 
+/*!
+ * \brief Create a CUDNN pooling descriptor for the given input matrix
+ * \return a cudnn_wrapper around a created CUDNN filter tensor
+ */
+inline cudnn_wrapper<cudnnPoolingDescriptor_t> create_pooling_descriptor(cudnnPoolingMode_t mode, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2){
+    cudnnPoolingDescriptor_t pooling_desc;
+    cudnn_check(cudnnCreatePoolingDescriptor(&pooling_desc));
+    cudnn_check(cudnnSetPooling2dDescriptor(pooling_desc, mode, CUDNN_PROPAGATE_NAN, c1, c2, p1, p2, s1, s2));
+
+    return cudnn_wrapper<cudnnPoolingDescriptor_t>{pooling_desc};
+}
+
+/*!
+ * \brief Create a CUDNN pooling descriptor for the given input matrix
+ * \return a cudnn_wrapper around a created CUDNN filter tensor
+ */
+inline cudnn_wrapper<cudnnPoolingDescriptor_t> create_pooling_descriptor(cudnnPoolingMode_t mode, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3){
+    int c[] = {int(c1), int(c2), int(c3)};
+    int s[] = {int(s1), int(s2), int(s3)};
+    int p[] = {int(p1), int(p2), int(p3)};
+
+    cudnnPoolingDescriptor_t pooling_desc;
+    cudnn_check(cudnnCreatePoolingDescriptor(&pooling_desc));
+    cudnn_check(cudnnSetPoolingNdDescriptor(pooling_desc, mode, CUDNN_PROPAGATE_NAN, 3, c, p, s));
+
+    return cudnn_wrapper<cudnnPoolingDescriptor_t>{pooling_desc};
+}
+
 } //end of namespace cudnn
 
 } //end of namespace impl
