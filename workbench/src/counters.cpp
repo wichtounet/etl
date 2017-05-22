@@ -27,7 +27,7 @@ float fake = 0;
  * Simple: 3 / 0 / 2 (Optimal!)
  * Basic: 15 / 0 / 3 (Optimal!)
  * Sub: 163 / 160 / 480
- * ML: 61 / 0 / 19
+ * ML: 61 / 10 / 19
  */
 
 void simple(){
