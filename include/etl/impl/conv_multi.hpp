@@ -268,66 +268,6 @@ struct dyn_conv2_valid_multi_multi_flipped_impl {
     }
 };
 
-/*!
- * \brief The functor impl for 2D full conv, with multiple kernels
- */
-struct conv2_full_multi_impl {
-    /*!
-     * \brief Apply the convolution
-     * \param input The input expression
-     * \param kernel The kernel expression
-     * \param conv The output expression
-     */
-    template <typename I, typename K, typename C>
-    static void apply(I&& input, K&& kernel, C&& conv) {
-        auto impl = select_conv_full_multi_impl<I, K, C>();
-
-        if (impl == etl::conv_multi_impl::VEC){
-            impl::vec::conv2_full_multi(input, kernel, conv);
-        } else if (impl == etl::conv_multi_impl::STD){
-            impl::standard::conv2_full_multi(input, kernel, conv);
-        } else if (impl == etl::conv_multi_impl::FFT_STD) {
-            impl::standard::conv2_full_multi_fft(input, kernel, conv);
-        } else if (impl == etl::conv_multi_impl::FFT_MKL) {
-            impl::blas::conv2_full_multi(input, kernel, conv);
-        } else if (impl == etl::conv_multi_impl::FFT_CUFFT) {
-            impl::cufft::conv2_full_multi(input, kernel, conv);
-        } else {
-            cpp_unreachable("Invalid conv implementation selection");
-        }
-    }
-};
-
-/*!
- * \brief The functor impl for 2D full conv, with multiple kernels
- */
-struct conv2_full_multi_flipped_impl {
-    /*!
-     * \brief Apply the convolution
-     * \param input The input expression
-     * \param kernel The kernel expression
-     * \param conv The output expression
-     */
-    template <typename I, typename K, typename C>
-    static void apply(I&& input, K&& kernel, C&& conv) {
-        auto impl = select_conv_full_multi_impl<I, K, C>();
-
-        if (impl == etl::conv_multi_impl::VEC){
-            impl::vec::conv2_full_multi_flipped(input, kernel, conv);
-        } else if (impl == etl::conv_multi_impl::STD){
-            impl::standard::conv2_full_multi_flipped(input, kernel, conv);
-        } else if (impl == etl::conv_multi_impl::FFT_STD) {
-            impl::standard::conv2_full_multi_flipped_fft(input, kernel, conv);
-        } else if (impl == etl::conv_multi_impl::FFT_MKL) {
-            impl::blas::conv2_full_multi_flipped(input, kernel, conv);
-        } else if (impl == etl::conv_multi_impl::FFT_CUFFT) {
-            impl::cufft::conv2_full_multi_flipped(input, kernel, conv);
-        } else {
-            cpp_unreachable("Invalid conv implementation selection");
-        }
-    }
-};
-
 } //end of namespace detail
 
 } //end of namespace etl

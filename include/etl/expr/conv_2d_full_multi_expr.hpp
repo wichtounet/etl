@@ -74,25 +74,121 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
     }
 
     /*!
+     * \brief Select the implementation of the conv multi of I and K in C
+     *
+     * This does not take the local context into account.
+     *
+     * \tparam I The input type
+     * \tparam K The kernel type
+     * \tparam C The conv type
+     * \return the implementation to be used
+     */
+    template <typename C>
+    static etl::conv_multi_impl select_default_impl() {
+        //Note: since the constexpr values will be known at compile time, the
+        //conditions will be a lot simplified
+
+        static constexpr order input_order  = decay_traits<A>::storage_order;
+        static constexpr order kernel_order = decay_traits<B>::storage_order;
+        static constexpr order output_order = decay_traits<C>::storage_order;
+
+        //Only the standard implementation is able to handle column major
+        if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
+            return etl::conv_multi_impl::STD;
+        }
+
+        if (vectorize_impl && vec_enabled) {
+            return etl::conv_multi_impl::VEC;
+        }
+
+        return etl::conv_multi_impl::STD;
+    }
+
+    /*!
+     * \brief Select the implementation of the conv of I and K in C
+     * \tparam C The conv type
+     * \return the implementation to be used
+     */
+    template <typename C>
+    static etl::conv_multi_impl select_impl() {
+        if (local_context().conv_multi_selector.forced) {
+            auto forced = local_context().conv_multi_selector.impl;
+
+            switch (forced) {
+                //CUDNN cannot always be used
+                case conv_multi_impl::CUDNN:
+                    if (!cudnn_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                        std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                        return select_default_impl<C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                    }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                    return forced;
+
+                //VEC cannot always be used
+                case conv_multi_impl::VEC:
+                    if (!vec_enabled || !vectorize_impl) {
+                        std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
+                        return select_default_impl<C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                    }
+
+                    return forced;
+
+                    // Although it may be suboptimal the forced selection can
+                    // always be achieved
+                default:
+                    return forced;
+            }
+        }
+
+        return select_default_impl<C>();
+    }
+
+    /*!
      * \brief Assign to a matrix of the full storage order
-     * \param c The expression to which assign
+     * \param conv The expression to which assign
      */
     template<typename C>
-    void assign_to(C&& c)  const {
+    void assign_to(C&& conv)  const {
         static_assert(all_etl_expr<A, B, C>::value, "conv2_full_multi only supported for ETL expressions");
 
-        auto& a = this->a();
-        auto& b = this->b();
+        auto& input  = this->a();
+        auto& kernel = this->b();
 
-        check(a, b, c);
+        check(input, kernel, conv);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
+        standard_evaluator::pre_assign_rhs(input);
+        standard_evaluator::pre_assign_rhs(kernel);
+
+        auto impl = select_impl<C>();
 
         if /* constexpr */ (Flipped){
-            detail::conv2_full_multi_flipped_impl::apply(make_temporary(a), make_temporary(b), c);
+            if (impl == etl::conv_multi_impl::VEC){
+                impl::vec::conv2_full_multi_flipped(make_temporary(input), make_temporary(kernel), conv);
+            } else if (impl == etl::conv_multi_impl::STD){
+                impl::standard::conv2_full_multi_flipped(make_temporary(input), make_temporary(kernel), conv);
+            } else if (impl == etl::conv_multi_impl::FFT_STD) {
+                impl::standard::conv2_full_multi_flipped_fft(make_temporary(input), make_temporary(kernel), conv);
+            } else if (impl == etl::conv_multi_impl::FFT_MKL) {
+                impl::blas::conv2_full_multi_flipped(make_temporary(input), make_temporary(kernel), conv);
+            } else if (impl == etl::conv_multi_impl::FFT_CUFFT) {
+                impl::cufft::conv2_full_multi_flipped(make_temporary(input), make_temporary(kernel), conv);
+            } else {
+                cpp_unreachable("Invalid conv implementation selection");
+            }
         } else {
-            detail::conv2_full_multi_impl::apply(make_temporary(a), make_temporary(b), c);
+            if (impl == etl::conv_multi_impl::VEC) {
+                impl::vec::conv2_full_multi(make_temporary(input), make_temporary(kernel), conv);
+            } else if (impl == etl::conv_multi_impl::STD) {
+                impl::standard::conv2_full_multi(make_temporary(input), make_temporary(kernel), conv);
+            } else if (impl == etl::conv_multi_impl::FFT_STD) {
+                impl::standard::conv2_full_multi_fft(make_temporary(input), make_temporary(kernel), conv);
+            } else if (impl == etl::conv_multi_impl::FFT_MKL) {
+                impl::blas::conv2_full_multi(make_temporary(input), make_temporary(kernel), conv);
+            } else if (impl == etl::conv_multi_impl::FFT_CUFFT) {
+                impl::cufft::conv2_full_multi(make_temporary(input), make_temporary(kernel), conv);
+            } else {
+                cpp_unreachable("Invalid conv implementation selection");
+            }
         }
     }
 
