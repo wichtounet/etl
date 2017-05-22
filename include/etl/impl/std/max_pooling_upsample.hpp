@@ -11,6 +11,8 @@ namespace etl {
 
 namespace impl {
 
+namespace standard {
+
 /*!
  * \brief Functor for the derivative of 3D Max Pooling
  */
@@ -620,6 +622,8 @@ struct max_pool_upsample_3d {
         }
     }
 };
+
+} //end of namespace standard
 
 } //end of namespace impl
 

@@ -10,7 +10,7 @@
 #include "etl/expr/base_temporary_expr.hpp"
 
 //Get the implementations
-#include "etl/impl/pooling.hpp"
+#include "etl/impl/std/max_pooling_upsample.hpp"
 
 namespace etl {
 
@@ -87,7 +87,7 @@ public:
 
         check(a, b, c, result);
 
-        impl::max_pool_upsample_2d::apply(
+        impl::standard::max_pool_upsample_2d::apply(
             make_temporary(a),
             make_temporary(b),
             make_temporary(c),
