@@ -9,8 +9,11 @@
 
 #include "etl/expr/base_temporary_expr.hpp"
 
-//Get the implementations
-#include "etl/impl/outer_product.hpp"
+//Include the implementations
+#include "etl/impl/std/outer.hpp"
+#include "etl/impl/blas/outer.hpp"
+#include "etl/impl/cublas/outer.hpp"
+#include "etl/impl/vec/outer.hpp"
 
 namespace etl {
 
@@ -38,6 +41,56 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
     // Assignment functions
 
     /*!
+     * \brief Select the outer product implementation for an expression of type A and B
+     *
+     * This does not take the local context into account
+     *
+     * \tparam A The type of a expression
+     * \tparam B The type of b expression
+     * \tparam C The type of c expression
+     * \return The implementation to use
+     */
+    template <typename C>
+    static cpp14_constexpr etl::outer_impl select_default_outer_impl() {
+        if (cblas_enabled) {
+            return etl::outer_impl::BLAS;
+        } else {
+            return etl::outer_impl::STD;
+        }
+    }
+
+    /*!
+     * \brief Select the outer product implementation for an expression of type A and B
+     * \tparam A The type of a expression
+     * \tparam B The type of b expression
+     * \tparam C The type of c expression
+     * \return The implementation to use
+     */
+    template <typename C>
+    static etl::outer_impl select_outer_impl() {
+        if (local_context().outer_selector.forced) {
+            auto forced = local_context().outer_selector.impl;
+
+            switch (forced) {
+                //AVX cannot always be used
+                case outer_impl::BLAS:
+                    if (!cblas_enabled) {
+                        std::cerr << "Forced selection to BLAS outer implementation, but not possible for this expression" << std::endl;
+                        return select_default_outer_impl<C>();
+                    }
+
+                    return forced;
+
+                //In other cases, simply use the forced impl
+                default:
+                    return forced;
+            }
+        }
+
+        return select_default_outer_impl<C>();
+    }
+
+    /*!
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
@@ -51,7 +104,13 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
-        detail::outer_product_impl::apply(a, b, c);
+        auto impl = select_outer_impl<C>();
+
+        if (impl == etl::outer_impl::BLAS) {
+            etl::impl::blas::outer(a, b, c);
+        } else {
+            etl::impl::standard::outer(a, b, c);
+        }
     }
 
     /*!

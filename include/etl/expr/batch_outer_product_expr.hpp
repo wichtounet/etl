@@ -9,8 +9,11 @@
 
 #include "etl/expr/base_temporary_expr.hpp"
 
-//Get the implementations
-#include "etl/impl/outer_product.hpp"
+//Include the implementations
+#include "etl/impl/std/outer.hpp"
+#include "etl/impl/blas/outer.hpp"
+#include "etl/impl/cublas/outer.hpp"
+#include "etl/impl/vec/outer.hpp"
 
 namespace etl {
 
@@ -38,6 +41,81 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
     // Assignment functions
 
     /*!
+     * \brief Select the batch outer product implementation for an expression of type A and B
+     *
+     * This does not take the local context into account
+     *
+     * \tparam C The type of c expression
+     * \return The implementation to use
+     */
+    template <typename C>
+    static cpp14_constexpr etl::outer_impl select_default_batch_outer_impl() {
+        if (cblas_enabled) {
+            return etl::outer_impl::BLAS;
+        }
+
+        // TODO This should only be done with large matrices or if the data is already in memory
+        if (cublas_enabled) {
+            return etl::outer_impl::CUBLAS;
+        }
+
+        if (vec_enabled) {
+            return etl::outer_impl::VEC;
+        }
+
+        return etl::outer_impl::STD;
+    }
+
+    /*!
+     * \brief Select the batch outer product implementation for an expression of type A and B
+     * \tparam A The type of a expression
+     * \tparam B The type of b expression
+     * \tparam C The type of c expression
+     * \return The implementation to use
+     */
+    template <typename C>
+    static etl::outer_impl select_batch_outer_impl() {
+        if (local_context().outer_selector.forced) {
+            auto forced = local_context().outer_selector.impl;
+
+            switch (forced) {
+                //BLAS cannot always be used
+                case outer_impl::BLAS:
+                    if (!cblas_enabled) {
+                        std::cerr << "Forced selection to BLAS outer implementation, but not possible for this expression" << std::endl;
+                        return select_default_batch_outer_impl<C>();
+                    }
+
+                    return forced;
+
+                //CUBLAS cannot always be used
+                case outer_impl::CUBLAS:
+                    if (!cublas_enabled) {
+                        std::cerr << "Forced selection to CUBLAS outer implementation, but not possible for this expression" << std::endl;
+                        return select_default_batch_outer_impl<C>();
+                    }
+
+                    return forced;
+
+                //VEC cannot always be used
+                case outer_impl::VEC:
+                    if (!vec_enabled) {
+                        std::cerr << "Forced selection to VEC outer implementation, but not possible for this expression" << std::endl;
+                        return select_default_batch_outer_impl<C>();
+                    }
+
+                    return forced;
+
+                //In other cases, simply use the forced impl
+                default:
+                    return forced;
+            }
+        }
+
+        return select_default_batch_outer_impl<C>();
+    }
+
+    /*!
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
@@ -51,7 +129,19 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
-        detail::batch_outer_product_impl::apply(a, b, c);
+        auto impl = select_batch_outer_impl<C>();
+
+        if (impl == etl::outer_impl::STD) {
+            etl::impl::standard::batch_outer(a, b, c);
+        } else if (impl == etl::outer_impl::BLAS) {
+            etl::impl::blas::batch_outer(a, b, c);
+        } else if (impl == etl::outer_impl::CUBLAS) {
+            etl::impl::cublas::batch_outer(a, b, c);
+        } else if (impl == etl::outer_impl::VEC) {
+            etl::impl::vec::batch_outer(a, b, c);
+        } else {
+            cpp_unreachable("Invalid batch_outer selection");
+        }
     }
 
     /*!
