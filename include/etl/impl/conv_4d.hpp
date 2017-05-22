@@ -596,6 +596,13 @@ struct conv4_backward_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C& conv) {
+        // The GPU implementation needs the real forward parameters, not the
+        // converted backward parameters
+        if /* constexpr*/ (cudnn_enabled && all_floating<I, K, C>::value){
+            impl::cudnn::conv4_backward(input, kernel, conv, S1, S2, P1, P2);
+            return;
+        }
+
         // Need K1 / K2 to compute transposed padding
         const size_t K1 = etl::dim<2>(kernel);
         const size_t K2 = etl::dim<3>(kernel);
@@ -640,6 +647,13 @@ struct conv4_backward_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C& conv) {
+        // The GPU implementation needs the real forward parameters, not the
+        // converted backward parameters
+        if /* constexpr*/ (cudnn_enabled && all_floating<I, K, C>::value){
+            impl::cudnn::conv4_backward_flipped(input, kernel, conv, S1, S2, P1, P2);
+            return;
+        }
+
         // Need K1 / K2 to compute transposed padding
         const size_t K1 = etl::dim<2>(kernel);
         const size_t K2 = etl::dim<3>(kernel);
@@ -683,6 +697,13 @@ struct dyn_conv4_backward_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+        // The GPU implementation needs the real forward parameters, not the
+        // converted backward parameters
+        if /* constexpr*/ (cudnn_enabled && all_floating<I, K, C>::value){
+            impl::cudnn::conv4_backward(input, kernel, conv, s1, s2, p1, p2);
+            return;
+        }
+
         // Need K1 / K2 to compute transposed padding
         const size_t k1 = etl::dim<2>(kernel);
         const size_t k2 = etl::dim<3>(kernel);
@@ -726,6 +747,13 @@ struct dyn_conv4_backward_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+        // The GPU implementation needs the real forward parameters, not the
+        // converted backward parameters
+        if /* constexpr*/ (cudnn_enabled && all_floating<I, K, C>::value){
+            impl::cudnn::conv4_backward_flipped(input, kernel, conv, s1, s2, p1, p2);
+            return;
+        }
+
         // Need K1 / K2 to compute transposed padding
         const size_t k1 = etl::dim<2>(kernel);
         const size_t k2 = etl::dim<3>(kernel);

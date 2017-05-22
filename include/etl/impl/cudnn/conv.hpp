@@ -559,6 +559,89 @@ void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_
     conv2_valid_multi_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
 }
 
+/*!
+ * \brief cudnn implementation of a 4D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv4_backward_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode, size_t s1, size_t s2, size_t p1, size_t p2) {
+    using type = value_t<I>;
+
+    type alpha[] = {1.0f};
+    type beta[] = {0.0f};
+
+    decltype(auto) handle = start_cudnn();
+
+    // Prepare the tensors
+    auto input_tensor  = create_tensor(input);
+    auto output_tensor = create_tensor(conv);
+    auto filter        = create_filter(kernel);
+
+    // Prepare the convolution
+    cudnnConvolutionDescriptor_t convolution;
+    cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, mode));
+
+    // Find the algorithm to use
+    cudnnConvolutionBwdDataAlgo_t conv_algo;
+    cudnn_check(cudnnGetConvolutionBackwardDataAlgorithm(handle.get(), *filter, *input_tensor, convolution,
+        *output_tensor, CUDNN_CONVOLUTION_BWD_DATA_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+
+    // Prepare the workspace
+    size_t workspace_size = 0;
+    cudnn_check(cudnnGetConvolutionBackwardDataWorkspaceSize(handle.get(), *filter, *input_tensor, convolution, *output_tensor, conv_algo, &workspace_size));
+
+    impl::cuda::cuda_memory<type> workspace;
+
+    if(workspace_size){
+        workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
+    }
+
+    // Allocate GPU memory, if necessary
+
+    input.ensure_gpu_up_to_date();
+    kernel.ensure_gpu_up_to_date();
+    conv.ensure_gpu_allocated();
+
+    // Perform the convolution
+
+    cudnn_check(cudnnConvolutionBackwardData(handle.get(),
+        alpha, *filter, kernel.gpu_memory(),
+        *input_tensor, input.gpu_memory(),
+        convolution, conv_algo, workspace.get(), workspace_size,
+        beta, *output_tensor, conv.gpu_memory()));
+
+    conv.validate_gpu();
+    conv.invalidate_cpu();
+
+    // Release the resources
+    cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
+}
+
+/*!
+ * \brief cudnn implementation of a 4D 'valid' backward convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv4_backward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    conv4_backward_set(input, kernel, conv, CUDNN_CROSS_CORRELATION, s1, s2, p1, p2);
+}
+
+/*!
+ * \brief cudnn implementation of a 2D 'valid' backward convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv4_backward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    conv4_backward_set(input, kernel, conv, CUDNN_CONVOLUTION, s1, s2, p1, p2);
+}
+
 #else
 
 //COVERAGE_EXCLUDE_BEGIN
@@ -773,6 +856,42 @@ void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_
     cpp_unused(p1);
     cpp_unused(p2);
     cpp_unreachable("Unsupported feature called: cudnn conv2_valid_multi_flipped");
+}
+
+/*!
+ * \brief cudnn implementation of a 4D 'valid' backward convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv4_backward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+    cpp_unreachable("Unsupported feature called: cudnn conv4_backward");
+}
+
+/*!
+ * \brief cudnn implementation of a 2D 'valid' backward convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv4_backward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+    cpp_unreachable("Unsupported feature called: cudnn conv4_backward_flipped");
 }
 
 //COVERAGE_EXCLUDE_END
