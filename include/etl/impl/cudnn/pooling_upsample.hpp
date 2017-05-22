@@ -172,6 +172,72 @@ struct max_pool_upsample_3d {
     }
 };
 
+/*!
+ * \brief Functor for 2D Avg Pooling Upsample
+ */
+struct avg_pool_upsample_2d {
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename A, typename B, typename C, typename M, cpp_enable_if((decay_traits<A>::dimensions() < 5))>
+    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
+        unpool_2d(CUDNN_POOLING_AVERAGE_COUNT_INCLUDE_PADDING, in, out, errors, m, c1, c2);
+    }
+
+    // Deep handling
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename A, typename B, typename C, typename M, cpp_enable_if((decay_traits<A>::dimensions > 4))>
+    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
+        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+            apply(in(i), out(i), errors(i), m(i), c1, c2);
+        }
+    }
+};
+
+/*!
+ * \brief Functor for 2D Max Pooling
+ */
+struct avg_pool_upsample_3d {
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename A, typename B, typename C, typename M, cpp_enable_if((decay_traits<A>::dimensions() < 5))>
+    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t c3) {
+        unpool_3d(CUDNN_POOLING_AVERAGE_COUNT_INCLUDE_PADDING, in, out, errors, m, c1, c2, c3);
+    }
+
+    // Deep handling
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename A, typename B, typename C, typename M, cpp_enable_if((decay_traits<A>::dimensions > 4))>
+    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t c3) {
+        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+            apply(in(i), out(i), errors(i), m(i), c1, c2, c3);
+        }
+    }
+};
+
 #else
 
 //COVERAGE_EXCLUDE_BEGIN
@@ -204,6 +270,55 @@ struct max_pool_upsample_2d {
  * \brief Functor for 3D Max Pooling Upsample
  */
 struct max_pool_upsample_3d {
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename A, typename B, typename C, typename M>
+    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t c3) {
+        cpp_unused(in);
+        cpp_unused(out);
+        cpp_unused(errors);
+        cpp_unused(m);
+        cpp_unused(c1);
+        cpp_unused(c2);
+        cpp_unused(c3);
+
+        cpp_unreachable("Unsupported feature called: cudnn pool");
+    }
+};
+
+/*!
+ * \brief Functor for 2D Avg Pooling Upsample
+ */
+struct avg_pool_upsample_2d {
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename A, typename B, typename C, typename M>
+    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
+        cpp_unused(in);
+        cpp_unused(out);
+        cpp_unused(errors);
+        cpp_unused(m);
+        cpp_unused(c1);
+        cpp_unused(c2);
+
+        cpp_unreachable("Unsupported feature called: cudnn pool");
+    }
+};
+
+/*!
+ * \brief Functor for 3D Avg Pooling Upsample
+ */
+struct avg_pool_upsample_3d {
     /*!
      * \brief Apply the functor on sub and store the result in m
      * \param sub The sub expression

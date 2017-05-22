@@ -158,21 +158,40 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
 
         auto impl = select_impl<R>();
 
-        if (impl == pool_impl::STD) {
-            impl::standard::max_pool_upsample_3d::apply<C1, C2, C3>(
-                make_temporary(a),
-                make_temporary(b),
-                make_temporary(c),
-                result);
-        } else if (impl == pool_impl::CUDNN) {
-            impl::cudnn::max_pool_upsample_3d::apply(
-                make_temporary(a),
-                make_temporary(b),
-                make_temporary(c),
-                result,
-                C1, C2, C3);
+        if /*constexpr*/ (Max) {
+            if (impl == pool_impl::STD) {
+                impl::standard::max_pool_upsample_3d::apply<C1, C2, C3>(
+                    make_temporary(a),
+                    make_temporary(b),
+                    make_temporary(c),
+                    result);
+            } else if (impl == pool_impl::CUDNN) {
+                impl::cudnn::max_pool_upsample_3d::apply(
+                    make_temporary(a),
+                    make_temporary(b),
+                    make_temporary(c),
+                    result,
+                    C1, C2, C3);
+            } else {
+                cpp_unreachable("Invalid pool implementation");
+            }
         } else {
-            cpp_unreachable("Invalid pool implementation");
+            if (impl == pool_impl::STD) {
+                impl::standard::avg_pool_upsample_3d::apply<C1, C2, C3>(
+                    make_temporary(a),
+                    make_temporary(b),
+                    make_temporary(c),
+                    result);
+            } else if (impl == pool_impl::CUDNN) {
+                impl::cudnn::avg_pool_upsample_3d::apply(
+                    make_temporary(a),
+                    make_temporary(b),
+                    make_temporary(c),
+                    result,
+                    C1, C2, C3);
+            } else {
+                cpp_unreachable("Invalid pool implementation");
+            }
         }
     }
 
@@ -324,6 +343,21 @@ struct etl_traits<etl::pool_upsample_3d_expr<A, B, C, C1, C2, C3, Max>> {
 template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C>
 pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3, true>
 max_pool_upsample_3d(A&& input, B&& output, C&& errors) {
+    return {input, output, errors};
+}
+
+/*!
+ * \brief Derivative of the 3D Average Pooling of the given matrix expression and upsampling.
+ * \param input The input
+ * \param output The output
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \tparam C3 The third pooling ratio
+ * \return A expression representing the Derivative of 3D Average Pooling of the input expression.
+ */
+template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C>
+pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3, false>
+avg_pool_upsample_3d(A&& input, B&& output, C&& errors) {
     return {input, output, errors};
 }
 
