@@ -10,33 +10,34 @@
 #include "etl/expr/base_temporary_expr.hpp"
 
 //Get the implementations
-#include "etl/impl/std/max_pooling_upsample.hpp"
-#include "etl/impl/cudnn/max_pooling_upsample.hpp"
+#include "etl/impl/std/pooling_upsample.hpp"
+#include "etl/impl/cudnn/pooling_upsample.hpp"
 
 namespace etl {
 
 /*!
- * \brief A derivative of the 2D max pooling (combine derivative and upsampling for performance)
+ * \brief A derivative of the max pooling (combine derivative and upsampling for performance)
  * \tparam A The input type
  * \tparam B The output type
  * \tparam C The errors type
  */
-template <typename A, typename B, typename C, size_t C1, size_t C2>
-struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d_expr<A, B, C, C1, C2>, A, B, C> {
+template <typename A, typename B, typename C, size_t C1, size_t C2, size_t C3>
+struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A, B, C, C1, C2, C3>, A, B, C> {
     using value_type = value_t<A>;                                   ///< The type of value of the expression
     using sub_traits = etl::decay_traits<A>;                         ///< The traits of the first sub type
-    using this_type  = max_pool_upsample_2d_expr<A, B, C, C1, C2>;   ///< The type of this expression
+    using this_type  = pool_upsample_3d_expr<A, B, C, C1, C2, C3>;   ///< The type of this expression
     using base_type  = base_temporary_expr_tern<this_type, A, B, C>; ///< The base type
 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
 
-    friend struct etl_traits<max_pool_upsample_2d_expr>;
+    friend struct etl_traits<pool_upsample_3d_expr>;
 
     /*!
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    max_pool_upsample_2d_expr(A a, B b, C c) : base_type(a, b, c) {
+    pool_upsample_3d_expr(A a, B b, C c)
+            : base_type(a, b, c) {
         //Nothing else to init
     }
 
@@ -54,17 +55,19 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
 
         static constexpr size_t D = etl::decay_traits<A>::dimensions();
 
-        static_assert(etl::decay_traits<B>::dimensions() == D, "Invalid dimensions in max_pool_upsample_3d");
-        static_assert(etl::decay_traits<C>::dimensions() == D, "Invalid dimensions in max_pool_upsample_3d");
-        static_assert(etl::decay_traits<R>::dimensions() == D, "Invalid dimensions in max_pool_upsample_3d");
+        static_assert(etl::decay_traits<B>::dimensions() == D, "Invalid dimensions in max_pool_upsampl_3d");
+        static_assert(etl::decay_traits<C>::dimensions() == D, "Invalid dimensions in max_pool_upsampl_3d");
+        static_assert(etl::decay_traits<R>::dimensions() == D, "Invalid dimensions in max_pool_upsampl_3d");
 
-        static_assert(etl::decay_traits<R>::size() == etl::decay_traits<A>::size(), "max_pool_upsample_2d:A and R must have the same size");
-        static_assert(etl::decay_traits<B>::size() == etl::decay_traits<C>::size(), "max_pool_upsample_2d:B and C must have the same size");
+        static_assert(etl::decay_traits<R>::size() == etl::decay_traits<A>::size(), "max_pool_upsample_3d:A and R must have the same size");
+        static_assert(etl::decay_traits<B>::size() == etl::decay_traits<C>::size(), "max_pool_upsample_3d:B and C must have the same size");
 
-        static_assert(etl::decay_traits<A>::template dim<D - 2>() == C1 * etl::decay_traits<B>::template dim<D - 2>(),
-            "Invalid pooling dimensions for max_pool_upsample_2d");
-        static_assert(etl::decay_traits<A>::template dim<D - 1>() == C2 * etl::decay_traits<B>::template dim<D - 1>(),
-            "Invalid pooling dimensions for max_pool_upsample_2d");
+        static_assert(etl::decay_traits<A>::template dim<D - 3>() == C1 * etl::decay_traits<B>::template dim<D - 3>(),
+                      "Invalid pooling dimensions for max_pool_upsample_2d");
+        static_assert(etl::decay_traits<A>::template dim<D - 2>() == C2 * etl::decay_traits<B>::template dim<D - 2>(),
+                      "Invalid pooling dimensions for max_pool_upsample_2d");
+        static_assert(etl::decay_traits<A>::template dim<D - 1>() == C3 * etl::decay_traits<B>::template dim<D - 1>(),
+                      "Invalid pooling dimensions for max_pool_upsample_2d");
     }
 
     /*!
@@ -81,16 +84,19 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
 
         static constexpr size_t D = etl::decay_traits<A>::dimensions();
 
-        static_assert(etl::decay_traits<B>::dimensions() == D, "Invalid dimensions in max_pool_upsample_3d");
-        static_assert(etl::decay_traits<C>::dimensions() == D, "Invalid dimensions in max_pool_upsample_3d");
-        static_assert(etl::decay_traits<R>::dimensions() == D, "Invalid dimensions in max_pool_upsample_3d");
+        static_assert(etl::decay_traits<B>::dimensions() == D, "Invalid dimensions in max_pool_upsampl_3d");
+        static_assert(etl::decay_traits<C>::dimensions() == D, "Invalid dimensions in max_pool_upsampl_3d");
+        static_assert(etl::decay_traits<R>::dimensions() == D, "Invalid dimensions in max_pool_upsampl_3d");
 
-        cpp_assert(etl::size(result) == etl::size(a), "max_pool_upsample_2d:A and R must have the same size");
-        cpp_assert(etl::size(b) == etl::size(c), "max_pool_upsample_2d:B and C must have the same size");
+        cpp_assert(etl::size(result) == etl::size(a), "max_pool_upsample_3d:A and R must have the same size");
+        cpp_assert(etl::size(b) == etl::size(c), "max_pool_upsample_3d:B and C must have the same size");
 
-        cpp_assert(etl::dim<D - 2>(a) == C1 * etl::dim<D - 2>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
-        cpp_assert(etl::dim<D - 1>(a) == C2 * etl::dim<D - 1>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
+        cpp_assert(etl::dim<D - 3>(a) == C1 * etl::dim<D - 3>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
+        cpp_assert(etl::dim<D - 2>(a) == C2 * etl::dim<D - 2>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
+        cpp_assert(etl::dim<D - 1>(a) == C3 * etl::dim<D - 1>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
     }
+
+    // Assignment functions
 
     /*!
      * \brief Select the pool implementation for an expression of type ABC->R
@@ -99,9 +105,9 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
      *
      * \return The implementation to use
      */
-    template<typename R>
+    template <typename R>
     static cpp14_constexpr etl::pool_impl select_default_impl() {
-        if (cudnn_enabled && all_floating<A, B, C, R>::value){
+        if (cudnn_enabled && all_floating<A, B, C, R>::value) {
             return etl::pool_impl::CUDNN;
         }
 
@@ -122,7 +128,7 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
                 case pool_impl::CUDNN:
                     if (!cudnn_enabled || !all_floating<A, B, C, R>::value) {                                                            //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to CUDNN pool implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_impl<R>();                                                                   //COVERAGE_EXCLUDE_LINE
+                        return select_default_impl<R>();                                                                                 //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                    //COVERAGE_EXCLUDE_LINE
 
                     return forced;
@@ -136,14 +142,12 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
         return select_default_impl<R>();
     }
 
-    // Assignment functions
-
     /*!
      * \brief Assign to a matrix of the same storage order
      * \param result The expression to which assign
      */
-    template<typename R>
-    void assign_to(R&& result)  const {
+    template <typename R>
+    void assign_to(R&& result) const {
         static_assert(all_etl_expr<A, B, C, R>::value, "Max Pool Derivative only supported for ETL expressions");
 
         auto& a = this->a();
@@ -154,19 +158,19 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
 
         auto impl = select_impl<R>();
 
-        if(impl == pool_impl::STD){
-            impl::standard::max_pool_upsample_2d::apply<C1, C2>(
+        if (impl == pool_impl::STD) {
+            impl::standard::max_pool_upsample_3d::apply<C1, C2, C3>(
                 make_temporary(a),
                 make_temporary(b),
                 make_temporary(c),
                 result);
-        } else if (impl == pool_impl::CUDNN){
-            impl::cudnn::max_pool_upsample_2d::apply(
+        } else if (impl == pool_impl::CUDNN) {
+            impl::cudnn::max_pool_upsample_3d::apply(
                 make_temporary(a),
                 make_temporary(b),
                 make_temporary(c),
                 result,
-                C1, C2);
+                C1, C2, C3);
         } else {
             cpp_unreachable("Invalid pool implementation");
         }
@@ -176,8 +180,8 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -185,8 +189,8 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -194,8 +198,8 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -203,8 +207,8 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -212,8 +216,8 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -223,8 +227,8 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
      * \param expr The expression to print
      * \return the output stream
      */
-    friend std::ostream& operator<<(std::ostream& os, const max_pool_upsample_2d_expr& expr) {
-        return os << "max_pool_upsample2(" << expr._a << ", " << expr._b << ", " << expr._c << ")";
+    friend std::ostream& operator<<(std::ostream& os, const pool_upsample_3d_expr& expr) {
+        return os << "max_pool_upsample3(" << expr._a << ", " << expr._b << ", " << expr._c << ")";
     }
 };
 
@@ -232,28 +236,28 @@ struct max_pool_upsample_2d_expr : base_temporary_expr_tern<max_pool_upsample_2d
  * \brief Traits for a pooling usample expression
  * \tparam A The pooling usample sub type
  */
-template <typename A, typename B, typename C, size_t C1, size_t C2>
-struct etl_traits<etl::max_pool_upsample_2d_expr<A, B, C, C1, C2>> {
-    using expr_t     = etl::max_pool_upsample_2d_expr<A, B, C, C1, C2>; ///< The expression type
+template <typename A, typename B, typename C, size_t C1, size_t C2, size_t C3>
+struct etl_traits<etl::pool_upsample_3d_expr<A, B, C, C1, C2, C3>> {
+    using expr_t     = etl::pool_upsample_3d_expr<A, B, C, C1, C2, C3>; ///< The expression type
     using sub_expr_t = std::decay_t<A>;                                 ///< The sub expression type
     using sub_traits = etl_traits<sub_expr_t>;                          ///< The sub traits
     using value_type = value_t<A>;                                      ///< The value type of the expression
 
-    static constexpr bool is_etl                  = true;                      ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer          = false;                     ///< Indicates if the type is a transformer
-    static constexpr bool is_view                 = false;                     ///< Indicates if the type is a view
-    static constexpr bool is_magic_view           = false;                     ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = sub_traits::is_fast;       ///< Indicates if the expression is fast
-    static constexpr bool is_linear               = true;                      ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe          = true;                      ///< Indicates if the expression is thread safe
-    static constexpr bool is_value                = false;                     ///< Indicates if the expression is of value type
-    static constexpr bool is_direct               = true;                      ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator            = false;                     ///< Indicates if the expression is a generator
-    static constexpr bool is_padded               = false;                     ///< Indicates if the expression is padded
-    static constexpr bool is_aligned              = true;                      ///< Indicates if the expression is padded
-    static constexpr bool is_gpu                  = false;                     ///< Indicates if the expression can be done on GPU
-    static constexpr bool is_temporary = true;                      ///< Indicates if the expression needs a evaluator visitor
-    static constexpr order storage_order          = sub_traits::storage_order; ///< The expression's storage order
+    static constexpr bool is_etl         = true;                      ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                     ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                     ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                     ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = sub_traits::is_fast;       ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = true;                      ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = true;                      ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                     ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = true;                      ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                     ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                     ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = true;                      ///< Indicates if the expression is padded
+    static constexpr bool is_gpu         = false;                     ///< Indicates if the expression can be done on GPU
+    static constexpr bool is_temporary   = true;                      ///< Indicates if the expression needs a evaluator visitor
+    static constexpr order storage_order = sub_traits::storage_order; ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -309,17 +313,18 @@ struct etl_traits<etl::max_pool_upsample_2d_expr<A, B, C, C1, C2>> {
 };
 
 /*!
- * \brief Derivative of the 2D Max Pooling of the given matrix expression and upsampling.
+ * \brief Derivative of the 3D Max Pooling of the given matrix expression and upsampling.
  * \param input The input
  * \param output The output
  * \tparam C1 The first pooling ratio
  * \tparam C2 The second pooling ratio
+ * \tparam C3 The third pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, typename A, typename B, typename C>
-max_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2> max_pool_upsample_2d(A&& input, B&& output, C&& errors) {
+template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C>
+pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3> max_pool_upsample_3d(A&& input, B&& output, C&& errors) {
     using detail::build_type;
-    return max_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2>{input, output, errors};
+    return pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3>{input, output, errors};
 }
 
 } //end of namespace etl
