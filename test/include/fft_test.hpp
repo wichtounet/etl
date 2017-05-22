@@ -5,21 +5,12 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#define FFT_FUNCTOR(name, ...)                                                                                                                                                                                                                                                                      \
-    /*!                                               \
-     * \brief name functor                            \
-     */                                                                                                                                                                             \
-    struct name {                                                                                                                                                                                                                                                                                   \
-        /*!                                           \
-         * \brief Apply the functor                   \
-         * \param a a                                 \
-         * \param b a                                 \
-         * \param c target                            \
-         */ \
-        template <typename A, typename C>                                                                                                                                                                                                                                                           \
-        static void apply(A&& a, C& c) {                                                                                                                                                                                                                                                            \
-            __VA_ARGS__;                                                                                                                                                                                                                                                                            \
-        }                                                                                                                                                                                                                                                                                           \
+#define FFT_FUNCTOR(name, ...)            \
+    struct name {                         \
+        template <typename A, typename C> \
+        static void apply(A&& a, C& c) {  \
+            __VA_ARGS__;                  \
+        }                                 \
     };
 
 FFT_FUNCTOR(default_fft1, c = etl::fft_1d(a))
