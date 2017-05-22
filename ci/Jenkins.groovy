@@ -21,6 +21,8 @@ node {
 
        stage 'test'
        sh './scripts/test_runner.sh'
+       archive 'catch_report.xml'
+       junit 'catch_report.xml'
 
        stage 'sonar'
        sh '/opt/sonar-runner/bin/sonar-runner'
