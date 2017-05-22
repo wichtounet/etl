@@ -464,54 +464,6 @@ struct conv2_full_multi_flipped_impl {
     }
 };
 
-/*!
- * \brief The functor impl for 2D same conv, with multiple kernels
- */
-struct conv2_same_multi_impl {
-    /*!
-     * \brief Apply the convolution
-     * \param input The input expression
-     * \param kernel The kernel expression
-     * \param conv The output expression
-     */
-    template <typename I, typename K, typename C>
-    static void apply(I&& input, K&& kernel, C&& conv) {
-        auto impl = select_conv_same_multi_impl<I, K, C>();
-
-        if (impl == etl::conv_multi_impl::VEC){
-            impl::vec::conv2_same_multi(input, kernel, conv);
-        } else if (impl == etl::conv_multi_impl::STD){
-            impl::standard::conv2_same_multi(input, kernel, conv);
-        } else {
-            cpp_unreachable("Invalid conv implementation selection");
-        }
-    }
-};
-
-/*!
- * \brief The functor impl for 2D same conv, with multiple flipped kernels
- */
-struct conv2_same_multi_flipped_impl {
-    /*!
-     * \brief Apply the convolution
-     * \param input The input expression
-     * \param kernel The kernel expression
-     * \param conv The output expression
-     */
-    template <typename I, typename K, typename C>
-    static void apply(I&& input, K&& kernel, C&& conv) {
-        auto impl = select_conv_same_multi_impl<I, K, C>();
-
-        if (impl == etl::conv_multi_impl::VEC){
-            impl::vec::conv2_same_multi_flipped(input, kernel, conv);
-        } else if (impl == etl::conv_multi_impl::STD){
-            impl::standard::conv2_same_multi_flipped(input, kernel, conv);
-        } else {
-            cpp_unreachable("Invalid conv implementation selection");
-        }
-    }
-};
-
 } //end of namespace detail
 
 } //end of namespace etl
