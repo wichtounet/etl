@@ -226,7 +226,9 @@ void fft_5_point(const etl::complex<T>* in, etl::complex<T>* out, const size_t p
  * \param twiddle6 The sixth twiddle factors
  */
 template <typename T>
-void fft_7_point(const etl::complex<T>* in, etl::complex<T>* out, const size_t product, const size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3, const etl::complex<T>* twiddle4, const etl::complex<T>* twiddle5, const etl::complex<T>* twiddle6) {
+void fft_7_point(const etl::complex<T>* in, etl::complex<T>* out, const size_t product, const size_t n,
+                 const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3, const etl::complex<T>* twiddle4,
+                 const etl::complex<T>* twiddle5, const etl::complex<T>* twiddle6) {
     static constexpr size_t factor = 7;
 
     const size_t m      = n / factor;
