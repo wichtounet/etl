@@ -74,6 +74,52 @@ public:
     // Assignment functions
 
     /*!
+     * \brief Select the pool implementation for an expression of type ABC->R
+     *
+     * This does not consider the local context
+     *
+     * \return The implementation to use
+     */
+    template<typename R>
+    static cpp14_constexpr etl::pool_impl select_default_impl() {
+        if (cudnn_enabled && all_floating<A, B, C, R>::value){
+            return etl::pool_impl::CUDNN;
+        }
+
+        return etl::pool_impl::STD;
+    }
+
+    /*!
+     * \brief Select the pool implementation for an expression of type ABC->R
+     * \return The implementation to use
+     */
+    template <typename R>
+    static etl::pool_impl select_impl() {
+        if (local_context().sum_selector.forced) {
+            auto forced = local_context().pool_selector.impl;
+
+            switch (forced) {
+                // CUDNN cannot always be used
+                case pool_impl::CUDNN:
+                    if (!cudnn_enabled || !all_floating<A, B, C, R>::value) {                                                            //COVERAGE_EXCLUDE_LINE
+                        std::cerr << "Forced selection to CUDNN pool implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                        return select_default_impl<R>();                                                                   //COVERAGE_EXCLUDE_LINE
+                    }                                                                                                                    //COVERAGE_EXCLUDE_LINE
+
+                    return forced;
+
+                //In other cases, simply use the forced impl
+                default:
+                    return forced;
+            }
+        }
+
+        return select_default_impl<R>();
+    }
+
+    // Assignment functions
+
+    /*!
      * \brief Assign to a matrix of the same storage order
      * \param result The expression to which assign
      */
@@ -87,12 +133,25 @@ public:
 
         check(a, b, c, result);
 
-        impl::standard::max_pool_upsample_2d::apply(
-            make_temporary(a),
-            make_temporary(b),
-            make_temporary(c),
-            result,
-            c1, c2);
+        auto impl = select_impl<R>();
+
+        if(impl == pool_impl::STD){
+            impl::standard::max_pool_upsample_2d::apply(
+                make_temporary(a),
+                make_temporary(b),
+                make_temporary(c),
+                result,
+                c1, c2);
+        } else if (impl == pool_impl::CUDNN){
+            impl::cudnn::max_pool_upsample_2d::apply(
+                make_temporary(a),
+                make_temporary(b),
+                make_temporary(c),
+                result,
+                c1, c2);
+        } else {
+            cpp_unreachable("Invalid pool implementation");
+        }
     }
 
     /*!
