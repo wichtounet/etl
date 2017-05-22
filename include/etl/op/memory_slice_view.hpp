@@ -279,6 +279,24 @@ public:
         sub.visit(visitor);
         visitor.need_value = old_need_value;
     }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // The sub value must be ensured
+        sub.ensure_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // The sub value must be ensured
+        sub.ensure_gpu_up_to_date();
+    }
 };
 
 /*!

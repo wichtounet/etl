@@ -163,6 +163,22 @@ public:
     }
 
     /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // Nothing to ensure
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // Nothing to ensure
+    }
+
+    /*!
      * \brief Outputs the expression to the given stream
      * \param os The output stream
      * \param expr The generator expr

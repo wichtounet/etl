@@ -112,6 +112,22 @@ struct magic_view {
     void visit(Visitor&& visitor) const {
         cpp_unused(visitor);
     }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // Nothing to ensure
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // Nothing to ensure
+    }
 };
 
 /*!
@@ -188,6 +204,22 @@ struct fast_magic_view {
     template<typename Visitor>
     void visit(Visitor&& visitor) const {
         cpp_unused(visitor);
+    }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // Nothing to ensure
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // Nothing to ensure
     }
 };
 

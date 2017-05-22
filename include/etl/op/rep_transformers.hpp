@@ -61,6 +61,24 @@ public:
         sub.visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // Need to ensure sub value
+        sub.ensure_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // Need to ensure both LHS and RHS
+        sub.ensure_gpu_up_to_date();
+    }
+
 private:
     /*!
      * \brief Returns a const reference to the derived object, i.e. the object using the CRTP injector.

@@ -115,6 +115,26 @@ struct mm_mul_transformer {
     }
 
     /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // Need to ensure both LHS and RHS
+        left.ensure_cpu_up_to_date();
+        right.ensure_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // Need to ensure both LHS and RHS
+        left.ensure_gpu_up_to_date();
+        right.ensure_gpu_up_to_date();
+    }
+
+    /*!
      * \brief Display the transformer on the given stream
      * \param os The output stream
      * \param transformer The transformer to print
@@ -230,6 +250,24 @@ struct dyn_convmtx_transformer {
         sub.visit(visitor);
         visitor.need_value = old_need_value;
     }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // Need to ensure sub value
+        sub.ensure_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // Need to ensure both LHS and RHS
+        sub.ensure_gpu_up_to_date();
+    }
 };
 
 /*!
@@ -332,6 +370,24 @@ struct dyn_convmtx2_transformer {
         visitor.need_value = true;
         sub.visit(visitor);
         visitor.need_value = old_need_value;
+    }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // Need to ensure sub value
+        sub.ensure_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // Need to ensure both LHS and RHS
+        sub.ensure_gpu_up_to_date();
     }
 };
 

@@ -261,6 +261,24 @@ public:
     }
 
     /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // The sub value must be ensured
+        value.ensure_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // The sub value must be ensured
+        value.ensure_gpu_up_to_date();
+    }
+
+    /*!
      * \brief Prints the type of the unary expression to the stream
      * \param os The output stream
      * \param expr The expression to print
@@ -721,8 +739,13 @@ public:
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
      */
     void ensure_gpu_up_to_date() const {
-        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
-        _gpu.ensure_gpu_up_to_date(memory_start(), etl::size(value));
+        if /*constexpr*/ (has_direct_access<Expr>::value) {
+            cpp::static_if<has_direct_access<Expr>::value>([&,this](auto f){
+                f(_gpu).ensure_gpu_up_to_date(f(this)->memory_start(), etl::size(f(value)));
+            });
+        } else {
+            value.ensure_gpu_up_to_date();
+        }
     }
 
     /*!
@@ -730,8 +753,13 @@ public:
      * necessary.
      */
     void ensure_cpu_up_to_date() const {
-        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
-        _gpu.ensure_cpu_up_to_date(memory_start(), etl::size(value));
+        if /*constexpr*/ (has_direct_access<Expr>::value) {
+            cpp::static_if<has_direct_access<Expr>::value>([&,this](auto f){
+                f(_gpu).ensure_cpu_up_to_date(f(this)->memory_start(), etl::size(f(value)));
+            });
+        } else {
+            value.ensure_cpu_up_to_date();
+        }
     }
 
     /*!
@@ -957,6 +985,24 @@ public:
     }
 
     /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // The sub value must be ensured
+        value.ensure_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // The sub value must be ensured
+        value.ensure_gpu_up_to_date();
+    }
+
+    /*!
      * \brief Prints the type of the unary expression to the stream
      * \param os The output stream
      * \param expr The expression to print
@@ -1151,6 +1197,24 @@ public:
         visitor.need_value = true;
         value.visit(visitor);
         visitor.need_value = old_need_value;
+    }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // The sub value must be ensured
+        value.ensure_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // The sub value must be ensured
+        value.ensure_gpu_up_to_date();
     }
 
     /*!
