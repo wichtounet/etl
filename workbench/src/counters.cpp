@@ -27,7 +27,7 @@ float fake = 0;
  * Simple: 3 / 0 / 2 (Optimal!)
  * Basic: 15 / 0 / 3 (Optimal!)
  * Sub: 163 / 160 / 480
- * ML: 65 / 20 / 19
+ * ML: 69 / 10 / 19
  */
 
 void simple(){
@@ -187,16 +187,16 @@ void ml(){
         // Compute the gradients
 
         C1_W_G  = etl::ml::convolution_backward_filter<1, 1, 1, 1>(I, C1_E);
-        C1_B_G  = etl::bias_batch_mean(C1_E); // (!GPU)
+        C1_B_G  = bias_batch_sum_4d(C1_E);
 
         C2_W_G  = etl::ml::convolution_backward_filter<1, 1, 1, 1>(P1_O, C2_E);
-        C2_B_G  = etl::bias_batch_mean(C2_E); // (!GPU)
+        C2_B_G  = bias_batch_sum_4d(C2_E);
 
         FC1_W_G = batch_outer(etl::reshape<32, 16 * 7 * 7>(P2_O), FC1_E);
-        FC1_B_G = etl::sum_l(FC1_E); // (!GPU)
+        FC1_B_G = bias_batch_sum_2d(FC1_E);
 
         FC2_W_G = batch_outer(FC1_O, FC2_E);
-        FC2_B_G = etl::sum_l(FC2_E); // (!GPU)
+        FC2_B_G = bias_batch_sum_2d(FC2_E);
 
         //TODO Apply the gradients
     }
