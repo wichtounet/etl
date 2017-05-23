@@ -15,10 +15,10 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A>
-struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A> {
+template <typename A, bool Mean>
+struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A, Mean>, A> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
-    using this_type  = bias_batch_mean_expr<A>;              ///< The type of this expression
+    using this_type  = bias_batch_mean_expr<A, Mean>;              ///< The type of this expression
     using base_type  = base_temporary_expr_un<this_type, A>; ///< The base type
     using sub_traits = decay_traits<A>;                      ///< The traits of the sub type
 
@@ -96,7 +96,11 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
                             mean += sum(a(b)(k));
                         }
 
-                        lhs(k) = mean / N;
+                        if /*constexpr*/ (Mean){
+                            lhs(k) = mean / N;
+                        } else {
+                            lhs(k) = mean;
+                        }
                     }
                 }
             }
@@ -134,7 +138,11 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
                             mean += sum(a(b)(k));
                         }
 
-                        lhs(k) += mean / N;
+                        if /*constexpr*/ (Mean){
+                            lhs(k) += mean / N;
+                        } else {
+                            lhs(k) += mean;
+                        }
                     }
                 }
             }
@@ -172,7 +180,11 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
                             mean += sum(a(b)(k));
                         }
 
-                        lhs(k) -= mean / N;
+                        if /*constexpr*/ (Mean){
+                            lhs(k) -= mean / N;
+                        } else {
+                            lhs(k) -= mean;
+                        }
                     }
                 }
             }
@@ -210,7 +222,11 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
                             mean += sum(a(b)(k));
                         }
 
-                        lhs(k) *= mean / N;
+                        if /*constexpr*/ (Mean){
+                            lhs(k) *= mean / N;
+                        } else {
+                            lhs(k) *= mean;
+                        }
                     }
                 }
             }
@@ -248,7 +264,11 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
                             mean += sum(a(b)(k));
                         }
 
-                        lhs(k) /= mean / N;
+                        if /*constexpr*/ (Mean){
+                            lhs(k) /= mean / N;
+                        } else {
+                            lhs(k) /= mean;
+                        }
                     }
                 }
             }
@@ -286,7 +306,11 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
                             mean += sum(a(b)(k));
                         }
 
-                        lhs(k) %= mean / N;
+                        if /*constexpr*/ (Mean){
+                            lhs(k) %= mean / N;
+                        } else {
+                            lhs(k) %= mean;
+                        }
                     }
                 }
             }
@@ -302,7 +326,11 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const bias_batch_mean_expr& expr) {
-        return os << "bias_batch_mean(" << expr._a << ")";
+        if /*constexpr*/ (Mean) {
+            return os << "bias_batch_mean(" << expr._a << ")";
+        } else {
+            return os << "bias_batch_sum(" << expr._a << ")";
+        }
     }
 };
 
@@ -310,12 +338,12 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A>
-struct etl_traits<etl::bias_batch_mean_expr<A>> {
-    using expr_t     = etl::bias_batch_mean_expr<A>; ///< The expression type
-    using sub_expr_t = std::decay_t<A>;              ///< The sub expression type
-    using sub_traits = etl_traits<sub_expr_t>;       ///< The sub traits
-    using value_type = value_t<A>;                   ///< The value type of the expression
+template <typename A, bool Mean>
+struct etl_traits<etl::bias_batch_mean_expr<A, Mean>> {
+    using expr_t     = etl::bias_batch_mean_expr<A, Mean>; ///< The expression type
+    using sub_expr_t = std::decay_t<A>;                    ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;             ///< The sub traits
+    using value_type = value_t<A>;                         ///< The value type of the expression
 
     static constexpr bool is_etl         = true;                      ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer = false;                     ///< Indicates if the type is a transformer
@@ -395,11 +423,24 @@ struct etl_traits<etl::bias_batch_mean_expr<A>> {
  * \return The transpose of the given expression.
  */
 template <typename E>
-bias_batch_mean_expr<detail::build_type<E>> bias_batch_mean(const E& value) {
+bias_batch_mean_expr<detail::build_type<E>, true> bias_batch_mean(const E& value) {
     static_assert(is_etl_expr<E>::value, "etl::bias_batch_mean can only be used on ETL expressions");
     static_assert(decay_traits<E>::dimensions() == 4, "etl::bias_batch_mean is only defined for 4D input");
 
-    return bias_batch_mean_expr<detail::build_type<E>>{value};
+    return bias_batch_mean_expr<detail::build_type<E>, true>{value};
+}
+
+/*!
+ * \brief Returns the transpose of the given expression.
+ * \param value The expression
+ * \return The transpose of the given expression.
+ */
+template <typename E>
+bias_batch_mean_expr<detail::build_type<E>, false> bias_batch_sum(const E& value) {
+    static_assert(is_etl_expr<E>::value, "etl::bias_batch_sum can only be used on ETL expressions");
+    static_assert(decay_traits<E>::dimensions() == 4, "etl::bias_batch_sum is only defined for 4D input");
+
+    return bias_batch_mean_expr<detail::build_type<E>, false>{value};
 }
 
 } //end of namespace etl
