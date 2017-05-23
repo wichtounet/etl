@@ -125,7 +125,7 @@ struct conv_4d_backward_expr : base_temporary_expr_bin<conv_4d_backward_expr<A, 
             // The GPU implementation needs the real forward parameters, not the
             // converted backward parameters
             if /* constexpr*/ (cudnn_enabled && all_floating<A, B, C>::value) {
-                impl::cudnn::conv4_backward_flipped(make_temporary(input), make_temporary(kernel), conv, S1, S2, P1, P2);
+                impl::cudnn::conv4_backward_data_flipped(make_temporary(input), make_temporary(kernel), conv, S1, S2, P1, P2);
                 return;
             }
 
@@ -156,7 +156,7 @@ struct conv_4d_backward_expr : base_temporary_expr_bin<conv_4d_backward_expr<A, 
             // The GPU implementation needs the real forward parameters, not the
             // converted backward parameters
             if /* constexpr*/ (cudnn_enabled && all_floating<A, B, C>::value) {
-                impl::cudnn::conv4_backward(make_temporary(input), make_temporary(kernel), conv, S1, S2, P1, P2);
+                impl::cudnn::conv4_backward_data(make_temporary(input), make_temporary(kernel), conv, S1, S2, P1, P2);
                 return;
             }
 

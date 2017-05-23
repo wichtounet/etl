@@ -30,7 +30,7 @@ struct conv4_valid_impl {
         auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_valid(input, kernel, conv, S1, S2, P1, P2);
+            impl::cudnn::conv4_forward(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::BLAS_MKL) {
@@ -61,7 +61,7 @@ struct conv4_valid_flipped_impl {
         auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_valid_flipped(input, kernel, conv, S1, S2, P1, P2);
+            impl::cudnn::conv4_forward_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::BLAS_MKL) {
@@ -91,7 +91,7 @@ struct dyn_conv4_valid_impl {
         auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_valid(input, kernel, conv, s1, s2, p1, p2);
+            impl::cudnn::conv4_forward(input, kernel, conv, s1, s2, p1, p2);
         } else if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid(input, kernel, conv, s1, s2, p1, p2);
         } else if (impl == etl::conv4_impl::BLAS_MKL) {
@@ -121,7 +121,7 @@ struct dyn_conv4_valid_flipped_impl {
         auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_valid_flipped(input, kernel, conv, s1, s2, p1, p2);
+            impl::cudnn::conv4_forward_flipped(input, kernel, conv, s1, s2, p1, p2);
         } else if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid_flipped(input, kernel, conv, s1, s2, p1, p2);
         } else if (impl == etl::conv4_impl::BLAS_MKL) {
@@ -152,7 +152,7 @@ struct conv4_valid_filter_impl {
         auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_valid_filter(input, kernel, conv, S1, S2, P1, P2);
+            impl::cudnn::conv4_backward_filter(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid_filter(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::BLAS_MKL) {
@@ -193,7 +193,7 @@ struct conv4_valid_filter_flipped_impl {
                     impl::standard::conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
                 }
             } else {
-                impl::cudnn::conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
+                impl::cudnn::conv4_backward_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
             }
         } else if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
@@ -224,7 +224,7 @@ struct dyn_conv4_valid_filter_impl {
         auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_valid_filter(input, kernel, conv, s1, s2, p1, p2);
+            impl::cudnn::conv4_backward_filter(input, kernel, conv, s1, s2, p1, p2);
         } else if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid_filter(input, kernel, conv, s1, s2, p1, p2);
         } else if (impl == etl::conv4_impl::BLAS_MKL) {
@@ -264,7 +264,7 @@ struct dyn_conv4_valid_filter_flipped_impl {
                     impl::standard::conv4_valid_filter_flipped(input, kernel, conv, s1, s2, p1, p2);
                 }
             } else {
-                impl::cudnn::conv4_valid_filter_flipped(input, kernel, conv, s1, s2, p1, p2);
+                impl::cudnn::conv4_backward_filter_flipped(input, kernel, conv, s1, s2, p1, p2);
             }
         } else if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid_filter_flipped(input, kernel, conv, s1, s2, p1, p2);
@@ -409,7 +409,7 @@ struct conv4_full_impl {
         auto impl = select_conv4_full_impl<I, K, C>(etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_full(input, kernel, conv);
+            impl::cudnn::conv4_backward_data_full(input, kernel, conv);
         } else if (impl == etl::conv4_impl::VEC) {
             impl::vec::conv4_full(input, kernel, conv);
         } else if (impl == etl::conv4_impl::FFT_STD) {
@@ -441,7 +441,7 @@ struct conv4_full_flipped_impl {
         auto impl = select_conv4_full_impl<I, K, C>(etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_full_flipped(input, kernel, conv);
+            impl::cudnn::conv4_backward_data_full_flipped(input, kernel, conv);
         } else if (impl == etl::conv4_impl::VEC) {
             impl::vec::conv4_full_flipped(input, kernel, conv);
         } else if (impl == etl::conv4_impl::FFT_STD) {

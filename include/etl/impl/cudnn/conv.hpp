@@ -130,7 +130,7 @@ void conv2_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, cudnnConvolutionMode_t mode) {
+void conv4_forward_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, cudnnConvolutionMode_t mode) {
     using type = value_t<I>;
 
     type alpha[] = {1.0f};
@@ -191,8 +191,8 @@ void conv4_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv4_valid_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
+void conv4_forward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    conv4_forward_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
 }
 
 /*!
@@ -202,8 +202,8 @@ void conv4_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv4_valid_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
+void conv4_forward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    conv4_forward_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
 }
 
 /*!
@@ -215,7 +215,7 @@ void conv4_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_valid_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, cudnnConvolutionMode_t mode) {
+void conv4_backward_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, cudnnConvolutionMode_t mode) {
     using type = value_t<I>;
 
     type alpha[] = {1.0f};
@@ -278,8 +278,8 @@ void conv4_valid_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_valid_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv4_valid_filter_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
+void conv4_backward_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    conv4_backward_filter_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
 }
 
 /*!
@@ -291,8 +291,8 @@ void conv4_valid_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, s
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_valid_filter_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv4_valid_filter_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
+void conv4_backward_filter_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    conv4_backward_filter_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
 }
 
 /*!
@@ -385,7 +385,7 @@ void conv2_full_flipped(I&& input, K&& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode) {
+void conv4_backward_data_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode) {
     using type = value_t<I>;
 
     type alpha[] = {1.0f};
@@ -446,8 +446,8 @@ void conv4_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_full(I&& input, K&& kernel, C&& conv) {
-    conv4_full_set(input, kernel, conv, CUDNN_CROSS_CORRELATION);
+void conv4_backward_data_full(I&& input, K&& kernel, C&& conv) {
+    conv4_backward_data_full_set(input, kernel, conv, CUDNN_CROSS_CORRELATION);
 }
 
 /*!
@@ -457,8 +457,8 @@ void conv4_full(I&& input, K&& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_full_flipped(I&& input, K&& kernel, C&& conv) {
-    conv4_full_set(input, kernel, conv, CUDNN_CONVOLUTION);
+void conv4_backward_data_full_flipped(I&& input, K&& kernel, C&& conv) {
+    conv4_backward_data_full_set(input, kernel, conv, CUDNN_CONVOLUTION);
 }
 
 /*!
@@ -566,7 +566,7 @@ void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_backward_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode, size_t s1, size_t s2, size_t p1, size_t p2) {
+void conv4_backward_data_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = value_t<I>;
 
     type alpha[] = {1.0f};
@@ -627,8 +627,8 @@ void conv4_backward_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t 
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_backward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv4_backward_set(input, kernel, conv, CUDNN_CROSS_CORRELATION, s1, s2, p1, p2);
+void conv4_backward_data(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    conv4_backward_data_set(input, kernel, conv, CUDNN_CROSS_CORRELATION, s1, s2, p1, p2);
 }
 
 /*!
@@ -638,8 +638,8 @@ void conv4_backward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_backward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv4_backward_set(input, kernel, conv, CUDNN_CONVOLUTION, s1, s2, p1, p2);
+void conv4_backward_data_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    conv4_backward_data_set(input, kernel, conv, CUDNN_CONVOLUTION, s1, s2, p1, p2);
 }
 
 #else
@@ -697,7 +697,7 @@ void conv2_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void conv4_forward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -715,7 +715,7 @@ void conv4_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void conv4_forward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -735,7 +735,7 @@ void conv4_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_valid_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void conv4_backward_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -755,7 +755,7 @@ void conv4_valid_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, s
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_valid_filter_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void conv4_backward_filter_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -763,7 +763,7 @@ void conv4_valid_filter_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size
     cpp_unused(s2);
     cpp_unused(p1);
     cpp_unused(p2);
-    cpp_unreachable("Unsupported feature called: cudnn conv4_valid_filter_flipped");
+    cpp_unreachable("Unsupported feature called: cudnn conv4_backward_filter_flipped");
 }
 
 /*!
@@ -801,7 +801,7 @@ void conv2_full_flipped(I&& input, K&& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_full(I&& input, K&& kernel, C&& conv) {
+void conv4_backward_data_full(I&& input, K&& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -815,7 +815,7 @@ void conv4_full(I&& input, K&& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_full_flipped(I&& input, K&& kernel, C&& conv) {
+void conv4_backward_data_full_flipped(I&& input, K&& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -865,7 +865,7 @@ void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_backward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void conv4_backward_data(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -873,7 +873,7 @@ void conv4_backward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_
     cpp_unused(s2);
     cpp_unused(p1);
     cpp_unused(p2);
-    cpp_unreachable("Unsupported feature called: cudnn conv4_backward");
+    cpp_unreachable("Unsupported feature called: cudnn conv4_backward_data");
 }
 
 /*!
@@ -883,7 +883,7 @@ void conv4_backward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_backward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void conv4_backward_data_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -891,7 +891,7 @@ void conv4_backward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s
     cpp_unused(s2);
     cpp_unused(p1);
     cpp_unused(p2);
-    cpp_unreachable("Unsupported feature called: cudnn conv4_backward_flipped");
+    cpp_unreachable("Unsupported feature called: cudnn conv4_backward_data_flipped");
 }
 
 //COVERAGE_EXCLUDE_END
