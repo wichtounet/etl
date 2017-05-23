@@ -73,8 +73,8 @@ struct dyn_conv_4d_backward_filter_expr : base_temporary_expr_bin<dyn_conv_4d_ba
         cpp_assert(etl::dim(conv, 1) == etl::dim(input, 1), "Invalid dimensions for conv4_backward_filter");
         cpp_assert(etl::dim(input, 0) == etl::dim(kernel, 0), "Invalid dimensions for conv4_backward_filter");
 
-        cpp_assert(etl::dim(conv, 2) == s1 * (etl::dim(input, 2) - 1) + etl::dim(kernel, 2) - 2 * p1, "Invalid dimensions for conv2_backward_filter");
-        cpp_assert(etl::dim(conv, 3) == s2 * (etl::dim(input, 3) - 1) + etl::dim(kernel, 3) - 2 * p2, "Invalid dimensions for conv2_backward_filter");
+        cpp_assert(etl::dim(conv, 2) == etl::dim(input, 2) - (s1 * (etl::dim(kernel, 2) - 1) + 1) + 2 * p1 + 1, "Invalid dimensions for conv2_backward");
+        cpp_assert(etl::dim(conv, 3) == etl::dim(input, 3) - (s2 * (etl::dim(kernel, 3) - 1) + 1) + 2 * p2 + 1, "Invalid dimensions for conv2_backward");
 
         cpp_unused(input);
         cpp_unused(kernel);
@@ -86,21 +86,45 @@ struct dyn_conv_4d_backward_filter_expr : base_temporary_expr_bin<dyn_conv_4d_ba
      * \param c The expression to which assign
      */
     template<typename C>
-    void assign_to(C&& c)  const {
+    void assign_to(C&& conv)  const {
         static_assert(all_etl_expr<A, B, C>::value, "conv4_backward_filter only supported for ETL expressions");
 
-        auto& a = this->a();
-        auto& b = this->b();
+        auto& input = this->a();
+        auto& kernel = this->b();
 
-        check(a, b, c);
+        check(input, kernel, conv);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
+        standard_evaluator::pre_assign_rhs(input);
+        standard_evaluator::pre_assign_rhs(kernel);
 
-        if /* constexpr */ (Flipped){
-            detail::dyn_conv4_backward_filter_flipped_impl::apply(make_temporary(a), make_temporary(b), c, s1, s2, p1, p2);
+        if /* constexpr */ (Flipped) {
+            // 1. Handle unit strides
+            if (s1 == 1 && s2 == 1) {
+                // Unit strides, zero padding -> Valid convolution with the correct padding
+                detail::dyn_conv4_valid_filter_flipped_impl::apply(make_temporary(input), make_temporary(kernel), conv, 1, 1, p1, p2);
+            }
+            // 2. Handle non_unit strides
+            else {
+                // Fractionally-strided convolution needs inner padding of the kernel
+                auto strided_kernel = impl::common::inner_pad(make_temporary(kernel), s1, s2);
+
+                // Non-unit strides, zero padding -> Fractionally-strided Valid convolution with the correct padding
+                detail::dyn_conv4_valid_filter_flipped_impl::apply(make_temporary(input), strided_kernel, conv, 1, 1, p1, p2);
+            }
         } else {
-            detail::dyn_conv4_backward_filter_impl::apply(make_temporary(a), make_temporary(b), c, s1, s2, p1, p2);
+            // 1. Handle unit strides
+            if (s1 == 1 && s2 == 1) {
+                // Unit strides -> Valid convolution with the correct padding
+                detail::dyn_conv4_valid_filter_impl::apply(make_temporary(input), make_temporary(kernel), conv, 1, 1, p1, p2);
+            }
+            // 2. Handle non_unit strides
+            else {
+                // Fractionally-strided convolution needs inner padding of the kernel
+                auto strided_kernel = impl::common::inner_pad(make_temporary(kernel), s1, s2);
+
+                // Non-unit strides, zero padding -> Fractionally-strided Valid convolution with the correct padding
+                detail::dyn_conv4_valid_filter_impl::apply(make_temporary(input), strided_kernel, conv, 1, 1, p1, p2);
+            }
         }
     }
 
@@ -209,9 +233,9 @@ struct etl_traits<etl::dyn_conv_4d_backward_filter_expr<A, B, Flipped>> {
         } else if (d == 1){
             return etl::dim(e._a, 1);
         } else if (d == 2){
-            return e.s1 * (etl::dim(e._a, 2) - 1) + etl::dim(e._b, 2) - 2 * e.p1;
+            return etl::dim(e._a, 2) - (e.s1 * (etl::dim(e._b, 2) - 1) + 1) + 2 * e.p1 + 1;
         } else {
-            return e.s2 * (etl::dim(e._a, 3) - 1) + etl::dim(e._b, 3) - 2 * e.p2;
+            return etl::dim(e._a, 3) - (e.s2 * (etl::dim(e._b, 3) - 1) + 1) + 2 * e.p2 + 1;
         }
     }
 
@@ -222,8 +246,8 @@ struct etl_traits<etl::dyn_conv_4d_backward_filter_expr<A, B, Flipped>> {
      */
     static size_t size(const expr_t& e) {
         return etl::dim(e._b, 1) * etl::dim(e._a, 1) *
-               (e.s1 * (etl::dim(e._a, 2) - 1) + etl::dim(e._b, 2) - 2 * e.p1) *
-               (e.s2 * (etl::dim(e._a, 3) - 1) + etl::dim(e._b, 3) - 2 * e.p2);
+               (etl::dim(e._a, 2) - (e.s1 * (etl::dim(e._b, 2) - 1) + 1) + 2 * e.p1 + 1) *
+               (etl::dim(e._a, 3) - (e.s2 * (etl::dim(e._b, 3) - 1) + 1) + 2 * e.p2 + 1);
     }
 
     /*!
