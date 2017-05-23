@@ -44,7 +44,7 @@ TEMPLATE_TEST_CASE_2("globals/lu/2", "[globals][LU]", Z, float, double) {
 /* QR */
 
 TEMPLATE_TEST_CASE_2("globals/qr/1", "[globals][QR]", Z, float, double) {
-    etl::fast_matrix<Z, 5, 3> A{12, -51, 4, 6, 167, -68, -4, 24, -41, -1, 1, 0, 2, 0, 3};
+    etl::fast_matrix<Z, 5, 3> A{12, -51, 4, 6, 167, -68, -4, 24, -41, -1, 1, 44, 2, 11, 3};
     etl::fast_matrix<Z, 5, 5> Q;
     etl::fast_matrix<Z, 5, 3> R;
     etl::fast_matrix<Z, 5, 3> QR;
