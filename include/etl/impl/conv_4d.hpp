@@ -17,7 +17,7 @@ namespace detail {
 /*!
  * \brief The functor impl for 4D valid conv
  */
-template<size_t S1, size_t S2, size_t P1, size_t P2>
+template <size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv4_valid_impl {
     /*!
      * \brief Apply the convolution
@@ -48,7 +48,7 @@ struct conv4_valid_impl {
 /*!
  * \brief The functor impl for 4D valid conv
  */
-template<size_t S1, size_t S2, size_t P1, size_t P2>
+template <size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv4_valid_flipped_impl {
     /*!
      * \brief Apply the convolution
@@ -139,7 +139,7 @@ struct dyn_conv4_valid_flipped_impl {
 /*!
  * \brief The functor impl for 4D valid conv
  */
-template<size_t S1, size_t S2, size_t P1, size_t P2>
+template <size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv4_valid_filter_impl {
     /*!
      * \brief Apply the convolution
@@ -170,7 +170,7 @@ struct conv4_valid_filter_impl {
 /*!
  * \brief The functor impl for 4D valid conv
  */
-template<size_t S1, size_t S2, size_t P1, size_t P2>
+template <size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv4_valid_filter_flipped_impl {
     /*!
      * \brief Apply the convolution
@@ -183,11 +183,11 @@ struct conv4_valid_filter_flipped_impl {
         auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
-            if(S1 > 1 || S2 > 1 || P1 || P2){
+            if (S1 > 1 || S2 > 1 || P1 || P2) {
                 // For some reasons, CUDNN backward filter cross correlation does
                 // not work correclty (or does not work the way I expect it to work)
                 // The padding may not be done as I thought
-                if(vec_enabled){
+                if (vec_enabled) {
                     impl::vec::conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
                 } else {
                     impl::standard::conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
@@ -254,11 +254,11 @@ struct dyn_conv4_valid_filter_flipped_impl {
         auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         if (impl == etl::conv4_impl::CUDNN) {
-            if(s1 > 1 || s2 > 1 || p1 || p2){
+            if (s1 > 1 || s2 > 1 || p1 || p2) {
                 // For some reasons, CUDNN backward filter cross correlation does
                 // not work correclty (or does not work the way I expect it to work)
                 // The padding may not be done as I thought
-                if(vec_enabled){
+                if (vec_enabled) {
                     impl::vec::conv4_valid_filter_flipped(input, kernel, conv, s1, s2, p1, p2);
                 } else {
                     impl::standard::conv4_valid_filter_flipped(input, kernel, conv, s1, s2, p1, p2);
@@ -283,7 +283,7 @@ struct dyn_conv4_valid_filter_flipped_impl {
 /*!
  * \brief The functor impl for 4D valid_back conv
  */
-template<size_t S1, size_t S2, size_t P1, size_t P2>
+template <size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv4_valid_back_impl {
     /*!
      * \brief Apply the convolution
@@ -312,7 +312,7 @@ struct conv4_valid_back_impl {
 /*!
  * \brief The functor impl for 4D valid_back conv
  */
-template<size_t S1, size_t S2, size_t P1, size_t P2>
+template <size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv4_valid_back_flipped_impl {
     /*!
      * \brief Apply the convolution
@@ -457,6 +457,7 @@ struct conv4_full_flipped_impl {
         }
     }
 };
+
 } //end of namespace detail
 
 } //end of namespace etl
