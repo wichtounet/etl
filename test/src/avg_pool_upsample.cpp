@@ -25,7 +25,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/1", "[pooling]", Z, float, double) 
     c1 = etl::avg_pool_derivative_2d(input, output, 2, 2) >> etl::upsample_2d(errors, 2, 2);
     c2 = etl::avg_pool_upsample_2d(input, output, errors, 2, 2);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/2", "[pooling]", Z, float, double) {
@@ -44,7 +44,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/2", "[pooling]", Z, float, double) 
     c1 = etl::avg_pool_derivative_2d(input, output, 3, 3) >> etl::upsample_2d(errors, 3, 3);
     c2 = etl::avg_pool_upsample_2d(input, output, errors, 3, 3);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/3", "[pooling]", Z, float, double) {
@@ -63,7 +63,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/3", "[pooling]", Z, float, double) 
     c1 = etl::avg_pool_derivative_2d(input, output, 6, 1) >> etl::upsample_2d(errors, 6, 1);
     c2 = etl::avg_pool_upsample_2d(input, output, errors, 6, 1);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/deep/1", "[pooling]", Z, float, double) {
@@ -82,7 +82,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/deep/1", "[pooling]", Z, float, dou
     c1 = etl::avg_pool_derivative_2d(input, output, 3, 3) >> etl::upsample_2d(errors, 3, 3);
     c2 = etl::avg_pool_upsample_2d(input, output, errors, 3, 3);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/1", "[pooling]", Z, float, double) {
@@ -101,7 +101,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/1", "[pooling]", Z, float, double) 
     c1 = etl::avg_pool_derivative_3d(input, output, 1, 2, 2) >> etl::upsample_3d(errors, 1, 2, 2);
     c2 = etl::avg_pool_upsample_3d(input, output, errors, 1, 2, 2);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/2", "[pooling]", Z, float, double) {
@@ -120,7 +120,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/2", "[pooling]", Z, float, double) 
     c1 = etl::avg_pool_derivative_3d(input, output, 2, 2, 3) >> etl::upsample_3d(errors, 2, 2, 3);
     c2 = etl::avg_pool_upsample_3d(input, output, errors, 2, 2, 3);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/3", "[pooling]", Z, float, double) {
@@ -139,7 +139,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/3", "[pooling]", Z, float, double) 
     c1 = etl::avg_pool_derivative_3d(input, output, 3, 1, 3) >> etl::upsample_3d(errors, 3, 1, 3);
     c2 = etl::avg_pool_upsample_3d(input, output, errors, 3, 1, 3);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/deep/1", "[pooling]", Z, float, double) {
@@ -158,7 +158,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/deep/1", "[pooling]", Z, float, dou
     c1 = etl::avg_pool_derivative_3d(input, output, 3, 1, 3) >> etl::upsample_3d(errors, 3, 1, 3);
     c2 = etl::avg_pool_upsample_3d(input, output, errors, 3, 1, 3);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/avg2/1", "[pooling]", Z, float, double) {
@@ -177,7 +177,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg2/1", "[pooling]", Z, float, double) {
     c1 = etl::avg_pool_derivative_2d<2, 2>(input, output) >> etl::upsample_2d<2, 2>(errors);
     c2 = etl::avg_pool_upsample_2d<2, 2>(input, output, errors);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/avg2/2", "[pooling]", Z, float, double) {
@@ -196,7 +196,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg2/2", "[pooling]", Z, float, double) {
     c1 = etl::avg_pool_derivative_2d<2, 2>(input, output) >> etl::upsample_2d<2, 2>(errors);
     c2 = etl::avg_pool_upsample_2d<2, 2>(input, output, errors);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/avg2/3", "[pooling]", Z, float, double) {
@@ -215,7 +215,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg2/3", "[pooling]", Z, float, double) {
     c1 = etl::avg_pool_derivative_2d<2, 1>(input, output) >> etl::upsample_2d<2, 1>(errors);
     c2 = etl::avg_pool_upsample_2d<2, 1>(input, output, errors);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/avg2/deep/1", "[pooling]", Z, float, double) {
@@ -234,7 +234,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg2/deep/1", "[pooling]", Z, float, double)
     c1 = etl::avg_pool_derivative_2d<2, 1>(input, output) >> etl::upsample_2d<2, 1>(errors);
     c2 = etl::avg_pool_upsample_2d<2, 1>(input, output, errors);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/avg3/1", "[pooling]", Z, float, double) {
@@ -253,7 +253,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg3/1", "[pooling]", Z, float, double) {
     c1 = etl::avg_pool_derivative_3d<2, 2, 2>(input, output) >> etl::upsample_3d<2, 2, 2>(errors);
     c2 = etl::avg_pool_upsample_3d<2, 2, 2>(input, output, errors);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/avg3/2", "[pooling]", Z, float, double) {
@@ -272,7 +272,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg3/2", "[pooling]", Z, float, double) {
     c1 = etl::avg_pool_derivative_3d<2, 2, 2>(input, output) >> etl::upsample_3d<2, 2, 2>(errors);
     c2 = etl::avg_pool_upsample_3d<2, 2, 2>(input, output, errors);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/avg3/3", "[pooling]", Z, float, double) {
@@ -291,7 +291,7 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg3/3", "[pooling]", Z, float, double) {
     c1 = etl::avg_pool_derivative_3d<2, 1, 1>(input, output) >> etl::upsample_3d<2, 1, 1>(errors);
     c2 = etl::avg_pool_upsample_3d<2, 1, 1>(input, output, errors);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/deep/avg3/1", "[pooling]", Z, float, double) {
@@ -310,5 +310,5 @@ TEMPLATE_TEST_CASE_2("pool_upsample/deep/avg3/1", "[pooling]", Z, float, double)
     c1 = etl::avg_pool_derivative_3d<2, 2, 2>(input, output) >> etl::upsample_3d<2, 2, 2>(errors);
     c2 = etl::avg_pool_upsample_3d<2, 2, 2>(input, output, errors);
 
-    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }

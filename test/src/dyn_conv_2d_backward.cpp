@@ -80,7 +80,7 @@ TEMPLATE_TEST_CASE_2("conv/2d/dyn_backward/3", "[conv][conv2]", T, float, double
     etl::fast_matrix<T, 9, 9> c_ref;
     c_ref = etl::conv_2d_full(a, b);
 
-    REQUIRE_DIRECT(approx_equals(c_ref, c, base_eps));
+    REQUIRE_DIRECT(approx_equals(c_ref, c, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("conv/2d/dyn_backward/4", "[conv][conv2]", T, float, double) {
@@ -96,7 +96,7 @@ TEMPLATE_TEST_CASE_2("conv/2d/dyn_backward/4", "[conv][conv2]", T, float, double
     etl::fast_matrix<T, 7, 7> c_ref;
     c_ref = etl::conv_2d_valid(a, b, 1, 1, 1, 1);
 
-    REQUIRE_DIRECT(approx_equals(c_ref, c, base_eps));
+    REQUIRE_DIRECT(approx_equals(c_ref, c, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("conv/2d/dyn_backward/5", "[conv][conv2]", T, float, double) {
@@ -112,7 +112,7 @@ TEMPLATE_TEST_CASE_2("conv/2d/dyn_backward/5", "[conv][conv2]", T, float, double
     etl::fast_matrix<T, 5, 5> c_ref;
     c_ref = etl::conv_2d_valid(a, b, 1, 1, 0, 0);
 
-    REQUIRE_DIRECT(approx_equals(c_ref, c, base_eps));
+    REQUIRE_DIRECT(approx_equals(c_ref, c, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("conv/2d/dyn_backward/6", "[conv][conv2]", T, float, double) {
@@ -128,7 +128,7 @@ TEMPLATE_TEST_CASE_2("conv/2d/dyn_backward/6", "[conv][conv2]", T, float, double
     etl::fast_matrix<T, 28, 28> c_ref;
     c_ref = etl::conv_2d_valid(a, b, 1, 1, 1, 1);
 
-    REQUIRE_DIRECT(approx_equals(c_ref, c, base_eps));
+    REQUIRE_DIRECT(approx_equals(c_ref, c, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("conv/2d/dyn_backward/7", "[conv][conv2]", T, float, double) {
@@ -145,7 +145,7 @@ TEMPLATE_TEST_CASE_2("conv/2d/dyn_backward/7", "[conv][conv2]", T, float, double
     auto a_s = etl::impl::common::inner_pad(a, 2, 2);
     c_ref = etl::conv_2d_full(a_s, b);
 
-    REQUIRE_DIRECT(approx_equals(c_ref, c, base_eps));
+    REQUIRE_DIRECT(approx_equals(c_ref, c, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("conv/2d/dyn_backward/8", "[conv][conv2]", T, float, double) {
@@ -162,5 +162,5 @@ TEMPLATE_TEST_CASE_2("conv/2d/dyn_backward/8", "[conv][conv2]", T, float, double
     auto a_s = etl::impl::common::inner_pad(a, 2, 2);
     c_ref = etl::conv_2d_valid(a_s, b, 1, 1, 3, 3);
 
-    REQUIRE_DIRECT(approx_equals(c_ref, c, base_eps));
+    REQUIRE_DIRECT(approx_equals(c_ref, c, base_eps_etl));
 }

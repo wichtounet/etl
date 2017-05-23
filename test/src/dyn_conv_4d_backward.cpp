@@ -21,7 +21,7 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward_dyn/0", "[conv][conv4][backward_dyn]", T,
     ref = etl::conv_4d_full(I, K);
     c = etl::conv_4d_backward(I, K, 1, 1, 0, 0);
 
-    REQUIRE_DIRECT(approx_equals(c, ref, base_eps));
+    REQUIRE_DIRECT(approx_equals(c, ref, base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward_dyn/1", "[conv][conv4][backward_dyn]", T, float, double) {
@@ -37,7 +37,7 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward_dyn/1", "[conv][conv4][backward_dyn]", T,
     ref = etl::conv_4d_valid_back(I, K, 1, 1, 1, 1);
     c = etl::conv_4d_backward(I, K, 1, 1, 1, 1);
 
-    REQUIRE_DIRECT(approx_equals(c, ref, base_eps));
+    REQUIRE_DIRECT(approx_equals(c, ref, 10.0 * base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward_dyn/2", "[conv][conv4][backward_dyn]", T, float, double) {
@@ -53,7 +53,7 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward_dyn/2", "[conv][conv4][backward_dyn]", T,
     c = etl::conv_4d_backward(I, K, 1, 1, 2, 2);
     ref = etl::conv_4d_valid_back(I, K, 1, 1, 0, 0);
 
-    REQUIRE_DIRECT(approx_equals(c, ref, base_eps));
+    REQUIRE_DIRECT(approx_equals(c, ref, 10.0 * base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward_dyn/3", "[conv][conv4][backward_dyn]", T, float, double) {
@@ -69,7 +69,7 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward_dyn/3", "[conv][conv4][backward_dyn]", T,
     c = etl::conv_4d_backward(I, K, 1, 1, 5, 5);
     ref = etl::conv_4d_valid_back(I, K, 1, 1, 1, 1);
 
-    REQUIRE_DIRECT(approx_equals(c, ref, base_eps));
+    REQUIRE_DIRECT(approx_equals(c, ref, 10.0 * base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward_dyn/4", "[conv][conv4][backward_dyn]", T, float, double) {
@@ -87,7 +87,7 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward_dyn/4", "[conv][conv4][backward_dyn]", T,
     auto I_s = etl::impl::common::inner_pad(I, 2, 2);
     ref = etl::conv_4d_full(I_s, K);
 
-    REQUIRE_DIRECT(approx_equals(c, ref, base_eps));
+    REQUIRE_DIRECT(approx_equals(c, ref, 10.0 * base_eps_etl));
 }
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward_dyn/5", "[conv][conv4][backward_dyn]", T, float, double) {
@@ -105,5 +105,5 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward_dyn/5", "[conv][conv4][backward_dyn]", T,
     auto I_s = etl::impl::common::inner_pad(I, 2, 2);
     ref = etl::conv_4d_valid_back(I_s, K, 1, 1, 3, 3);
 
-    REQUIRE_DIRECT(approx_equals(c, ref, base_eps));
+    REQUIRE_DIRECT(approx_equals(c, ref, 10.0 * base_eps_etl));
 }
