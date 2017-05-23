@@ -816,9 +816,9 @@ auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
  * \return An ETL expression representing the derivative of the logistic sigmoid of the input.
  */
 template <typename E>
-auto sigmoid_derivative(E&& value) -> decltype(value >> (1.0 - value)) {
+auto sigmoid_derivative(E&& value) -> decltype(sigmoid(value) >> (1.0 - sigmoid(value))) {
     static_assert(is_etl_expr<E>::value, "etl::sigmoid_derivative can only be used on ETL expressions");
-    return value >> (1.0 - value);
+    return sigmoid(value) >> (1.0 - sigmoid(value));
 }
 
 /*!
@@ -923,9 +923,9 @@ auto r_bernoulli(const E& value) -> detail::unary_helper<E, reverse_bernoulli_un
  * \return An ETL expression representing the derivative of the tanh function of the input.
  */
 template <typename E>
-auto tanh_derivative(E&& value) -> decltype(1.0 - (value >> value)) {
+auto tanh_derivative(E&& value) -> decltype(1.0 - (tanh(value) >> tanh(value))) {
     static_assert(is_etl_expr<E>::value, "etl::tanh_derivative can only be used on ETL expressions");
-    return 1.0 - (value >> value);
+    return 1.0 - (tanh(value) >> tanh(value));
 }
 
 /*!

@@ -295,5 +295,66 @@ avg_pool_backward(A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
     return {input, output, errors, c1, c2};
 }
 
+// Derivatives with respect to output
+
+/*!
+ * \brief Return the derivative of the identiy function for the given output value.
+ * \param value The ETL expression
+ * \return 1.0
+ */
+template <typename E>
+auto identity_derivative_out(E&& value) {
+    cpp_unused(value);
+    return 1.0;
+}
+
+/*!
+ * \brief Return the derivative of the logistic sigmoid of the given ETL
+ * expression, with respect to the output value.
+ * \param value The ETL expression
+ * \return An ETL expression representing the derivative of the logistic sigmoid of the input.
+ */
+template <typename E>
+auto sigmoid_derivative_out(E&& value) -> decltype(value >> (1.0 - value)) {
+    static_assert(is_etl_expr<E>::value, "etl::sigmoid_derivative can only be used on ETL expressions");
+    return value >> (1.0 - value);
+}
+
+/*!
+ * \brief Return the derivative of the softmax function of the given ETL
+ * expression, with respect to output values.
+ * \param e The ETL expression
+ * \return An ETL expression representing the derivative of the softmax function of the input.
+ */
+template <typename E>
+auto softmax_derivative_out(E&& e) {
+    cpp_unused(e);
+    return 1.0;
+}
+
+/*!
+ * \brief Return the derivative of the tanh function of the given ETL expression,
+ * with respect to the output values.
+ * \param value The ETL expression
+ * \return An ETL expression representing the derivative of the tanh function of the input.
+ */
+template <typename E>
+auto tanh_derivative_out(E&& value) -> decltype(1.0 - (value >> value)) {
+    static_assert(is_etl_expr<E>::value, "etl::tanh_derivative can only be used on ETL expressions");
+    return 1.0 - (value >> value);
+}
+
+/*!
+ * \brief Return the derivative of the relu function of the given ETL expression,
+ * with respect for the output values.
+ * \param value The ETL expression
+ * \return An ETL expression representing the derivative of the relu function of the input.
+ */
+template <typename E>
+auto relu_derivative_out(const E& value) -> detail::unary_helper<E, relu_derivative_op> {
+    static_assert(is_etl_expr<E>::value, "etl::relu_derivative can only be used on ETL expressions");
+    return detail::unary_helper<E, relu_derivative_op>{value};
+}
+
 } //end of namespace ml
 } //end of namespace etl
