@@ -461,66 +461,6 @@ struct conv4_full_flipped_impl {
 /*!
  * \brief The functor impl for 2D tranposed conv
  */
-template<size_t S1, size_t S2, size_t P1, size_t P2>
-struct conv4_backward_filter_impl {
-    /*!
-     * \brief Apply the backward convolution
-     *
-     * \param input The input expression
-     * \param kernel The kernel expression
-     * \param conv The output expression
-     */
-    template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C& conv) {
-        // 1. Handle unit strides
-        if /* constexpr */ (S1 == 1 && S2 == 1){
-            // Unit strides -> Valid convolution with the correct padding
-            dyn_conv4_valid_filter_impl::apply(input, kernel, conv, 1, 1, P1, P2);
-        }
-        // 2. Handle non_unit strides
-        else {
-            // Fractionally-strided convolution needs inner padding of the kernel
-            auto strided_kernel = impl::common::inner_pad(kernel, S1, S2);
-
-            // Non-unit strides, zero padding -> Fractionally-strided Valid convolution with the correct padding
-            dyn_conv4_valid_filter_impl::apply(input, strided_kernel, conv, 1, 1, P1, P2);
-        }
-    }
-};
-
-/*!
- * \brief The functor impl for 2D tranposed conv with flipped kernels
- */
-template<size_t S1, size_t S2, size_t P1, size_t P2>
-struct conv4_backward_filter_flipped_impl {
-    /*!
-     * \brief Apply the backward convolution
-     *
-     * \param input The input expression
-     * \param kernel The kernel expression
-     * \param conv The output expression
-     */
-    template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C& conv) {
-        // 1. Handle unit strides
-        if /* constexpr */ (S1 == 1 && S2 == 1){
-            // Unit strides, zero padding -> Valid convolution with the correct padding
-            dyn_conv4_valid_filter_flipped_impl::apply(input, kernel, conv, 1, 1, P1, P2);
-        }
-        // 2. Handle non_unit strides
-        else {
-            // Fractionally-strided convolution needs inner padding of the input
-            auto strided_kernel = impl::common::inner_pad(kernel, S1, S2);
-
-            // Non-unit strides, zero padding -> Fractionally-strided Valid convolution with the correct padding
-            dyn_conv4_valid_filter_flipped_impl::apply(input, strided_kernel, conv, 1, 1, P1, P2);
-        }
-    }
-};
-
-/*!
- * \brief The functor impl for 2D tranposed conv
- */
 struct dyn_conv4_backward_filter_impl {
     /*!
      * \brief Apply the backward convolution
