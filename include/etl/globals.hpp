@@ -504,13 +504,13 @@ bool is_hermitian(E&& expr){
  *
  * The logic is taken from http://floating-point-gui.de/errors/comparison/ (Michael Borgwardt)
  */
-template<typename T>
-inline bool approx_equals_float(T a, T b, T epsilon){
+template <typename T, typename TE = T>
+inline bool approx_equals_float(T a, T b, TE epsilon) {
     using std::fabs;
 
-    const auto abs_a = fabs(a);
-    const auto abs_b = fabs(b);
-    const auto diff = fabs(a - b);
+    const auto abs_a    = fabs(a);
+    const auto abs_b    = fabs(b);
+    const auto abs_diff = fabs(a - b);
 
     // Note: min for floating points is the min normalized value
     static constexpr T min_normal = std::numeric_limits<T>::min();
@@ -519,12 +519,12 @@ inline bool approx_equals_float(T a, T b, T epsilon){
     if (a == b) {
         // This should handle infinities properly
         return true;
-    } else if (a == 0 || b == 0 || diff < min_normal) {
+    } else if (a == 0 || b == 0 || abs_diff < min_normal) {
         // a or b is zero or both are extremely close to it
         // relative error is less meaningful here
-        return diff < (epsilon * min_normal);
+        return abs_diff < epsilon;
     } else { // use relative error
-        return (diff / std::min(abs_a + abs_b, max)) < epsilon;
+        return (abs_diff / std::min(abs_a + abs_b, max)) < epsilon;
     }
 }
 
