@@ -9,6 +9,8 @@
 
 #include "etl/expr/base_temporary_expr.hpp"
 
+#include "etl/impl/cudnn/bias_batch_mean.hpp"
+
 namespace etl {
 
 /*!
@@ -86,17 +88,21 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
 
         check(a, lhs);
 
-        for (size_t k = 0; k < K; ++k) {
-            T mean(0);
+        if /*constexpr*/ (!Mean && cudnn_enabled && all_floating<A, L>::value) {
+            impl::cudnn::bias_batch_mean_2d(a, lhs);
+        } else {
+            for (size_t k = 0; k < K; ++k) {
+                T mean(0);
 
-            for (size_t b = 0; b < N; ++b) {
-                mean += a(b, k);
-            }
+                for (size_t b = 0; b < N; ++b) {
+                    mean += a(b, k);
+                }
 
-            if /*constexpr*/ (Mean) {
-                lhs(k) = mean / N;
-            } else {
-                lhs(k) = mean;
+                if /*constexpr*/ (Mean) {
+                    lhs(k) = mean / N;
+                } else {
+                    lhs(k) = mean;
+                }
             }
         }
     }
