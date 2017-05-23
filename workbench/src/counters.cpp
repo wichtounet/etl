@@ -27,7 +27,7 @@ float fake = 0;
  * Simple: 3 / 0 / 2 (Optimal!)
  * Basic: 15 / 0 / 3 (Optimal!)
  * Sub: 163 / 160 / 480
- * ML: 61 / 10 / 19
+ * ML: 65 / 20 / 19
  */
 
 void simple(){
@@ -128,6 +128,8 @@ void ml(){
 
     etl::dyn_matrix<float, 4> C1_W(16, 3, 3, 3);
     etl::dyn_matrix<float, 1> C1_B(16);
+    etl::dyn_matrix<float, 4> C1_W_G(16, 3, 3, 3);
+    etl::dyn_matrix<float, 1> C1_B_G(16);
     etl::dyn_matrix<float, 4> C1_O(32, 16, 28, 28);
     etl::dyn_matrix<float, 4> C1_E(32, 16, 28, 28);
 
@@ -136,6 +138,8 @@ void ml(){
 
     etl::dyn_matrix<float, 4> C2_W(16, 16, 3, 3);
     etl::dyn_matrix<float, 1> C2_B(16);
+    etl::dyn_matrix<float, 4> C2_W_G(16, 16, 3, 3);
+    etl::dyn_matrix<float, 1> C2_B_G(16);
     etl::dyn_matrix<float, 4> C2_O(32, 16, 14, 14);
     etl::dyn_matrix<float, 4> C2_E(32, 16, 14, 14);
 
@@ -144,11 +148,15 @@ void ml(){
 
     etl::dyn_matrix<float, 2> FC1_W(16 * 7 * 7, 500);
     etl::dyn_matrix<float, 1> FC1_B(500);
+    etl::dyn_matrix<float, 2> FC1_W_G(16 * 7 * 7, 500);
+    etl::dyn_matrix<float, 1> FC1_B_G(500);
     etl::dyn_matrix<float, 2> FC1_O(32, 500);
     etl::dyn_matrix<float, 2> FC1_E(32, 500);
 
     etl::dyn_matrix<float, 2> FC2_W(500, 10);
     etl::dyn_matrix<float, 1> FC2_B(10);
+    etl::dyn_matrix<float, 2> FC2_W_G(500, 10);
+    etl::dyn_matrix<float, 1> FC2_B_G(10);
     etl::dyn_matrix<float, 2> FC2_O(32, 10);
     etl::dyn_matrix<float, 2> FC2_E(32, 10);
 
@@ -167,6 +175,8 @@ void ml(){
         FC1_O = bias_add_2d(etl::reshape<32, 16 * 7 * 7>(P2_O) * FC1_W, FC1_B);
         FC2_O = bias_add_2d(FC1_O * FC2_W, FC2_B);
 
+        // Backward propagation of the errors
+
         FC2_E = L - FC2_O;                                            // Errors of last layer  (!GPU)
         FC1_E = FC2_E * trans(FC2_W);                                 // FC2 -> FC1
         etl::reshape<32, 16 * 7 * 7>(P2_E) = FC1_E * trans(FC1_W);    // FC1 -> MP2
@@ -174,7 +184,21 @@ void ml(){
         P1_E = etl::ml::convolution_backward<1, 1, 1, 1>(C2_E, C2_W); // C2 -> MP1
         C1_E = etl::max_pool_upsample_2d<2, 2>(C1_O, P1_O, P1_E);     // MP1 -> C1
 
-        //TODO Add backward
+        // Compute the gradients
+
+        C1_W_G  = etl::ml::convolution_backward_filter<1, 1, 1, 1>(I, C1_E);
+        C1_B_G  = etl::bias_batch_mean(C1_E); // (!GPU)
+
+        C2_W_G  = etl::ml::convolution_backward_filter<1, 1, 1, 1>(P1_O, C2_E);
+        C2_B_G  = etl::bias_batch_mean(C2_E); // (!GPU)
+
+        FC1_W_G = batch_outer(etl::reshape<32, 16 * 7 * 7>(P2_O), FC1_E);
+        FC1_B_G = etl::sum_l(FC1_E); // (!GPU)
+
+        FC2_W_G = batch_outer(FC1_O, FC2_E);
+        FC2_B_G = etl::sum_l(FC2_E); // (!GPU)
+
+        //TODO Apply the gradients
     }
 
     etl::dump_counters();
