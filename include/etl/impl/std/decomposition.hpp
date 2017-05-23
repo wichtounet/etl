@@ -146,7 +146,8 @@ void householder(AT& A, QT& Q, RT& R) {
             q[k](i, i) += 1;
         }
 
-        z = q[k] * z;
+        auto ZZZ = force_temporary(q[k] * z);
+        z = ZZZ;
     }
 
     Q = q[0];
