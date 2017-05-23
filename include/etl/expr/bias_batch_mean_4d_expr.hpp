@@ -16,9 +16,9 @@ namespace etl {
  * \tparam A The transposed type
  */
 template <typename A, bool Mean>
-struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A, Mean>, A> {
+struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<A, Mean>, A> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
-    using this_type  = bias_batch_mean_expr<A, Mean>;              ///< The type of this expression
+    using this_type  = bias_batch_mean_4d_expr<A, Mean>;              ///< The type of this expression
     using base_type  = base_temporary_expr_un<this_type, A>; ///< The base type
     using sub_traits = decay_traits<A>;                      ///< The traits of the sub type
 
@@ -28,7 +28,7 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A, Mea
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    explicit bias_batch_mean_expr(A a)
+    explicit bias_batch_mean_4d_expr(A a)
             : base_type(a) {
         //Nothing else to init
     }
@@ -43,10 +43,10 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A, Mea
         cpp_unused(a);
         cpp_unused(c);
 
-        static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_mean is a vector");
-        static_assert(etl::dimensions<A>() == 4, "The input of bias_batch_mean is a 4D matrix");
+        static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_mean_4d is a vector");
+        static_assert(etl::dimensions<A>() == 4, "The input of bias_batch_mean_4d is a 4D matrix");
 
-        static_assert(etl::dim<1, A>() == etl::dim<0, C>(), "Invalid dimensions for bias_batch_mean");
+        static_assert(etl::dim<1, A>() == etl::dim<0, C>(), "Invalid dimensions for bias_batch_mean_4d");
     }
 
     /*!
@@ -56,10 +56,10 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A, Mea
      */
     template <typename C, cpp_disable_if(all_fast<A, C>::value)>
     static void check(const A& a, const C& c) {
-        static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_mean is a vector");
-        static_assert(etl::dimensions<A>() == 4, "The input of bias_batch_mean is a 4D matrix");
+        static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_mean_4d is a vector");
+        static_assert(etl::dimensions<A>() == 4, "The input of bias_batch_mean_4d is a 4D matrix");
 
-        cpp_assert(etl::dim<1>(a) == etl::dim<0>(c), "Invalid dimensions for bias_batch_mean");
+        cpp_assert(etl::dim<1>(a) == etl::dim<0>(c), "Invalid dimensions for bias_batch_mean_4d");
 
         cpp_unused(a);
         cpp_unused(c);
@@ -73,7 +73,7 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A, Mea
      */
     template <typename L>
     void assign_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean_4d only supported for ETL expressions");
 
         auto& a = this->a();
 
@@ -115,7 +115,7 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A, Mea
      */
     template <typename L>
     void assign_add_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean_4d only supported for ETL expressions");
 
         auto& a = this->a();
 
@@ -157,7 +157,7 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A, Mea
      */
     template <typename L>
     void assign_sub_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean_4d only supported for ETL expressions");
 
         auto& a = this->a();
 
@@ -199,7 +199,7 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A, Mea
      */
     template <typename L>
     void assign_mul_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean_4d only supported for ETL expressions");
 
         auto& a = this->a();
 
@@ -241,7 +241,7 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A, Mea
      */
     template <typename L>
     void assign_div_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean_4d only supported for ETL expressions");
 
         auto& a = this->a();
 
@@ -283,7 +283,7 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A, Mea
      */
     template <typename L>
     void assign_mod_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean_4d only supported for ETL expressions");
 
         auto& a = this->a();
 
@@ -325,11 +325,11 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A, Mea
      * \param expr The expression to print
      * \return the output stream
      */
-    friend std::ostream& operator<<(std::ostream& os, const bias_batch_mean_expr& expr) {
+    friend std::ostream& operator<<(std::ostream& os, const bias_batch_mean_4d_expr& expr) {
         if /*constexpr*/ (Mean) {
-            return os << "bias_batch_mean(" << expr._a << ")";
+            return os << "bias_batch_mean_4d(" << expr._a << ")";
         } else {
-            return os << "bias_batch_sum(" << expr._a << ")";
+            return os << "bias_batch_sum_4d(" << expr._a << ")";
         }
     }
 };
@@ -339,8 +339,8 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A, Mea
  * \tparam A The transposed sub type
  */
 template <typename A, bool Mean>
-struct etl_traits<etl::bias_batch_mean_expr<A, Mean>> {
-    using expr_t     = etl::bias_batch_mean_expr<A, Mean>; ///< The expression type
+struct etl_traits<etl::bias_batch_mean_4d_expr<A, Mean>> {
+    using expr_t     = etl::bias_batch_mean_4d_expr<A, Mean>; ///< The expression type
     using sub_expr_t = std::decay_t<A>;                    ///< The sub expression type
     using sub_traits = etl_traits<sub_expr_t>;             ///< The sub traits
     using value_type = value_t<A>;                         ///< The value type of the expression
@@ -423,11 +423,11 @@ struct etl_traits<etl::bias_batch_mean_expr<A, Mean>> {
  * \return The transpose of the given expression.
  */
 template <typename E>
-bias_batch_mean_expr<detail::build_type<E>, true> bias_batch_mean(const E& value) {
-    static_assert(is_etl_expr<E>::value, "etl::bias_batch_mean can only be used on ETL expressions");
-    static_assert(decay_traits<E>::dimensions() == 4, "etl::bias_batch_mean is only defined for 4D input");
+bias_batch_mean_4d_expr<detail::build_type<E>, true> bias_batch_mean_4d(const E& value) {
+    static_assert(is_etl_expr<E>::value, "etl::bias_batch_mean_4d can only be used on ETL expressions");
+    static_assert(decay_traits<E>::dimensions() == 4, "etl::bias_batch_mean_4d is only defined for 4D input");
 
-    return bias_batch_mean_expr<detail::build_type<E>, true>{value};
+    return bias_batch_mean_4d_expr<detail::build_type<E>, true>{value};
 }
 
 /*!
@@ -436,11 +436,11 @@ bias_batch_mean_expr<detail::build_type<E>, true> bias_batch_mean(const E& value
  * \return The transpose of the given expression.
  */
 template <typename E>
-bias_batch_mean_expr<detail::build_type<E>, false> bias_batch_sum(const E& value) {
-    static_assert(is_etl_expr<E>::value, "etl::bias_batch_sum can only be used on ETL expressions");
-    static_assert(decay_traits<E>::dimensions() == 4, "etl::bias_batch_sum is only defined for 4D input");
+bias_batch_mean_4d_expr<detail::build_type<E>, false> bias_batch_sum_4d(const E& value) {
+    static_assert(is_etl_expr<E>::value, "etl::bias_batch_sum_4d can only be used on ETL expressions");
+    static_assert(decay_traits<E>::dimensions() == 4, "etl::bias_batch_sum_4d is only defined for 4D input");
 
-    return bias_batch_mean_expr<detail::build_type<E>, false>{value};
+    return bias_batch_mean_4d_expr<detail::build_type<E>, false>{value};
 }
 
 } //end of namespace etl
