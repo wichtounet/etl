@@ -18,7 +18,7 @@ namespace etl {
 template <typename A>
 struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
-    using this_type  = bias_batch_mean_expr<A>;                    ///< The type of this expression
+    using this_type  = bias_batch_mean_expr<A>;              ///< The type of this expression
     using base_type  = base_temporary_expr_un<this_type, A>; ///< The base type
     using sub_traits = decay_traits<A>;                      ///< The traits of the sub type
 
@@ -28,7 +28,8 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    explicit bias_batch_mean_expr(A a) : base_type(a) {
+    explicit bias_batch_mean_expr(A a)
+            : base_type(a) {
         //Nothing else to init
     }
 
@@ -37,7 +38,7 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_enable_if(all_fast<A,C>::value)>
+    template <typename C, cpp_enable_if(all_fast<A, C>::value)>
     static void check(const A& a, const C& c) {
         cpp_unused(a);
         cpp_unused(c);
@@ -53,7 +54,7 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_disable_if(all_fast<A,C>::value)>
+    template <typename C, cpp_disable_if(all_fast<A, C>::value)>
     static void check(const A& a, const C& c) {
         static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_mean is a vector");
         static_assert(etl::dimensions<A>() == 4, "The input of bias_batch_mean is a 4D matrix");
@@ -70,8 +71,8 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>::value, "bias_batch_mean only supported for ETL expressions");
 
         auto& a = this->a();
@@ -108,8 +109,8 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>::value, "bias_batch_mean only supported for ETL expressions");
 
         auto& a = this->a();
@@ -146,8 +147,8 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>::value, "bias_batch_mean only supported for ETL expressions");
 
         auto& a = this->a();
@@ -184,8 +185,8 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>::value, "bias_batch_mean only supported for ETL expressions");
 
         auto& a = this->a();
@@ -222,8 +223,8 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>::value, "bias_batch_mean only supported for ETL expressions");
 
         auto& a = this->a();
@@ -260,8 +261,8 @@ struct bias_batch_mean_expr : base_temporary_expr_un<bias_batch_mean_expr<A>, A>
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>::value, "bias_batch_mean only supported for ETL expressions");
 
         auto& a = this->a();
@@ -316,21 +317,21 @@ struct etl_traits<etl::bias_batch_mean_expr<A>> {
     using sub_traits = etl_traits<sub_expr_t>;       ///< The sub traits
     using value_type = value_t<A>;                   ///< The value type of the expression
 
-    static constexpr bool is_etl                  = true;                      ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer          = false;                     ///< Indicates if the type is a transformer
-    static constexpr bool is_view                 = false;                     ///< Indicates if the type is a view
-    static constexpr bool is_magic_view           = false;                     ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = sub_traits::is_fast;       ///< Indicates if the expression is fast
-    static constexpr bool is_linear               = true;                      ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe          = true;                      ///< Indicates if the expression is thread safe
-    static constexpr bool is_value                = false;                     ///< Indicates if the expression is of value type
-    static constexpr bool is_direct               = true;                      ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator            = false;                     ///< Indicates if the expression is a generator
-    static constexpr bool is_padded               = false;                     ///< Indicates if the expression is padded
-    static constexpr bool is_aligned              = true;                      ///< Indicates if the expression is padded
-    static constexpr bool is_gpu                  = false;                     ///< Indicates if the expression can be done on GPU
-    static constexpr bool is_temporary = true;                      ///< Indicates if the expression needs a evaluator visitor
-    static constexpr order storage_order          = sub_traits::storage_order; ///< The expression's storage order
+    static constexpr bool is_etl         = true;                      ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                     ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                     ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                     ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = sub_traits::is_fast;       ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = true;                      ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = true;                      ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                     ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = true;                      ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                     ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                     ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = true;                      ///< Indicates if the expression is padded
+    static constexpr bool is_gpu         = false;                     ///< Indicates if the expression can be done on GPU
+    static constexpr bool is_temporary   = true;                      ///< Indicates if the expression needs a evaluator visitor
+    static constexpr order storage_order = sub_traits::storage_order; ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
