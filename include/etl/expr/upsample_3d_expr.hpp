@@ -9,6 +9,8 @@
 
 #include "etl/expr/base_temporary_expr.hpp"
 
+#include "etl/impl/std/upsample.hpp"
+
 namespace etl {
 
 /*!

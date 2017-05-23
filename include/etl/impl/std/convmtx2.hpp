@@ -9,7 +9,9 @@
 
 namespace etl {
 
-namespace detail {
+namespace impl {
+
+namespace standard {
 
 /*!
  * \brief Direct evaluation of conmtx2
@@ -54,6 +56,8 @@ struct convmtx2_direct {
     }
 };
 
-} //end of namespace detail
+} //end of namespace standard
+
+} //end of namespace impl
 
 } //end of namespace etl

@@ -10,7 +10,7 @@
 #include "etl/expr/base_temporary_expr.hpp"
 
 //Get the implementations
-#include "etl/impl/pooling.hpp"
+#include "etl/impl/std/upsample.hpp"
 
 namespace etl {
 

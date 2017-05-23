@@ -10,7 +10,7 @@
 #include "etl/expr/base_temporary_expr.hpp"
 
 //Get the implementations
-#include "etl/impl/convmtx2.hpp"
+#include "etl/impl/std/convmtx2.hpp"
 
 namespace etl {
 
@@ -50,7 +50,7 @@ struct convmtx_2d_expr : base_temporary_expr_un<convmtx_2d_expr<A, K1, K2>, A> {
 
         standard_evaluator::pre_assign_rhs(a);
 
-        detail::convmtx2_direct::template apply<K1, K2>(
+        impl::standard::convmtx2_direct::template apply<K1, K2>(
             make_temporary(a),
             c);
     }
