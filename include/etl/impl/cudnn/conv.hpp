@@ -379,89 +379,6 @@ void conv2_full_flipped(I&& input, K&& kernel, C&& conv) {
 }
 
 /*!
- * \brief cudnn implementation of a 4D 'full' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C>
-void conv4_backward_data_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode) {
-    using type = value_t<I>;
-
-    type alpha[] = {1.0f};
-    type beta[] = {0.0f};
-
-    decltype(auto) handle = start_cudnn();
-
-    // Prepare the tensors
-    auto input_tensor  = create_tensor(input);
-    auto output_tensor = create_tensor(conv);
-    auto filter        = create_filter(kernel);
-
-    // Prepare the convolution
-    cudnnConvolutionDescriptor_t convolution;
-    cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, 0, 0, 1, 1, 1, 1, mode));
-
-    // Find the algorithm to use
-    cudnnConvolutionBwdDataAlgo_t conv_algo;
-    cudnn_check(cudnnGetConvolutionBackwardDataAlgorithm(handle.get(), *filter, *input_tensor, convolution,
-        *output_tensor, CUDNN_CONVOLUTION_BWD_DATA_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
-
-    // Prepare the workspace
-    size_t workspace_size = 0;
-    cudnn_check(cudnnGetConvolutionBackwardDataWorkspaceSize(handle.get(), *filter, *input_tensor, convolution, *output_tensor, conv_algo, &workspace_size));
-
-    impl::cuda::cuda_memory<type> workspace;
-
-    if(workspace_size){
-        workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
-    }
-
-    // Allocate GPU memory, if necessary
-
-    input.ensure_gpu_up_to_date();
-    kernel.ensure_gpu_up_to_date();
-    conv.ensure_gpu_allocated();
-
-    // Perform the convolution
-
-    cudnn_check(cudnnConvolutionBackwardData(handle.get(),
-        alpha, *filter, kernel.gpu_memory(),
-        *input_tensor, input.gpu_memory(),
-        convolution, conv_algo, workspace.get(), workspace_size,
-        beta, *output_tensor, conv.gpu_memory()));
-
-    conv.validate_gpu();
-    conv.invalidate_cpu();
-
-    // Release the resources
-    cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
-}
-
-/*!
- * \brief cudnn implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C>
-void conv4_backward_data_full(I&& input, K&& kernel, C&& conv) {
-    conv4_backward_data_full_set(input, kernel, conv, CUDNN_CROSS_CORRELATION);
-}
-
-/*!
- * \brief cudnn implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C>
-void conv4_backward_data_full_flipped(I&& input, K&& kernel, C&& conv) {
-    conv4_backward_data_full_set(input, kernel, conv, CUDNN_CONVOLUTION);
-}
-
-/*!
  * \brief CUDNN implementation of a 2D 'valid' convolution C = I * K
  * \param input The input matrix
  * \param kernel The kernel matrix
@@ -640,6 +557,28 @@ void conv4_backward_data(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
 template <typename I, typename K, typename C>
 void conv4_backward_data_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv4_backward_data_set(input, kernel, conv, CUDNN_CONVOLUTION, s1, s2, p1, p2);
+}
+
+/*!
+ * \brief cudnn implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv4_backward_data_full(I&& input, K&& kernel, C&& conv) {
+    conv4_backward_data_set(input, kernel, conv, CUDNN_CROSS_CORRELATION, 1, 1, 0, 0);
+}
+
+/*!
+ * \brief cudnn implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv4_backward_data_full_flipped(I&& input, K&& kernel, C&& conv) {
+    conv4_backward_data_set(input, kernel, conv, CUDNN_CONVOLUTION, 1, 1, 0, 0);
 }
 
 #else
