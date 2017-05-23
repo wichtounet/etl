@@ -496,6 +496,39 @@ bool is_hermitian(E&& expr){
 }
 
 /*!
+ * \brief Test if two floating point numbers are approximately equals
+ * \param a The first number of test
+ * \param b The second number of test
+ * \param epsilon The epsilon for comparison (0.0000001f is good default)
+ * \return true if the two numbers are approximately equals, false otherwise
+ *
+ * The logic is taken from http://floating-point-gui.de/errors/comparison/ (Michael Borgwardt)
+ */
+template<typename T>
+inline bool approx_equals_float(T a, T b, T epsilon){
+    using std::fabs;
+
+    const auto abs_a = fabs(a);
+    const auto abs_b = fabs(b);
+    const auto diff = fabs(a - b);
+
+    // Note: min for floating points is the min normalized value
+    static constexpr T min_normal = std::numeric_limits<T>::min();
+    static constexpr T max        = std::numeric_limits<T>::max();
+
+    if (a == b) {
+        // This should handle infinities properly
+        return true;
+    } else if (a == 0 || b == 0 || diff < min_normal) {
+        // a or b is zero or both are extremely close to it
+        // relative error is less meaningful here
+        return diff < (epsilon * min_normal);
+    } else { // use relative error
+        return (diff / std::min(abs_a + abs_b, max)) < epsilon;
+    }
+}
+
+/*!
  * \brief Test if two ETL expression are approximately equals
  * \param lhs The left hand-side
  * \param rhs The right hand-side
@@ -521,8 +554,7 @@ bool approx_equals(L&& lhs, E&& rhs, value_t<L> eps){
     force(rhs);
 
     for(size_t i = 0; i < etl::size(lhs); ++i){
-        using std::fabs;
-        if(fabs(lhs[i] - rhs[i]) > eps * (1.0 + std::max(fabs(lhs[i]), fabs(rhs[i])))){
+        if(!approx_equals_float(lhs[i], rhs[i], eps)){
             return false;
         }
     }
