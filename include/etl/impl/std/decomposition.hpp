@@ -98,7 +98,12 @@ void householder(AT& A, QT& Q, RT& R) {
     const auto m = etl::dim<0>(A);
     const auto n = etl::dim<1>(A);
 
-    std::vector<QT> q(m);
+    std::vector<etl::dyn_matrix<T, 2>> q;
+    q.reserve(m);
+
+    for(size_t i = 0; i < m; ++i){
+        q.emplace_back(m, m);
+    }
 
     etl::dyn_matrix<T> z(m, n);
     z = A;
@@ -129,16 +134,13 @@ void householder(AT& A, QT& Q, RT& R) {
             a = -a;
         }
 
-        etl::dyn_vector<T> e(m);
-        for (size_t i = 0; i < m; i++){
-            e[i] = x[i] + ((i == k) ? a : 0);
-        }
+        x[k] += a;
 
-        e /= norm(e);
+        x /= norm(x);
 
         for(size_t i = 0; i < m; ++i){
             for(size_t j = 0; j < m; ++j){
-                q[k](i, j) = -2 * e[i] * e[j];
+                q[k](i, j) = T(-2) * x[i] * x[j];
             }
 
             q[k](i, i) += 1;
