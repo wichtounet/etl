@@ -609,8 +609,6 @@ DYN_CONV_FUNCTOR(cudnn_dyn_conv2_valid_multi_flipped, c = selected_helper(etl::c
 
 CONV_FUNCTOR(cudnn_conv4_valid, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid<S1,S2,P1,P2>(a, b))))
 CONV_FUNCTOR(cudnn_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid_flipped<S1,S2,P1,P2>(a, b))))
-CONV_FUNCTOR(cudnn_conv4_valid_filter, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid_filter<S1, S2, P1, P2>(a, b))))
-CONV_FUNCTOR(cudnn_conv4_valid_filter_flipped, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid_filter_flipped<S1, S2, P1, P2>(a, b))))
 CONV_FUNCTOR(cudnn_conv4_full, c = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_full(a, b)))
 CONV_FUNCTOR(cudnn_conv4_full_flipped, c = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_full_flipped(a, b)))
 
@@ -618,8 +616,6 @@ DYN_CONV_FUNCTOR(cudnn_dyn_conv4_valid, c = selected_helper(etl::conv4_impl::CUD
 DYN_CONV_FUNCTOR(cudnn_dyn_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid_flipped(a, b, s1, s2, p1, p2))))
 DYN_CONV_FUNCTOR(cudnn_dyn_conv4_valid_back, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid_back(a, b, s1, s2, p1, p2))))
 DYN_CONV_FUNCTOR(cudnn_dyn_conv4_valid_back_flipped, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid_back_flipped(a, b, s1, s2, p1, p2))))
-DYN_CONV_FUNCTOR(cudnn_dyn_conv4_valid_filter, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid_filter(a, b, s1, s2, p1, p2))))
-DYN_CONV_FUNCTOR(cudnn_dyn_conv4_valid_filter_flipped, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid_filter_flipped(a, b, s1, s2, p1, p2))))
 
 CONV_FUNCTOR(cudnn_conv2_valid_multi, c = selected_helper(etl::conv_multi_impl::CUDNN, (etl::conv_2d_valid_multi<S1, S2, P1, P2>(a, b))))
 CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi_impl::CUDNN, (etl::conv_2d_valid_multi_flipped<S1, S2, P1, P2>(a, b))))
@@ -637,8 +633,6 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
 
 #define CONV4_VALID_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_conv4_valid)
 #define CONV4_VALID_FLIPPED_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_conv4_valid_flipped)
-#define CONV4_VALID_FILTER_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_conv4_valid_filter)
-#define CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_conv4_valid_filter_flipped)
 #define CONV4_FULL_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_conv4_full)
 #define CONV4_FULL_FLIPPED_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_conv4_full_flipped)
 
@@ -646,8 +640,6 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
 #define DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_dyn_conv4_valid_flipped)
 #define DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_dyn_conv4_valid_back)
 #define DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_dyn_conv4_valid_back_flipped)
-#define DYN_CONV4_VALID_FILTER_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_dyn_conv4_valid_filter)
-#define DYN_CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_dyn_conv4_valid_filter_flipped)
 #else
 #define CONV2_FULL_TEST_CASE_SECTION_CUDNN
 #define CONV2_FULL_FLIPPED_TEST_CASE_SECTION_CUDNN
@@ -664,8 +656,6 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
 #define CONV4_VALID_FLIPPED_TEST_CASE_SECTION_CUDNN
 #define CONV4_VALID_BACK_TEST_CASE_SECTION_CUDNN
 #define CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_CUDNN
-#define CONV4_VALID_FILTER_TEST_CASE_SECTION_CUDNN
-#define CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_CUDNN
 #define CONV4_FULL_TEST_CASE_SECTION_CUDNN
 #define CONV4_FULL_FLIPPED_TEST_CASE_SECTION_CUDNN
 
@@ -673,8 +663,6 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
 #define DYN_CONV4_VALID_FLIPPED_TEST_CASE_SECTION_CUDNN
 #define DYN_CONV4_VALID_BACK_TEST_CASE_SECTION_CUDNN
 #define DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_CUDNN
-#define DYN_CONV4_VALID_FILTER_TEST_CASE_SECTION_CUDNN
-#define DYN_CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_CUDNN
 #endif
 
 #define CONV_TEST_CASE_DECL(name, description)                                 \
@@ -897,7 +885,6 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
         CONV4_VALID_FILTER_TEST_CASE_SECTION_BLAS_VEC   \
         CONV4_VALID_FILTER_TEST_CASE_SECTION_BLAS_MKL   \
         CONV4_VALID_FILTER_TEST_CASE_SECTION_VEC        \
-        CONV4_VALID_FILTER_TEST_CASE_SECTION_CUDNN      \
     }                                                   \
     CONV_TEST_CASE_DEFN
 
@@ -908,7 +895,6 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
         CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_BLAS_VEC   \
         CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_BLAS_MKL   \
         CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_VEC        \
-        CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_CUDNN      \
     }                                                           \
     CONV_TEST_CASE_DEFN
 
@@ -919,7 +905,6 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
         DYN_CONV4_VALID_FILTER_TEST_CASE_SECTION_BLAS_VEC   \
         DYN_CONV4_VALID_FILTER_TEST_CASE_SECTION_BLAS_MKL   \
         DYN_CONV4_VALID_FILTER_TEST_CASE_SECTION_VEC        \
-        DYN_CONV4_VALID_FILTER_TEST_CASE_SECTION_CUDNN      \
     }                                                   \
     CONV_TEST_CASE_DEFN
 
@@ -930,7 +915,6 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
         DYN_CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_BLAS_VEC   \
         DYN_CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_BLAS_MKL   \
         DYN_CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_VEC        \
-        DYN_CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_CUDNN      \
     }                                                           \
     CONV_TEST_CASE_DEFN
 

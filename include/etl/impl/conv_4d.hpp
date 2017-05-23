@@ -149,11 +149,9 @@ struct conv4_valid_filter_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
+        auto impl = select_conv4_valid_filter_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
-        if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_backward_filter(input, kernel, conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::BLAS_VEC) {
+        if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid_filter(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::BLAS_MKL) {
             impl::blas::blas_conv4_valid_filter(input, kernel, conv, S1, S2, P1, P2);
@@ -180,22 +178,9 @@ struct conv4_valid_filter_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
+        auto impl = select_conv4_valid_filter_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
-        if (impl == etl::conv4_impl::CUDNN) {
-            if (S1 > 1 || S2 > 1 || P1 || P2) {
-                // For some reasons, CUDNN backward filter cross correlation does
-                // not work correclty (or does not work the way I expect it to work)
-                // The padding may not be done as I thought
-                if (vec_enabled) {
-                    impl::vec::conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
-                } else {
-                    impl::standard::conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
-                }
-            } else {
-                impl::cudnn::conv4_backward_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
-            }
-        } else if (impl == etl::conv4_impl::BLAS_VEC) {
+        if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::BLAS_MKL) {
             impl::blas::blas_conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
@@ -221,11 +206,9 @@ struct dyn_conv4_valid_filter_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
+        auto impl = select_conv4_valid_filter_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
-        if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_backward_filter(input, kernel, conv, s1, s2, p1, p2);
-        } else if (impl == etl::conv4_impl::BLAS_VEC) {
+        if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid_filter(input, kernel, conv, s1, s2, p1, p2);
         } else if (impl == etl::conv4_impl::BLAS_MKL) {
             impl::blas::blas_conv4_valid_filter(input, kernel, conv, s1, s2, p1, p2);
@@ -251,22 +234,9 @@ struct dyn_conv4_valid_filter_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
+        auto impl = select_conv4_valid_filter_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
-        if (impl == etl::conv4_impl::CUDNN) {
-            if (s1 > 1 || s2 > 1 || p1 || p2) {
-                // For some reasons, CUDNN backward filter cross correlation does
-                // not work correclty (or does not work the way I expect it to work)
-                // The padding may not be done as I thought
-                if (vec_enabled) {
-                    impl::vec::conv4_valid_filter_flipped(input, kernel, conv, s1, s2, p1, p2);
-                } else {
-                    impl::standard::conv4_valid_filter_flipped(input, kernel, conv, s1, s2, p1, p2);
-                }
-            } else {
-                impl::cudnn::conv4_backward_filter_flipped(input, kernel, conv, s1, s2, p1, p2);
-            }
-        } else if (impl == etl::conv4_impl::BLAS_VEC) {
+        if (impl == etl::conv4_impl::BLAS_VEC) {
             impl::vec::blas_conv4_valid_filter_flipped(input, kernel, conv, s1, s2, p1, p2);
         } else if (impl == etl::conv4_impl::BLAS_MKL) {
             impl::blas::blas_conv4_valid_filter_flipped(input, kernel, conv, s1, s2, p1, p2);

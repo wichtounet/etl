@@ -172,7 +172,6 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv4_valid_filter [conv][conv4]", conv_4d_v
     VEC_SECTION_FUNCTOR("vec", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::VEC, etl::conv_4d_valid_filter(a, b)); })
     VEC_SECTION_FUNCTOR("blas_vec", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS_VEC, etl::conv_4d_valid_filter(a, b)); })
     BLAS_SECTION_FUNCTOR("blas_mkl", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS_MKL, etl::conv_4d_valid_filter(a, b)); })
-    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_valid_filter(a, b)); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv4_valid_filter_flipped [conv][conv4]", conv_4d_valid_policy,
@@ -183,7 +182,6 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv4_valid_filter_flipped [conv][conv4]", c
     VEC_SECTION_FUNCTOR("vec", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::VEC, etl::conv_4d_valid_filter_flipped(a, b)); })
     VEC_SECTION_FUNCTOR("blas_vec", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS_VEC, etl::conv_4d_valid_filter_flipped(a, b)); })
     BLAS_SECTION_FUNCTOR("blas_mkl", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS_MKL, etl::conv_4d_valid_filter_flipped(a, b)); })
-    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_valid_filter_flipped(a, b)); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv4_full [conv][conv4]", conv_4d_full_policy_1,
@@ -275,7 +273,6 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("imagenet_gradients [conv][conv4]", imagenet_g
     VEC_SECTION_FUNCTOR("vec", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::VEC, (etl::conv_4d_valid_filter_flipped<1,1,1,1>(a, b))); })
     VEC_SECTION_FUNCTOR("blas_vec", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS_VEC, (etl::conv_4d_valid_filter_flipped<1,1,1,1>(a, b))); })
     BLAS_SECTION_FUNCTOR("blas_mkl", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS_MKL, (etl::conv_4d_valid_filter_flipped<1,1,1,1>(a, b))); })
-    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid_filter_flipped<1,1,1,1>(a, b))); })
 )
 
 #endif
