@@ -8,6 +8,9 @@
 #include "test.hpp"
 #include "conv_test.hpp"
 
+// Note the use of the large epsilons for comparison is because in CUDNN mode we
+// are comparing GPU and CPU versions which may be large difference
+
 TEMPLATE_TEST_CASE_2("conv/4d/backward_filter/0", "[conv][conv4][backward_filter]", T, float, double) {
     etl::fast_matrix<T, 10, 3, 6, 6> I;
     etl::fast_matrix<T, 10, 4, 4, 4> K;
@@ -21,7 +24,11 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward_filter/0", "[conv][conv4][backward_filter
     ref = etl::conv_4d_valid_filter<1, 1, 0, 0>(I, K);
     c = etl::conv_4d_backward_filter<1, 1, 0, 0>(I, K);
 
-    REQUIRE_DIRECT(approx_equals(c, ref, base_eps));
+#ifdef ETL_CUDNN_MODE
+    REQUIRE_DIRECT(approx_equals(c, ref, 2.0 * base_eps_etl_large));
+#else
+    REQUIRE_DIRECT(approx_equals(c, ref, base_eps_etl));
+#endif
 }
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward_filter/1", "[conv][conv4][backward_filter]", T, float, double) {
@@ -37,7 +44,11 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward_filter/1", "[conv][conv4][backward_filter
     ref = etl::conv_4d_valid_filter<1, 1, 1, 1>(I, K);
     c = etl::conv_4d_backward_filter<1, 1, 1, 1>(I, K);
 
-    REQUIRE_DIRECT(approx_equals(c, ref, base_eps));
+#ifdef ETL_CUDNN_MODE
+    REQUIRE_DIRECT(approx_equals(c, ref, base_eps_etl_large));
+#else
+    REQUIRE_DIRECT(approx_equals(c, ref, base_eps_etl));
+#endif
 }
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward_filter/2", "[conv][conv4][backward_filter]", T, float, double) {
@@ -53,7 +64,11 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward_filter/2", "[conv][conv4][backward_filter
     ref = etl::conv_4d_valid_filter<1, 1, 1, 1>(I, K);
     c = etl::conv_4d_backward_filter<1, 1, 1, 1>(I, K);
 
-    REQUIRE_DIRECT(approx_equals(c, ref, base_eps));
+#ifdef ETL_CUDNN_MODE
+    REQUIRE_DIRECT(approx_equals(c, ref, base_eps_etl_large));
+#else
+    REQUIRE_DIRECT(approx_equals(c, ref, base_eps_etl));
+#endif
 }
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward_filter/3", "[conv][conv4][backward_filter]", T, float, double) {
@@ -70,7 +85,11 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward_filter/3", "[conv][conv4][backward_filter
     ref = etl::conv_4d_valid_filter<1, 1, 0, 0>(I, SK);
     c = etl::conv_4d_backward_filter<2, 2, 0, 0>(I, K);
 
-    REQUIRE_DIRECT(approx_equals(c, ref, base_eps));
+#ifdef ETL_CUDNN_MODE
+    REQUIRE_DIRECT(approx_equals(c, ref, base_eps_etl_large));
+#else
+    REQUIRE_DIRECT(approx_equals(c, ref, base_eps_etl));
+#endif
 }
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward_filter/4", "[conv][conv4][backward_filter]", T, float, double) {
@@ -87,5 +106,9 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward_filter/4", "[conv][conv4][backward_filter
     ref = etl::conv_4d_valid_filter<1, 1, 1, 1>(I, SK);
     c = etl::conv_4d_backward_filter<2, 2, 1, 1>(I, K);
 
-    REQUIRE_DIRECT(approx_equals(c, ref, base_eps));
+#ifdef ETL_CUDNN_MODE
+    REQUIRE_DIRECT(approx_equals(c, ref, base_eps_etl_large));
+#else
+    REQUIRE_DIRECT(approx_equals(c, ref, base_eps_etl));
+#endif
 }
