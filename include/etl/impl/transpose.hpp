@@ -183,6 +183,17 @@ struct transpose {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
+        // Detect inplace (some implementations do not support inplace if not told explicitely)
+        if(a.memory_start() == c.memory_start()){
+            if(is_square(c)){
+                inplace_square_transpose::apply(c);
+            } else {
+                inplace_rectangular_transpose::apply(c);
+            }
+
+            return;
+        }
+
         const auto impl = select_transpose_impl<A, C>(select_default_transpose_impl<A, C>());
 
         if (impl == transpose_impl::MKL) {
