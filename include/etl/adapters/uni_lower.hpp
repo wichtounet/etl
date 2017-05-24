@@ -119,7 +119,21 @@ public:
         // Perform the real assign
 
         validate_assign(*this, e);
-        e.assign_to(*this);
+
+        // Avoid aliasing issues
+        if (!decay_traits<E>::is_linear && e.alias(*this)) {
+            // Create a temporary to hold the result
+            this_type tmp(*this);
+
+            // Assign the expression to the temporary
+            tmp = e;
+
+            // Assign the temporary to this matrix
+            *this = tmp;
+        } else {
+            // Direct assignment of the expression into this matrix
+            e.assign_to(*this);
+        }
 
         return *this;
     }
