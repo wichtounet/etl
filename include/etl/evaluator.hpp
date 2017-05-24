@@ -540,7 +540,7 @@ namespace standard_evaluator {
         pre_assign_rhs(expr);
 
         if(result.alias(expr)){
-            auto tmp_result = force_temporary(result);
+            auto tmp_result = force_temporary_dim_only(result);
 
             //Perform the evaluation to tmp_result
             assign_evaluate_impl(expr, tmp_result);
