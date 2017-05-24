@@ -18,7 +18,6 @@ namespace etl {
  * \brief Enumeration describing the different implementations of transpose
  */
 enum class transpose_impl {
-    SELECT, ///< Select the best implementation
     STD,    ///< Standard implementation
     MKL,    ///< MKL implementation
     CUBLAS, ///< CUBLAS implementation

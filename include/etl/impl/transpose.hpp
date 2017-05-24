@@ -28,22 +28,89 @@ namespace detail {
 //TODO We should take into account parallel blas when selecting MKL transpose
 
 /*!
+ * \brief Select the default transposition implementation to use
+ *
+ * This does not take local context into account
+ *
+ * \tparam The type of input
+ * \tparam The type of output
+ *
+ * \return The best default transpose implementation to use
+ */
+template<typename A, typename C>
+cpp14_constexpr transpose_impl select_default_transpose_impl(){
+    if(cublas_enabled && all_dma<A, C>::value && all_floating<A, C>::value){
+        return transpose_impl::CUBLAS;
+    }
+
+#ifdef SLOW_MKL
+    // STD is always faster than MKL for out-of-place transpose
+    return transpose_impl::STD;
+#else
+    // Condition to use MKL
+    constexpr bool mkl_possible = mkl_enabled && all_dma<C>::value && all_floating<C>::value;
+
+    if (mkl_possible) {
+        return transpose_impl::MKL;
+    } else {
+        return transpose_impl::STD;
+    }
+#endif
+}
+
+/*!
+ * \brief Select the default transposition implementation to use for an inplace
+ * square transposition operation.
+ *
+ * This does not take local context into account
+ *
+ * \tparam The type of input
+ * \tparam The type of output
+ *
+ * \return The best default transpose implementation to use
+ */
+template<typename A, typename C>
+cpp14_constexpr transpose_impl select_default_in_square_transpose_impl(){
+    if(cublas_enabled && all_dma<A, C>::value && all_floating<A, C>::value){
+        return transpose_impl::CUBLAS;
+    }
+
+    // Condition to use MKL
+    constexpr bool mkl_possible = mkl_enabled && all_dma<C>::value && all_floating<C>::value;
+
+    if (mkl_possible) {
+        return transpose_impl::MKL;
+    } else {
+        return transpose_impl::STD;
+    }
+}
+
+/*!
  * \brief Select the transpose implementation for an expression of type A and C
  * \tparam A The type of rhs expression
  * \tparam C The type of lhs expression
  * \return The implementation to use
  */
 template <typename A, typename C>
-transpose_impl select_transpose_impl_smart() {
+transpose_impl select_transpose_impl(transpose_impl def) {
     if (local_context().transpose_selector.forced) {
         auto forced = local_context().transpose_selector.impl;
 
         switch (forced) {
+            //CUBLAS cannot always be used
+            case transpose_impl::CUBLAS:
+                if (!cublas_enabled || !all_dma<A, C>::value || !all_floating<A, C>::value) {
+                    std::cerr << "Forced selection to CUBLAS transpose implementation, but not possible for this expression" << std::endl;
+                    return def;
+                }
+
+                return forced;
+
             //MKL cannot always be used
             case transpose_impl::MKL:
                 if (!mkl_enabled || !all_dma<A, C>::value || !all_floating<A, C>::value) {
                     std::cerr << "Forced selection to MKL transpose implementation, but not possible for this expression" << std::endl;
-                    return transpose_impl::SELECT;
+                    return def;
                 }
 
                 return forced;
@@ -54,7 +121,7 @@ transpose_impl select_transpose_impl_smart() {
         }
     }
 
-    return transpose_impl::SELECT;
+    return def;
 }
 
 /*!
@@ -67,19 +134,9 @@ struct inplace_square_transpose {
      */
     template <typename C>
     static void apply(C&& c) {
-        const auto impl = select_transpose_impl_smart<C, C>();
+        const auto impl = select_transpose_impl<C, C>(select_default_in_square_transpose_impl<C, C>());
 
-        if(cpp_likely(impl == transpose_impl::SELECT)){
-            // Condition to use MKL
-            static constexpr bool mkl_possible = mkl_enabled && all_dma<C>::value && all_floating<C>::value;
-
-            // MKL is always faster than STD on inplace square transpositions
-            if(mkl_possible){
-                etl::impl::blas::inplace_square_transpose(c);
-            } else {
-                etl::impl::standard::inplace_square_transpose(c);
-            }
-        } else if (impl == transpose_impl::MKL) {
+        if (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_square_transpose(c);
         } else if (impl == transpose_impl::CUBLAS) {
             etl::impl::cublas::inplace_square_transpose(c);
@@ -101,23 +158,9 @@ struct inplace_rectangular_transpose {
      */
     template <typename C>
     static void apply(C&& c) {
-        const auto impl = select_transpose_impl_smart<C, C>();
+        const auto impl = select_transpose_impl<C, C>(select_default_transpose_impl<C, C>());
 
-        if(cpp_likely(impl == transpose_impl::SELECT)){
-#ifdef SLOW_MKL
-            // STD is always faster than MKL for inplace rectangular transpositions
-            etl::impl::standard::inplace_rectangular_transpose(c);
-#else
-            // Condition to use MKL
-            static constexpr bool mkl_possible = mkl_enabled && all_dma<C>::value && all_floating<C>::value;
-
-            if(mkl_possible){
-                etl::impl::blas::inplace_rectangular_transpose(c);
-            } else {
-                etl::impl::standard::inplace_rectangular_transpose(c);
-            }
-#endif
-        } else if (impl == transpose_impl::MKL) {
+        if (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_rectangular_transpose(c);
         } else if (impl == transpose_impl::CUBLAS) {
             etl::impl::cublas::inplace_rectangular_transpose(c);
@@ -140,23 +183,9 @@ struct transpose {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        const auto impl = select_transpose_impl_smart<A, C>();
+        const auto impl = select_transpose_impl<A, C>(select_default_transpose_impl<A, C>());
 
-        if(cpp_likely(impl == transpose_impl::SELECT)){
-#ifdef SLOW_MKL
-            // STD is always faster than MKL for out-of-place transpose
-            etl::impl::standard::transpose(a, c);
-#else
-            // Condition to use MKL
-            static constexpr bool mkl_possible = mkl_enabled && all_dma<C>::value && all_floating<C>::value;
-
-            if(mkl_possible){
-                etl::impl::blas::transpose(a, c);
-            } else {
-                etl::impl::standard::transpose(a, c);
-            }
-#endif
-        } else if (impl == transpose_impl::MKL) {
+        if (impl == transpose_impl::MKL) {
             etl::impl::blas::transpose(a, c);
         } else if (impl == transpose_impl::CUBLAS) {
             etl::impl::cublas::transpose(a, c);
