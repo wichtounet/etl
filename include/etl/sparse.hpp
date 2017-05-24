@@ -467,6 +467,34 @@ private:
         return _memory[n];
     }
 
+    /*!
+     * \brief Inherit the dimensions of an ETL expressions.
+     * This must only be called when the matrix has no dimensions
+     * \param e The expression to get the dimensions from.
+     */
+    template <typename E, cpp_enable_if(etl::decay_traits<E>::is_generator)>
+    void inherit(const E& e){
+        cpp_assert(false, "Impossible to inherit dimensions from generators");
+        cpp_unused(e);
+    }
+
+    /*!
+     * \brief Inherit the dimensions of an ETL expressions.
+     * This must only be called when the matrix has no dimensions
+     * \param e The expression to get the dimensions from.
+     */
+    template <typename E, cpp_disable_if(etl::decay_traits<E>::is_generator)>
+    void inherit(const E& e){
+        cpp_assert(n_dimensions == etl::dimensions(e), "Invalid number of dimensions");
+
+        // Compute the size and new dimensions
+        _size = 1;
+        for (size_t d = 0; d < n_dimensions; ++d) {
+            _dimensions[d] = etl::dim(e, d);
+            _size *= _dimensions[d];
+        }
+    }
+
 public:
     using base_type::dim;
     using base_type::rows;
@@ -529,7 +557,14 @@ public:
      */
     template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, sparse_matrix_impl<T, storage_format, D>>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
     sparse_matrix_impl& operator=(E&& e) noexcept {
-        validate_assign(*this, e);
+        // It is possible that the matrix was not initialized before
+        // In the case, get the the dimensions from the expression and
+        // initialize the matrix
+        if(!_size){
+            inherit(e);
+        } else {
+            validate_assign(*this, e);
+        }
 
         e.assign_to(*this);
 

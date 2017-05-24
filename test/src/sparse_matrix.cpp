@@ -304,3 +304,22 @@ TEMPLATE_TEST_CASE_2("sparse_matrix/div/1", "[mat][div][sparse]", Z, double, flo
     REQUIRE_EQUALS_APPROX(c.get(2, 0), Z(3.0));
     REQUIRE_EQUALS_APPROX(c.get(2, 1), Z(0.333333));
 }
+
+TEMPLATE_TEST_CASE_2("sparse_matrix/inherit/0", "[mat][add][sparse]", Z, double, float) {
+    etl::sparse_matrix<Z> a(3, 2, std::initializer_list<Z>({1.0, 0.0, 0.0, 2.0, 3.0, 0.0}));
+    etl::sparse_matrix<Z> b(3, 2, std::initializer_list<Z>({2.0, 1.0, 0.0, 3.0, 0.0, 0.0}));
+    etl::sparse_matrix<Z> c;
+
+    c = a + b;
+
+    REQUIRE_EQUALS(c.size(), a.size());
+    REQUIRE_EQUALS(etl::dim<0>(c), etl::dim<0>(a));
+    REQUIRE_EQUALS(etl::dim<1>(c), etl::dim<1>(a));
+
+    REQUIRE_EQUALS(c.get(0, 0), 3.0);
+    REQUIRE_EQUALS(c.get(0, 1), 1.0);
+    REQUIRE_EQUALS(c.get(1, 0), 0.0);
+    REQUIRE_EQUALS(c.get(1, 1), 5.0);
+    REQUIRE_EQUALS(c.get(2, 0), 3.0);
+    REQUIRE_EQUALS(c.get(2, 1), 0.0);
+}
