@@ -172,16 +172,28 @@ template <typename T, size_t... Dims>
 using fast_dyn_matrix = fast_matrix_impl<T, cpp::aligned_vector<T, default_intrinsic_traits<T>::alignment>, order::RowMajor, Dims...>;
 
 /*!
+ * \brief A hybrid matrix with fixed dimensions, in specified  order
+ */
+template <typename T, order SO, size_t... Dims>
+using fast_dyn_matrix_o = fast_matrix_impl<T, cpp::aligned_vector<T, default_intrinsic_traits<T>::alignment>, SO, Dims...>;
+
+/*!
  * \brief A dynamic matrix, in row-major order, of D dimensions
  */
 template <typename T, size_t D = 2>
-using dyn_matrix                    = dyn_matrix_impl<T, order::RowMajor, D>;
+using dyn_matrix = dyn_matrix_impl<T, order::RowMajor, D>;
 
 /*!
  * \brief A dynamic matrix, in column-major order, of D dimensions
  */
 template <typename T, size_t D = 2>
-using dyn_matrix_cm                 = dyn_matrix_impl<T, order::ColumnMajor, D>;
+using dyn_matrix_cm = dyn_matrix_impl<T, order::ColumnMajor, D>;
+
+/*!
+ * \brief A dynamic matrix, in specific storage order, of D dimensions
+ */
+template <typename T, order SO, size_t D = 2>
+using dyn_matrix_o = dyn_matrix_impl<T, SO, D>;
 
 /*!
  * \brief A dynamic vector, in row-major order
