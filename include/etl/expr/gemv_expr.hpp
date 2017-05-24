@@ -253,7 +253,7 @@ struct etl_traits<etl::gemv_expr<A, B>> {
     static constexpr bool is_view                 = false;                                         ///< Indicates if the type is a view
     static constexpr bool is_magic_view           = false;                                         ///< Indicates if the type is a magic view
     static constexpr bool is_fast                 = left_traits::is_fast && right_traits::is_fast; ///< Indicates if the expression is fast
-    static constexpr bool is_linear               = true;                                          ///< Indicates if the expression is linear
+    static constexpr bool is_linear               = false;                                          ///< Indicates if the expression is linear
     static constexpr bool is_thread_safe          = true;                                          ///< Indicates if the expression is thread safe
     static constexpr bool is_value                = false;                                         ///< Indicates if the expression is of value type
     static constexpr bool is_direct               = true;                                          ///< Indicates if the expression has direct memory access

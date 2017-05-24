@@ -177,7 +177,7 @@ struct etl_traits<etl::conv_2d_valid_multi_multi_expr<A, B, S1, S2, P1, P2, Flip
     static constexpr bool is_view         = false;                      ///< Indicates if the type is a view
     static constexpr bool is_magic_view   = false;                      ///< Indicates if the type is a magic view
     static constexpr bool is_fast         = all_fast<A, B>::value;      ///< Indicates if the expression is fast
-    static constexpr bool is_linear       = true;                       ///< Indicates if the expression is linear
+    static constexpr bool is_linear       = false;                       ///< Indicates if the expression is linear
     static constexpr bool is_thread_safe  = true;                       ///< Indicates if the expression is thread safe
     static constexpr bool is_value        = false;                      ///< Indicates if the expression is of value type
     static constexpr bool is_direct       = true;                       ///< Indicates if the expression has direct memory access

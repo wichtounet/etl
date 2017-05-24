@@ -126,7 +126,7 @@ struct etl_traits<etl::pool_3d_expr<A, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>
     static constexpr bool is_view                 = false;                     ///< Indicates if the type is a view
     static constexpr bool is_magic_view           = false;                     ///< Indicates if the type is a magic view
     static constexpr bool is_fast                 = sub_traits::is_fast;       ///< Indicates if the expression is fast
-    static constexpr bool is_linear               = true;                      ///< Indicates if the expression is linear
+    static constexpr bool is_linear               = false;                      ///< Indicates if the expression is linear
     static constexpr bool is_thread_safe          = true;                      ///< Indicates if the expression is thread safe
     static constexpr bool is_value                = false;                     ///< Indicates if the expression is of value type
     static constexpr bool is_direct               = true;                      ///< Indicates if the expression has direct memory access
