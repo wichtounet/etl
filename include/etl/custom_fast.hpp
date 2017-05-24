@@ -122,7 +122,7 @@ public:
      */
     custom_fast_matrix_impl& operator=(custom_fast_matrix_impl&& rhs) noexcept {
         if (this != &rhs) {
-            _data               = std::move(rhs._data);
+            _data = std::move(rhs._data);
         }
 
         return *this;
