@@ -323,3 +323,24 @@ TEMPLATE_TEST_CASE_2("sparse_matrix/inherit/0", "[mat][add][sparse]", Z, double,
     REQUIRE_EQUALS(c.get(2, 0), 3.0);
     REQUIRE_EQUALS(c.get(2, 1), 0.0);
 }
+
+TEMPLATE_TEST_CASE_2("sparse_matrix/copy/1", "[mat][reference][sparse]", Z, double, float) {
+    etl::sparse_matrix<Z> a(3, 3);
+    etl::sparse_matrix<Z> b(3, 3);
+
+    a(1, 1) = 42;
+    a(0, 0) = 1.0;
+    a(2, 2) = 2.0;
+
+    REQUIRE_EQUALS(a.get(0, 0), 1.0);
+    REQUIRE_EQUALS(a.get(1, 1), 42.0);
+    REQUIRE_EQUALS(a.get(2, 2), 2.0);
+    REQUIRE_EQUALS(a.non_zeros(), 3UL);
+
+    b = a;
+
+    REQUIRE_EQUALS(b.get(0, 0), 1.0);
+    REQUIRE_EQUALS(b.get(1, 1), 42.0);
+    REQUIRE_EQUALS(b.get(2, 2), 2.0);
+    REQUIRE_EQUALS(b.non_zeros(), 3UL);
+}

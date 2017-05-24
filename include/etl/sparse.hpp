@@ -553,6 +553,31 @@ public:
     }
 
     /*!
+     * \brief Copy assign from another matrix
+     *
+     * This operator can change the dimensions of the matrix
+     *
+     * \param rhs The matrix to copy from
+     * \return A reference to the matrix
+     */
+    sparse_matrix_impl& operator=(const sparse_matrix_impl& rhs) noexcept {
+        if (this != &rhs) {
+            if (!_size) {
+                inherit(rhs);
+            } else {
+                validate_assign(*this, rhs);
+            }
+
+            // TODO Find a better solution
+            const_cast<sparse_matrix_impl&>(rhs).assign_to(*this);
+        }
+
+        check_invariants();
+
+        return *this;
+    }
+
+    /*!
      * \brief Assign an ETL expression to the sparse matrix
      */
     template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, sparse_matrix_impl<T, storage_format, D>>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
@@ -774,6 +799,59 @@ public:
         // No GPU support for sparse matrix so far
     }
 
+    /*!
+     * \brief Assign to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_to(L&& lhs)  const {
+        std_assign_evaluate(*this, lhs);
+    }
+
+    /*!
+     * \brief Add to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_add_to(L&& lhs)  const {
+        std_add_evaluate(*this, lhs);
+    }
+
+    /*!
+     * \brief sub to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_sub_to(L&& lhs)  const {
+        std_sub_evaluate(*this, lhs);
+    }
+
+    /*!
+     * \brief mul to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_mul_to(L&& lhs)  const {
+        std_mul_evaluate(*this, lhs);
+    }
+
+    /*!
+     * \brief Div to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_div_to(L&& lhs)  const {
+        std_div_evaluate(*this, lhs);
+    }
+
+    /*!
+     * \brief Mod to the given left-hand-side expression
+     * \param lhs The expression to which assign
+     */
+    template<typename L>
+    void assign_mod_to(L&& lhs)  const {
+        std_mod_evaluate(*this, lhs);
+    }
 
     /*!
      * \brief Prints a fast matrix type (not the contents) to the given stream
