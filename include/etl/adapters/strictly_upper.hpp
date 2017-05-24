@@ -25,8 +25,9 @@ namespace etl {
  */
 template <typename Matrix>
 struct strictly_upper_matrix final : adapter<Matrix>, iterable<const strictly_upper_matrix<Matrix>> {
-    using matrix_t = Matrix;   ///< The adapted matrix type
-    using expr_t   = matrix_t; ///< The wrapped expression type
+    using matrix_t  = Matrix;                        ///< The adapted matrix type
+    using expr_t    = matrix_t;                      ///< The wrapped expression type
+    using this_type = strictly_upper_matrix<Matrix>; ///< The type of this matrix
 
     static_assert(etl_traits<matrix_t>::is_value, "Strictly upper triangular matrix only works with value classes");
     static_assert(etl_traits<matrix_t>::dimensions() == 2, "Strictly upper triangular matrix must be two-dimensional");

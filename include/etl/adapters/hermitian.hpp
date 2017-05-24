@@ -39,8 +39,9 @@ struct hermitian_exception : std::exception {
  */
 template <typename Matrix>
 struct hermitian_matrix final : adapter<Matrix>, iterable<const hermitian_matrix<Matrix>> {
-    using matrix_t = Matrix;   ///< The adapted matrix type
-    using expr_t   = matrix_t; ///< The wrapped expression type
+    using matrix_t  = Matrix;                   ///< The adapted matrix type
+    using expr_t    = matrix_t;                 ///< The wrapped expression type
+    using this_type = hermitian_matrix<Matrix>; ///< The type of this matrix
 
     static_assert(etl_traits<matrix_t>::is_value, "Hermitian matrix only works with value classes");
     static_assert(etl_traits<matrix_t>::dimensions() == 2, "Hermitian matrix must be two-dimensional");
