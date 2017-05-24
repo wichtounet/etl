@@ -125,6 +125,7 @@ void householder(AT& A, QT& Q, RT& R) {
 
         // x -> Take k-th column of z
         etl::dyn_vector<T> x(m);
+
         for(size_t i = 0; i < m; ++i){
             x[i] = z(i, k);
         }
@@ -146,17 +147,13 @@ void householder(AT& A, QT& Q, RT& R) {
             q[k](i, i) += 1;
         }
 
-        auto ZZZ = force_temporary(q[k] * z);
-        z = ZZZ;
+        z = q[k] * z;
     }
 
     Q = q[0];
-    R = q[0] * A;
 
     for (size_t i = 1; i < n && i < m - 1; i++) {
-        etl::dyn_matrix<T> z1(m, m);
-        z1 = q[i] * Q;
-        Q = std::move(z1);
+        Q = q[i] * Q;
     }
 
     R = Q * A;
