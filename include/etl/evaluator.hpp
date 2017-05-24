@@ -522,35 +522,13 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_if(decay_traits<E>::is_linear)>
+    template <typename E, typename R>
     void assign_evaluate(E&& expr, R&& result) {
         //Evaluate sub parts, if any
         pre_assign_rhs(expr);
 
         //Perform the real evaluation, selected by TMP
         assign_evaluate_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc assign_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(!decay_traits<E>::is_linear)>
-    void assign_evaluate(E&& expr, R&& result) {
-        //Evaluate sub parts, if any
-        pre_assign_rhs(expr);
-
-        if(result.alias(expr)){
-            auto tmp_result = force_temporary_dim_only(result);
-
-            //Perform the evaluation to tmp_result
-            assign_evaluate_impl(expr, tmp_result);
-
-            //Perform the real evaluation to result
-            assign_evaluate_impl(tmp_result, result);
-        } else {
-            //Perform the real evaluation, selected by TMP
-            assign_evaluate_impl(expr, result);
-        }
     }
 
 } // end of namespace standard_evaluator

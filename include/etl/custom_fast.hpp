@@ -148,7 +148,22 @@ public:
     template <typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
     custom_fast_matrix_impl& operator=(E&& e) {
         validate_assign(*this, e);
-        e.assign_to(*this);
+
+        // Avoid aliasing issues
+        if (!decay_traits<E>::is_linear && e.alias(*this)) {
+            // Create a temporary to hold the result
+            etl::fast_dyn_matrix_o<T, SO, Dims...> tmp;
+
+            // Assign the expression to the temporary
+            tmp = e;
+
+            // Assign the temporary to this matrix
+            *this = tmp;
+        } else {
+            // Direct assignment of the expression into this matrix
+            e.assign_to(*this);
+        }
+
         return *this;
     }
 
