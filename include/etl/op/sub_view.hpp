@@ -451,6 +451,7 @@ public:
      */
     template <typename... S, cpp_enable_if((sizeof...(S) == n_dimensions))>
     ETL_STRONG_INLINE(const_return_type) operator()(S... args) const {
+        ensure_cpu_up_to_date();
         return memory[dyn_index(*this, args...)];
     }
 
@@ -461,6 +462,7 @@ public:
      */
     template <typename... S, cpp_enable_if((sizeof...(S) == n_dimensions))>
     ETL_STRONG_INLINE(return_type) operator()(S... args) {
+        ensure_cpu_up_to_date();
         return memory[dyn_index(*this, args...)];
     }
 
