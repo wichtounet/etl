@@ -55,5 +55,5 @@ TEMPLATE_TEST_CASE_2("globals/qr/1", "[globals][QR]", Z, float, double) {
 
     // The epsilon need to be big because of the zero in the result
     // and the large difference in computation around zero
-    REQUIRE_DIRECT(approx_equals(QR, A, 10000 * base_eps_etl));
+    REQUIRE_DIRECT(approx_equals(QR, A, 100 * base_eps_etl));
 }
