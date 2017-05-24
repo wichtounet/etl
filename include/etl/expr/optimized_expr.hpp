@@ -54,6 +54,16 @@ public:
     optimized_expr& operator=(const optimized_expr& e) = delete;
     optimized_expr& operator=(optimized_expr&& e) = delete;
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param other The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
+    template <typename E>
+    bool alias(const E& other) const noexcept {
+        return value.alias(other);
+    }
+
     // Assignment functions
 
     /*!
