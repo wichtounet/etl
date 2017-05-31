@@ -382,6 +382,20 @@ public:
     }
 
     /*!
+     * \brief Release all memory hold by the matrix.
+     *
+     * Using a matrix after it has been cleared is considered as Undefined Behaviour.
+     */
+    void clear(){
+        if(_memory){
+            release(_memory, _size);
+        }
+
+        _memory = nullptr;
+        _size = 0;
+    }
+
+    /*!
      * \brief Swap the content of the matrix with the content of the given matrix
      * \param other The other matrix to swap content with
      */
