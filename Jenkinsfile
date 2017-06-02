@@ -7,7 +7,6 @@ pipeline {
        ETL_CPP = "g++-4.9.4"
        ETL_MKL = 'true'
        ETL_THREADS = "-j6"
-       LD_LIBRARY_PATH = "${env.LD_LIBRARY_PATH}:/opt/intel/mkl/lib/intel64:/opt/intel/lib/intel64"
     }
 
     stages {
@@ -40,7 +39,7 @@ pipeline {
 
         stage ('test'){
             steps {
-                sh 'LD_LIBRARY_PATH=\"${env.LD_LIBRARY_PATH}:/opt/intel/mkl/lib/intel64:/opt/intel/lib/intel64\" ./scripts/test_runner.sh'
+                sh 'LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}:/opt/intel/mkl/lib/intel64:/opt/intel/lib/intel64\" ./scripts/test_runner.sh'
                 archive 'catch_report.xml'
                 junit 'catch_report.xml'
             }
