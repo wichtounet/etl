@@ -212,6 +212,18 @@ MP2_TEST_CASE("pooling/max2/13", "[pooling]") {
     REQUIRE_EQUALS(b(2, 2), 4.0);
 }
 
+MP2_TEST_CASE("pooling/max3/14", "[pooling]") {
+    etl::fast_matrix<T, 2, 2, 2, 2> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0});
+    etl::fast_matrix<T, 2, 2, 1, 1> b;
+
+    Impl::template apply<2, 2,  2, 2,  0, 0>(a, b);
+
+    REQUIRE_EQUALS(b(0, 0, 0, 0), 4.0);
+    REQUIRE_EQUALS(b(0, 1, 0, 0), 8.0);
+    REQUIRE_EQUALS(b(1, 0, 0, 0), 4.0);
+    REQUIRE_EQUALS(b(1, 1, 0, 0), 8.0);
+}
+
 // Dynamic version
 
 DYN_MP2_TEST_CASE("dyn_pooling/max2/1", "[pooling]") {
