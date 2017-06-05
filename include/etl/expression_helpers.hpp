@@ -70,6 +70,18 @@ template <typename LE, typename RE, typename OP>
 using right_binary_helper_op = binary_expr<value_t<RE>, build_type<LE>, OP, build_type<RE>>;
 
 /*!
+ * \brief Helper to create a binary expr with left typing
+ */
+template <typename LE, typename RE, template <typename> class OP>
+using bool_left_binary_helper = binary_expr<bool, build_type<LE>, OP<value_t<LE>>, build_type<RE>>;
+
+/*!
+ * \brief Helper to create a binary expr with right typing
+ */
+template <typename LE, typename RE, template <typename> class OP>
+using bool_right_binary_helper = binary_expr<bool, build_type<LE>, OP<value_t<RE>>, build_type<RE>>;
+
+/*!
  * \brief Helper to create an unary expression
  */
 template <typename E, template <typename> class OP>
