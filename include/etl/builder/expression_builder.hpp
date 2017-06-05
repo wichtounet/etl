@@ -395,6 +395,41 @@ LE& operator%=(LE&& lhs, RE&& rhs) {
     return lhs;
 }
 
+// Comparison
+
+/*!
+ * \brief Builds an expression representing the elementwise comparison of lhs and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the element wise comparison of lhs and rhs
+ */
+template <typename LE, typename RE, cpp_enable_if(all_etl_expr<LE, RE>::value)>
+auto equal(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, LE, equal_binary_op> {
+    return {lhs, rhs};
+}
+
+/*!
+ * \brief Builds an expression representing the elementwise comparison of lhs and rhs (scalar)
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the element wise comparison of lhs and rhs (scalar)
+ */
+template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value)>
+auto equal(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, scalar<value_t<LE>>, equal_binary_op> {
+    return {lhs, scalar<value_t<LE>>(rhs)};
+}
+
+/*!
+ * \brief Builds an expression representing the elementwise comparison of lhs (scalar) and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the element wise comparison of lhs (scalar) and rhs
+ */
+template <typename LE, typename RE, cpp_enable_if(std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value)>
+auto equal(LE lhs, RE&& rhs) -> detail::bool_right_binary_helper<scalar<value_t<RE>>, RE, equal_binary_op> {
+    return {scalar<value_t<RE>>(lhs), rhs};
+}
+
 // Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
 
 /*!
