@@ -100,6 +100,32 @@ struct max_pool_2d {
     }
 
     /*!
+     * \brief Pool a block of the sub expression
+     * \param sub The sub expression
+     * \param j The first index of the block
+     * \param k The second index of the block
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     * \tparam S1 The first dimension stride
+     * \tparam S2 The second dimension stride
+     */
+    template <size_t C1, size_t C2, size_t S1, size_t S2, typename A>
+    static auto pool_block_4d(const A& sub, size_t m, size_t n, size_t j, size_t k) {
+        const auto s_j = j * S1;
+        const auto s_k = k * S2;
+
+        auto max = sub(m, n, s_j, s_k);
+
+        for (size_t jj = 0; jj < C1; ++jj) {
+            for (size_t kk = 0; kk < C2; ++kk) {
+                max = std::max(max, sub(m, n, s_j + jj, s_k + kk));
+            }
+        }
+
+        return max;
+    }
+
+    /*!
      * \brief Apply the functor on sub and store the result in m
      * \param sub The sub expression
      * \param m The storage matrix
@@ -188,6 +214,30 @@ struct max_pool_2d {
         for (size_t jj = 0; jj < c1; ++jj) {
             for (size_t kk = 0; kk < c2; ++kk) {
                 max = std::max(max, sub(n, s_j + jj, s_k + kk));
+            }
+        }
+
+        return max;
+    }
+
+    /*!
+     * \brief Pool a block of the sub expression
+     * \param sub The sub expression
+     * \param j The first index of the block
+     * \param k The second index of the block
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename A>
+    static auto pool_block_4d(const A& sub, size_t m, size_t n, size_t j, size_t k, size_t c1, size_t c2, size_t s1, size_t s2) {
+        const auto s_j = j * s1;
+        const auto s_k = k * s2;
+
+        auto max = sub(m, n, s_j, s_k);
+
+        for (size_t jj = 0; jj < c1; ++jj) {
+            for (size_t kk = 0; kk < c2; ++kk) {
+                max = std::max(max, sub(m, n, s_j + jj, s_k + kk));
             }
         }
 
@@ -316,6 +366,90 @@ struct max_pool_2d {
         engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
     }
 
+    /*
+     * 4D handling
+     *
+     * This is especially optimized because this is the most common
+     * case in machine learning. Moreover, this is also easy to
+     * parallelize and optimize
+     */
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_if(is_4d<A>::value)>
+    static void apply(const A& sub, M&& m) {
+        auto batch_fun_n = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    if (cpp_likely(!P1 && !P2)) {
+                        for (size_t mm = first; mm < last; ++mm) {
+                            for (size_t n = 0; n < etl::dim<1>(m); ++n) {
+                                for (size_t j = 0; j < etl::dim<2>(m); ++j) {
+                                    for (size_t k = 0; k < etl::dim<3>(m); ++k) {
+                                        m(mm, n, j, k) = pool_block_4d<C1, C2, S1, S2>(sub, mm, n, j, k);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        for (size_t mm = first; mm < last; ++mm) {
+                            for (size_t n = 0; n < etl::dim<1>(m); ++n) {
+                                apply<C1, C2, S1, S2, P1, P2>(sub(mm)(n), m(mm)(n));
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const size_t N = etl::dim<0>(m);
+
+        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
+    }
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename A, typename M, cpp_enable_if(is_4d<A>::value)>
+    static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+        auto batch_fun_n = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    if (cpp_likely(!p1 && !p2)) {
+                        for (size_t mm = first; mm < last; ++mm) {
+                            for (size_t n = 0; n < etl::dim<1>(m); ++n) {
+                                for (size_t j = 0; j < etl::dim<2>(m); ++j) {
+                                    for (size_t k = 0; k < etl::dim<3>(m); ++k) {
+                                        m(mm, n, j, k) = pool_block_4d(sub, mm, n, j, k, c1, c2, s1, s2);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        for (size_t mm = first; mm < last; ++mm) {
+                            for (size_t n = 0; n < etl::dim<1>(m); ++n) {
+                                apply(sub(mm)(n), m(mm)(n), c1, c2, s1, s2, p1, p2);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const size_t N = etl::dim<0>(m);
+
+        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
+    }
+
     // Deep handling
 
     /*!
@@ -327,7 +461,7 @@ struct max_pool_2d {
      * \tparam S1 The first dimension stride
      * \tparam S2 The second dimension stride
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_if(!is_2d<A>::value && !is_3d<A>::value)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_if(!is_2d<A>::value && !is_3d<A>::value && !is_4d<A>::value)>
     static void apply(const A& sub, M&& m) {
         for(size_t i = 0; i < etl::dim<0>(sub); ++i){
             apply<C1, C2, S1, S2, P1, P2>(sub(i), m(i));
@@ -341,7 +475,7 @@ struct max_pool_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_if(!is_2d<A>::value && !is_3d<A>::value)>
+    template <typename A, typename M, cpp_enable_if(!is_2d<A>::value && !is_3d<A>::value && !is_4d<A>::value)>
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         for(size_t i = 0; i < etl::dim<0>(sub); ++i){
             apply(sub(i), m(i), c1, c2, s1, s2, p1, p2);
