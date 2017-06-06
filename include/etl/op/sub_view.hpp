@@ -281,10 +281,7 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(detail::evaluator_visitor& visitor) const {
-        bool old_need_value = visitor.need_value;
-        visitor.need_value = true;
         sub_expr.visit(visitor);
-        visitor.need_value = old_need_value;
     }
 
     /*!
@@ -667,10 +664,7 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(detail::evaluator_visitor& visitor) const {
-        bool old_need_value = visitor.need_value;
-        visitor.need_value = true;
         sub_expr.visit(visitor);
-        visitor.need_value = old_need_value;
     }
 
     // GPU functions

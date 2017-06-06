@@ -494,10 +494,6 @@ struct base_temporary_expr_un : base_temporary_expr<D, Fast> {
         _a.visit(visitor);
 
         this->evaluate();
-
-        if (visitor.need_value) {
-            this->ensure_cpu_up_to_date();
-        }
     }
 };
 
@@ -606,10 +602,6 @@ struct base_temporary_expr_bin : base_temporary_expr<D, Fast> {
         _b.visit(visitor);
 
         this->evaluate();
-
-        if (visitor.need_value) {
-            this->ensure_cpu_up_to_date();
-        }
     }
 };
 
@@ -746,10 +738,6 @@ public:
         _c.visit(visitor);
 
         this->evaluate();
-
-        if (visitor.need_value) {
-            this->ensure_cpu_up_to_date();
-        }
     }
 };
 

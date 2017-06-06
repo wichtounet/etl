@@ -21,7 +21,7 @@ namespace detail {
  * \brief Visitor to perform local evaluation when necessary
  */
 struct evaluator_visitor {
-    bool need_value = false; ///< Indicates if the value if necessary for the next visits
+    // Nothing to configure
 };
 
 } //end of namespace detail
