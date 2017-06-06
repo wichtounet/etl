@@ -251,6 +251,25 @@ void gevm_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, C&& cc) 
                 cc.template store<V>(vec_type::add(r4, cc.template load<V>(j + 3 * vec_size)), j + 3 * vec_size);
             }
 
+            // 2-Unrolled vectorized loop
+            for (; j + vec_size < n_end; j += vec_size * 2) {
+                auto r1 = vec_type::template zero<T>();
+                auto r2 = vec_type::template zero<T>();
+
+                for (size_t k = block_k; k < m_end; ++k) {
+                    auto a1 = vec_type::set(aa[k]);
+
+                    auto b1 = vec_type::loadu(bb + k * n + j + 0 * vec_size);
+                    auto b2 = vec_type::loadu(bb + k * n + j + 1 * vec_size);
+
+                    r1 = vec_type::fmadd(a1, b1, r1);
+                    r2 = vec_type::fmadd(a1, b2, r2);
+                }
+
+                cc.template store<V>(vec_type::add(r1, cc.template load<V>(j + 0 * vec_size)), j + 0 * vec_size);
+                cc.template store<V>(vec_type::add(r2, cc.template load<V>(j + 1 * vec_size)), j + 1 * vec_size);
+            }
+
             // Base vectorized loop
             for (; j < n_end; j += vec_size) {
                 auto r1 = vec_type::template zero<T>();
