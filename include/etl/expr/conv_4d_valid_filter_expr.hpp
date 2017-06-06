@@ -183,7 +183,6 @@ struct etl_traits<etl::conv_4d_valid_filter_expr<A, B, S1, S2, P1, P2, Flipped>>
     static constexpr bool is_generator    = false;                      ///< Indicates if the expression is a generator
     static constexpr bool is_padded       = false;                      ///< Indicates if the expression is padded
     static constexpr bool is_aligned      = true;                       ///< Indicates if the expression is padded
-    static constexpr bool is_gpu          = false;                      ///< Indicates if the expression can be done on GPU
     static constexpr bool is_temporary = true;                       ///< Indicates if the expression needs a evaluator visitor
     static constexpr order storage_order  = left_traits::storage_order; ///< The expression's storage order
 

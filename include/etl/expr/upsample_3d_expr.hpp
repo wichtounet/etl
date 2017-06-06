@@ -135,7 +135,6 @@ struct etl_traits<etl::upsample_3d_expr<A, C1, C2, C3, Impl>> {
     static constexpr bool is_generator            = false;                     ///< Indicates if the expression is a generator
     static constexpr bool is_padded               = false;                     ///< Indicates if the expression is padded
     static constexpr bool is_aligned              = true;                      ///< Indicates if the expression is padded
-    static constexpr bool is_gpu                  = false;                     ///< Indicates if the expression can be done on GPU
     static constexpr bool is_temporary = true;                      ///< Indicates if the expression needs a evaluator visitor
     static constexpr order storage_order          = sub_traits::storage_order; ///< The expression's storage order
 
