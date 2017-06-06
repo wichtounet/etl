@@ -596,9 +596,15 @@ void gemm_large_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size
     }
 }
 
+/*!
+ * \brief BLIS-like GEMM config
+ */
 template<typename T>
 struct gemm_config;
 
+/*!
+ * \brief BLIS-like GEMM config for single-precision
+ */
 template<>
 struct gemm_config <float> {
     static constexpr size_t MC = 768;
@@ -609,6 +615,9 @@ struct gemm_config <float> {
     static constexpr size_t NR = 4;
 };
 
+/*!
+ * \brief BLIS-like GEMM config for double-precision
+ */
 template<>
 struct gemm_config <double> {
     static constexpr size_t MC = 384;
@@ -619,6 +628,9 @@ struct gemm_config <double> {
     static constexpr size_t NR = 4;
 };
 
+/*!
+ * \brief Packing panels of A, with padding if required.
+ */
 template<typename T>
 void pack_A(size_t mc, size_t kc, const T *A, size_t incRowA, size_t incColA, T* _A){
     static constexpr const size_t MR = gemm_config<T>::MR;
@@ -649,6 +661,9 @@ void pack_A(size_t mc, size_t kc, const T *A, size_t incRowA, size_t incColA, T*
     }
 }
 
+/*!
+ * \brief Packing panels of B, with padding if required.
+ */
 template <typename T>
 void pack_B(size_t kc, size_t nc, const T* B, size_t incRowB, size_t incColB, T* _B) {
     static constexpr const size_t NR = gemm_config<T>::NR;
@@ -679,6 +694,9 @@ void pack_B(size_t kc, size_t nc, const T* B, size_t incRowB, size_t incColB, T*
     }
 }
 
+/*!
+ * \brief Compute Y += alpha*X
+ */
 template<typename T>
 void dgeaxpy(size_t m, size_t n, T alpha, const T* X, size_t incRowX, size_t incColX, T* Y, size_t incRowY, size_t incColY) {
     if (alpha != 1.0) {
@@ -696,6 +714,9 @@ void dgeaxpy(size_t m, size_t n, T alpha, const T* X, size_t incRowX, size_t inc
     }
 }
 
+/*!
+ * \brief Scale X by alpha
+ */
 template <typename T>
 void dgescal(size_t m, size_t n, T alpha, T* X, size_t incRowX, size_t incColX) {
     if (alpha != 0.0) {
@@ -713,7 +734,9 @@ void dgescal(size_t m, size_t n, T alpha, T* X, size_t incRowX, size_t incColX) 
     }
 }
 
-// General version
+/*!
+ * \brief General pico kernel for BLIS
+ */
 template <typename V, typename T, cpp_disable_if(std::is_same<float, T>::value && vector_mode == vector_mode_t::AVX)>
 void gemm_pico_kernel(size_t kc, const T* A, const T* B, T* AB) {
     static constexpr const size_t MR = gemm_config<T>::MR;
@@ -732,7 +755,9 @@ void gemm_pico_kernel(size_t kc, const T* A, const T* B, T* AB) {
     }
 }
 
-// AVX/float version
+/*!
+ * \brief Optimized pico kernel for BLIS, for avx and float
+ */
 template <typename V, typename T, cpp_enable_if(std::is_same<float, T>::value && vector_mode == vector_mode_t::AVX)>
 void gemm_pico_kernel(size_t kc, const T* ETL_RESTRICT A, const T* ETL_RESTRICT B, T* ETL_RESTRICT AB) {
     using vec_type = V;
@@ -848,6 +873,9 @@ void gemm_pico_kernel(size_t kc, const T* ETL_RESTRICT A, const T* ETL_RESTRICT 
     vec_type::storeu(AB + 3 * MR, AB4);
 }
 
+/*!
+ * \brief Micro kernel for BLIS
+ */
 template <typename V, typename T>
 void gemm_micro_kernel(size_t kc, T alpha, const T* A, const T* B, T beta, T* C, size_t incRowC, size_t incColC) {
     static constexpr const size_t MR = gemm_config<T>::MR;
@@ -890,7 +918,10 @@ void gemm_micro_kernel(size_t kc, T alpha, const T* A, const T* B, T beta, T* C,
     }
 }
 
-
+/*!
+ * \brief Macro kernel for the BLIS version of the kernels. Assuming that they
+ * are already packed in _A and _B
+ */
 template <typename V, typename T>
 void gemm_macro_kernel(size_t mc, size_t nc, size_t kc, T alpha, T beta, T* C, size_t incRowC, size_t incColC, etl::dyn_matrix<T, 2>& _A, etl::dyn_matrix<T, 2>& _B, etl::dyn_matrix<T, 2>& _C) {
     static constexpr const size_t MR = gemm_config<T>::MR;
