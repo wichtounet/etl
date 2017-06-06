@@ -101,6 +101,9 @@ struct get_intrinsic_traits<vector_mode_t::AVX512> {
     using type = avx512_intrinsic_traits<T>;
 };
 
+/*!
+ * \copy get_vector_impl
+ */
 template <>
 struct get_vector_impl<vector_mode_t::AVX512> {
     using type = avx512_vec; ///< The vector implementation
@@ -123,6 +126,9 @@ struct get_intrinsic_traits<vector_mode_t::AVX> {
     using type = avx_intrinsic_traits<T>;
 };
 
+/*!
+ * \copy get_vector_impl
+ */
 template <>
 struct get_vector_impl<vector_mode_t::AVX> {
     using type = avx_vec; ///< The vector implementation
@@ -145,6 +151,9 @@ struct get_intrinsic_traits<vector_mode_t::SSE3> {
     using type = sse_intrinsic_traits<T>;
 };
 
+/*!
+ * \copy get_vector_impl
+ */
 template <>
 struct get_vector_impl<vector_mode_t::SSE3> {
     using type = sse_vec; ///< The vector implementation
@@ -156,29 +165,53 @@ struct get_vector_impl<vector_mode_t::SSE3> {
 
 #ifdef __AVX512F__
 
+/*!
+ * \brief The default vectorization scheme
+ */
 using default_vec = avx512_vec;
 
+/*!
+ * \brief The default intrinsic traits
+ */
 template <typename T>
 using default_intrinsic_traits = avx512_intrinsic_traits<T>;
 
 #elif defined(__AVX__)
 
+/*!
+ * \brief The default vectorization scheme
+ */
 using default_vec = avx_vec;
 
+/*!
+ * \brief The default intrinsic traits
+ */
 template <typename T>
 using default_intrinsic_traits = avx_intrinsic_traits<T>;
 
 #elif defined(__SSE3__)
 
+/*!
+ * \brief The default vectorization scheme
+ */
 using default_vec = sse_vec;
 
+/*!
+ * \brief The default intrinsic traits
+ */
 template <typename T>
 using default_intrinsic_traits = sse_intrinsic_traits<T>;
 
 #else
 
+/*!
+ * \brief The default vectorization scheme
+ */
 using default_vec = no_vec;
 
+/*!
+ * \brief The default intrinsic traits
+ */
 template <typename T>
 using default_intrinsic_traits = no_intrinsic_traits<T>;
 
@@ -187,7 +220,7 @@ using default_intrinsic_traits = no_intrinsic_traits<T>;
 #else //ETL_VECTORIZE_EXPR
 
 /*!
- * \brief The defautl vectorization scheme
+ * \brief The default vectorization scheme
  */
 using default_vec = no_vec;
 

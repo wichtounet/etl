@@ -11,6 +11,16 @@ namespace etl {
 
 namespace impl {
 
+/*!
+ * \brief Kernel for probabilistic max pooling (for hidden units)
+ * for a kernel of 2x2
+ *
+ * This is especially optimized because this is the most common
+ * kernel used in machine learning.
+ *
+ * \param exp_sub The exponentials
+ * \param base The output matrix
+ */
 template<typename T>
 inline void pmp_h_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base){
     const size_t M = etl::dim<0>(exp_sub);
@@ -31,6 +41,13 @@ inline void pmp_h_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 
     }
 }
 
+/*!
+ * \brief Kernel for probabilistic max pooling (for hidden units)
+ * \param exp_sub The exponentials
+ * \param base The output matrix
+ * \tparam C1 The first dimension pooling ratio
+ * \tparam C2 The second dimension pooling ratio
+ */
 template<size_t C1, size_t C2, typename T>
 inline void pmp_h_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base){
     const size_t M = etl::dim<0>(exp_sub);
@@ -55,6 +72,13 @@ inline void pmp_h_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& 
     }
 }
 
+/*!
+ * \brief Kernel for probabilistic max pooling (for hidden units)
+ * \param exp_sub The exponentials
+ * \param base The output matrix
+ * \param c1 The first dimension pooling ratio
+ * \param c2 The second dimension pooling ratio
+ */
 template<typename T>
 inline void pmp_h_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base, size_t c1, size_t c2){
     const size_t M = etl::dim<0>(exp_sub);
@@ -336,6 +360,16 @@ struct dyn_pmp_h_impl {
     }
 };
 
+/*!
+ * \brief Kernel for probabilistic max pooling (for pooling units)
+ * with a 2x2 kernel
+ *
+ * This is especially optimized because this is the most common
+ * kernel used in machine learning.
+ *
+ * \param exp_sub The exponentials
+ * \param base The output matrix
+ */
 template<typename T>
 inline void pmp_p_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base){
     const size_t M = etl::dim<0>(exp_sub);
@@ -356,6 +390,13 @@ inline void pmp_p_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 
     }
 }
 
+/*!
+ * \brief Kernel for probabilistic max pooling (for pooling units)
+ * \param exp_sub The exponentials
+ * \param base The output matrix
+ * \tparam C1 The first dimension pooling ratio
+ * \tparam C2 The second dimension pooling ratio
+ */
 template<size_t C1, size_t C2, typename T>
 inline void pmp_p_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base){
     const size_t M = etl::dim<0>(exp_sub);
@@ -380,6 +421,13 @@ inline void pmp_p_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& 
     }
 }
 
+/*!
+ * \brief Kernel for probabilistic max pooling (for pooling units)
+ * \param exp_sub The exponentials
+ * \param base The output matrix
+ * \param c1 The first dimension pooling ratio
+ * \param c2 The second dimension pooling ratio
+ */
 template<typename T>
 inline void pmp_p_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base, size_t c1, size_t c2){
     const size_t M = etl::dim<0>(exp_sub);

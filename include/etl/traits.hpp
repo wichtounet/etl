@@ -11,51 +11,107 @@ namespace etl {
 
 namespace traits_detail {
 
+/*!
+ * \brief Special traits helper to detect if type is a fast_matrix
+ * \tparam T The type to test
+ */
 template <typename T>
 struct is_fast_matrix_impl : std::false_type {};
 
+/*!
+ * \copydoc is_fast_matrix_impl
+ */
 template <typename V1, typename V2, order V3, size_t... R>
 struct is_fast_matrix_impl<fast_matrix_impl<V1, V2, V3, R...>> : std::true_type {};
 
+/*!
+ * \brief Special traits helper to detect if type is a custom_fast_matrix
+ * \tparam T The type to test
+ */
 template <typename T>
 struct is_custom_fast_matrix_impl : std::false_type {};
 
+/*!
+ * \copydoc is_custom_fast_matrix_impl
+ */
 template <typename V1, typename V2, order V3, size_t... R>
 struct is_custom_fast_matrix_impl<custom_fast_matrix_impl<V1, V2, V3, R...>> : std::true_type {};
 
+/*!
+ * \brief Special traits helper to detect if type is a dyn_matrix
+ * \tparam T The type to test
+ */
 template <typename T>
 struct is_dyn_matrix_impl : std::false_type {};
 
+/*!
+ * \copydoc is_dyn_matrix_impl
+ */
 template <typename V1, order V2, size_t V3>
 struct is_dyn_matrix_impl<dyn_matrix_impl<V1, V2, V3>> : std::true_type {};
 
+/*!
+ * \brief Special traits helper to detect if type is a custom_dyn_matrix
+ * \tparam T The type to test
+ */
 template <typename T>
 struct is_custom_dyn_matrix_impl : std::false_type {};
 
+/*!
+ * \copydoc is_custom_dyn_matrix_impl
+ */
 template <typename V1, order V2, size_t V3>
 struct is_custom_dyn_matrix_impl<custom_dyn_matrix_impl<V1, V2, V3>> : std::true_type {};
 
+/*!
+ * \brief Special traits helper to detect if type is a sparse_matrix
+ * \tparam T The type to test
+ */
 template <typename T>
 struct is_sparse_matrix_impl : std::false_type {};
 
+/*!
+ * \copydoc is_sparse_matrix_impl
+ */
 template <typename V1, sparse_storage V2, size_t V3>
 struct is_sparse_matrix_impl<sparse_matrix_impl<V1, V2, V3>> : std::true_type {};
 
+/*!
+ * \brief Special traits helper to detect if type is a dyn_matrix_view
+ * \tparam T The type to test
+ */
 template <typename T>
 struct is_dyn_matrix_view : std::false_type {};
 
+/*!
+ * \copydoc is_dyn_matrix_view
+ */
 template <typename E, size_t D, typename Enable>
 struct is_dyn_matrix_view<dyn_matrix_view<E, D, Enable>> : std::true_type {};
 
+/*!
+ * \brief Special traits helper to detect if type is a sub_view
+ * \tparam T The type to test
+ */
 template <typename T>
 struct is_sub_view : std::false_type {};
 
+/*!
+ * \copydoc is_sub_view
+ */
 template <typename E, bool Aligned>
 struct is_sub_view<sub_view<E, Aligned>> : std::true_type {};
 
+/*!
+ * \brief Special traits helper to detect if type is a selected_expr
+ * \tparam T The type to test
+ */
 template <typename T>
 struct is_selected_expr_impl : std::false_type {};
 
+/*!
+ * \copydoc is_selected_expr_impl
+ */
 template <typename Selector, Selector V, typename Expr>
 struct is_selected_expr_impl<selected_expr<Selector, V, Expr>> : std::true_type {};
 

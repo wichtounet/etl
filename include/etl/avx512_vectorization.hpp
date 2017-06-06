@@ -501,11 +501,17 @@ struct avx512_vec {
         return lhs;
     }
 
+    /*!
+     * \brief Multiply the two given complex vectors
+     */
     template <bool Complex = false>
     ETL_INLINE_VEC_512D mul(__m512d lhs, __m512d rhs) {
         return _mm512_mul_pd(lhs, rhs);
     }
 
+    /*!
+     * \brief Multiply the two given complex vectors
+     */
     template <>
     ETL_INLINE_VEC_512D mul<true>(__m512d lhs, __m512d rhs) {
         cpp_unreachable("Not yet implemented");
