@@ -892,7 +892,7 @@ void gemm_micro_kernel(size_t kc, T alpha, const T* A, const T* B, T beta, T* C,
 
 
 template <typename V, typename T>
-void dgemm_macro_kernel(size_t mc, size_t nc, size_t kc, T alpha, T beta, T* C, size_t incRowC, size_t incColC, etl::dyn_matrix<T, 2>& _A, etl::dyn_matrix<T, 2>& _B, etl::dyn_matrix<T, 2>& _C) {
+void gemm_macro_kernel(size_t mc, size_t nc, size_t kc, T alpha, T beta, T* C, size_t incRowC, size_t incColC, etl::dyn_matrix<T, 2>& _A, etl::dyn_matrix<T, 2>& _B, etl::dyn_matrix<T, 2>& _C) {
     static constexpr const size_t MR = gemm_config<T>::MR;
     static constexpr const size_t NR = gemm_config<T>::NR;
 
@@ -920,7 +920,14 @@ void dgemm_macro_kernel(size_t mc, size_t nc, size_t kc, T alpha, T beta, T* C, 
 }
 
 /*!
- * \brief Optimized version of large GEMM for row major version
+ * \brief Optimized version of large GEMM for row major version with workspace
+ * on the form of the BLIS kernels.
+ *
+ * On very large matrices, this is somewhat faster but seems to depend on the
+ * processor. This will need more work and complete kernels.
+ *
+ * From: http://apfel.mathematik.uni-ulm.de/~lehn/sghpc/gemm/
+ *
  * \param a The lhs matrix
  * \param b The rhs matrix
  * \param c The result matrix
@@ -972,7 +979,7 @@ void gemm_large_kernel_workspace_rr(const T* A, const T* B, T* C, size_t m, size
 
                 pack_A(mc, kc, &A[i * MC * incRowA + l * KC * incColA], incRowA, incColA, _A.memory_start());
 
-                dgemm_macro_kernel<V>(mc, nc, kc, alpha, _beta,
+                gemm_macro_kernel<V>(mc, nc, kc, alpha, _beta,
                                    &C[i * MC * incRowC + j * NC * incColC],
                                    incRowC, incColC, _A, _B, _C);
             }
@@ -982,7 +989,7 @@ void gemm_large_kernel_workspace_rr(const T* A, const T* B, T* C, size_t m, size
 
 template <typename V, typename T, cpp_disable_if(all_floating_t<T>::value)>
 void gemm_large_kernel_workspace_rr(const T* , const T* , T* , size_t , size_t , size_t , T ) {
-
+    // Nothing to do here
 }
 
 /*!
@@ -1007,7 +1014,6 @@ void gemm(A&& a, B&& b, C&& c) {
     if(etl::size(b) <= gemm_rr_small_threshold){
         gemm_small_kernel_rr<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
     } else {
-        //gemm_large_kernel_workspace_rr<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, T(0));
         gemm_large_kernel_rr<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, T(0));
     }
 
