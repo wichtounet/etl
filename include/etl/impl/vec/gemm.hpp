@@ -714,7 +714,7 @@ void dgescal(size_t m, size_t n, T alpha, T* X, size_t incRowX, size_t incColX) 
 }
 
 // General version
-template <typename V, typename T, cpp_disable_if(std::is_same<float, T>::value && std::is_same<V, avx_vec>::value)>
+template <typename V, typename T, cpp_disable_if(std::is_same<float, T>::value && vector_mode == vector_mode_t::AVX)>
 void gemm_pico_kernel(size_t kc, const T* A, const T* B, T* AB) {
     static constexpr const size_t MR = gemm_config<T>::MR;
     static constexpr const size_t NR = gemm_config<T>::NR;
@@ -733,7 +733,7 @@ void gemm_pico_kernel(size_t kc, const T* A, const T* B, T* AB) {
 }
 
 // AVX/float version
-template <typename V, typename T, cpp_enable_if(std::is_same<float, T>::value && std::is_same<V, avx_vec>::value)>
+template <typename V, typename T, cpp_enable_if(std::is_same<float, T>::value && vector_mode == vector_mode_t::AVX)>
 void gemm_pico_kernel(size_t kc, const T* ETL_RESTRICT A, const T* ETL_RESTRICT B, T* ETL_RESTRICT AB) {
     using vec_type = V;
 
