@@ -529,6 +529,72 @@ auto less_equal(LE lhs, RE&& rhs) -> detail::bool_right_binary_helper<scalar<val
     return {scalar<value_t<RE>>(lhs), rhs};
 }
 
+/*!
+ * \brief Builds an expression representing the elementwise greater than comparison of lhs and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the element wise greater than comparison of lhs and rhs
+ */
+template <typename LE, typename RE, cpp_enable_if(all_etl_expr<LE, RE>::value)>
+auto greater(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, LE, greater_binary_op> {
+    return {lhs, rhs};
+}
+
+/*!
+ * \brief Builds an expression representing the elementwise greater than comparison of lhs and rhs (scalar)
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the element wise greater than comparison of lhs and rhs (scalar)
+ */
+template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value)>
+auto greater(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, scalar<value_t<LE>>, greater_binary_op> {
+    return {lhs, scalar<value_t<LE>>(rhs)};
+}
+
+/*!
+ * \brief Builds an expression representing the elementwise greater than comparison of lhs (scalar) and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the element wise greater than comparison of lhs (scalar) and rhs
+ */
+template <typename LE, typename RE, cpp_enable_if(std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value)>
+auto greater(LE lhs, RE&& rhs) -> detail::bool_right_binary_helper<scalar<value_t<RE>>, RE, greater_binary_op> {
+    return {scalar<value_t<RE>>(lhs), rhs};
+}
+
+/*!
+ * \brief Builds an expression representing the elementwise greater than or equals comparison of lhs and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the element wise greater than or equals comparison of lhs and rhs
+ */
+template <typename LE, typename RE, cpp_enable_if(all_etl_expr<LE, RE>::value)>
+auto greater_equal(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, LE, greater_equal_binary_op> {
+    return {lhs, rhs};
+}
+
+/*!
+ * \brief Builds an expression representing the elementwise greater than or equals comparison of lhs and rhs (scalar)
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the element wise greater than or equals comparison of lhs and rhs (scalar)
+ */
+template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value)>
+auto greater_equal(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, scalar<value_t<LE>>, greater_equal_binary_op> {
+    return {lhs, scalar<value_t<LE>>(rhs)};
+}
+
+/*!
+ * \brief Builds an expression representing the elementwise greater than or equals comparison of lhs (scalar) and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the element wise greater than or equals comparison of lhs (scalar) and rhs
+ */
+template <typename LE, typename RE, cpp_enable_if(std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value)>
+auto greater_equal(LE lhs, RE&& rhs) -> detail::bool_right_binary_helper<scalar<value_t<RE>>, RE, greater_equal_binary_op> {
+    return {scalar<value_t<RE>>(lhs), rhs};
+}
+
 // Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
 
 /*!
