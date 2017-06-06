@@ -12,6 +12,7 @@ pipeline {
     stages {
         stage ('git'){
             steps {
+                // TODO This horrible Jenkins mess should be cleaned
                 checkout([
                     $class: 'GitSCM',
                     branches: scm.branches,
@@ -39,6 +40,7 @@ pipeline {
 
         stage ('test'){
             steps {
+                // TODO It should not be necessary to set variables here, but seems it is the only way with Jenkins sh step
                 sh 'ETL_THREADS=-j6 ETL_GPP=g++-4.9.4 LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}:/opt/intel/mkl/lib/intel64:/opt/intel/lib/intel64\" ./scripts/test_runner.sh'
                 archive 'catch_report.xml'
                 junit 'catch_report.xml'
@@ -74,6 +76,7 @@ pipeline {
 
     post {
         always {
+            // TODO This should send "Back to normal notification"
             step([$class: 'Mailer',
                 notifyEveryUnstableBuild: true,
                 recipients: "baptiste.wicht@gmail.com",
