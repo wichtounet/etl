@@ -491,18 +491,13 @@ struct base_temporary_expr_un : base_temporary_expr<D, Fast> {
 
         this->allocate_temporary();
 
-        bool old_need_value = visitor.need_value;
-
-        visitor.need_value = decay_traits<D>::is_gpu;
         _a.visit(visitor);
 
         this->evaluate();
 
-        if (old_need_value) {
+        if (visitor.need_value) {
             this->ensure_cpu_up_to_date();
         }
-
-        visitor.need_value = old_need_value;
     }
 };
 
@@ -607,21 +602,14 @@ struct base_temporary_expr_bin : base_temporary_expr<D, Fast> {
 
         this->allocate_temporary();
 
-        bool old_need_value = visitor.need_value;
-
-        visitor.need_value = decay_traits<D>::is_gpu;
         _a.visit(visitor);
-
-        visitor.need_value = decay_traits<D>::is_gpu;
         _b.visit(visitor);
 
         this->evaluate();
 
-        if (old_need_value) {
+        if (visitor.need_value) {
             this->ensure_cpu_up_to_date();
         }
-
-        visitor.need_value = old_need_value;
     }
 };
 
@@ -753,24 +741,15 @@ public:
 
         this->allocate_temporary();
 
-        bool old_need_value = visitor.need_value;
-
-        visitor.need_value = decay_traits<D>::is_gpu;
         _a.visit(visitor);
-
-        visitor.need_value = decay_traits<D>::is_gpu;
         _b.visit(visitor);
-
-        visitor.need_value = decay_traits<D>::is_gpu;
         _c.visit(visitor);
 
         this->evaluate();
 
-        if (old_need_value) {
+        if (visitor.need_value) {
             this->ensure_cpu_up_to_date();
         }
-
-        visitor.need_value = old_need_value;
     }
 };
 
