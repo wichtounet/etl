@@ -10,7 +10,7 @@
 #include <random>
 
 #define ETL_COUNTERS
-#define ETL_COUNTERS_VERBOSE
+//#define ETL_COUNTERS_VERBOSE
 
 #define IF_DEBUG if(false)
 
@@ -93,7 +93,6 @@ void basic(){
     std::cout << "Should be: 3.36933e+23" << std::endl;
 }
 
-
 void sub(){
     etl::dyn_matrix<float, 3> A(16, 2048, 2048);
     etl::dyn_matrix<float, 3> B(16, 2048, 2048);
@@ -166,14 +165,14 @@ void ml(){
 
     for (size_t i = 0; i < 10; ++i) {
         // Forward Propagation
-        C1_O = bias_add_4d(etl::ml::convolution_forward<1, 1, 1, 1>(I, C1_W), C1_B);
+        C1_O = relu(bias_add_4d(etl::ml::convolution_forward<1, 1, 1, 1>(I, C1_W), C1_B));
         P1_O = etl::max_pool_2d<2, 2>(C1_O);
 
-        C2_O = bias_add_4d(etl::ml::convolution_forward<1, 1, 1, 1>(P1_O, C2_W), C2_B);
+        C2_O = relu(bias_add_4d(etl::ml::convolution_forward<1, 1, 1, 1>(P1_O, C2_W), C2_B));
         P2_O = etl::max_pool_2d<2, 2>(C2_O);
 
-        FC1_O = bias_add_2d(etl::reshape<32, 16 * 7 * 7>(P2_O) * FC1_W, FC1_B);
-        FC2_O = bias_add_2d(FC1_O * FC2_W, FC2_B);
+        FC1_O = sigmoid(bias_add_2d(etl::reshape<32, 16 * 7 * 7>(P2_O) * FC1_W, FC1_B));
+        FC2_O = sigmoid(bias_add_2d(FC1_O * FC2_W, FC2_B));
 
         // Backward propagation of the errors
 
