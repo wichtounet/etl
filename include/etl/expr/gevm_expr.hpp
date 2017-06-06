@@ -85,11 +85,17 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
     static inline cpp14_constexpr gemm_impl select_default_gevm_impl(const size_t n1, const size_t n2) {
         using T = value_t<A>;
 
+        constexpr bool vec_possible = all_vectorizable_t<vector_mode, A, B, C>::value && vec_enabled;
+
         if(cblas_enabled){
+            if(vec_possible && n1 * n2 <= 200 * 200){
+                return gemm_impl::VEC;
+            }
+
             return gemm_impl::BLAS;
         }
 
-        if(all_vectorizable_t<vector_mode, A, B, C>::value && vec_enabled){
+        if(vec_possible){
             return gemm_impl::VEC;
         }
 
