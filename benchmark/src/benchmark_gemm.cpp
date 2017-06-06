@@ -19,7 +19,7 @@ double double_ref = 0.0;
 
 } //end of anonymous namespace
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (s) [gemm]", gemm_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (s) [gemm]", sgemm_policy,
     FLOPS([](size_t d1, size_t d2){ return 2 * d1 * d2 * d2; }),
     CPM_SECTION_INIT([](size_t d1, size_t d2){ return std::make_tuple(smat(d1,d2), smat(d1,d2), smat(d1, d2)); }),
     CPM_SECTION_FUNCTOR("default", [](smat& a, smat& b, smat& c){ c = a * b; }),
