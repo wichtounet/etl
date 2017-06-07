@@ -42,7 +42,6 @@ pipeline {
             environment {
                 ETL_THREADS = "-j6"
                 ETL_GPP = "g++-4.9.4"
-                LD_LIBRARY_PATH = "${LD_LIBRARY_PATH}:/opt/intel/mkl/lib/intel64:/opt/intel/lib/intel64"
             }
 
             steps {
