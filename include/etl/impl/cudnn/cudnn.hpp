@@ -300,6 +300,44 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_5d(I&& input){
  * \param input The input matrix
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
+template<typename I>
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_flat(I&& input){
+    using T = value_t<I>;
+
+    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+
+    cudnnTensorDescriptor_t tensor;
+    cudnn_check(cudnnCreateTensorDescriptor(&tensor));
+    cudnn_check(cudnnSetTensor4dDescriptor(tensor, CUDNN_TENSOR_NCHW, data_type,
+        etl::size(input), 1, 1, 1));
+
+    return cudnn_wrapper<cudnnTensorDescriptor_t>{tensor};
+}
+
+/*!
+ * \brief Create a CUDNN tensor for the given input matrix
+ * \param input The input matrix
+ * \return a cudnn_wrapper around a created CUDNN tensor
+ */
+template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 1)>
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
+    using T = value_t<I>;
+
+    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+
+    cudnnTensorDescriptor_t tensor;
+    cudnn_check(cudnnCreateTensorDescriptor(&tensor));
+    cudnn_check(cudnnSetTensor4dDescriptor(tensor, CUDNN_TENSOR_NCHW, data_type,
+        etl::dim<0>(input), 1, 1, 1));
+
+    return cudnn_wrapper<cudnnTensorDescriptor_t>{tensor};
+}
+
+/*!
+ * \brief Create a CUDNN tensor for the given input matrix
+ * \param input The input matrix
+ * \return a cudnn_wrapper around a created CUDNN tensor
+ */
 template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 2)>
 cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
     using T = value_t<I>;
@@ -310,6 +348,25 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
     cudnn_check(cudnnCreateTensorDescriptor(&tensor));
     cudnn_check(cudnnSetTensor4dDescriptor(tensor, CUDNN_TENSOR_NCHW, data_type,
         etl::dim<0>(input), etl::dim<1>(input), 1, 1));
+
+    return cudnn_wrapper<cudnnTensorDescriptor_t>{tensor};
+}
+
+/*!
+ * \brief Create a CUDNN tensor for the given input matrix
+ * \param input The input matrix
+ * \return a cudnn_wrapper around a created CUDNN tensor
+ */
+template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 4)>
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
+    using T = value_t<I>;
+
+    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+
+    cudnnTensorDescriptor_t tensor;
+    cudnn_check(cudnnCreateTensorDescriptor(&tensor));
+    cudnn_check(cudnnSetTensor4dDescriptor(tensor, CUDNN_TENSOR_NCHW, data_type,
+        etl::dim<0>(input), etl::dim<1>(input), etl::dim<2>(input), etl::dim<3>(input)));
 
     return cudnn_wrapper<cudnnTensorDescriptor_t>{tensor};
 }
