@@ -356,5 +356,67 @@ auto relu_derivative_out(const E& value) -> detail::unary_helper<E, relu_derivat
     return detail::unary_helper<E, relu_derivative_op>{value};
 }
 
+// Fully-Fledged backward activation
+
+/*!
+ * \brief Return the backward activation of the identity function
+ * \param output The output of the forward activation function
+ * \param errors The errors at output of this activation function
+ * \return the backward activation of the activation function
+ */
+template <typename O, typename E>
+decltype(auto) identity_backward(O&& output, E&& errors) {
+    cpp_unused(output);
+    return std::forward<E>(errors);
+}
+
+/*!
+ * \brief Return the backward activation of the sigmoid function
+ * \param output The output of the forward activation function
+ * \param errors The errors at output of this activation function
+ * \return the backward activation of the activation function
+ */
+template <typename O, typename E>
+auto sigmoid_backward(O&& output, E&& errors){
+    static_assert(is_etl_expr<E>::value, "etl::sigmoid_derivative can only be used on ETL expressions");
+    return output >> (1.0 - output) >> errors;
+}
+
+/*!
+ * \brief Return the backward activation of the softmax function
+ * \param output The output of the forward activation function
+ * \param errors The errors at output of this activation function
+ * \return the backward activation of the activation function
+ */
+template <typename O, typename E>
+decltype(auto) softmax_backward(O&& output, E&& errors) {
+    cpp_unused(output);
+    return std::forward<E>(errors);
+}
+
+/*!
+ * \brief Return the backward activation of the tanh function
+ * \param output The output of the forward activation function
+ * \param errors The errors at output of this activation function
+ * \return the backward activation of the activation function
+ */
+template <typename O, typename E>
+auto tanh_backward(O&& output, E&& errors){
+    static_assert(is_etl_expr<E>::value, "etl::tanh_derivative can only be used on ETL expressions");
+    return 1.0 - (output >> output) >> errors;
+}
+
+/*!
+ * \brief Return the backward activation of the RELU function
+ * \param output The output of the forward activation function
+ * \param errors The errors at output of this activation function
+ * \return the backward activation of the activation function
+ */
+template <typename O, typename E>
+auto relu_backward(O&& output, E&& errors) {
+    static_assert(is_etl_expr<E>::value, "etl::relu_derivative can only be used on ETL expressions");
+    return detail::unary_helper<E, relu_derivative_op>{output} >> errors;
+}
+
 } //end of namespace ml
 } //end of namespace etl
