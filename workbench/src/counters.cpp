@@ -28,7 +28,7 @@ float fake = 0;
  * Basic: 15 / 0 / 3 (Optimal!)
  * Sub: 163 / 160 / 480
  * ML: 69 / 10 / 19 (without activations)
- * ML: 129 / 80 / 49 (with activations)
+ * ML: 109 / 80 / 49 (with activations)
  */
 
 void simple(){
@@ -179,13 +179,13 @@ void ml(){
 
         FC2_E = L - FC2_O;                                            // Errors of last layer  (!GPU)
         FC1_E = FC2_E * trans(FC2_W);                                 // Backpropagate FC2 -> FC1
-        FC1_E = sigmoid_derivative(FC1_O) >> FC1_E;                   // Adapt errors of FC1
+        FC1_E = etl::ml::sigmoid_backward(FC1_O, FC1_E);              // Adapt errors of FC1
         etl::reshape<32, 16 * 7 * 7>(P2_E) = FC1_E * trans(FC1_W);    // FC1 -> MP2
         C2_E = etl::max_pool_upsample_2d<2, 2>(C2_O, P2_O, P2_E);     // MP2 -> C2
-        C2_E = relu_derivative(C2_O) >> C2_E;                         // Adapt errors of C2
+        C2_E = etl::ml::relu_backward(C2_O, C2_E);                    // Adapt errors of C2
         P1_E = etl::ml::convolution_backward<1, 1, 1, 1>(C2_E, C2_W); // C2 -> MP1
         C1_E = etl::max_pool_upsample_2d<2, 2>(C1_O, P1_O, P1_E);     // MP1 -> C1
-        C1_E = relu_derivative(C1_O) >> C1_E;                         // Adapt errors of C1
+        C1_E = etl::ml::relu_backward(C1_O, C1_E);                    // Adapt errors of C1
 
         // Compute the gradients
 
