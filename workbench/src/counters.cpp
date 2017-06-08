@@ -12,6 +12,9 @@
 #define ETL_COUNTERS
 //#define ETL_COUNTERS_VERBOSE
 
+// Use GPU pool to limit allocations
+#define ETL_GPU_POOL
+
 #define IF_DEBUG if(false)
 
 #include "etl/etl.hpp"
@@ -24,10 +27,18 @@ float fake = 0;
 /*
  *
  * Current values are (alloc/release/gpu_to_cpu/cpu_to_gpu):
+ *
+ * No pool
  * Simple: 13 /  13 /   0 /   2 (Optimal!)
  * Basic:  25 /  25 /   0 /   3 (Optimal!)
  * Sub:   163 / 163 / 160 / 480
  * ML:    179 / 179 /  10 /  19
+ *
+ * GPU pool
+ * Simple:  4 / 0 /   0 /   2 (Optimal!)
+ * Basic:   2 / 0 /   0 /   3 (Optimal!)
+ * Sub:     4 / 0 / 160 / 480
+ * ML:     40 / 0 /  10 /  19
  */
 
 void simple() {
