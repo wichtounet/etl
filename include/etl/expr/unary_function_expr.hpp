@@ -18,9 +18,9 @@ namespace etl {
  * \tparam A The transposed type
  */
 template <typename A, typename Impl>
-struct function_expr : base_temporary_expr_un<function_expr<A, Impl>, A> {
+struct unary_function_expr : base_temporary_expr_un<unary_function_expr<A, Impl>, A> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
-    using this_type  = function_expr<A, Impl>;               ///< The type of this expression
+    using this_type  = unary_function_expr<A, Impl>;               ///< The type of this expression
     using base_type  = base_temporary_expr_un<this_type, A>; ///< The base type
     using sub_traits = decay_traits<A>;                      ///< The traits of the sub type
 
@@ -30,7 +30,7 @@ struct function_expr : base_temporary_expr_un<function_expr<A, Impl>, A> {
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    explicit function_expr(A a) : base_type(a) {
+    explicit unary_function_expr(A a) : base_type(a) {
         //Nothing else to init
     }
 
@@ -149,7 +149,7 @@ struct function_expr : base_temporary_expr_un<function_expr<A, Impl>, A> {
      * \param expr The expression to print
      * \return the output stream
      */
-    friend std::ostream& operator<<(std::ostream& os, const function_expr& expr) {
+    friend std::ostream& operator<<(std::ostream& os, const unary_function_expr& expr) {
         return os << Impl::name() << "(" << expr._a << ")";
     }
 };
@@ -159,8 +159,8 @@ struct function_expr : base_temporary_expr_un<function_expr<A, Impl>, A> {
  * \tparam A The transposed sub type
  */
 template <typename A, typename Impl>
-struct etl_traits<etl::function_expr<A, Impl>> {
-    using expr_t     = etl::function_expr<A, Impl>; ///< The expression type
+struct etl_traits<etl::unary_function_expr<A, Impl>> {
+    using expr_t     = etl::unary_function_expr<A, Impl>; ///< The expression type
     using sub_expr_t = std::decay_t<A>;             ///< The sub expression type
     using sub_traits = etl_traits<sub_expr_t>;      ///< The sub traits
     using value_type = value_t<A>;                  ///< The value type of the expression

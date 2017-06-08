@@ -190,9 +190,9 @@ auto identity_derivative(E&& value) {
  * \return An ETL expression representing the logistic sigmoid of the input.
  */
 template <typename E, cpp_enable_if(all_dma<E>::value)>
-auto sigmoid(E&& value) -> function_expr<detail::build_type<E>, detail::sigmoid> {
+auto sigmoid(E&& value) -> unary_function_expr<detail::build_type<E>, detail::sigmoid> {
     static_assert(is_etl_expr<E>::value, "etl::sigmoid can only be used on ETL expressions");
-    return function_expr<detail::build_type<E>, detail::sigmoid>(value);
+    return unary_function_expr<detail::build_type<E>, detail::sigmoid>(value);
 }
 
 /*!
@@ -212,9 +212,9 @@ auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
  * \return An ETL expression representing the relu activation of the input.
  */
 template <typename E, cpp_enable_if(all_dma<E>::value)>
-auto relu(E&& value) -> function_expr<detail::build_type<E>, detail::relu> {
+auto relu(E&& value) -> unary_function_expr<detail::build_type<E>, detail::relu> {
     static_assert(is_etl_expr<E>::value, "etl::relu can only be used on ETL expressions");
-    return function_expr<detail::build_type<E>, detail::relu>(value);
+    return unary_function_expr<detail::build_type<E>, detail::relu>(value);
 }
 
 /*!
