@@ -65,6 +65,9 @@ struct function_expr : base_temporary_expr_un<function_expr<A, Impl>, A> {
         static_assert(order_lhs == order_rhs, "Cannot change storage order");
         static_assert(decay_traits<A>::dimensions() == decay_traits<C>::dimensions(), "Invalid dimensions");
         cpp_assert(etl::size(a) == etl::size(c), "Invalid size");
+
+        cpp_unused(a);
+        cpp_unused(c);
     }
 
     // Assignment functions
