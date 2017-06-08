@@ -56,6 +56,40 @@ struct relu {
     }
 };
 
+/*!
+ * \brief Logistic sigmoid backward
+ */
+struct sigmoid_backward {
+    /*!
+     * \brief Apply the functor to e
+     */
+    template <typename O, typename E, typename C>
+    static void apply(O&& o, E&& e, C&& c) {
+        impl::cudnn::sigmoid_backward(o, e, c);
+    }
+
+    static const char* name(){
+        return "sigmoid'";
+    }
+};
+
+/*!
+ * \brief Logistic sigmoid backward
+ */
+struct relu_backward {
+    /*!
+     * \brief Apply the functor to e
+     */
+    template <typename O, typename E, typename C>
+    static void apply(O&& o, E&& e, C&& c) {
+        impl::cudnn::relu_backward(o, e, c);
+    }
+
+    static const char* name(){
+        return "relu'";
+    }
+};
+
 } //end of namespace detail
 
 } //end of namespace etl
