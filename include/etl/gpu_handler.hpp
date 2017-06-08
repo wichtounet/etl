@@ -138,6 +138,15 @@ public:
         return pool;
     }
 
+    /*!
+     * \brief Return the lock for the pool
+     * \return a reference to the pool lock
+     */
+    static std::mutex& get_lock(){
+        static std::mutex lock;
+        return lock;
+    }
+
 public:
     /*!
      * \brief Allocate GPU memory of the given size
@@ -150,12 +159,15 @@ public:
 
         // Try to get memory from the pool
 
-        // TODO thread safety
-        for(auto& slot : get_pool().cache){
-            if(slot.memory && slot.size == real_size){
-                auto memory = slot.memory;
-                slot.memory = nullptr;
-                return static_cast<T*>(memory);
+        {
+            std::lock_guard<std::mutex> l(get_lock());
+
+            for(auto& slot : get_pool().cache){
+                if(slot.memory && slot.size == real_size){
+                    auto memory = slot.memory;
+                    slot.memory = nullptr;
+                    return static_cast<T*>(memory);
+                }
             }
         }
 
@@ -172,12 +184,17 @@ public:
     template<typename T>
     static void release(const T* gpu_memory, size_t size){
         // Try to get an empty slot
-        for(auto& slot : get_pool().cache){
-            if(!slot.memory){
-                slot.memory = const_cast<void*>(static_cast<const void*>(gpu_memory));
-                slot.size   = size * sizeof(T);
 
-                return;
+        {
+            std::lock_guard<std::mutex> l(get_lock());
+
+            for(auto& slot : get_pool().cache){
+                if(!slot.memory){
+                    slot.memory = const_cast<void*>(static_cast<const void*>(gpu_memory));
+                    slot.size   = size * sizeof(T);
+
+                    return;
+                }
             }
         }
 
