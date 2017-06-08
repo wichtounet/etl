@@ -53,6 +53,7 @@ struct binary_function_expr : base_temporary_expr_bin<binary_function_expr<A, B,
         static_assert(decay_traits<B>::size() == decay_traits<C>::size(), "Invalid size");
 
         cpp_unused(a);
+        cpp_unused(b);
         cpp_unused(c);
     }
 
@@ -75,6 +76,7 @@ struct binary_function_expr : base_temporary_expr_bin<binary_function_expr<A, B,
         cpp_assert(etl::size(b) == etl::size(c), "Invalid size");
 
         cpp_unused(a);
+        cpp_unused(b);
         cpp_unused(c);
     }
 
