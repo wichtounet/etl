@@ -82,6 +82,7 @@
 #include "etl/crtp/iterable.hpp"
 
 // The complex expressions
+#include "etl/expr/function_expr.hpp"
 #include "etl/expr/transpose_expr.hpp"
 #include "etl/expr/bias_batch_mean_2d_expr.hpp"
 #include "etl/expr/bias_batch_mean_4d_expr.hpp"
