@@ -28,7 +28,7 @@ float fake = 0;
  * Basic: 15 / 0 / 3 (Optimal!)
  * Sub: 163 / 160 / 480
  * ML: 69 / 10 / 19 (without activations)
- * ML: 108 / 70 / 79 (with activations)
+ * ML: 129 / 80 / 49 (with activations)
  */
 
 void simple(){
