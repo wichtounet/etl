@@ -21,13 +21,14 @@ namespace etl {
  * All GPU memory allocations should be made through this helper.
  */
 struct gpu_memory_allocator {
+private:
     /*!
      * \brief Allocate GPU memory of the given size
      * \param size The memory  size
      * \return The allocated GPU memory
      */
     template<typename T>
-    static T* allocate(size_t size){
+    static T* base_allocate(size_t size){
         T* memory = nullptr;
 
         auto cuda_status = cudaMalloc(&memory, size * sizeof(T));
@@ -48,14 +49,143 @@ struct gpu_memory_allocator {
      * \param gpu_memory The GPU memory allocated
      * \param size The size of the allocated GPU memory
      */
-    static void release(const void* gpu_memory, size_t size){
-        cpp_unused(size);
-
+    static void base_release(const void* gpu_memory){
         //Note: the const_cast is only here to allow compilation
         cuda_check(cudaFree((const_cast<void*>(gpu_memory))));
 
         inc_counter("gpu:release");
     }
+
+#ifndef ETL_GPU_POOL
+public:
+    /*!
+     * \brief Allocate GPU memory of the given size
+     * \param size The memory  size
+     * \return The allocated GPU memory
+     */
+    template<typename T>
+    static T* allocate(size_t size){
+        return base_allocate<T>(size);
+    }
+
+    /*!
+     * \brief Release memory allocated by this allocator
+     * \param gpu_memory The GPU memory allocated
+     * \param size The size of the allocated GPU memory
+     */
+    static void release(const void* gpu_memory, size_t size){
+        base_release(gpu_memory, size);
+
+        cpp_unused(size);
+    }
+
+#else // ETL_GPU_POOL
+
+#ifdef ETL_GPU_POOL_SIZE
+    static constexpr size_t limit = ETL_GPU_POOL_SIZE; ///< The limit of the pool
+#else
+    static constexpr size_t limit = 32; ///< The limit of the pool
+#endif
+
+    /*!
+     * \brief An entry in the mini-pool
+     */
+    struct mini_pool_entry {
+        size_t size;  ///< The size, in bytes, of the memory
+        void* memory; ///< Pointer to the memory, if any
+    };
+
+    /*!
+     * \brief A very simple implementation for a GPU memory pool of
+     * fixed-size
+     *
+     * Although it's quite simple, it should help in most cases
+     * where the same operations are done several times, as in
+     * Machine Learning. In that case, even a very simple pool like
+     * this may greatly reduce the overhead of memory allocation.
+     */
+    struct mini_pool {
+        std::array<mini_pool_entry, limit> cache; ///< The cache of GPU memory addresses
+
+        /*!
+         * \brief Construct the mini pool
+         */
+        mini_pool(){
+            for(auto& slot : cache){
+                slot.size         = 0;
+                slot.memory       = nullptr;
+            }
+        }
+
+        /*!
+         * \brief Destructs the GPU pool, releasing all remaining memory
+         */
+        ~mini_pool(){
+            for(auto& slot : cache){
+                if(slot.memory){
+                    base_release(slot.memory);
+                }
+            }
+        }
+    };
+
+    /*!
+     * \brief Return a reference to the GPU pool
+     * \return a reference to the GPU pool
+     */
+    static mini_pool& get_pool(){
+        static mini_pool pool;
+        return pool;
+    }
+
+public:
+    /*!
+     * \brief Allocate GPU memory of the given size
+     * \param size The memory  size
+     * \return The allocated GPU memory
+     */
+    template<typename T>
+    static T* allocate(size_t size){
+        const auto real_size = size * sizeof(T);
+
+        // Try to get memory from the pool
+
+        // TODO thread safety
+        for(auto& slot : get_pool().cache){
+            if(slot.memory && slot.size == real_size){
+                auto memory = slot.memory;
+                slot.memory = nullptr;
+                return static_cast<T*>(memory);
+            }
+        }
+
+        // If a memory block is not found, allocate new memory
+
+        return base_allocate<T>(size);
+    }
+
+    /*!
+     * \brief Release memory allocated by this allocator
+     * \param gpu_memory The GPU memory allocated
+     * \param size The size of the allocated GPU memory
+     */
+    template<typename T>
+    static void release(const T* gpu_memory, size_t size){
+        // Try to get an empty slot
+        for(auto& slot : get_pool().cache){
+            if(!slot.memory){
+                slot.memory = const_cast<void*>(static_cast<const void*>(gpu_memory));
+                slot.size   = size * sizeof(T);
+
+                return;
+            }
+        }
+
+        // If the cache is pool, release the memory
+
+        base_release(gpu_memory);
+    }
+#endif
 };
 
 /*!
