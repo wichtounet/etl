@@ -75,20 +75,15 @@ struct function_expr : base_temporary_expr_un<function_expr<A, Impl>, A> {
      */
     template<typename C, cpp_enable_if(decay_traits<C>::storage_order == storage_order)>
     void assign_to(C&& c)  const {
-        std::cout << "FE0" << std::endl;
         static_assert(all_etl_expr<A, C>::value, "Function expression only supported for ETL expressions");
 
         auto& a = this->a();
 
-        std::cout << "FE1" << std::endl;
         standard_evaluator::pre_assign_rhs(a);
-        std::cout << "FE2" << std::endl;
 
         check(a, c);
-        std::cout << "FE3" << std::endl;
 
         Impl::apply(make_temporary(a), c);
-        std::cout << "FE4" << std::endl;
     }
 
     /*!
