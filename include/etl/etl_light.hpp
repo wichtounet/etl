@@ -82,8 +82,9 @@
 #include "etl/crtp/iterable.hpp"
 
 // The complex expressions
-#include "etl/expr/transpose_expr.hpp"
 #include "etl/expr/unary_function_expr.hpp"
+#include "etl/expr/binary_function_expr.hpp"
+#include "etl/expr/transpose_expr.hpp"
 
 // The expressions building
 #include "etl/builder/expression_builder.hpp"
