@@ -14,8 +14,8 @@
 namespace etl {
 
 /*!
- * \brief A transposition expression.
- * \tparam A The transposed type
+ * \brief An unary function expression.
+ * \tparam A The unary sub type
  */
 template <typename A, typename Impl>
 struct unary_function_expr : base_temporary_expr_un<unary_function_expr<A, Impl>, A> {
@@ -35,7 +35,7 @@ struct unary_function_expr : base_temporary_expr_un<unary_function_expr<A, Impl>
     }
 
     /*!
-     * \brief Validate the transposition dimensions
+     * \brief Validate the function dimensions
      * \param a The input matrix
      * \þaram c The output matrix
      */
@@ -53,7 +53,7 @@ struct unary_function_expr : base_temporary_expr_un<unary_function_expr<A, Impl>
     }
 
     /*!
-     * \brief Validate the transposition dimensions
+     * \brief Validate the function dimensions
      * \param a The input matrix
      * \þaram c The output matrix
      */
@@ -155,8 +155,8 @@ struct unary_function_expr : base_temporary_expr_un<unary_function_expr<A, Impl>
 };
 
 /*!
- * \brief Traits for a transpose expression
- * \tparam A The transposed sub type
+ * \brief Traits for an unary function expression
+ * \tparam A The unary sub type
  */
 template <typename A, typename Impl>
 struct etl_traits<etl::unary_function_expr<A, Impl>> {
