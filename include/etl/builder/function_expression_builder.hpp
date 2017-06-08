@@ -182,6 +182,32 @@ auto identity_derivative(E&& value) {
 //Note: Use of decltype here should not be necessary, but g++ does
 //not like it without it for some reason
 
+#ifdef ETL_CUDNN_MODE
+
+/*!
+ * \brief Return the logistic sigmoid of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the logistic sigmoid of the input.
+ */
+template <typename E, cpp_enable_if(all_dma<E>::value)>
+auto sigmoid(E&& value) -> function_expr<detail::build_type<E>, detail::sigmoid> {
+    static_assert(is_etl_expr<E>::value, "etl::sigmoid can only be used on ETL expressions");
+    return function_expr<detail::build_type<E>, detail::sigmoid>(value);
+}
+
+/*!
+ * \brief Return the logistic sigmoid of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the logistic sigmoid of the input.
+ */
+template <typename E, cpp_disable_if(all_dma<E>::value)>
+auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
+    static_assert(is_etl_expr<E>::value, "etl::sigmoid can only be used on ETL expressions");
+    return 1.0 / (1.0 + exp(-value));
+}
+
+#else
+
 /*!
  * \brief Return the logistic sigmoid of the given ETL expression.
  * \param value The ETL expression
@@ -192,6 +218,8 @@ auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
     static_assert(is_etl_expr<E>::value, "etl::sigmoid can only be used on ETL expressions");
     return 1.0 / (1.0 + exp(-value));
 }
+
+#endif
 
 /*!
  * \brief Return the derivative of the logistic sigmoid of the given ETL expression.
