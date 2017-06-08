@@ -29,12 +29,13 @@ namespace cudnn {
 #ifdef ETL_CUDNN_MODE
 
 /*!
- * \brief Compute the sigmoid of x and store the result in y
+ * \brief Compute an activation of x and store the result in y
  * \param x The a expression
  * \param y The c expression
+ * \param mode The activation function to use
  */
 template <typename I, typename C>
-void sigmoid(I&& x, C&& y) {
+void activation(I&& x, C&& y, cudnnActivationMode_t mode) {
     using type = std::remove_const_t<value_t<I>>;
 
     type alpha[] = {1.0f};
@@ -48,14 +49,14 @@ void sigmoid(I&& x, C&& y) {
 
     cudnnActivationDescriptor_t func_tensor;
     cudnn_check(cudnnCreateActivationDescriptor(&func_tensor));
-    cudnn_check(cudnnSetActivationDescriptor(func_tensor, CUDNN_ACTIVATION_SIGMOID, CUDNN_PROPAGATE_NAN, 0.0));
+    cudnn_check(cudnnSetActivationDescriptor(func_tensor, mode, CUDNN_PROPAGATE_NAN, 0.0));
 
     // Allocate GPU memory, if necessary
 
     x.ensure_gpu_up_to_date();
     y.ensure_gpu_allocated();
 
-    // y = sigmoid(x)
+    // y = activation(x)
 
     cudnn_check(cudnnActivationForward(handle.get(),
         func_tensor,
@@ -67,6 +68,26 @@ void sigmoid(I&& x, C&& y) {
 
     // Release the resources
     cudnn_check(cudnnDestroyActivationDescriptor(func_tensor));
+}
+
+/*!
+ * \brief Compute the sigmoid of x and store the result in y
+ * \param x The a expression
+ * \param y The c expression
+ */
+template <typename I, typename C>
+void sigmoid(I&& x, C&& y) {
+    activation(x, y, CUDNN_ACTIVATION_SIGMOID);
+}
+
+/*!
+ * \brief Compute the RELU of x and store the result in y
+ * \param x The a expression
+ * \param y The c expression
+ */
+template <typename I, typename C>
+void relu(I&& x, C&& y) {
+    activation(x, y, CUDNN_ACTIVATION_RELU);
 }
 
 #else
@@ -81,7 +102,18 @@ void sigmoid(I&& x, C&& y) {
 template <typename I, typename C>
 void sigmoid(I&& x, C&& y) {
     cpp_unused(x);
-    cpp_unused(b);
+    cpp_unused(y);
+    cpp_unreachable("CUDNN not available/enabled");
+}
+
+/*!
+ * \brief Compute the RELU of x and store the result in y
+ * \param x The a expression
+ * \param y The c expression
+ */
+template <typename I, typename C>
+void relu(I&& x, C&& y) {
+    cpp_unused(x);
     cpp_unused(y);
     cpp_unreachable("CUDNN not available/enabled");
 }

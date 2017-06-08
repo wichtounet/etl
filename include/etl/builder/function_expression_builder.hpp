@@ -206,6 +206,28 @@ auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
     return 1.0 / (1.0 + exp(-value));
 }
 
+/*!
+ * \brief Return the relu activation of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the relu activation of the input.
+ */
+template <typename E, cpp_enable_if(all_dma<E>::value)>
+auto relu(E&& value) -> function_expr<detail::build_type<E>, detail::relu> {
+    static_assert(is_etl_expr<E>::value, "etl::relu can only be used on ETL expressions");
+    return function_expr<detail::build_type<E>, detail::relu>(value);
+}
+
+/*!
+ * \brief Return the relu activation of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the relu activation of the input.
+ */
+template <typename E, cpp_disable_if(all_dma<E>::value)>
+auto relu(E&& value) -> decltype(max(value, 0.0)) {
+    static_assert(is_etl_expr<E>::value, "etl::relu can only be used on ETL expressions");
+    return max(value, 0.0);
+}
+
 #else
 
 /*!
@@ -217,6 +239,17 @@ template <typename E>
 auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
     static_assert(is_etl_expr<E>::value, "etl::sigmoid can only be used on ETL expressions");
     return 1.0 / (1.0 + exp(-value));
+}
+
+/*!
+ * \brief Return the relu activation of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the relu activation of the input.
+ */
+template <typename E>
+auto relu(E&& value) -> decltype(max(value, 0.0)) {
+    static_assert(is_etl_expr<E>::value, "etl::relu can only be used on ETL expressions");
+    return max(value, 0.0);
 }
 
 #endif
@@ -337,17 +370,6 @@ template <typename E>
 auto tanh_derivative(E&& value) -> decltype(1.0 - (tanh(value) >> tanh(value))) {
     static_assert(is_etl_expr<E>::value, "etl::tanh_derivative can only be used on ETL expressions");
     return 1.0 - (tanh(value) >> tanh(value));
-}
-
-/*!
- * \brief Return the relu activation of the given ETL expression.
- * \param value The ETL expression
- * \return An ETL expression representing the relu activation of the input.
- */
-template <typename E>
-auto relu(E&& value) -> decltype(max(value, 0.0)) {
-    static_assert(is_etl_expr<E>::value, "etl::relu can only be used on ETL expressions");
-    return max(value, 0.0);
 }
 
 /*!

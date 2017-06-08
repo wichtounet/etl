@@ -39,6 +39,23 @@ struct sigmoid {
     }
 };
 
+/*!
+ * \brief Logistic sigmoid
+ */
+struct relu {
+    /*!
+     * \brief Apply the functor to e
+     */
+    template <typename E, typename C>
+    static void apply(E&& e, C&& c) {
+        impl::cudnn::relu(e, c);
+    }
+
+    static const char* name(){
+        return "relu";
+    }
+};
+
 } //end of namespace detail
 
 } //end of namespace etl
