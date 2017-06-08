@@ -23,12 +23,11 @@ float fake = 0;
 
 /*
  *
- * Current values are (alloc/gpu_to_cpu/cpu_to_gpu):
- * Simple: 3 / 0 / 2 (Optimal!)
- * Basic: 15 / 0 / 3 (Optimal!)
- * Sub: 163 / 160 / 480
- * ML: 69 / 10 / 19 (without activations)
- * ML: 139 / 10 / 19 (with activations)
+ * Current values are (alloc/release/gpu_to_cpu/cpu_to_gpu):
+ * Simple: 13 /  13 /   0 /   2 (Optimal!)
+ * Basic:  25 /  25 /   0 /   3 (Optimal!)
+ * Sub:   163 / 163 / 160 / 480
+ * ML:    179 / 179 /  10 /  19
  */
 
 void simple() {
