@@ -63,17 +63,9 @@ struct vectorized_base {
      * \param i The index where to start loading from
      * \return a vector from lhs starting at position i
      */
-    inline auto lhs_load(size_t i) const {
-        return lhs.template load<vect_impl>(i);
-    }
-
-    /*!
-     * \brief Load a vector from rhs at position i
-     * \param i The index where to start loading from
-     * \return a vector from rhs starting at position i
-     */
-    inline auto rhs_load(size_t i) const {
-        return rhs.template load<vect_impl>(i);
+    template<typename T>
+    static inline auto load(T&& x, size_t i) {
+        return x.template load<vect_impl>(i);
     }
 };
 
@@ -93,7 +85,7 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr> {
     using base_t::lhs;
     using base_t::rhs;
     using base_t::_size;
-    using base_t::rhs_load;
+    using base_t::load;
 
     /*!
      * \brief Constuct a new VectorizedAssign
@@ -116,7 +108,7 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr> {
 
         if(streaming && _size > stream_threshold / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)){
             for (; i < last; i += IT::size) {
-                lhs.template stream<vect_impl>(rhs_load(i), i);
+                lhs.template stream<vect_impl>(load(rhs, i), i);
             }
 
             for (; remainder && i < _size; ++i) {
@@ -124,14 +116,14 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr> {
             }
         } else {
             for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
-                lhs.template store<vect_impl>(rhs_load(i + 0 * IT::size), i + 0 * IT::size);
-                lhs.template store<vect_impl>(rhs_load(i + 1 * IT::size), i + 1 * IT::size);
-                lhs.template store<vect_impl>(rhs_load(i + 2 * IT::size), i + 2 * IT::size);
-                lhs.template store<vect_impl>(rhs_load(i + 3 * IT::size), i + 3 * IT::size);
+                lhs.template store<vect_impl>(load(rhs, i + 0 * IT::size), i + 0 * IT::size);
+                lhs.template store<vect_impl>(load(rhs, i + 1 * IT::size), i + 1 * IT::size);
+                lhs.template store<vect_impl>(load(rhs, i + 2 * IT::size), i + 2 * IT::size);
+                lhs.template store<vect_impl>(load(rhs, i + 3 * IT::size), i + 3 * IT::size);
             }
 
             for (; i < last; i += IT::size) {
-                lhs.template store<vect_impl>(rhs_load(i), i);
+                lhs.template store<vect_impl>(load(rhs, i), i);
             }
 
             for (; remainder && i < _size; ++i) {
@@ -154,8 +146,7 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, R_Expr> {
     using base_t::lhs_m;
     using base_t::rhs;
     using base_t::_size;
-    using base_t::lhs_load;
-    using base_t::rhs_load;
+    using base_t::load;
 
     /*!
      * \brief Constuct a new VectorizedAssignAdd
@@ -177,14 +168,14 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, R_Expr> {
         size_t i = 0;
 
         for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
-            lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::add(load(lhs, i + 0 * IT::size), load(rhs, i + 0 * IT::size)), i + 0 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::add(load(lhs, i + 1 * IT::size), load(rhs, i + 1 * IT::size)), i + 1 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::add(load(lhs, i + 2 * IT::size), load(rhs, i + 2 * IT::size)), i + 2 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::add(load(lhs, i + 3 * IT::size), load(rhs, i + 3 * IT::size)), i + 3 * IT::size);
         }
 
         for (; i < last; i += IT::size) {
-            lhs.template store<vect_impl>(vect_impl::add(lhs_load(i), rhs_load(i)), i);
+            lhs.template store<vect_impl>(vect_impl::add(load(lhs, i), load(rhs, i)), i);
         }
 
         for (; remainder && i < _size; ++i) {
@@ -206,8 +197,7 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, R_Expr> {
     using base_t::lhs_m;
     using base_t::rhs;
     using base_t::_size;
-    using base_t::lhs_load;
-    using base_t::rhs_load;
+    using base_t::load;
 
     /*!
      * \brief Constuct a new VectorizedAssignSub
@@ -229,14 +219,14 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, R_Expr> {
         size_t i = 0;
 
         for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
-            lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::sub(load(lhs, i + 0 * IT::size), load(rhs, i + 0 * IT::size)), i + 0 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::sub(load(lhs, i + 1 * IT::size), load(rhs, i + 1 * IT::size)), i + 1 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::sub(load(lhs, i + 2 * IT::size), load(rhs, i + 2 * IT::size)), i + 2 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::sub(load(lhs, i + 3 * IT::size), load(rhs, i + 3 * IT::size)), i + 3 * IT::size);
         }
 
         for (; i < last; i += IT::size) {
-            lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i), rhs_load(i)), i);
+            lhs.template store<vect_impl>(vect_impl::sub(load(lhs, i), load(rhs, i)), i);
         }
 
         for (; remainder && i < _size; ++i) {
@@ -258,8 +248,7 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr> {
     using base_t::lhs_m;
     using base_t::rhs;
     using base_t::_size;
-    using base_t::lhs_load;
-    using base_t::rhs_load;
+    using base_t::load;
 
     /*!
      * \brief Constuct a new VectorizedAssignMul
@@ -281,14 +270,14 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr> {
         size_t i = 0;
 
         for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
-            lhs.template store<vect_impl>(vect_impl::mul(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::mul(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::mul(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::mul(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::mul(load(lhs, i + 0 * IT::size), load(rhs, i + 0 * IT::size)), i + 0 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::mul(load(lhs, i + 1 * IT::size), load(rhs, i + 1 * IT::size)), i + 1 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::mul(load(lhs, i + 2 * IT::size), load(rhs, i + 2 * IT::size)), i + 2 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::mul(load(lhs, i + 3 * IT::size), load(rhs, i + 3 * IT::size)), i + 3 * IT::size);
         }
 
         for (; i < last; i += IT::size) {
-            lhs.template store<vect_impl>(vect_impl::mul(lhs_load(i), rhs_load(i)), i);
+            lhs.template store<vect_impl>(vect_impl::mul(load(lhs, i), load(rhs, i)), i);
         }
 
         for (; remainder && i < _size; ++i) {
@@ -310,8 +299,7 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr> {
     using base_t::lhs_m;
     using base_t::rhs;
     using base_t::_size;
-    using base_t::lhs_load;
-    using base_t::rhs_load;
+    using base_t::load;
 
     /*!
      * \brief Constuct a new VectorizedAssignDiv
@@ -333,14 +321,14 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr> {
         size_t i = 0;
 
         for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
-            lhs.template store<vect_impl>(vect_impl::div(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::div(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::div(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::div(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::div(load(lhs, i + 0 * IT::size), load(rhs, i + 0 * IT::size)), i + 0 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::div(load(lhs, i + 1 * IT::size), load(rhs, i + 1 * IT::size)), i + 1 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::div(load(lhs, i + 2 * IT::size), load(rhs, i + 2 * IT::size)), i + 2 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::div(load(lhs, i + 3 * IT::size), load(rhs, i + 3 * IT::size)), i + 3 * IT::size);
         }
 
         for (; i < last; i += IT::size) {
-            lhs.template store<vect_impl>(vect_impl::div(lhs_load(i), rhs_load(i)), i);
+            lhs.template store<vect_impl>(vect_impl::div(load(lhs, i), load(rhs, i)), i);
         }
 
         for (; remainder && i < _size; ++i) {
