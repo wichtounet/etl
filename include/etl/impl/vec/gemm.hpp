@@ -607,12 +607,12 @@ struct gemm_config;
  */
 template<>
 struct gemm_config <float> {
-    static constexpr size_t MC = 768;
-    static constexpr size_t KC = 384;
-    static constexpr size_t NC = 4096;
+    static constexpr size_t MC = 768;  ///< The first dimension buffer
+    static constexpr size_t KC = 384;  ///< The second dimension buffer
+    static constexpr size_t NC = 4096; ///< The third dimension buffer
 
-    static constexpr size_t MR = 8;
-    static constexpr size_t NR = 4;
+    static constexpr size_t MR = 8; ///< The first dimension of micro-kernel
+    static constexpr size_t NR = 4; ///< The second dimension of micro-kernel
 };
 
 /*!
@@ -620,19 +620,19 @@ struct gemm_config <float> {
  */
 template<>
 struct gemm_config <double> {
-    static constexpr size_t MC = 384;
-    static constexpr size_t KC = 384;
-    static constexpr size_t NC = 4096;
+    static constexpr size_t MC = 384;  ///< The first dimension buffer
+    static constexpr size_t KC = 384;  ///< The second dimension buffer
+    static constexpr size_t NC = 4096; ///< The third dimension buffer
 
-    static constexpr size_t MR = 4;
-    static constexpr size_t NR = 4;
+    static constexpr size_t MR = 4; ///< The first dimension of micro-kernel
+    static constexpr size_t NR = 4; ///< The second dimension of micro-kernel
 };
 
 /*!
  * \brief Packing panels of A, with padding if required.
  */
 template<typename T>
-void pack_A(size_t mc, size_t kc, const T *A, size_t incRowA, size_t incColA, T* _A){
+void pack_a(size_t mc, size_t kc, const T *A, size_t incRowA, size_t incColA, T* _A){
     static constexpr const size_t MR = gemm_config<T>::MR;
 
     const size_t mp  = mc / MR;
@@ -665,7 +665,7 @@ void pack_A(size_t mc, size_t kc, const T *A, size_t incRowA, size_t incColA, T*
  * \brief Packing panels of B, with padding if required.
  */
 template <typename T>
-void pack_B(size_t kc, size_t nc, const T* B, size_t incRowB, size_t incColB, T* _B) {
+void pack_b(size_t kc, size_t nc, const T* B, size_t incRowB, size_t incColB, T* _B) {
     static constexpr const size_t NR = gemm_config<T>::NR;
 
     const size_t np  = nc / NR;
@@ -1003,12 +1003,12 @@ void gemm_large_kernel_workspace_rr(const T* A, const T* B, T* C, size_t m, size
             const size_t kc = (l != kb - 1 || _kc == 0) ? KC : _kc;
             T _beta         = (l == 0) ? beta : 1.0;
 
-            pack_B(kc, nc, &B[l * KC * incRowB + j * NC * incColB], incRowB, incColB, _B.memory_start());
+            pack_b(kc, nc, &B[l * KC * incRowB + j * NC * incColB], incRowB, incColB, _B.memory_start());
 
             for (size_t i = 0; i < mb; ++i) {
                 const size_t mc = (i != mb - 1 || _mc == 0) ? MC : _mc;
 
-                pack_A(mc, kc, &A[i * MC * incRowA + l * KC * incColA], incRowA, incColA, _A.memory_start());
+                pack_a(mc, kc, &A[i * MC * incRowA + l * KC * incColA], incRowA, incColA, _A.memory_start());
 
                 gemm_macro_kernel<V>(mc, nc, kc, alpha, _beta,
                                    &C[i * MC * incRowC + j * NC * incColC],
