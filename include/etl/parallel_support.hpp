@@ -259,6 +259,158 @@ inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, 
  * \param acc_functor The functor to accumulate results
  * \param threshold The threshold for paralellization
  */
+template <typename E, typename Functor>
+inline void engine_dispatch_1d_slice(E&& expr, Functor&& functor, size_t threshold) {
+    using TT = value_t<E>;
+
+    static constexpr size_t S = default_intrinsic_traits<TT>::size;
+
+    const size_t n = size(expr);
+
+    if(n){
+        if (engine_select_parallel(n, threshold)) {
+            const size_t T = std::min(n, etl::threads);
+
+            ETL_PARALLEL_SESSION {
+                thread_engine::acquire();
+
+                if /*constexpr*/ (decay_traits<E>::is_aligned && S > 1){
+                    if(n >= T * S){
+                        // In case there is enough data, we align it
+
+                        const size_t n_aligned = (n + (S - 1)) & ~(S - 1);
+                        const size_t blocks = n_aligned / S;
+                        const size_t blocks_per_thread = blocks / T;
+                        const size_t batch = blocks_per_thread * S;
+
+                        for (size_t t = 0; t < T - 1; ++t) {
+                            thread_engine::schedule(functor, memory_slice<aligned>(expr, t * batch, (t + 1) * batch));
+                        }
+
+                        thread_engine::schedule(functor, memory_slice<aligned>(expr, (T - 1) * batch, n));
+                    } else {
+                        // Not enough data to consider aligning
+
+                        const size_t batch = n / T;
+
+                        for (size_t t = 0; t < T - 1; ++t) {
+                            thread_engine::schedule(functor, memory_slice<unaligned>(expr, t * batch, (t + 1) * batch));
+                        }
+
+                        thread_engine::schedule(functor, memory_slice<unaligned>(expr, (T - 1) * batch, n));
+                    }
+                } else {
+                    // If the data is not aligned in the first, don't make any effort to align it
+
+                    const size_t batch = n / T;
+
+                    for (size_t t = 0; t < T - 1; ++t) {
+                        thread_engine::schedule(functor, memory_slice<unaligned>(expr, t * batch, (t + 1) * batch));
+                    }
+
+                    thread_engine::schedule(functor, memory_slice<unaligned>(expr, (T - 1) * batch, n));
+                }
+
+                thread_engine::wait();
+            }
+        } else {
+            functor(expr);
+        }
+    }
+}
+
+/*!
+ * \brief Dispatch the elements of an ETL container in a parallel manner and use an accumulator functor to accumulate the results.
+ *
+ * The functors will be called with slices of the original expression.
+ *
+ * \param expr The expression to slice
+ * \param functor The functor to execute
+ * \param acc_functor The functor to accumulate results
+ * \param threshold The threshold for paralellization
+ */
+template <typename E1, typename E2, typename Functor>
+inline void engine_dispatch_1d_slice_binary(E1&& expr1, E2&& expr2, Functor&& functor, size_t threshold) {
+    using TT = value_t<E1>;
+
+    static constexpr size_t S = default_intrinsic_traits<TT>::size;
+
+    const size_t n = size(expr1);
+
+    if(n){
+        if (engine_select_parallel(n, threshold)) {
+            const size_t T = std::min(n, etl::threads);
+
+            ETL_PARALLEL_SESSION {
+                thread_engine::acquire();
+
+                if /*constexpr*/ (decay_traits<E1>::is_aligned && decay_traits<E2>::is_aligned && S > 1){
+                    if(n >= T * S){
+                        // In case there is enough data, we align it
+
+                        const size_t n_aligned = (n + (S - 1)) & ~(S - 1);
+                        const size_t blocks = n_aligned / S;
+                        const size_t blocks_per_thread = blocks / T;
+                        const size_t batch = blocks_per_thread * S;
+
+                        for (size_t t = 0; t < T - 1; ++t) {
+                            thread_engine::schedule(functor,
+                                memory_slice<aligned>(expr1, t * batch, (t + 1) * batch),
+                                memory_slice<aligned>(expr2, t * batch, (t + 1) * batch));
+                        }
+
+                        thread_engine::schedule(functor,
+                            memory_slice<aligned>(expr1, (T - 1) * batch, n),
+                            memory_slice<aligned>(expr2, (T - 1) * batch, n));
+                    } else {
+                        // Not enough data to consider aligning
+
+                        const size_t batch = n / T;
+
+                        for (size_t t = 0; t < T - 1; ++t) {
+                            thread_engine::schedule(functor,
+                                memory_slice<unaligned>(expr1, t * batch, (t + 1) * batch),
+                                memory_slice<unaligned>(expr2, t * batch, (t + 1) * batch));
+                        }
+
+                        thread_engine::schedule(functor,
+                            memory_slice<unaligned>(expr1, (T - 1) * batch, n),
+                            memory_slice<unaligned>(expr2, (T - 1) * batch, n));
+                    }
+                } else {
+                    // If the data is not aligned in the first, don't make any effort to align it
+
+                    const size_t batch = n / T;
+
+                    for (size_t t = 0; t < T - 1; ++t) {
+                        thread_engine::schedule(functor,
+                            memory_slice<unaligned>(expr1, t * batch, (t + 1) * batch),
+                            memory_slice<unaligned>(expr2, t * batch, (t + 1) * batch));
+                    }
+
+                    thread_engine::schedule(functor,
+                        memory_slice<unaligned>(expr1, (T - 1) * batch, n),
+                        memory_slice<unaligned>(expr2, (T - 1) * batch, n));
+                }
+
+                thread_engine::wait();
+            }
+        } else {
+            functor(expr1, expr2);
+        }
+    }
+}
+
+/*!
+ * \brief Dispatch the elements of an ETL container in a parallel manner and use an accumulator functor to accumulate the results.
+ *
+ * The functors will be called with slices of the original expression.
+ *
+ * \param expr The expression to slice
+ * \param functor The functor to execute
+ * \param acc_functor The functor to accumulate results
+ * \param threshold The threshold for paralellization
+ */
 template <typename E, typename Functor, typename AccFunctor>
 inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor&& acc_functor, size_t threshold) {
     using TT = value_t<E>;
