@@ -73,6 +73,14 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, siz
     }
 }
 
+/*!
+ * \brief Split a matrix into blocks for each thread for parallel
+ * dispatching
+ * \param M The first dimension of the matrix
+ * \param N The second dimension of the matrix
+ * \return A pair containing the width and height of the blocks
+ * processed by each thread
+ */
 inline std::pair<size_t, size_t> thread_blocks(size_t M, size_t N) {
     if (M >= N) {
         size_t m = std::min(threads, std::max(1UL, size_t(round(std::sqrt(threads * double(M) / double(N))))));
