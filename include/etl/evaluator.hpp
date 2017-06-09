@@ -13,7 +13,7 @@
  * it will choose the most adapted implementation to assign one to another.
  * There are several implementations of assign:
  *   * standard: Use of standard operators []
- *   * direct: Assign directly to the memory
+ *   * direct: Assign directly to the memory (bypassing the operators)
  *   * fast: memcopy
  *   * vectorized: Use SSE/AVX to compute the expression and store it
  *   * parallel: Parallelized version of direct
@@ -30,11 +30,9 @@
 
 #include "cpp_utils/static_if.hpp"
 
-#include "etl/eval_selectors.hpp" //method selectors
-#include "etl/eval_functors.hpp"  //Implementation functors
-
-// Optimized evaluations
-#include "etl/impl/transpose.hpp"
+#include "etl/eval_selectors.hpp"       //Method selectors
+#include "etl/linear_eval_functors.hpp" //Implementation functors
+#include "etl/vec_eval_functors.hpp"    //Implementation functors
 
 namespace etl {
 
