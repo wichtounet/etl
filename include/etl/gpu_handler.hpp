@@ -101,8 +101,8 @@ public:
      * \brief An entry in the mini-pool
      */
     struct mini_pool_entry {
-        size_t size;  ///< The size, in bytes, of the memory
-        void* memory; ///< Pointer to the memory, if any
+        size_t size  = 0;       ///< The size, in bytes, of the memory
+        void* memory = nullptr; ///< Pointer to the memory, if any
     };
 
     /*!
@@ -116,27 +116,6 @@ public:
      */
     struct mini_pool {
         std::array<mini_pool_entry, limit> cache; ///< The cache of GPU memory addresses
-
-        /*!
-         * \brief Construct the mini pool
-         */
-        mini_pool(){
-            for(auto& slot : cache){
-                slot.size         = 0;
-                slot.memory       = nullptr;
-            }
-        }
-
-        /*!
-         * \brief Destructs the GPU pool, releasing all remaining memory
-         */
-        ~mini_pool(){
-            for(auto& slot : cache){
-                if(slot.memory){
-                    base_release(slot.memory);
-                }
-            }
-        }
     };
 
     /*!
