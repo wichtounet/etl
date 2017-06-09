@@ -178,6 +178,8 @@ void ml() {
         etl::dyn_matrix<float, 2> FC2_O(32, 10);
         etl::dyn_matrix<float, 2> FC2_E(32, 10);
 
+        float eps = 0.1;
+
         for (size_t i = 0; i < 10; ++i) {
             // Forward Propagation
             C1_O = relu(bias_add_4d(etl::ml::convolution_forward<1, 1, 1, 1>(I, C1_W), C1_B));
@@ -215,7 +217,19 @@ void ml() {
             FC2_W_G = batch_outer(FC1_O, FC2_E);
             FC2_B_G = bias_batch_sum_2d(FC2_E);
 
-            //TODO Apply the gradients
+            // Apply the gradients
+
+            FC2_W += (eps / 32) * FC2_W_G;
+            FC2_B += (eps / 32) * FC2_B_G;
+
+            FC1_W += (eps / 32) * FC1_W_G;
+            FC1_B += (eps / 32) * FC1_B_G;
+
+            C2_W += (eps / 32) * C2_W_G;
+            C2_B += (eps / 32) * C2_B_G;
+
+            C1_W += (eps / 32) * C1_W_G;
+            C1_B += (eps / 32) * C1_B_G;
         }
     }
 
