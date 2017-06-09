@@ -76,24 +76,16 @@ pipeline {
                 build job: 'etl - benchmark', wait: false
             }
         }
-
-        stage ('success'){
-            steps {
-                script {
-                    currentBuild.result = 'SUCCESS'
-                }
-            }
-        }
     }
 
     post {
-        failure {
-            script {
-                currentBuild.result = 'FAILURE'
-            }
-        }
-
         always {
+            script {
+                if (currentBuild.result == null) {
+                    currentBuild.result = 'SUCCESS'
+                }
+            }
+
             step([$class: 'Mailer',
                 notifyEveryUnstableBuild: true,
                 recipients: "baptiste.wicht@gmail.com",
