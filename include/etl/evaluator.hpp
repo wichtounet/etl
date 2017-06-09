@@ -126,27 +126,11 @@ namespace standard_evaluator {
      */
     template <typename Fun, typename E, typename R>
     void par_linear(E&& expr, R&& result) {
-        const auto n = etl::size(result);
-
-        auto slice_functor = [&](const size_t first, const size_t last){
-            Fun::apply(memory_slice(result, first, last), memory_slice(expr, first, last));
+        auto slice_functor = [&](auto&& lhs, auto&& rhs){
+            Fun::apply(lhs, rhs);
         };
 
-        ETL_PARALLEL_SESSION {
-            thread_engine::acquire();
-
-            //Distribute evenly the batches
-
-            auto batch = n / threads;
-
-            for (size_t t = 0; t < threads - 1; ++t) {
-                thread_engine::schedule(slice_functor, t * batch, (t + 1) * batch);
-            }
-
-            thread_engine::schedule(slice_functor, (threads - 1) * batch, n);
-
-            thread_engine::wait();
-        }
+        engine_dispatch_1d_slice_binary(result, expr, slice_functor, 0);
     }
 #else
     /*!
@@ -169,29 +153,11 @@ namespace standard_evaluator {
      */
     template <template <vector_mode_t> class Fun, vector_mode_t V, typename E, typename R>
     void par_vec(E&& expr, R&& result) {
-        const auto n = etl::size(result);
-
-        auto slice_functor = [&](const size_t first, const size_t last){
-            Fun<V>::apply(memory_slice(result, first, last), memory_slice(expr, first, last));
+        auto slice_functor = [&](auto&& lhs, auto&& rhs){
+            Fun<V>::apply(lhs, rhs);
         };
 
-        engine_dispatch_1d_slice_binary(result, expr, slice_functor, 0
-
-        ETL_PARALLEL_SESSION {
-            thread_engine::acquire();
-
-            //Distribute evenly the batches
-
-            auto batch = n / threads;
-
-            for (size_t t = 0; t < threads - 1; ++t) {
-                thread_engine::schedule(slice_functor, t * batch, (t + 1) * batch);
-            }
-
-            thread_engine::schedule(slice_functor, (threads - 1) * batch, n);
-
-            thread_engine::wait();
-        }
+        engine_dispatch_1d_slice_binary(result, expr, slice_functor, 0);
     }
 #else
     /*!
