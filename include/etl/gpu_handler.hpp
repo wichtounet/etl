@@ -79,6 +79,16 @@ public:
         cpp_unused(size);
     }
 
+    /*!
+     * \brief Release all memory acquired by the allocator.
+     *
+     * This has no effect if the allocator does not use a memory
+     * pool.
+     */
+    static void clear(){
+        // This allocator does not store memory
+    }
+
 #else // ETL_GPU_POOL
 
 #ifdef ETL_GPU_POOL_SIZE
@@ -201,6 +211,28 @@ public:
         // If the cache is pool, release the memory
 
         base_release(gpu_memory);
+    }
+
+    /*!
+     * \brief Release all memory acquired by the allocator.
+     *
+     * This has no effect if the allocator does not use a memory
+     * pool.
+     */
+    static void clear(){
+        std::lock_guard<std::mutex> l(get_lock());
+
+        // Release each used slots
+        // and clear them
+
+        for(auto& slot : get_pool().cache){
+            if(slot.memory){
+                base_release(slot.memory);
+
+                slot.memory = nullptr;
+                slot.size   = 0;
+            }
+        }
     }
 #endif
 };
