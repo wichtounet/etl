@@ -199,3 +199,6 @@
 
 // to_string support
 #include "etl/print.hpp"
+
+// exit support
+#include "etl/exit.hpp"
