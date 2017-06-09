@@ -74,7 +74,7 @@ public:
      * \param size The size of the allocated GPU memory
      */
     static void release(const void* gpu_memory, size_t size){
-        base_release(gpu_memory, size);
+        base_release(gpu_memory);
 
         cpp_unused(size);
     }
