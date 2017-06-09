@@ -20,43 +20,9 @@ namespace detail {
 /*!
  * \brief Common base for vectorized functors
  */
-template <vector_mode_t V, typename L_Expr, typename R_Expr>
+template <vector_mode_t V>
 struct vectorized_base {
-    using memory_type = value_t<L_Expr>*; ///< The memory type
-
-    L_Expr lhs;              ///< The left hand side
-    memory_type lhs_m;       ///< The left hand side memory
-    R_Expr rhs;              ///< The right hand side
-    const size_t _size; ///< The size to assign
-
-    /*!
-     * \brief The RHS value type
-     */
-    using lhs_value_type = value_t<L_Expr>;
-
-    /*!
-     * \brief The RHS value type
-     */
-    using rhs_value_type = value_t<R_Expr>;
-
-    /*!
-     * \brief The intrinsic type for the value type
-     */
-    using IT = typename get_intrinsic_traits<V>::template type<rhs_value_type>;
-
-    /*!
-     * \brief The vector implementation to use
-     */
-    using vect_impl = typename get_vector_impl<V>::type;
-
-    /*!
-     * \brief Constuct a new vectorized_base
-     * \param lhs The lhs expression
-     * \param rhs The rhs expression
-     */
-    vectorized_base(L_Expr lhs, R_Expr rhs) : lhs(lhs), lhs_m(lhs.memory_start()), rhs(rhs), _size(etl::size(lhs)) {
-        //Nothing else
-    }
+    using vect_impl = typename get_vector_impl<V>::type; ///< The vectorization type
 
     /*!
      * \brief Load a vector from lhs at position i
@@ -75,44 +41,36 @@ struct vectorized_base {
  * The result is computed in a vectorized fashion with several
  * operations per cycle and written directly to the memory of lhs.
  */
-template <vector_mode_t V, typename L_Expr, typename R_Expr>
-struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr> {
-    using base_t    = vectorized_base<V, L_Expr, R_Expr>; ///< The base type
-    using IT        = typename base_t::IT;                ///< The intrisic type
-    using vect_impl = typename base_t::vect_impl;         ///< The vector implementation
-
-    using base_t::lhs_m;
-    using base_t::lhs;
-    using base_t::rhs;
-    using base_t::_size;
+template <vector_mode_t V>
+struct VectorizedAssign : vectorized_base<V> {
+    using base_t = vectorized_base<V>; ///< The base type
     using base_t::load;
-
-    /*!
-     * \brief Constuct a new VectorizedAssign
-     * \param lhs The lhs expression
-     * \param rhs The rhs expression
-     */
-    VectorizedAssign(L_Expr lhs, R_Expr rhs) : base_t(lhs, rhs) {
-        //Nothing else
-    }
+    using vect_impl = typename base_t::vect_impl; ///< The vectorization type
 
     /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      */
-    void operator()(){
+    template <typename L_Expr, typename R_Expr>
+    static void apply(L_Expr&& lhs, R_Expr&& rhs) {
+        using IT = typename get_intrinsic_traits<V>::template type<value_t<R_Expr>>;
+
+        const size_t N = etl::size(lhs);
+
+        auto* lhs_mem = lhs.memory_start();
+
         constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
-        const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
+        const size_t last = remainder ? (N & size_t(-IT::size)) : N;
 
         size_t i = 0;
 
-        if(streaming && _size > stream_threshold / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)){
+        if(streaming && N > stream_threshold / (sizeof(value_t<L_Expr>) * 3) && !rhs.alias(lhs)){
             for (; i < last; i += IT::size) {
                 lhs.template stream<vect_impl>(load(rhs, i), i);
             }
 
-            for (; remainder && i < _size; ++i) {
-                lhs_m[i] = rhs[i];
+            for (; remainder && i < N; ++i) {
+                lhs_mem[i] = rhs[i];
             }
         } else {
             for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
@@ -126,8 +84,8 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr> {
                 lhs.template store<vect_impl>(load(rhs, i), i);
             }
 
-            for (; remainder && i < _size; ++i) {
-                lhs_m[i] = rhs[i];
+            for (; remainder && i < N; ++i) {
+                lhs_mem[i] = rhs[i];
             }
         }
     }
@@ -136,34 +94,26 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr> {
 /*!
  * \brief Functor for vectorized compound assign add
  */
-template <vector_mode_t V, typename L_Expr, typename R_Expr>
-struct VectorizedAssignAdd : vectorized_base<V, L_Expr, R_Expr> {
-    using base_t    = vectorized_base<V, L_Expr, R_Expr>; ///< The base type
-    using IT        = typename base_t::IT;                ///< The intrisic type
-    using vect_impl = typename base_t::vect_impl;         ///< The vector implementation
-
-    using base_t::lhs;
-    using base_t::lhs_m;
-    using base_t::rhs;
-    using base_t::_size;
+template <vector_mode_t V>
+struct VectorizedAssignAdd : vectorized_base<V> {
+    using base_t    = vectorized_base<V>; ///< The base type
     using base_t::load;
-
-    /*!
-     * \brief Constuct a new VectorizedAssignAdd
-     * \param lhs The lhs expression
-     * \param rhs The rhs expression
-     */
-    VectorizedAssignAdd(L_Expr lhs, R_Expr rhs) : base_t(lhs, rhs) {
-        //Nothing else
-    }
+    using vect_impl = typename base_t::vect_impl; ///< The vectorization type
 
     /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      */
-    void operator()(){
+    template <typename L_Expr, typename R_Expr>
+    static void apply(L_Expr&& lhs, R_Expr&& rhs) {
+        using IT = typename get_intrinsic_traits<V>::template type<value_t<R_Expr>>;
+
+        const size_t N = etl::size(lhs);
+
+        auto* lhs_mem = lhs.memory_start();
+
         constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
-        const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
+        const size_t last = remainder ? (N & size_t(-IT::size)) : N;
 
         size_t i = 0;
 
@@ -178,8 +128,8 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, R_Expr> {
             lhs.template store<vect_impl>(vect_impl::add(load(lhs, i), load(rhs, i)), i);
         }
 
-        for (; remainder && i < _size; ++i) {
-            lhs_m[i] += rhs[i];
+        for (; remainder && i < N; ++i) {
+            lhs_mem[i] += rhs[i];
         }
     }
 };
@@ -187,34 +137,26 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, R_Expr> {
 /*!
  * \brief Functor for vectorized compound assign sub
  */
-template <vector_mode_t V, typename L_Expr, typename R_Expr>
-struct VectorizedAssignSub : vectorized_base<V, L_Expr, R_Expr> {
-    using base_t    = vectorized_base<V, L_Expr, R_Expr>; ///< The base type
-    using IT        = typename base_t::IT;                ///< The intrisic type
-    using vect_impl = typename base_t::vect_impl;         ///< The vector implementation
-
-    using base_t::lhs;
-    using base_t::lhs_m;
-    using base_t::rhs;
-    using base_t::_size;
+template <vector_mode_t V>
+struct VectorizedAssignSub : vectorized_base<V> {
+    using base_t    = vectorized_base<V>; ///< The base type
     using base_t::load;
-
-    /*!
-     * \brief Constuct a new VectorizedAssignSub
-     * \param lhs The lhs expression
-     * \param rhs The rhs expression
-     */
-    VectorizedAssignSub(L_Expr lhs, R_Expr rhs) : base_t(lhs, rhs) {
-        //Nothing else
-    }
+    using vect_impl = typename base_t::vect_impl; ///< The vectorization type
 
     /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      */
-    void operator()() {
+    template <typename L_Expr, typename R_Expr>
+    static void apply(L_Expr&& lhs, R_Expr&& rhs) {
+        using IT = typename get_intrinsic_traits<V>::template type<value_t<R_Expr>>;
+
+        const size_t N = etl::size(lhs);
+
+        auto* lhs_mem = lhs.memory_start();
+
         constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
-        const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
+        const size_t last = remainder ? (N & size_t(-IT::size)) : N;
 
         size_t i = 0;
 
@@ -229,8 +171,8 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, R_Expr> {
             lhs.template store<vect_impl>(vect_impl::sub(load(lhs, i), load(rhs, i)), i);
         }
 
-        for (; remainder && i < _size; ++i) {
-            lhs_m[i] -= rhs[i];
+        for (; remainder && i < N; ++i) {
+            lhs_mem[i] -= rhs[i];
         }
     }
 };
@@ -238,34 +180,26 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, R_Expr> {
 /*!
  * \brief Functor for vectorized compound assign mul
  */
-template <vector_mode_t V, typename L_Expr, typename R_Expr>
-struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr> {
-    using base_t    = vectorized_base<V, L_Expr, R_Expr>; ///< The base type
-    using IT        = typename base_t::IT;                ///< The intrisic type
-    using vect_impl = typename base_t::vect_impl;         ///< The vector implementation
-
-    using base_t::lhs;
-    using base_t::lhs_m;
-    using base_t::rhs;
-    using base_t::_size;
+template <vector_mode_t V>
+struct VectorizedAssignMul : vectorized_base<V> {
+    using base_t    = vectorized_base<V>; ///< The base type
     using base_t::load;
-
-    /*!
-     * \brief Constuct a new VectorizedAssignMul
-     * \param lhs The lhs expression
-     * \param rhs The rhs expression
-     */
-    VectorizedAssignMul(L_Expr lhs, R_Expr rhs) : base_t(lhs, rhs) {
-        //Nothing else
-    }
+    using vect_impl = typename base_t::vect_impl; ///< The vectorization type
 
     /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      */
-    void operator()(){
+    template <typename L_Expr, typename R_Expr>
+    static void apply(L_Expr&& lhs, R_Expr&& rhs) {
+        using IT = typename get_intrinsic_traits<V>::template type<value_t<R_Expr>>;
+
+        const size_t N = etl::size(lhs);
+
+        auto* lhs_mem = lhs.memory_start();
+
         constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
-        const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
+        const size_t last = remainder ? (N & size_t(-IT::size)) : N;
 
         size_t i = 0;
 
@@ -280,8 +214,8 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr> {
             lhs.template store<vect_impl>(vect_impl::mul(load(lhs, i), load(rhs, i)), i);
         }
 
-        for (; remainder && i < _size; ++i) {
-            lhs_m[i] *= rhs[i];
+        for (; remainder && i < N; ++i) {
+            lhs_mem[i] *= rhs[i];
         }
     }
 };
@@ -289,34 +223,26 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr> {
 /*!
  * \brief Functor for vectorized compound assign div
  */
-template <vector_mode_t V, typename L_Expr, typename R_Expr>
-struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr> {
-    using base_t    = vectorized_base<V, L_Expr, R_Expr>; ///< The base type
-    using IT        = typename base_t::IT;                ///< The intrisic type
-    using vect_impl = typename base_t::vect_impl;         ///< The vector implementation
-
-    using base_t::lhs;
-    using base_t::lhs_m;
-    using base_t::rhs;
-    using base_t::_size;
+template <vector_mode_t V>
+struct VectorizedAssignDiv : vectorized_base<V> {
+    using base_t    = vectorized_base<V>; ///< The base type
     using base_t::load;
-
-    /*!
-     * \brief Constuct a new VectorizedAssignDiv
-     * \param lhs The lhs expression
-     * \param rhs The rhs expression
-     */
-    VectorizedAssignDiv(L_Expr lhs, R_Expr rhs) : base_t(lhs, rhs) {
-        //Nothing else
-    }
+    using vect_impl = typename base_t::vect_impl; ///< The vectorization type
 
     /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      */
-    void operator()(){
+    template <typename L_Expr, typename R_Expr>
+    static void apply(L_Expr&& lhs, R_Expr&& rhs) {
+        using IT = typename get_intrinsic_traits<V>::template type<value_t<R_Expr>>;
+
+        const size_t N = etl::size(lhs);
+
+        auto* lhs_mem = lhs.memory_start();
+
         constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
-        const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
+        const size_t last = remainder ? (N & size_t(-IT::size)) : N;
 
         size_t i = 0;
 
@@ -331,8 +257,8 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr> {
             lhs.template store<vect_impl>(vect_impl::div(load(lhs, i), load(rhs, i)), i);
         }
 
-        for (; remainder && i < _size; ++i) {
-            lhs_m[i] /= rhs[i];
+        for (; remainder && i < N; ++i) {
+            lhs_mem[i] /= rhs[i];
         }
     }
 };

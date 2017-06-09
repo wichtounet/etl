@@ -167,12 +167,13 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <template <vector_mode_t, typename, typename> class Fun, vector_mode_t V, typename E, typename R>
+    template <template <vector_mode_t> class Fun, vector_mode_t V, typename E, typename R>
     void par_vec(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
-        using RS = decltype(memory_slice(result, 0, n));
-        using ES = decltype(memory_slice(expr, 0, n));
+        auto slice_functor = [&](const size_t first, const size_t last){
+            Fun<V>::apply(memory_slice(result, first, last), memory_slice(expr, first, last));
+        };
 
         ETL_PARALLEL_SESSION {
             thread_engine::acquire();
@@ -182,10 +183,10 @@ namespace standard_evaluator {
             auto batch = n / threads;
 
             for (size_t t = 0; t < threads - 1; ++t) {
-                thread_engine::schedule(Fun<V, RS, ES>(memory_slice(result, t * batch, (t + 1) * batch), memory_slice(expr, t * batch, (t + 1) * batch)));
+                thread_engine::schedule(slice_functor, t * batch, (t + 1) * batch);
             }
 
-            thread_engine::schedule(Fun<V, RS, ES>(memory_slice(result, (threads - 1) * batch, n), memory_slice(expr, (threads - 1) * batch, n)));
+            thread_engine::schedule(slice_functor, (threads - 1) * batch, n);
 
             thread_engine::wait();
         }
@@ -196,9 +197,9 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <template <vector_mode_t, typename, typename> class Fun, vector_mode_t V, typename E, typename R>
+    template <template <vector_mode_t> class Fun, vector_mode_t V, typename E, typename R>
     void par_vec(E&& expr, R&& result) {
-        Fun<V, R&, E&>(result, expr)();
+        Fun<V>::apply(result, expr)();
     }
 #endif
 
@@ -232,7 +233,7 @@ namespace standard_evaluator {
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec<detail::VectorizedAssign, V>(expr, result);
         } else {
-            detail::VectorizedAssign<V, R&, E&>(result, expr)();
+            detail::VectorizedAssign<V>::apply(result, expr);
         }
 
         result.invalidate_gpu();
@@ -294,7 +295,7 @@ namespace standard_evaluator {
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec<detail::VectorizedAssignAdd, V>(expr, result);
         } else {
-            detail::VectorizedAssignAdd<V, R&, E&>(result, expr)();
+            detail::VectorizedAssignAdd<V>::apply(result, expr);
         }
 
         result.invalidate_gpu();
@@ -359,7 +360,7 @@ namespace standard_evaluator {
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec<detail::VectorizedAssignSub, V>(expr, result);
         } else {
-            detail::VectorizedAssignSub<V, R&, E&>(result, expr)();
+            detail::VectorizedAssignSub<V>::apply(result, expr);
         }
 
         result.invalidate_gpu();
@@ -424,7 +425,7 @@ namespace standard_evaluator {
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec<detail::VectorizedAssignMul, V>(expr, result);
         } else {
-            detail::VectorizedAssignMul<V, R&, E&>(result, expr)();
+            detail::VectorizedAssignMul<V>::apply(result, expr);
         }
 
         result.invalidate_gpu();
@@ -489,7 +490,7 @@ namespace standard_evaluator {
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec<detail::VectorizedAssignDiv, V>(expr, result);
         } else {
-            detail::VectorizedAssignDiv<V, R&, E&>(result, expr)();
+            detail::VectorizedAssignDiv<V>::apply(result, expr);
         }
 
         result.invalidate_gpu();
