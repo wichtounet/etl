@@ -120,12 +120,12 @@ namespace standard_evaluator {
 // CPP17: if constexpr here
 #ifdef ETL_PARALLEL_SUPPORT
     /*!
-     * \brief Assign the result of the expression expression to the result with the given Functor, using parallel non-vectorized implementation
+     * \brief Assign the result of the expression expression to the result with the given Functor, using parallel implementation
      * \param expr The right hand side expression
      * \param result The left hand side
      */
     template <typename Fun, typename E, typename R>
-    void par_linear(E&& expr, R&& result) {
+    void par_exec(E&& expr, R&& result) {
         auto slice_functor = [&](auto&& lhs, auto&& rhs){
             Fun::apply(lhs, rhs);
         };
@@ -134,40 +134,13 @@ namespace standard_evaluator {
     }
 #else
     /*!
-     * \brief Assign the result of the expression expression to the result with the given Functor, using parallel non-vectorized implementation
+     * \brief Assign the result of the expression expression to the result with the given Functor, using parallel implementation
      * \param expr The right hand side expression
      * \param result The left hand side
      */
     template <typename Fun, typename E, typename R>
-    void par_linear(E&& expr, R&& result) {
+    void par_exec(E&& expr, R&& result) {
         Fun::apply(result, expr);
-    }
-#endif
-
-// CPP17: if constexpr here
-#ifdef ETL_PARALLEL_SUPPORT
-    /*!
-     * \brief Assign the result of the expression expression to the result with the given Functor, using parallel vectorized implementation
-     * \param expr The right hand side expression
-     * \param result The left hand side
-     */
-    template <template <vector_mode_t> class Fun, vector_mode_t V, typename E, typename R>
-    void par_vec(E&& expr, R&& result) {
-        auto slice_functor = [&](auto&& lhs, auto&& rhs){
-            Fun<V>::apply(lhs, rhs);
-        };
-
-        engine_dispatch_1d_slice_binary(result, expr, slice_functor, 0);
-    }
-#else
-    /*!
-     * \brief Assign the result of the expression expression to the result with the given Functor, using parallel vectorized implementation
-     * \param expr The right hand side expression
-     * \param result The left hand side
-     */
-    template <template <vector_mode_t> class Fun, vector_mode_t V, typename E, typename R>
-    void par_vec(E&& expr, R&& result) {
-        Fun<V>::apply(result, expr);
     }
 #endif
 
@@ -180,7 +153,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(result);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
-            par_linear<detail::Assign>(expr, result);
+            par_exec<detail::Assign>(expr, result);
         } else {
             detail::Assign::apply(result, expr);
         }
@@ -199,7 +172,7 @@ namespace standard_evaluator {
         constexpr auto V = detail::select_vector_mode<E, R>();
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
-            par_vec<detail::VectorizedAssign, V>(expr, result);
+            par_exec<detail::VectorizedAssign<V>>(expr, result);
         } else {
             detail::VectorizedAssign<V>::apply(result, expr);
         }
@@ -238,7 +211,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(result);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
-            par_linear<detail::AssignAdd>(expr, result);
+            par_exec<detail::AssignAdd>(expr, result);
         } else {
             detail::AssignAdd::apply(result, expr);
         }
@@ -261,7 +234,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(result);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
-            par_vec<detail::VectorizedAssignAdd, V>(expr, result);
+            par_exec<detail::VectorizedAssignAdd<V>>(expr, result);
         } else {
             detail::VectorizedAssignAdd<V>::apply(result, expr);
         }
@@ -303,7 +276,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(result);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
-            par_linear<detail::AssignSub>(expr, result);
+            par_exec<detail::AssignSub>(expr, result);
         } else {
             detail::AssignSub::apply(result, expr);
         }
@@ -326,7 +299,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(result);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
-            par_vec<detail::VectorizedAssignSub, V>(expr, result);
+            par_exec<detail::VectorizedAssignSub<V>>(expr, result);
         } else {
             detail::VectorizedAssignSub<V>::apply(result, expr);
         }
@@ -368,7 +341,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(result);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
-            par_linear<detail::AssignMul>(expr, result);
+            par_exec<detail::AssignMul>(expr, result);
         } else {
             detail::AssignMul::apply(result, expr);
         }
@@ -391,7 +364,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(result);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
-            par_vec<detail::VectorizedAssignMul, V>(expr, result);
+            par_exec<detail::VectorizedAssignMul<V>>(expr, result);
         } else {
             detail::VectorizedAssignMul<V>::apply(result, expr);
         }
@@ -433,7 +406,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(result);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
-            par_linear<detail::AssignDiv>(expr, result);
+            par_exec<detail::AssignDiv>(expr, result);
         } else {
             detail::AssignDiv::apply(result, expr);
         }
@@ -456,7 +429,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(result);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
-            par_vec<detail::VectorizedAssignDiv, V>(expr, result);
+            par_exec<detail::VectorizedAssignDiv<V>>(expr, result);
         } else {
             detail::VectorizedAssignDiv<V>::apply(result, expr);
         }
