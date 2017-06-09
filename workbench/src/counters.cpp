@@ -43,6 +43,11 @@ float fake = 0;
 
 void simple() {
     std::cout << "Simple" << std::endl;
+
+#ifdef ETL_CUDA
+    etl::gpu_memory_allocator::clear();
+#endif
+
     etl::reset_counters();
 
     {
@@ -68,6 +73,10 @@ void simple() {
 
 void basic() {
     std::cout << "Basic" << std::endl;
+
+#ifdef ETL_CUDA
+    etl::gpu_memory_allocator::clear();
+#endif
 
     etl::reset_counters();
 
@@ -110,6 +119,10 @@ void basic() {
 void sub() {
     std::cout << "Sub" << std::endl;
 
+#ifdef ETL_CUDA
+    etl::gpu_memory_allocator::clear();
+#endif
+
     etl::reset_counters();
     {
         etl::dyn_matrix<float, 3> A(16, 2048, 2048);
@@ -138,6 +151,11 @@ void sub() {
 // Simulate forward propagation in a neural network (with some ops as DLL)
 void ml() {
     std::cout << "ML" << std::endl;
+
+#ifdef ETL_CUDA
+    etl::gpu_memory_allocator::clear();
+#endif
+
     etl::reset_counters();
 
     {
@@ -248,6 +266,8 @@ int main() {
     auto duration = std::chrono::duration_cast<milliseconds>(end_time - start_time);
 
     std::cout << "duration: " << duration.count() << "ms" << std::endl;
+
+    etl::exit();
 
     return (int)fake;
 }
