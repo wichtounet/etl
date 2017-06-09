@@ -156,7 +156,7 @@ namespace standard_evaluator {
      */
     template <typename Fun, typename E, typename R>
     void par_linear(E&& expr, R&& result) {
-        Fun::apply(result, expr)();
+        Fun::apply(result, expr);
     }
 #endif
 
@@ -174,6 +174,8 @@ namespace standard_evaluator {
         auto slice_functor = [&](const size_t first, const size_t last){
             Fun<V>::apply(memory_slice(result, first, last), memory_slice(expr, first, last));
         };
+
+        engine_dispatch_1d_slice_binary(result, expr, slice_functor, 0
 
         ETL_PARALLEL_SESSION {
             thread_engine::acquire();
@@ -199,7 +201,7 @@ namespace standard_evaluator {
      */
     template <template <vector_mode_t> class Fun, vector_mode_t V, typename E, typename R>
     void par_vec(E&& expr, R&& result) {
-        Fun<V>::apply(result, expr)();
+        Fun<V>::apply(result, expr);
     }
 #endif
 
