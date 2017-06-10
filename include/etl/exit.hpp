@@ -14,6 +14,11 @@
 
 namespace etl {
 
+/*!
+ * \brief Exit from ETL, releasing any possible resource.
+ *
+ * This function must be called if ETL_GPU_POOL is used
+ */
 inline void exit(){
 #ifdef ETL_CUDA
 #ifdef ETL_GPU_POOL

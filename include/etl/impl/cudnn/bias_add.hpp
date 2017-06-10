@@ -156,10 +156,7 @@ void bias_add_2d(I&& x, K&& b, C&& y) {
         }
     }
 
-    // This should be used
-    //cudnn_check(cudnnAddTensor(handle.get(),
-        //alpha, b_tensor, b.gpu_memory(),
-        //alpha, *y_tensor, y.gpu_memory()));
+    //TODO Ideally, a simple cudnnAddTensor should be used
 
     y.validate_gpu();
     y.invalidate_cpu();
