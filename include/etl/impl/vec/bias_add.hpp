@@ -124,7 +124,6 @@ void bias_add_4d(const L& x, const R& b, C&& y) {
     };
 
     // TODO The gain of dispatching has to be checked again
-    //engine_dispatch_1d(batch_fun, 0, B, 8UL);
     batch_fun(0, B);
 
     y.invalidate_gpu();
