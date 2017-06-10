@@ -34,7 +34,10 @@ struct sigmoid {
         impl::cudnn::sigmoid(e, c);
     }
 
-    static const char* name(){
+    /*!
+     * \brief Return the name of the function
+     */
+    static constexpr const char* name(){
         return "sigmoid";
     }
 };
@@ -51,7 +54,10 @@ struct relu {
         impl::cudnn::relu(e, c);
     }
 
-    static const char* name(){
+    /*!
+     * \brief Return the name of the function
+     */
+    static constexpr const char* name(){
         return "relu";
     }
 };
@@ -68,7 +74,10 @@ struct sigmoid_backward {
         impl::cudnn::sigmoid_backward(o, e, c);
     }
 
-    static const char* name(){
+    /*!
+     * \brief Return the name of the function
+     */
+    static constexpr const char* name(){
         return "sigmoid'";
     }
 };
@@ -85,7 +94,10 @@ struct relu_backward {
         impl::cudnn::relu_backward(o, e, c);
     }
 
-    static const char* name(){
+    /*!
+     * \brief Return the name of the function
+     */
+    static constexpr const char* name(){
         return "relu'";
     }
 };
