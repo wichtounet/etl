@@ -568,7 +568,8 @@ public:
                 validate_assign(*this, rhs);
             }
 
-            // TODO Find a better solution
+            // Note: The const_cast is necessary in order to call assign_to
+            // and the parameter cannot be made non-const
             const_cast<sparse_matrix_impl&>(rhs).assign_to(*this);
         }
 
