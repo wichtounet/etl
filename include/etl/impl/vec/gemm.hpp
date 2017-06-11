@@ -1018,6 +1018,9 @@ void gemm_large_kernel_workspace_rr(const T* A, const T* B, T* C, size_t m, size
     }
 }
 
+/*!
+ * \copydoc gemm_large_kernel_workspace_rr
+ */
 template <typename V, typename T, cpp_disable_if(all_floating_t<T>::value)>
 void gemm_large_kernel_workspace_rr(const T* , const T* , T* , size_t , size_t , size_t , T ) {
     // Nothing to do here
