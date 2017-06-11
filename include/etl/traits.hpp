@@ -115,19 +115,19 @@ struct is_selected_expr_impl : std::false_type {};
 template <typename Selector, Selector V, typename Expr>
 struct is_selected_expr_impl<selected_expr<Selector, V, Expr>> : std::true_type {};
 
-/*
+/*!
  * \brief Implementation of is_base_of_template_tb
  */
 template <template <typename, bool> class BTE, typename T, bool B>
 std::true_type is_base_of_template_tb_impl(const BTE<T, B>*);
 
-/*
+/*!
  * \brief Implementation of is_base_of_template_tb
  */
 template <template <typename, bool> class BTE>
 std::false_type is_base_of_template_tb_impl(...);
 
-/*
+/*!
  * \brief Traits to test if a type if inheriting from a given template.
  */
 template <typename T, template <typename, bool> class C>
