@@ -39,14 +39,34 @@ void pad_2d_input(const I& in, C& out, size_t p1, size_t p2) {
 }
 
 #ifdef __AVX__
+/*!
+ * \brief Safe AVX vectorization utility.
+ *
+ * If AVX is enabled, this is directly AVX, otherwise, no vectorization.
+ */
 using safe_avx_vec = avx_vec;
 #else
+/*!
+ * \brief Safe AVX vectorization utility.
+ *
+ * If AVX is enabled, this is directly AVX, otherwise, no vectorization.
+ */
 using safe_avx_vec = no_vec;
 #endif
 
 #ifdef __SSE3__
+/*!
+ * \brief Safe SSE vectorization utility.
+ *
+ * If AVX is enabled, this is directly SSE, otherwise, no vectorization.
+ */
 using safe_sse_vec = sse_vec;
 #else
+/*!
+ * \brief Safe SSE vectorization utility.
+ *
+ * If AVX is enabled, this is directly SSE, otherwise, no vectorization.
+ */
 using safe_sse_vec = no_vec;
 #endif
 
