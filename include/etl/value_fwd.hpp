@@ -62,8 +62,7 @@ static constexpr size_t alloc_size_mat(size_t size, size_t last) {
  */
 template <typename T>
 static constexpr size_t alloc_size_mat(size_t size, size_t last) {
-    cpp_unused(last);
-    return size == 0 ? 0 : alloc_size_vec<T>(size);
+    return (void) last, (size == 0 ? 0 : alloc_size_vec<T>(size));
 }
 
 #endif
