@@ -224,6 +224,9 @@ struct sse_vec {
 
 #ifdef VEC_DEBUG
 
+    /*!
+     * \brief Print the value of a SSE vector of double
+     */
     template <typename T>
     static void debug_d(T value) {
         union test {
@@ -237,6 +240,9 @@ struct sse_vec {
         std::cout << "[" << u_value.array[0] << "," << u_value.array[1] << "]" << std::endl;
     }
 
+    /*!
+     * \brief Print the value of a SSE vector of float
+     */
     template <typename T>
     static void debug_s(T value) {
         union test {
@@ -252,11 +258,17 @@ struct sse_vec {
 
 #else
 
+    /*!
+     * \brief Print the value of a SSE vector of double
+     */
     template <typename T>
     static std::string debug_d(T) {
         return "";
     }
 
+    /*!
+     * \brief Print the value of a SSE vector of float
+     */
     template <typename T>
     static std::string debug_s(T) {
         return "";
@@ -504,6 +516,9 @@ struct sse_vec {
         _mm_stream_pd(reinterpret_cast<double*>(memory), value.value);
     }
 
+    /*!
+     * \brief Create a vector filled of zero for the given type
+     */
     template<typename T>
     ETL_TMP_INLINE(typename sse_intrinsic_traits<T>::intrinsic_type) zero();
 

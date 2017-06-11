@@ -225,6 +225,9 @@ struct avx_vec {
 
 #ifdef VEC_DEBUG
 
+    /*!
+     * \brief Print the value of a AVX vector of double
+     */
     template <typename T>
     static std::string debug_d(T value) {
         union test {
@@ -238,6 +241,9 @@ struct avx_vec {
         std::cout << "[" << u_value.array[0] << "," << u_value.array[1] << "," << u_value.array[2] << "," << u_value.array[3] << "]" << std::endl;
     }
 
+    /*!
+     * \brief Print the value of a AVX vector of float
+     */
     template <typename T>
     static std::string debug_s(T value) {
         union test {
@@ -254,11 +260,17 @@ struct avx_vec {
 
 #else
 
+    /*!
+     * \brief Print the value of a AVX vector of double
+     */
     template <typename T>
     static std::string debug_d(T) {
         return "";
     }
 
+    /*!
+     * \brief Print the value of a AVX vector of float
+     */
     template <typename T>
     static std::string debug_s(T) {
         return "";
