@@ -134,6 +134,9 @@ struct avx512_vec {
 
 #ifdef VEC_DEBUG
 
+    /*!
+     * \brief Print the value of a AVX-512 vector of double
+     */
     template <typename T>
     static std::string debug_d(T value) {
         union test {
@@ -150,6 +153,9 @@ struct avx512_vec {
                   << "]" << std::endl;
     }
 
+    /*!
+     * \brief Print the value of a AVX-512 vector of float
+     */
     template <typename T>
     static std::string debug_s(T value) {
         union test {
@@ -170,11 +176,17 @@ struct avx512_vec {
 
 #else
 
+    /*!
+     * \brief Print the value of a AVX-512 vector of double
+     */
     template <typename T>
     static std::string debug_d(T) {
         return "";
     }
 
+    /*!
+     * \brief Print the value of a AVX-512 vector of float
+     */
     template <typename T>
     static std::string debug_s(T) {
         return "";

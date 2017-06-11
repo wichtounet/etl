@@ -102,6 +102,11 @@ public:
         //Nothing else to init
     }
 
+    /*!
+     * \brief Copy assign a custom dyn matrix
+     * \param rhs The Right Hand Side to assign to this matrix
+     * \return The custom dyn matrix
+     */
     custom_dyn_matrix_impl& operator=(const custom_dyn_matrix_impl& rhs) noexcept {
         if (this != &rhs) {
             _size       = rhs._size;
