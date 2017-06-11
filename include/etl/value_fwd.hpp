@@ -20,6 +20,13 @@
 
 namespace etl {
 
+/*!
+ * \brief Compute the real size to allocate for a vector of the
+ * given size and type
+ * \param size The number of elements of the vector
+ * \tparam T The type contained in the vector
+ * \return The size to be allocated
+ */
 template <typename T>
 static constexpr size_t alloc_size_vec(size_t size) {
     return padding
@@ -29,6 +36,13 @@ static constexpr size_t alloc_size_vec(size_t size) {
 
 #ifdef ETL_ADVANCED_PADDING
 
+/*!
+ * \brief Compute the real allocated size for a 2D matrix
+ * \tparam T the type of the elements of the matrix
+ * \param size The size of the matrix
+ * \param last The last dimension of the matrix
+ * \return the allocated size for the matrix
+ */
 template <typename T>
 static constexpr size_t alloc_size_mat(size_t size, size_t last) {
     return size == 0 ? 0 :
@@ -39,13 +53,27 @@ static constexpr size_t alloc_size_mat(size_t size, size_t last) {
 
 #else
 
+/*!
+ * \brief Compute the real allocated size for a 2D matrix
+ * \tparam T the type of the elements of the matrix
+ * \param size The size of the matrix
+ * \param last The last dimension of the matrix
+ * \return the allocated size for the matrix
+ */
 template <typename T>
-static constexpr size_t alloc_size_mat(size_t size, size_t /*last*/) {
+static constexpr size_t alloc_size_mat(size_t size, size_t last) {
+    cpp_unused(last);
     return size == 0 ? 0 : alloc_size_vec<T>(size);
 }
 
 #endif
 
+/*!
+ * \brief Compute the real allocated size for a matrix
+ * \tparam T the type of the elements of the matrix
+ * \tparam Dims The dimensions of the matrix
+ * \return the allocated size for the matrix
+ */
 template <typename T, size_t... Dims>
 static constexpr size_t alloc_size_mat() {
     return alloc_size_mat<T>(mul_all<Dims...>(), nth_size<sizeof...(Dims) - 1, 0, Dims...>::value);
