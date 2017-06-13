@@ -158,7 +158,7 @@ struct max_pool_upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M>
-    static void pool_block_3d(const A& in, const B& out, const C& errors, M& m, size_t p, size_t q, size_t i, size_t j, size_t c1, size_t c2) {
+    static void pool_block_4d(const A& in, const B& out, const C& errors, M& m, size_t p, size_t q, size_t i, size_t j, size_t c1, size_t c2) {
         auto max = out(p, q, i, j);
         auto error = errors(p, q, i, j);
 
@@ -743,7 +743,7 @@ struct avg_pool_upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename C, typename M>
-    static void pool_block_3d(const C& errors, M& m, size_t p, size_t q, size_t i, size_t j, size_t c1, size_t c2) {
+    static void pool_block_4d(const C& errors, M& m, size_t p, size_t q, size_t i, size_t j, size_t c1, size_t c2) {
         auto error = errors(p, q, i, j);
 
         for (size_t ii = 0; ii < c1; ++ii) {
