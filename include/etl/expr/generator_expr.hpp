@@ -36,7 +36,7 @@ public:
      * \param args The input arguments of the generator
      */
     template <typename... Args>
-    explicit generator_expr(Args... args)
+    explicit generator_expr(Args&&... args)
             : generator(std::forward<Args>(args)...) {}
 
     generator_expr(const generator_expr& e) = default;
