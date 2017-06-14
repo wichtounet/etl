@@ -229,7 +229,7 @@ auto uniform_noise(E&& value) -> detail::unary_helper<E, uniform_noise_unary_op>
  * \param value The input ETL expression
  * \return an expression representing the input expression plus noise
  */
-template <typename G, typename E>
+template <typename E, typename G>
 auto uniform_noise(G& g, E&& value) {
     return detail::make_stateful_unary_expr<E, uniform_noise_unary_g_op<G, value_t<E>>>(value, g);
 }
@@ -250,7 +250,7 @@ auto normal_noise(E&& value) -> detail::unary_helper<E, normal_noise_unary_op> {
  * \param value The input ETL expression
  * \return an expression representing the input expression plus noise
  */
-template <typename G, typename E>
+template <typename E, typename G>
 auto normal_noise(G& g, E&& value) {
     return detail::make_stateful_unary_expr<E, normal_noise_unary_g_op<G, value_t<E>>>(value, g);
 }
@@ -271,7 +271,7 @@ auto logistic_noise(E&& value) -> detail::unary_helper<E, logistic_noise_unary_o
  * \param value The input ETL expression
  * \return an expression representing the input expression plus noise
  */
-template <typename G, typename E>
+template <typename E, typename G>
 auto logistic_noise(G& g, E&& value) {
     return detail::make_stateful_unary_expr<E, logistic_noise_unary_g_op<G, value_t<E>>>(value, g);
 }
@@ -779,7 +779,7 @@ auto normal_generator(T mean = 0.0, T stddev = 1.0) -> generator_expr<normal_gen
  *
  * \return An expression generating numbers from the normal distribution
  */
-template <typename G, typename T = double>
+template <typename T = double, typename G>
 auto normal_generator(G& g, T mean = 0.0, T stddev = 1.0) -> generator_expr<normal_generator_g_op<G, T>> {
     return generator_expr<normal_generator_g_op<G, T>>{g, mean, stddev};
 }
@@ -805,7 +805,7 @@ auto uniform_generator(T start, T end) -> generator_expr<uniform_generator_op<T>
  *
  * \return An expression generating numbers from the uniform distribution
  */
-template <typename G, typename T = double>
+template <typename T = double, typename G>
 auto uniform_generator(G& g, T start, T end) -> generator_expr<uniform_generator_g_op<G, T>> {
     return generator_expr<uniform_generator_g_op<G, T>>{g, start, end};
 }

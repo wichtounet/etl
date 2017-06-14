@@ -355,7 +355,7 @@ auto bernoulli(const E& value) -> detail::unary_helper<E, bernoulli_unary_op> {
  * \param value the expression to sample
  * \return an expression representing the Bernoulli sampling of the given expression
  */
-template <typename G, typename E>
+template <typename E, typename G>
 auto bernoulli(G& g, E&& value) {
     return detail::make_stateful_unary_expr<E, bernoulli_unary_g_op<G, value_t<E>>>(value, g);
 }
@@ -376,7 +376,7 @@ auto r_bernoulli(const E& value) -> detail::unary_helper<E, reverse_bernoulli_un
  * \param value the expression to sample
  * \return an expression representing the Reverse Bernoulli sampling of the given expression
  */
-template <typename G, typename E>
+template <typename E, typename G>
 auto r_bernoulli(G& g, E&& value) {
     return detail::make_stateful_unary_expr<E, reverse_bernoulli_unary_g_op<G, value_t<E>>>(value, g);
 }
