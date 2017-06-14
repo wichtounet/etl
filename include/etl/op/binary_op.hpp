@@ -602,6 +602,61 @@ struct logical_xor_binary_op {
  * This operator adds noise from N(0,1) to x. If x is 0 or the rhs
  * value, x is not modified.
  */
+template <typename G, typename T, typename E>
+struct ranged_noise_binary_g_op {
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func   = true;  ///< Indicates if the description must be printed as function
+
+    G& rand_engine; ///< The random engine
+
+    /*!
+     * \brief Construct a new ranged_noise_binary_g_op
+     */
+    ranged_noise_binary_g_op(G& rand_engine) : rand_engine(rand_engine) {
+        //Nothing else to init
+    }
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    using vectorizable = std::false_type;
+
+    /*!
+     * \brief Apply the unary operator on lhs and rhs
+     * \param x The left hand side value on which to apply the operator
+     * \param value The right hand side value on which to apply the operator
+     * \return The result of applying the binary operator on lhs and rhs
+     */
+    static T apply(const T& x, E value) {
+        std::normal_distribution<double> normal_distribution(0.0, 1.0);
+        auto noise = std::bind(normal_distribution, rand_engine);
+
+        if (x == 0.0 || x == value) {
+            return x;
+        } else {
+            return x + noise();
+        }
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
+    static std::string desc() noexcept {
+        return "ranged_noise";
+    }
+};
+
+/*!
+ * \brief Binary operator for ranged noise generation
+ *
+ * This operator adds noise from N(0,1) to x. If x is 0 or the rhs
+ * value, x is not modified.
+ */
 template <typename T, typename E>
 struct ranged_noise_binary_op {
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
