@@ -648,11 +648,13 @@ bool qr(AT& A, QT& Q, RT& R) {
 }
 
 /*!
- * \brief Shuffle all the elements of an ETL vector
+ * \brief Shuffle all the elements of an ETL vector or matrix (considered as
+ * array)
+ *
  * \param vector The vector to shuffle
  */
-template<typename T, cpp_enable_if(decay_traits<T>::dimensions() == 1)>
-void shuffle(T& vector){
+template<typename T>
+void shuffle_flat(T& vector){
     static std::random_device rd;
     static etl::random_engine g(rd());
 
@@ -683,8 +685,8 @@ void shuffle(T& vector){
  *
  * \param matrix The matrix to shuffle
  */
-template<typename T, cpp_enable_if((decay_traits<T>::dimensions() > 1))>
-void shuffle(T& matrix){
+template<typename T>
+void shuffle_first(T& matrix){
     static std::random_device rd;
     static etl::random_engine g(rd());
 
@@ -711,12 +713,34 @@ void shuffle(T& matrix){
 }
 
 /*!
+ * \brief Shuffle all the elements of an ETL vector
+ * \param vector The vector to shuffle
+ */
+template<typename T, cpp_enable_if(decay_traits<T>::dimensions() == 1)>
+void shuffle(T& vector){
+    shuffle_flat(vector);
+}
+
+/*!
+ * \brief Shuffle all the elements of a matrix.
+ *
+ * The elements will be shuffled according to the first dimension of
+ * the matrix.
+ *
+ * \param matrix The matrix to shuffle
+ */
+template<typename T, cpp_enable_if((decay_traits<T>::dimensions() > 1))>
+void shuffle(T& matrix){
+    shuffle_first(matrix);
+}
+
+/*!
  * \brief Shuffle all the elements of two vectors, using the same permutation
  * \param v1 The first vector to shuffle
  * \param v2 The second vector to shuffle
  */
-template<typename T1, typename T2, cpp_enable_if(decay_traits<T1>::dimensions() == 1)>
-void parallel_shuffle(T1& v1, T2& v2){
+template<typename T1, typename T2>
+void parallel_shuffle_flat(T1& v1, T2& v2){
     static_assert(decay_traits<T1>::dimensions() == decay_traits<T2>::dimensions(), "Impossible to shuffle vector of different dimensions");
 
     cpp_assert(etl::size(v1) == etl::size(v2), "Impossible to shuffle vector of different dimensions");
@@ -753,8 +777,8 @@ void parallel_shuffle(T1& v1, T2& v2){
  * \param m1 The first matrix to shuffle
  * \param m2 The first matrix to shuffle
  */
-template<typename T1, typename T2, cpp_enable_if((decay_traits<T1>::dimensions() > 1))>
-void parallel_shuffle(T1& m1, T2& m2){
+template<typename T1, typename T2>
+void parallel_shuffle_first(T1& m1, T2& m2){
     cpp_assert(etl::dim<0>(m1) == etl::dim<0>(m2), "Impossible to shuffle together matrices of different first dimension");
 
     static std::random_device rd;
@@ -785,6 +809,30 @@ void parallel_shuffle(T1& m1, T2& m2){
         m2(i) = m2(new_i);
         m2(new_i) = t2;
     }
+}
+
+/*!
+ * \brief Shuffle all the elements of two vectors, using the same permutation
+ * \param v1 The first vector to shuffle
+ * \param v2 The second vector to shuffle
+ */
+template<typename T1, typename T2, cpp_enable_if(decay_traits<T1>::dimensions() == 1)>
+void parallel_shuffle(T1& v1, T2& v2){
+    parallel_shuffle_flat(v1, v2);
+}
+
+/*!
+ * \brief Shuffle all the elements of two matrices, using the same permutation.
+ *
+ * The elements will be shuffled according to the first dimension of
+ * the matrix.
+ *
+ * \param m1 The first matrix to shuffle
+ * \param m2 The first matrix to shuffle
+ */
+template<typename T1, typename T2, cpp_enable_if((decay_traits<T1>::dimensions() > 1))>
+void parallel_shuffle(T1& m1, T2& m2){
+    parallel_shuffle_first(m1, m2);
 }
 
 } //end of namespace etl
