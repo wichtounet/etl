@@ -225,6 +225,16 @@ auto uniform_noise(E&& value) -> detail::unary_helper<E, uniform_noise_unary_op>
 }
 
 /*!
+ * \brief Add some uniform noise (0, 1.0) to the given expression
+ * \param value The input ETL expression
+ * \return an expression representing the input expression plus noise
+ */
+template <typename G, typename E>
+auto uniform_noise(G& g, E&& value) {
+    return detail::make_stateful_unary_expr<E, uniform_noise_unary_g_op<G, value_t<E>>>(value, g);
+}
+
+/*!
  * \brief Add some normal noise (0, 1.0) to the given expression
  * \param value The input ETL expression
  * \return an expression representing the input expression plus noise
@@ -236,6 +246,16 @@ auto normal_noise(E&& value) -> detail::unary_helper<E, normal_noise_unary_op> {
 }
 
 /*!
+ * \brief Add some normal noise (0, 1.0) to the given expression
+ * \param value The input ETL expression
+ * \return an expression representing the input expression plus noise
+ */
+template <typename G, typename E>
+auto normal_noise(G& g, E&& value) {
+    return detail::make_stateful_unary_expr<E, normal_noise_unary_g_op<G, value_t<E>>>(value, g);
+}
+
+/*!
  * \brief Add some normal noise (0, sigmoid(x)) to the given expression
  * \param value The input ETL expression
  * \return an expression representing the input expression plus noise
@@ -244,6 +264,16 @@ template <typename E>
 auto logistic_noise(E&& value) -> detail::unary_helper<E, logistic_noise_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::logistic_noise can only be used on ETL expressions");
     return detail::unary_helper<E, logistic_noise_unary_op>{value};
+}
+
+/*!
+ * \brief Add some normal noise (0, sigmoid(x)) to the given expression
+ * \param value The input ETL expression
+ * \return an expression representing the input expression plus noise
+ */
+template <typename G, typename E>
+auto logistic_noise(G& g, E&& value) {
+    return detail::make_stateful_unary_expr<E, logistic_noise_unary_g_op<G, value_t<E>>>(value, g);
 }
 
 /*!

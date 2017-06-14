@@ -506,11 +506,24 @@ constexpr bool binary(double a) {
     return a == 0.0 || a == 1.0;
 }
 
-TEMPLATE_TEST_CASE_2("dyn_vector/bernoulli", "dyn_vector::bernoulli", Z, double, float) {
+TEMPLATE_TEST_CASE_2("dyn_vector/bernoulli/1", "dyn_vector::bernoulli", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 0.0};
 
     etl::dyn_vector<Z> d;
     d = etl::bernoulli(a);
+
+    REQUIRE_DIRECT(binary(d[0]));
+    REQUIRE_DIRECT(binary(d[1]));
+    REQUIRE_DIRECT(binary(d[2]));
+}
+
+TEMPLATE_TEST_CASE_2("dyn_vector/bernoulli/2", "dyn_vector::bernoulli", Z, double, float) {
+    etl::dyn_vector<Z> a = {-1.0, 2.0, 0.0};
+
+    etl::random_engine engine(42);
+
+    etl::dyn_vector<Z> d;
+    d = etl::bernoulli(engine, a);
 
     REQUIRE_DIRECT(binary(d[0]));
     REQUIRE_DIRECT(binary(d[1]));

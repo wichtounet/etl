@@ -351,6 +351,16 @@ auto bernoulli(const E& value) -> detail::unary_helper<E, bernoulli_unary_op> {
 }
 
 /*!
+ * \brief Apply Bernoulli sampling to the values of the expression
+ * \param value the expression to sample
+ * \return an expression representing the Bernoulli sampling of the given expression
+ */
+template <typename G, typename E>
+auto bernoulli(G& g, E&& value) {
+    return detail::make_stateful_unary_expr<E, bernoulli_unary_g_op<G, value_t<E>>>(value, g);
+}
+
+/*!
  * \brief Apply Reverse Bernoulli sampling to the values of the expression
  * \param value the expression to sample
  * \return an expression representing the Reverse Bernoulli sampling of the given expression
@@ -359,6 +369,16 @@ template <typename E>
 auto r_bernoulli(const E& value) -> detail::unary_helper<E, reverse_bernoulli_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::r_bernoulli can only be used on ETL expressions");
     return detail::unary_helper<E, reverse_bernoulli_unary_op>{value};
+}
+
+/*!
+ * \brief Apply Reverse Bernoulli sampling to the values of the expression
+ * \param value the expression to sample
+ * \return an expression representing the Reverse Bernoulli sampling of the given expression
+ */
+template <typename G, typename E>
+auto r_bernoulli(G& g, E&& value) {
+    return detail::make_stateful_unary_expr<E, reverse_bernoulli_unary_g_op<G, value_t<E>>>(value, g);
 }
 
 /*!
