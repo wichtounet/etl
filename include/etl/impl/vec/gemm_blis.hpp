@@ -263,7 +263,7 @@ void gemm_micro_kernel(size_t kc, T alpha, const T* A, const T* B, T beta, T* C,
     static constexpr const size_t MR = gemm_config<T>::MR;
     static constexpr const size_t NR = gemm_config<T>::NR;
 
-    T AB[MR * NR];
+    alignas(64) T AB[MR * NR];
 
     // Bottleneck kernel
 
