@@ -631,7 +631,7 @@ struct ranged_noise_binary_g_op {
      * \param value The right hand side value on which to apply the operator
      * \return The result of applying the binary operator on lhs and rhs
      */
-    static T apply(const T& x, E value) {
+    T apply(const T& x, E value) {
         std::normal_distribution<double> normal_distribution(0.0, 1.0);
         auto noise = std::bind(normal_distribution, rand_engine);
 
