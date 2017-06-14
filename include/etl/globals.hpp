@@ -652,12 +652,10 @@ bool qr(AT& A, QT& Q, RT& R) {
  * array)
  *
  * \param vector The vector to shuffle
+ * \param g The generator to use for random number generation
  */
-template<typename T>
-void shuffle_flat(T& vector){
-    static std::random_device rd;
-    static etl::random_engine g(rd());
-
+template<typename T, typename G>
+void shuffle_flat(T& vector, G&& g){
     const auto n = etl::size(vector);
 
     if(n < 2){
@@ -678,18 +676,30 @@ void shuffle_flat(T& vector){
 }
 
 /*!
+ * \brief Shuffle all the elements of an ETL vector or matrix (considered as
+ * array)
+ *
+ * \param vector The vector to shuffle
+ */
+template<typename T>
+void shuffle_flat(T& vector){
+    static std::random_device rd;
+    static etl::random_engine g(rd());
+
+    shuffle_flat(vector, g);
+}
+
+/*!
  * \brief Shuffle all the elements of a matrix.
  *
  * The elements will be shuffled according to the first dimension of
  * the matrix.
  *
  * \param matrix The matrix to shuffle
+ * \param g The generator to use for random number generation
  */
-template<typename T>
-void shuffle_first(T& matrix){
-    static std::random_device rd;
-    static etl::random_engine g(rd());
-
+template<typename T, typename G>
+void shuffle_first(T& matrix, G&& g){
     const auto n = etl::dim<0>(matrix);
 
     if(n < 2){
@@ -713,12 +723,38 @@ void shuffle_first(T& matrix){
 }
 
 /*!
+ * \brief Shuffle all the elements of a matrix.
+ *
+ * The elements will be shuffled according to the first dimension of
+ * the matrix.
+ *
+ * \param matrix The matrix to shuffle
+ */
+template<typename T>
+void shuffle_first(T& matrix){
+    static std::random_device rd;
+    static etl::random_engine g(rd());
+
+    shuffle_first(matrix, g);
+}
+
+/*!
  * \brief Shuffle all the elements of an ETL vector
  * \param vector The vector to shuffle
  */
 template<typename T, cpp_enable_if(decay_traits<T>::dimensions() == 1)>
 void shuffle(T& vector){
     shuffle_flat(vector);
+}
+
+/*!
+ * \brief Shuffle all the elements of an ETL vector
+ * \param vector The vector to shuffle
+ * \param g The generator to use for random number generation
+ */
+template<typename T, typename G, cpp_enable_if(decay_traits<T>::dimensions() == 1)>
+void shuffle(T& vector, G&& g){
+    shuffle_flat(vector, g);
 }
 
 /*!
@@ -735,18 +771,29 @@ void shuffle(T& matrix){
 }
 
 /*!
+ * \brief Shuffle all the elements of a matrix.
+ *
+ * The elements will be shuffled according to the first dimension of
+ * the matrix.
+ *
+ * \param matrix The matrix to shuffle
+ * \param g The generator to use for random number generation
+ */
+template<typename T, typename G, cpp_enable_if((decay_traits<T>::dimensions() > 1))>
+void shuffle(T& matrix, G&& g){
+    shuffle_first(matrix, g);
+}
+
+/*!
  * \brief Shuffle all the elements of two vectors, using the same permutation
  * \param v1 The first vector to shuffle
  * \param v2 The second vector to shuffle
  */
-template<typename T1, typename T2>
-void parallel_shuffle_flat(T1& v1, T2& v2){
+template<typename T1, typename T2, typename G>
+void parallel_shuffle_flat(T1& v1, T2& v2, G&& g){
     static_assert(decay_traits<T1>::dimensions() == decay_traits<T2>::dimensions(), "Impossible to shuffle vector of different dimensions");
 
     cpp_assert(etl::size(v1) == etl::size(v2), "Impossible to shuffle vector of different dimensions");
-
-    static std::random_device rd;
-    static etl::random_engine g(rd());
 
     const auto n = etl::size(v1);
 
@@ -769,6 +816,19 @@ void parallel_shuffle_flat(T1& v1, T2& v2){
 }
 
 /*!
+ * \brief Shuffle all the elements of two vectors, using the same permutation
+ * \param v1 The first vector to shuffle
+ * \param v2 The second vector to shuffle
+ */
+template<typename T1, typename T2>
+void parallel_shuffle_flat(T1& v1, T2& v2){
+    static std::random_device rd;
+    static etl::random_engine g(rd());
+
+    parallel_shuffle_flat(v1, v2, g);
+}
+
+/*!
  * \brief Shuffle all the elements of two matrices, using the same permutation.
  *
  * The elements will be shuffled according to the first dimension of
@@ -777,12 +837,9 @@ void parallel_shuffle_flat(T1& v1, T2& v2){
  * \param m1 The first matrix to shuffle
  * \param m2 The first matrix to shuffle
  */
-template<typename T1, typename T2>
-void parallel_shuffle_first(T1& m1, T2& m2){
+template<typename T1, typename T2, typename G>
+void parallel_shuffle_first(T1& m1, T2& m2, G&& g){
     cpp_assert(etl::dim<0>(m1) == etl::dim<0>(m2), "Impossible to shuffle together matrices of different first dimension");
-
-    static std::random_device rd;
-    static etl::random_engine g(rd());
 
     const auto n = etl::dim<0>(m1);
 
@@ -812,6 +869,23 @@ void parallel_shuffle_first(T1& m1, T2& m2){
 }
 
 /*!
+ * \brief Shuffle all the elements of two matrices, using the same permutation.
+ *
+ * The elements will be shuffled according to the first dimension of
+ * the matrix.
+ *
+ * \param m1 The first matrix to shuffle
+ * \param m2 The first matrix to shuffle
+ */
+template<typename T1, typename T2>
+void parallel_shuffle_first(T1& m1, T2& m2){
+    static std::random_device rd;
+    static etl::random_engine g(rd());
+
+    parallel_shuffle_first(m1, m2, g);
+}
+
+/*!
  * \brief Shuffle all the elements of two vectors, using the same permutation
  * \param v1 The first vector to shuffle
  * \param v2 The second vector to shuffle
@@ -819,6 +893,16 @@ void parallel_shuffle_first(T1& m1, T2& m2){
 template<typename T1, typename T2, cpp_enable_if(decay_traits<T1>::dimensions() == 1)>
 void parallel_shuffle(T1& v1, T2& v2){
     parallel_shuffle_flat(v1, v2);
+}
+
+/*!
+ * \brief Shuffle all the elements of two vectors, using the same permutation
+ * \param v1 The first vector to shuffle
+ * \param v2 The second vector to shuffle
+ */
+template<typename T1, typename T2, typename G, cpp_enable_if(decay_traits<T1>::dimensions() == 1)>
+void parallel_shuffle(T1& v1, T2& v2, G&& g){
+    parallel_shuffle_flat(v1, v2, g);
 }
 
 /*!
@@ -833,6 +917,20 @@ void parallel_shuffle(T1& v1, T2& v2){
 template<typename T1, typename T2, cpp_enable_if((decay_traits<T1>::dimensions() > 1))>
 void parallel_shuffle(T1& m1, T2& m2){
     parallel_shuffle_first(m1, m2);
+}
+
+/*!
+ * \brief Shuffle all the elements of two matrices, using the same permutation.
+ *
+ * The elements will be shuffled according to the first dimension of
+ * the matrix.
+ *
+ * \param m1 The first matrix to shuffle
+ * \param m2 The first matrix to shuffle
+ */
+template<typename T1, typename T2, typename G, cpp_enable_if((decay_traits<T1>::dimensions() > 1))>
+void parallel_shuffle(T1& m1, T2& m2, G&& g){
+    parallel_shuffle_first(m1, m2, g);
 }
 
 } //end of namespace etl
