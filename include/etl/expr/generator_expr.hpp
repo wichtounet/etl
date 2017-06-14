@@ -42,6 +42,14 @@ public:
     generator_expr(const generator_expr& e) = default;
     generator_expr(generator_expr&& e) noexcept = default;
 
+    /*!
+     * \brief Copy constructor for non-const argument. This simply forwards to the
+     * regular copy constructor to avoid the forwarding constructor to be used.
+     */
+    generator_expr(generator_expr& e) : generator_expr(const_cast<const generator_expr&>(e)){
+        // Nothing else to init
+    }
+
     //Expression are invariant
     generator_expr& operator=(const generator_expr& e) = delete;
     generator_expr& operator=(generator_expr&& e) = delete;
