@@ -376,9 +376,9 @@ void gemm_macro_kernel(size_t mc, size_t nc, size_t kc, T alpha, T beta, T* C, s
  *
  * From: http://apfel.mathematik.uni-ulm.de/~lehn/sghpc/gemm/
  *
- * \param a The lhs matrix
- * \param b The rhs matrix
- * \param c The result matrix
+ * \param A The lhs matrix
+ * \param B The rhs matrix
+ * \param C The result matrix
  * \param beta The multipliying of the previous value
  */
 template <typename V, typename T, cpp_enable_if(all_floating_t<T>::value)>

@@ -83,7 +83,7 @@ struct dyn_conv_4d_backward_filter_expr : base_temporary_expr_bin<dyn_conv_4d_ba
 
     /*!
      * \brief Assign to a matrix
-     * \param c The expression to which assign
+     * \param conv The expression to which assign
      */
     template<typename C>
     void assign_to(C&& conv)  const {

@@ -87,7 +87,6 @@ struct thread_engine {
     /*!
      * \brief Schedule a new task
      * \param fun The functor to execute
-     * \param args The arguments to pass to the functor
      */
     template <class Functor, typename... Args>
     static void schedule(Functor&& fun, Args&&... /*args*/) {

@@ -248,7 +248,7 @@ struct avg_pool_upsample_3d {
 struct max_pool_upsample_2d {
     /*!
      * \brief Apply the functor on sub and store the result in m
-     * \param sub The sub expression
+     * \param in The sub expression
      * \param m The storage matrix
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
@@ -272,7 +272,7 @@ struct max_pool_upsample_2d {
 struct max_pool_upsample_3d {
     /*!
      * \brief Apply the functor on sub and store the result in m
-     * \param sub The sub expression
+     * \param in The sub expression
      * \param m The storage matrix
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
@@ -297,7 +297,7 @@ struct max_pool_upsample_3d {
 struct avg_pool_upsample_2d {
     /*!
      * \brief Apply the functor on sub and store the result in m
-     * \param sub The sub expression
+     * \param in The sub expression
      * \param m The storage matrix
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
@@ -321,7 +321,7 @@ struct avg_pool_upsample_2d {
 struct avg_pool_upsample_3d {
     /*!
      * \brief Apply the functor on sub and store the result in m
-     * \param sub The sub expression
+     * \param in The sub expression
      * \param m The storage matrix
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio

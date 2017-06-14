@@ -78,8 +78,6 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
      *
      * This does not take the local context into account.
      *
-     * \tparam I The input type
-     * \tparam K The kernel type
      * \tparam C The conv type
      * \return the implementation to be used
      */

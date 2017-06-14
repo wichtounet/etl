@@ -45,8 +45,6 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
      *
      * This does not take the local context into account
      *
-     * \tparam A The type of a expression
-     * \tparam B The type of b expression
      * \tparam C The type of c expression
      * \return The implementation to use
      */
@@ -61,8 +59,6 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
 
     /*!
      * \brief Select the outer product implementation for an expression of type A and B
-     * \tparam A The type of a expression
-     * \tparam B The type of b expression
      * \tparam C The type of c expression
      * \return The implementation to use
      */

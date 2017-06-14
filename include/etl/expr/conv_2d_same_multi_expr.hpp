@@ -78,8 +78,6 @@ struct conv_2d_same_multi_expr : base_temporary_expr_bin<conv_2d_same_multi_expr
      *
      * This does not take the local context into account.
      *
-     * \tparam I The input type
-     * \tparam K The kernel type
      * \tparam C The conv type
      * \return the implementation to be used
      */
@@ -106,8 +104,6 @@ struct conv_2d_same_multi_expr : base_temporary_expr_bin<conv_2d_same_multi_expr
 
     /*!
      * \brief Select the implementation of the conv of I and K in C
-     * \tparam I The input type
-     * \tparam K The kernel type
      * \tparam C The conv type
      * \return the implementation to be used
      */

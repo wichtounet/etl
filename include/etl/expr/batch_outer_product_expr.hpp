@@ -68,8 +68,6 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
 
     /*!
      * \brief Select the batch outer product implementation for an expression of type A and B
-     * \tparam A The type of a expression
-     * \tparam B The type of b expression
      * \tparam C The type of c expression
      * \return The implementation to use
      */

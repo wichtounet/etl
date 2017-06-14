@@ -629,8 +629,7 @@ struct max_pool_upsample_3d {
 struct avg_pool_upsample_2d {
     /*!
      * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
+     * \param errors The sub expression
      * \param m The storage matrix
      * \param i The first index of the block
      * \param j The second index of the block
@@ -650,8 +649,7 @@ struct avg_pool_upsample_2d {
 
     /*!
      * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
+     * \param errors The sub expression
      * \param m The storage matrix
      * \param i The first index of the block
      * \param j The second index of the block
@@ -671,8 +669,7 @@ struct avg_pool_upsample_2d {
 
     /*!
      * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
+     * \param errors The sub expression
      * \param m The storage matrix
      * \param i The first index of the block
      * \param j The second index of the block
@@ -692,8 +689,7 @@ struct avg_pool_upsample_2d {
 
     /*!
      * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
+     * \param errors The sub expression
      * \param m The storage matrix
      * \param i The first index of the block
      * \param j The second index of the block
@@ -713,8 +709,7 @@ struct avg_pool_upsample_2d {
 
     /*!
      * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
+     * \param errors The sub expression
      * \param m The storage matrix
      * \param i The first index of the block
      * \param j The second index of the block
@@ -734,8 +729,7 @@ struct avg_pool_upsample_2d {
 
     /*!
      * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
+     * \param errors The sub expression
      * \param m The storage matrix
      * \param i The first index of the block
      * \param j The second index of the block
@@ -962,8 +956,7 @@ struct avg_pool_upsample_2d {
 struct avg_pool_upsample_3d {
     /*!
      * \brief Pool a 3D block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
+     * \param errors The sub expression
      * \param m The storage matrix
      * \param i The first index of the block
      * \param j The second index of the block
@@ -987,8 +980,7 @@ struct avg_pool_upsample_3d {
 
     /*!
      * \brief Pool a 4D block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
+     * \param errors The sub expression
      * \param m The storage matrix
      * \param i The first index of the block
      * \param j The second index of the block
@@ -1012,8 +1004,7 @@ struct avg_pool_upsample_3d {
 
     /*!
      * \brief Pool a 3D block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
+     * \param errors The sub expression
      * \param m The storage matrix
      * \param i The first index of the block
      * \param j The second index of the block
@@ -1037,8 +1028,7 @@ struct avg_pool_upsample_3d {
 
     /*!
      * \brief Pool a 4D block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
+     * \param errors The sub expression
      * \param m The storage matrix
      * \param i The first index of the block
      * \param j The second index of the block

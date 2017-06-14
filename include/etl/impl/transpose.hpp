@@ -32,8 +32,8 @@ namespace detail {
  *
  * This does not take local context into account
  *
- * \tparam The type of input
- * \tparam The type of output
+ * \tparam A The type of input
+ * \tparam C The type of output
  *
  * \return The best default transpose implementation to use
  */
@@ -64,8 +64,8 @@ cpp14_constexpr transpose_impl select_default_transpose_impl(){
  *
  * This does not take local context into account
  *
- * \tparam The type of input
- * \tparam The type of output
+ * \tparam A The type of input
+ * \tparam C The type of output
  *
  * \return The best default transpose implementation to use
  */
