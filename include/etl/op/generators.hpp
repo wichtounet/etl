@@ -55,6 +55,44 @@ struct normal_generator_op {
 };
 
 /*!
+ * \brief Generator from a normal distribution using a custom random engine.
+ */
+template <typename G, typename T = double>
+struct normal_generator_g_op {
+    using value_type = T; ///< The value type
+
+    G& rand_engine;                                    ///< The random engine
+    std::normal_distribution<value_type> distribution; ///< The used distribution
+
+    /*!
+     * \brief Construct a new generator with the given mean and standard deviation
+     * \param mean The mean
+     * \param stddev The standard deviation
+     */
+    normal_generator_g_op(G& g, T mean, T stddev)
+            : rand_engine(g), distribution(mean, stddev) {}
+
+    /*!
+     * \brief Generate a new value
+     * \return the newly generated value
+     */
+    value_type operator()() {
+        return distribution(rand_engine);
+    }
+
+    /*!
+     * \brief Outputs the given generator to the given stream
+     * \param os The output stream
+     * \param s The generator
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const normal_generator_g_op& s) {
+        cpp_unused(s);
+        return os << "N(0,1)";
+    }
+};
+
+/*!
  * \brief Selector helper to get an uniform_distribution based on the type (real or int)
  * \tparam T The type of return of the distribution
  */
@@ -97,6 +135,44 @@ struct uniform_generator_op {
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const uniform_generator_op& s) {
+        cpp_unused(s);
+        return os << "U(0,1)";
+    }
+};
+
+/*!
+ * \brief Generator from an uniform distribution using a custom random engine.
+ */
+template <typename G, typename T = double>
+struct uniform_generator_g_op {
+    using value_type = T; ///< The value type
+
+    G& rand_engine;                                ///< The random engine
+    uniform_distribution<value_type> distribution; ///< The used distribution
+
+    /*!
+     * \brief Construct a new generator with the given start and end of the range
+     * \param start The beginning of the range
+     * \param end The end of the range
+     */
+    uniform_generator_g_op(G& g, T start, T end)
+            : rand_engine(g), distribution(start, end) {}
+
+    /*!
+     * \brief Generate a new value
+     * \return the newly generated value
+     */
+    value_type operator()() {
+        return distribution(rand_engine);
+    }
+
+    /*!
+     * \brief Outputs the given generator to the given stream
+     * \param os The output stream
+     * \param s The generator
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const uniform_generator_g_op& s) {
         cpp_unused(s);
         return os << "U(0,1)";
     }

@@ -740,6 +740,21 @@ auto normal_generator(T mean = 0.0, T stddev = 1.0) -> generator_expr<normal_gen
 }
 
 /*!
+ * \brief Create an expression generating numbers from a normal distribution
+ * using the given custom random engine.
+ *
+ * \param g The random engine
+ * \param mean The mean of the distribution
+ * \param stddev The standard deviation of the distribution
+ *
+ * \return An expression generating numbers from the normal distribution
+ */
+template <typename G, typename T = double>
+auto normal_generator(G& g, T mean = 0.0, T stddev = 1.0) -> generator_expr<normal_generator_g_op<G, T>> {
+    return generator_expr<normal_generator_g_op<G, T>>{g, mean, stddev};
+}
+
+/*!
  * \brief Create an expression generating numbers from an uniform distribution
  * \param start The beginning of the range
  * \param end The end of the range
@@ -748,6 +763,21 @@ auto normal_generator(T mean = 0.0, T stddev = 1.0) -> generator_expr<normal_gen
 template <typename T = double>
 auto uniform_generator(T start, T end) -> generator_expr<uniform_generator_op<T>> {
     return generator_expr<uniform_generator_op<T>>{start, end};
+}
+
+/*!
+ * \brief Create an expression generating numbers from an uniform distribution
+ * using the given custom random engine.
+ *
+ * \param g The random engine
+ * \param start The beginning of the range
+ * \param end The end of the range
+ *
+ * \return An expression generating numbers from the uniform distribution
+ */
+template <typename G, typename T = double>
+auto uniform_generator(G& g, T start, T end) -> generator_expr<uniform_generator_g_op<G, T>> {
+    return generator_expr<uniform_generator_g_op<G, T>>{g, start, end};
 }
 
 /*!
