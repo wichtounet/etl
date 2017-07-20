@@ -162,6 +162,13 @@ struct strictly_lower_matrix;
 template <typename Matrix>
 struct uni_lower_matrix;
 
+/*
+ * Note: the use of aligned_array has a lot of overhead. Unfortunately, this is
+ * the only way to align dynamically allocated fast matrix. Once dynamic
+ * allocation is fixed (C++17 normally), a simple struct with alignas should
+ * suffice and should prove more memory-efficient.
+ */
+
 /*!
  * \brief A static matrix with fixed dimensions, in row-major order
  */
