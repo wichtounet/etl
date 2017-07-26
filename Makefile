@@ -174,17 +174,9 @@ TEST_FILES=$(CPP_FILES:test/%=%)
 $(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
 $(eval $(call add_executable_set,etl_test,etl_test))
 
+# Create the benchmark executables
 BENCH_FILES=$(wildcard benchmark/src/benchmark*cpp)
 
-# Create executables
-$(eval $(call add_executable,test_asm_1,workbench/src/test.cpp))
-$(eval $(call add_executable,test_asm_2,workbench/src/test_dim.cpp))
-$(eval $(call add_executable,mmul,workbench/src/mmul.cpp))
-$(eval $(call add_executable,parallel,workbench/src/parallel.cpp))
-$(eval $(call add_executable,multi,workbench/src/multi.cpp))
-$(eval $(call add_executable,locality,workbench/src/locality.cpp))
-$(eval $(call add_executable,counters,workbench/src/counters.cpp))
-$(eval $(call add_executable,verify_cpm,workbench/src/verify_cpm.cpp))
 $(eval $(call add_executable,benchmark,$(BENCH_FILES)))
 $(eval $(call add_executable,benchmark_cdbn,benchmark/src/benchmark.cpp benchmark/src/benchmark_cdbn.cpp))
 $(eval $(call add_executable,benchmark_conv,benchmark/src/benchmark.cpp benchmark/src/benchmark_conv.cpp))
@@ -193,6 +185,16 @@ $(eval $(call add_executable,benchmark_fft,benchmark/src/benchmark.cpp benchmark
 $(eval $(call add_executable,benchmark_gemm,benchmark/src/benchmark.cpp benchmark/src/benchmark_gemm.cpp))
 $(eval $(call add_executable,benchmark_pool,benchmark/src/benchmark.cpp benchmark/src/benchmark_pool.cpp))
 $(eval $(call add_executable,benchmark_thesis,benchmark/src/benchmark.cpp benchmark/src/benchmark_thesis.cpp))
+
+# Create various executables
+$(eval $(call add_executable,test_asm_1,workbench/src/test.cpp))
+$(eval $(call add_executable,test_asm_2,workbench/src/test_dim.cpp))
+$(eval $(call add_executable,mmul,workbench/src/mmul.cpp))
+$(eval $(call add_executable,parallel,workbench/src/parallel.cpp))
+$(eval $(call add_executable,multi,workbench/src/multi.cpp))
+$(eval $(call add_executable,locality,workbench/src/locality.cpp))
+$(eval $(call add_executable,counters,workbench/src/counters.cpp))
+$(eval $(call add_executable,verify_cpm,workbench/src/verify_cpm.cpp))
 
 test_asm: release/bin/test_asm_1 release/bin/test_asm_2
 
