@@ -549,6 +549,58 @@ void gemv(A&& a, B&& b, C&& c) {
 }
 
 /*!
+ * \brief Compute the matrix-vector mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
+template <typename A, typename B, typename C>
+void gemv_t(A&& a, B&& b, C&& c) {
+    decltype(auto) handle = start_cublas();
+
+    const bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+
+    using VT = value_t<A>;
+    using T = cublas_type<VT>;
+
+    auto alpha = make_default<T>(1.0);
+    auto beta  = make_default<T>(0.0);
+
+    //Perform the actual multiplication
+
+    if (row_major) {
+        cublas_gemv(
+            handle.get(),
+            CUBLAS_OP_N,
+            etl::columns(a), etl::rows(a),
+            &alpha,
+            safe_cast(a.gpu_memory()), major_stride(a),
+            safe_cast(b.gpu_memory()), 1,
+            &beta,
+            safe_cast(c.gpu_memory()), 1);
+    } else {
+        cublas_gemv(
+            handle.get(),
+            CUBLAS_OP_T,
+            etl::rows(a), etl::columns(a),
+            &alpha,
+            safe_cast(a.gpu_memory()), major_stride(a),
+            safe_cast(b.gpu_memory()), 1,
+            &beta,
+            safe_cast(c.gpu_memory()), 1);
+    }
+
+    //Copy the result from GPU to CPU
+
+    c.validate_gpu();
+    c.invalidate_cpu();
+}
+
+/*!
  * \brief Compute the vector-matrix mutplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
@@ -720,6 +772,20 @@ void gemm_tt(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B, typename C>
 void gemv(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+    cpp_unreachable("Unsupported feature called: cublas gemm");
+}
+
+/*!
+ * \brief Compute the matrix-vector mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
+template <typename A, typename B, typename C>
+void gemv_t(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);

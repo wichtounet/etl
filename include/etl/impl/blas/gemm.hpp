@@ -306,6 +306,37 @@ void gemv(A&& a, B&& b, C&& c) {
 }
 
 /*!
+ * \brief Compute the matrix-vector multiplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
+template <typename A, typename B, typename C>
+void gemv_t(A&& a, B&& b, C&& c) {
+    using T = value_t<A>;
+
+    static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
+    T alpha(1.0);
+    T beta(0.0);
+
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    cblas_gemv(
+        row_major ? CblasRowMajor : CblasColMajor,
+        CblasTrans,
+        etl::rows(a), etl::columns(a),
+        alpha,
+        a.memory_start(), major_stride(a),
+        b.memory_start(), 1,
+        beta,
+        c.memory_start(), 1);
+
+    c.invalidate_gpu();
+}
+
+/*!
  * \brief Compute the vector-matrix multiplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
@@ -1249,6 +1280,20 @@ void gemm_tt(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B, typename C>
 void gemv(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+    cpp_unreachable("Unsupported feature called: blas gemm");
+}
+
+/*!
+ * \brief Compute the matrix-vector multiplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
+template <typename A, typename B, typename C>
+void gemv_t(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);
