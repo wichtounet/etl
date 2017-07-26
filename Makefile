@@ -170,6 +170,10 @@ $(eval $(call auto_folder_compile,test/src))
 CPP_FILES=$(wildcard test/src/*.cpp)
 TEST_FILES=$(CPP_FILES:test/%=%)
 
+# Create the test executable
+$(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
+$(eval $(call add_executable_set,etl_test,etl_test))
+
 BENCH_FILES=$(wildcard benchmark/src/benchmark*cpp)
 
 # Create executables
@@ -182,9 +186,13 @@ $(eval $(call add_executable,locality,workbench/src/locality.cpp))
 $(eval $(call add_executable,counters,workbench/src/counters.cpp))
 $(eval $(call add_executable,verify_cpm,workbench/src/verify_cpm.cpp))
 $(eval $(call add_executable,benchmark,$(BENCH_FILES)))
-$(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
-
-$(eval $(call add_executable_set,etl_test,etl_test))
+$(eval $(call add_executable,benchmark_cdbn,benchmark/src/benchmark.cpp benchmark/src/benchmark_cdbn.cpp))
+$(eval $(call add_executable,benchmark_conv,benchmark/src/benchmark.cpp benchmark/src/benchmark_conv.cpp))
+$(eval $(call add_executable,benchmark_conv_extended,benchmark/src/benchmark.cpp benchmark/src/benchmark_conv_extended.cpp))
+$(eval $(call add_executable,benchmark_fft,benchmark/src/benchmark.cpp benchmark/src/benchmark_fft.cpp))
+$(eval $(call add_executable,benchmark_gemm,benchmark/src/benchmark.cpp benchmark/src/benchmark_gemm.cpp))
+$(eval $(call add_executable,benchmark_pool,benchmark/src/benchmark.cpp benchmark/src/benchmark_pool.cpp))
+$(eval $(call add_executable,benchmark_thesis,benchmark/src/benchmark.cpp benchmark/src/benchmark_thesis.cpp))
 
 test_asm: release/bin/test_asm_1 release/bin/test_asm_2
 
