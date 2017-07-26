@@ -600,6 +600,58 @@ void gevm(A&& a, B&& b, C&& c) {
     c.invalidate_cpu();
 }
 
+/*!
+ * \brief Compute the vector-matrix mutplication of a and trans(B) and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
+template <typename A, typename B, typename C>
+void gevm_t(A&& a, B&& b, C&& c) {
+    decltype(auto) handle = start_cublas();
+
+    bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+
+    using VT = value_t<A>;
+    using T = cublas_type<VT>;
+
+    auto alpha = make_default<T>(1.0);
+    auto beta  = make_default<T>(0.0);
+
+    //Perform the actual multiplication
+
+    if (row_major) {
+        cublas_gemv(
+            handle.get(),
+            CUBLAS_OP_T,
+            etl::columns(b), etl::rows(b),
+            &alpha,
+            safe_cast(b.gpu_memory()), major_stride(b),
+            safe_cast(a.gpu_memory()), 1,
+            &beta,
+            safe_cast(c.gpu_memory()), 1);
+    } else {
+        cublas_gemv(
+            handle.get(),
+            CUBLAS_OP_N,
+            etl::rows(b), etl::columns(b),
+            &alpha,
+            safe_cast(b.gpu_memory()), major_stride(b),
+            safe_cast(a.gpu_memory()), 1,
+            &beta,
+            safe_cast(c.gpu_memory()), 1);
+    }
+
+    //Copy the result from GPU to CPU
+
+    c.validate_gpu();
+    c.invalidate_cpu();
+}
+
 #else
 
 //COVERAGE_EXCLUDE_BEGIN
@@ -682,6 +734,20 @@ void gemv(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B, typename C>
 void gevm(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+    cpp_unreachable("Unsupported feature called: cublas gemm");
+}
+
+/*!
+ * \brief Compute the vector-matrix mutplication of a and trans(B) and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
+template <typename A, typename B, typename C>
+void gevm_t(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);

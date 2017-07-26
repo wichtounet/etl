@@ -719,6 +719,82 @@ void gevm(A&& a, B&& b, C&& c) {
     }
 }
 
+// Versions with transposition
+
+/*!
+ * \brief Optimized version of GEVM for row major version
+ * \param a The lhs vector
+ * \param b The rhs matrix
+ * \param c The result vector
+ */
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
+void gevm_t(A&& a, B&& b, C&& c) {
+    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    const auto m = rows(b);
+    const auto n = columns(b);
+
+    if(etl::size(b) < gevm_rm_small_threshold){
+        gevm_small_kernel_cc<default_vec>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+    } else {
+        c = 0;
+
+        gevm_large_kernel_cc<default_vec>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+    }
+
+    c.invalidate_gpu();
+}
+
+/*!
+ * \brief Optimized version of GEVM for column major version
+ * \param a The lhs vector
+ * \param b The rhs matrix
+ * \param c The result vector
+ */
+template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A, B, C>::value))>
+void gevm_t(A&& a, B&& b, C&& c) {
+    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    const auto m = rows(b);
+    const auto n = columns(b);
+
+    if(etl::size(b) < gevm_cm_small_threshold){
+        gevm_small_kernel_rr<default_vec>(a.memory_start(), n, m, b.memory_start(), c);
+    } else {
+        c = 0;
+
+        gevm_large_kernel_rr<default_vec>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+    }
+
+    c.invalidate_gpu();
+}
+
+
+/*!
+ * \brief Unoptimized version of GEVM for column major version
+ * \param a The lhs vector
+ * \param b The rhs matrix
+ * \param c The result vector
+ */
+template <typename A, typename B, typename C, cpp_disable_if((all_column_major<A,B,C>::value || all_row_major<A, B, C>::value))>
+void gevm_t(A&& a, B&& b, C&& c) {
+    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+
+    c = 0;
+
+    for (size_t j = 0; j < rows(b); j++) {
+        for (size_t k = 0; k < etl::dim<0>(a); k++) {
+            c(j) += a(k) * b(j, k);
+        }
+    }
+}
+
 } //end of namespace vec
 } //end of namespace impl
 } //end of namespace etl

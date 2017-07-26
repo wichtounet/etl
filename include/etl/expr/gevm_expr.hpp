@@ -155,18 +155,47 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
     }
 
     /*!
-     * \brief Assign to a matrix of the same storage order
-     * \param c The expression to which assign
+     * \brief Compute C = a * trans(B)
+     * \param a The a vector
+     * \param b The B matrix
+     * \param c The C matrix (output)
      */
-    template<typename C>
-    void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, B, C>::value, "gemm only supported for ETL expressions");
+    template <typename AA, typename BB, typename C, cpp_enable_if((is_transpose_expr<BB>::value))>
+    static void apply_raw(AA&& a, BB&& b, C&& c) {
+        // The vector is always assigned in the same way
+        standard_evaluator::pre_assign_rhs(a);
 
-        auto& a = this->a();
-        auto& b = this->b();
+        auto impl = select_gevm_impl<C>(etl::dim<0>(b), etl::dim<1>(b));
 
-        check(a, b, c);
+        if (impl == gemm_impl::STD) {
+            standard_evaluator::pre_assign_rhs(b);
 
+            etl::impl::standard::vm_mul(make_temporary(a), make_temporary(b), c);
+        } else if (impl == gemm_impl::BLAS) {
+            standard_evaluator::pre_assign_rhs(b.a());
+
+            etl::impl::blas::gevm_t(make_temporary(a), make_temporary(b.a()), c);
+        } else if (impl == gemm_impl::VEC) {
+            standard_evaluator::pre_assign_rhs(b.a());
+
+            etl::impl::vec::gevm_t(make_temporary(a), make_temporary(b.a()), c);
+        } else if (impl == gemm_impl::CUBLAS) {
+            standard_evaluator::pre_assign_rhs(b.a());
+
+            etl::impl::cublas::gevm_t(make_temporary(a), make_temporary(b.a()), c);
+        } else {
+            cpp_unreachable("Invalid selection for gevm");
+        }
+    }
+
+    /*!
+     * \brief Compute C = a * B
+     * \param a The a vector
+     * \param b The B matrix
+     * \param c The C matrix (output)
+     */
+    template <typename AA, typename BB, typename C, cpp_enable_if((!is_transpose_expr<BB>::value))>
+    static void apply_raw(AA&& a, BB&& b, C&& c) {
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
@@ -183,6 +212,19 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
         } else {
             cpp_unreachable("Invalid selection for gevm");
         }
+    }
+
+    /*!
+     * \brief Assign to a matrix of the same storage order
+     * \param c The expression to which assign
+     */
+    template<typename C>
+    void assign_to(C&& c)  const {
+        static_assert(all_etl_expr<A, B, C>::value, "gemm only supported for ETL expressions");
+
+        check(this->a(), this->b(), c);
+
+        apply_raw(this->a(), this->b(), c);
     }
 
     /*!

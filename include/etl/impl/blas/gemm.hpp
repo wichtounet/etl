@@ -151,7 +151,7 @@ inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, 
 }
 
 /*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
+ * \brief Compute the matrix multiplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
  * param c The result
@@ -182,7 +182,7 @@ void gemm(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
+ * \brief Compute the matrix multiplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
  * param c The result
@@ -213,7 +213,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
+ * \brief Compute the matrix multiplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
  * param c The result
@@ -244,7 +244,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
+ * \brief Compute the matrix multiplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
  * param c The result
@@ -275,7 +275,7 @@ void gemm_tt(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Compute the matrix-vector mutplication of a and b and store the result in c
+ * \brief Compute the matrix-vector multiplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
  * param c The result
@@ -306,7 +306,7 @@ void gemv(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Compute the vector-matrix mutplication of a and b and store the result in c
+ * \brief Compute the vector-matrix multiplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
  * param c The result
@@ -326,6 +326,37 @@ void gevm(A&& a, B&& b, C&& c) {
     cblas_gemv(
         row_major ? CblasRowMajor : CblasColMajor,
         CblasTrans,
+        etl::rows(b), etl::columns(b),
+        alpha,
+        b.memory_start(), major_stride(b),
+        a.memory_start(), 1,
+        beta,
+        c.memory_start(), 1);
+
+    c.invalidate_gpu();
+}
+
+/*!
+ * \brief Compute the vector-matrix multiplication of a and trans(B) and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
+template <typename A, typename B, typename C>
+void gevm_t(A&& a, B&& b, C&& c) {
+    using T = value_t<A>;
+
+    static constexpr bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+
+    T alpha(1.0);
+    T beta(0.0);
+
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    cblas_gemv(
+        row_major ? CblasRowMajor : CblasColMajor,
+        CblasNoTrans,
         etl::rows(b), etl::columns(b),
         alpha,
         b.memory_start(), major_stride(b),
@@ -1155,7 +1186,7 @@ void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t
 //COVERAGE_EXCLUDE_BEGIN
 
 /*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
+ * \brief Compute the matrix multiplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
  * param c The result
@@ -1169,7 +1200,7 @@ void gemm(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
+ * \brief Compute the matrix multiplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
  * param c The result
@@ -1183,7 +1214,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
+ * \brief Compute the matrix multiplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
  * param c The result
@@ -1197,7 +1228,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
+ * \brief Compute the matrix multiplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
  * param c The result
@@ -1211,7 +1242,7 @@ void gemm_tt(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Compute the matrix-vector mutplication of a and b and store the result in c
+ * \brief Compute the matrix-vector multiplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
  * param c The result
@@ -1225,13 +1256,28 @@ void gemv(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Compute the vector-matrix mutplication of a and b and store the result in c
+ * \brief Compute the vector-matrix multiplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
  * param c The result
  */
 template <typename A, typename B, typename C>
 void gevm(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+    cpp_unreachable("Unsupported feature called: blas gemm");
+}
+
+/*!
+ * \brief Compute the vector-matrix multiplication of a and trans(B) and store the result in c
+ *
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
+template <typename A, typename B, typename C>
+void gevm_t(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);
