@@ -1079,7 +1079,7 @@ void gemm_large_kernel_cc(const T* a, const T* b, T* c, size_t M, size_t N, size
  * \param b The rhs matrix
  * \param c The result matrix
  */
-template <typename A, typename B, typename C, cpp_disable_if((all_row_major<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A, B, C>::value))>
 void gemm(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
