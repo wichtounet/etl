@@ -7,7 +7,8 @@
 
 #pragma once
 
-#include "etl/impl/vec/gemm_blis.hpp"
+#include "etl/impl/vec/gemm_blis.hpp" // BLIS-Like optimized kernel
+#include "etl/impl/vec/gemm_tn.hpp"   // For C = trans(A) * B
 
 // The idea of the GEMM kernels is largely inspired by the kernels in Blaze by
 // Klaus Igleberg
