@@ -130,3 +130,53 @@ GEMV_TEST_CASE("gemv/6", "[gemv]") {
         REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
     }
 }
+
+GEMV_T_TEST_CASE("gemv_t/1", "[gemv][gemv_t]") {
+    etl::dyn_matrix<T> a(368, 512);
+    etl::dyn_vector<T> b(368);
+
+    etl::dyn_vector<T> c(512);
+    etl::dyn_vector<T> c_ref(512);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(a, b, c);
+
+    c_ref = 0;
+
+    for (size_t k = 0; k < 368; k++) {
+        for (size_t i = 0; i < 512; i++) {
+            c_ref(i) += a(k, i) * b(k);
+        }
+    }
+
+    for(size_t i = 0; i < etl::size(c); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
+    }
+}
+
+GEMV_T_TEST_CASE("gemv_t/2", "[gemv][gemv_t]") {
+    etl::dyn_matrix<T> a(512, 368);
+    etl::dyn_vector<T> b(512);
+
+    etl::dyn_vector<T> c(368);
+    etl::dyn_vector<T> c_ref(368);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(a, b, c);
+
+    c_ref = 0;
+
+    for (size_t k = 0; k < 512; k++) {
+        for (size_t i = 0; i < 368; i++) {
+            c_ref(i) += a(k, i) * b(k);
+        }
+    }
+
+    for(size_t i = 0; i < etl::size(c); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
+    }
+}

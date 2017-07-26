@@ -28,6 +28,7 @@ MUL_FUNCTOR(default_gemm_nt, c = a * transpose(b))
 MUL_FUNCTOR(default_gemm_tn, c = transpose(a) * b)
 MUL_FUNCTOR(default_gemm_tt, c = transpose(a) * transpose(b))
 MUL_FUNCTOR(default_gemv, c = etl::mul(a, b))
+MUL_FUNCTOR(default_gemv_t, c = etl::mul(transpose(a), b))
 MUL_FUNCTOR(default_gevm, c = etl::mul(a, b))
 MUL_FUNCTOR(default_gevm_t, c = a * transpose(b))
 
@@ -36,6 +37,7 @@ MUL_FUNCTOR(default_gevm_t, c = a * transpose(b))
 #define GEMM_NT_TEST_CASE_SECTION_DEFAULT MUL_TEST_CASE_SECTIONS(default_gemm_nt, default_gemm_nt)
 #define GEMM_TT_TEST_CASE_SECTION_DEFAULT MUL_TEST_CASE_SECTIONS(default_gemm_tt, default_gemm_tt)
 #define GEMV_TEST_CASE_SECTION_DEFAULT MUL_TEST_CASE_SECTIONS(default_gemv, default_gemv)
+#define GEMV_T_TEST_CASE_SECTION_DEFAULT MUL_TEST_CASE_SECTIONS(default_gemv_t, default_gemv_t)
 #define GEVM_TEST_CASE_SECTION_DEFAULT MUL_TEST_CASE_SECTIONS(default_gevm, default_gevm)
 #define GEVM_T_TEST_CASE_SECTION_DEFAULT MUL_TEST_CASE_SECTIONS(default_gevm_t, default_gevm_t)
 
@@ -46,6 +48,7 @@ MUL_FUNCTOR(std_gemm_tn, c = selected_helper(etl::gemm_impl::STD, transpose(a) *
 MUL_FUNCTOR(std_gemm_nt, c = selected_helper(etl::gemm_impl::STD, a * transpose(b)))
 MUL_FUNCTOR(std_gemm_tt, c = selected_helper(etl::gemm_impl::STD, transpose(a) * transpose(b)))
 MUL_FUNCTOR(std_gemv, c = selected_helper(etl::gemm_impl::STD, a * b))
+MUL_FUNCTOR(std_gemv_t, c = selected_helper(etl::gemm_impl::STD, transpose(a) * b))
 MUL_FUNCTOR(std_gevm, c = selected_helper(etl::gemm_impl::STD, a * b))
 MUL_FUNCTOR(std_gevm_t, c = selected_helper(etl::gemm_impl::STD, a * transpose(b)))
 
@@ -54,6 +57,7 @@ MUL_FUNCTOR(std_gevm_t, c = selected_helper(etl::gemm_impl::STD, a * transpose(b
 #define GEMM_NT_TEST_CASE_SECTION_STD MUL_TEST_CASE_SECTIONS(std_gemm_nt, std_gemm_nt)
 #define GEMM_TT_TEST_CASE_SECTION_STD MUL_TEST_CASE_SECTIONS(std_gemm_tt, std_gemm_tt)
 #define GEMV_TEST_CASE_SECTION_STD MUL_TEST_CASE_SECTIONS(std_gemv, std_gemv)
+#define GEMV_T_TEST_CASE_SECTION_STD MUL_TEST_CASE_SECTIONS(std_gemv_t, std_gemv_t)
 #define GEVM_TEST_CASE_SECTION_STD MUL_TEST_CASE_SECTIONS(std_gevm, std_gevm)
 #define GEVM_T_TEST_CASE_SECTION_STD MUL_TEST_CASE_SECTIONS(std_gevm_t, std_gevm_t)
 
@@ -75,6 +79,7 @@ MUL_FUNCTOR(vec_gemm_tn, c = selected_helper(etl::gemm_impl::VEC, transpose(a) *
 MUL_FUNCTOR(vec_gemm_nt, c = selected_helper(etl::gemm_impl::VEC, a * transpose(b)))
 MUL_FUNCTOR(vec_gemm_tt, c = selected_helper(etl::gemm_impl::VEC, transpose(a) * transpose(b)))
 MUL_FUNCTOR(vec_gemv, c = selected_helper(etl::gemm_impl::VEC, a * b))
+MUL_FUNCTOR(vec_gemv_t, c = selected_helper(etl::gemm_impl::VEC, transpose(a) * b))
 MUL_FUNCTOR(vec_gevm, c = selected_helper(etl::gemm_impl::VEC, a * b))
 MUL_FUNCTOR(vec_gevm_t, c = selected_helper(etl::gemm_impl::VEC, a * transpose(b)))
 
@@ -83,6 +88,7 @@ MUL_FUNCTOR(vec_gevm_t, c = selected_helper(etl::gemm_impl::VEC, a * transpose(b
 #define GEMM_NT_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gemm_nt, vec_gemm_nt)
 #define GEMM_TT_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gemm_tt, vec_gemm_tt)
 #define GEMV_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gemv, vec_gemv)
+#define GEMV_T_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gemv_t, vec_gemv_t)
 #define GEVM_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gevm, vec_gevm)
 #define GEVM_T_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gevm_t, vec_gevm_t)
 #else
@@ -91,6 +97,7 @@ MUL_FUNCTOR(vec_gevm_t, c = selected_helper(etl::gemm_impl::VEC, a * transpose(b
 #define GEMM_NT_TEST_CASE_SECTION_VEC
 #define GEMM_TT_TEST_CASE_SECTION_VEC
 #define GEMV_TEST_CASE_SECTION_VEC
+#define GEMV_T_TEST_CASE_SECTION_VEC
 #define GEVM_TEST_CASE_SECTION_VEC
 #define GEVM_T_TEST_CASE_SECTION_VEC
 #endif
@@ -103,6 +110,7 @@ MUL_FUNCTOR(blas_gemm_tn, c = selected_helper(etl::gemm_impl::BLAS, transpose(a)
 MUL_FUNCTOR(blas_gemm_nt, c = selected_helper(etl::gemm_impl::BLAS, a * transpose(b)))
 MUL_FUNCTOR(blas_gemm_tt, c = selected_helper(etl::gemm_impl::BLAS, transpose(a) * transpose(b)))
 MUL_FUNCTOR(blas_gemv, c = selected_helper(etl::gemm_impl::BLAS, a * b))
+MUL_FUNCTOR(blas_gemv_t, c = selected_helper(etl::gemm_impl::BLAS, transpose(a) * b))
 MUL_FUNCTOR(blas_gevm, c = selected_helper(etl::gemm_impl::BLAS, a * b))
 MUL_FUNCTOR(blas_gevm_t, c = selected_helper(etl::gemm_impl::BLAS, a * transpose(b)))
 
@@ -111,6 +119,7 @@ MUL_FUNCTOR(blas_gevm_t, c = selected_helper(etl::gemm_impl::BLAS, a * transpose
 #define GEMM_NT_TEST_CASE_SECTION_BLAS MUL_TEST_CASE_SECTIONS(blas_gemm_nt, blas_gemm_nt)
 #define GEMM_TT_TEST_CASE_SECTION_BLAS MUL_TEST_CASE_SECTIONS(blas_gemm_tt, blas_gemm_tt)
 #define GEMV_TEST_CASE_SECTION_BLAS MUL_TEST_CASE_SECTIONS(blas_gemv, blas_gemv)
+#define GEMV_T_TEST_CASE_SECTION_BLAS MUL_TEST_CASE_SECTIONS(blas_gemv_t, blas_gemv_t)
 #define GEVM_TEST_CASE_SECTION_BLAS MUL_TEST_CASE_SECTIONS(blas_gevm, blas_gevm)
 #define GEVM_T_TEST_CASE_SECTION_BLAS MUL_TEST_CASE_SECTIONS(blas_gevm_t, blas_gevm_t)
 #else
@@ -119,6 +128,7 @@ MUL_FUNCTOR(blas_gevm_t, c = selected_helper(etl::gemm_impl::BLAS, a * transpose
 #define GEMM_NT_TEST_CASE_SECTION_BLAS
 #define GEMM_TT_TEST_CASE_SECTION_BLAS
 #define GEMV_TEST_CASE_SECTION_BLAS
+#define GEMV_T_TEST_CASE_SECTION_BLAS
 #define GEVM_TEST_CASE_SECTION_BLAS
 #define GEVM_T_TEST_CASE_SECTION_BLAS
 #endif
@@ -131,6 +141,7 @@ MUL_FUNCTOR(cublas_gemm_tn, c = selected_helper(etl::gemm_impl::CUBLAS, transpos
 MUL_FUNCTOR(cublas_gemm_nt, c = selected_helper(etl::gemm_impl::CUBLAS, a * transpose(b)))
 MUL_FUNCTOR(cublas_gemm_tt, c = selected_helper(etl::gemm_impl::CUBLAS, transpose(a) * transpose(b)))
 MUL_FUNCTOR(cublas_gemv, c = selected_helper(etl::gemm_impl::CUBLAS, a * b))
+MUL_FUNCTOR(cublas_gemv_t, c = selected_helper(etl::gemm_impl::CUBLAS, transpose(a) * b))
 MUL_FUNCTOR(cublas_gevm, c = selected_helper(etl::gemm_impl::CUBLAS, a * b))
 MUL_FUNCTOR(cublas_gevm_t, c = selected_helper(etl::gemm_impl::CUBLAS, a * transpose(b)))
 
@@ -139,6 +150,7 @@ MUL_FUNCTOR(cublas_gevm_t, c = selected_helper(etl::gemm_impl::CUBLAS, a * trans
 #define GEMM_NT_TEST_CASE_SECTION_CUBLAS MUL_TEST_CASE_SECTIONS(cublas_gemm_nt, cublas_gemm_nt)
 #define GEMM_TT_TEST_CASE_SECTION_CUBLAS MUL_TEST_CASE_SECTIONS(cublas_gemm_tt, cublas_gemm_tt)
 #define GEMV_TEST_CASE_SECTION_CUBLAS MUL_TEST_CASE_SECTIONS(cublas_gemv, cublas_gemv)
+#define GEMV_T_TEST_CASE_SECTION_CUBLAS MUL_TEST_CASE_SECTIONS(cublas_gemv_t, cublas_gemv_t)
 #define GEVM_TEST_CASE_SECTION_CUBLAS MUL_TEST_CASE_SECTIONS(cublas_gevm, cublas_gevm)
 #define GEVM_T_TEST_CASE_SECTION_CUBLAS MUL_TEST_CASE_SECTIONS(cublas_gevm_t, cublas_gevm_t)
 #else
@@ -147,6 +159,7 @@ MUL_FUNCTOR(cublas_gevm_t, c = selected_helper(etl::gemm_impl::CUBLAS, a * trans
 #define GEMM_NT_TEST_CASE_SECTION_CUBLAS
 #define GEMM_TT_TEST_CASE_SECTION_CUBLAS
 #define GEMV_TEST_CASE_SECTION_CUBLAS
+#define GEMV_T_TEST_CASE_SECTION_CUBLAS
 #define GEVM_TEST_CASE_SECTION_CUBLAS
 #define GEVM_T_TEST_CASE_SECTION_CUBLAS
 #endif
@@ -218,6 +231,16 @@ MUL_FUNCTOR(cublas_gevm_t, c = selected_helper(etl::gemm_impl::CUBLAS, a * trans
         GEMV_TEST_CASE_SECTION_VEC          \
         GEMV_TEST_CASE_SECTION_BLAS         \
         GEMV_TEST_CASE_SECTION_CUBLAS       \
+    }                                       \
+    MUL_TEST_CASE_DEFN
+
+#define GEMV_T_TEST_CASE(name, description) \
+    MUL_TEST_CASE_DECL(name, description) { \
+        GEMV_T_TEST_CASE_SECTION_DEFAULT    \
+        GEMV_T_TEST_CASE_SECTION_STD        \
+        GEMV_T_TEST_CASE_SECTION_VEC        \
+        GEMV_T_TEST_CASE_SECTION_BLAS       \
+        GEMV_T_TEST_CASE_SECTION_CUBLAS     \
     }                                       \
     MUL_TEST_CASE_DEFN
 
