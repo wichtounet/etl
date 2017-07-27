@@ -34,7 +34,7 @@ void gemm_tn_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, s
 
     size_t j = 0;
 
-    for(; j + 7 * vec_size < j_end; j += 8 * vec_size){
+    for (; j + 7 * vec_size < j_end; j += 8 * vec_size) {
         size_t i = 0;
 
         for (; i < M; i++) {
@@ -80,7 +80,7 @@ void gemm_tn_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, s
         }
     }
 
-    for(; j + 3 * vec_size < j_end; j += 4 * vec_size){
+    for (; j + 3 * vec_size < j_end; j += 4 * vec_size) {
         size_t i = 0;
 
         for (; i + 1 < M; i += 2) {
@@ -158,7 +158,7 @@ void gemm_tn_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, s
         }
     }
 
-    for(; j + 1 * vec_size < j_end; j += 2 * vec_size){
+    for (; j + 1 * vec_size < j_end; j += 2 * vec_size) {
         size_t i = 0;
 
         for (; i + 1 < M; i += 2) {
@@ -208,7 +208,7 @@ void gemm_tn_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, s
         }
     }
 
-    for(; j < j_end; j += vec_size){
+    for (; j < j_end; j += vec_size) {
         size_t i = 0;
 
         for (; i + 1 < M; i += 2) {
@@ -303,10 +303,10 @@ void gemm_tn_large_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, s
                 size_t j = jj;
 
 #ifdef __clang__
-                for(; j + 3 * vec_size < j_end; j += 4 * vec_size){
+                for (; j + 3 * vec_size < j_end; j += 4 * vec_size) {
                     size_t i = ii;
 
-                    for(; i + 1 < i_end; i += 2){
+                    for (; i + 1 < i_end; i += 2) {
                         auto r11 = vec_type::loadu(c + (i + 0) * N + j + 0 * vec_size);
                         auto r12 = vec_type::loadu(c + (i + 0) * N + j + 1 * vec_size);
                         auto r13 = vec_type::loadu(c + (i + 0) * N + j + 2 * vec_size);
@@ -376,10 +376,10 @@ void gemm_tn_large_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, s
                 }
 #endif
 
-                for(; j + vec_size < j_end; j += 2 * vec_size){
+                for (; j + vec_size < j_end; j += 2 * vec_size) {
                     size_t i = ii;
 
-                    for(; i + 3 < i_end; i += 4){
+                    for (; i + 3 < i_end; i += 4) {
                         auto r11 = vec_type::loadu(c + (i + 0) * N + j + 0 * vec_size);
                         auto r12 = vec_type::loadu(c + (i + 0) * N + j + 1 * vec_size);
 
@@ -392,7 +392,7 @@ void gemm_tn_large_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, s
                         auto r41 = vec_type::loadu(c + (i + 3) * N + j + 0 * vec_size);
                         auto r42 = vec_type::loadu(c + (i + 3) * N + j + 1 * vec_size);
 
-                        for(size_t k = kk; k < k_end; ++k){
+                        for (size_t k = kk; k < k_end; ++k) {
                             auto a1 = vec_type::set(a[(i + 0) + k * M]);
                             auto a2 = vec_type::set(a[(i + 1) + k * M]);
                             auto a3 = vec_type::set(a[(i + 2) + k * M]);
@@ -427,14 +427,14 @@ void gemm_tn_large_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, s
                         vec_type::storeu(c + (i + 3) * N + j + 1 * vec_size, r42);
                     }
 
-                    for(; i + 1 < i_end; i += 2){
+                    for (; i + 1 < i_end; i += 2) {
                         auto r11 = vec_type::loadu(c + (i + 0) * N + j + 0 * vec_size);
                         auto r12 = vec_type::loadu(c + (i + 0) * N + j + 1 * vec_size);
 
                         auto r21 = vec_type::loadu(c + (i + 1) * N + j + 0 * vec_size);
                         auto r22 = vec_type::loadu(c + (i + 1) * N + j + 1 * vec_size);
 
-                        for(size_t k = kk; k < k_end; ++k){
+                        for (size_t k = kk; k < k_end; ++k) {
                             auto a1 = vec_type::set(a[(i + 0) + k * M]);
                             auto a2 = vec_type::set(a[(i + 1) + k * M]);
 
@@ -455,11 +455,11 @@ void gemm_tn_large_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, s
                         vec_type::storeu(c + (i + 1) * N + j + 1 * vec_size, r22);
                     }
 
-                    if(i < i_end){
+                    if (i < i_end) {
                         auto r11 = vec_type::loadu(c + (i + 0) * N + j + 0 * vec_size);
                         auto r12 = vec_type::loadu(c + (i + 0) * N + j + 1 * vec_size);
 
-                        for(size_t k = kk; k < k_end; ++k){
+                        for (size_t k = kk; k < k_end; ++k) {
                             auto a1 = vec_type::set(a[(i + 0) + k * M]);
 
                             auto b1 = vec_type::loadu(b + k * N + j + 0 * vec_size);
@@ -474,11 +474,11 @@ void gemm_tn_large_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, s
                     }
                 }
 
-                for(; j < j_end; j += vec_size){
-                    for(size_t i = ii; i < i_end; ++i){
+                for (; j < j_end; j += vec_size) {
+                    for (size_t i = ii; i < i_end; ++i) {
                         auto r11 = vec_type::loadu(c + (i + 0) * N + j + 0 * vec_size);
 
-                        for(size_t k = kk; k < k_end; ++k){
+                        for (size_t k = kk; k < k_end; ++k) {
                             auto a1 = vec_type::set(a[(i + 0) + k * M]);
 
                             auto b1 = vec_type::loadu(b + k * N + j + 0 * vec_size);
@@ -490,20 +490,18 @@ void gemm_tn_large_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, s
                     }
                 }
 
-                for(; j < j_end_a; ++j){
-                    for(size_t i = ii; i < i_end; ++i){
+                for (; j < j_end_a; ++j) {
+                    for (size_t i = ii; i < i_end; ++i) {
                         auto r11 = c[(i + 0) * N + j];
 
-                        for(size_t k = kk; k < k_end; ++k){
+                        for (size_t k = kk; k < k_end; ++k) {
                             r11 += a[(i + 0) + k * M] * b[k * N + j];
                         }
 
                         c[(i + 0) * N + j] = r11;
                     }
                 }
-
             }
-
         }
     }
 }
