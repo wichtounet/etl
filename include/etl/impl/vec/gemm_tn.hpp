@@ -273,6 +273,242 @@ void gemm_tn_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, s
 }
 
 /*!
+ * \brief Optimized version of GEMM for assignment of a large
+ * Column-Major Matrix - Row Major Matrix to a Row Major Matrix.
+ *
+ * \param a The lhs matrix
+ * \param b The rhs matrix
+ * \param c The result matrix
+ */
+template <typename V, typename T>
+void gemm_tn_large_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
+    using vec_type = V;
+
+    static constexpr size_t vec_size = vec_type::template traits<T>::size;
+
+    constexpr size_t n_block_size = 128UL;
+    constexpr size_t m_block_size = 64UL;
+    constexpr size_t k_block_size = 128UL;
+
+    for (size_t jj = 0; jj < N; jj += n_block_size) {
+        const size_t j_end_a = std::min(jj + n_block_size, N);
+        const size_t j_end   = j_end_a & size_t(-vec_size);
+
+        for (size_t ii = 0; ii < M; ii += m_block_size) {
+            const size_t i_end = std::min(ii + m_block_size, M);
+
+            for (size_t kk = 0; kk < K; kk += k_block_size) {
+                const size_t k_end = std::min(kk + k_block_size, K);
+
+                size_t j = jj;
+
+#ifdef __clang__
+                for(; j + 3 * vec_size < j_end; j += 4 * vec_size){
+                    size_t i = ii;
+
+                    for(; i + 1 < i_end; i += 2){
+                        auto r11 = vec_type::loadu(c + (i + 0) * N + j + 0 * vec_size);
+                        auto r12 = vec_type::loadu(c + (i + 0) * N + j + 1 * vec_size);
+                        auto r13 = vec_type::loadu(c + (i + 0) * N + j + 2 * vec_size);
+                        auto r14 = vec_type::loadu(c + (i + 0) * N + j + 3 * vec_size);
+
+                        auto r21 = vec_type::loadu(c + (i + 1) * N + j + 0 * vec_size);
+                        auto r22 = vec_type::loadu(c + (i + 1) * N + j + 1 * vec_size);
+                        auto r23 = vec_type::loadu(c + (i + 1) * N + j + 2 * vec_size);
+                        auto r24 = vec_type::loadu(c + (i + 1) * N + j + 3 * vec_size);
+
+                        for (size_t k = kk; k < k_end; ++k) {
+                            auto a1 = vec_type::set(a[(i + 0) + k * M]);
+                            auto a2 = vec_type::set(a[(i + 1) + k * M]);
+
+                            auto b1 = vec_type::loadu(b + k * N + j + 0 * vec_size);
+                            auto b2 = vec_type::loadu(b + k * N + j + 1 * vec_size);
+                            auto b3 = vec_type::loadu(b + k * N + j + 2 * vec_size);
+                            auto b4 = vec_type::loadu(b + k * N + j + 3 * vec_size);
+
+                            r11 = vec_type::fmadd(a1, b1, r11);
+                            r12 = vec_type::fmadd(a1, b2, r12);
+                            r13 = vec_type::fmadd(a1, b3, r13);
+                            r14 = vec_type::fmadd(a1, b4, r14);
+
+                            r21 = vec_type::fmadd(a2, b1, r21);
+                            r22 = vec_type::fmadd(a2, b2, r22);
+                            r23 = vec_type::fmadd(a2, b3, r23);
+                            r24 = vec_type::fmadd(a2, b4, r24);
+                        }
+
+                        vec_type::storeu(c + (i + 0) * N + j + 0 * vec_size, r11);
+                        vec_type::storeu(c + (i + 0) * N + j + 1 * vec_size, r12);
+                        vec_type::storeu(c + (i + 0) * N + j + 2 * vec_size, r13);
+                        vec_type::storeu(c + (i + 0) * N + j + 3 * vec_size, r14);
+
+                        vec_type::storeu(c + (i + 1) * N + j + 0 * vec_size, r21);
+                        vec_type::storeu(c + (i + 1) * N + j + 1 * vec_size, r22);
+                        vec_type::storeu(c + (i + 1) * N + j + 2 * vec_size, r23);
+                        vec_type::storeu(c + (i + 1) * N + j + 3 * vec_size, r24);
+                    }
+
+                    if (i < i_end) {
+                        auto r11 = vec_type::loadu(c + (i + 0) * N + j + 0 * vec_size);
+                        auto r12 = vec_type::loadu(c + (i + 0) * N + j + 1 * vec_size);
+                        auto r13 = vec_type::loadu(c + (i + 0) * N + j + 2 * vec_size);
+                        auto r14 = vec_type::loadu(c + (i + 0) * N + j + 3 * vec_size);
+
+                        for (size_t k = kk; k < k_end; ++k) {
+                            auto a1 = vec_type::set(a[(i + 0) + k * M]);
+
+                            auto b1 = vec_type::loadu(b + k * N + j + 0 * vec_size);
+                            auto b2 = vec_type::loadu(b + k * N + j + 1 * vec_size);
+                            auto b3 = vec_type::loadu(b + k * N + j + 2 * vec_size);
+                            auto b4 = vec_type::loadu(b + k * N + j + 3 * vec_size);
+
+                            r11 = vec_type::fmadd(a1, b1, r11);
+                            r12 = vec_type::fmadd(a1, b2, r12);
+                            r13 = vec_type::fmadd(a1, b3, r13);
+                            r14 = vec_type::fmadd(a1, b4, r14);
+                        }
+
+                        vec_type::storeu(c + (i + 0) * N + j + 0 * vec_size, r11);
+                        vec_type::storeu(c + (i + 0) * N + j + 1 * vec_size, r12);
+                        vec_type::storeu(c + (i + 0) * N + j + 2 * vec_size, r13);
+                        vec_type::storeu(c + (i + 0) * N + j + 3 * vec_size, r14);
+                    }
+                }
+#endif
+
+                for(; j + vec_size < j_end; j += 2 * vec_size){
+                    size_t i = ii;
+
+                    for(; i + 3 < i_end; i += 4){
+                        auto r11 = vec_type::loadu(c + (i + 0) * N + j + 0 * vec_size);
+                        auto r12 = vec_type::loadu(c + (i + 0) * N + j + 1 * vec_size);
+
+                        auto r21 = vec_type::loadu(c + (i + 1) * N + j + 0 * vec_size);
+                        auto r22 = vec_type::loadu(c + (i + 1) * N + j + 1 * vec_size);
+
+                        auto r31 = vec_type::loadu(c + (i + 2) * N + j + 0 * vec_size);
+                        auto r32 = vec_type::loadu(c + (i + 2) * N + j + 1 * vec_size);
+
+                        auto r41 = vec_type::loadu(c + (i + 3) * N + j + 0 * vec_size);
+                        auto r42 = vec_type::loadu(c + (i + 3) * N + j + 1 * vec_size);
+
+                        for(size_t k = kk; k < k_end; ++k){
+                            auto a1 = vec_type::set(a[(i + 0) + k * M]);
+                            auto a2 = vec_type::set(a[(i + 1) + k * M]);
+                            auto a3 = vec_type::set(a[(i + 2) + k * M]);
+                            auto a4 = vec_type::set(a[(i + 3) + k * M]);
+
+                            auto b1 = vec_type::loadu(b + k * N + j + 0 * vec_size);
+                            auto b2 = vec_type::loadu(b + k * N + j + 1 * vec_size);
+
+                            r11 = vec_type::fmadd(a1, b1, r11);
+                            r12 = vec_type::fmadd(a1, b2, r12);
+
+                            r21 = vec_type::fmadd(a2, b1, r21);
+                            r22 = vec_type::fmadd(a2, b2, r22);
+
+                            r31 = vec_type::fmadd(a3, b1, r31);
+                            r32 = vec_type::fmadd(a3, b2, r32);
+
+                            r41 = vec_type::fmadd(a4, b1, r41);
+                            r42 = vec_type::fmadd(a4, b2, r42);
+                        }
+
+                        vec_type::storeu(c + (i + 0) * N + j + 0 * vec_size, r11);
+                        vec_type::storeu(c + (i + 0) * N + j + 1 * vec_size, r12);
+
+                        vec_type::storeu(c + (i + 1) * N + j + 0 * vec_size, r21);
+                        vec_type::storeu(c + (i + 1) * N + j + 1 * vec_size, r22);
+
+                        vec_type::storeu(c + (i + 2) * N + j + 0 * vec_size, r31);
+                        vec_type::storeu(c + (i + 2) * N + j + 1 * vec_size, r32);
+
+                        vec_type::storeu(c + (i + 3) * N + j + 0 * vec_size, r41);
+                        vec_type::storeu(c + (i + 3) * N + j + 1 * vec_size, r42);
+                    }
+
+                    for(; i + 1 < i_end; i += 2){
+                        auto r11 = vec_type::loadu(c + (i + 0) * N + j + 0 * vec_size);
+                        auto r12 = vec_type::loadu(c + (i + 0) * N + j + 1 * vec_size);
+
+                        auto r21 = vec_type::loadu(c + (i + 1) * N + j + 0 * vec_size);
+                        auto r22 = vec_type::loadu(c + (i + 1) * N + j + 1 * vec_size);
+
+                        for(size_t k = kk; k < k_end; ++k){
+                            auto a1 = vec_type::set(a[(i + 0) + k * M]);
+                            auto a2 = vec_type::set(a[(i + 1) + k * M]);
+
+                            auto b1 = vec_type::loadu(b + k * N + j + 0 * vec_size);
+                            auto b2 = vec_type::loadu(b + k * N + j + 1 * vec_size);
+
+                            r11 = vec_type::fmadd(a1, b1, r11);
+                            r12 = vec_type::fmadd(a1, b2, r12);
+
+                            r21 = vec_type::fmadd(a2, b1, r21);
+                            r22 = vec_type::fmadd(a2, b2, r22);
+                        }
+
+                        vec_type::storeu(c + (i + 0) * N + j + 0 * vec_size, r11);
+                        vec_type::storeu(c + (i + 0) * N + j + 1 * vec_size, r12);
+
+                        vec_type::storeu(c + (i + 1) * N + j + 0 * vec_size, r21);
+                        vec_type::storeu(c + (i + 1) * N + j + 1 * vec_size, r22);
+                    }
+
+                    if(i < i_end){
+                        auto r11 = vec_type::loadu(c + (i + 0) * N + j + 0 * vec_size);
+                        auto r12 = vec_type::loadu(c + (i + 0) * N + j + 1 * vec_size);
+
+                        for(size_t k = kk; k < k_end; ++k){
+                            auto a1 = vec_type::set(a[(i + 0) + k * M]);
+
+                            auto b1 = vec_type::loadu(b + k * N + j + 0 * vec_size);
+                            auto b2 = vec_type::loadu(b + k * N + j + 1 * vec_size);
+
+                            r11 = vec_type::fmadd(a1, b1, r11);
+                            r12 = vec_type::fmadd(a1, b2, r12);
+                        }
+
+                        vec_type::storeu(c + (i + 0) * N + j + 0 * vec_size, r11);
+                        vec_type::storeu(c + (i + 0) * N + j + 1 * vec_size, r12);
+                    }
+                }
+
+                for(; j < j_end; j += vec_size){
+                    for(size_t i = ii; i < i_end; ++i){
+                        auto r11 = vec_type::loadu(c + (i + 0) * N + j + 0 * vec_size);
+
+                        for(size_t k = kk; k < k_end; ++k){
+                            auto a1 = vec_type::set(a[(i + 0) + k * M]);
+
+                            auto b1 = vec_type::loadu(b + k * N + j + 0 * vec_size);
+
+                            r11 = vec_type::fmadd(a1, b1, r11);
+                        }
+
+                        vec_type::storeu(c + (i + 0) * N + j + 0 * vec_size, r11);
+                    }
+                }
+
+                for(; j < j_end_a; ++j){
+                    for(size_t i = ii; i < i_end; ++i){
+                        auto r11 = c[(i + 0) * N + j];
+
+                        for(size_t k = kk; k < k_end; ++k){
+                            r11 += a[(i + 0) + k * M] * b[k * N + j];
+                        }
+
+                        c[(i + 0) * N + j] = r11;
+                    }
+                }
+
+            }
+
+        }
+    }
+}
+
+/*!
  * \brief Optimized version of GEMM for assignment of a
  * Column-Major Matrix - Row Major Matrix to a Row Major Matrix.
  *
@@ -291,11 +527,12 @@ void gemm_tn(A&& a, B&& b, C&& c) {
     const size_t N = etl::columns(b); // columns (B) = columns(C)
     const size_t K = etl::rows(a);    // columns(trans(A)) = rows(B)
 
-    //if(etl::size(b) <= gemm_rr_small_threshold){
+    if (etl::size(c) <= gemm_rr_small_threshold) {
         gemm_tn_small_kernel_rr<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
-    //} else {
-        //gemm_tn_large_kernel_rr<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
-    //}
+    } else {
+        c = 0;
+        gemm_tn_large_kernel_rr<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+    }
 
     c.invalidate_gpu();
 }
