@@ -170,9 +170,17 @@ $(eval $(call auto_folder_compile,test/src))
 CPP_FILES=$(wildcard test/src/*.cpp)
 TEST_FILES=$(CPP_FILES:test/%=%)
 
-# Create the test executable
+# Create the main test executable
 $(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
 $(eval $(call add_executable_set,etl_test,etl_test))
+
+# Create the sub test executable
+$(eval $(call add_test_executable,etl_test_gemm,src/test.cpp src/gemm.cpp))
+$(eval $(call add_test_executable,etl_test_gemm_expr,src/test.cpp src/gemm_expr.cpp))
+$(eval $(call add_test_executable,etl_test_gemm_nt,src/test.cpp src/gemm_nt.cpp))
+$(eval $(call add_test_executable,etl_test_gemm_tn,src/test.cpp src/gemm_tn.cpp))
+$(eval $(call add_test_executable,etl_test_gemm_tt,src/test.cpp src/gemm_tt.cpp))
+$(eval $(call add_test_executable,etl_test_gemv,src/test.cpp src/gemv.cpp))
 
 # Create the benchmark executables
 BENCH_FILES=$(wildcard benchmark/src/benchmark*cpp)
