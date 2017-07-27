@@ -5,10 +5,13 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#pragma once
+/*!
+ * \file
+ * \brief Kernels for row-major matrix - column-major matrix multiplication and
+ * assignment to a row-major matrix
+ */
 
-// The idea of the GEMM kernels is largely inspired by the kernels in Blaze by
-// Klaus Igleberg
+#pragma once
 
 namespace etl {
 
@@ -25,7 +28,7 @@ namespace vec {
  * \param c The result matrix
  */
 template <typename V, typename T>
-void gemm_nt_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
+void gemm_small_kernel_rc_to_r(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -292,7 +295,7 @@ void gemm_nt_small_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, s
  * \param c The result matrix
  */
 template <typename V, typename T>
-void gemm_nt_large_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
+void gemm_large_kernel_rc_to_r(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -524,32 +527,27 @@ void gemm_nt_large_kernel_rr(const T* a, const T* b, T* c, size_t M, size_t N, s
 }
 
 /*!
- * \brief Optimized version of GEMM for assignment of a
- * Column-Major Matrix - Row Major Matrix to a Row Major Matrix.
+ * \brief Vectorized implementation of row-major matrix - column-major matrix
+ * multiplication and assignment into a row-major matrix.
  *
- * \param a The lhs matrix (row major)
- * \param b The rhs matrix (transposed row major)
- * \param c The result matrix (row major)
+ * \param a The lhs matrix
+ * \param b The rhs matrix
+ * \param c The result matrix
+ *
+ * \param M The number of rows of the matrix A and rows of the matrix C
+ * \param N The number of columns of the matrix B and columns of the matrix C
+ * \param K The number of columns of the matrix A and rows of the matrix B
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
-void gemm_nt(A&& a, B&& b, C&& c) {
+template <typename T>
+void gemm_rc_to_r(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-
-    const size_t M = etl::rows(a);
-    const size_t N = etl::rows(b);
-    const size_t K = etl::columns(a);
-
-    if (etl::size(c) <= gemm_nt_rr_small_threshold) {
-        gemm_nt_small_kernel_rr<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+    if (M * N <= gemm_nt_rr_small_threshold) {
+        gemm_small_kernel_rc_to_r<default_vec>(a, b, c, M, N, K);
     } else {
-        c = 0;
-        gemm_nt_large_kernel_rr<default_vec>(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+        direct_fill_n(c, M * N, T(0));
+        gemm_large_kernel_rc_to_r<default_vec>(a, b, c, M, N, K);
     }
-
-    c.invalidate_gpu();
 }
 
 } //end of namespace vec
