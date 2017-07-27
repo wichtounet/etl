@@ -211,9 +211,9 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
             etl::impl::standard::mm_mul(make_temporary(a), make_temporary(b), c);
         } else if (impl == gemm_impl::VEC) {
             standard_evaluator::pre_assign_rhs(a);
-            standard_evaluator::pre_assign_rhs(b);
+            standard_evaluator::pre_assign_rhs(b.a());
 
-            etl::impl::vec::gemm(make_temporary(a), make_temporary(b), c);
+            etl::impl::vec::gemm_nt(make_temporary(a), make_temporary(b.a()), c);
         } else if (impl == gemm_impl::BLAS) {
             standard_evaluator::pre_assign_rhs(a);
             standard_evaluator::pre_assign_rhs(b.a());
