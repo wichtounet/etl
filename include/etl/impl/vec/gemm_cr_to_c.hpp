@@ -82,7 +82,7 @@ void gemm_small_kernel_cr_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
             vec_type::storeu(c + i + (j + 1) * M + 3 * vec_size, r42);
         }
 
-        for (; j < N; ++j) {
+        if (j < N) {
             auto r11 = vec_type::template zero<T>();
             auto r21 = vec_type::template zero<T>();
             auto r31 = vec_type::template zero<T>();
@@ -140,7 +140,7 @@ void gemm_small_kernel_cr_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
             vec_type::storeu(c + i + (j + 1) * M + 1 * vec_size, r22);
         }
 
-        for (; j < N; ++j) {
+        if (j < N) {
             auto r11 = vec_type::template zero<T>();
             auto r21 = vec_type::template zero<T>();
 
@@ -180,7 +180,7 @@ void gemm_small_kernel_cr_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
             vec_type::storeu(c + i + (j + 1) * M, r12);
         }
 
-        for (; j < N; ++j) {
+        if (j < N) {
             auto r11 = vec_type::template zero<T>();
 
             for (size_t k = 0; k < K; ++k) {
@@ -211,7 +211,7 @@ void gemm_small_kernel_cr_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
             c[i + (j + 1) * M] = r12;
         }
 
-        for (; j < N; ++j) {
+        if (j < N) {
             auto r11 = T();
 
             for (size_t k = 0; k < K; ++k) {
