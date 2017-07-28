@@ -50,6 +50,8 @@ void inplace_square_transpose(C&& c) {
  */
 template <typename C>
 void inplace_rectangular_transpose(C&& mat) {
+    static constexpr bool row_major = decay_traits<C>::storage_order == order::RowMajor;
+
     auto copy = force_temporary(mat);
 
     //Dimensions prior to transposition
@@ -59,16 +61,31 @@ void inplace_rectangular_transpose(C&& mat) {
     // Note: cannot use operator(i,j) for lhs because it is indexed by its
     // previous scheme (N instead of M)
 
-    for (size_t i = 0; i < N; ++i) {
-        size_t j = 0;
+    if (row_major) {
+        for (size_t i = 0; i < N; ++i) {
+            size_t j = 0;
 
-        for (; j + 1 < M; j += 2) {
-            mat[(j + 0) * N + i] = copy(i, (j + 0));
-            mat[(j + 1) * N + i] = copy(i, (j + 1));
+            for (; j + 1 < M; j += 2) {
+                mat[(j + 0) * N + i] = copy(i, (j + 0));
+                mat[(j + 1) * N + i] = copy(i, (j + 1));
+            }
+
+            if (j < M) {
+                mat[j * N + i] = copy(i, j);
+            }
         }
+    } else {
+        for (size_t i = 0; i < N; ++i) {
+            size_t j = 0;
 
-        if (j < M) {
-            mat[j * N + i] = copy(i, j);
+            for (; j + 1 < M; j += 2) {
+                mat[(j + 0) + M * i] = copy(i, (j + 0));
+                mat[(j + 1) + M * i] = copy(i, (j + 1));
+            }
+
+            if (j < M) {
+                mat[j + M * i] = copy(i, j);
+            }
         }
     }
 }
