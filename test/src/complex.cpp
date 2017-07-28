@@ -312,7 +312,7 @@ TEMPLATE_TEST_CASE_2("complex/etl/9", "[complex]", Z, float, double) {
     REQUIRE_EQUALS(c(0)[2], a(0)[2] * b(0)[2]);
 }
 
-CGEMV_TEST_CASE("complex/etl/11", "[mul][complex]") {
+GEMV_TEST_CASE("complex/etl/11", "[mul][complex]") {
     using Z = T;
 
     etl::fast_matrix<etl::complex<Z>, 2, 3> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
@@ -327,7 +327,7 @@ CGEMV_TEST_CASE("complex/etl/11", "[mul][complex]") {
     REQUIRE_EQUALS_APPROX(c(1).imag, Z(4.2));
 }
 
-CGEVM_TEST_CASE("complex/etl/12", "[mul][complex]") {
+GEVM_TEST_CASE("complex/etl/12", "[mul][complex]") {
     using Z = T;
 
     etl::fast_matrix<etl::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
