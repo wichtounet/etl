@@ -9,11 +9,15 @@
 
 #include "etl/impl/vec/gemm_blis.hpp" // BLIS-Like optimized kernel
 
-// The various kernels
+// Allocations to row major
 #include "etl/impl/vec/gemm_rr_to_r.hpp"
-#include "etl/impl/vec/gemm_cc_to_c.hpp"
 #include "etl/impl/vec/gemm_cr_to_r.hpp"
 #include "etl/impl/vec/gemm_rc_to_r.hpp"
+
+// Allocations to column major
+#include "etl/impl/vec/gemm_cc_to_c.hpp"
+#include "etl/impl/vec/gemm_cr_to_c.hpp"
+#include "etl/impl/vec/gemm_rc_to_c.hpp"
 
 // The idea of the GEMM kernels is largely inspired by the kernels in Blaze by
 // Klaus Igleberg
@@ -66,8 +70,8 @@ void gemm(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Optimized version of GEMM for assignment of a
- * Column-Major Matrix - Row Major Matrix to a Row Major Matrix.
+ * \brief Optimized version of GEMM for C = trans(A) * B where all matrices are
+ * stored in row-major order.
  *
  * \param a The lhs matrix (row major)
  * \param b The rhs matrix (transposed row major)
@@ -88,8 +92,30 @@ void gemm_tn(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Optimized version of GEMM for assignment of a
- * Column-Major Matrix - Row Major Matrix to a Row Major Matrix.
+ * \brief Optimized version of GEMM for C = trans(A) * B where all matrices are
+ * stored in column-major order.
+ *
+ * \param a The lhs matrix (row major)
+ * \param b The rhs matrix (transposed row major)
+ * \param c The result matrix (row major)
+ */
+template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A, B, C>::value))>
+void gemm_tn(A&& a, B&& b, C&& c) {
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    const size_t M = etl::columns(a); // rows(trans(A)) = rows(C)
+    const size_t N = etl::columns(b); // columns (B) = columns(C)
+    const size_t K = etl::rows(a);    // columns(trans(A)) = rows(B)
+
+    gemm_rc_to_c(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+
+    c.invalidate_gpu();
+}
+
+/*!
+ * \brief Optimized version of GEMM for C = A * trans(B) where all matrices are
+ * stored in row-major order.
  *
  * \param a The lhs matrix (row major)
  * \param b The rhs matrix (transposed row major)
@@ -105,6 +131,28 @@ void gemm_nt(A&& a, B&& b, C&& c) {
     const size_t K = etl::columns(a);
 
     gemm_rc_to_r(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+
+    c.invalidate_gpu();
+}
+
+/*!
+ * \brief Optimized version of GEMM for C = A * trans(B) where all matrices are
+ * stored in colum-major order.
+ *
+ * \param a The lhs matrix (row major)
+ * \param b The rhs matrix (transposed row major)
+ * \param c The result matrix (row major)
+ */
+template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A, B, C>::value))>
+void gemm_nt(A&& a, B&& b, C&& c) {
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    const size_t M = etl::rows(a);
+    const size_t N = etl::rows(b);
+    const size_t K = etl::columns(a);
+
+    gemm_cr_to_c(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
 
     c.invalidate_gpu();
 }
