@@ -470,7 +470,7 @@ TEMPLATE_TEST_CASE_2("column_major/compound/add_3", "[cm]", Z, float, double) {
 
 // Complex multiplication tests
 
-CGEMM_TEST_CASE("column_major/complex/mul/0", "[mul][complex]") {
+GEMM_TEST_CASE("column_major/complex/mul/0", "[mul][complex]") {
     using Z = T;
 
     etl::fast_matrix_cm<std::complex<Z>, 2, 3> a = {CZ(1, 1), CZ(0, 0), CZ(-2, -2),CZ(1, 1), CZ(2, 3), CZ(2, 2)};
@@ -489,7 +489,7 @@ CGEMM_TEST_CASE("column_major/complex/mul/0", "[mul][complex]") {
     REQUIRE_EQUALS(c(1, 1).imag(), 9.0);
 }
 
-CGEMV_TEST_CASE("column_major/complex/mul/1", "[mul][complex]") {
+GEMV_TEST_CASE("column_major/complex/mul/1", "[mul][complex]") {
     using Z = T;
 
     etl::fast_matrix_cm<etl::complex<Z>, 2, 3> a = {ECZ(1, 1), ECZ(0, 0), ECZ(-2, -2),ECZ(1, 1), ECZ(2, 3), ECZ(2, 2)};
@@ -504,7 +504,7 @@ CGEMV_TEST_CASE("column_major/complex/mul/1", "[mul][complex]") {
     REQUIRE_EQUALS_APPROX(c(1).imag, Z(4.2));
 }
 
-CGEVM_TEST_CASE("column_major/complex/mul/2", "[mul][complex]") {
+GEVM_TEST_CASE("column_major/complex/mul/2", "[mul][complex]") {
     using Z = T;
 
     etl::fast_matrix_cm<std::complex<Z>, 3, 2> a = {CZ(1, 1), CZ(2, 3), CZ(1, 1), CZ(-2, -2), CZ(0, 0), CZ(2, 2)};
