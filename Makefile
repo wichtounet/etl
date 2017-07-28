@@ -181,6 +181,10 @@ $(eval $(call add_test_executable,etl_test_gemm_nt,src/test.cpp src/gemm_nt.cpp)
 $(eval $(call add_test_executable,etl_test_gemm_tn,src/test.cpp src/gemm_tn.cpp))
 $(eval $(call add_test_executable,etl_test_gemm_tt,src/test.cpp src/gemm_tt.cpp))
 $(eval $(call add_test_executable,etl_test_gemv,src/test.cpp src/gemv.cpp))
+$(eval $(call add_test_executable,etl_test_gemm_cm,src/test.cpp src/gemm_cm.cpp))
+$(eval $(call add_test_executable,etl_test_gemm_tn_cm,src/test.cpp src/gemm_tn_cm.cpp))
+$(eval $(call add_test_executable,etl_test_gemm_nt_cm,src/test.cpp src/gemm_nt_cm.cpp))
+$(eval $(call add_test_executable,etl_test_gemm_tt_cm,src/test.cpp src/gemm_tt_cm.cpp))
 $(eval $(call add_test_executable,etl_test_column_major,src/test.cpp src/column_major.cpp))
 
 # Create the benchmark executables
