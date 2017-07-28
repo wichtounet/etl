@@ -120,3 +120,81 @@ GEMM_NT_TEST_CASE("gemm_nt/6", "[gemm]") {
     REQUIRE_EQUALS(c(3, 3), 824524);
     REQUIRE_EQUALS(c(18, 18), 828343);
 }
+
+GEMM_NT_TEST_CASE("gemm_nt/7", "[gemm]") {
+    etl::dyn_matrix<T> a(128, 128);
+    etl::dyn_matrix<T> b(128, 128);
+    etl::dyn_matrix<T> c(128, 128);
+    etl::dyn_matrix<T> r(128, 128);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(a, b, c);
+
+    r = 0;
+
+    b.transpose_inplace();
+
+    for (size_t i = 0; i < rows(a); i++) {
+        for (size_t k = 0; k < columns(a); k++) {
+            for (size_t j = 0; j < columns(b); j++) {
+                r(i, j) += a(i, k) * b(k, j);
+            }
+        }
+    }
+
+    REQUIRE_DIRECT(etl::approx_equals(c, r, base_eps_etl_large));
+}
+
+GEMM_NT_TEST_CASE("gemm_nt/8", "[gemm]") {
+    etl::dyn_matrix<T> a(128, 256);
+    etl::dyn_matrix<T> b(128, 256);
+    etl::dyn_matrix<T> c(128, 128);
+    etl::dyn_matrix<T> r(128, 128);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(a, b, c);
+
+    r = 0;
+
+    b.transpose_inplace();
+
+    for (size_t i = 0; i < rows(a); i++) {
+        for (size_t k = 0; k < columns(a); k++) {
+            for (size_t j = 0; j < columns(b); j++) {
+                r(i, j) += a(i, k) * b(k, j);
+            }
+        }
+    }
+
+    REQUIRE_DIRECT(etl::approx_equals(c, r, base_eps_etl_large));
+}
+
+GEMM_NT_TEST_CASE("gemm_nt/9", "[gemm]") {
+    etl::dyn_matrix<T> a(194, 128);
+    etl::dyn_matrix<T> b(156, 128);
+    etl::dyn_matrix<T> c(194, 156);
+    etl::dyn_matrix<T> r(194, 156);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(a, b, c);
+
+    r = 0;
+
+    b.transpose_inplace();
+
+    for (size_t i = 0; i < rows(a); i++) {
+        for (size_t k = 0; k < columns(a); k++) {
+            for (size_t j = 0; j < columns(b); j++) {
+                r(i, j) += a(i, k) * b(k, j);
+            }
+        }
+    }
+
+    REQUIRE_DIRECT(etl::approx_equals(c, r, base_eps_etl_large));
+}
