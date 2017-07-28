@@ -144,7 +144,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
                 //VEC cannot always be used
                 case gemm_impl::VEC:
                     if (!vec_enabled || !all_vectorizable<vector_mode, AA, BB, C>::value) {                                               //COVERAGE_EXCLUDE_LINE
-                        std::cerr << "Forced selection to VEC gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                        std::cerr << "Forced selection to VEC gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return def;                                                            //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
