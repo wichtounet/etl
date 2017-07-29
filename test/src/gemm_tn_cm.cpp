@@ -122,7 +122,7 @@ GEMM_TN_TEST_CASE("gemm_tn/cm/6", "[gemm_tn]") {
     REQUIRE_EQUALS(c(18, 18), 828343);
 }
 
-GEMM_TN_TEST_CASE("gemm_tn/cm/9", "[gemm]") {
+GEMM_TN_TEST_CASE("gemm_tn/cm/7", "[gemm]") {
     etl::dyn_matrix_cm<T> a(128, 128);
     etl::dyn_matrix_cm<T> b(128, 128);
     etl::dyn_matrix_cm<T> c(128, 128);
@@ -148,7 +148,7 @@ GEMM_TN_TEST_CASE("gemm_tn/cm/9", "[gemm]") {
     REQUIRE_DIRECT(etl::approx_equals(c, r, base_eps_etl_large));
 }
 
-GEMM_TN_TEST_CASE("gemm_tn/cm/10", "[gemm]") {
+GEMM_TN_TEST_CASE("gemm_tn/cm/8", "[gemm]") {
     etl::dyn_matrix_cm<T> a(256, 128);
     etl::dyn_matrix_cm<T> b(256, 128);
     etl::dyn_matrix_cm<T> c(128, 128);
@@ -174,7 +174,7 @@ GEMM_TN_TEST_CASE("gemm_tn/cm/10", "[gemm]") {
     REQUIRE_DIRECT(etl::approx_equals(c, r, base_eps_etl_large));
 }
 
-GEMM_TN_TEST_CASE("gemm_tn/cm/11", "[gemm]") {
+GEMM_TN_TEST_CASE("gemm_tn/cm/9", "[gemm]") {
     etl::dyn_matrix_cm<T> a(128, 194);
     etl::dyn_matrix_cm<T> b(128, 156);
     etl::dyn_matrix_cm<T> c(194, 156);
