@@ -727,7 +727,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<B>::value))>
 void gevm_t(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -754,7 +754,7 @@ void gevm_t(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_column_major<B>::value))>
 void gevm_t(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -769,30 +769,10 @@ void gevm_t(A&& a, B&& b, C&& c) {
     } else {
         c = 0;
 
-        gevm_large_kernel_rr<default_vec>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+        gevm_large_kernel_rr<default_vec>(a.memory_start(), n, m, b.memory_start(), c);
     }
 
     c.invalidate_gpu();
-}
-
-
-/*!
- * \brief Unoptimized version of GEVM for column major version
- * \param a The lhs vector
- * \param b The rhs matrix
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_disable_if((all_column_major<A,B,C>::value || all_row_major<A, B, C>::value))>
-void gevm_t(A&& a, B&& b, C&& c) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
-
-    c = 0;
-
-    for (size_t j = 0; j < rows(b); j++) {
-        for (size_t k = 0; k < etl::dim<0>(a); k++) {
-            c(j) += a(k) * b(j, k);
-        }
-    }
 }
 
 } //end of namespace vec

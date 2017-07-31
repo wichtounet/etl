@@ -661,7 +661,7 @@ void gemv(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A>::value))>
 void gemv_t(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -686,7 +686,7 @@ void gemv_t(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A,B,C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A>::value))>
 void gemv_t(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -704,28 +704,6 @@ void gemv_t(A&& a, B&& b, C&& c) {
     }
 
     c.invalidate_gpu();
-}
-
-/*!
- * \brief Unoptimized version of GEMV for mixed order
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_disable_if((all_column_major<A,B,C>::value || all_row_major<A,B,C>::value))>
-void gemv_t(A&& a, B&& b, C&& c) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
-
-    const auto m = columns(a);
-    const auto n = rows(a);
-
-    c = 0;
-
-    for (size_t i = 0; i < m; i++) {
-        for (size_t k = 0; k < n; k++) {
-            c(i) += a(k, i) * b(k);
-        }
-    }
 }
 
 } //end of namespace vec
