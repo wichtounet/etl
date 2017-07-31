@@ -176,6 +176,7 @@ $(eval $(call add_executable_set,etl_test,etl_test))
 
 # Create the sub test executable
 $(eval $(call add_test_executable,etl_test_gemm,src/test.cpp src/gemm.cpp))
+$(eval $(call add_test_executable,etl_test_gemm_mixed,src/test.cpp src/gemm_mixed.cpp))
 $(eval $(call add_test_executable,etl_test_gemm_expr,src/test.cpp src/gemm_expr.cpp))
 $(eval $(call add_test_executable,etl_test_gemm_nt,src/test.cpp src/gemm_nt.cpp))
 $(eval $(call add_test_executable,etl_test_gemm_tn,src/test.cpp src/gemm_tn.cpp))
