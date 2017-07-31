@@ -99,6 +99,11 @@ using dmat_cm = etl::dyn_matrix_cm<double>;
 using cmat_cm = etl::dyn_matrix_cm<std::complex<float>>;
 using zmat_cm = etl::dyn_matrix_cm<std::complex<double>>;
 
+using smat_rm = etl::dyn_matrix<float>;
+using dmat_rm = etl::dyn_matrix<double>;
+using cmat_rm = etl::dyn_matrix<std::complex<float>>;
+using zmat_rm = etl::dyn_matrix<std::complex<double>>;
+
 using svec_cm = etl::dyn_matrix_cm<float, 1>;
 using dvec_cm = etl::dyn_matrix_cm<double, 1>;
 using cvec_cm = etl::dyn_matrix_cm<std::complex<float>, 1>;
