@@ -156,7 +156,7 @@ inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, 
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, B, C>::value || all_column_major<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -172,6 +172,52 @@ void gemm(A&& a, B&& b, C&& c) {
         row_major ? CblasRowMajor : CblasColMajor,
         CblasNoTrans, CblasNoTrans,
         etl::rows(a), etl::columns(b), etl::columns(a),
+        alpha,
+        a.memory_start(), major_stride(a),
+        b.memory_start(), major_stride(b),
+        beta,
+        c.memory_start(), major_stride(c));
+
+    c.invalidate_gpu();
+}
+
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<B, C>::value && all_column_major<A>::value)>
+void gemm(A&& a, B&& b, C&& c) {
+    using T = value_t<A>;
+
+    T alpha(1.0);
+    T beta(0.0);
+
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    cblas_gemm(
+        CblasRowMajor,
+        CblasTrans, CblasNoTrans,
+        etl::columns(a), etl::columns(b), etl::rows(a),
+        alpha,
+        a.memory_start(), major_stride(a),
+        b.memory_start(), major_stride(b),
+        beta,
+        c.memory_start(), major_stride(c));
+
+    c.invalidate_gpu();
+}
+
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, C>::value && all_column_major<B>::value)>
+void gemm(A&& a, B&& b, C&& c) {
+    using T = value_t<A>;
+
+    T alpha(1.0);
+    T beta(0.0);
+
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    cblas_gemm(
+        CblasRowMajor,
+        CblasNoTrans, CblasTrans,
+        etl::rows(a), etl::rows(b), etl::columns(a),
         alpha,
         a.memory_start(), major_stride(a),
         b.memory_start(), major_stride(b),

@@ -77,6 +77,50 @@ void gemm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<B, C>::value && all_column_major<A>::value))>
+void gemm(A&& a, B&& b, C&& c) {
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    const size_t M = etl::rows(a);
+    const size_t N = etl::columns(b);
+    const size_t K = etl::columns(a);
+
+    gemm_cr_to_r(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+
+    c.invalidate_gpu();
+}
+
+/*!
+ * \brief Optimized version of GEMM for C = trans(A) * B where all matrices are
+ * stored in row-major order.
+ *
+ * \param a The lhs matrix (row major)
+ * \param b The rhs matrix (transposed row major)
+ * \param c The result matrix (row major)
+ */
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, C>::value && all_column_major<B>::value))>
+void gemm(A&& a, B&& b, C&& c) {
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    const size_t M = etl::rows(a);
+    const size_t N = etl::columns(b);
+    const size_t K = etl::columns(a);
+
+    gemm_rc_to_r(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+
+    c.invalidate_gpu();
+}
+
+/*!
+ * \brief Optimized version of GEMM for C = trans(A) * B where all matrices are
+ * stored in row-major order.
+ *
+ * \param a The lhs matrix (row major)
+ * \param b The rhs matrix (transposed row major)
+ * \param c The result matrix (row major)
+ */
 template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
 void gemm_tn(A&& a, B&& b, C&& c) {
     a.ensure_cpu_up_to_date();
