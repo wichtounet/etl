@@ -346,32 +346,7 @@ void gemm(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B, typename C, cpp_enable_if(all_row_major<B, C>::value && all_column_major<A>::value)>
 void gemm(A&& a, B&& b, C&& c) {
-    decltype(auto) handle = start_cublas();
-
-    using VT = value_t<A>;
-    using T = cublas_type<VT>;
-
-    auto alpha = make_default<T>(1.0);
-    auto beta  = make_default<T>(0.0);
-
-    a.ensure_gpu_up_to_date();
-    b.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
-
-    // Do the actual multiplication
-
-    cublas_gemm(
-        handle.get(),
-        CUBLAS_OP_N, CUBLAS_OP_T,
-        etl::columns(c), etl::rows(c), etl::rows(a),
-        &alpha,
-        b.gpu_memory(), etl::major_stride(b),
-        a.gpu_memory(), etl::major_stride(a),
-        &beta,
-        c.gpu_memory(), etl::major_stride(c));
-
-    c.validate_gpu();
-    c.invalidate_cpu();
+    gemm(force_temporary_opp(a), b, c);
 }
 
 /*!
@@ -382,32 +357,18 @@ void gemm(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, C>::value && all_column_major<B>::value)>
 void gemm(A&& a, B&& b, C&& c) {
-    decltype(auto) handle = start_cublas();
+    gemm(a, force_temporary_opp(b), c);
+}
 
-    using VT = value_t<A>;
-    using T = cublas_type<VT>;
-
-    auto alpha = make_default<T>(1.0);
-    auto beta  = make_default<T>(0.0);
-
-    a.ensure_gpu_up_to_date();
-    b.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
-
-    // Do the actual multiplication
-
-    cublas_gemm(
-        handle.get(),
-        CUBLAS_OP_T, CUBLAS_OP_N,
-        etl::columns(c), etl::rows(c), etl::columns(a),
-        &alpha,
-        b.gpu_memory(), etl::major_stride(b),
-        a.gpu_memory(), etl::major_stride(a),
-        &beta,
-        c.gpu_memory(), etl::major_stride(c));
-
-    c.validate_gpu();
-    c.invalidate_cpu();
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<C>::value && all_column_major<A, B>::value)>
+void gemm(A&& a, B&& b, C&& c) {
+    gemm(force_temporary_opp(a), force_temporary_opp(b), c);
 }
 
 /*!

@@ -217,7 +217,30 @@ void gemm(A&& a, B&& b, C&& c) {
     cblas_gemm(
         CblasRowMajor,
         CblasNoTrans, CblasTrans,
-        etl::rows(a), etl::rows(b), etl::columns(a),
+        etl::rows(a), etl::columns(b), etl::columns(a),
+        alpha,
+        a.memory_start(), major_stride(a),
+        b.memory_start(), major_stride(b),
+        beta,
+        c.memory_start(), major_stride(c));
+
+    c.invalidate_gpu();
+}
+
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<C>::value && all_column_major<A, B>::value)>
+void gemm(A&& a, B&& b, C&& c) {
+    using T = value_t<A>;
+
+    T alpha(1.0);
+    T beta(0.0);
+
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    cblas_gemm(
+        CblasRowMajor,
+        CblasTrans, CblasTrans,
+        etl::rows(a), etl::columns(b), etl::columns(a),
         alpha,
         a.memory_start(), major_stride(a),
         b.memory_start(), major_stride(b),
