@@ -296,6 +296,29 @@ void gemm(A&& a, B&& b, C&& c) {
     c.invalidate_gpu();
 }
 
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, B>::value && all_column_major<C>::value)>
+void gemm(A&& a, B&& b, C&& c) {
+    using T = value_t<A>;
+
+    T alpha(1.0);
+    T beta(0.0);
+
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    cblas_gemm(
+        CblasColMajor,
+        CblasTrans, CblasTrans,
+        etl::rows(a), etl::columns(b), etl::columns(a),
+        alpha,
+        a.memory_start(), major_stride(a),
+        b.memory_start(), major_stride(b),
+        beta,
+        c.memory_start(), major_stride(c));
+
+    c.invalidate_gpu();
+}
+
 /*!
  * \brief Compute the matrix multiplication of a and b and store the result in c
  * param a The lhs of the multiplication

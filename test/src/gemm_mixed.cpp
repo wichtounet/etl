@@ -381,3 +381,77 @@ GEMM_TEST_CASE("gemm/mixed/15", "[gemm]") {
 
     REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
+
+// CM = RM * RM
+
+GEMM_TEST_CASE("gemm/mixed/16", "[gemm]") {
+    etl::dyn_matrix<T> a(128, 128);
+    etl::dyn_matrix<T> b(128, 128);
+    etl::dyn_matrix_cm<T> c(128, 128);
+    etl::dyn_matrix_cm<T> r(128, 128);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(a, b, c);
+
+    r = 0;
+
+    for (size_t i = 0; i < rows(a); i++) {
+        for (size_t k = 0; k < columns(a); k++) {
+            for (size_t j = 0; j < columns(b); j++) {
+                r(i, j) += a(i, k) * b(k, j);
+            }
+        }
+    }
+
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+}
+
+GEMM_TEST_CASE("gemm/mixed/17", "[gemm]") {
+    etl::dyn_matrix<T> a(128, 128);
+    etl::dyn_matrix<T> b(128, 128);
+    etl::dyn_matrix_cm<T> c(128, 128);
+    etl::dyn_matrix_cm<T> r(128, 128);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(a, b, c);
+
+    r = 0;
+
+    for (size_t i = 0; i < rows(a); i++) {
+        for (size_t k = 0; k < columns(a); k++) {
+            for (size_t j = 0; j < columns(b); j++) {
+                r(i, j) += a(i, k) * b(k, j);
+            }
+        }
+    }
+
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+}
+
+GEMM_TEST_CASE("gemm/mixed/18", "[gemm]") {
+    etl::dyn_matrix<T> a(194, 128);
+    etl::dyn_matrix<T> b(128, 156);
+    etl::dyn_matrix_cm<T> c(194, 156);
+    etl::dyn_matrix_cm<T> r(194, 156);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(a, b, c);
+
+    r = 0;
+
+    for (size_t i = 0; i < rows(a); i++) {
+        for (size_t k = 0; k < columns(a); k++) {
+            for (size_t j = 0; j < columns(b); j++) {
+                r(i, j) += a(i, k) * b(k, j);
+            }
+        }
+    }
+
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+}
