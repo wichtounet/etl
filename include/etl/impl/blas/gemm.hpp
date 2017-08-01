@@ -194,7 +194,7 @@ void gemm(A&& a, B&& b, C&& c) {
     cblas_gemm(
         CblasRowMajor,
         CblasTrans, CblasNoTrans,
-        etl::columns(a), etl::columns(b), etl::rows(a),
+        etl::rows(a), etl::columns(b), etl::columns(a),
         alpha,
         a.memory_start(), major_stride(a),
         b.memory_start(), major_stride(b),
