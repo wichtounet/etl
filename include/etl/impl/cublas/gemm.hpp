@@ -377,6 +377,17 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A>::value && all_column_major<B, C>::value)>
+void gemm(A&& a, B&& b, C&& c) {
+    gemm(force_temporary_opp(a), b, c);
+}
+
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C>
 void gemm_nt(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
