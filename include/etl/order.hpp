@@ -17,4 +17,8 @@ enum class order {
     ColumnMajor ///< Column-Major storage
 };
 
+constexpr order reverse(order o){
+    return o == order::RowMajor ? order::ColumnMajor : order::RowMajor;
+}
+
 } //end of namespace etl

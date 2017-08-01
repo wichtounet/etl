@@ -25,6 +25,18 @@ struct build_fast_dyn_matrix_type<E, std::index_sequence<I...>> {
         decay_traits<E>::template dim<I>()...>;
 };
 
+template <typename E, typename Sequence>
+struct build_fast_dyn_matrix_type_opp;
+
+template <typename E, size_t... I>
+struct build_fast_dyn_matrix_type_opp<E, std::index_sequence<I...>> {
+    using type = fast_matrix_impl<
+        value_t<E>,
+        cpp::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
+        reverse(decay_traits<E>::storage_order),
+        decay_traits<E>::template dim<I>()...>;
+};
+
 /*!
  * \brief Build a dyn matrix of the correct for the given
  * expression, but does not copy the values of the expression.
@@ -99,6 +111,38 @@ template <typename E>
 decltype(auto) force_temporary_dyn(E&& expr) {
     //Sizes will be directly propagated
     dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()> mat;
+    mat = expr;
+    return mat;
+}
+
+/*!
+ * \brief Force a temporary out of the expression, with opposite storage order.
+ *
+ * In case of a fast matrix, a fast matrix with vector storage is created  even
+ * if the input has array storage.
+ *
+ * \param expr The expression to make a temporary from
+ * \return a temporary of the expression
+ */
+template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
+decltype(auto) force_temporary_opp(E&& expr) {
+    typename detail::build_fast_dyn_matrix_type_opp<E, std::make_index_sequence<decay_traits<E>::dimensions()>>::type mat;
+    mat = std::forward<E>(expr);
+    return mat;
+}
+
+/*!
+ * \brief Force a temporary out of the expression, with opposite storage order.
+ *
+ * In case of a fast matrix, a fast matrix with vector storage is created  even
+ * if the input has array storage.
+ *
+ * \param expr The expression to make a temporary from
+ * \return a temporary of the expression
+ */
+template <typename E, cpp_enable_if(!decay_traits<E>::is_fast, !is_sparse_matrix<E>::value)>
+decltype(auto) force_temporary_opp(E&& expr) {
+    dyn_matrix_impl<value_t<E>, reverse(decay_traits<E>::storage_order), decay_traits<E>::dimensions()> mat;
     mat = expr;
     return mat;
 }
