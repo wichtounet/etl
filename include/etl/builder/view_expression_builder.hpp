@@ -65,7 +65,7 @@ auto sub(E&& value, size_t i) -> sub_view<detail::build_identity_type<E>, false>
 }
 
 /*!
- * \brief Returns view representing a sub matirx view of the given expression.
+ * \brief Returns view representing a sub matrix view of the given expression.
  * \param value The ETL expression
  * \param i The first index
  * \param j The second index
@@ -78,6 +78,22 @@ auto sub(E&& value, size_t i, size_t j, size_t m, size_t n) -> sub_matrix_2d<det
     static_assert(is_etl_expr<E>::value, "etl::sub can only be used on ETL expressions");
     static_assert(etl_traits<std::decay_t<E>>::dimensions() == 2, "Cannot use sub on vector");
     return {value, i, j, m, n};
+}
+
+/*!
+ * \brief Returns view representing a sub matrix view of the given expression.
+ * \param value The ETL expression
+ * \param i The first index
+ * \param j The second index
+ * \param m The first dimension
+ * \param n The second dimension
+ * \return a view expression representing a sub matrix view of the given expression
+ */
+template <typename E>
+auto sub(E&& value, size_t i, size_t j, size_t k, size_t m, size_t n, size_t o) -> sub_matrix_3d<detail::build_identity_type<E>, false> {
+    static_assert(is_etl_expr<E>::value, "etl::sub can only be used on ETL expressions");
+    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 3, "Cannot use sub on vector");
+    return {value, i, j, k, m, n, o};
 }
 
 /*!

@@ -61,6 +61,9 @@ struct sub_view;
 template <typename T, bool Aligned, typename Enable = void>
 struct sub_matrix_2d;
 
+template <typename T, bool Aligned, typename Enable = void>
+struct sub_matrix_3d;
+
 template <typename T, typename Enable = void>
 struct slice_view;
 
