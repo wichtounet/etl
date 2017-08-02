@@ -10,6 +10,119 @@
 namespace etl {
 
 /*!
+ * \brief Transformer to implement one if max sub on 2D matrix.
+ *
+ * \tparam T The type on which the transformer is applied
+ */
+template <typename T>
+struct one_if_max_sub_transformer {
+    using sub_type   = T;          ///< The type on which the expression works
+    using value_type = value_t<T>; ///< The type of valuie
+
+    friend etl_traits<one_if_max_sub_transformer>;
+
+    static_assert(decay_traits<sub_type>::dimensions() == 2, "one_if_max_sub is only defined for 2D Matrix");
+
+private:
+    sub_type sub; ///< The subexpression
+
+    std::vector<size_t> max_indices;
+
+public:
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit one_if_max_sub_transformer(sub_type expr) : sub(expr), max_indices(etl::dim<0>(expr)) {
+        for(size_t i = 0; i < etl::dim<0>(expr); ++i){
+            max_indices[i] = max_index(sub(i));
+        }
+    }
+
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
+    value_type operator[](size_t i) const {
+        size_t i_i = i / dim<1>(sub);
+        size_t i_j = i % dim<1>(sub);
+        return i_j == max_indices[i_i] ? value_type(1) : value_type(0);
+    }
+
+    /*!
+     * \brief Returns the value at the given index
+     * This function never has side effects.
+     * \param i The index
+     * \return the value at the given index.
+     */
+    value_type read_flat(size_t i) const {
+        size_t i_i = i / dim<1>(sub);
+        size_t i_j = i % dim<1>(sub);
+        return i_j == max_indices[i_i] ? value_type(1) : value_type(0);
+    }
+
+    /*!
+     * \brief Access to the value at the given (i, j) position
+     * \param i The first index
+     * \param j The second index
+     * \return The value at the position (i, j)
+     */
+    value_type operator()(size_t i, size_t j) const {
+        return j == max_indices[i] ? value_type(1) : value_type(0);
+    }
+
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
+    template <typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
+
+    // Internals
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    template<typename V>
+    void visit(V&& visitor) const {
+        sub.visit(std::forward<V>(visitor));
+    }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // Need to ensure sub value
+        sub.ensure_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // Need to ensure both LHS and RHS
+        sub.ensure_gpu_up_to_date();
+    }
+
+    /*!
+     * \brief Display the transformer on the given stream
+     * \param os The output stream
+     * \param transformer The transformer to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const one_if_max_sub_transformer& transformer) {
+        return os << "one_if_max_sub(" << transformer.sub << ")";
+    }
+};
+
+/*!
  * \brief Transform (dynamic) that flips a matrix horizontally
  * \tparam T The type on which the transformer is applied
  */
@@ -412,7 +525,8 @@ template <typename T>
 struct etl_traits<T, std::enable_if_t<cpp::or_c<
                          cpp::is_specialization_of<etl::hflip_transformer, std::decay_t<T>>,
                          cpp::is_specialization_of<etl::vflip_transformer, std::decay_t<T>>,
-                         cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>>::value>>
+                         cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>,
+                         cpp::is_specialization_of<etl::one_if_max_sub_transformer, std::decay_t<T>>>::value>>
                          {
     using expr_t     = T;                                  ///< The expression type
     using sub_expr_t = std::decay_t<typename T::sub_type>; ///< The sub expression type

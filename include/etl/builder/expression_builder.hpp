@@ -483,6 +483,22 @@ auto mean_l(E&& value) -> detail::stable_transform_helper<E, mean_l_transformer>
 }
 
 /*!
+ * \brief Return, for each original position, 1.0 if the value is the max of the
+ * sub matrix, 0.0 otherwise.
+ *
+ * \param value The matrix to explore
+ *
+ * \return an expression representing the 1-if-max view for each sub view of
+ * the input matrix
+ */
+template <typename E>
+auto one_if_max_sub(const E& value) -> detail::stable_transform_helper<E, one_if_max_sub_transformer> {
+    static_assert(is_etl_expr<E>::value, "etl::one_if_max_sub can only be used on ETL expressions");
+    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 2, "Can only use one_if_max_sub 2D matrix");
+    return detail::make_transform_expr<E, one_if_max_sub_transformer>(value);
+}
+
+/*!
  * \brief Returns the horizontal flipping of the given expression.
  * \param value The expression
  * \return The horizontal flipping of the given expression.

@@ -1033,3 +1033,34 @@ TEMPLATE_TEST_CASE_2("fast_matrix/binary_sub", "[binary][sub]", Z, float, double
     REQUIRE_EQUALS((a + b)(1)(0)(0), 11.0);
     REQUIRE_EQUALS((a + b)(1)(0)(1), 2.0);
 }
+
+TEMPLATE_TEST_CASE_2("one_if_max_sub/1", "[fast]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 3> a = {1.0, 3.0, 5.0, 2.0, 7, 1.0};
+    etl::fast_matrix<Z, 2, 3> b;
+
+    b = one_if_max_sub(a);
+
+    REQUIRE_EQUALS(b(0, 0), Z(0.0));
+    REQUIRE_EQUALS(b(0, 1), Z(0.0));
+    REQUIRE_EQUALS(b(0, 2), Z(1.0));
+
+    REQUIRE_EQUALS(b(1, 0), Z(0.0));
+    REQUIRE_EQUALS(b(1, 1), Z(1.0));
+    REQUIRE_EQUALS(b(1, 2), Z(0.0));
+}
+
+TEMPLATE_TEST_CASE_2("one_if_max_sub/2", "[fast]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 2> a = {1.0, 3.0, 5.0, 2.0, 7, 1.0};
+    etl::fast_matrix<Z, 3, 2> b;
+
+    b = one_if_max_sub(a);
+
+    REQUIRE_EQUALS(b(0, 0), Z(0.0));
+    REQUIRE_EQUALS(b(0, 1), Z(1.0));
+
+    REQUIRE_EQUALS(b(1, 0), Z(1.0));
+    REQUIRE_EQUALS(b(1, 1), Z(0.0));
+
+    REQUIRE_EQUALS(b(2, 0), Z(1.0));
+    REQUIRE_EQUALS(b(2, 1), Z(0.0));
+}
