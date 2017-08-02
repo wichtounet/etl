@@ -190,6 +190,7 @@ $(eval $(call add_test_executable,etl_test_gemv_cm,src/test.cpp src/gemv_cm.cpp)
 $(eval $(call add_test_executable,etl_test_gevm,src/test.cpp src/gevm.cpp))
 $(eval $(call add_test_executable,etl_test_gevm_cm,src/test.cpp src/gevm_cm.cpp))
 $(eval $(call add_test_executable,etl_test_column_major,src/test.cpp src/column_major.cpp))
+$(eval $(call add_test_executable,etl_test_fast_matrix,src/test.cpp src/fast_matrix.cpp))
 
 # Create the benchmark executables
 BENCH_FILES=$(wildcard benchmark/src/benchmark*cpp)
