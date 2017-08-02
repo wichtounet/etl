@@ -375,28 +375,58 @@ auto rep_l(E&& value, size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_l_tra
 
 /*!
  * \brief Returns the indices of the maximum values in the first axis of the
- * given matrix
- * \param value The value to aggregate
+ * given matrix. If passed a vector, returns the index of the maximum element.
+ *
+ * \param value The matrix or vector to aggregate
+ *
  * \return an expression representing the aggregated expression
  */
-template <typename E>
+template <typename E, cpp_enable_if((decay_traits<E>::dimensions() > 1))>
 auto argmax(E&& value) -> detail::stable_transform_helper<E, argmax_transformer> {
     static_assert(is_etl_expr<E>::value, "etl::argmax can only be used on ETL expressions");
-    static_assert(decay_traits<E>::dimensions() > 1, "Can only use argmax on matrix");
     return detail::make_transform_expr<E, argmax_transformer>(value);
 }
 
 /*!
- * \brief Returns the indices of the minimum values in the first axis of the
- * given matrix
- * \param value The value to aggregate
+ * \brief Returns the indices of the maximum values in the first axis of the
+ * given matrix. If passed a vector, returns the index of the maximum element.
+ *
+ * \param value The matrix or vector to aggregate
+ *
  * \return an expression representing the aggregated expression
  */
-template <typename E>
+template <typename E, cpp_enable_if((decay_traits<E>::dimensions() == 1))>
+size_t argmax(E&& value) {
+    static_assert(is_etl_expr<E>::value, "etl::argmax can only be used on ETL expressions");
+    return max_index(value);
+}
+
+/*!
+ * \brief Returns the indices of the minimum values in the first axis of the
+ * given matrix. If passed a vector, returns the index of the mimimum element.
+ *
+ * \param value The value to aggregate
+ *
+ * \return an expression representing the aggregated expression
+ */
+template <typename E, cpp_enable_if((decay_traits<E>::dimensions() > 1))>
 auto argmin(E&& value) -> detail::stable_transform_helper<E, argmin_transformer> {
     static_assert(is_etl_expr<E>::value, "etl::argmax can only be used on ETL expressions");
-    static_assert(decay_traits<E>::dimensions() > 1, "Can only use argmax on matrix");
     return detail::make_transform_expr<E, argmin_transformer>(value);
+}
+
+/*!
+ * \brief Returns the indices of the minimum values in the first axis of the
+ * given matrix. If passed a vector, returns the index of the mimimum element.
+ *
+ * \param value The value to aggregate
+ *
+ * \return an expression representing the aggregated expression
+ */
+template <typename E, cpp_enable_if((decay_traits<E>::dimensions() == 1))>
+size_t argmin(E&& value) {
+    static_assert(is_etl_expr<E>::value, "etl::argmax can only be used on ETL expressions");
+    return min_index(value);
 }
 
 /*!
