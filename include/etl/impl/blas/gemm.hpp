@@ -151,7 +151,10 @@ inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, 
 }
 
 /*!
- * \brief Compute the matrix multiplication of a and b and store the result in c
+ * \brief Compute the matrix multiplication of a and b and store the result in c.
+ *
+ * All the matrices have the same storage order.
+ *
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication
  * param c The result
@@ -181,6 +184,15 @@ void gemm(A&& a, B&& b, C&& c) {
     c.invalidate_gpu();
 }
 
+/*!
+ * \brief Compute the matrix multiplication of a and b and store the result in c.
+ *
+ * A is a row-major matrix, B and C are column major.
+ *
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_row_major<B, C>::value && all_column_major<A>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
@@ -204,6 +216,15 @@ void gemm(A&& a, B&& b, C&& c) {
     c.invalidate_gpu();
 }
 
+/*!
+ * \brief Compute the matrix multiplication of a and b and store the result in c.
+ *
+ * A and C are row-major, B is column major.
+ *
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, C>::value && all_column_major<B>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
@@ -227,6 +248,15 @@ void gemm(A&& a, B&& b, C&& c) {
     c.invalidate_gpu();
 }
 
+/*!
+ * \brief Compute the matrix multiplication of a and b and store the result in c.
+ *
+ * C is row-major, A and B are column major.
+ *
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_row_major<C>::value && all_column_major<A, B>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
@@ -250,6 +280,15 @@ void gemm(A&& a, B&& b, C&& c) {
     c.invalidate_gpu();
 }
 
+/*!
+ * \brief Compute the matrix multiplication of a and b and store the result in c.
+ *
+ * A is row-major, B and C are column major.
+ *
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A>::value && all_column_major<B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
@@ -273,6 +312,15 @@ void gemm(A&& a, B&& b, C&& c) {
     c.invalidate_gpu();
 }
 
+/*!
+ * \brief Compute the matrix multiplication of a and b and store the result in c.
+ *
+ * B is row-major, A and C are column major.
+ *
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_row_major<B>::value && all_column_major<A, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
@@ -296,6 +344,15 @@ void gemm(A&& a, B&& b, C&& c) {
     c.invalidate_gpu();
 }
 
+/*!
+ * \brief Compute the matrix multiplication of a and b and store the result in c.
+ *
+ * A and B are row-major, C is column major.
+ *
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, B>::value && all_column_major<C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;

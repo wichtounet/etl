@@ -17,6 +17,11 @@ enum class order {
     ColumnMajor ///< Column-Major storage
 };
 
+/*!
+ * \brief Reverse the given storage order.
+ * \param o The order to reverse
+ * \return the reversed equivalent storage order
+ */
 constexpr order reverse(order o){
     return o == order::RowMajor ? order::ColumnMajor : order::RowMajor;
 }
