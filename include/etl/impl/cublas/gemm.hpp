@@ -566,7 +566,7 @@ void gemm_tt(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
+template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>::value)>
 void gemv(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
@@ -618,7 +618,7 @@ void gemv(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
+template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>::value)>
 void gemv_t(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
@@ -670,7 +670,7 @@ void gemv_t(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
+template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>::value)>
 void gevm(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
@@ -722,7 +722,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
+template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>::value)>
 void gevm_t(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
@@ -833,6 +833,70 @@ void gemm_tt(A&& a, B&& b, C&& c) {
     cpp_unused(c);
 
     cpp_unreachable("Invalid operation called cublas::gemm_tt with heterogeneous types");
+}
+
+/*!
+ * \brief GEMV with heterogeneous types
+ *
+ * \param a The lhs matrix
+ * \param b The rhs vector
+ * \param c The result vector
+ */
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+void gemv(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+
+    cpp_unreachable("Invalid operation called blas::gemv with heterogeneous types");
+}
+
+/*!
+ * \brief GEMV with heterogeneous types
+ *
+ * \param a The lhs matrix
+ * \param b The rhs vector
+ * \param c The result vector
+ */
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+void gemv_t(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+
+    cpp_unreachable("Invalid operation called blas::gemv_t with heterogeneous types");
+}
+
+/*!
+ * \brief GEVM with heterogeneous types
+ *
+ * \param a The lhs matrix
+ * \param b The rhs vector
+ * \param c The result vector
+ */
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+void gevm(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+
+    cpp_unreachable("Invalid operation called blas::gevm with heterogeneous types");
+}
+
+/*!
+ * \brief GEVM with heterogeneous types
+ *
+ * \param a The lhs matrix
+ * \param b The rhs vector
+ * \param c The result vector
+ */
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+void gevm_t(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+
+    cpp_unreachable("Invalid operation called blas::gevm_t with heterogeneous types");
 }
 
 #else
