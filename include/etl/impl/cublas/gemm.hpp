@@ -294,7 +294,7 @@ inline void cublas_gemv(cublasHandle_t handle, cublasOperation_t trans, size_t m
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, B, C>::value || all_column_major<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value || all_column_major<A, B, C>::value) && all_homogeneous<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
@@ -344,7 +344,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_row_major<B, C>::value && all_column_major<A>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<B, C>::value && all_column_major<A>::value && all_homogeneous<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm(force_temporary_opp(a), b, c);
 }
@@ -355,7 +355,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, C>::value && all_column_major<B>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, C>::value && all_column_major<B>::value && all_homogeneous<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm(a, force_temporary_opp(b), c);
 }
@@ -366,7 +366,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_row_major<C>::value && all_column_major<A, B>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<C>::value && all_column_major<A, B>::value && all_homogeneous<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm(force_temporary_opp(a), force_temporary_opp(b), c);
 }
@@ -377,7 +377,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A>::value && all_column_major<B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A>::value && all_column_major<B, C>::value && all_homogeneous<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm(force_temporary_opp(a), b, c);
 }
@@ -388,7 +388,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_row_major<B>::value && all_column_major<A, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<B>::value && all_column_major<A, C>::value && all_homogeneous<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm(a, force_temporary_opp(b), c);
 }
@@ -399,7 +399,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, B>::value && all_column_major<C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, B>::value && all_column_major<C>::value && all_homogeneous<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm(force_temporary_opp(a), force_temporary_opp(b), c);
 }
@@ -410,7 +410,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
+template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>::value)>
 void gemm_nt(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
@@ -462,7 +462,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
+template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>::value)>
 void gemm_tn(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
@@ -514,7 +514,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
+template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>::value)>
 void gemm_tt(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
@@ -766,6 +766,73 @@ void gevm_t(A&& a, B&& b, C&& c) {
 
     c.validate_gpu();
     c.invalidate_cpu();
+}
+
+// Fallback functions for heterogeneous types
+// CPP17: Replace with a if constexpr in the base functions ?
+
+/*!
+ * \brief GEMM with heterogeneous types
+ *
+ * \param a The lhs matrix
+ * \param b The rhs matrix
+ * \param c The result matrix
+ */
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+void gemm(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+
+    cpp_unreachable("Invalid operation called cublas::gemm with heterogeneous types");
+}
+
+/*!
+ * \brief GEMM with heterogeneous types
+ *
+ * \param a The lhs matrix (row major)
+ * \param b The rhs matrix (transposed row major)
+ * \param c The result matrix (row major)
+ */
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+void gemm_nt(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+
+    cpp_unreachable("Invalid operation called cublas::gemm_nt with heterogeneous types");
+}
+
+/*!
+ * \brief GEMM with heterogeneous types
+ *
+ * \param a The lhs matrix (row major)
+ * \param b The rhs matrix (transposed row major)
+ * \param c The result matrix (row major)
+ */
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+void gemm_tn(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+
+    cpp_unreachable("Invalid operation called cublas::gemm_tn with heterogeneous types");
+}
+
+/*!
+ * \brief GEMM with heterogeneous types
+ *
+ * \param a The lhs matrix (row major)
+ * \param b The rhs matrix (transposed row major)
+ * \param c The result matrix (row major)
+ */
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+void gemm_tt(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+
+    cpp_unreachable("Invalid operation called cublas::gemm_tt with heterogeneous types");
 }
 
 #else
