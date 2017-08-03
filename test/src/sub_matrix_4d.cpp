@@ -7,7 +7,7 @@
 
 #include "test.hpp"
 
-TEMPLATE_TEST_CASE_2("sub_matrix_3d/0", "[sub]", Z, double, float) {
+TEMPLATE_TEST_CASE_2("sub_matrix_4d/0", "[sub]", Z, double, float) {
     etl::fast_matrix<Z, 2, 3, 2, 2> a = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
 
     auto a_0 = sub(a, 0, 0, 0, 0, 1, 2, 1, 2);
@@ -37,7 +37,7 @@ TEMPLATE_TEST_CASE_2("sub_matrix_3d/0", "[sub]", Z, double, float) {
     REQUIRE_EQUALS(a(0, 1, 0, 1), 42);
 }
 
-TEMPLATE_TEST_CASE_2("sub_matrix_3d/1", "[sub]", Z, double, float) {
+TEMPLATE_TEST_CASE_2("sub_matrix_4d/1", "[sub]", Z, double, float) {
     etl::fast_matrix<Z, 2, 3, 2, 2> a = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
 
     auto a_0 = sub(a,  0, 0, 1, 0,  1, 2, 1, 2);
@@ -67,7 +67,7 @@ TEMPLATE_TEST_CASE_2("sub_matrix_3d/1", "[sub]", Z, double, float) {
     REQUIRE_EQUALS(a(0, 1, 1, 1), 42);
 }
 
-TEMPLATE_TEST_CASE_2("sub_matrix_3d/2", "[sub]", Z, double, float) {
+TEMPLATE_TEST_CASE_2("sub_matrix_4d/2", "[sub]", Z, double, float) {
     etl::fast_matrix<Z, 2, 3, 2, 2> a = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
 
     auto a_0 = sub(a,  1, 0, 1, 0,  1, 2, 1, 2);
@@ -97,7 +97,7 @@ TEMPLATE_TEST_CASE_2("sub_matrix_3d/2", "[sub]", Z, double, float) {
     REQUIRE_EQUALS(a(1, 1, 1, 1), 42);
 }
 
-TEMPLATE_TEST_CASE_2("sub_matrix_3d/cm/0", "[sub]", Z, double, float) {
+TEMPLATE_TEST_CASE_2("sub_matrix_4d/cm/0", "[sub]", Z, double, float) {
     etl::fast_matrix<Z, 2, 3, 2, 2> aa = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
     etl::fast_matrix_cm<Z, 2, 3, 2, 2> a;
     a(0)(0) = aa(0)(0);
@@ -134,7 +134,7 @@ TEMPLATE_TEST_CASE_2("sub_matrix_3d/cm/0", "[sub]", Z, double, float) {
     REQUIRE_EQUALS(a(0, 1, 0, 1), 42);
 }
 
-TEMPLATE_TEST_CASE_2("sub_matrix_3d/cm/1", "[sub]", Z, double, float) {
+TEMPLATE_TEST_CASE_2("sub_matrix_4d/cm/1", "[sub]", Z, double, float) {
     etl::fast_matrix<Z, 2, 3, 2, 2> aa = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
     etl::fast_matrix_cm<Z, 2, 3, 2, 2> a;
     a(0)(0) = aa(0)(0);
@@ -171,7 +171,7 @@ TEMPLATE_TEST_CASE_2("sub_matrix_3d/cm/1", "[sub]", Z, double, float) {
     REQUIRE_EQUALS(a(0, 1, 1, 1), 42);
 }
 
-TEMPLATE_TEST_CASE_2("sub_matrix_3d/cm/2", "[sub]", Z, double, float) {
+TEMPLATE_TEST_CASE_2("sub_matrix_4d/cm/2", "[sub]", Z, double, float) {
     etl::fast_matrix<Z, 2, 3, 2, 2> aa = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
     etl::fast_matrix_cm<Z, 2, 3, 2, 2> a;
     a(0)(0) = aa(0)(0);
