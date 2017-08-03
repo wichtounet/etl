@@ -1128,12 +1128,16 @@ struct bernoulli_unary_g_op {
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear
     static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
 
+private:
+
     G& rand_engine; ///< The custom random engine
+
+public:
 
     /*!
      * \brief Construct a new bernoulli_unary_g_op
      */
-    bernoulli_unary_g_op(G& rand_engine) : rand_engine(rand_engine) {
+    explicit bernoulli_unary_g_op(G& rand_engine) : rand_engine(rand_engine) {
         //Nothing else to init
     }
 
@@ -1212,12 +1216,16 @@ struct reverse_bernoulli_unary_g_op {
     static constexpr bool linear = true; ///< Indicates if the operator is linear
     static constexpr bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
 
+private:
+
     G& rand_engine; ///< The custom random engine
+
+public:
 
     /*!
      * \brief Construct a new reverse_bernoulli_unary_g_op
      */
-    reverse_bernoulli_unary_g_op(G& rand_engine) : rand_engine(rand_engine) {
+    explicit reverse_bernoulli_unary_g_op(G& rand_engine) : rand_engine(rand_engine) {
         //Nothing else to init
     }
 
@@ -1296,12 +1304,16 @@ struct uniform_noise_unary_g_op {
     static constexpr bool linear = true; ///< Indicates if the operator is linear
     static constexpr bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
 
+private:
+
     G& rand_engine; ///< The custom random engine
+
+public:
 
     /*!
      * \brief Construct a new uniform_noise_unary_g_op
      */
-    uniform_noise_unary_g_op(G& rand_engine) : rand_engine(rand_engine) {
+    explicit uniform_noise_unary_g_op(G& rand_engine) : rand_engine(rand_engine) {
         //Nothing else to init
     }
 
@@ -1380,12 +1392,16 @@ struct normal_noise_unary_g_op {
     static constexpr bool linear = true; ///< Indicates if the operator is linear
     static constexpr bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
 
+private:
+
     G& rand_engine; ///< The custom random engine
+
+public:
 
     /*!
      * \brief Construct a new normal_noise_unary_g_op
      */
-    normal_noise_unary_g_op(G& rand_engine) : rand_engine(rand_engine) {
+    explicit normal_noise_unary_g_op(G& rand_engine) : rand_engine(rand_engine) {
         //Nothing else to init
     }
 
@@ -1465,12 +1481,16 @@ struct logistic_noise_unary_g_op {
     static constexpr bool linear = true; ///< Indicates if the operator is linear
     static constexpr bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
 
+private:
+
     G& rand_engine; ///< The custom random engine
+
+public:
 
     /*!
      * \brief Construct a new logistic_noise_unary_g_op
      */
-    logistic_noise_unary_g_op(G& rand_engine) : rand_engine(rand_engine) {
+    explicit logistic_noise_unary_g_op(G& rand_engine) : rand_engine(rand_engine) {
         //Nothing else to init
     }
 
