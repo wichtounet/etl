@@ -301,7 +301,7 @@ public:
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const sub_matrix_3d& v) {
-        return os << "sub(" << v.sub_expr << ", " << v.base_i << ", " << v.base_j << ", " << v.base_k<< ", " << v.m << ", " << v.n << ", " << v.base_l << ")";
+        return os << "sub(" << v.sub_expr << ", " << v.base_i << ", " << v.base_j << ", " << v.base_k<< ", " << v.m << ", " << v.n << ", " << v.o << ")";
     }
 };
 
