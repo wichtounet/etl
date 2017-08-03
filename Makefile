@@ -193,6 +193,7 @@ $(eval $(call add_test_executable,etl_test_column_major,src/test.cpp src/column_
 $(eval $(call add_test_executable,etl_test_fast_matrix,src/test.cpp src/fast_matrix.cpp))
 $(eval $(call add_test_executable,etl_test_sub_matrix_2d,src/test.cpp src/sub_matrix_2d.cpp))
 $(eval $(call add_test_executable,etl_test_sub_matrix_3d,src/test.cpp src/sub_matrix_3d.cpp))
+$(eval $(call add_test_executable,etl_test_sub_matrix_4d,src/test.cpp src/sub_matrix_4d.cpp))
 
 # Create the benchmark executables
 BENCH_FILES=$(wildcard benchmark/src/benchmark*cpp)

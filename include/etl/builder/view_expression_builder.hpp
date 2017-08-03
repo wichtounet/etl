@@ -97,6 +97,22 @@ auto sub(E&& value, size_t i, size_t j, size_t k, size_t m, size_t n, size_t o) 
 }
 
 /*!
+ * \brief Returns view representing a sub matrix view of the given expression.
+ * \param value The ETL expression
+ * \param i The first index
+ * \param j The second index
+ * \param m The first dimension
+ * \param n The second dimension
+ * \return a view expression representing a sub matrix view of the given expression
+ */
+template <typename E>
+auto sub(E&& value, size_t i, size_t j, size_t k, size_t l, size_t m, size_t n, size_t o, size_t p) -> sub_matrix_4d<detail::build_identity_type<E>, false> {
+    static_assert(is_etl_expr<E>::value, "etl::sub can only be used on ETL expressions");
+    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 4, "Cannot use sub on vector");
+    return {value, i, j, k, l, m, n, o, p};
+}
+
+/*!
  * \brief Returns view representing a slice view of the given expression.
  * \param value The ETL expression
  * \param first The first index
