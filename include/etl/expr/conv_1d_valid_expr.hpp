@@ -10,8 +10,8 @@
 #include "etl/expr/base_temporary_expr.hpp"
 
 //Get the implementations
-#include "etl/impl/conv_select.hpp"
 #include "etl/impl/conv.hpp"
+#include "etl/impl/conv_select.hpp"
 
 namespace etl {
 
