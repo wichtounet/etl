@@ -236,6 +236,12 @@ template <typename T>
 using dyn_vector = dyn_matrix_impl<T, order::RowMajor, 1>;
 
 /*!
+ * \brief A dynamic vector, in column-major order
+ */
+template <typename T>
+using dyn_vector_cm = dyn_matrix_impl<T, order::ColumnMajor, 1>;
+
+/*!
  * \brief A dynamic matrix, in row-major order, of D dimensions
  */
 template <typename T, size_t D = 2>
