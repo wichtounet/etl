@@ -140,7 +140,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
                 //VEC cannot always be used
                 case gemm_impl::VEC:
                     if (!vec_enabled || !all_vectorizable<vector_mode, A, B, C>::value || all_homogeneous<A, B, C>::value) {           //COVERAGE_EXCLUDE_LINE
-                        std::cerr << "Forced selection to VEC gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                        std::cerr << "Forced selection to VEC gevm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return select_default_gevm_impl<C>(n1, n2);                                                                    //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                  //COVERAGE_EXCLUDE_LINE
 
