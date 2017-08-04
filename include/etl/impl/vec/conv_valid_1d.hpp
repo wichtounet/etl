@@ -16,8 +16,12 @@ namespace impl {
 namespace vec {
 
 /*!
- * \brief Traits indicating if vectorized convolution is possible
+ * \brief Traits indicating if vectorized 1D convolution is possible
  * for the given configuration.
+ *
+ * A 1D convolution can be optimized if vectorization is enabled,
+ * vectorization of algorithms is enabled, all the types are the
+ * same and all the types are vectorizable.
  *
  * \param V The vector mode
  * \param I The type of the input matrix
@@ -25,9 +29,8 @@ namespace vec {
  * \param C The type of the output matrix
  */
 template <vector_mode_t V, typename I, typename K, typename C>
-using conv_possible = cpp::bool_constant<vec_enabled &&
+using conv1_possible = cpp::bool_constant<vec_enabled &&
                                          vectorize_impl &&
-                                         all_row_major<I, K, C>::value &&
                                          all_homogeneous<I, K, C>::value &&
                                          all_vectorizable<V, I, K, C>::value>;
 
@@ -355,7 +358,7 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t
  * \param first The index where to start in the output matrix
  * \param last The index where to stop in the output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_if(conv_possible<vector_mode, I, K, C>::value)>
+template <typename I, typename K, typename C, cpp_enable_if(conv1_possible<vector_mode, I, K, C>::value)>
 void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
     conv1_valid<default_vec>(input, kernel, conv, first, last);
 }
@@ -368,7 +371,7 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t
  * \param first The index where to start in the output matrix
  * \param last The index where to stop in the output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_if(conv_possible<vector_mode, I, K, C>::value)>
+template <typename I, typename K, typename C, cpp_disable_if(conv1_possible<vector_mode, I, K, C>::value)>
 void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
     cpp_unused(input);
     cpp_unused(kernel);
