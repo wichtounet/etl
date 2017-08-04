@@ -52,4 +52,39 @@ constexpr bool aligned = false;
  */
 constexpr bool unaligned = false;
 
+/*!
+ * \brief The current major version number of the library
+ */
+constexpr size_t version_major = 1;
+
+/*!
+ * \brief The current minor version number of the library
+ */
+constexpr size_t version_minor = 1;
+
+/*!
+ * \brief The current revision version number of the library
+ */
+constexpr size_t version_revision = 0;
+
 } //end of namespace etl
+
+/*!
+ * \brief String representation of the current version of the library.
+ */
+#define ETL_VERSION_STR "1.0"
+
+/*!
+ * \brief The current major version number of the library
+ */
+#define ETL_VERSION_MAJOR 1
+
+/*!
+ * \brief The current minor version number of the library
+ */
+#define ETL_VERSION_MINOR 1
+
+/*!
+ * \brief The current revision version number of the library
+ */
+#define ETL_VERSION_REVISION 0
