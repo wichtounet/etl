@@ -298,31 +298,6 @@ void gevm_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, C&& cc) 
 }
 
 /*!
- * \brief Optimized version of GEVM for row major version
- * \param a The lhs vector
- * \param b The rhs matrix
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value && all_homogeneous<A, B, C>::value))>
-void gevm(A&& a, B&& b, C&& c) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
-
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-
-    const auto m = rows(b);
-    const auto n = columns(b);
-
-    if(etl::size(b) < gevm_rm_small_threshold){
-        gevm_small_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c);
-    } else {
-        gevm_large_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c);
-    }
-
-    c.invalidate_gpu();
-}
-
-/*!
  * \brief Optimized version of small GEVM for row major version
  * \param aa The lhs vector
  * \param bb The rhs matrix
@@ -674,6 +649,31 @@ void gevm_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
 }
 
 /*!
+ * \brief Optimized version of GEVM for row major version
+ * \param a The lhs vector
+ * \param b The rhs matrix
+ * \param c The result vector
+ */
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value && all_homogeneous<A, B, C>::value))>
+void gevm(A&& a, B&& b, C&& c) {
+    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
+    const auto m = rows(b);
+    const auto n = columns(b);
+
+    if(etl::size(b) < gevm_rm_small_threshold){
+        gevm_small_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c);
+    } else {
+        gevm_large_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c);
+    }
+
+    c.invalidate_gpu();
+}
+
+/*!
  * \brief Optimized version of GEVM for column major version
  * \param a The lhs vector
  * \param b The rhs matrix
@@ -706,7 +706,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if(((!!all_column_major<A,B,C>::value || !!all_row_major<A, B, C>::value) && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((!all_column_major<A,B,C>::value && !all_row_major<A, B, C>::value && all_homogeneous<A, B, C>::value))>
 void gevm(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
