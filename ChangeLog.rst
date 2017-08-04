@@ -1,30 +1,50 @@
-In development - ETL 1.1
-++++++++++++++++++++++++
+ETL 1.1 - 04.08.2017
+++++++++++++++++++++
 
+* *Performance* Better dispatching for alignment
+* *Performance* Much faster multiplications between matrices of different major
+* *Performance* Highly improved performed of multiplications with transpose
 * *Performance* Vectorization of signed integer operations
 * *Performance* Faster CPU convolutions
 * *Performance* Better parallelization of convolutions
-* *Performance* Better usage of GPU contexts
 * *Performance* Much better GEMM/GEMV/GEVM kernels (when BLAS not available)
 * *Performance* Reduced overhead for 3D/4D matrices access by indices
 * *Performance* Use of non-temporal stores for large matrices
-* *Performance*: Forced alignment of matrices
-* *Performance*: Force basic padding of vectors
-* *Performance*: Better thread reuse
-* *Performance*: Faster dot product
-* *Performance*: Faster batched outer product
-* *Performance*: Better usage of FMA
-* *Performance*: SSE/AVX double-precision exponentiation
-* *Performance*: Much faster Probabilistic Max Pooling
+* *Performance* Forced alignment of matrices
+* *Performance* Force basic padding of vectors
+* *Performance* Better thread reuse
+* *Performance* Faster dot product
+* *Performance* Faster batched outer product
+* *Performance* Better usage of FMA
+* *Performance* SSE/AVX double-precision exponentiation
+* *Performance* Much faster Pooling for various dimensions
+* *Feature*: Sub matrices in 2D, 3D and 4D
+* *Feature* Helpers for Machine Learning
+* *Feature* Comparisons operators and functions equal, not_equal, almost_equal
+* *Feature* Logical operators for boolean containers
+* *Feature* Shuffle and noise can now operate on custom random engines
 * *Feature* Pooling with stride is now supported
-* *Feature*: Custom fast and dyn matrices support
+* *Feature* Custom fast and dyn matrices support
 * *Feature* Matrices and vectors slices view
 * *Feature* Deeper pooling support
-* *Misc* Lots of small fixes
+* *Feature* bias_add (2D and 4D) (Machine Learning)
+* *Feature* bias_batch_mean (2D and 4D) (Machine Learning)
+* *Feature* Transposed convolution
+* *GPU* Better usage of contexts
+* *GPU* Pooling and Upsample support
+* *GPU* batch_outer support
+* *GPU* sigmoid and RELU and derivatives
+* *GPU* Memory pool handling
+* *GPU* Avoid a lot of temporaries
 * *Misc* Reduced duplications in the code base
 * *Misc* Simplifications of the iterators to DMA expressions
 * *Misc* Faster compilation of the test cases
 * *Misc* Generalized SSE/AVX versions into VEC versions
+* *Misc* Reviewed completely temporary expressions
+* *Bug* Lots of small fixes
+* *Bug* Transpose on GPU was not working on column major matrix
+* *Bug* 4D Pooling
+* *Bug* Q/R Decomposition
 
 ETL 1.0 - 02.09.2016
 ++++++++++++++++++++
