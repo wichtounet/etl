@@ -72,7 +72,7 @@ constexpr size_t version_revision = 0;
 /*!
  * \brief String representation of the current version of the library.
  */
-#define ETL_VERSION_STR "1.0"
+#define ETL_VERSION_STR "1.1"
 
 /*!
  * \brief The current major version number of the library
