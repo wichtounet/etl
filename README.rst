@@ -1,11 +1,11 @@
-Expression Templates Library (ETL) 1.0
+Expression Templates Library (ETL) 1.1
 ======================================
 
 |logo|    |coverage| |jenkins| |license| |doc|
 
 .. |logo| image:: logo_small.png
 .. |coverage| image:: https://img.shields.io/sonar/https/sonar.baptiste-wicht.ch/etl/coverage.svg
-.. |jenkins| image:: https://img.shields.io/jenkins/s/https/jenkins.baptiste-wicht.ch/etl.svg 
+.. |jenkins| image:: https://img.shields.io/jenkins/s/https/jenkins.baptiste-wicht.ch/etl.svg
 .. |license| image:: https://img.shields.io/github/license/mashape/apistatus.svg
 .. |doc| image:: https://codedocs.xyz/wichtounet/etl.svg
    :target: https://codedocs.xyz/wichtounet/etl/
