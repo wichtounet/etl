@@ -125,7 +125,7 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
                 //VEC cannot always be used
                 case conv_multi_impl::VEC:
                     if (!vec_enabled || !vectorize_impl) {
-                        std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
+                        std::cerr << "Forced selection to VEC conv2_full_multi implementation, but not possible for this expression" << std::endl;
                         return select_default_impl<C>();                                                                   // COVERAGE_EXCLUDE_LINE
                     }
 
