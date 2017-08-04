@@ -586,7 +586,7 @@ void gemv_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A>::value && all_homogeneous<A, B, C>::value))>
 void gemv(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -611,7 +611,7 @@ void gemv(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A,B,C>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A>::value && all_homogeneous<A, B, C>::value))>
 void gemv(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -629,30 +629,6 @@ void gemv(A&& a, B&& b, C&& c) {
     }
 
     c.invalidate_gpu();
-}
-
-/*!
- * \brief Unoptimized version of GEMV for mixed order
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_if((!all_column_major<A,B,C>::value && !all_row_major<A,B,C>::value && all_homogeneous<A, B, C>::value))>
-void gemv(A&& a, B&& b, C&& c) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
-
-    const auto m = rows(a);
-    const auto n = columns(a);
-
-    // TODO Replace this with proper selection of the kernel based on order
-
-    c = 0;
-
-    for (size_t k = 0; k < n; k++) {
-        for (size_t i = 0; i < m; i++) {
-            c(i) += a(i, k) * b(k);
-        }
-    }
 }
 
 // Versions with transpose

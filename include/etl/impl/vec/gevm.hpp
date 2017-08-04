@@ -654,7 +654,7 @@ void gevm_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
  * \param b The rhs matrix
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<B>::value && all_homogeneous<A, B, C>::value))>
 void gevm(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -679,7 +679,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A, B, C>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_column_major<B>::value && all_homogeneous<A, B, C>::value))>
 void gevm(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -698,27 +698,6 @@ void gevm(A&& a, B&& b, C&& c) {
     }
 
     c.invalidate_gpu();
-}
-
-/*!
- * \brief Unoptimized version of GEVM for column major version
- * \param a The lhs vector
- * \param b The rhs matrix
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_if((!all_column_major<A,B,C>::value && !all_row_major<A, B, C>::value && all_homogeneous<A, B, C>::value))>
-void gevm(A&& a, B&& b, C&& c) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
-
-    // TODO Replace this with proper selection of the kernel based on order
-
-    c = 0;
-
-    for (size_t j = 0; j < columns(b); j++) {
-        for (size_t k = 0; k < etl::dim<0>(a); k++) {
-            c(j) += a(k) * b(k, j);
-        }
-    }
 }
 
 // Versions with transposition
