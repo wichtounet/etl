@@ -82,10 +82,11 @@ added,subtracted,divided, ... by scalars.
 
 .. code:: cpp
 
-    etl::dyn_vector<double> a({1.0,2.0,3.0});
-    etl::dyn_vector<double> b({3.0,2.0,1.0});
+    etl::dyn_vector<double> a{1.0,2.0,3.0};
+    etl::dyn_vector<double> b{3.0,2.0,1.0};
+    etl::dyn_vector<double> c;
 
-    etl::dyn_vector<double> c(1.4 * (a + b) / b + b + a / 1.2);
+    c = 1.4 * (a + b) / b + b + a / 1.2;
 
 
 All the operations are only executed once the expression is
