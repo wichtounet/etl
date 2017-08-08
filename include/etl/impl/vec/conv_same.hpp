@@ -39,7 +39,7 @@ void conv1_same(const I& input, const K& kernel, C&& conv, size_t first, size_t 
     etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out, first, last);
     etl::impl::common::right_same_kernel(in, size(input), k, size(kernel), out, first, last);
 
-    conv1_valid<default_vec>(input, kernel, memory_slice(conv, left, size(conv)), first, last);
+    conv1_valid_impl<default_vec>(input, kernel, memory_slice(conv, left, size(conv)), first, last);
 }
 
 /*!

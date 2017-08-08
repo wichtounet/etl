@@ -61,7 +61,7 @@ inline etl::conv_impl select_default_conv1_impl_new() {
     } else if(mkl_enabled && TT == conv_type::FULL && floating){
         //TODO This should only be done for some sizes
         return etl::conv_impl::FFT_MKL;
-    } else if (impl::vec::conv1_possible<vector_mode, I, K, C>::value) {
+    } else if (impl::vec::conv1_possible<vector_mode, I, K, C>) {
         return etl::conv_impl::VEC;
     } else {
         return etl::conv_impl::STD;
@@ -107,7 +107,7 @@ inline etl::conv_impl select_conv1_impl_new() {
 
             //VEC cannot always be used
             case conv_impl::VEC:
-                if (!impl::vec::conv1_possible<vector_mode, I, K, C>::value) {
+                if (!impl::vec::conv1_possible<vector_mode, I, K, C>) {
                     std::cerr << "Forced selection to VEC conv1 implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }

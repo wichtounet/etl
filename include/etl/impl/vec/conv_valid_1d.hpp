@@ -29,10 +29,11 @@ namespace vec {
  * \param C The type of the output matrix
  */
 template <vector_mode_t V, typename I, typename K, typename C>
-using conv1_possible = cpp::bool_constant<vec_enabled &&
-                                         vectorize_impl &&
-                                         all_homogeneous<I, K, C>::value &&
-                                         all_vectorizable<V, I, K, C>::value>;
+constexpr bool conv1_possible =
+                vec_enabled
+            &&  vectorize_impl
+            &&  all_homogeneous<I, K, C>::value
+            &&  all_vectorizable<V, I, K, C>::value;
 
 /*!
  * \brief Vectorized implementation of a 1D 'valid' convolution C = I * K
@@ -43,7 +44,7 @@ using conv1_possible = cpp::bool_constant<vec_enabled &&
  * \param last The index where to stop in the output matrix
  */
 template <typename V, typename I, typename K, typename C>
-void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
+void conv1_valid_impl(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
@@ -358,9 +359,9 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t
  * \param first The index where to start in the output matrix
  * \param last The index where to stop in the output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_if(conv1_possible<vector_mode, I, K, C>::value)>
+template <typename I, typename K, typename C, cpp_enable_if((conv1_possible<vector_mode, I, K, C>))>
 void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
-    conv1_valid<default_vec>(input, kernel, conv, first, last);
+    conv1_valid_impl<default_vec>(input, kernel, conv, first, last);
 }
 
 /*!
@@ -371,7 +372,7 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t
  * \param first The index where to start in the output matrix
  * \param last The index where to stop in the output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_if(conv1_possible<vector_mode, I, K, C>::value)>
+template <typename I, typename K, typename C, cpp_disable_if(conv1_possible<vector_mode, I, K, C>)>
 void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
     cpp_unused(input);
     cpp_unused(kernel);
