@@ -234,6 +234,31 @@ private:
 public:
     gpu_memory_handler() = default;
 
+    gpu_memory_handler(const gpu_memory_handler& rhs) = default;
+    gpu_memory_handler& operator=(const gpu_memory_handler& rhs) = default;
+
+    /*!
+     * \brief Move construct a gpu_memory_handler
+     */
+    gpu_memory_handler(gpu_memory_handler&& rhs)
+            noexcept : gpu_memory_(rhs.gpu_memory_), gpu_memory_size(rhs.gpu_memory_size), cpu_up_to_date(rhs.cpu_up_to_date), gpu_up_to_date(rhs.gpu_up_to_date) {
+        rhs.gpu_memory_     = nullptr;
+        rhs.gpu_memory_size = 0;
+    }
+
+    /*!
+     * \brief Move assign a gpu_memory_handler
+     */
+    gpu_memory_handler& operator=(gpu_memory_handler&& rhs) noexcept {
+        gpu_memory_         = rhs.gpu_memory_;
+        gpu_memory_size     = rhs.gpu_memory_size;
+        cpu_up_to_date      = rhs.cpu_up_to_date;
+        gpu_up_to_date      = rhs.gpu_up_to_date;
+
+        rhs.gpu_memory_     = nullptr;
+        rhs.gpu_memory_size = 0;
+    }
+
     /*!
      * \brief Destroys the GPU memory handler. This effectively
      * releases any memory allocated.
