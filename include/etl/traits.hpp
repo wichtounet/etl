@@ -161,6 +161,13 @@ struct etl_traits {
     static constexpr bool is_magic_view  = false; ///< Indicates if T is a magic view
     static constexpr bool is_fast        = false; ///< Indicates if T is a fast structure
     static constexpr bool is_generator   = false; ///< Indicates if T is a generator expression
+
+    /*!
+     * \brief Return the number of dimensions of the expression
+     */
+    static constexpr size_t dimensions() {
+        return 0;
+    }
 };
 
 /*!
@@ -418,7 +425,7 @@ using is_simple_lhs = cpp::or_c<is_etl_value_class<T>, is_unary_expr<T>, is_sub_
  * \tparam T The type to test
  */
 template <typename T>
-using has_direct_access = cpp::bool_constant<decay_traits<T>::is_direct>;
+constexpr bool has_direct_access = decay_traits<T>::is_direct;
 
 /*!
  * \brief Traits to test if the given type is single precision type.
@@ -558,14 +565,14 @@ using all_complex = cpp::and_c<is_complex<E>...>;
  * \tparam E The ETL expression type.
  */
 template <typename E>
-using is_dma = has_direct_access<E>;
+constexpr bool is_dma = has_direct_access<E>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types have direct memory access (DMA).
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_dma = cpp::and_c<has_direct_access<E>...>;
+using all_dma = cpp::and_u<(has_direct_access<E>)...>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are row-major.
@@ -600,28 +607,28 @@ using all_etl_expr = cpp::and_c<is_etl_expr<E>...>;
  * \tparam T The ETL expression type
  */
 template <typename T>
-using is_1d = cpp::bool_constant<decay_traits<T>::dimensions() == 1>;
+constexpr bool is_1d = decay_traits<T>::dimensions() == 1;
 
 /*!
  * \brief Traits to test if the given expression type is 2D
  * \tparam T The ETL expression type
  */
 template <typename T>
-using is_2d = cpp::bool_constant<decay_traits<T>::dimensions() == 2>;
+constexpr bool is_2d = decay_traits<T>::dimensions() == 2;
 
 /*!
  * \brief Traits to test if the given expression type is 3D
  * \tparam T The ETL expression type
  */
 template <typename T>
-using is_3d = cpp::bool_constant<decay_traits<T>::dimensions() == 3>;
+constexpr bool is_3d = decay_traits<T>::dimensions() == 3;
 
 /*!
  * \brief Traits to test if the given expression type is 4D
  * \tparam T The ETL expression type
  */
 template <typename T>
-using is_4d = cpp::bool_constant<decay_traits<T>::dimensions() == 4>;
+constexpr bool is_4d = decay_traits<T>::dimensions() == 4;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are vectorizable.
@@ -657,14 +664,14 @@ using all_thread_safe = cpp::and_u<decay_traits<E>::is_thread_safe...>;
  * \tparam T The ETL expression type.
  */
 template <typename T>
-using is_padded_value = cpp::or_u<is_dyn_matrix<T>::value, is_fast_matrix<T>::value>;
+constexpr bool is_padded_value = is_dyn_matrix<T>::value || is_fast_matrix<T>::value;
 
 /*!
  * \brief Traits to test if the givn ETL expression is an aligned value class.
  * \tparam T The ETL expression type.
  */
 template <typename T>
-using is_aligned_value = cpp::or_u<is_dyn_matrix<T>::value, is_fast_matrix<T>::value>;
+constexpr bool is_aligned_value = is_dyn_matrix<T>::value || is_fast_matrix<T>::value;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are padded.
@@ -685,14 +692,14 @@ using all_homogeneous = cpp::is_homogeneous<value_t<E>...>;
  * of this type.
  */
 template <typename T>
-constexpr bool fast_sub_view_able = has_direct_access<T>::value && decay_traits<T>::storage_order == order::RowMajor;
+constexpr bool fast_sub_view_able = has_direct_access<T> && decay_traits<T>::storage_order == order::RowMajor;
 
 /*!
  * \brief Simple utility traits indicating if a light sub_matrix can be created out
  * of this type.
  */
 template <typename T>
-constexpr bool fast_sub_matrix_able = has_direct_access<T>::value;
+constexpr bool fast_sub_matrix_able = has_direct_access<T>;
 
 /*!
  * \brief Simple utility traits indicating if a light slice view can be created out
@@ -712,7 +719,7 @@ struct inplace_transpose_able;
  * \copydoc inplace_transpose_able
  */
 template <typename T>
-struct inplace_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_2d<T>::value>> {
+struct inplace_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_2d<T>>> {
     /*!
      * \brief Indicates if T is inplace transpose-able
      */
@@ -723,7 +730,7 @@ struct inplace_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_2d<T>
  * \copydoc inplace_transpose_able
  */
 template <typename T>
-struct inplace_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_2d<T>::value>> {
+struct inplace_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_2d<T>>> {
     /*!
      * \brief Indicates if T is inplace transpose-able
      */
@@ -734,7 +741,7 @@ struct inplace_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_2d<T
  * \copydoc inplace_transpose_able
  */
 template <typename T>
-struct inplace_transpose_able<T, std::enable_if_t<!is_2d<T>::value>> {
+struct inplace_transpose_able<T, std::enable_if_t<!is_2d<T>>> {
     /*!
      * \brief Indicates if T is inplace transpose-able
      */
@@ -755,7 +762,7 @@ struct inplace_sub_transpose_able;
  * \copydoc inplace_sub_transpose_able
  */
 template <typename T>
-struct inplace_sub_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_3d<T>::value>> {
+struct inplace_sub_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_3d<T>>> {
     /*!
      * \brief Indicates if T is inplace sub-transpose-able
      */
@@ -766,7 +773,7 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_3
  * \copydoc inplace_sub_transpose_able
  */
 template <typename T>
-struct inplace_sub_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_3d<T>::value>> {
+struct inplace_sub_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_3d<T>>> {
     /*!
      * \brief Indicates if T is inplace sub-transpose-able
      */
@@ -777,7 +784,7 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_
  * \copydoc inplace_sub_transpose_able
  */
 template <typename T>
-struct inplace_sub_transpose_able<T, std::enable_if_t<!is_3d<T>::value>> {
+struct inplace_sub_transpose_able<T, std::enable_if_t<!is_3d<T>>> {
     /*!
      * \brief Indicates if T is inplace sub-transpose-able
      */
@@ -800,7 +807,7 @@ struct is_square_matrix {
  * \copydoc is_square_matrix
  */
 template <typename Matrix>
-struct is_square_matrix <Matrix, std::enable_if_t<all_fast<Matrix>::value && is_2d<Matrix>::value>> {
+struct is_square_matrix <Matrix, std::enable_if_t<all_fast<Matrix>::value && is_2d<Matrix>>> {
     /*!
      * \brief The value of the traits. True if the matrix is square, false otherwise
      */
@@ -811,7 +818,7 @@ struct is_square_matrix <Matrix, std::enable_if_t<all_fast<Matrix>::value && is_
  * \copydoc is_square_matrix
  */
 template <typename Matrix>
-struct is_square_matrix <Matrix, std::enable_if_t<!all_fast<Matrix>::value && is_2d<Matrix>::value>> {
+struct is_square_matrix <Matrix, std::enable_if_t<!all_fast<Matrix>::value && is_2d<Matrix>>> {
     /*!
      * \brief The value of the traits. True if the matrix is square, false otherwise
      */
@@ -860,8 +867,8 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
     static constexpr bool is_linear       = true;                                                        ///< Indicates if the expression is linear
     static constexpr bool is_generator    = false;                                                       ///< Indicates if the expression is a generator expression
     static constexpr bool is_temporary = false;                                                       ///< Indicates if the expression needs an evaluator visitor
-    static constexpr bool is_padded       = is_padded_value<T>::value;                                   ///< Indicates if the expression is padded
-    static constexpr bool is_aligned      = is_aligned_value<T>::value;                                  ///< Indicates if the expression is aligned
+    static constexpr bool is_padded       = is_padded_value<T>;                                   ///< Indicates if the expression is padded
+    static constexpr bool is_aligned      = is_aligned_value<T>;                                  ///< Indicates if the expression is aligned
     static constexpr order storage_order  = T::storage_order;                                            ///< The expression storage order
 
     /*!

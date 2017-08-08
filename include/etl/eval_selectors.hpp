@@ -67,7 +67,7 @@ inline constexpr vector_mode_t select_vector_mode(){
  * \brief Integral constant indicating if a fast assign is possible
  */
 template <typename E, typename R>
-using fast_assign = cpp::and_c<has_direct_access<E>, has_direct_access<R>>;
+using fast_assign = cpp::and_u<has_direct_access<E>, has_direct_access<R>>;
 
 /*!
  * \brief Integral constant indicating if a vectorized assign is possible
@@ -79,13 +79,13 @@ using vectorized_assign = cpp::and_u<!fast_assign<E, R>::value, are_vectorizable
  * \brief Integral constant indicating if a direct assign is possible
  */
 template <typename E, typename R>
-using direct_assign = cpp::and_u<!are_vectorizable<E, R>::value, !has_direct_access<E>::value, has_direct_access<R>::value>;
+using direct_assign = cpp::and_u<!are_vectorizable<E, R>::value, !has_direct_access<E>, has_direct_access<R>>;
 
 /*!
  * \brief Integral constant indicating if a standard assign is necessary
  */
 template <typename E, typename R>
-using standard_assign = cpp::not_c<has_direct_access<R>>;
+using standard_assign = cpp::not_u<has_direct_access<R>>;
 
 //Selectors for compound operations
 
@@ -102,7 +102,7 @@ using vectorized_compound = cpp::and_u<
 template <typename E, typename R>
 using direct_compound = cpp::and_u<
                            !vectorized_compound<E, R>::value,
-                           has_direct_access<R>::value>;
+                           has_direct_access<R>>;
 
 /*!
  * \brief Integral constant indicating if a standard compound assign is necessary
@@ -128,7 +128,7 @@ using vectorized_compound_div = cpp::and_u<
 template <typename E, typename R>
 using direct_compound_div = cpp::and_u<
                            !vectorized_compound_div<E, R>::value,
-                           has_direct_access<R>::value>;
+                           has_direct_access<R>>;
 
 /*!
  * \brief Integral constant indicating if a standard compound div assign is necessary

@@ -462,7 +462,7 @@ struct etl_traits<etl::gemm_expr<A, B, Strassen>> {
  * \param b The right hand side matrix
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_2d<B>::value)>
+template <typename A, typename B, cpp_enable_if((is_2d<A> && is_2d<B>))>
 gemm_expr<detail::build_type<A>, detail::build_type<B>, false> operator*(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
@@ -476,7 +476,7 @@ gemm_expr<detail::build_type<A>, detail::build_type<B>, false> operator*(A&& a, 
  * \param b The right hand side matrix
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_if(is_2d<A>::value, is_2d<B>::value)>
+template <typename A, typename B, cpp_enable_if((is_2d<A> && is_2d<B>))>
 gemm_expr<detail::build_type<A>, detail::build_type<B>, false> mul(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
@@ -491,7 +491,7 @@ gemm_expr<detail::build_type<A>, detail::build_type<B>, false> mul(A&& a, B&& b)
  * \param c The expression used to store the result
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
-template <typename A, typename B, typename C, cpp_enable_if(is_2d<A>::value, is_2d<B>::value, is_2d<C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(is_2d<A>, is_2d<B>, is_2d<C>)>
 auto mul(A&& a, B&& b, C&& c) {
     static_assert(all_etl_expr<A, B, C>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");

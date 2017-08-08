@@ -182,7 +182,7 @@ decltype(auto) force_temporary_dim_only(E&& expr) {
  * \param expr The expression to make a temporary from
  * \return a temporary of the expression if necessary, otherwise the expression itself
  */
-template <typename E, cpp_enable_if(has_direct_access<E>::value)>
+template <typename E, cpp_enable_if(has_direct_access<E>)>
 decltype(auto) make_temporary(E&& expr) {
     return std::forward<E>(expr);
 }
@@ -195,7 +195,7 @@ decltype(auto) make_temporary(E&& expr) {
  * \param expr The expression to make a temporary from
  * \return a temporary of the expression if necessary, otherwise the expression itself
  */
-template <typename E, cpp_enable_if(!has_direct_access<E>::value)>
+template <typename E, cpp_enable_if(!has_direct_access<E>)>
 decltype(auto) make_temporary(E&& expr) {
     return force_temporary(std::forward<E>(expr));
 }
