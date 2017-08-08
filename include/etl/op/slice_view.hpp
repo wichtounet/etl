@@ -25,10 +25,10 @@ struct slice_view;
  * \brief Specialization of slice_view for non-DMA types
  */
 template <typename T>
-struct slice_view  <T, std::enable_if_t<!fast_slice_view_able<T>::value>>
-: assignable<slice_view<T>, value_t<T>>, value_testable<slice_view<T>>, iterable<slice_view<T>, fast_slice_view_able<T>::value> {
+struct slice_view  <T, std::enable_if_t<!fast_slice_view_able<T>>>
+: assignable<slice_view<T>, value_t<T>>, value_testable<slice_view<T>>, iterable<slice_view<T>, fast_slice_view_able<T>> {
     using this_type            = slice_view<T>;                                                        ///< The type of this expression
-    using iterable_base_type   = iterable<this_type, fast_slice_view_able<T>::value>;                  ///< The iterable base type
+    using iterable_base_type   = iterable<this_type, fast_slice_view_able<T>>;                  ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The assignable base type
     using sub_type             = T;                                                                    ///< The sub type
     using value_type           = value_t<sub_type>;                                                    ///< The value contained in the expression
@@ -258,7 +258,7 @@ public:
  * \brief Specialization of slice_view for DMA types
  */
 template <typename T>
-struct slice_view  <T, std::enable_if_t<fast_slice_view_able<T>::value>>
+struct slice_view  <T, std::enable_if_t<fast_slice_view_able<T>>>
 : assignable<slice_view<T>, value_t<T>>, value_testable<slice_view<T>>, iterable<slice_view<T>, true> {
     using this_type            = slice_view<T>;                                                        ///< The type of this expression
     using iterable_base_type   = iterable<this_type, true>;                                            ///< The iterable base type
@@ -732,7 +732,7 @@ struct etl_traits<etl::slice_view<T>> {
     static constexpr bool is_linear               = sub_traits::is_linear;               ///< Indicates if the expression is linear
     static constexpr bool is_thread_safe          = sub_traits::is_thread_safe;          ///< Indicates if the expression is thread safe
     static constexpr bool is_value                = false;                               ///< Indicates if the expression is of value type
-    static constexpr bool is_direct               = fast_slice_view_able<T>::value;      ///< Indicates if the expression has direct memory access
+    static constexpr bool is_direct               = fast_slice_view_able<T>;      ///< Indicates if the expression has direct memory access
     static constexpr bool is_generator            = false;                               ///< Indicates if the expression is a generator
     static constexpr bool is_padded               = false;                               ///< Indicates if the expression is padded
     static constexpr bool is_aligned              = false;                               ///< Indicates if the expression is padded
