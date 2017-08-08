@@ -135,6 +135,17 @@ using is_base_of_template_tb = decltype(is_base_of_template_tb_impl<C>(std::decl
 
 } //end of namespace traits_detail
 
+// CPP17: Remove and_v and use variadic &&
+
+/*!
+ * \brief Simple helper variable template to perform an AND between a set of
+ * boolean values.
+ */
+template <bool... B>
+constexpr bool and_v = std::is_same<
+    cpp::tmp_detail::bool_list<true, B...>,
+    cpp::tmp_detail::bool_list<B..., true>>::value;
+
 /*!
  * \brief Traits to get information about ETL types
  *
@@ -561,14 +572,14 @@ using all_dma = cpp::and_c<has_direct_access<E>...>;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_row_major = cpp::and_u<(decay_traits<E>::storage_order == order::RowMajor)...>;
+constexpr bool all_row_major = and_v<(decay_traits<E>::storage_order == order::RowMajor)...>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are column-major.
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_column_major = cpp::and_u<(decay_traits<E>::storage_order == order::ColumnMajor)...>;
+constexpr bool all_column_major = and_v<(decay_traits<E>::storage_order == order::ColumnMajor)...>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are fast (sizes known at compile-time)

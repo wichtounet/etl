@@ -35,7 +35,7 @@ namespace vec {
  * \param b The rhs matrix
  * \param c The result matrix
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C> && all_homogeneous<A, B, C>::value))>
 void gemm(A&& a, B&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
@@ -55,7 +55,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix
  * \param c The result matrix
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A, B, C>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A, B, C> && all_homogeneous<A, B, C>::value))>
 void gemm(A&& a, B&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
@@ -77,7 +77,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<B, C>::value && all_column_major<A>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<B, C> && all_column_major<A> && all_homogeneous<A, B, C>::value))>
 void gemm(A&& a, B&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
@@ -99,7 +99,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, C>::value && all_column_major<B>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, C> && all_column_major<B> && all_homogeneous<A, B, C>::value))>
 void gemm(A&& a, B&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
@@ -121,7 +121,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<C>::value && all_column_major<A, B>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<C> && all_column_major<A, B> && all_homogeneous<A, B, C>::value))>
 void gemm(A&& a, B&& b, C&& c) {
     const size_t M = etl::rows(a);
     const size_t N = etl::columns(b);
@@ -154,7 +154,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A>::value && all_column_major<B, C>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A> && all_column_major<B, C> && all_homogeneous<A, B, C>::value))>
 void gemm(A&& a, B&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
@@ -176,7 +176,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<B>::value && all_column_major<A, C>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<B> && all_column_major<A, C> && all_homogeneous<A, B, C>::value))>
 void gemm(A&& a, B&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
@@ -198,7 +198,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_column_major<C>::value && all_row_major<A, B>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_column_major<C> && all_row_major<A, B> && all_homogeneous<A, B, C>::value))>
 void gemm(A&& a, B&& b, C&& c) {
     const size_t M = etl::rows(a);
     const size_t N = etl::columns(b);
@@ -231,7 +231,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C> && all_homogeneous<A, B, C>::value))>
 void gemm_tn(A&& a, B&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
@@ -253,7 +253,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A, B, C>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A, B, C> && all_homogeneous<A, B, C>::value))>
 void gemm_tn(A&& a, B&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
@@ -275,7 +275,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C> && all_homogeneous<A, B, C>::value))>
 void gemm_nt(A&& a, B&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
@@ -297,7 +297,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A, B, C>::value && all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((all_column_major<A, B, C> && all_homogeneous<A, B, C>::value))>
 void gemm_nt(A&& a, B&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();

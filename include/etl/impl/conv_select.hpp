@@ -46,7 +46,7 @@ inline etl::conv_impl select_default_conv1_impl_new() {
     static constexpr bool floating = all_floating<I, K, C>::value;
 
     //Only the standard implementation is able to handle column major
-    if  /*constexpr*/ (!all_row_major<I, K, C>::value) {
+    if  /*constexpr*/ (!all_row_major<I, K, C>) {
         return etl::conv_impl::STD;
     }
 
