@@ -19,6 +19,13 @@ namespace impl {
 
 namespace vec {
 
+// The 8-times unrolled loop is poorly handled by clang (3.9, 4.0)
+#ifndef ETL_GEMM_SMALL_RR_R_UNROLL_8
+#ifndef __clang__
+#define ETL_GEMM_SMALL_RR_R_UNROLL_8
+#endif
+#endif
+
 /*!
  * \brief Optimized version of small GEMM for row major version
  * \param a The lhs matrix
@@ -35,6 +42,7 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* c, size_t M, size_t N,
 
     size_t j = 0;
 
+#ifdef ETL_GEMM_SMALL_RR_R_UNROLL_8
     for (; j + vec_size * 7 < j_end; j += vec_size * 8) {
         for (size_t i = 0; i < M; ++i) {
             auto r1 = vec_type::template zero<T>();
@@ -78,6 +86,7 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* c, size_t M, size_t N,
             vec_type::storeu(c + i * N + j + 7 * vec_size, r8);
         }
     }
+#endif
 
     for (; j + vec_size * 3 < j_end; j += 4 * vec_size) {
         size_t i = 0;
