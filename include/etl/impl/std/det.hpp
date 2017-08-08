@@ -30,26 +30,31 @@ namespace standard {
  */
 template <typename AT>
 value_t<AT> det(const AT& A) {
+    using T = value_t<AT>;
+
     const auto n = etl::dim<0>(A);
 
-    if(is_permutation_matrix(A)){
+    if (is_permutation_matrix(A)) {
         size_t t = 0;
-        for(size_t i = 0; i < n; ++i){
-            for(size_t j = 0; j < n; ++j){
-                if(A(i, j) != 0.0 && i != j){
+
+        for (size_t i = 0; i < n; ++i) {
+            for (size_t j = 0; j < n; ++j) {
+                if (A(i, j) != 0.0 && i != j) {
                     ++t;
                 }
             }
         }
 
-        return std::pow(value_t<AT>(-1.0), t - 1);
+        return std::pow(T(-1.0), t - 1);
     }
 
-    if(is_triangular(A)){
-        value_t<AT> det(1.0);
-        for(size_t i = 0; i < n; ++i){
+    if (is_triangular(A)) {
+        T det(1.0);
+
+        for (size_t i = 0; i < n; ++i) {
             det *= A(i, i);
         }
+
         return det;
     }
 
