@@ -16,6 +16,10 @@
 
 #define ETL_RESTRICT __restrict
 
+#elif defined( __clang__ )
+
+#define ETL_RESTRICT __restrict__
+
 #else
 
 #define ETL_RESTRICT
