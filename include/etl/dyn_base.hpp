@@ -326,6 +326,18 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
     }
 
     /*!
+     * \brief Copy construct a derived_t
+     *
+     * This constructor is necessary in order to use the correct constructor in
+     * the parent type.
+     *
+     * \param rhs The derived_t to copy from
+     */
+    dense_dyn_base(const derived_t& rhs) noexcept : base_type(rhs) {
+        //Nothing else to init
+    }
+
+    /*!
      * \brief Move construct a dense_dyn_base
      * \param rhs The dense_dyn_base to move from
      */
