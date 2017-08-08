@@ -385,6 +385,8 @@ private:
         cpp_assert(is_gpu_allocated(), "Cannot copy to unallocated GPU memory");
         cpp_assert(!gpu_up_to_date, "Copy must only be done if necessary");
         cpp_assert(cpu_up_to_date, "Copy from invalid memory!");
+        cpp_assert(cpu_memory, "cpu_memory is nullptr in entry to cpu_to_gpu");
+        cpp_assert(gpu_memory_, "gpu_memory_ is nullptr in entry to cpu_to_gpu");
 
         cuda_check(cudaMemcpy(
             const_cast<std::remove_const_t<T>*>(gpu_memory_),
@@ -403,6 +405,8 @@ private:
         cpp_assert(is_gpu_allocated(), "Cannot copy from unallocated GPU memory()");
         cpp_assert(gpu_up_to_date, "Cannot copy from invalid memory");
         cpp_assert(!cpu_up_to_date, "Copy done without reason");
+        cpp_assert(cpu_memory, "cpu_memory is nullptr in entry to gpu_to_cpu");
+        cpp_assert(gpu_memory_, "gpu_memory_ is nullptr in entry to gpu_to_cpu");
 
         cuda_check(cudaMemcpy(
             const_cast<std::remove_const_t<T>*>(cpu_memory),
