@@ -208,6 +208,7 @@ $(eval $(call add_test_executable,etl_test_conv_1d,src/test.cpp src/conv_1d.cpp)
 $(eval $(call add_test_executable,etl_test_conv_2d_full,src/test.cpp src/conv_2d_full.cpp))
 $(eval $(call add_test_executable,etl_test_conv_2d_valid,src/test.cpp src/conv_2d_valid.cpp))
 $(eval $(call add_test_executable,etl_test_conv_2d_same,src/test.cpp src/conv_2d_same.cpp))
+$(eval $(call add_test_executable,etl_test_globals,src/test.cpp src/globals.cpp))
 
 # Create the benchmark executables
 BENCH_FILES=$(wildcard benchmark/src/benchmark*cpp)
