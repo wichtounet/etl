@@ -211,21 +211,21 @@ struct sparse_matrix_impl;
  * \tparam D The number of dimensions
  */
 template <typename T, size_t D>
-struct sparse_matrix_impl<T, sparse_storage::COO, D> final : dyn_base<T, D> {
-    static constexpr size_t n_dimensions      = D;                                      ///< The number of dimensions
+struct sparse_matrix_impl<T, sparse_storage::COO, D> final : dyn_base<sparse_matrix_impl<T, sparse_storage::COO, D>, T, D> {
+    static constexpr size_t n_dimensions           = D;                                      ///< The number of dimensions
     static constexpr sparse_storage storage_format = sparse_storage::COO;                    ///< The sparse storage scheme
     static constexpr order storage_order           = order::RowMajor;                        ///< The storage order
-    static constexpr size_t alignment         = default_intrinsic_traits<T>::alignment; ///< The alignment
+    static constexpr size_t alignment              = default_intrinsic_traits<T>::alignment; ///< The alignment
 
-    using base_type              = dyn_base<T, D>;                                   ///< The base type
     using this_type              = sparse_matrix_impl<T, sparse_storage::COO, D>;    ///< this type
+    using base_type              = dyn_base<this_type, T, D>;                        ///< The base type
     using reference_type         = sparse_detail::sparse_reference<this_type>;       ///< The type of reference returned by the functions
     using const_reference_type   = sparse_detail::sparse_reference<const this_type>; ///< The type of const reference returned by the functions
     using value_type             = T;                                                ///< The type of value returned by the function
-    using dimension_storage_impl = std::array<size_t, n_dimensions>;            ///< The type used to store the dimensions
+    using dimension_storage_impl = std::array<size_t, n_dimensions>;                 ///< The type used to store the dimensions
     using memory_type            = value_type*;                                      ///< The memory type
     using const_memory_type      = const value_type*;                                ///< The const memory type
-    using index_type             = size_t;                                      ///< The type used to store the COO index
+    using index_type             = size_t;                                           ///< The type used to store the COO index
     using index_memory_type      = index_type*;                                      ///< The memory type to the COO index
 
     friend struct sparse_detail::sparse_reference<this_type>;

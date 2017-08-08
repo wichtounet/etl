@@ -109,7 +109,7 @@ inline std::array<size_t, sizeof...(I)> sizes(const std::index_sequence<I...>& /
  *
  * The matrix support an arbitrary number of dimensions.
  */
-template <typename T, size_t D>
+template <typename Derived, typename T, size_t D>
 struct dyn_base {
     static_assert(D > 0, "A matrix must have a least 1 dimension");
 
@@ -117,10 +117,12 @@ protected:
     static constexpr size_t n_dimensions = D;                                      ///< The number of dimensions
     static constexpr size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
 
-    using value_type             = T;                                     ///< The value type
+    using value_type             = T;                                ///< The value type
     using dimension_storage_impl = std::array<size_t, n_dimensions>; ///< The type used to store the dimensions
-    using memory_type            = value_type*;                           ///< The memory type
-    using const_memory_type      = const value_type*;                     ///< The const memory type
+    using memory_type            = value_type*;                      ///< The memory type
+    using const_memory_type      = const value_type*;                ///< The const memory type
+    using derived_t              = Derived;                          ///< The derived (CRTP) type
+    using this_type              = dyn_base<Derived, T, D>;          ///< The type of this class
 
     size_t _size;                  ///< The size of the matrix
     dimension_storage_impl _dimensions; ///< The dimensions of the matrix
@@ -215,9 +217,8 @@ protected:
      * \brief Move construct a dyn_base
      * \param rhs The dyn_base to move from
      */
-    template <typename E>
-    explicit dyn_base(E&& rhs)
-            : _size(etl::size(rhs)) {
+    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, derived_t>::value)>
+    explicit dyn_base(E&& rhs) : _size(etl::size(rhs)) {
         for (size_t d = 0; d < etl::dimensions(rhs); ++d) {
             _dimensions[d] = etl::dim(rhs, d);
         }
@@ -288,14 +289,15 @@ public:
  * The matrix support an arbitrary number of dimensions.
  */
 template <typename Derived, typename T, order SO, size_t D>
-struct dense_dyn_base : dyn_base<T, D> {
-    using value_type        = T;                 ///< The type of the contained values
-    using base_type         = dyn_base<T, D>;    ///< The base type
-    using derived_t         = Derived;           ///< The derived type
-    using memory_type       = value_type*;       ///< The memory type
-    using const_memory_type = const value_type*; ///< The const memory type
-    using iterator          = memory_type;       ///< The type of iterator
-    using const_iterator    = const_memory_type; ///< The type of const iterator
+struct dense_dyn_base : dyn_base<Derived, T, D> {
+    using value_type        = T;                                 ///< The type of the contained values
+    using base_type         = dyn_base<Derived, T, D>;                    ///< The base type
+    using this_type         = dense_dyn_base<Derived, T, SO, D>; ///< The type of this class
+    using derived_t         = Derived;                           ///< The derived type
+    using memory_type       = value_type*;                       ///< The memory type
+    using const_memory_type = const value_type*;                 ///< The const memory type
+    using iterator          = memory_type;                       ///< The type of iterator
+    using const_iterator    = const_memory_type;                 ///< The type of const iterator
 
     using dimension_storage_impl = typename base_type::dimension_storage_impl; ///< The storage type used to store the dimensions
 
@@ -327,7 +329,19 @@ struct dense_dyn_base : dyn_base<T, D> {
      * \brief Move construct a dense_dyn_base
      * \param rhs The dense_dyn_base to move from
      */
-    dense_dyn_base(dense_dyn_base&& rhs) noexcept : base_type(std::move(rhs)) {
+    dense_dyn_base(dense_dyn_base&& rhs) noexcept : base_type(std::move(rhs)), _gpu(std::move(rhs._gpu)) {
+        //Nothing else to init
+    }
+
+    /*!
+     * \brief Move construct a derived_t.
+     *
+     * This constructor is necessary in order to use the correct constructor in
+     * the parent type.
+     *
+     * \param rhs The dense_dyn_base to move from
+     */
+    dense_dyn_base(derived_t&& rhs) noexcept : base_type(std::move(rhs)), _gpu(std::move(rhs._gpu)) {
         //Nothing else to init
     }
 
@@ -344,7 +358,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * \brief Move construct a dense_dyn_base
      * \param rhs The dense_dyn_base to move from
      */
-    template <typename E>
+    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, derived_t>::value)>
     explicit dense_dyn_base(E&& rhs) : base_type(std::move(rhs)) {
         //Nothing else to init
     }
