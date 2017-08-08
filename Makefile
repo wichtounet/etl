@@ -37,6 +37,7 @@ CXX_FLAGS += -ftemplate-backtrace-limit=0
 
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-error=documentation
+CXX_FLAGS += -Wpessimizing-move
 endif
 
 # Silence some gcc warnings (relative to vector types)
