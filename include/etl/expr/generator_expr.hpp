@@ -233,6 +233,13 @@ struct etl_traits<etl::generator_expr<Generator>> {
     static constexpr size_t size() {
         return 0;
     }
+
+    /*!
+     * \brief Return the number of dimensions of the expression
+     */
+    static constexpr size_t dimensions() {
+        return 0;
+    }
 };
 
 } //end of namespace etl
