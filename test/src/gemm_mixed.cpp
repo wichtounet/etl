@@ -15,10 +15,10 @@
 // RM = CM * RM
 
 GEMM_TEST_CASE("gemm/mixed/1", "[gemm]") {
-    etl::dyn_matrix_cm<T> a(128, 128);
-    etl::dyn_matrix<T> b(128, 128);
-    etl::dyn_matrix<T> c(128, 128);
-    etl::dyn_matrix<T> r(128, 128);
+    etl::dyn_matrix_cm<T> a(64, 64);
+    etl::dyn_matrix<T> b(64, 64);
+    etl::dyn_matrix<T> c(64, 64);
+    etl::dyn_matrix<T> r(64, 64);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -39,10 +39,10 @@ GEMM_TEST_CASE("gemm/mixed/1", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/mixed/2", "[gemm]") {
-    etl::dyn_matrix_cm<T> a(128, 256);
-    etl::dyn_matrix<T> b(256, 128);
-    etl::dyn_matrix<T> c(128, 128);
-    etl::dyn_matrix<T> r(128, 128);
+    etl::dyn_matrix_cm<T> a(64, 128);
+    etl::dyn_matrix<T> b(128, 64);
+    etl::dyn_matrix<T> c(64, 64);
+    etl::dyn_matrix<T> r(64, 64);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -63,10 +63,10 @@ GEMM_TEST_CASE("gemm/mixed/2", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/mixed/3", "[gemm]") {
-    etl::dyn_matrix_cm<T> a(194, 128);
-    etl::dyn_matrix<T> b(128, 156);
-    etl::dyn_matrix<T> c(194, 156);
-    etl::dyn_matrix<T> r(194, 156);
+    etl::dyn_matrix_cm<T> a(132, 64);
+    etl::dyn_matrix<T> b(64, 92);
+    etl::dyn_matrix<T> c(132, 92);
+    etl::dyn_matrix<T> r(132, 92);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -89,10 +89,10 @@ GEMM_TEST_CASE("gemm/mixed/3", "[gemm]") {
 // RM = CM * RM
 
 GEMM_TEST_CASE("gemm/mixed/4", "[gemm]") {
-    etl::dyn_matrix<T> a(128, 128);
-    etl::dyn_matrix_cm<T> b(128, 128);
-    etl::dyn_matrix<T> c(128, 128);
-    etl::dyn_matrix<T> r(128, 128);
+    etl::dyn_matrix<T> a(64, 64);
+    etl::dyn_matrix_cm<T> b(64, 64);
+    etl::dyn_matrix<T> c(64, 64);
+    etl::dyn_matrix<T> r(64, 64);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -113,10 +113,10 @@ GEMM_TEST_CASE("gemm/mixed/4", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/mixed/5", "[gemm]") {
-    etl::dyn_matrix<T> a(128, 256);
-    etl::dyn_matrix_cm<T> b(256, 128);
-    etl::dyn_matrix<T> c(128, 128);
-    etl::dyn_matrix<T> r(128, 128);
+    etl::dyn_matrix<T> a(64, 128);
+    etl::dyn_matrix_cm<T> b(128, 64);
+    etl::dyn_matrix<T> c(64, 64);
+    etl::dyn_matrix<T> r(64, 64);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -137,10 +137,10 @@ GEMM_TEST_CASE("gemm/mixed/5", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/mixed/6", "[gemm]") {
-    etl::dyn_matrix<T> a(194, 128);
-    etl::dyn_matrix_cm<T> b(128, 156);
-    etl::dyn_matrix<T> c(194, 156);
-    etl::dyn_matrix<T> r(194, 156);
+    etl::dyn_matrix<T> a(132, 64);
+    etl::dyn_matrix_cm<T> b(64, 92);
+    etl::dyn_matrix<T> c(132, 92);
+    etl::dyn_matrix<T> r(132, 92);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -163,10 +163,10 @@ GEMM_TEST_CASE("gemm/mixed/6", "[gemm]") {
 // RM = CM * CM
 
 GEMM_TEST_CASE("gemm/mixed/7", "[gemm]") {
-    etl::dyn_matrix_cm<T> a(128, 128);
-    etl::dyn_matrix_cm<T> b(128, 128);
-    etl::dyn_matrix<T> c(128, 128);
-    etl::dyn_matrix<T> r(128, 128);
+    etl::dyn_matrix_cm<T> a(64, 64);
+    etl::dyn_matrix_cm<T> b(64, 64);
+    etl::dyn_matrix<T> c(64, 64);
+    etl::dyn_matrix<T> r(64, 64);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -187,10 +187,10 @@ GEMM_TEST_CASE("gemm/mixed/7", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/mixed/8", "[gemm]") {
-    etl::dyn_matrix_cm<T> a(128, 256);
-    etl::dyn_matrix_cm<T> b(256, 128);
-    etl::dyn_matrix<T> c(128, 128);
-    etl::dyn_matrix<T> r(128, 128);
+    etl::dyn_matrix_cm<T> a(64, 128);
+    etl::dyn_matrix_cm<T> b(128, 64);
+    etl::dyn_matrix<T> c(64, 64);
+    etl::dyn_matrix<T> r(64, 64);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -211,10 +211,10 @@ GEMM_TEST_CASE("gemm/mixed/8", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/mixed/9", "[gemm]") {
-    etl::dyn_matrix_cm<T> a(194, 128);
-    etl::dyn_matrix_cm<T> b(128, 156);
-    etl::dyn_matrix<T> c(194, 156);
-    etl::dyn_matrix<T> r(194, 156);
+    etl::dyn_matrix_cm<T> a(132, 64);
+    etl::dyn_matrix_cm<T> b(64, 92);
+    etl::dyn_matrix<T> c(132, 92);
+    etl::dyn_matrix<T> r(132, 92);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -237,10 +237,10 @@ GEMM_TEST_CASE("gemm/mixed/9", "[gemm]") {
 // CM = RM * CM
 
 GEMM_TEST_CASE("gemm/mixed/10", "[gemm]") {
-    etl::dyn_matrix<T> a(128, 128);
-    etl::dyn_matrix_cm<T> b(128, 128);
-    etl::dyn_matrix_cm<T> c(128, 128);
-    etl::dyn_matrix_cm<T> r(128, 128);
+    etl::dyn_matrix<T> a(64, 64);
+    etl::dyn_matrix_cm<T> b(64, 64);
+    etl::dyn_matrix_cm<T> c(64, 64);
+    etl::dyn_matrix_cm<T> r(64, 64);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -261,10 +261,10 @@ GEMM_TEST_CASE("gemm/mixed/10", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/mixed/11", "[gemm]") {
-    etl::dyn_matrix<T> a(128, 256);
-    etl::dyn_matrix_cm<T> b(256, 128);
-    etl::dyn_matrix_cm<T> c(128, 128);
-    etl::dyn_matrix_cm<T> r(128, 128);
+    etl::dyn_matrix<T> a(64, 128);
+    etl::dyn_matrix_cm<T> b(128, 64);
+    etl::dyn_matrix_cm<T> c(64, 64);
+    etl::dyn_matrix_cm<T> r(64, 64);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -285,10 +285,10 @@ GEMM_TEST_CASE("gemm/mixed/11", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/mixed/12", "[gemm]") {
-    etl::dyn_matrix<T> a(194, 128);
-    etl::dyn_matrix_cm<T> b(128, 156);
-    etl::dyn_matrix_cm<T> c(194, 156);
-    etl::dyn_matrix_cm<T> r(194, 156);
+    etl::dyn_matrix<T> a(132, 64);
+    etl::dyn_matrix_cm<T> b(64, 92);
+    etl::dyn_matrix_cm<T> c(132, 92);
+    etl::dyn_matrix_cm<T> r(132, 92);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -311,10 +311,10 @@ GEMM_TEST_CASE("gemm/mixed/12", "[gemm]") {
 // CM = CM * RM
 
 GEMM_TEST_CASE("gemm/mixed/13", "[gemm]") {
-    etl::dyn_matrix_cm<T> a(128, 128);
-    etl::dyn_matrix<T> b(128, 128);
-    etl::dyn_matrix_cm<T> c(128, 128);
-    etl::dyn_matrix_cm<T> r(128, 128);
+    etl::dyn_matrix_cm<T> a(64, 64);
+    etl::dyn_matrix<T> b(64, 64);
+    etl::dyn_matrix_cm<T> c(64, 64);
+    etl::dyn_matrix_cm<T> r(64, 64);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -335,10 +335,10 @@ GEMM_TEST_CASE("gemm/mixed/13", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/mixed/14", "[gemm]") {
-    etl::dyn_matrix_cm<T> a(128, 128);
-    etl::dyn_matrix<T> b(128, 128);
-    etl::dyn_matrix_cm<T> c(128, 128);
-    etl::dyn_matrix_cm<T> r(128, 128);
+    etl::dyn_matrix_cm<T> a(64, 64);
+    etl::dyn_matrix<T> b(64, 64);
+    etl::dyn_matrix_cm<T> c(64, 64);
+    etl::dyn_matrix_cm<T> r(64, 64);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -359,10 +359,10 @@ GEMM_TEST_CASE("gemm/mixed/14", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/mixed/15", "[gemm]") {
-    etl::dyn_matrix_cm<T> a(194, 128);
-    etl::dyn_matrix<T> b(128, 156);
-    etl::dyn_matrix_cm<T> c(194, 156);
-    etl::dyn_matrix_cm<T> r(194, 156);
+    etl::dyn_matrix_cm<T> a(132, 64);
+    etl::dyn_matrix<T> b(64, 92);
+    etl::dyn_matrix_cm<T> c(132, 92);
+    etl::dyn_matrix_cm<T> r(132, 92);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -385,10 +385,10 @@ GEMM_TEST_CASE("gemm/mixed/15", "[gemm]") {
 // CM = RM * RM
 
 GEMM_TEST_CASE("gemm/mixed/16", "[gemm]") {
-    etl::dyn_matrix<T> a(128, 128);
-    etl::dyn_matrix<T> b(128, 128);
-    etl::dyn_matrix_cm<T> c(128, 128);
-    etl::dyn_matrix_cm<T> r(128, 128);
+    etl::dyn_matrix<T> a(64, 64);
+    etl::dyn_matrix<T> b(64, 64);
+    etl::dyn_matrix_cm<T> c(64, 64);
+    etl::dyn_matrix_cm<T> r(64, 64);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -409,10 +409,10 @@ GEMM_TEST_CASE("gemm/mixed/16", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/mixed/17", "[gemm]") {
-    etl::dyn_matrix<T> a(128, 128);
-    etl::dyn_matrix<T> b(128, 128);
-    etl::dyn_matrix_cm<T> c(128, 128);
-    etl::dyn_matrix_cm<T> r(128, 128);
+    etl::dyn_matrix<T> a(64, 64);
+    etl::dyn_matrix<T> b(64, 64);
+    etl::dyn_matrix_cm<T> c(64, 64);
+    etl::dyn_matrix_cm<T> r(64, 64);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -433,10 +433,10 @@ GEMM_TEST_CASE("gemm/mixed/17", "[gemm]") {
 }
 
 GEMM_TEST_CASE("gemm/mixed/18", "[gemm]") {
-    etl::dyn_matrix<T> a(194, 128);
-    etl::dyn_matrix<T> b(128, 156);
-    etl::dyn_matrix_cm<T> c(194, 156);
-    etl::dyn_matrix_cm<T> r(194, 156);
+    etl::dyn_matrix<T> a(132, 64);
+    etl::dyn_matrix<T> b(64, 92);
+    etl::dyn_matrix_cm<T> c(132, 92);
+    etl::dyn_matrix_cm<T> r(132, 92);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
