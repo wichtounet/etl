@@ -39,6 +39,11 @@ ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-error=documentation
 endif
 
+# Silence some gcc warnings (relative to vector types)
+ifneq (,$(findstring g++,$(CXX)))
+CXX_FLAGS += -Wno-ignored-attributes
+endif
+
 ifneq (,$(ETL_MKL))
 CXX_FLAGS += -DETL_MKL_MODE $(shell pkg-config --cflags $(BLAS_PKG))
 LD_FLAGS += $(shell pkg-config --libs $(BLAS_PKG))
