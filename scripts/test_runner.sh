@@ -32,6 +32,9 @@ unset ETL_EGBLAS
 export CXX=$ETL_GPP
 export LD=$ETL_GPP
 
+# Enable coverage
+export ETL_COVERAGE=true
+
 echo "Test 1. GCC (debug default)"
 
 export ETL_DEFAULTS="-DETL_DEBUG_THRESHOLDS -DCPP_UTILS_ASSERT_EXCEPTION"

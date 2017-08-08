@@ -124,7 +124,7 @@ endif
 LD_FLAGS += -pthread
 
 # Enable coverage if not disabled by the user
-ifeq (,$(ETL_NO_COVERAGE))
+ifneq (,$(ETL_COVERAGE))
 $(eval $(call enable_coverage))
 endif
 
