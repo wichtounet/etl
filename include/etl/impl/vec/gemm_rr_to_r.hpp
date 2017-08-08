@@ -33,7 +33,7 @@ namespace vec {
  * \param c The result matrix
  */
 template <typename V, typename T>
-void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
+void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t M, size_t N, size_t K) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -369,7 +369,7 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* c, size_t M, size_t N,
  * \param beta The multipliying of the previous value
  */
 template <typename V, typename T>
-void gemm_large_kernel_rr_to_r(const T* a, const T* b, T* c, size_t M, size_t N, size_t K, T beta) {
+void gemm_large_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t M, size_t N, size_t K, T beta) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
