@@ -37,14 +37,14 @@ CONV4_VALID_TEST_CASE("conv_4d/valid_1", "[conv][conv4][valid]") {
 }
 
 CONV4_VALID_TEST_CASE("conv_4d/valid_2", "[conv][conv4][valid]") {
-    etl::fast_matrix<T, 9, 4, 19, 19> I;
+    etl::fast_matrix<T, 9, 4, 15, 15> I;
     etl::fast_matrix<T, 10, 4, 5, 5> K;
 
     I = etl::sequence_generator(-10.0) * 0.04;
     K = etl::sequence_generator(-2.0) * 1.56;
 
-    etl::fast_matrix<T, 9, 10, 15, 15> ref;
-    etl::fast_matrix<T, 9, 10, 15, 15> c;
+    etl::fast_matrix<T, 9, 10, 11, 11> ref;
+    etl::fast_matrix<T, 9, 10, 11, 11> c;
 
     SELECTED_SECTION(etl::conv_impl::STD) {
         ref = 0.0;
