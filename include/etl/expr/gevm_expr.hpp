@@ -45,7 +45,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \param b The right side matrix
      * \param c The result matrix
      */
-    template <typename C, cpp_disable_if(all_fast<A, B, C>)>
+    template <typename C, cpp_disable_iff(all_fast<A, B, C>)>
     static void check(const A& a, const B& b, const C& c) {
         cpp_assert(
             dim<0>(a) == dim<0>(b)         //exterior dimension 1

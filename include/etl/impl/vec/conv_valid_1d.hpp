@@ -372,7 +372,7 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t
  * \param first The index where to start in the output matrix
  * \param last The index where to stop in the output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_if(conv1_possible<vector_mode, I, K, C>)>
+template <typename I, typename K, typename C, cpp_disable_iff(conv1_possible<vector_mode, I, K, C>)>
 void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
     cpp_unused(input);
     cpp_unused(kernel);

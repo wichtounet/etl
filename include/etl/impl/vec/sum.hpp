@@ -182,7 +182,7 @@ value_t<L> asum(const L& lhs) {
  * \param lhs The lhs expression
  * \return the sum of the elements of lhs
  */
-template <typename L, cpp_disable_if((vec_enabled && all_vectorizable<vector_mode, L>))>
+template <typename L, cpp_disable_iff((vec_enabled && all_vectorizable<vector_mode, L>))>
 value_t<L> sum(const L& lhs) {
     cpp_unused(lhs);
     cpp_unreachable("vec::sum called with invalid parameters");
@@ -193,7 +193,7 @@ value_t<L> sum(const L& lhs) {
  * \param lhs The lhs expression
  * \return the asum of the elements of lhs
  */
-template <typename L, cpp_disable_if((vec_enabled && all_vectorizable<vector_mode, L>))>
+template <typename L, cpp_disable_iff((vec_enabled && all_vectorizable<vector_mode, L>))>
 value_t<L> asum(const L& lhs) {
     cpp_unused(lhs);
     cpp_unreachable("vec::asum called with invalid parameters");

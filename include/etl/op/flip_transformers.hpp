@@ -151,7 +151,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    template <bool C = matrix, cpp_disable_if(C)>
+    template <bool C = matrix, cpp_disable_iff(C)>
     value_type operator[](size_t i) const {
         return sub[size(sub) - i - 1];
     }
@@ -174,7 +174,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    template <bool C = matrix, cpp_disable_if(C)>
+    template <bool C = matrix, cpp_disable_iff(C)>
     value_type read_flat(size_t i) const {
         return sub.read_flat(size(sub) - i - 1);
     }
@@ -290,7 +290,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    template <bool C = matrix, cpp_disable_if(C)>
+    template <bool C = matrix, cpp_disable_iff(C)>
     value_type operator[](size_t i) const {
         return sub[i];
     }
@@ -313,7 +313,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    template <bool C = matrix, cpp_disable_if(C)>
+    template <bool C = matrix, cpp_disable_iff(C)>
     value_type read_flat(size_t i) const {
         return sub.read_flat(i);
     }

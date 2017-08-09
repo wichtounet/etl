@@ -186,7 +186,7 @@ void transpose(A&& a, C&& c) {
  * \brief Inplace transposition of the square matrix c
  * \param c The matrix to transpose
  */
-template <typename C, cpp_disable_if(all_dma<C>&& all_floating<C>)>
+template <typename C, cpp_disable_iff(all_dma<C>&& all_floating<C>)>
 void inplace_square_transpose(C&& c) {
     cpp_unused(c);
     cpp_unreachable("Invalid CUBLAS function called");
@@ -196,7 +196,7 @@ void inplace_square_transpose(C&& c) {
  * \brief Inplace transposition of the rectangular matrix c
  * \param c The matrix to transpose
  */
-template <typename C, cpp_disable_if(all_dma<C>&& all_floating<C>)>
+template <typename C, cpp_disable_iff(all_dma<C>&& all_floating<C>)>
 void inplace_rectangular_transpose(C&& c) {
     cpp_unused(c);
     cpp_unreachable("Invalid CUBLAS function called");
@@ -207,7 +207,7 @@ void inplace_rectangular_transpose(C&& c) {
  * \param a The matrix to transpose
  * \param c The target matrix
  */
-template <typename A, typename C, cpp_disable_if(all_dma<A, C>&& all_floating<A, C>)>
+template <typename A, typename C, cpp_disable_iff(all_dma<A, C>&& all_floating<A, C>)>
 void transpose(A&& a, C&& c) {
     cpp_unused(a);
     cpp_unused(c);

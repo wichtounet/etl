@@ -60,7 +60,7 @@ struct binary_function_expr : base_temporary_expr_bin<binary_function_expr<A, B,
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename C, cpp_disable_if(all_fast<A, B, C>)>
+    template <typename C, cpp_disable_iff(all_fast<A, B, C>)>
     static void check(const A& a, const B& b, const C& c){
         static constexpr etl::order order_a = decay_traits<A>::storage_order;
         static constexpr etl::order order_b = decay_traits<B>::storage_order;

@@ -483,7 +483,7 @@ private:
      * This must only be called when the matrix has no dimensions
      * \param e The expression to get the dimensions from.
      */
-    template <typename E, cpp_disable_if(etl::decay_traits<E>::is_generator)>
+    template <typename E, cpp_disable_iff(etl::decay_traits<E>::is_generator)>
     void inherit(const E& e){
         cpp_assert(n_dimensions == etl::dimensions(e), "Invalid number of dimensions");
 
@@ -767,7 +767,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template <typename E, cpp_disable_if(is_sparse_matrix<E>)>
+    template <typename E, cpp_disable_iff(is_sparse_matrix<E>)>
     bool alias(const E& rhs) const noexcept {
         return rhs.alias(*this);
     }

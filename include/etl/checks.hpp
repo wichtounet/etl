@@ -177,7 +177,7 @@ void assert_square(E&& expr) {
  *
  * \param expr The expression to assert
  */
-template <typename E, cpp_disable_if(all_fast<E>)>
+template <typename E, cpp_disable_iff(all_fast<E>)>
 void assert_square(E&& expr) {
     static_assert(decay_traits<E>::dimensions() == 2, "Function undefined for non-square matrix");
     cpp_assert(etl::dim<0>(expr) == etl::dim<1>(expr), "Function undefined for non-square matrix");

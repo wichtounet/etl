@@ -46,7 +46,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \param b The right side matrix
      * \param c The result matrix
      */
-    template <typename C, cpp_disable_if(all_fast<A, B, C>)>
+    template <typename C, cpp_disable_iff(all_fast<A, B, C>)>
     static void check(const A& a, const B& b, const C& c) {
         cpp_assert(
             dim<1>(a) == dim<0>(b)         //interior dimensions

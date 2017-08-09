@@ -544,7 +544,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template <typename E, cpp_disable_if(all_dma<E>)>
+    template <typename E, cpp_disable_iff(all_dma<E>)>
     bool alias(const E& rhs) const noexcept {
         return sub_expr.alias(rhs);
     }

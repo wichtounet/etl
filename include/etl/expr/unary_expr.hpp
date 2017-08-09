@@ -537,7 +537,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template <typename E, cpp_disable_if(has_direct_access<Expr>&& all_dma<E>)>
+    template <typename E, cpp_disable_iff(has_direct_access<Expr>&& all_dma<E>)>
     bool alias(const E& rhs) const noexcept {
         return value.alias(rhs);
     }
@@ -591,7 +591,7 @@ public:
      * \brief Returns the DDth dimension of the matrix
      * \return The DDth dimension of the matrix
      */
-    template <size_t DD, typename TT = this_type, cpp_disable_if(all_fast<TT>)>
+    template <size_t DD, typename TT = this_type, cpp_disable_iff(all_fast<TT>)>
     size_t dim() const {
         return etl_traits<TT>::dim(*this, DD);
     }

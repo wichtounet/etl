@@ -56,7 +56,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_disable_if(all_fast<A, C>)>
+    template <typename C, cpp_disable_iff(all_fast<A, C>)>
     static void check(const A& a, const C& c) {
         static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_mean_4d is a vector");
         static_assert(etl::dimensions<A>() == 4, "The input of bias_batch_mean_4d is a 4D matrix");

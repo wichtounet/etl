@@ -489,7 +489,7 @@ bool operator!=(L&& lhs, R&& rhs){
  * \param expr The expression to test
  * \return true if the given expression is an hermitian matrix, false otherwise.
  */
-template <typename E, cpp_disable_if(is_complex<E>)>
+template <typename E, cpp_disable_iff(is_complex<E>)>
 bool is_hermitian(E&& expr){
     cpp_unused(expr);
     return false;

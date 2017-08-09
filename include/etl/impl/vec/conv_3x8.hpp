@@ -35,7 +35,7 @@ namespace detail {
  * \param out The output matrix
  * \param beta The multiplicative for the previous values of out
  */
-template <typename V, typename T, cpp_disable_if(std::is_same<V, etl::avx_vec>::value && std::is_same<T, float>::value)>
+template <typename V, typename T, cpp_disable_iff(std::is_same<V, etl::avx_vec>::value && std::is_same<T, float>::value)>
 void conv2_valid_flipped_micro_kernel_3x8(const T* in, size_t n1, size_t n2, const T* kkk, T* out, T beta) {
     cpp_unused(in);
     cpp_unused(n1);

@@ -173,7 +173,7 @@ protected:
     /*!
      * \brief Allocate the temporary
      */
-    template <cpp_disable_if_cst(all_fast<derived_t>)>
+    template <bool B = all_fast<derived_t>, cpp_disable_iff(B)>
     result_type* allocate() const {
         return dyn_allocate(std::make_index_sequence<decay_traits<derived_t>::dimensions()>());
     }

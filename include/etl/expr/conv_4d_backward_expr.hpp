@@ -62,7 +62,7 @@ struct conv_4d_backward_expr : base_temporary_expr_bin<conv_4d_backward_expr<A, 
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C, cpp_disable_if(all_fast<A, B, C>)>
+    template <typename I, typename K, typename C, cpp_disable_iff(all_fast<A, B, C>)>
     static void check(const I& input, const K& kernel, const C& conv){
         static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_backward");
         static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_backward");

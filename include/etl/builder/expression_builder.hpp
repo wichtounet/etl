@@ -74,7 +74,7 @@ auto max(E&& value, T v) {
  * \param rhs The right hand side ETL expression
  * \return an expression representing the max values from lhs and rhs
  */
-template <typename L, typename R, cpp_disable_if(std::is_arithmetic<R>::value)>
+template <typename L, typename R, cpp_disable_iff(std::is_arithmetic<R>::value)>
 auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, max_binary_op<value_t<L>, value_t<R>>> {
     static_assert(is_etl_expr<L>, "etl::max can only be used on ETL expressions");
     return {lhs, rhs};
@@ -98,7 +98,7 @@ auto min(E&& value, T v) {
  * \param rhs The right hand side ETL expression
  * \return an expression representing the min values from lhs and rhs
  */
-template <typename L, typename R, cpp_disable_if(std::is_arithmetic<R>::value)>
+template <typename L, typename R, cpp_disable_iff(std::is_arithmetic<R>::value)>
 auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, min_binary_op<value_t<L>, value_t<R>>> {
     static_assert(is_etl_expr<L>, "etl::max can only be used on ETL expressions");
     return {lhs, rhs};

@@ -518,7 +518,7 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_disable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_add_to(L&& lhs)  const {
         std_add_evaluate(*this, lhs);
     }
@@ -538,7 +538,7 @@ public:
      * \brief Subtract from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_disable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_sub_to(L&& lhs)  const {
         std_sub_evaluate(*this, lhs);
     }
@@ -558,7 +558,7 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_disable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_mul_to(L&& lhs)  const {
         std_mul_evaluate(*this, lhs);
     }
@@ -577,7 +577,7 @@ public:
      * \brief Divide to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_disable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_div_to(L&& lhs)  const {
         std_div_evaluate(*this, lhs);
     }
@@ -618,7 +618,7 @@ private:
      * This must only be called when the matrix has no dimensions
      * \param e The expression to get the dimensions from.
      */
-    template <typename E, cpp_disable_if(etl::decay_traits<E>::is_generator)>
+    template <typename E, cpp_disable_iff(etl::decay_traits<E>::is_generator)>
     void inherit(const E& e){
         cpp_assert(n_dimensions == etl::dimensions(e), "Invalid number of dimensions");
 

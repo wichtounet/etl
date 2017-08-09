@@ -340,7 +340,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
      * \param v The binary expr
      * \return a refernece to the main sub expression
      */
-    template <bool B = left_directed, cpp_disable_if(B)>
+    template <bool B = left_directed, cpp_disable_iff(B)>
     static constexpr auto& get(const expr_t& v) {
         return v.rhs;
     }

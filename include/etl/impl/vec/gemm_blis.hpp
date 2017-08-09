@@ -154,7 +154,7 @@ void dgescal(size_t m, size_t n, T alpha, T* X, size_t incRowX, size_t incColX) 
 /*!
  * \brief General pico kernel for BLIS
  */
-template <typename V, typename T, cpp_disable_if(std::is_same<float, T>::value && vector_mode == vector_mode_t::AVX)>
+template <typename V, typename T, cpp_disable_iff(std::is_same<float, T>::value && vector_mode == vector_mode_t::AVX)>
 void gemm_pico_kernel(size_t kc, const T* A, const T* B, T* AB) {
     static constexpr const size_t MR = gemm_config<T>::MR;
     static constexpr const size_t NR = gemm_config<T>::NR;
@@ -403,7 +403,7 @@ void gemm_large_kernel_workspace_rr(const T* A, const T* B, T* C, size_t m, size
 /*!
  * \copydoc gemm_large_kernel_workspace_rr
  */
-template <typename V, typename T, cpp_disable_if(all_floating_t<T>)>
+template <typename V, typename T, cpp_disable_iff(all_floating_t<T>)>
 void gemm_large_kernel_workspace_rr(const T* , const T* , T* , size_t , size_t , size_t , T ) {
     // Nothing to do here
 }

@@ -186,7 +186,7 @@ struct inplace_assignable {
      *
      * Only square fast matrix can be transpose in place, dyn matrix don't have any limitation.
      */
-    template <typename S = D, cpp_disable_if(is_dyn_matrix<S>)>
+    template <typename S = D, cpp_disable_iff(is_dyn_matrix<S>)>
     derived_t& transpose_inplace() {
         static_assert(etl_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be transposed");
         cpp_assert(etl::dim<0>(as_derived()) == etl::dim<1>(as_derived()), "Only square fast matrices can be tranposed inplace");
