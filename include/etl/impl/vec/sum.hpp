@@ -25,7 +25,7 @@ namespace vec {
  * \return The sum of the given range
  */
 template <typename V, typename L>
-value_t<L> selected_sum(const L& lhs) {
+value_t<L> sum_impl(const L& lhs) {
     //Note: Padding cannot be taken into account we don't start at zero
 
     using vec_type = V;
@@ -82,7 +82,7 @@ value_t<L> selected_sum(const L& lhs) {
  * \return The absolute sum of the given range
  */
 template <typename V, typename L>
-value_t<L> selected_asum(const L& lhs) {
+value_t<L> asum_impl(const L& lhs) {
     //Note: Padding cannot be taken into account we don't start at zero
 
     using vec_type = V;
@@ -161,7 +161,7 @@ value_t<L> sum(const L& lhs) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
     // The default vectorization scheme should be sufficient
-    return selected_sum<default_vec>(lhs);
+    return sum_impl<default_vec>(lhs);
 }
 
 /*!
@@ -174,7 +174,7 @@ value_t<L> asum(const L& lhs) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
     // The default vectorization scheme should be sufficient
-    return selected_asum<default_vec>(lhs);
+    return asum_impl<default_vec>(lhs);
 }
 
 /*!

@@ -25,7 +25,7 @@ namespace vec {
  * \param y The c expression
  */
 template <typename V, typename L, typename R, typename C>
-void bias_add_4d(const L& x, const R& b, C&& y) {
+void bias_add_4d_impl(const L& x, const R& b, C&& y) {
     using vec_type = V;
     using T        = value_t<L>;
 
@@ -136,7 +136,7 @@ void bias_add_4d(const L& x, const R& b, C&& y) {
  * \param y The c expression
  */
 template <typename V, typename L, typename R, typename C>
-void bias_add_2d(const L& x, const R& b, C&& y) {
+void bias_add_2d_impl(const L& x, const R& b, C&& y) {
     using vec_type = V;
     using T        = value_t<L>;
 
@@ -184,7 +184,7 @@ void bias_add_2d(const L& x, const R& b, C&& y) {
  */
 template <typename A, typename B, typename C>
 void bias_add_4d(const A& x, const B& b, C&& y) {
-    bias_add_4d<default_vec>(x, b, y);
+    bias_add_4d_impl<default_vec>(x, b, y);
 }
 
 /*!
@@ -195,7 +195,7 @@ void bias_add_4d(const A& x, const B& b, C&& y) {
  */
 template <typename A, typename B, typename C>
 void bias_add_2d(const A& x, const B& b, C&& y) {
-    bias_add_2d<default_vec>(x, b, y);
+    bias_add_2d_impl<default_vec>(x, b, y);
 }
 
 } //end of namespace standard

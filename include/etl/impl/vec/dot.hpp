@@ -19,7 +19,7 @@ namespace impl {
 namespace vec {
 
 template <typename V, typename L, typename R>
-value_t<L> selected_dot(const L& lhs, const R& rhs) {
+value_t<L> dot_impl(const L& lhs, const R& rhs) {
     using vec_type = V;
     using T        = value_t<L>;
 
@@ -138,7 +138,7 @@ value_t<L> dot(const L& lhs, const R& rhs) {
     rhs.ensure_cpu_up_to_date();
 
     // The default vectorization scheme should be sufficient
-    return selected_dot<default_vec>(lhs, rhs);
+    return dot_impl<default_vec>(lhs, rhs);
 }
 
 } //end of namespace vec
