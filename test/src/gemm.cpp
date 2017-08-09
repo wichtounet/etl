@@ -166,7 +166,7 @@ GEMM_TEST_CASE("gemm/9", "[gemm]") {
     REQUIRE_DIRECT(etl::approx_equals(c, r, base_eps_etl_large));
 }
 
-GEMM_TEST_CASE("gemm/10", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/10", "[gemm]") {
     etl::dyn_matrix<T> a(128, 256);
     etl::dyn_matrix<T> b(256, 128);
     etl::dyn_matrix<T> c(128, 128);
@@ -190,7 +190,7 @@ GEMM_TEST_CASE("gemm/10", "[gemm]") {
     REQUIRE_DIRECT(etl::approx_equals(c, r, base_eps_etl_large));
 }
 
-GEMM_TEST_CASE("gemm/11", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/11", "[gemm]") {
     etl::dyn_matrix<T> a(194, 128);
     etl::dyn_matrix<T> b(128, 156);
     etl::dyn_matrix<T> c(194, 156);

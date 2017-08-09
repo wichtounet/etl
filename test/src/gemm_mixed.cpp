@@ -62,7 +62,7 @@ GEMM_TEST_CASE("gemm/mixed/2", "[gemm]") {
     REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
-GEMM_TEST_CASE("gemm/mixed/3", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/mixed/3", "[gemm]") {
     etl::dyn_matrix_cm<T> a(132, 64);
     etl::dyn_matrix<T> b(64, 92);
     etl::dyn_matrix<T> c(132, 92);
@@ -136,7 +136,7 @@ GEMM_TEST_CASE("gemm/mixed/5", "[gemm]") {
     REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
-GEMM_TEST_CASE("gemm/mixed/6", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/mixed/6", "[gemm]") {
     etl::dyn_matrix<T> a(132, 64);
     etl::dyn_matrix_cm<T> b(64, 92);
     etl::dyn_matrix<T> c(132, 92);
@@ -210,7 +210,7 @@ GEMM_TEST_CASE("gemm/mixed/8", "[gemm]") {
     REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
-GEMM_TEST_CASE("gemm/mixed/9", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/mixed/9", "[gemm]") {
     etl::dyn_matrix_cm<T> a(132, 64);
     etl::dyn_matrix_cm<T> b(64, 92);
     etl::dyn_matrix<T> c(132, 92);
@@ -284,7 +284,7 @@ GEMM_TEST_CASE("gemm/mixed/11", "[gemm]") {
     REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
-GEMM_TEST_CASE("gemm/mixed/12", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/mixed/12", "[gemm]") {
     etl::dyn_matrix<T> a(132, 64);
     etl::dyn_matrix_cm<T> b(64, 92);
     etl::dyn_matrix_cm<T> c(132, 92);
@@ -358,7 +358,7 @@ GEMM_TEST_CASE("gemm/mixed/14", "[gemm]") {
     REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
-GEMM_TEST_CASE("gemm/mixed/15", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/mixed/15", "[gemm]") {
     etl::dyn_matrix_cm<T> a(132, 64);
     etl::dyn_matrix<T> b(64, 92);
     etl::dyn_matrix_cm<T> c(132, 92);
@@ -432,7 +432,7 @@ GEMM_TEST_CASE("gemm/mixed/17", "[gemm]") {
     REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
-GEMM_TEST_CASE("gemm/mixed/18", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/mixed/18", "[gemm]") {
     etl::dyn_matrix<T> a(132, 64);
     etl::dyn_matrix<T> b(64, 92);
     etl::dyn_matrix_cm<T> c(132, 92);

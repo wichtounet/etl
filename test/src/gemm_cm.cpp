@@ -12,7 +12,7 @@
 
 // Matrix Matrix multiplication tests
 
-GEMM_TEST_CASE("gemm/cm/1", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/cm/1", "[gemm]") {
     etl::fast_matrix_cm<T, 2, 3> a = {1, 4, 2, 5, 3, 6};
     etl::fast_matrix_cm<T, 3, 2> b = {7, 9, 11, 8, 10, 12};
     etl::fast_matrix_cm<T, 2, 2> c;
@@ -25,7 +25,7 @@ GEMM_TEST_CASE("gemm/cm/1", "[gemm]") {
     REQUIRE_EQUALS(c(1, 1), 154);
 }
 
-GEMM_TEST_CASE("gemm/cm/2", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/cm/2", "[gemm]") {
     etl::fast_matrix_cm<T, 3, 3> a = {1, 4, 7, 2, 5, 8, 3, 6, 9};
     etl::fast_matrix_cm<T, 3, 3> b = {7, 9, 11, 8, 10, 12, 9, 11, 13};
     etl::fast_matrix_cm<T, 3, 3> c;
@@ -43,7 +43,7 @@ GEMM_TEST_CASE("gemm/cm/2", "[gemm]") {
     REQUIRE_EQUALS(c(2, 2), 268);
 }
 
-GEMM_TEST_CASE("gemm/cm/3", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/cm/3", "[gemm]") {
     etl::dyn_matrix_cm<T> a(4, 4, etl::values(1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15, 4, 8, 12, 16));
     etl::dyn_matrix_cm<T> b(4, 4, etl::values(1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15, 4, 8, 12, 16));
     etl::dyn_matrix_cm<T> c(4, 4);
@@ -60,7 +60,7 @@ GEMM_TEST_CASE("gemm/cm/3", "[gemm]") {
     REQUIRE_EQUALS(c(3, 1), 484);
 }
 
-GEMM_TEST_CASE("gemm/cm/4", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/cm/4", "[gemm]") {
     etl::dyn_matrix_cm<T> a(2, 2, etl::values(1, 3, 2, 4));
     etl::dyn_matrix_cm<T> b(2, 2, etl::values(1, 3, 2, 4));
     etl::dyn_matrix_cm<T> c(2, 2);
@@ -73,7 +73,7 @@ GEMM_TEST_CASE("gemm/cm/4", "[gemm]") {
     REQUIRE_EQUALS(c(1, 1), 22);
 }
 
-GEMM_TEST_CASE("gemm/cm/5", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/cm/5", "[gemm]") {
     etl::dyn_matrix_cm<T> a(3, 3, std::initializer_list<T>({1, 4, 7, 2, 5, 8, 3, 6, 9}));
     etl::dyn_matrix_cm<T> b(3, 3, std::initializer_list<T>({7, 9, 11, 8, 10, 12, 9, 11, 13}));
     etl::dyn_matrix_cm<T> c(3, 3);
@@ -91,7 +91,7 @@ GEMM_TEST_CASE("gemm/cm/5", "[gemm]") {
     REQUIRE_EQUALS(c(2, 2), 268);
 }
 
-GEMM_TEST_CASE("gemm/cm/6", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/cm/6", "[gemm]") {
     etl::fast_matrix_cm<T, 19, 19> a;
     etl::fast_matrix_cm<T, 19, 19> b;
     etl::fast_matrix_cm<T, 19, 19> c;
@@ -108,7 +108,7 @@ GEMM_TEST_CASE("gemm/cm/6", "[gemm]") {
     REQUIRE_EQUALS(c(18, 18), 828343);
 }
 
-GEMM_TEST_CASE("gemm/cm/7", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/cm/7", "[gemm]") {
     etl::fast_matrix_cm<T, 19, 19> a;
     etl::fast_matrix_cm<T, 19, 19> b;
     etl::fast_matrix_cm<T, 19, 19> c;
@@ -125,7 +125,7 @@ GEMM_TEST_CASE("gemm/cm/7", "[gemm]") {
     REQUIRE_EQUALS(c(18, 18), 828343);
 }
 
-GEMM_TEST_CASE("gemm/cm/8", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/cm/8", "[gemm]") {
     etl::fast_matrix_cm<T, 19, 19> a;
     etl::fast_matrix_cm<T, 19, 19> b;
     etl::fast_matrix_cm<T, 19, 19> c;
@@ -142,7 +142,7 @@ GEMM_TEST_CASE("gemm/cm/8", "[gemm]") {
     REQUIRE_EQUALS(c(18, 18), 828343);
 }
 
-GEMM_TEST_CASE("gemm/cm/9", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/cm/9", "[gemm]") {
     etl::dyn_matrix_cm<T> a(128, 128);
     etl::dyn_matrix_cm<T> b(128, 128);
     etl::dyn_matrix_cm<T> c(128, 128);
@@ -166,7 +166,7 @@ GEMM_TEST_CASE("gemm/cm/9", "[gemm]") {
     REQUIRE_DIRECT(etl::approx_equals(c, r, base_eps_etl_large));
 }
 
-GEMM_TEST_CASE("gemm/cm/10", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/cm/10", "[gemm]") {
     etl::dyn_matrix_cm<T> a(128, 256);
     etl::dyn_matrix_cm<T> b(256, 128);
     etl::dyn_matrix_cm<T> c(128, 128);
@@ -190,7 +190,7 @@ GEMM_TEST_CASE("gemm/cm/10", "[gemm]") {
     REQUIRE_DIRECT(etl::approx_equals(c, r, base_eps_etl_large));
 }
 
-GEMM_TEST_CASE("gemm/cm/11", "[gemm]") {
+GEMM_TEST_CASE_FAST("gemm/cm/11", "[gemm]") {
     etl::dyn_matrix_cm<T> a(194, 128);
     etl::dyn_matrix_cm<T> b(128, 156);
     etl::dyn_matrix_cm<T> c(194, 156);

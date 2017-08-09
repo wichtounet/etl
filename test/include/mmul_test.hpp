@@ -189,39 +189,50 @@ MUL_FUNCTOR(cublas_gevm_t, c = selected_helper(etl::gemm_impl::CUBLAS, a * trans
         GEMM_TEST_CASE_SECTION_LAZY         \
         GEMM_TEST_CASE_SECTION_STRASSEN     \
         GEMM_TEST_CASE_SECTION_BLAS         \
-        GEMM_TEST_CASE_SECTION_VEC         \
+        GEMM_TEST_CASE_SECTION_VEC          \
         GEMM_TEST_CASE_SECTION_CUBLAS       \
     }                                       \
     MUL_TEST_CASE_DEFN
 
-#define GEMM_NT_TEST_CASE(name, description)   \
-    MUL_TEST_CASE_DECL(name, description) { \
-        GEMM_NT_TEST_CASE_SECTION_DEFAULT      \
-        GEMM_NT_TEST_CASE_SECTION_STD          \
-        GEMM_NT_TEST_CASE_SECTION_BLAS         \
-        GEMM_NT_TEST_CASE_SECTION_VEC         \
-        GEMM_NT_TEST_CASE_SECTION_CUBLAS       \
-    }                                       \
+#define GEMM_TEST_CASE_FAST(name, description) \
+    MUL_TEST_CASE_DECL(name, description) {    \
+        GEMM_TEST_CASE_SECTION_DEFAULT         \
+        GEMM_TEST_CASE_SECTION_STD             \
+        GEMM_TEST_CASE_SECTION_LAZY            \
+        GEMM_TEST_CASE_SECTION_BLAS            \
+        GEMM_TEST_CASE_SECTION_VEC             \
+        GEMM_TEST_CASE_SECTION_CUBLAS          \
+    }                                          \
     MUL_TEST_CASE_DEFN
 
-#define GEMM_TT_TEST_CASE(name, description)   \
-    MUL_TEST_CASE_DECL(name, description) { \
-        GEMM_TT_TEST_CASE_SECTION_DEFAULT      \
-        GEMM_TT_TEST_CASE_SECTION_STD          \
-        GEMM_TT_TEST_CASE_SECTION_BLAS         \
-        GEMM_TT_TEST_CASE_SECTION_VEC         \
-        GEMM_TT_TEST_CASE_SECTION_CUBLAS       \
-    }                                       \
+#define GEMM_NT_TEST_CASE(name, description) \
+    MUL_TEST_CASE_DECL(name, description) {  \
+        GEMM_NT_TEST_CASE_SECTION_DEFAULT    \
+        GEMM_NT_TEST_CASE_SECTION_STD        \
+        GEMM_NT_TEST_CASE_SECTION_BLAS       \
+        GEMM_NT_TEST_CASE_SECTION_VEC        \
+        GEMM_NT_TEST_CASE_SECTION_CUBLAS     \
+    }                                        \
     MUL_TEST_CASE_DEFN
 
-#define GEMM_TN_TEST_CASE(name, description)   \
-    MUL_TEST_CASE_DECL(name, description) { \
-        GEMM_TN_TEST_CASE_SECTION_DEFAULT      \
-        GEMM_TN_TEST_CASE_SECTION_STD          \
-        GEMM_TN_TEST_CASE_SECTION_BLAS         \
-        GEMM_TN_TEST_CASE_SECTION_VEC         \
-        GEMM_TN_TEST_CASE_SECTION_CUBLAS       \
-    }                                       \
+#define GEMM_TT_TEST_CASE(name, description) \
+    MUL_TEST_CASE_DECL(name, description) {  \
+        GEMM_TT_TEST_CASE_SECTION_DEFAULT    \
+        GEMM_TT_TEST_CASE_SECTION_STD        \
+        GEMM_TT_TEST_CASE_SECTION_BLAS       \
+        GEMM_TT_TEST_CASE_SECTION_VEC        \
+        GEMM_TT_TEST_CASE_SECTION_CUBLAS     \
+    }                                        \
+    MUL_TEST_CASE_DEFN
+
+#define GEMM_TN_TEST_CASE(name, description) \
+    MUL_TEST_CASE_DECL(name, description) {  \
+        GEMM_TN_TEST_CASE_SECTION_DEFAULT    \
+        GEMM_TN_TEST_CASE_SECTION_STD        \
+        GEMM_TN_TEST_CASE_SECTION_BLAS       \
+        GEMM_TN_TEST_CASE_SECTION_VEC        \
+        GEMM_TN_TEST_CASE_SECTION_CUBLAS     \
+    }                                        \
     MUL_TEST_CASE_DEFN
 
 #define GEMV_TEST_CASE(name, description)   \
