@@ -134,12 +134,10 @@ GEMM_TN_TEST_CASE("gemm_tn/9", "[gemm]") {
 
     r = 0;
 
-    a.transpose_inplace();
-
-    for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
+    for (size_t k = 0; k < rows(a); k++) {
+        for (size_t i = 0; i < columns(a); i++) {
             for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+                r(i, j) += a(k, i) * b(k, j);
             }
         }
     }
@@ -160,12 +158,10 @@ GEMM_TN_TEST_CASE("gemm_tn/10", "[gemm]") {
 
     r = 0;
 
-    a.transpose_inplace();
-
-    for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
+    for (size_t k = 0; k < rows(a); k++) {
+        for (size_t i = 0; i < columns(a); i++) {
             for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+                r(i, j) += a(k, i) * b(k, j);
             }
         }
     }
@@ -186,12 +182,10 @@ GEMM_TN_TEST_CASE("gemm_tn/11", "[gemm]") {
 
     r = 0;
 
-    a.transpose_inplace();
-
-    for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
+    for (size_t k = 0; k < rows(a); k++) {
+        for (size_t i = 0; i < columns(a); i++) {
             for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+                r(i, j) += a(k, i) * b(k, j);
             }
         }
     }

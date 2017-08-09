@@ -25,13 +25,13 @@ GEMM_TEST_CASE("gemm/mixed/1", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -49,13 +49,13 @@ GEMM_TEST_CASE("gemm/mixed/2", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -73,13 +73,13 @@ GEMM_TEST_CASE_FAST("gemm/mixed/3", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -99,13 +99,13 @@ GEMM_TEST_CASE("gemm/mixed/4", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -123,13 +123,13 @@ GEMM_TEST_CASE("gemm/mixed/5", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -147,13 +147,13 @@ GEMM_TEST_CASE_FAST("gemm/mixed/6", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -173,13 +173,13 @@ GEMM_TEST_CASE("gemm/mixed/7", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -197,13 +197,13 @@ GEMM_TEST_CASE("gemm/mixed/8", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -221,13 +221,13 @@ GEMM_TEST_CASE_FAST("gemm/mixed/9", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -247,13 +247,13 @@ GEMM_TEST_CASE("gemm/mixed/10", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -271,13 +271,13 @@ GEMM_TEST_CASE("gemm/mixed/11", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -295,13 +295,13 @@ GEMM_TEST_CASE_FAST("gemm/mixed/12", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -321,13 +321,13 @@ GEMM_TEST_CASE("gemm/mixed/13", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -345,13 +345,13 @@ GEMM_TEST_CASE("gemm/mixed/14", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -369,13 +369,13 @@ GEMM_TEST_CASE_FAST("gemm/mixed/15", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -395,13 +395,13 @@ GEMM_TEST_CASE("gemm/mixed/16", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -419,13 +419,13 @@ GEMM_TEST_CASE("gemm/mixed/17", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 
@@ -443,13 +443,13 @@ GEMM_TEST_CASE_FAST("gemm/mixed/18", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+        for (size_t j = 0; j < columns(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < columns(a); k++) {
+                t += a(i, k) * b(k, j);
             }
+            r(i, j) = t;
         }
     }
 

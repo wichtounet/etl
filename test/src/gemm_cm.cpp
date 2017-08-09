@@ -153,13 +153,13 @@ GEMM_TEST_CASE_FAST("gemm/cm/9", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t j = 0; j < columns(b); j++) {
         for (size_t i = 0; i < rows(a); i++) {
+            T t(0);
             for (size_t k = 0; k < columns(a); k++) {
-                r(i, j) += a(i, k) * b(k, j);
+                t += a(i, k) * b(k, j);
             }
+            r(i,j) = t;
         }
     }
 
@@ -177,13 +177,13 @@ GEMM_TEST_CASE_FAST("gemm/cm/10", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t j = 0; j < columns(b); j++) {
         for (size_t i = 0; i < rows(a); i++) {
+            T t(0);
             for (size_t k = 0; k < columns(a); k++) {
-                r(i, j) += a(i, k) * b(k, j);
+                t += a(i, k) * b(k, j);
             }
+            r(i,j) = t;
         }
     }
 
@@ -201,13 +201,13 @@ GEMM_TEST_CASE_FAST("gemm/cm/11", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
     for (size_t j = 0; j < columns(b); j++) {
         for (size_t i = 0; i < rows(a); i++) {
+            T t(0);
             for (size_t k = 0; k < columns(a); k++) {
-                r(i, j) += a(i, k) * b(k, j);
+                t += a(i, k) * b(k, j);
             }
+            r(i,j) = t;
         }
     }
 

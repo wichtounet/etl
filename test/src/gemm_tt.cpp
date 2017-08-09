@@ -140,16 +140,13 @@ GEMM_TT_TEST_CASE("gemm_tt/7", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
-    a.transpose_inplace();
-    b.transpose_inplace();
-
-    for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+    for (size_t i = 0; i < columns(a); i++) {
+        for (size_t j = 0; j < rows(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < rows(a); k++) {
+                t += a(k, i) * b(j, k);
             }
+            r(i,j) = t;
         }
     }
 
@@ -167,16 +164,13 @@ GEMM_TT_TEST_CASE("gemm_tt/8", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
-    a.transpose_inplace();
-    b.transpose_inplace();
-
-    for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+    for (size_t i = 0; i < columns(a); i++) {
+        for (size_t j = 0; j < rows(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < rows(a); k++) {
+                t += a(k, i) * b(j, k);
             }
+            r(i,j) = t;
         }
     }
 
@@ -194,16 +188,13 @@ GEMM_TT_TEST_CASE("gemm_tt/9", "[gemm]") {
 
     Impl::apply(a, b, c);
 
-    r = 0;
-
-    a.transpose_inplace();
-    b.transpose_inplace();
-
-    for (size_t i = 0; i < rows(a); i++) {
-        for (size_t k = 0; k < columns(a); k++) {
-            for (size_t j = 0; j < columns(b); j++) {
-                r(i, j) += a(i, k) * b(k, j);
+    for (size_t i = 0; i < columns(a); i++) {
+        for (size_t j = 0; j < rows(b); j++) {
+            T t(0);
+            for (size_t k = 0; k < rows(a); k++) {
+                t += a(k, i) * b(j, k);
             }
+            r(i,j) = t;
         }
     }
 
