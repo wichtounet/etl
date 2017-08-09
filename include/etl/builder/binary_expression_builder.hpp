@@ -248,7 +248,7 @@ auto operator%(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<R
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>)>
 LE& operator+=(LE&& lhs, RE rhs) {
     detail::scalar_add::apply(lhs, rhs);
     return lhs;
@@ -260,7 +260,7 @@ LE& operator+=(LE&& lhs, RE rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>, is_simple_lhs<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>, is_simple_lhs<LE>)>
 LE& operator+=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
     rhs.assign_add_to(lhs);
@@ -273,7 +273,7 @@ LE& operator+=(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>)>
 LE& operator-=(LE&& lhs, RE rhs) {
     detail::scalar_sub::apply(lhs, rhs);
     return lhs;
@@ -285,7 +285,7 @@ LE& operator-=(LE&& lhs, RE rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>, is_simple_lhs<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>, is_simple_lhs<LE>)>
 LE& operator-=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
     rhs.assign_sub_to(lhs);
@@ -298,7 +298,7 @@ LE& operator-=(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>)>
 LE& operator*=(LE&& lhs, RE rhs) {
     detail::scalar_mul::apply(lhs, rhs);
     return lhs;
@@ -310,7 +310,7 @@ LE& operator*=(LE&& lhs, RE rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>, is_simple_lhs<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>, is_simple_lhs<LE>)>
 LE& operator*=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
     rhs.assign_mul_to(lhs);
@@ -323,7 +323,7 @@ LE& operator*=(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>)>
 LE& operator>>=(LE&& lhs, RE rhs) {
     detail::scalar_mul::apply(lhs, rhs);
     return lhs;
@@ -335,7 +335,7 @@ LE& operator>>=(LE&& lhs, RE rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>, is_simple_lhs<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>, is_simple_lhs<LE>)>
 LE& operator>>=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
     rhs.assign_mul_to(lhs);
@@ -348,7 +348,7 @@ LE& operator>>=(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>)>
 LE& operator/=(LE&& lhs, RE rhs) {
     detail::scalar_div::apply(lhs, rhs);
     return lhs;
@@ -360,7 +360,7 @@ LE& operator/=(LE&& lhs, RE rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>, is_simple_lhs<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>, is_simple_lhs<LE>)>
 LE& operator/=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
     rhs.assign_div_to(lhs);
@@ -373,7 +373,7 @@ LE& operator/=(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>)>
 LE& operator%=(LE&& lhs, RE rhs) {
     detail::scalar_mod::apply(lhs, rhs);
     return lhs;
@@ -385,7 +385,7 @@ LE& operator%=(LE&& lhs, RE rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>, is_simple_lhs<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>, is_simple_lhs<LE>)>
 LE& operator%=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
     rhs.assign_mod_to(lhs);

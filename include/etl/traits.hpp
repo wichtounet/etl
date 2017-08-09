@@ -273,81 +273,81 @@ constexpr bool is_uni_upper_matrix = cpp::is_specialization_of<etl::uni_upper_ma
  * \tparam T The type to test
  */
 template <typename T>
-using is_unary_expr = cpp::is_specialization_of<etl::unary_expr, std::decay_t<T>>;
+constexpr bool is_unary_expr = cpp::is_specialization_of<etl::unary_expr, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a binary expression.
  * \tparam T The type to test
  */
 template <typename T>
-using is_binary_expr = cpp::is_specialization_of<etl::binary_expr, std::decay_t<T>>;
+constexpr bool is_binary_expr = cpp::is_specialization_of<etl::binary_expr, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a generator expression.
  * \tparam T The type to test
  */
 template <typename T>
-using is_generator_expr = cpp::is_specialization_of<etl::generator_expr, std::decay_t<T>>;
+constexpr bool is_generator_expr = cpp::is_specialization_of<etl::generator_expr, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is an optimized expression.
  * \tparam T The type to test
  */
 template <typename T>
-using is_optimized_expr = cpp::is_specialization_of<etl::optimized_expr, std::decay_t<T>>;
+constexpr bool is_optimized_expr = cpp::is_specialization_of<etl::optimized_expr, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a serial expression.
  * \tparam T The type to test
  */
 template <typename T>
-using is_serial_expr = cpp::is_specialization_of<etl::serial_expr, std::decay_t<T>>;
+constexpr bool is_serial_expr = cpp::is_specialization_of<etl::serial_expr, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a selector expression.
  * \tparam T The type to test
  */
 template <typename T>
-using is_selected_expr = traits_detail::is_selected_expr_impl<std::decay_t<T>>;
+constexpr bool is_selected_expr = traits_detail::is_selected_expr_impl<std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a parallel expression.
  * \tparam T The type to test
  */
 template <typename T>
-using is_parallel_expr = cpp::is_specialization_of<etl::parallel_expr, std::decay_t<T>>;
+constexpr bool is_parallel_expr = cpp::is_specialization_of<etl::parallel_expr, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a timed expression.
  * \tparam T The type to test
  */
 template <typename T>
-using is_timed_expr = cpp::is_specialization_of<etl::timed_expr, std::decay_t<T>>;
+constexpr bool is_timed_expr = cpp::is_specialization_of<etl::timed_expr, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a wrapper expression (optimized, serial, ...).
  * \tparam T The type to test
  */
 template <typename T>
-using is_wrapper_expr = cpp::or_c<is_optimized_expr<T>, is_selected_expr<T>, is_serial_expr<T>, is_parallel_expr<T>, is_timed_expr<T>>;
+constexpr bool is_wrapper_expr = is_optimized_expr<T> || is_selected_expr<T> || is_serial_expr<T> || is_parallel_expr<T> || is_timed_expr<T>;
 
 /*!
  * \brief Traits to test if the given expression is a sub_view
  */
 template <typename T>
-using is_sub_view = traits_detail::is_sub_view<std::decay_t<T>>;
+constexpr bool is_sub_view = traits_detail::is_sub_view<std::decay_t<T>>::value;
 
 /*!
  * \brief Traits to test if the given expression is a slice_view
  */
 template <typename T>
-using is_slice_view = cpp::is_specialization_of<etl::slice_view, std::decay_t<T>>;
+constexpr bool is_slice_view = cpp::is_specialization_of<etl::slice_view, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits to test if the given expression is a dyn_matrix_view
  */
 template <typename T>
-using is_dyn_matrix_view = traits_detail::is_dyn_matrix_view<T>;
+constexpr bool is_dyn_matrix_view = traits_detail::is_dyn_matrix_view<T>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a transformer expression.
@@ -382,35 +382,35 @@ constexpr bool is_etl_expr = decay_traits<T>::is_etl;
  * \tparam T The type to test
  */
 template <typename T>
-using is_transpose_expr = cpp::is_specialization_of<etl::transpose_expr, std::decay_t<T>>;
+constexpr bool is_transpose_expr = cpp::is_specialization_of<etl::transpose_expr, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given type is a temporary expression.
  * \tparam T The type to test
  */
 template <typename T>
-using is_temporary_expr = traits_detail::is_base_of_template_tb<std::decay_t<T>, etl::base_temporary_expr>;
+constexpr bool is_temporary_expr = traits_detail::is_base_of_template_tb<std::decay_t<T>, etl::base_temporary_expr>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a value type.
  * \tparam T The type to test
  */
 template <typename T>
-using is_etl_value = cpp::bool_constant<decay_traits<T>::is_value>;
+constexpr bool is_etl_value = decay_traits<T>::is_value;
 
 /*!
  * \brief Traits indicating if the given ETL type is from a value class.
  * \tparam T The type to test
  */
 template <typename T>
-using is_etl_value_class = cpp::or_u<is_fast_matrix<T>, is_custom_fast_matrix<T>, is_dyn_matrix<T>, is_custom_dyn_matrix<T>, is_sparse_matrix<T>>;
+constexpr bool is_etl_value_class = is_fast_matrix<T> || is_custom_fast_matrix<T> || is_dyn_matrix<T> || is_custom_dyn_matrix<T> || is_sparse_matrix<T>;
 
 /*!
  * \brief Traits indicating if the given ETL type can be left hand side type
  * \tparam T The type to test
  */
 template <typename T>
-using is_lhs = cpp::or_c<is_etl_value<T>, is_unary_expr<T>>;
+constexpr bool is_lhs = is_etl_value<T> || is_unary_expr<T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a simple left hand side type.
@@ -418,7 +418,7 @@ using is_lhs = cpp::or_c<is_etl_value<T>, is_unary_expr<T>>;
  * \tparam T The type to test
  */
 template <typename T>
-using is_simple_lhs = cpp::or_c<is_etl_value_class<T>, is_unary_expr<T>, is_sub_view<T>, is_slice_view<T>, is_dyn_matrix_view<T>>;
+constexpr bool is_simple_lhs = is_etl_value_class<T> || is_unary_expr<T> || is_sub_view<T> || is_slice_view<T> || is_dyn_matrix_view<T>;
 
 /*!
  * \brief Traits indicating if the given ETL type has direct memory access.
@@ -859,7 +859,7 @@ using const_return_helper = std::conditional_t<
  * \brief Specialization for value structures
  */
 template <typename T>
-struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
+struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>>> {
     using value_type = typename T::value_type; ///< The value type of the expression
 
     static constexpr bool is_etl          = true;                                                        ///< Indicates if the type is an ETL expression

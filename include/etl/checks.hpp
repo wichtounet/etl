@@ -95,7 +95,7 @@ void validate_assign(const LE& lhs, const RE& rhs) noexcept {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_if(!etl_traits<RE>::is_generator, all_etl_expr<RE>, !all_fast<LE, RE>, !is_wrapper_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(!etl_traits<RE>::is_generator, all_etl_expr<RE>, !all_fast<LE, RE>, !is_wrapper_expr<RE>)>
 void validate_assign(const LE& lhs, const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
@@ -112,7 +112,7 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_if(!etl_traits<RE>::is_generator, all_etl_expr<RE>, all_fast<LE, RE>, !is_wrapper_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(!etl_traits<RE>::is_generator, all_etl_expr<RE>, all_fast<LE, RE>, !is_wrapper_expr<RE>)>
 void validate_assign(const LE& lhs, const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
@@ -129,7 +129,7 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_if(!all_etl_expr<RE>, !is_wrapper_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(!all_etl_expr<RE>, !is_wrapper_expr<RE>)>
 void validate_assign(const LE& lhs, const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(size(lhs) == rhs.size(), "Cannot perform element-wise operations on collections of different size");
@@ -146,7 +146,7 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_if(is_wrapper_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_wrapper_expr<RE>)>
 void validate_assign(const LE& lhs, const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");

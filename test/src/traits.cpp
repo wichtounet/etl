@@ -529,25 +529,25 @@ TEMPLATE_TEST_CASE_2("etl_traits/selected_expr", "[traits]", Z, float, double) {
     using selected_type_1 = decltype(etl::selected<etl::gemm_impl, etl::gemm_impl::STD>(a * b));
     using selected_type_2 = decltype(selected_helper(etl::gemm_impl::STD, a * b));
 
-    REQUIRE_DIRECT(etl::is_selected_expr<selected_type_1>::value);
-    REQUIRE_DIRECT(etl::is_selected_expr<selected_type_1>::value);
-    REQUIRE_DIRECT(etl::is_wrapper_expr<selected_type_2>::value);
-    REQUIRE_DIRECT(etl::is_wrapper_expr<selected_type_2>::value);
+    REQUIRE_DIRECT(etl::is_selected_expr<selected_type_1>);
+    REQUIRE_DIRECT(etl::is_selected_expr<selected_type_1>);
+    REQUIRE_DIRECT(etl::is_wrapper_expr<selected_type_2>);
+    REQUIRE_DIRECT(etl::is_wrapper_expr<selected_type_2>);
 
-    REQUIRE_DIRECT(etl::is_selected_expr<const selected_type_1>::value);
-    REQUIRE_DIRECT(etl::is_selected_expr<const selected_type_1>::value);
-    REQUIRE_DIRECT(etl::is_wrapper_expr<const selected_type_2>::value);
-    REQUIRE_DIRECT(etl::is_wrapper_expr<const selected_type_2>::value);
+    REQUIRE_DIRECT(etl::is_selected_expr<const selected_type_1>);
+    REQUIRE_DIRECT(etl::is_selected_expr<const selected_type_1>);
+    REQUIRE_DIRECT(etl::is_wrapper_expr<const selected_type_2>);
+    REQUIRE_DIRECT(etl::is_wrapper_expr<const selected_type_2>);
 
-    REQUIRE_DIRECT(etl::is_selected_expr<selected_type_1&>::value);
-    REQUIRE_DIRECT(etl::is_selected_expr<selected_type_1&>::value);
-    REQUIRE_DIRECT(etl::is_wrapper_expr<selected_type_2&>::value);
-    REQUIRE_DIRECT(etl::is_wrapper_expr<selected_type_2&>::value);
+    REQUIRE_DIRECT(etl::is_selected_expr<selected_type_1&>);
+    REQUIRE_DIRECT(etl::is_selected_expr<selected_type_1&>);
+    REQUIRE_DIRECT(etl::is_wrapper_expr<selected_type_2&>);
+    REQUIRE_DIRECT(etl::is_wrapper_expr<selected_type_2&>);
 
-    REQUIRE_DIRECT(etl::is_selected_expr<const selected_type_1&>::value);
-    REQUIRE_DIRECT(etl::is_selected_expr<const selected_type_1&>::value);
-    REQUIRE_DIRECT(etl::is_wrapper_expr<const selected_type_2&>::value);
-    REQUIRE_DIRECT(etl::is_wrapper_expr<const selected_type_2&>::value);
+    REQUIRE_DIRECT(etl::is_selected_expr<const selected_type_1&>);
+    REQUIRE_DIRECT(etl::is_selected_expr<const selected_type_1&>);
+    REQUIRE_DIRECT(etl::is_wrapper_expr<const selected_type_2&>);
+    REQUIRE_DIRECT(etl::is_wrapper_expr<const selected_type_2&>);
 }
 
 TEST_CASE("etl_traits/vectorizable_bool", "[traits]") {
@@ -705,9 +705,9 @@ TEST_CASE("etl_traits/vectorize/expr/2", "[traits]") {
 TEST_CASE("etl_traits/is_temporary_expr", "[traits]") {
     etl::dyn_matrix<float, 2> A(3, 3);
 
-    REQUIRE_DIRECT(!etl::is_temporary_expr<decltype(A)>::value);
-    REQUIRE_DIRECT(!etl::is_temporary_expr<decltype(A + A)>::value);
-    REQUIRE_DIRECT(etl::is_temporary_expr<decltype(A * A)>::value);
-    REQUIRE_DIRECT(etl::is_temporary_expr<decltype(trans(A))>::value);
-    REQUIRE_DIRECT(etl::is_temporary_expr<decltype(trans(A) * A)>::value);
+    REQUIRE_DIRECT(!etl::is_temporary_expr<decltype(A)>);
+    REQUIRE_DIRECT(!etl::is_temporary_expr<decltype(A + A)>);
+    REQUIRE_DIRECT(etl::is_temporary_expr<decltype(A * A)>);
+    REQUIRE_DIRECT(etl::is_temporary_expr<decltype(trans(A))>);
+    REQUIRE_DIRECT(etl::is_temporary_expr<decltype(trans(A) * A)>);
 }

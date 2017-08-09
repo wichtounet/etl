@@ -166,7 +166,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \param b The B matrix
      * \param c The C matrix (output)
      */
-    template <typename AA, typename BB, typename C, cpp_enable_if((is_transpose_expr<AA>::value && is_transpose_expr<BB>::value))>
+    template <typename AA, typename BB, typename C, cpp_enable_if((is_transpose_expr<AA> && is_transpose_expr<BB>))>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
@@ -201,7 +201,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \param b The B matrix
      * \param c The C matrix (output)
      */
-    template <typename AA, typename BB, typename C, cpp_enable_if((!is_transpose_expr<AA>::value && is_transpose_expr<BB>::value))>
+    template <typename AA, typename BB, typename C, cpp_enable_if((!is_transpose_expr<AA> && is_transpose_expr<BB>))>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
@@ -236,7 +236,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \param b The B matrix
      * \param c The C matrix (output)
      */
-    template <typename AA, typename BB, typename C, cpp_enable_if((is_transpose_expr<AA>::value && !is_transpose_expr<BB>::value))>
+    template <typename AA, typename BB, typename C, cpp_enable_if((is_transpose_expr<AA> && !is_transpose_expr<BB>))>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
@@ -271,7 +271,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \param b The B matrix
      * \param c The C matrix (output)
      */
-    template <typename AA, typename BB, typename C, cpp_enable_if((!is_transpose_expr<AA>::value && !is_transpose_expr<BB>::value))>
+    template <typename AA, typename BB, typename C, cpp_enable_if((!is_transpose_expr<AA> && !is_transpose_expr<BB>))>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 

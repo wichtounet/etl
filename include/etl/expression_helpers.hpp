@@ -24,7 +24,7 @@ namespace detail {
  */
 template <typename T>
 using build_type = std::conditional_t<
-    is_etl_value<T>::value,
+    is_etl_value<T>,
     const std::decay_t<T>&,
     std::decay_t<T>>;
 
@@ -36,7 +36,7 @@ using build_type = std::conditional_t<
  */
 template <typename T>
 using build_identity_type = std::conditional_t<
-    is_etl_value<T>::value,
+    is_etl_value<T>,
     std::conditional_t<
         std::is_const<std::remove_reference_t<T>>::value,
         const std::decay_t<T>&,
