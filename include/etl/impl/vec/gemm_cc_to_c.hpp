@@ -261,7 +261,6 @@ void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
 
                 // 4x unrolled vectorized inner loop
                 for (; i + 4 * vec_size - 1 < i_end; i += 4 * vec_size) {
-
                     size_t j = block_j;
 
                     for (; j + 1 < j_end; j += 2) {
@@ -339,17 +338,17 @@ void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                     size_t j = block_j;
 
                     for (; j + 3 < j_end; j += 4) {
-                        auto r11 = vec_type::loadu(c + i * vec_size + 0 + (j + 0) * M);
-                        auto r12 = vec_type::loadu(c + i * vec_size + 1 + (j + 0) * M);
+                        auto r11 = vec_type::loadu(c + i + 0 * vec_size + (j + 0) * M);
+                        auto r12 = vec_type::loadu(c + i + 1 * vec_size + (j + 0) * M);
 
-                        auto r21 = vec_type::loadu(c + i * vec_size + 0 + (j + 1) * M);
-                        auto r22 = vec_type::loadu(c + i * vec_size + 1 + (j + 1) * M);
+                        auto r21 = vec_type::loadu(c + i + 0 * vec_size + (j + 1) * M);
+                        auto r22 = vec_type::loadu(c + i + 1 * vec_size + (j + 1) * M);
 
-                        auto r31 = vec_type::loadu(c + i * vec_size + 0 + (j + 2) * M);
-                        auto r32 = vec_type::loadu(c + i * vec_size + 1 + (j + 3) * M);
+                        auto r31 = vec_type::loadu(c + i + 0 * vec_size + (j + 2) * M);
+                        auto r32 = vec_type::loadu(c + i + 1 * vec_size + (j + 2) * M);
 
-                        auto r41 = vec_type::loadu(c + i * vec_size + 0 + (j + 4) * M);
-                        auto r42 = vec_type::loadu(c + i * vec_size + 1 + (j + 4) * M);
+                        auto r41 = vec_type::loadu(c + i + 0 * vec_size + (j + 3) * M);
+                        auto r42 = vec_type::loadu(c + i + 1 * vec_size + (j + 3) * M);
 
                         for (size_t k = block_k; k < k_end; ++k) {
                             auto a1 = vec_type::loadu(a + i + 0 * vec_size + k * M);
@@ -387,11 +386,11 @@ void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                     }
 
                     for (; j + 1 < j_end; j += 2) {
-                        auto r11 = vec_type::loadu(c + i * vec_size + 0 + (j + 0) * M);
-                        auto r12 = vec_type::loadu(c + i * vec_size + 1 + (j + 0) * M);
+                        auto r11 = vec_type::loadu(c + i + 0 * vec_size + (j + 0) * M);
+                        auto r12 = vec_type::loadu(c + i + 1 * vec_size + (j + 0) * M);
 
-                        auto r21 = vec_type::loadu(c + i * vec_size + 0 + (j + 1) * M);
-                        auto r22 = vec_type::loadu(c + i * vec_size + 1 + (j + 1) * M);
+                        auto r21 = vec_type::loadu(c + i + 0 * vec_size + (j + 1) * M);
+                        auto r22 = vec_type::loadu(c + i + 1 * vec_size + (j + 1) * M);
 
                         for (size_t k = block_k; k < k_end; ++k) {
                             auto a1 = vec_type::loadu(a + i + 0 * vec_size + k * M);
