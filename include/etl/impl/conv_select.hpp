@@ -51,7 +51,7 @@ inline etl::conv_impl select_default_conv1_impl_new() {
     }
 
     // Only the standar dimplementation is able to handle heterogeneous types
-    if /*constexpr*/ (!all_homogeneous<I, K, C>::value) {
+    if /*constexpr*/ (!all_homogeneous<I, K, C>) {
         return etl::conv_impl::STD;
     }
 
@@ -84,7 +84,7 @@ inline etl::conv_impl select_conv1_impl_new() {
         auto forced = local_context().conv_selector.impl;
 
         static constexpr bool floating    = all_floating<I, K, C>;
-        static constexpr bool homogeneous = all_homogeneous<I, K, C>::value;
+        static constexpr bool homogeneous = all_homogeneous<I, K, C>;
 
         switch (forced) {
             //MKL cannot always be used

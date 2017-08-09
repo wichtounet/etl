@@ -32,7 +32,7 @@ template <vector_mode_t V, typename I, typename K, typename C>
 constexpr bool conv1_possible =
                 vec_enabled
             &&  vectorize_impl
-            &&  all_homogeneous<I, K, C>::value
+            &&  all_homogeneous<I, K, C>
             &&  all_vectorizable<V, I, K, C>;
 
 /*!

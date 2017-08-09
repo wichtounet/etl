@@ -87,7 +87,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
     static inline cpp14_constexpr gemm_impl select_default_gemv_impl(const size_t n1, const size_t n2) {
         using T = value_t<A>;
 
-        constexpr bool homo = all_homogeneous<A, B, C>::value;
+        constexpr bool homo = all_homogeneous<A, B, C>;
 
         if(all_vectorizable_t<vector_mode, A, B, C> && vec_enabled && homo){
             return gemm_impl::VEC;
@@ -118,7 +118,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
             switch (forced) {
                 //CUBLAS cannot always be used
                 case gemm_impl::CUBLAS:
-                    if (!cublas_enabled || !all_homogeneous<A, B, C>::value) {                                                                                     //COVERAGE_EXCLUDE_LINE
+                    if (!cublas_enabled || !all_homogeneous<A, B, C>) {                                                                                     //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to CUBLAS gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return select_default_gemv_impl<C>(n1, n2);                                                                  //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                     //COVERAGE_EXCLUDE_LINE
@@ -127,7 +127,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
 
                 //BLAS cannot always be used
                 case gemm_impl::BLAS:
-                    if (!cblas_enabled || !all_homogeneous<A, B, C>::value) {                                                                                    //COVERAGE_EXCLUDE_LINE
+                    if (!cblas_enabled || !all_homogeneous<A, B, C>) {                                                                                    //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to BLAS gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return select_default_gemv_impl<C>(n1, n2);                                                                //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                   //COVERAGE_EXCLUDE_LINE
@@ -136,7 +136,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
 
                 //VEC cannot always be used
                 case gemm_impl::VEC:
-                    if (!vec_enabled || !all_vectorizable<vector_mode, A, B, C> || !all_homogeneous<A, B, C>::value) {                                               //COVERAGE_EXCLUDE_LINE
+                    if (!vec_enabled || !all_vectorizable<vector_mode, A, B, C> || !all_homogeneous<A, B, C>) {                                               //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to VEC gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return select_default_gemv_impl<C>(n1, n2);                                                                //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                   //COVERAGE_EXCLUDE_LINE

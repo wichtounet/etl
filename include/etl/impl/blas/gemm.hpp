@@ -159,7 +159,7 @@ inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, 
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C> || all_column_major<A, B, C>) && all_homogeneous<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C> || all_column_major<A, B, C>) && all_homogeneous<A, B, C>)>
 void gemm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -193,7 +193,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_row_major<B, C> && all_column_major<A> && all_homogeneous<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<B, C> && all_column_major<A> && all_homogeneous<A, B, C>)>
 void gemm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -225,7 +225,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, C> && all_column_major<B> && all_homogeneous<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, C> && all_column_major<B> && all_homogeneous<A, B, C>)>
 void gemm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -257,7 +257,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_row_major<C> && all_column_major<A, B> && all_homogeneous<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<C> && all_column_major<A, B> && all_homogeneous<A, B, C>)>
 void gemm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -289,7 +289,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A> && all_column_major<B, C> && all_homogeneous<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A> && all_column_major<B, C> && all_homogeneous<A, B, C>)>
 void gemm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -321,7 +321,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_row_major<B> && all_column_major<A, C> && all_homogeneous<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<B> && all_column_major<A, C> && all_homogeneous<A, B, C>)>
 void gemm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -353,7 +353,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, B> && all_column_major<C> && all_homogeneous<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, B> && all_column_major<C> && all_homogeneous<A, B, C>)>
 void gemm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -382,7 +382,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>)>
 void gemm_nt(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -413,7 +413,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>)>
 void gemm_tn(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -444,7 +444,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>)>
 void gemm_tt(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -475,7 +475,7 @@ void gemm_tt(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>)>
 void gemv(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -506,7 +506,7 @@ void gemv(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>)>
 void gemv_t(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -537,7 +537,7 @@ void gemv_t(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>)>
 void gevm(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -568,7 +568,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_homogeneous<A, B, C>)>
 void gevm_t(A&& a, B&& b, C&& c) {
     using T = value_t<A>;
 
@@ -603,7 +603,7 @@ void gevm_t(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix
  * \param c The result matrix
  */
-template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>))>
 void gemm(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -619,7 +619,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>))>
 void gemm_nt(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -635,7 +635,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>))>
 void gemm_tn(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -651,7 +651,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>))>
 void gemm_tt(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -667,7 +667,7 @@ void gemm_tt(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>))>
 void gemv(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -683,7 +683,7 @@ void gemv(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>))>
 void gemv_t(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -699,7 +699,7 @@ void gemv_t(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>))>
 void gevm(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -715,7 +715,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>::value))>
+template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>))>
 void gevm_t(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);

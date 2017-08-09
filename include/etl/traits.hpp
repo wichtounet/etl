@@ -691,7 +691,7 @@ constexpr bool all_padded = and_v<(decay_traits<E>::is_padded)...>;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_homogeneous = cpp::is_homogeneous<value_t<E>...>;
+constexpr bool all_homogeneous = cpp::is_homogeneous<value_t<E>...>::value;
 
 /*!
  * \brief Simple utility traits indicating if a light subview can be created out

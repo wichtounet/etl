@@ -94,7 +94,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
         //Note since these boolean will be known at compile time, the conditions will be a lot simplified
         constexpr bool blas   = cblas_enabled;
         constexpr bool cublas = cublas_enabled;
-        constexpr bool homo   = all_homogeneous<AA, BB, C>::value;
+        constexpr bool homo   = all_homogeneous<AA, BB, C>;
 
         if (cublas && homo) {
             return gemm_impl::CUBLAS;
@@ -126,7 +126,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
             switch (forced) {
                 //CUBLAS cannot always be used
                 case gemm_impl::CUBLAS:
-                    if (!cublas_enabled || !all_homogeneous<AA, BB, C>::value) {                                                                                     //COVERAGE_EXCLUDE_LINE
+                    if (!cublas_enabled || !all_homogeneous<AA, BB, C>) {                                                                                     //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to CUBLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return def;                                                              //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                     //COVERAGE_EXCLUDE_LINE
@@ -135,7 +135,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
 
                 //BLAS cannot always be used
                 case gemm_impl::BLAS:
-                    if (!cblas_enabled || !all_homogeneous<AA, BB, C>::value) {                                                                                    //COVERAGE_EXCLUDE_LINE
+                    if (!cblas_enabled || !all_homogeneous<AA, BB, C>) {                                                                                    //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to BLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return def;                                                            //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                   //COVERAGE_EXCLUDE_LINE
@@ -144,7 +144,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
 
                 //VEC cannot always be used
                 case gemm_impl::VEC:
-                    if (!vec_enabled || !all_vectorizable_t<vector_mode, AA, BB, C> || !all_homogeneous<AA, BB, C>::value) {                                               //COVERAGE_EXCLUDE_LINE
+                    if (!vec_enabled || !all_vectorizable_t<vector_mode, AA, BB, C> || !all_homogeneous<AA, BB, C>) {                                               //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to VEC gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return def;                                                            //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                   //COVERAGE_EXCLUDE_LINE

@@ -182,8 +182,8 @@ private:
      */
     template <typename C>
     static cpp14_constexpr etl::bias_add_impl select_default_impl(bool gpu) {
-        constexpr bool vec_possible = vec_enabled && vectorize_impl && all_vectorizable<vector_mode, A, B, C> && all_homogeneous<A, B, C>::value;
-        constexpr bool cudnn_possible = cudnn_enabled && all_floating<A, B, C> && all_homogeneous<A, B, C>::value;
+        constexpr bool vec_possible = vec_enabled && vectorize_impl && all_vectorizable<vector_mode, A, B, C> && all_homogeneous<A, B, C>;
+        constexpr bool cudnn_possible = cudnn_enabled && all_floating<A, B, C> && all_homogeneous<A, B, C>;
 
         if (cudnn_possible && gpu) {
             return etl::bias_add_impl::CUDNN;
@@ -211,7 +211,7 @@ private:
             switch (forced) {
                 //CUDNN cannot always be used
                 case bias_add_impl::CUDNN:
-                    if (!cudnn_enabled || !all_floating<A, B, C> || !all_homogeneous<A, B, C>::value) {
+                    if (!cudnn_enabled || !all_floating<A, B, C> || !all_homogeneous<A, B, C>) {
                         std::cerr << "Forced selection to cUDNN bias_add implementation, but not possible for this expression" << std::endl;
                         return def;
                     }
@@ -220,7 +220,7 @@ private:
 
                 //VEC cannot always be used
                 case bias_add_impl::VEC:
-                    if (!vec_enabled || !vectorize_impl || !all_vectorizable<vector_mode, A, B, C> || !all_homogeneous<A, B, C>::value) {
+                    if (!vec_enabled || !vectorize_impl || !all_vectorizable<vector_mode, A, B, C> || !all_homogeneous<A, B, C>) {
                         std::cerr << "Forced selection to VEC bias_add implementation, but not possible for this expression" << std::endl;
                         return def;
                     }
