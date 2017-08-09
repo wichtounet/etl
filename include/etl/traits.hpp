@@ -973,7 +973,7 @@ size_t rows(const E& expr) {
  * \param expr The expression to get the number of rows from.
  * \return The number of rows of the given expression.
  */
-template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
+template <typename E, cpp_enable_iff(decay_traits<E>::is_fast)>
 constexpr size_t rows(const E& expr) noexcept {
     return (void)expr, etl_traits<E>::template dim<0>();
 }
@@ -994,7 +994,7 @@ size_t columns(const E& expr) {
  * \param expr The expression to get the number of columns from.
  * \return The number of columns of the given expression.
  */
-template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
+template <typename E, cpp_enable_iff(decay_traits<E>::is_fast)>
 constexpr size_t columns(const E& expr) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
     return (void)expr, etl_traits<E>::template dim<1>();
@@ -1015,7 +1015,7 @@ size_t size(const E& expr) {
  * \param expr The expression to get the size from.
  * \return The size of the given expression.
  */
-template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
+template <typename E, cpp_enable_iff(decay_traits<E>::is_fast)>
 constexpr size_t size(const E& expr) noexcept {
     return (void)expr, etl_traits<E>::size();
 }
@@ -1036,7 +1036,7 @@ size_t subsize(const E& expr) {
  * \param expr The expression to get the sub-size from.
  * \return The sub-size of the given expression.
  */
-template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
+template <typename E, cpp_enable_iff(decay_traits<E>::is_fast)>
 constexpr size_t subsize(const E& expr) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return (void)expr, etl_traits<E>::size() / etl_traits<E>::template dim<0>();
@@ -1070,7 +1070,7 @@ size_t dim(const E& e, size_t d) noexcept {
  * \tparam D The dimension to get
  * \return the Dth dimension of e
  */
-template <size_t D, typename E, cpp_enable_if(decay_traits<E>::is_fast)>
+template <size_t D, typename E, cpp_enable_iff(decay_traits<E>::is_fast)>
 constexpr size_t dim(const E& e) noexcept {
     return (void)e, etl_traits<E>::template dim<D>();
 }
@@ -1203,7 +1203,7 @@ void safe_ensure_cpu_up_to_date(E&& expr){
  *
  * \param expr The expression
  */
-template <typename E, cpp_enable_if(all_dma<E>)>
+template <typename E, cpp_enable_iff(all_dma<E>)>
 bool safe_is_gpu_up_to_date(E&& expr){
     return expr.is_gpu_up_to_date();
 }

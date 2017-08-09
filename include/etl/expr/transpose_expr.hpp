@@ -40,7 +40,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_enable_if(all_fast<A,C>)>
+    template <typename C, cpp_enable_iff(all_fast<A,C>)>
     static void check(const A& a, const C& c) {
         cpp_unused(a);
         cpp_unused(c);
@@ -120,7 +120,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template<typename C, cpp_enable_if(decay_traits<C>::storage_order == storage_order)>
+    template<typename C, cpp_enable_iff(decay_traits<C>::storage_order == storage_order)>
     void assign_to(C&& c)  const {
         static_assert(all_etl_expr<A, C>, "Transpose only supported for ETL expressions");
 
@@ -137,7 +137,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
      * \brief Assign to a matrix of a different storage order
      * \param c The expression to which assign
      */
-    template<typename C, cpp_enable_if(decay_traits<C>::storage_order != storage_order)>
+    template<typename C, cpp_enable_iff(decay_traits<C>::storage_order != storage_order)>
     void assign_to(C&& c)  const {
         std_assign_evaluate(*this, c);
     }

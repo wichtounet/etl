@@ -46,7 +46,7 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename R, cpp_enable_if(all_fast<A, B, C, R>)>
+    template <typename R, cpp_enable_iff(all_fast<A, B, C, R>)>
     static void check(const A& a, const B& b, const C& c, const R& result) {
         cpp_unused(a);
         cpp_unused(b);

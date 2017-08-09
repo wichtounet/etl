@@ -415,7 +415,7 @@ private:
     /*!
      * \brief Get the value at index (i,j) and position n
      */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
+    template <bool B = n_dimensions == 2, cpp_enable_iff(B)>
     value_type get_hint(size_t i, size_t j, size_t n) const noexcept {
         if (n < nnz && _row_index[n] == i && _col_index[n] == j) {
             return _memory[n];
@@ -472,7 +472,7 @@ private:
      * This must only be called when the matrix has no dimensions
      * \param e The expression to get the dimensions from.
      */
-    template <typename E, cpp_enable_if(etl::decay_traits<E>::is_generator)>
+    template <typename E, cpp_enable_iff(etl::decay_traits<E>::is_generator)>
     void inherit(const E& e){
         cpp_assert(false, "Impossible to inherit dimensions from generators");
         cpp_unused(e);
@@ -527,7 +527,7 @@ public:
      * \brief Construct a new sparse matrix of the given dimensions
      * and use the initializer list to fill the matrix
      */
-    template <typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
+    template <typename... S, cpp_enable_iff(dyn_detail::is_initializer_list_constructor<S...>::value)>
     explicit sparse_matrix_impl(S... sizes) noexcept : base_type(util::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...),
                                                                  dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
         static_assert(sizeof...(S) == D + 1, "Invalid number of dimensions");
@@ -540,7 +540,7 @@ public:
      * \brief Construct a new sparse matrix of the given dimensions
      * and use the list of values list to fill the matrix
      */
-    template <typename S1, typename... S, cpp_enable_if(
+    template <typename S1, typename... S, cpp_enable_iff(
                                               (sizeof...(S) == D)
                                               && cpp::is_specialization_of<values_t, typename cpp::last_type<S1, S...>::type>::value)>
     explicit sparse_matrix_impl(S1 s1, S... sizes) noexcept : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
@@ -578,7 +578,7 @@ public:
     /*!
      * \brief Assign an ETL expression to the sparse matrix
      */
-    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, sparse_matrix_impl<T, storage_format, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
+    template <typename E, cpp_enable_iff(!std::is_same<std::decay_t<E>, sparse_matrix_impl<T, storage_format, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
     sparse_matrix_impl& operator=(E&& e) noexcept {
         // It is possible that the matrix was not initialized before
         // In the case, get the the dimensions from the expression and
@@ -686,7 +686,7 @@ public:
      * \param n The index
      * \return the value at the given index.
      */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
+    template <bool B = n_dimensions == 2, cpp_enable_iff(B)>
     value_type read_flat(size_t n) const noexcept {
         return get(n / columns(), n % columns());
     }
@@ -757,7 +757,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template <typename E, cpp_enable_if(is_sparse_matrix<E>)>
+    template <typename E, cpp_enable_iff(is_sparse_matrix<E>)>
     bool alias(const E& rhs) const noexcept {
         return this == &rhs;
     }

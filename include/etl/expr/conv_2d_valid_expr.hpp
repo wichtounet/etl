@@ -65,7 +65,7 @@ struct conv_2d_valid_expr : base_temporary_expr_bin<conv_2d_valid_expr<A, B, S1,
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C, cpp_enable_if(all_fast<A, B, C>)>
+    template <typename I, typename K, typename C, cpp_enable_iff(all_fast<A, B, C>)>
     static void check(const I& input, const K& kernel, const C& conv){
         static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_valid");
         static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_valid");

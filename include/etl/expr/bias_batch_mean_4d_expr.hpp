@@ -40,7 +40,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_enable_if(all_fast<A, C>)>
+    template <typename C, cpp_enable_iff(all_fast<A, C>)>
     static void check(const A& a, const C& c) {
         cpp_unused(a);
         cpp_unused(c);

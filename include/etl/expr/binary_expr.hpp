@@ -138,7 +138,7 @@ public:
      * \param args The position indices
      * \return The value at the given position (args...)
      */
-    template <typename... S, cpp_enable_if(sizeof...(S) == safe_dimensions<this_type>::value)>
+    template <typename... S, cpp_enable_iff(sizeof...(S) == safe_dimensions<this_type>::value)>
     value_type operator()(S... args) const {
         static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
@@ -150,7 +150,7 @@ public:
      * \param i The index to use
      * \return a sub view of the expression at position i.
      */
-    template <bool B = (safe_dimensions<this_type>::value > 1), cpp_enable_if(B)>
+    template <bool B = (safe_dimensions<this_type>::value > 1), cpp_enable_iff(B)>
     auto operator()(size_t i) {
         return sub(*this, i);
     }
@@ -160,7 +160,7 @@ public:
      * \param i The index to use
      * \return a sub view of the expression at position i.
      */
-    template <bool B = (safe_dimensions<this_type>::value > 1), cpp_enable_if(B)>
+    template <bool B = (safe_dimensions<this_type>::value > 1), cpp_enable_iff(B)>
     auto operator()(size_t i) const {
         return sub(*this, i);
     }
@@ -330,7 +330,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
      * \param v The binary expr
      * \return a refernece to the main sub expression
      */
-    template <bool B = left_directed, cpp_enable_if(B)>
+    template <bool B = left_directed, cpp_enable_iff(B)>
     static constexpr auto& get(const expr_t& v) {
         return v.lhs;
     }

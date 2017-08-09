@@ -62,7 +62,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \param b The right side matrix
      * \param c The result matrix
      */
-    template <typename C, cpp_enable_if(all_fast<A, B, C>)>
+    template <typename C, cpp_enable_iff(all_fast<A, B, C>)>
     static void check(const A& a, const B& b, const C& c) {
         static_assert(
             dim<0, A>() == dim<0, B>()         //exterior dimension 1
@@ -161,7 +161,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \param b The B matrix
      * \param c The C matrix (output)
      */
-    template <typename AA, typename BB, typename C, cpp_enable_if((is_transpose_expr<BB>))>
+    template <typename AA, typename BB, typename C, cpp_enable_iff((is_transpose_expr<BB>))>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         // The vector is always assigned in the same way
         standard_evaluator::pre_assign_rhs(a);
@@ -195,7 +195,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \param b The B matrix
      * \param c The C matrix (output)
      */
-    template <typename AA, typename BB, typename C, cpp_enable_if((!is_transpose_expr<BB>))>
+    template <typename AA, typename BB, typename C, cpp_enable_iff((!is_transpose_expr<BB>))>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
@@ -372,7 +372,7 @@ struct etl_traits<etl::gevm_expr<A, B>> {
  * \param b The right hand side matrix
  * \return An expression representing the vector-matrix multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_if(is_1d<A> && is_2d<B>)>
+template <typename A, typename B, cpp_enable_iff(is_1d<A> && is_2d<B>)>
 gevm_expr<detail::build_type<A>, detail::build_type<B>> operator*(A&& a, B&& b) {
     return gevm_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
@@ -383,7 +383,7 @@ gevm_expr<detail::build_type<A>, detail::build_type<B>> operator*(A&& a, B&& b) 
  * \param b The right hand side matrix
  * \return An expression representing the vector-matrix multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_if(is_1d<A> && is_2d<B>)>
+template <typename A, typename B, cpp_enable_iff(is_1d<A> && is_2d<B>)>
 gevm_expr<detail::build_type<A>, detail::build_type<B>> mul(A&& a, B&& b) {
     return gevm_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
@@ -395,7 +395,7 @@ gevm_expr<detail::build_type<A>, detail::build_type<B>> mul(A&& a, B&& b) {
  * \param c The expression used to store the result
  * \return An expression representing the vector-matrix multiplication of a and b
  */
-template <typename A, typename B, typename C, cpp_enable_if(is_1d<A> && is_2d<B>)>
+template <typename A, typename B, typename C, cpp_enable_iff(is_1d<A> && is_2d<B>)>
 auto mul(A&& a, B&& b, C&& c){
     c = mul(a, b);
     return c;

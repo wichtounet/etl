@@ -42,7 +42,7 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_enable_if(all_fast<A, B, C>)>
+    template <typename C, cpp_enable_iff(all_fast<A, B, C>)>
     static void check(const A& a, const B& b, const C& c) {
         static_assert(etl::dimensions<A>() == 2, "The input of bias_add_2d is a 2D matrix");
         static_assert(etl::dimensions<B>() == 1, "The input of bias_add_2d is a vector of biases");

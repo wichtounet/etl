@@ -159,7 +159,7 @@ public:
      *
      * Every element of the matrix will be set to this value.
      */
-    template <typename... S, cpp_enable_if(
+    template <typename... S, cpp_enable_iff(
                                               (sizeof...(S) == D)
                                               && !cpp::is_specialization_of<values_t, typename cpp::last_type<size_t, S...>::type>::value
                                               )>
@@ -302,7 +302,7 @@ public:
      * \param e The expression containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
+    template <typename E, cpp_enable_iff(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
     dyn_matrix_impl& operator=(E&& e) noexcept {
         // It is possible that the matrix was not initialized before
         // In the case, get the the dimensions from the expression and
@@ -338,7 +338,7 @@ public:
      * \param vec The container containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename Container, cpp_enable_if(!is_etl_expr<Container> && std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_iff(!is_etl_expr<Container> && std::is_convertible<typename Container::value_type, value_type>::value)>
     dyn_matrix_impl& operator=(const Container& vec) {
         // Inherit from the dimensions if possible
         if(!_memory && D == 1){
@@ -507,7 +507,7 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_enable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_add_to(L&& lhs)  const {
         if(!detail::direct_add(lhs, *this)){
             std_add_evaluate(*this, lhs);
@@ -527,7 +527,7 @@ public:
      * \brief Subtract from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_enable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_sub_to(L&& lhs)  const {
         if(!detail::direct_sub(lhs, *this)){
             std_sub_evaluate(*this, lhs);
@@ -547,7 +547,7 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_enable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_mul_to(L&& lhs)  const {
         if(!detail::direct_mul(lhs, *this)){
             std_mul_evaluate(*this, lhs);
@@ -566,7 +566,7 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_enable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_div_to(L&& lhs)  const {
         if(!detail::direct_div(lhs, *this)){
             std_div_evaluate(*this, lhs);
@@ -607,7 +607,7 @@ private:
      * This must only be called when the matrix has no dimensions
      * \param e The expression to get the dimensions from.
      */
-    template <typename E, cpp_enable_if(etl::decay_traits<E>::is_generator)>
+    template <typename E, cpp_enable_iff(etl::decay_traits<E>::is_generator)>
     void inherit(const E& e){
         cpp_assert(false, "Impossible to inherit dimensions from generators");
         cpp_unused(e);
