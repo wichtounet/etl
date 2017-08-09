@@ -140,7 +140,7 @@ public:
      */
     template <typename... S, cpp_enable_iff(sizeof...(S) == safe_dimensions<this_type>::value)>
     value_type operator()(S... args) const {
-        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return BinaryOp::apply(lhs(args...), rhs(args...));
     }

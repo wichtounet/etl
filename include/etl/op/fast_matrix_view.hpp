@@ -100,7 +100,7 @@ public:
      */
     template <typename... S, cpp_enable_iff((sizeof...(S) == sizeof...(Dims)))>
     return_type operator()(S... args) noexcept {
-        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return sub[etl::fast_index<this_type>(static_cast<size_t>(args)...)];
     }
@@ -112,7 +112,7 @@ public:
      */
     template <typename... S, cpp_enable_iff((sizeof...(S) == sizeof...(Dims)))>
     const_return_type operator()(S... args) const noexcept {
-        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return sub[etl::fast_index<this_type>(static_cast<size_t>(args)...)];
     }
@@ -396,7 +396,7 @@ public:
      */
     template <typename... S, cpp_enable_iff((sizeof...(S) == sizeof...(Dims)))>
     return_type operator()(S... args) noexcept {
-        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
         cpp_assert(memory, "Memory has not been initialized");
         ensure_cpu_up_to_date();
         invalidate_gpu();
@@ -410,7 +410,7 @@ public:
      */
     template <typename... S, cpp_enable_iff((sizeof...(S) == sizeof...(Dims)))>
     const_return_type operator()(S... args) const noexcept {
-        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
         cpp_assert(memory, "Memory has not been initialized");
         ensure_cpu_up_to_date();
         return memory[etl::fast_index<this_type>(static_cast<size_t>(args)...)];

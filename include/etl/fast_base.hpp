@@ -281,7 +281,7 @@ public:
      */
     template <typename... S, cpp_enable_iff(sizeof...(S) == sizeof...(Dims))>
     value_type& operator()(S... args) noexcept(assert_nothrow) {
-        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return access(static_cast<size_t>(args)...);
     }
@@ -293,7 +293,7 @@ public:
      */
     template <typename... S, cpp_enable_iff(sizeof...(S) == sizeof...(Dims))>
     const value_type& operator()(S... args) const noexcept(assert_nothrow) {
-        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return access(static_cast<size_t>(args)...);
     }

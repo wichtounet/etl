@@ -84,7 +84,7 @@ struct scalar {
      */
     template <typename... S>
     constexpr T operator()(__attribute__((unused)) S... args) const noexcept {
-        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return value;
     }

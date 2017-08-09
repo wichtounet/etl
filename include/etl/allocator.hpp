@@ -31,11 +31,11 @@ struct mangling_faker {};
  *
  */
 template<typename T>
-using is_mangle_able = cpp::or_c<
-    std::is_same<std::decay_t<T>, float>,
-    std::is_same<std::decay_t<T>, double>,
-    cpp::is_specialization_of<std::complex, std::decay_t<T>>,
-    cpp::is_specialization_of<etl::complex, std::decay_t<T>>
+using is_mangle_able = cpp::or_u<
+    std::is_same<std::decay_t<T>, float>::value,
+    std::is_same<std::decay_t<T>, double>::value,
+    cpp::is_specialization_of_v<std::complex, std::decay_t<T>>,
+    cpp::is_specialization_of_v<etl::complex, std::decay_t<T>>
     >;
 
 /*!

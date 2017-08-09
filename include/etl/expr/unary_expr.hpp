@@ -176,7 +176,7 @@ public:
      */
     template <typename... S>
     value_type operator()(S... args) const {
-        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return UnaryOp::apply(value(args...));
     }
@@ -505,7 +505,7 @@ public:
      */
     template <typename... S, cpp_enable_iff((sizeof...(S) == safe_dimensions<this_type>::value))>
     ETL_STRONG_INLINE(return_type) operator()(S... args) noexcept(noexcept(value(args...))) {
-        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return value(args...);
     }
@@ -517,7 +517,7 @@ public:
      */
     template <typename... S, cpp_enable_iff((sizeof...(S) == safe_dimensions<this_type>::value))>
     ETL_STRONG_INLINE(const_return_type) operator()(S... args) const noexcept(noexcept(value(args...))) {
-        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return value(args...);
     }
@@ -894,7 +894,7 @@ public:
      */
     template <typename... S>
     std::enable_if_t<sizeof...(S) == safe_dimensions<this_type>::value, value_type> operator()(S... args) const {
-        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return value(args...);
     }
@@ -1106,7 +1106,7 @@ public:
      */
     template <typename... S>
     std::enable_if_t<sizeof...(S) == safe_dimensions<this_type>::value, value_type> operator()(S... args) const {
-        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return op.apply(value(args...));
     }

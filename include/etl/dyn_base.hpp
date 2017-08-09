@@ -416,7 +416,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
     template <typename... S, cpp_enable_iff(
                                  (n_dimensions > 1) &&
                                  (sizeof...(S) == n_dimensions) &&
-                                 cpp::all_convertible_to<size_t, S...>::value)>
+                                 cpp::all_convertible_to_v<size_t, S...>)>
     const value_type& operator()(S... sizes) const noexcept(assert_nothrow) {
         ensure_cpu_up_to_date();
         return _memory[etl::dyn_index(as_derived(), sizes...)];
@@ -430,7 +430,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
     template <typename... S, cpp_enable_iff(
                                  (n_dimensions > 1) &&
                                  (sizeof...(S) == n_dimensions) &&
-                                 cpp::all_convertible_to<size_t, S...>::value)>
+                                 cpp::all_convertible_to_v<size_t, S...>)>
     value_type& operator()(S... sizes) noexcept(assert_nothrow) {
         ensure_cpu_up_to_date();
         invalidate_gpu();

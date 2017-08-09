@@ -117,7 +117,7 @@ public:
      */
     template <typename... S, cpp_enable_iff(
                                  (sizeof...(S) == D)
-                                 && cpp::all_convertible_to<size_t, S...>::value
+                                 && cpp::all_convertible_to_v<size_t, S...>
                                  )>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}}) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
@@ -144,7 +144,7 @@ public:
      */
     template <typename... S, cpp_enable_iff(
                                  (sizeof...(S) == D)
-                                 && cpp::is_specialization_of<values_t, typename cpp::last_type<size_t, S...>::type>::value)>
+                                 && cpp::is_specialization_of_v<values_t, typename cpp::last_type<size_t, S...>::type>)>
     explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                               dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
@@ -161,7 +161,7 @@ public:
      */
     template <typename... S, cpp_enable_iff(
                                               (sizeof...(S) == D)
-                                              && !cpp::is_specialization_of<values_t, typename cpp::last_type<size_t, S...>::type>::value
+                                              && !cpp::is_specialization_of_v<values_t, typename cpp::last_type<size_t, S...>::type>
                                               )>
     explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept : base_type(
                                                                util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),

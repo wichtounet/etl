@@ -207,7 +207,7 @@ public:
      */
     template <typename... S, cpp_enable_iff(sizeof...(S) == safe_dimensions<derived_t>::value)>
     value_type operator()(S... args) const {
-        static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return result()(args...);
     }
