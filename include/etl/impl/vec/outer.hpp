@@ -25,7 +25,7 @@ namespace vec {
  * \param result The c expression
  */
 template <typename V, typename L, typename R, typename C>
-void batch_outer(const L& lhs, const R& rhs, C&& result) {
+void batch_outer_impl(const L& lhs, const R& rhs, C&& result) {
     using vec_type = V;
     using T        = value_t<L>;
 
@@ -274,7 +274,7 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
  */
 template <typename A, typename B, typename C>
 void batch_outer(const A& lhs, const B& rhs, C&& c) {
-    batch_outer<default_vec>(lhs, rhs, c);
+    batch_outer_impl<default_vec>(lhs, rhs, c);
 }
 
 } //end of namespace standard
