@@ -149,8 +149,8 @@ CONV4_VALID_FLIPPED_TEST_CASE("conv_4d/valid_5", "[conv][conv4][valid]") {
 }
 
 CONV4_VALID_FLIPPED_TEST_CASE("conv_4d/valid_6", "[conv][conv4][valid]") {
-    etl::fast_matrix<T, 5, 4, 37, 37> I;
-    etl::fast_matrix<T, 2, 4, 23, 23> K;
+    etl::fast_matrix<T, 5, 4, 33, 33> I;
+    etl::fast_matrix<T, 2, 4, 19, 19> K;
 
     I = etl::sequence_generator(-10.0) * 0.04;
     K = etl::sequence_generator(-2.0) * 1.56;
