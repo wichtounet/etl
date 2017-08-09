@@ -798,7 +798,7 @@ private:
      * \brief Assign the given value to each eleemnt of the unary expression
      * \param e The value
      */
-    template<cpp_enable_if_cst(all_dma<Expr>)>
+    template<bool B = all_dma<Expr>, cpp_enable_iff(B)>
     void memory_set(const value_type& e){
         direct_fill(memory_start(), memory_end(), e);
     }
@@ -807,7 +807,7 @@ private:
      * \brief Assign the given value to each eleemnt of the unary expression
      * \param e The value
      */
-    template<cpp_enable_if_cst(!all_dma<Expr>)>
+    template<bool B = all_dma<Expr>, cpp_disable_iff(B)>
     void memory_set(const value_type& e){
         for (size_t i = 0; i < size(*this); ++i) {
             (*this)[i] = e;

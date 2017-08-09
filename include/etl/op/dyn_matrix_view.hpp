@@ -393,7 +393,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given position.
      */
-    template<cpp_enable_if_cst((D == 1))>
+    template<bool B = (D == 1), cpp_enable_iff(B)>
     const_return_type operator()(size_t j) const {
         ensure_cpu_up_to_date();
         return memory[j];
@@ -404,7 +404,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given position.
      */
-    template<cpp_enable_if_cst((D == 1))>
+    template<bool B = (D == 1), cpp_enable_iff(B)>
     return_type operator()(size_t j) {
         ensure_cpu_up_to_date();
         invalidate_gpu();

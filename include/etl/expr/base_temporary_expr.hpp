@@ -157,7 +157,7 @@ protected:
     /*!
      * \brief Allocate the temporary
      */
-    template <cpp_enable_if_cst(all_fast<derived_t>)>
+    template <bool B = all_fast<derived_t>, cpp_enable_iff(B)>
     result_type* allocate() const {
         return new result_type;
     }

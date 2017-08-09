@@ -172,7 +172,7 @@ public:
      * \param value The value to assign to each element
      * \return a reference to the fast matrix
      */
-    template <typename VT, cpp_enable_if_or(std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value)>
+    template <typename VT, cpp_enable_iff(std::is_convertible<VT, value_type>::value || std::is_assignable<T&, VT>::value)>
     custom_fast_matrix_impl& operator=(const VT& value) noexcept {
         std::fill(_data.begin(), _data.end(), value);
 

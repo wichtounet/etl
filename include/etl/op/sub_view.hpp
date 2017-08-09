@@ -468,7 +468,7 @@ public:
      * \param x The index to use
      * \return a sub view of the matrix at position x.
      */
-    template <cpp_enable_if_cst((n_dimensions > 1))>
+    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
     auto operator()(size_t x) const {
         return sub(*this, x);
     }

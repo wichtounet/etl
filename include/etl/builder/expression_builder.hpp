@@ -609,7 +609,7 @@ value_t<A> dot(const A& a, const B& b) {
  * \param b The right expression
  * \return The dot product of the two expressions
  */
-template <typename A, typename B, cpp_enable_if_cst(all_fast<A, B>)>
+template <typename A, typename B, cpp_enable_iff(all_fast<A, B>)>
 etl::fast_vector<value_t<A>, 3> cross(const A& a, const B& b) {
     static_assert(etl::decay_traits<A>::dimensions() == 1, "Cross product is only valid for 1D vectors");
     static_assert(etl::decay_traits<B>::dimensions() == 1, "Cross product is only valid for 1D vectors");
@@ -625,7 +625,7 @@ etl::fast_vector<value_t<A>, 3> cross(const A& a, const B& b) {
  * \param b The right expression
  * \return The dot product of the two expressions
  */
-template <typename A, typename B, cpp_disable_if_cst(all_fast<A, B>)>
+template <typename A, typename B, cpp_disable_iff(all_fast<A, B>)>
 etl::dyn_vector<value_t<A>> cross(const A& a, const B& b) {
     static_assert(etl::decay_traits<A>::dimensions() == 1, "Cross product is only valid for 1D vectors");
     static_assert(etl::decay_traits<B>::dimensions() == 1, "Cross product is only valid for 1D vectors");
