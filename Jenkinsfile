@@ -46,7 +46,7 @@ pipeline {
             }
 
             steps {
-                sh './scripts/test_runner.sh'
+                sh './scripts/test_runner_ci.sh'
                 archive 'catch_report.xml'
                 junit 'catch_report.xml'
             }

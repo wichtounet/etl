@@ -4,17 +4,7 @@ set -e
 function etl_run {
     make clean
     make $ETL_THREADS debug/bin/etl_test
-    ./debug/bin/etl_test --reporter=junit --out catch_report_${1}.xml
-
-if [ "$ETL_LCOV" == "" ]
-then
-    gcovr -x -b -r . --object-directory=debug/test > coverage_${1}_raw.xml
-    cov_clean coverage_${1}_raw.xml coverage_${1}.xml
-else
-    lcov --directory debug --rc lcov_branch_coverage=1 --capture --output-file coverage_${1}.dat
-    lcov_cobertura.py -b debug -o coverage_${1}.xml coverage_${1}.dat
-    sed -i 's/filename="..\//filename="/' coverage_${1}.xml
-fi
+    ./debug/bin/etl_test
 }
 
 # Disable default options
@@ -34,9 +24,6 @@ export LD=$ETL_GPP
 
 echo "Tests are compiled using $CXX compiler:"
 $CXX --version
-
-# Enable coverage
-export ETL_COVERAGE=true
 
 echo "Test 1. GCC (debug default)"
 
@@ -88,28 +75,4 @@ then
     export ETL_CUDNN=true
 
     etl_run 7
-
-    echo "Merge the coverage reports"
-
-    if [ "$ETL_LCOV_MERGE" == "" ]
-    then
-        merge-xml-coverage.py -o coverage_report.xml coverage_1.xml coverage_2.xml coverage_3.xml coverage_4.xml coverage_5.xml coverage_6.xml coverage_7.xml
-    else
-        lcov --rc lcov_branch_coverage=1 -a coverage_1.dat -a coverage_2.dat -a coverage_3.dat -a coverage_4.dat -a coverage_5.dat -a coverage_6.dat -a coverage_7.dat -o coverage_full.dat
-        lcov_cobertura.py -b debug -o coverage_report.xml coverage_full.dat
-        sed -i 's/filename="..\//filename="/' coverage_report.xml
-    fi
-else
-    echo "Merge the coverage reports"
-
-    if [ "$ETL_LCOV_MERGE" == "" ]
-    then
-        merge-xml-coverage.py -o coverage_report.xml coverage_1.xml coverage_2.xml coverage_3.xml coverage_4.xml coverage_5.xml coverage_6.xml
-    else
-        lcov --rc lcov_branch_coverage=1 -a coverage_1.dat -a coverage_2.dat -a coverage_3.dat -a coverage_4.dat -a coverage_5.dat -a coverage_6.dat -o coverage_full.dat
-        lcov_cobertura.py -b debug -o coverage_report.xml coverage_full.dat
-        sed -i 's/filename="..\//filename="/' coverage_report.xml
-    fi
 fi
-
-cp catch_report_1.xml catch_report.xml
