@@ -32,6 +32,9 @@ unset ETL_EGBLAS
 export CXX=$ETL_GPP
 export LD=$ETL_GPP
 
+echo "Tests are compiled using $CXX compiler:"
+$CXX --version
+
 # Enable coverage
 export ETL_COVERAGE=true
 
