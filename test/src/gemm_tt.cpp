@@ -157,10 +157,10 @@ GEMM_TT_TEST_CASE("gemm_tt/7", "[gemm]") {
 }
 
 GEMM_TT_TEST_CASE("gemm_tt/8", "[gemm]") {
-    etl::dyn_matrix<T> a(256, 128);
-    etl::dyn_matrix<T> b(128, 256);
-    etl::dyn_matrix<T> c(128, 128);
-    etl::dyn_matrix<T> r(128, 128);
+    etl::dyn_matrix<T> a(128, 96);
+    etl::dyn_matrix<T> b(96, 128);
+    etl::dyn_matrix<T> c(96, 96);
+    etl::dyn_matrix<T> r(96, 96);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
@@ -184,10 +184,10 @@ GEMM_TT_TEST_CASE("gemm_tt/8", "[gemm]") {
 }
 
 GEMM_TT_TEST_CASE("gemm_tt/9", "[gemm]") {
-    etl::dyn_matrix<T> a(128, 194);
-    etl::dyn_matrix<T> b(156, 128);
-    etl::dyn_matrix<T> c(194, 156);
-    etl::dyn_matrix<T> r(194, 156);
+    etl::dyn_matrix<T> a(96, 156);
+    etl::dyn_matrix<T> b(128, 96);
+    etl::dyn_matrix<T> c(156, 128);
+    etl::dyn_matrix<T> r(156, 128);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
