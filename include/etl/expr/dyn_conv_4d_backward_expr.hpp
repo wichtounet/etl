@@ -87,7 +87,7 @@ struct dyn_conv_4d_backward_expr : base_temporary_expr_bin<dyn_conv_4d_backward_
      */
     template<typename C>
     void assign_to(C&& conv)  const {
-        static_assert(all_etl_expr<A, B, C>::value, "conv4_backward only supported for ETL expressions");
+        static_assert(all_etl_expr<A, B, C>, "conv4_backward only supported for ETL expressions");
 
         auto& input = this->a();
         auto& kernel = this->b();
@@ -309,7 +309,7 @@ struct etl_traits<etl::dyn_conv_4d_backward_expr<A, B, Flipped>> {
 template <typename A, typename B>
 dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, false>
 conv_4d_backward(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b, s1, s2, p1, p2};
 }
@@ -329,7 +329,7 @@ conv_4d_backward(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2) {
  */
 template <typename A, typename B, typename C>
 auto conv_4d_backward(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2){
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_4d_backward(a, b, s1, s2, p1, p2);
 
@@ -350,7 +350,7 @@ auto conv_4d_backward(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size
 template <typename A, typename B>
 dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true>
 conv_4d_backward_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
 }
@@ -370,7 +370,7 @@ conv_4d_backward_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p
  */
 template <typename A, typename B, typename C>
 auto conv_4d_backward_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2){
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_4d_backward_flipped(a, b, s1, s2, p1, p2);
 

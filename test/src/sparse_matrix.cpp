@@ -11,14 +11,14 @@
 TEMPLATE_TEST_CASE_2("sparse_matrix/traits/1", "[mat][init][sparse]", Z, double, float) {
     etl::sparse_matrix<Z> a;
 
-    REQUIRE_DIRECT(etl::is_etl_expr<decltype(a)>::value);
+    REQUIRE_DIRECT(etl::is_etl_expr<decltype(a)>);
     REQUIRE_DIRECT(etl::is_sparse_matrix<decltype(a)>::value);
 }
 
 TEMPLATE_TEST_CASE_2("sparse_matrix/traits/2", "[mat][init][sparse]", Z, double, float) {
     etl::sparse_matrix<Z> a(3, 4);
 
-    REQUIRE_DIRECT(etl::is_etl_expr<decltype(a)>::value);
+    REQUIRE_DIRECT(etl::is_etl_expr<decltype(a)>);
     REQUIRE_DIRECT(etl::is_sparse_matrix<decltype(a)>::value);
     REQUIRE_EQUALS(etl::rows(a), 3UL);
     REQUIRE_EQUALS(etl::columns(a), 4UL);

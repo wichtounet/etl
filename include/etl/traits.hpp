@@ -354,28 +354,28 @@ using is_dyn_matrix_view = traits_detail::is_dyn_matrix_view<T>;
  * \tparam T The type to test
  */
 template <typename T>
-using is_transformer = cpp::bool_constant<decay_traits<T>::is_transformer>;
+constexpr bool is_transformer = decay_traits<T>::is_transformer;
 
 /*!
  * \brief Traits indicating if the given ETL type is a view expression.
  * \tparam T The type to test
  */
 template <typename T>
-using is_view = cpp::bool_constant<decay_traits<T>::is_view>;
+constexpr bool is_view = decay_traits<T>::is_view;
 
 /*!
  * \brief Traits indicating if the given ETL type is a magic view expression.
  * \tparam T The type to test
  */
 template <typename T>
-using is_magic_view = cpp::bool_constant<decay_traits<T>::is_magic_view>;
+constexpr bool is_magic_view = decay_traits<T>::is_magic_view;
 
 /*!
  * \brief Traits indicating if the given type is an ETL type.
  * \tparam T The type to test
  */
 template <typename T>
-using is_etl_expr = cpp::bool_constant<decay_traits<T>::is_etl>;
+constexpr bool is_etl_expr = decay_traits<T>::is_etl;
 
 /*!
  * \brief Traits indicating if the given type is a transpose expr.
@@ -600,7 +600,7 @@ using all_fast = cpp::and_u<decay_traits<E>::is_fast...>;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_etl_expr = cpp::and_c<is_etl_expr<E>...>;
+constexpr bool all_etl_expr = and_v<(is_etl_expr<E>)...>;
 
 /*!
  * \brief Traits to test if the given expression type is 1D

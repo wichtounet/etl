@@ -36,7 +36,7 @@ struct sub_matrix_4d <T, Aligned, std::enable_if_t<true>> final :
     value_testable<sub_matrix_4d<T, Aligned>>,
     inplace_assignable<sub_matrix_4d<T, Aligned>>
 {
-    static_assert(is_etl_expr<T>::value, "sub_matrix_4d<T> only works with ETL expressions");
+    static_assert(is_etl_expr<T>, "sub_matrix_4d<T> only works with ETL expressions");
 
     using this_type            = sub_matrix_4d<T, Aligned>;                                            ///< The type of this expression
     using iterable_base_type   = iterable<this_type, false>;                                           ///< The iterable base type

@@ -78,7 +78,7 @@ struct conv_2d_valid_deep_expr : base_temporary_expr_bin<conv_2d_valid_deep_expr
      */
     template<typename C>
     void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, B, C>::value, "conv2_valid_deep only supported for ETL expressions");
+        static_assert(all_etl_expr<A, B, C>, "conv2_valid_deep only supported for ETL expressions");
 
         auto& a = this->a();
         auto& b = this->b();
@@ -269,7 +269,7 @@ struct etl_traits<etl::conv_2d_valid_deep_expr<A, B, S1, S2, P1, P2, Flipped>> {
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 conv_2d_valid_deep_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, false> conv_2d_valid_deep(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return conv_2d_valid_deep_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, false>{a, b};
 }
@@ -288,7 +288,7 @@ conv_2d_valid_deep_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_2d_valid_deep(A&& a, B&& b, C&& c){
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_deep<S1, S2, P1, P2>(a, b);
 
@@ -308,7 +308,7 @@ auto conv_2d_valid_deep(A&& a, B&& b, C&& c){
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 conv_2d_valid_deep_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true> conv_2d_valid_deep_flipped(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return conv_2d_valid_deep_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{a, b};
 }
@@ -327,7 +327,7 @@ conv_2d_valid_deep_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_2d_valid_deep_flipped(A&& a, B&& b, C&& c){
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_deep_flipped<S1, S2, P1, P2>(a, b);
 

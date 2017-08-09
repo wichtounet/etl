@@ -78,7 +78,7 @@ struct unary_function_expr : base_temporary_expr_un<unary_function_expr<A, Impl>
      */
     template<typename C, cpp_enable_if(decay_traits<C>::storage_order == storage_order)>
     void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, C>::value, "Function expression only supported for ETL expressions");
+        static_assert(all_etl_expr<A, C>, "Function expression only supported for ETL expressions");
 
         auto& a = this->a();
 

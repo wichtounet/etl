@@ -43,7 +43,7 @@ struct inv_expr : base_temporary_expr_un<inv_expr<A>, A> {
      */
     template<typename C>
     void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, C>::value, "max_pool_2d only supported for ETL expressions");
+        static_assert(all_etl_expr<A, C>, "max_pool_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
         auto& a = this->a();
@@ -199,7 +199,7 @@ struct etl_traits<etl::inv_expr<A>> {
  */
 template <typename A>
 inv_expr<A> inv(A&& a) {
-    static_assert(is_etl_expr<A>::value, "Inverse only supported for ETL expressions");
+    static_assert(is_etl_expr<A>, "Inverse only supported for ETL expressions");
 
     return inv_expr<A>{a};
 }

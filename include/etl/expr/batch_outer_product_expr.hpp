@@ -119,7 +119,7 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
      */
     template<typename C>
     void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, B, C>::value, "batch_outer_product only supported for ETL expressions");
+        static_assert(all_etl_expr<A, B, C>, "batch_outer_product only supported for ETL expressions");
 
         auto& a = this->a();
         auto& b = this->b();

@@ -444,7 +444,7 @@ bool is_hermitian(E&& expr){
  *
  * \return true if the expressions contains the same sequence of values, false othwerise.
  */
-template <typename L, typename R, cpp_enable_if(all_etl_expr<L, R>::value)>
+template <typename L, typename R, cpp_enable_if(all_etl_expr<L, R>)>
 bool operator==(L&& lhs, R&& rhs){
     // Both expressions must have the same number of dimensions
     if (etl::dimensions(lhs) != etl::dimensions(rhs)) {
@@ -479,7 +479,7 @@ bool operator==(L&& lhs, R&& rhs){
  *
  * \return false if the expressions contains the same sequence of values, true othwerise.
  */
-template <typename L, typename R, cpp_enable_if(all_etl_expr<L, R>::value)>
+template <typename L, typename R, cpp_enable_if(all_etl_expr<L, R>)>
 bool operator!=(L&& lhs, R&& rhs){
     return !(lhs == rhs);
 }

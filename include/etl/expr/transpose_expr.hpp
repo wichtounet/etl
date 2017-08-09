@@ -122,7 +122,7 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
      */
     template<typename C, cpp_enable_if(decay_traits<C>::storage_order == storage_order)>
     void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, C>::value, "Transpose only supported for ETL expressions");
+        static_assert(all_etl_expr<A, C>, "Transpose only supported for ETL expressions");
 
         auto& a = this->a();
 

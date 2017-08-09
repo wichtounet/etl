@@ -69,7 +69,7 @@ struct dyn_conv_4d_valid_filter_expr : base_temporary_expr_bin<dyn_conv_4d_valid
      */
     template<typename C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, B, C>::value, "conv4_valid_filter only supported for ETL expressions");
+        static_assert(all_etl_expr<A, B, C>, "conv4_valid_filter only supported for ETL expressions");
 
         auto& a = this->a();
         auto& b = this->b();
@@ -226,7 +226,7 @@ struct etl_traits<etl::dyn_conv_4d_valid_filter_expr<A, B, Flipped>> {
  */
 template <typename A, typename B>
 dyn_conv_4d_valid_filter_expr<detail::build_type<A>, detail::build_type<B>, false> conv_4d_valid_filter(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return dyn_conv_4d_valid_filter_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b, s1, s2, p1, p2};
 }
@@ -244,7 +244,7 @@ dyn_conv_4d_valid_filter_expr<detail::build_type<A>, detail::build_type<B>, fals
  */
 template <typename A, typename B, typename C>
 auto conv_4d_valid_filter(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2){
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_filter(a, b, s1, s2, p1, p2);
 
@@ -263,7 +263,7 @@ auto conv_4d_valid_filter(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, 
  */
 template <typename A, typename B>
 dyn_conv_4d_valid_filter_expr<detail::build_type<A>, detail::build_type<B>, true> conv_4d_valid_filter_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return dyn_conv_4d_valid_filter_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
 }
@@ -281,7 +281,7 @@ dyn_conv_4d_valid_filter_expr<detail::build_type<A>, detail::build_type<B>, true
  */
 template <typename A, typename B, typename C>
 auto conv_4d_valid_filter_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2){
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_4d_valid_filter_flipped(a, b, s1, s2, p1, p2);
 

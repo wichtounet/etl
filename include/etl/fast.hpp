@@ -139,7 +139,7 @@ public:
      * \brief Construct a fast matrix from the given STL container
      * \param container The container to get values from
      */
-    template <typename Container, cpp_enable_if(!is_complex_t<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value, !is_etl_expr<Container>::value)>
+    template <typename Container, cpp_enable_if(!is_complex_t<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value, !is_etl_expr<Container>)>
     explicit fast_matrix_impl(const Container& container): base_type()  {
         init();
         validate_assign(*this, container);
@@ -190,7 +190,7 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_if(is_etl_expr<E>::value, std::is_convertible<value_t<E>, value_type>::value)>
+    template <typename E, cpp_enable_if(is_etl_expr<E>, std::is_convertible<value_t<E>, value_type>::value)>
     fast_matrix_impl& operator=(E&& e) {
         validate_assign(*this, e);
 

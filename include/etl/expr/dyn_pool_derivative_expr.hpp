@@ -47,7 +47,7 @@ struct dyn_pool_derivative_expr : base_temporary_expr_bin<dyn_pool_derivative_ex
      */
     template<typename C>
     void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, B, C>::value, "pool_derivative only supported for ETL expressions");
+        static_assert(all_etl_expr<A, B, C>, "pool_derivative only supported for ETL expressions");
 
         auto& a = this->a();
         auto& b = this->b();

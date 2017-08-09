@@ -78,7 +78,7 @@ struct conv_1d_same_expr : base_temporary_expr_bin<conv_1d_same_expr<A, B>, A, B
      */
     template<typename C>
     void assign_to(C&& conv)  const {
-        static_assert(all_etl_expr<A, B, C>::value, "conv1_same only supported for ETL expressions");
+        static_assert(all_etl_expr<A, B, C>, "conv1_same only supported for ETL expressions");
 
         auto& input_raw = this->a();
         auto& kernel_raw = this->b();
@@ -275,7 +275,7 @@ struct etl_traits<etl::conv_1d_same_expr<A, B>> {
  */
 template <typename A, typename B>
 conv_1d_same_expr<detail::build_type<A>, detail::build_type<B>> conv_1d_same(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return conv_1d_same_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
@@ -294,7 +294,7 @@ conv_1d_same_expr<detail::build_type<A>, detail::build_type<B>> conv_1d_same(A&&
  */
 template <typename A, typename B, typename C>
 auto conv_1d_same(A&& a, B&& b, C&& c){
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_1d_same(a, b);
 

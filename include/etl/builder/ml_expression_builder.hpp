@@ -44,7 +44,7 @@ namespace ml {
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>
 convolution_forward(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{a, b};
 }
@@ -72,7 +72,7 @@ convolution_forward(A&& a, B&& b) {
 template <typename A, typename B>
 dyn_conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, true>
 convolution_forward(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return dyn_conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
 }
@@ -100,7 +100,7 @@ convolution_forward(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>
 convolution_backward(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{a, b};
 }
@@ -128,7 +128,7 @@ convolution_backward(A&& a, B&& b) {
 template <typename A, typename B>
 dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true>
 convolution_backward(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
 }
@@ -156,7 +156,7 @@ convolution_backward(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>
 convolution_backward_filter(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{a, b};
 }
@@ -184,7 +184,7 @@ convolution_backward_filter(A&& a, B&& b) {
 template <typename A, typename B>
 dyn_conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, true>
 convolution_backward_filter(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return dyn_conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
 }
@@ -316,7 +316,7 @@ auto identity_derivative_out(E&& value) {
  */
 template <typename E>
 auto sigmoid_derivative_out(E&& value) -> decltype(value >> (1.0 - value)) {
-    static_assert(is_etl_expr<E>::value, "etl::sigmoid_derivative can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sigmoid_derivative can only be used on ETL expressions");
     return value >> (1.0 - value);
 }
 
@@ -340,7 +340,7 @@ auto softmax_derivative_out(E&& e) {
  */
 template <typename E>
 auto tanh_derivative_out(E&& value) -> decltype(1.0 - (value >> value)) {
-    static_assert(is_etl_expr<E>::value, "etl::tanh_derivative can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::tanh_derivative can only be used on ETL expressions");
     return 1.0 - (value >> value);
 }
 
@@ -352,7 +352,7 @@ auto tanh_derivative_out(E&& value) -> decltype(1.0 - (value >> value)) {
  */
 template <typename E>
 auto relu_derivative_out(const E& value) -> detail::unary_helper<E, relu_derivative_op> {
-    static_assert(is_etl_expr<E>::value, "etl::relu_derivative can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::relu_derivative can only be used on ETL expressions");
     return detail::unary_helper<E, relu_derivative_op>{value};
 }
 
@@ -380,7 +380,7 @@ decltype(auto) identity_backward(O&& output, E&& errors) {
  */
 template <typename O, typename E, cpp_enable_if(all_dma<O, E>::value)>
 auto sigmoid_backward(O&& output, E&& errors) -> binary_function_expr<detail::build_type<E>, detail::build_type<E>, detail::sigmoid_backward>{
-    static_assert(is_etl_expr<E>::value, "etl::sigmoid_backward can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sigmoid_backward can only be used on ETL expressions");
     return binary_function_expr<detail::build_type<E>, detail::build_type<E>, detail::sigmoid_backward>(output, errors);
 }
 
@@ -392,7 +392,7 @@ auto sigmoid_backward(O&& output, E&& errors) -> binary_function_expr<detail::bu
  */
 template <typename O, typename E, cpp_disable_if(all_dma<O, E>::value)>
 auto sigmoid_backward(O&& output, E&& errors){
-    static_assert(is_etl_expr<E>::value, "etl::sigmoid_derivative can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sigmoid_derivative can only be used on ETL expressions");
     return output >> (1.0 - output) >> errors;
 }
 
@@ -404,7 +404,7 @@ auto sigmoid_backward(O&& output, E&& errors){
  */
 template <typename O, typename E, cpp_enable_if(all_dma<O, E>::value)>
 auto relu_backward(O&& output, E&& errors) -> binary_function_expr<detail::build_type<E>, detail::build_type<E>, detail::relu_backward>{
-    static_assert(is_etl_expr<E>::value, "etl::relu_backward can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::relu_backward can only be used on ETL expressions");
     return binary_function_expr<detail::build_type<E>, detail::build_type<E>, detail::relu_backward>(output, errors);
 }
 
@@ -416,7 +416,7 @@ auto relu_backward(O&& output, E&& errors) -> binary_function_expr<detail::build
  */
 template <typename O, typename E, cpp_disable_if(all_dma<O, E>::value)>
 auto relu_backward(O&& output, E&& errors) {
-    static_assert(is_etl_expr<E>::value, "etl::relu_derivative can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::relu_derivative can only be used on ETL expressions");
     return detail::unary_helper<E, relu_derivative_op>{output} >> errors;
 }
 
@@ -430,7 +430,7 @@ auto relu_backward(O&& output, E&& errors) {
  */
 template <typename O, typename E>
 auto sigmoid_backward(O&& output, E&& errors){
-    static_assert(is_etl_expr<E>::value, "etl::sigmoid_derivative can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sigmoid_derivative can only be used on ETL expressions");
     return output >> (1.0 - output) >> errors;
 }
 
@@ -442,7 +442,7 @@ auto sigmoid_backward(O&& output, E&& errors){
  */
 template <typename O, typename E>
 auto relu_backward(O&& output, E&& errors) {
-    static_assert(is_etl_expr<E>::value, "etl::relu_derivative can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::relu_derivative can only be used on ETL expressions");
     return detail::unary_helper<E, relu_derivative_op>{output} >> errors;
 }
 
@@ -468,7 +468,7 @@ decltype(auto) softmax_backward(O&& output, E&& errors) {
  */
 template <typename O, typename E>
 auto tanh_backward(O&& output, E&& errors){
-    static_assert(is_etl_expr<E>::value, "etl::tanh_derivative can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::tanh_derivative can only be used on ETL expressions");
     return 1.0 - (output >> output) >> errors;
 }
 

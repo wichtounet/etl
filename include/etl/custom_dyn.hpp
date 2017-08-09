@@ -147,7 +147,7 @@ public:
      * \param e The expression containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, custom_dyn_matrix_impl<T, SO, D>>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
+    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, custom_dyn_matrix_impl<T, SO, D>>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>)>
     custom_dyn_matrix_impl& operator=(E&& e) noexcept {
         validate_assign(*this, e);
 
@@ -176,7 +176,7 @@ public:
      * \param vec The container containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_if(!is_etl_expr<Container>, std::is_convertible<typename Container::value_type, value_type>::value)>
     custom_dyn_matrix_impl& operator=(const Container& vec) {
         validate_assign(*this, vec);
 

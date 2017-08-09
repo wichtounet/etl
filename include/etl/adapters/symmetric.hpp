@@ -138,7 +138,7 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
+    template <typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>)>
     symmetric_matrix& operator=(E&& e) noexcept(false) {
         // Make sure the other matrix is symmetric
         if(!is_symmetric(e)){
@@ -182,7 +182,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
+    template<typename R, cpp_enable_if(is_etl_expr<R>)>
     symmetric_matrix& operator+=(R&& rhs){
         // Make sure the other matrix is symmetric
         if(!is_symmetric(rhs)){
@@ -209,7 +209,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
+    template<typename R, cpp_enable_if(is_etl_expr<R>)>
     symmetric_matrix& operator-=(R&& rhs){
         // Make sure the other matrix is symmetric
         if(!is_symmetric(rhs)){
@@ -236,7 +236,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
+    template<typename R, cpp_enable_if(is_etl_expr<R>)>
     symmetric_matrix& operator*=(R&& rhs) {
         // Make sure the other matrix is symmetric
         if(!is_symmetric(rhs)){
@@ -263,7 +263,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
+    template<typename R, cpp_enable_if(is_etl_expr<R>)>
     symmetric_matrix& operator>>=(R&& rhs) {
         // Make sure the other matrix is symmetric
         if(!is_symmetric(rhs)){
@@ -290,7 +290,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
+    template<typename R, cpp_enable_if(is_etl_expr<R>)>
     symmetric_matrix& operator/=(R&& rhs) {
         // Make sure the other matrix is symmetric
         if(!is_symmetric(rhs)){
@@ -317,7 +317,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
+    template<typename R, cpp_enable_if(is_etl_expr<R>)>
     symmetric_matrix& operator%=(R&& rhs){
         // Make sure the other matrix is symmetric
         if(!is_symmetric(rhs)){

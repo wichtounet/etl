@@ -45,7 +45,7 @@ struct dyn_upsample_2d_expr : base_temporary_expr_un<dyn_upsample_2d_expr<A, Imp
      */
     template<typename L>
     void assign_to(L&& lhs)  const {
-        static_assert(all_etl_expr<A, L>::value, "max_pool_2d only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>, "max_pool_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<L>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
         auto& a = this->a();

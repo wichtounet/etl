@@ -33,7 +33,7 @@ struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final :
     value_testable<dyn_matrix_view<T, D>>,
     assignable<dyn_matrix_view<T, D>, value_t<T>>
 {
-    static_assert(is_etl_expr<T>::value, "dyn_matrix_view only works with ETL expressions");
+    static_assert(is_etl_expr<T>, "dyn_matrix_view only works with ETL expressions");
 
     using this_type            = dyn_matrix_view<T, D>;                                                ///< The type of this expression
     using iterable_base_type   = iterable<this_type, false>;                                           ///< The iterable base type
@@ -315,7 +315,7 @@ struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final :
     value_testable<dyn_matrix_view<T, D>>,
     assignable<dyn_matrix_view<T, D>, value_t<T>>
 {
-    static_assert(is_etl_expr<T>::value, "dyn_matrix_view only works with ETL expressions");
+    static_assert(is_etl_expr<T>, "dyn_matrix_view only works with ETL expressions");
 
     using this_type            = dyn_matrix_view<T, D>;                                                ///< The type of this expression
     using iterable_base_type   = iterable<this_type, true>;                                            ///< The iterable base type

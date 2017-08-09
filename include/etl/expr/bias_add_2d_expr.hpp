@@ -87,7 +87,7 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
      */
     template<typename L>
     void assign_to(L&& lhs)  const {
-        static_assert(all_etl_expr<A, L>::value, "bias_add_2d only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>, "bias_add_2d only supported for ETL expressions");
 
         auto& a = this->a();
         auto& b = this->b();
@@ -321,7 +321,7 @@ struct etl_traits<etl::bias_add_2d_expr<A, B>> {
  */
 template <typename E, typename B>
 bias_add_2d_expr<detail::build_type<E>, detail::build_type<B>> bias_add_2d(const E& x, const B& biases){
-    static_assert(all_etl_expr<E, B>::value, "etl::bias_add_2d can only be used on ETL expressions");
+    static_assert(all_etl_expr<E, B>, "etl::bias_add_2d can only be used on ETL expressions");
     static_assert(decay_traits<E>::dimensions() == 2, "etl::bias_add_2d is only defined for 2D input");
     static_assert(decay_traits<B>::dimensions() == 1, "etl::bias_add_2d is only defined for 1D bias vector");
 

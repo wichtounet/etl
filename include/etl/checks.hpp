@@ -42,7 +42,7 @@ void validate_expression_impl(const LE& lhs, const RE& rhs) noexcept {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_if(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator), all_etl_expr<LE, RE>::value, !all_fast<LE, RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator), all_etl_expr<LE, RE>, !all_fast<LE, RE>::value)>
 void validate_expression_impl(const LE& lhs, const RE& rhs) {
     cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
@@ -58,7 +58,7 @@ void validate_expression_impl(const LE& lhs, const RE& rhs) {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_if(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator), all_etl_expr<LE, RE>::value, all_fast<LE, RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator), all_etl_expr<LE, RE>, all_fast<LE, RE>::value)>
 void validate_expression_impl(const LE& lhs, const RE& rhs) {
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
@@ -66,7 +66,7 @@ void validate_expression_impl(const LE& lhs, const RE& rhs) {
 }
 
 #define validate_expression(lhs, rhs)                                                                                                          \
-    static_assert(is_etl_expr<decltype(lhs)>::value && is_etl_expr<decltype(rhs)>::value, "ETL functions are only made for ETL expressions "); \
+    static_assert(is_etl_expr<decltype(lhs)> && is_etl_expr<decltype(rhs)>, "ETL functions are only made for ETL expressions "); \
     validate_expression_impl(lhs, rhs);
 
 /*!
@@ -80,7 +80,7 @@ void validate_expression_impl(const LE& lhs, const RE& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_if(etl_traits<RE>::is_generator)>
 void validate_assign(const LE& lhs, const RE& rhs) noexcept {
-    static_assert(is_etl_expr<LE>::value, "Assign can only work on ETL expressions");
+    static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     //Nothing to test, generators are of infinite size
     cpp_unused(lhs);
     cpp_unused(rhs);
@@ -95,9 +95,9 @@ void validate_assign(const LE& lhs, const RE& rhs) noexcept {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_if(!etl_traits<RE>::is_generator, all_etl_expr<RE>::value, !all_fast<LE, RE>::value, !is_wrapper_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(!etl_traits<RE>::is_generator, all_etl_expr<RE>, !all_fast<LE, RE>::value, !is_wrapper_expr<RE>::value)>
 void validate_assign(const LE& lhs, const RE& rhs) {
-    static_assert(is_etl_expr<LE>::value, "Assign can only work on ETL expressions");
+    static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
     cpp_unused(rhs);
@@ -112,9 +112,9 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_if(!etl_traits<RE>::is_generator, all_etl_expr<RE>::value, all_fast<LE, RE>::value, !is_wrapper_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(!etl_traits<RE>::is_generator, all_etl_expr<RE>, all_fast<LE, RE>::value, !is_wrapper_expr<RE>::value)>
 void validate_assign(const LE& lhs, const RE& rhs) {
-    static_assert(is_etl_expr<LE>::value, "Assign can only work on ETL expressions");
+    static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
     cpp_unused(rhs);
@@ -129,9 +129,9 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_if(!all_etl_expr<RE>::value, !is_wrapper_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(!all_etl_expr<RE>, !is_wrapper_expr<RE>::value)>
 void validate_assign(const LE& lhs, const RE& rhs) {
-    static_assert(is_etl_expr<LE>::value, "Assign can only work on ETL expressions");
+    static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(size(lhs) == rhs.size(), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
     cpp_unused(rhs);
@@ -148,7 +148,7 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_if(is_wrapper_expr<RE>::value)>
 void validate_assign(const LE& lhs, const RE& rhs) {
-    static_assert(is_etl_expr<LE>::value, "Assign can only work on ETL expressions");
+    static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
     cpp_unused(rhs);
@@ -298,7 +298,7 @@ void validate_pmax_pooling_impl(const E& e, size_t c1, size_t c2) {
  */
 template <size_t C1, size_t C2, typename E>
 void validate_pmax_pooling(const E& expr) {
-    static_assert(is_etl_expr<E>::value, "Prob. Max Pooling only defined for ETL expressions");
+    static_assert(is_etl_expr<E>, "Prob. Max Pooling only defined for ETL expressions");
     static_assert(etl_traits<E>::dimensions() >= 2 && etl_traits<E>::dimensions() <= 4, "Prob. Max Pooling only defined for 2D and 3D");
 
     detail::validate_pmax_pooling_impl<C1, C2>(expr);
@@ -316,7 +316,7 @@ void validate_pmax_pooling(const E& expr) {
  */
 template <typename E>
 void validate_pmax_pooling(const E& expr, size_t c1, size_t c2) {
-    static_assert(is_etl_expr<E>::value, "Prob. Max Pooling only defined for ETL expressions");
+    static_assert(is_etl_expr<E>, "Prob. Max Pooling only defined for ETL expressions");
     static_assert(etl_traits<E>::dimensions() >= 2 && etl_traits<E>::dimensions() <= 4, "Prob. Max Pooling only defined for 2D and 3D");
 
     detail::validate_pmax_pooling_impl(expr, c1, c2);

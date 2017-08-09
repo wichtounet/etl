@@ -75,7 +75,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
      */
     template <typename L>
     void assign_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean_2d only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
 
         auto& a = this->a();
 
@@ -113,7 +113,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
      */
     template <typename L>
     void assign_add_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean_2d only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
 
         auto& a = this->a();
 
@@ -147,7 +147,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
      */
     template <typename L>
     void assign_sub_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean_2d only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
 
         auto& a = this->a();
 
@@ -181,7 +181,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
      */
     template <typename L>
     void assign_mul_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean_2d only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
 
         auto& a = this->a();
 
@@ -215,7 +215,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
      */
     template <typename L>
     void assign_div_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean_2d only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
 
         auto& a = this->a();
 
@@ -249,7 +249,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
      */
     template <typename L>
     void assign_mod_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>::value, "bias_batch_mean_2d only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
 
         auto& a = this->a();
 
@@ -381,7 +381,7 @@ struct etl_traits<etl::bias_batch_mean_2d_expr<A, Mean>> {
  */
 template <typename E>
 bias_batch_mean_2d_expr<detail::build_type<E>, true> bias_batch_mean_2d(const E& value) {
-    static_assert(is_etl_expr<E>::value, "etl::bias_batch_mean_2d can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::bias_batch_mean_2d can only be used on ETL expressions");
     static_assert(decay_traits<E>::dimensions() == 2, "etl::bias_batch_mean_2d is only defined for 2d input");
 
     return bias_batch_mean_2d_expr<detail::build_type<E>, true>{value};
@@ -394,7 +394,7 @@ bias_batch_mean_2d_expr<detail::build_type<E>, true> bias_batch_mean_2d(const E&
  */
 template <typename E>
 bias_batch_mean_2d_expr<detail::build_type<E>, false> bias_batch_sum_2d(const E& value) {
-    static_assert(is_etl_expr<E>::value, "etl::bias_batch_sum_2d can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::bias_batch_sum_2d can only be used on ETL expressions");
     static_assert(decay_traits<E>::dimensions() == 2, "etl::bias_batch_sum_2d is only defined for 2d input");
 
     return bias_batch_mean_2d_expr<detail::build_type<E>, false>{value};

@@ -30,7 +30,7 @@ struct assignable {
      * \param e The expression to get the values from
      * \return the unary expression
      */
-    template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
+    template <typename E, cpp_enable_if(is_etl_expr<E>)>
     derived_t& operator=(E&& e) {
         validate_assign(as_derived(), e);
         e.assign_to(as_derived());
@@ -52,7 +52,7 @@ struct assignable {
      * \param vec The container to get the values from
      * \return the unary expression
      */
-    template <typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_if(!is_etl_expr<Container>, std::is_convertible<typename Container::value_type, value_type>::value)>
     derived_t& operator=(const Container& vec) {
         validate_assign(as_derived(), vec);
 

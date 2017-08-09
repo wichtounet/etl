@@ -21,11 +21,11 @@ struct binary_expr final :
         iterable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>
 {
 private:
-    static_assert(cpp::or_c<
-                      cpp::and_c<std::is_same<LeftExpr, scalar<T>>, std::is_same<RightExpr, scalar<T>>>,
-                      cpp::and_c<is_etl_expr<LeftExpr>, std::is_same<RightExpr, scalar<T>>>,
-                      cpp::and_c<is_etl_expr<RightExpr>, std::is_same<LeftExpr, scalar<T>>>,
-                      cpp::and_c<is_etl_expr<LeftExpr>, is_etl_expr<RightExpr>>>::value,
+    static_assert(
+                         (std::is_same<LeftExpr, scalar<T>>::value && std::is_same<RightExpr, scalar<T>>::value)
+                      || (is_etl_expr<LeftExpr> && std::is_same<RightExpr, scalar<T>>::value)
+                      || (is_etl_expr<RightExpr> && std::is_same<LeftExpr, scalar<T>>::value)
+                      || (is_etl_expr<LeftExpr> && is_etl_expr<RightExpr>),
                   "One argument must be an ETL expression and the other one convertible to T");
 
     using this_type = binary_expr<T, LeftExpr, BinaryOp, RightExpr>; ///< This type

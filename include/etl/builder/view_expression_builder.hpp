@@ -23,7 +23,7 @@ namespace etl {
  */
 template <size_t D, typename E>
 auto dim(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, D>> {
-    static_assert(is_etl_expr<E>::value, "etl::dim can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::dim can only be used on ETL expressions");
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, D>>{{value, i}};
 }
 
@@ -35,7 +35,7 @@ auto dim(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::bui
  */
 template <typename E>
 auto row(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 1>> {
-    static_assert(is_etl_expr<E>::value, "etl::row can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::row can only be used on ETL expressions");
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 1>>{{value, i}};
 }
 
@@ -47,7 +47,7 @@ auto row(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::bui
  */
 template <typename E>
 auto col(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 2>> {
-    static_assert(is_etl_expr<E>::value, "etl::col can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::col can only be used on ETL expressions");
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 2>>{{value, i}};
 }
 
@@ -59,7 +59,7 @@ auto col(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::bui
  */
 template <typename E>
 auto sub(E&& value, size_t i) -> sub_view<detail::build_identity_type<E>, false> {
-    static_assert(is_etl_expr<E>::value, "etl::sub can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sub can only be used on ETL expressions");
     static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Cannot use sub on vector");
     return {value, i};
 }
@@ -75,7 +75,7 @@ auto sub(E&& value, size_t i) -> sub_view<detail::build_identity_type<E>, false>
  */
 template <typename E>
 auto sub(E&& value, size_t i, size_t j, size_t m, size_t n) -> sub_matrix_2d<detail::build_identity_type<E>, false> {
-    static_assert(is_etl_expr<E>::value, "etl::sub can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sub can only be used on ETL expressions");
     static_assert(etl_traits<std::decay_t<E>>::dimensions() == 2, "Cannot use sub on vector");
     return {value, i, j, m, n};
 }
@@ -91,7 +91,7 @@ auto sub(E&& value, size_t i, size_t j, size_t m, size_t n) -> sub_matrix_2d<det
  */
 template <typename E>
 auto sub(E&& value, size_t i, size_t j, size_t k, size_t m, size_t n, size_t o) -> sub_matrix_3d<detail::build_identity_type<E>, false> {
-    static_assert(is_etl_expr<E>::value, "etl::sub can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sub can only be used on ETL expressions");
     static_assert(etl_traits<std::decay_t<E>>::dimensions() == 3, "Cannot use sub on vector");
     return {value, i, j, k, m, n, o};
 }
@@ -107,7 +107,7 @@ auto sub(E&& value, size_t i, size_t j, size_t k, size_t m, size_t n, size_t o) 
  */
 template <typename E>
 auto sub(E&& value, size_t i, size_t j, size_t k, size_t l, size_t m, size_t n, size_t o, size_t p) -> sub_matrix_4d<detail::build_identity_type<E>, false> {
-    static_assert(is_etl_expr<E>::value, "etl::sub can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sub can only be used on ETL expressions");
     static_assert(etl_traits<std::decay_t<E>>::dimensions() == 4, "Cannot use sub on vector");
     return {value, i, j, k, l, m, n, o, p};
 }
@@ -121,7 +121,7 @@ auto sub(E&& value, size_t i, size_t j, size_t k, size_t l, size_t m, size_t n, 
  */
 template <typename E>
 auto slice(E&& value, size_t first, size_t last) -> slice_view<detail::build_identity_type<E>> {
-    static_assert(is_etl_expr<E>::value, "etl::slice can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::slice can only be used on ETL expressions");
     return {value, first, last};
 }
 
@@ -133,7 +133,7 @@ auto slice(E&& value, size_t first, size_t last) -> slice_view<detail::build_ide
  */
 template <size_t... Dims, typename E>
 auto reshape(E&& value) -> fast_matrix_view<detail::build_identity_type<E>, all_dma<E>::value, Dims...> {
-    static_assert(is_etl_expr<E>::value, "etl::reshape can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::reshape can only be used on ETL expressions");
     cpp_assert(decay_traits<E>::is_generator || size(value) == mul_all<Dims...>::value, "Invalid size for reshape");
 
     return fast_matrix_view<detail::build_identity_type<E>, all_dma<E>::value, Dims...>{value};
@@ -147,7 +147,7 @@ auto reshape(E&& value) -> fast_matrix_view<detail::build_identity_type<E>, all_
  */
 template <typename E, typename... S>
 auto reshape(E&& value, S... sizes) -> dyn_matrix_view<detail::build_identity_type<E>, sizeof...(sizes)> {
-    static_assert(is_etl_expr<E>::value, "etl::reshape can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::reshape can only be used on ETL expressions");
 
     using ret_type = dyn_matrix_view<detail::build_identity_type<E>, sizeof...(sizes)>;
 

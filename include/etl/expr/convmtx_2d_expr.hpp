@@ -43,7 +43,7 @@ struct convmtx_2d_expr : base_temporary_expr_un<convmtx_2d_expr<A, K1, K2>, A> {
      */
     template<typename C>
     void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, C>::value, "max_pool_2d only supported for ETL expressions");
+        static_assert(all_etl_expr<A, C>, "max_pool_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
         auto& a = this->a();
@@ -205,7 +205,7 @@ struct etl_traits<etl::convmtx_2d_expr<A, K1, K2>> {
  */
 template <size_t K1, size_t K2, typename A>
 convmtx_2d_expr<detail::build_type<A>, K1, K2> convmtx2_direct(A&& a) {
-    static_assert(is_etl_expr<A>::value, "Convolution matrices only supported for ETL expressions");
+    static_assert(is_etl_expr<A>, "Convolution matrices only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2, "Convolutional matrix only works in 2D");
 
     return convmtx_2d_expr<detail::build_type<A>, K1, K2>{a};

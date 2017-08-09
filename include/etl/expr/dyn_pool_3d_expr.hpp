@@ -50,7 +50,7 @@ struct dyn_pool_3d_expr : base_temporary_expr_un<dyn_pool_3d_expr<A, Impl>, A> {
      */
     template<typename L>
     void assign_to(L&& lhs)  const {
-        static_assert(all_etl_expr<A, L>::value, "pool_2d only supported for ETL expressions");
+        static_assert(all_etl_expr<A, L>, "pool_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<L>(), "pool_2d must be applied on matrices of same dimensionality");
 
         auto& a = this->a();

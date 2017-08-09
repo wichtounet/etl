@@ -221,7 +221,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      */
     template<typename C>
     void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, B, C>::value, "gemm only supported for ETL expressions");
+        static_assert(all_etl_expr<A, B, C>, "gemm only supported for ETL expressions");
 
         check(this->a(), this->b(), c);
 

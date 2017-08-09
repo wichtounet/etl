@@ -125,7 +125,7 @@ public:
      */
     template <typename R>
     void assign_to(R&& result) const {
-        static_assert(all_etl_expr<A, B, C, R>::value, "Max Pool Derivative only supported for ETL expressions");
+        static_assert(all_etl_expr<A, B, C, R>, "Max Pool Derivative only supported for ETL expressions");
 
         auto& a = this->a();
         auto& b = this->b();

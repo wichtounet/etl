@@ -139,7 +139,7 @@ TEMPLATE_TEST_CASE_2("lvalue/mmul1", "[gemm]", Z, float, double) {
 
     auto s = etl::sub(c, 0);
 
-    static_assert(etl::is_etl_expr<decltype(s)>::value, "");
+    static_assert(etl::is_etl_expr<decltype(s)>, "");
 
     etl::force(etl::mul(etl::sub(a, 0), etl::sub(b, 0), s));
 

@@ -22,7 +22,7 @@ namespace etl {
  */
 template <typename E>
 auto sqrt(E&& value) -> detail::unary_helper<E, sqrt_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::sqrt can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sqrt can only be used on ETL expressions");
     return detail::unary_helper<E, sqrt_unary_op>{value};
 }
 
@@ -33,7 +33,7 @@ auto sqrt(E&& value) -> detail::unary_helper<E, sqrt_unary_op> {
  */
 template <typename E>
 auto invsqrt(E&& value) -> detail::unary_helper<E, invsqrt_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::invsqrt can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::invsqrt can only be used on ETL expressions");
     return detail::unary_helper<E, invsqrt_unary_op>{value};
 }
 
@@ -44,7 +44,7 @@ auto invsqrt(E&& value) -> detail::unary_helper<E, invsqrt_unary_op> {
  */
 template <typename E>
 auto cbrt(E&& value) -> detail::unary_helper<E, cbrt_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::cbrt can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::cbrt can only be used on ETL expressions");
     return detail::unary_helper<E, cbrt_unary_op>{value};
 }
 
@@ -55,7 +55,7 @@ auto cbrt(E&& value) -> detail::unary_helper<E, cbrt_unary_op> {
  */
 template <typename E>
 auto invcbrt(E&& value) -> detail::unary_helper<E, invcbrt_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::invcbrt can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::invcbrt can only be used on ETL expressions");
     return detail::unary_helper<E, invcbrt_unary_op>{value};
 }
 
@@ -66,7 +66,7 @@ auto invcbrt(E&& value) -> detail::unary_helper<E, invcbrt_unary_op> {
  */
 template <typename E>
 auto log(E&& value) -> detail::unary_helper<E, log_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::log can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::log can only be used on ETL expressions");
     return detail::unary_helper<E, log_unary_op>{value};
 }
 
@@ -77,7 +77,7 @@ auto log(E&& value) -> detail::unary_helper<E, log_unary_op> {
  */
 template <typename E>
 auto tan(E&& value) -> detail::unary_helper<E, tan_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::tan can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::tan can only be used on ETL expressions");
     return detail::unary_helper<E, tan_unary_op>{value};
 }
 
@@ -88,7 +88,7 @@ auto tan(E&& value) -> detail::unary_helper<E, tan_unary_op> {
  */
 template <typename E>
 auto cos(E&& value) -> detail::unary_helper<E, cos_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::cos can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::cos can only be used on ETL expressions");
     return detail::unary_helper<E, cos_unary_op>{value};
 }
 
@@ -99,7 +99,7 @@ auto cos(E&& value) -> detail::unary_helper<E, cos_unary_op> {
  */
 template <typename E>
 auto sin(E&& value) -> detail::unary_helper<E, sin_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::sin can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sin can only be used on ETL expressions");
     return detail::unary_helper<E, sin_unary_op>{value};
 }
 
@@ -110,7 +110,7 @@ auto sin(E&& value) -> detail::unary_helper<E, sin_unary_op> {
  */
 template <typename E>
 auto tanh(E&& value) -> detail::unary_helper<E, tanh_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::tanh can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::tanh can only be used on ETL expressions");
     return detail::unary_helper<E, tanh_unary_op>{value};
 }
 
@@ -121,7 +121,7 @@ auto tanh(E&& value) -> detail::unary_helper<E, tanh_unary_op> {
  */
 template <typename E>
 auto cosh(E&& value) -> detail::unary_helper<E, cosh_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::cosh can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::cosh can only be used on ETL expressions");
     return detail::unary_helper<E, cosh_unary_op>{value};
 }
 
@@ -132,7 +132,7 @@ auto cosh(E&& value) -> detail::unary_helper<E, cosh_unary_op> {
  */
 template <typename E>
 auto sinh(E&& value) -> detail::unary_helper<E, sinh_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::sinh can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sinh can only be used on ETL expressions");
     return detail::unary_helper<E, sinh_unary_op>{value};
 }
 
@@ -143,7 +143,7 @@ auto sinh(E&& value) -> detail::unary_helper<E, sinh_unary_op> {
  */
 template <typename E>
 auto exp(E&& value) -> detail::unary_helper<E, exp_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::exp can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::exp can only be used on ETL expressions");
     return detail::unary_helper<E, exp_unary_op>{value};
 }
 
@@ -154,7 +154,7 @@ auto exp(E&& value) -> detail::unary_helper<E, exp_unary_op> {
  */
 template <typename E>
 auto sign(E&& value) -> detail::unary_helper<E, sign_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::sign can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sign can only be used on ETL expressions");
     return detail::unary_helper<E, sign_unary_op>{value};
 }
 
@@ -191,7 +191,7 @@ auto identity_derivative(E&& value) {
  */
 template <typename E, cpp_enable_if(all_dma<E>::value)>
 auto sigmoid(E&& value) -> unary_function_expr<detail::build_type<E>, detail::sigmoid> {
-    static_assert(is_etl_expr<E>::value, "etl::sigmoid can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sigmoid can only be used on ETL expressions");
     return unary_function_expr<detail::build_type<E>, detail::sigmoid>(value);
 }
 
@@ -202,7 +202,7 @@ auto sigmoid(E&& value) -> unary_function_expr<detail::build_type<E>, detail::si
  */
 template <typename E, cpp_disable_if(all_dma<E>::value)>
 auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
-    static_assert(is_etl_expr<E>::value, "etl::sigmoid can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sigmoid can only be used on ETL expressions");
     return 1.0 / (1.0 + exp(-value));
 }
 
@@ -213,7 +213,7 @@ auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
  */
 template <typename E, cpp_enable_if(all_dma<E>::value)>
 auto relu(E&& value) -> unary_function_expr<detail::build_type<E>, detail::relu> {
-    static_assert(is_etl_expr<E>::value, "etl::relu can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::relu can only be used on ETL expressions");
     return unary_function_expr<detail::build_type<E>, detail::relu>(value);
 }
 
@@ -224,7 +224,7 @@ auto relu(E&& value) -> unary_function_expr<detail::build_type<E>, detail::relu>
  */
 template <typename E, cpp_disable_if(all_dma<E>::value)>
 auto relu(E&& value) -> decltype(max(value, 0.0)) {
-    static_assert(is_etl_expr<E>::value, "etl::relu can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::relu can only be used on ETL expressions");
     return max(value, 0.0);
 }
 
@@ -237,7 +237,7 @@ auto relu(E&& value) -> decltype(max(value, 0.0)) {
  */
 template <typename E>
 auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
-    static_assert(is_etl_expr<E>::value, "etl::sigmoid can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sigmoid can only be used on ETL expressions");
     return 1.0 / (1.0 + exp(-value));
 }
 
@@ -248,7 +248,7 @@ auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
  */
 template <typename E>
 auto relu(E&& value) -> decltype(max(value, 0.0)) {
-    static_assert(is_etl_expr<E>::value, "etl::relu can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::relu can only be used on ETL expressions");
     return max(value, 0.0);
 }
 
@@ -261,7 +261,7 @@ auto relu(E&& value) -> decltype(max(value, 0.0)) {
  */
 template <typename E>
 auto sigmoid_derivative(E&& value) -> decltype(sigmoid(value) >> (1.0 - sigmoid(value))) {
-    static_assert(is_etl_expr<E>::value, "etl::sigmoid_derivative can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::sigmoid_derivative can only be used on ETL expressions");
     return sigmoid(value) >> (1.0 - sigmoid(value));
 }
 
@@ -275,7 +275,7 @@ auto sigmoid_derivative(E&& value) -> decltype(sigmoid(value) >> (1.0 - sigmoid(
  */
 template <typename E>
 auto fast_sigmoid(const E& value) -> detail::unary_helper<E, fast_sigmoid_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::fast_sigmoid can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::fast_sigmoid can only be used on ETL expressions");
     return detail::unary_helper<E, fast_sigmoid_unary_op>{value};
 }
 
@@ -289,7 +289,7 @@ auto fast_sigmoid(const E& value) -> detail::unary_helper<E, fast_sigmoid_unary_
  */
 template <typename E>
 auto hard_sigmoid(E&& x) -> decltype(etl::clip(x * 0.2 + 0.5, 0.0, 1.0)) {
-    static_assert(is_etl_expr<E>::value, "etl::hard_sigmoid can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::hard_sigmoid can only be used on ETL expressions");
     return etl::clip(x * 0.2 + 0.5, 0.0, 1.0);
 }
 
@@ -300,7 +300,7 @@ auto hard_sigmoid(E&& x) -> decltype(etl::clip(x * 0.2 + 0.5, 0.0, 1.0)) {
  */
 template <typename E>
 auto softmax(E&& e) {
-    static_assert(is_etl_expr<E>::value, "etl::softmax can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::softmax can only be used on ETL expressions");
     return exp(e) / sum(exp(e));
 }
 
@@ -312,7 +312,7 @@ auto softmax(E&& e) {
  */
 template <typename E>
 auto stable_softmax(E&& e) {
-    static_assert(is_etl_expr<E>::value, "etl::stable_softmax can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::stable_softmax can only be used on ETL expressions");
     auto m = max(e);
     return exp(e - m) / sum(exp(e - m));
 }
@@ -335,7 +335,7 @@ auto softmax_derivative(E&& e) {
  */
 template <typename E>
 auto softplus(E&& value) -> decltype(log(1.0 + exp(value))) {
-    static_assert(is_etl_expr<E>::value, "etl::softplus can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::softplus can only be used on ETL expressions");
     return log(1.0 + exp(value));
 }
 
@@ -346,7 +346,7 @@ auto softplus(E&& value) -> decltype(log(1.0 + exp(value))) {
  */
 template <typename E>
 auto bernoulli(const E& value) -> detail::unary_helper<E, bernoulli_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::bernoulli can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::bernoulli can only be used on ETL expressions");
     return detail::unary_helper<E, bernoulli_unary_op>{value};
 }
 
@@ -367,7 +367,7 @@ auto bernoulli(G& g, E&& value) {
  */
 template <typename E>
 auto r_bernoulli(const E& value) -> detail::unary_helper<E, reverse_bernoulli_unary_op> {
-    static_assert(is_etl_expr<E>::value, "etl::r_bernoulli can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::r_bernoulli can only be used on ETL expressions");
     return detail::unary_helper<E, reverse_bernoulli_unary_op>{value};
 }
 
@@ -388,7 +388,7 @@ auto r_bernoulli(G& g, E&& value) {
  */
 template <typename E>
 auto tanh_derivative(E&& value) -> decltype(1.0 - (tanh(value) >> tanh(value))) {
-    static_assert(is_etl_expr<E>::value, "etl::tanh_derivative can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::tanh_derivative can only be used on ETL expressions");
     return 1.0 - (tanh(value) >> tanh(value));
 }
 
@@ -399,7 +399,7 @@ auto tanh_derivative(E&& value) -> decltype(1.0 - (tanh(value) >> tanh(value))) 
  */
 template <typename E>
 auto relu_derivative(const E& value) -> detail::unary_helper<E, relu_derivative_op> {
-    static_assert(is_etl_expr<E>::value, "etl::relu_derivative can only be used on ETL expressions");
+    static_assert(is_etl_expr<E>, "etl::relu_derivative can only be used on ETL expressions");
     return detail::unary_helper<E, relu_derivative_op>{value};
 }
 

@@ -86,7 +86,7 @@ struct unary_expr final :
 {
 private:
     static_assert(
-        is_etl_expr<Expr>::value || std::is_same<Expr, etl::scalar<T>>::value,
+        is_etl_expr<Expr> || std::is_same<Expr, etl::scalar<T>>::value,
         "Only ETL expressions can be used in unary_expr");
 
     using this_type = unary_expr<T, Expr, UnaryOp>; ///< The type of this expression
@@ -300,7 +300,7 @@ struct unary_expr<T, Expr, identity_op> :
         iterable<unary_expr<T, Expr, identity_op>, has_direct_access<Expr>>
 {
 private:
-    static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
+    static_assert(is_etl_expr<Expr>, "Only ETL expressions can be used in unary_expr");
 
     Expr value;                ///< The sub expression
     gpu_memory_handler<T> _gpu; ///< The GPU memory handler

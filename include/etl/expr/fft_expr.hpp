@@ -40,7 +40,7 @@ struct fft_expr : base_temporary_expr_un<fft_expr<A, T, Impl>, A> {
      */
     template<typename C>
     void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, C>::value, "max_pool_2d only supported for ETL expressions");
+        static_assert(all_etl_expr<A, C>, "max_pool_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
         auto& a = this->a();
@@ -218,7 +218,7 @@ using ifft_real_value_type = std::conditional_t<is_complex<A>::value, typename v
  */
 template <typename A>
 fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft1_impl> fft_1d(A&& a) {
-    static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
+    static_assert(is_etl_expr<A>, "FFT only supported for ETL expressions");
 
     return fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft1_impl>{a};
 }
@@ -231,7 +231,7 @@ fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft1_impl> ff
  */
 template <typename A, typename C>
 auto fft_1d(A&& a, C&& c){
-    static_assert(all_etl_expr<A, C>::value, "FFT only supported for ETL expressions");
+    static_assert(all_etl_expr<A, C>, "FFT only supported for ETL expressions");
     validate_assign(c, a);
 
     c = fft_1d(a);
@@ -245,7 +245,7 @@ auto fft_1d(A&& a, C&& c){
  */
 template <typename A>
 fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft1_impl> ifft_1d(A&& a) {
-    static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
+    static_assert(is_etl_expr<A>, "FFT only supported for ETL expressions");
 
     return fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft1_impl>{a};
 }
@@ -258,7 +258,7 @@ fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft1_impl> 
  */
 template <typename A, typename C>
 auto ifft_1d(A&& a, C&& c) {
-    static_assert(all_etl_expr<A, C>::value, "FFT only supported for ETL expressions");
+    static_assert(all_etl_expr<A, C>, "FFT only supported for ETL expressions");
     validate_assign(c, a);
 
     c = ifft_1d(a);
@@ -272,7 +272,7 @@ auto ifft_1d(A&& a, C&& c) {
  */
 template <typename A>
 fft_expr<detail::build_type<A>, detail::ifft_real_value_type<A>, detail::ifft1_real_impl> ifft_1d_real(A&& a) {
-    static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
+    static_assert(is_etl_expr<A>, "FFT only supported for ETL expressions");
 
     return fft_expr<detail::build_type<A>, detail::ifft_real_value_type<A>, detail::ifft1_real_impl>{a};
 }
@@ -285,7 +285,7 @@ fft_expr<detail::build_type<A>, detail::ifft_real_value_type<A>, detail::ifft1_r
  */
 template <typename A, typename C>
 auto ifft_1d_real(A&& a, C&& c) {
-    static_assert(all_etl_expr<A, C>::value, "FFT only supported for ETL expressions");
+    static_assert(all_etl_expr<A, C>, "FFT only supported for ETL expressions");
     validate_assign(c, a);
 
     c = ifft_1d_real(a);
@@ -299,7 +299,7 @@ auto ifft_1d_real(A&& a, C&& c) {
  */
 template <typename A>
 fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft2_impl> fft_2d(A&& a) {
-    static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
+    static_assert(is_etl_expr<A>, "FFT only supported for ETL expressions");
 
     return fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft2_impl>{a};
 }
@@ -312,7 +312,7 @@ fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft2_impl> ff
  */
 template <typename A, typename C>
 auto fft_2d(A&& a, C&& c){
-    static_assert(all_etl_expr<A, C>::value, "FFT only supported for ETL expressions");
+    static_assert(all_etl_expr<A, C>, "FFT only supported for ETL expressions");
     validate_assign(c, a);
 
     c = fft_2d(a);
@@ -326,7 +326,7 @@ auto fft_2d(A&& a, C&& c){
  */
 template <typename A>
 fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft2_impl> ifft_2d(A&& a) {
-    static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
+    static_assert(is_etl_expr<A>, "FFT only supported for ETL expressions");
 
     return fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft2_impl>{a};
 }
@@ -339,7 +339,7 @@ fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft2_impl> 
  */
 template <typename A, typename C>
 auto ifft_2d(A&& a, C&& c){
-    static_assert(all_etl_expr<A, C>::value, "FFT only supported for ETL expressions");
+    static_assert(all_etl_expr<A, C>, "FFT only supported for ETL expressions");
     validate_assign(c, a);
 
     c = ifft_2d(a);
@@ -353,7 +353,7 @@ auto ifft_2d(A&& a, C&& c){
  */
 template <typename A>
 fft_expr<detail::build_type<A>, detail::ifft_real_value_type<A>, detail::ifft2_real_impl> ifft_2d_real(A&& a) {
-    static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
+    static_assert(is_etl_expr<A>, "FFT only supported for ETL expressions");
 
     return fft_expr<detail::build_type<A>, detail::ifft_real_value_type<A>, detail::ifft2_real_impl>{a};
 }
@@ -366,7 +366,7 @@ fft_expr<detail::build_type<A>, detail::ifft_real_value_type<A>, detail::ifft2_r
  */
 template <typename A, typename C>
 auto ifft_2d_real(A&& a, C&& c) {
-    static_assert(all_etl_expr<A, C>::value, "FFT only supported for ETL expressions");
+    static_assert(all_etl_expr<A, C>, "FFT only supported for ETL expressions");
     validate_assign(c, a);
 
     c = ifft_2d_real(a);
@@ -383,7 +383,7 @@ auto ifft_2d_real(A&& a, C&& c) {
  */
 template <typename A>
 fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft1_many_impl> fft_1d_many(A&& a) {
-    static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
+    static_assert(is_etl_expr<A>, "FFT only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() >= 2, "fft_many requires at least 2D matrices");
 
     return fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft1_many_impl>{a};
@@ -400,7 +400,7 @@ fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft1_many_imp
  */
 template <typename A, typename C>
 auto fft_1d_many(A&& a, C&& c) {
-    static_assert(all_etl_expr<A, C>::value, "FFT only supported for ETL expressions");
+    static_assert(all_etl_expr<A, C>, "FFT only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() >= 2 && decay_traits<C>::dimensions() >= 2, "fft_many requires at least 2D matrices");
     validate_assign(c, a);
 
@@ -418,7 +418,7 @@ auto fft_1d_many(A&& a, C&& c) {
  */
 template <typename A>
 fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft1_many_impl> ifft_1d_many(A&& a) {
-    static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
+    static_assert(is_etl_expr<A>, "FFT only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() >= 2, "ifft_many requires at least 2D matrices");
 
     return fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft1_many_impl>{a};
@@ -435,7 +435,7 @@ fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft1_many_i
  */
 template <typename A, typename C>
 auto ifft_1d_many(A&& a, C&& c) {
-    static_assert(all_etl_expr<A, C>::value, "FFT only supported for ETL expressions");
+    static_assert(all_etl_expr<A, C>, "FFT only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() >= 2 && decay_traits<C>::dimensions() >= 2, "ifft_many requires at least 2D matrices");
     validate_assign(c, a);
 
@@ -453,7 +453,7 @@ auto ifft_1d_many(A&& a, C&& c) {
  */
 template <typename A>
 fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft2_many_impl> fft_2d_many(A&& a) {
-    static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
+    static_assert(is_etl_expr<A>, "FFT only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() >= 3, "fft_many requires at least 3D matrices");
 
     return fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft2_many_impl>{a};
@@ -470,7 +470,7 @@ fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft2_many_imp
  */
 template <typename A, typename C>
 auto fft_2d_many(A&& a, C&& c) {
-    static_assert(all_etl_expr<A, C>::value, "FFT only supported for ETL expressions");
+    static_assert(all_etl_expr<A, C>, "FFT only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() >= 3 && decay_traits<C>::dimensions() >= 3, "fft_many requires at least 3D matrices");
     validate_assign(c, a);
 
@@ -488,7 +488,7 @@ auto fft_2d_many(A&& a, C&& c) {
  */
 template <typename A>
 fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft2_many_impl> ifft_2d_many(A&& a) {
-    static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
+    static_assert(is_etl_expr<A>, "FFT only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() >= 3, "ifft_many requires at least 3D matrices");
 
     return fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft2_many_impl>{a};
@@ -505,7 +505,7 @@ fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft2_many_i
  */
 template <typename A, typename C>
 auto ifft_2d_many(A&& a, C&& c) {
-    static_assert(all_etl_expr<A, C>::value, "FFT only supported for ETL expressions");
+    static_assert(all_etl_expr<A, C>, "FFT only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() >= 3 && decay_traits<C>::dimensions() >= 3, "ifft_many requires at least 3D matrices");
     validate_assign(c, a);
 

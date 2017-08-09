@@ -43,7 +43,7 @@ struct pool_derivative_expr : base_temporary_expr_bin<pool_derivative_expr<A, B,
      */
     template<typename C>
     void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, B, C>::value, "gemm only supported for ETL expressions");
+        static_assert(all_etl_expr<A, B, C>, "gemm only supported for ETL expressions");
 
         auto& a = this->a();
         auto& b = this->b();

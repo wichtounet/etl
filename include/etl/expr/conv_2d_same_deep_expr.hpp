@@ -78,7 +78,7 @@ struct conv_2d_same_deep_expr : base_temporary_expr_bin<conv_2d_same_deep_expr<A
      */
     template<typename C>
     void assign_to(C&& c)  const {
-        static_assert(all_etl_expr<A, B, C>::value, "conv2_same_deep only supported for ETL expressions");
+        static_assert(all_etl_expr<A, B, C>, "conv2_same_deep only supported for ETL expressions");
 
         auto& a = this->a();
         auto& b = this->b();
@@ -245,7 +245,7 @@ struct etl_traits<etl::conv_2d_same_deep_expr<A, B, Flipped>> {
  */
 template <typename A, typename B>
 conv_2d_same_deep_expr<detail::build_type<A>, detail::build_type<B>, false> conv_2d_same_deep(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return conv_2d_same_deep_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b};
 }
@@ -261,7 +261,7 @@ conv_2d_same_deep_expr<detail::build_type<A>, detail::build_type<B>, false> conv
  */
 template <typename A, typename B, typename C>
 auto conv_2d_same_deep(A&& a, B&& b, C&& c){
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_2d_same_deep(a, b);
 
@@ -278,7 +278,7 @@ auto conv_2d_same_deep(A&& a, B&& b, C&& c){
  */
 template <typename A, typename B>
 conv_2d_same_deep_expr<detail::build_type<A>, detail::build_type<B>, true> conv_2d_same_deep_flipped(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return conv_2d_same_deep_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b};
 }
@@ -294,7 +294,7 @@ conv_2d_same_deep_expr<detail::build_type<A>, detail::build_type<B>, true> conv_
  */
 template <typename A, typename B, typename C>
 auto conv_2d_same_deep_flipped(A&& a, B&& b, C&& c){
-    static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
+    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_2d_same_deep_flipped(a, b);
 

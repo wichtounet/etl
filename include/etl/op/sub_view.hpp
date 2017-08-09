@@ -36,7 +36,7 @@ struct sub_view <T, Aligned, std::enable_if_t<!fast_sub_view_able<T>>> final :
     value_testable<sub_view<T, Aligned>>,
     inplace_assignable<sub_view<T, Aligned>>
 {
-    static_assert(is_etl_expr<T>::value, "sub_view<T> only works with ETL expressions");
+    static_assert(is_etl_expr<T>, "sub_view<T> only works with ETL expressions");
 
     using this_type            = sub_view<T, Aligned>;                                                          ///< The type of this expression
     using iterable_base_type   = iterable<this_type, false>;                                           ///< The iterable base type
@@ -324,7 +324,7 @@ struct sub_view <T, Aligned, std::enable_if_t<fast_sub_view_able<T>>> :
     value_testable<sub_view<T, Aligned>>,
     inplace_assignable<sub_view<T, Aligned>>
 {
-    static_assert(is_etl_expr<T>::value, "sub_view<T> only works with ETL expressions");
+    static_assert(is_etl_expr<T>, "sub_view<T> only works with ETL expressions");
     static_assert(decay_traits<T>::dimensions() > 1, "sub_view<T, true> should only be done with Matrices >1D");
     static_assert(decay_traits<T>::storage_order == order::RowMajor, "sub_view<T, true> should only be done with RowMajor");
 
