@@ -141,7 +141,7 @@ struct mm_mul_transformer {
     }
 
 private:
-    template <typename A, typename B, cpp_disable_if(all_fast<A, B>::value)>
+    template <typename A, typename B, cpp_disable_if(all_fast<A, B>)>
     void check_mmul_sizes(const A& a, const B& b) {
         cpp_assert(
             dim<1>(a) == dim<0>(b) //interior dimensions
@@ -151,7 +151,7 @@ private:
         cpp_unused(b);
     }
 
-    template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
+    template <typename A, typename B, cpp_enable_if(all_fast<A, B>)>
     void check_mmul_sizes(const A& /*a*/, const B& /*b*/) {
         static_assert(
             etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>() //interior dimensions
@@ -429,7 +429,7 @@ void convmtx2_direct_t(M& m, A&& sub, size_t k1, size_t k2) {
  * \param k1 The first dimension of ther kernel
  * \param k2 The second dimension of ther kernel
  */
-template <typename A, typename M, cpp_disable_if(all_dma<A, M>::value)>
+template <typename A, typename M, cpp_disable_if(all_dma<A, M>)>
 void im2col_direct(M& m, A&& sub, size_t k1, size_t k2) {
     const size_t i1 = etl::dim<0>(sub);
     const size_t i2 = etl::dim<1>(sub);
@@ -458,7 +458,7 @@ void im2col_direct(M& m, A&& sub, size_t k1, size_t k2) {
  * \param k1 The first dimension of ther kernel
  * \param k2 The second dimension of ther kernel
  */
-template <typename A, typename M, cpp_enable_if(all_dma<A, M>::value)>
+template <typename A, typename M, cpp_enable_if(all_dma<A, M>)>
 void im2col_direct(M& m, A&& sub, size_t k1, size_t k2) {
     const size_t i1 = etl::dim<0>(sub);
     const size_t i2 = etl::dim<1>(sub);
@@ -494,7 +494,7 @@ void im2col_direct(M& m, A&& sub, size_t k1, size_t k2) {
  */
 template <typename A, typename M>
 void im2col_direct_tr(M& m, A&& sub, size_t k1, size_t k2) {
-    static_assert(all_dma<A, M>::value, "im2col_direct_tr has only been implemented for direct memory access");
+    static_assert(all_dma<A, M>, "im2col_direct_tr has only been implemented for direct memory access");
 
     const size_t i1 = etl::dim<0>(sub);
     const size_t i2 = etl::dim<1>(sub);
@@ -531,7 +531,7 @@ void im2col_direct_tr(M& m, A&& sub, size_t k1, size_t k2) {
  */
 template <typename A, typename M>
 void im2col_direct_tr_multi(M& m, A&& sub, size_t k1, size_t k2) {
-    static_assert(all_dma<A, M>::value, "im2col_direct_tr has only been implemented for direct memory access");
+    static_assert(all_dma<A, M>, "im2col_direct_tr has only been implemented for direct memory access");
 
     const auto N  = etl::dim<0>(sub);
     const auto i1 = etl::dim<1>(sub);

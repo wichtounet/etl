@@ -74,7 +74,7 @@ decltype(auto) force_temporary(E&& expr) {
  * \param expr The expression to make a temporary from
  * \return a temporary of the expression
  */
-template <typename E, cpp_enable_if(!decay_traits<E>::is_fast, !is_sparse_matrix<E>::value)>
+template <typename E, cpp_enable_if(!decay_traits<E>::is_fast, !is_sparse_matrix<E>)>
 decltype(auto) force_temporary(E&& expr) {
     dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()> mat;
     mat = expr;
@@ -90,7 +90,7 @@ decltype(auto) force_temporary(E&& expr) {
  * \param expr The expression to make a temporary from
  * \return a temporary of the expression
  */
-template <typename E, cpp_enable_if(is_sparse_matrix<E>::value)>
+template <typename E, cpp_enable_if(is_sparse_matrix<E>)>
 decltype(auto) force_temporary(E&& expr) {
     //Sizes will be directly propagated
     return std::decay_t<E>{std::forward<E>(expr)};
@@ -140,7 +140,7 @@ decltype(auto) force_temporary_opp(E&& expr) {
  * \param expr The expression to make a temporary from
  * \return a temporary of the expression
  */
-template <typename E, cpp_enable_if(!decay_traits<E>::is_fast, !is_sparse_matrix<E>::value)>
+template <typename E, cpp_enable_if(!decay_traits<E>::is_fast, !is_sparse_matrix<E>)>
 decltype(auto) force_temporary_opp(E&& expr) {
     dyn_matrix_impl<value_t<E>, reverse(decay_traits<E>::storage_order), decay_traits<E>::dimensions()> mat;
     mat = expr;

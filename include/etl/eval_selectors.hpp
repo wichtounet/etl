@@ -119,7 +119,7 @@ using standard_compound = cpp::and_u<
  */
 template <typename E, typename R>
 using vectorized_compound_div = cpp::and_u<
-    (is_floating_t<value_t<E>>::value || is_complex_t<value_t<E>>::value),
+    (is_floating_t<value_t<E>> || is_complex_t<value_t<E>>),
     are_vectorizable<E, R>::value>;
 
 /*!

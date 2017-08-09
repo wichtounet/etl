@@ -28,10 +28,10 @@ namespace cublas {
  */
 template <typename T>
 using cublas_type = std::conditional_t<
-    is_complex_single_t<T>::value,
+    is_complex_single_t<T>,
     cuComplex,
     std::conditional_t<
-        is_complex_double_t<T>::value,
+        is_complex_double_t<T>,
         cuDoubleComplex,
         T>>;
 

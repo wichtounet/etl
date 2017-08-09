@@ -40,7 +40,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_enable_if(all_fast<A, C>::value)>
+    template <typename C, cpp_enable_if(all_fast<A, C>)>
     static void check(const A& a, const C& c) {
         cpp_unused(a);
         cpp_unused(c);
@@ -56,7 +56,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_disable_if(all_fast<A, C>::value)>
+    template <typename C, cpp_disable_if(all_fast<A, C>)>
     static void check(const A& a, const C& c) {
         static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_mean_2d is a vector");
         static_assert(etl::dimensions<A>() == 2, "The input of bias_batch_mean_2d is a 2d matrix");
@@ -88,7 +88,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
 
         check(a, lhs);
 
-        if /*constexpr*/ (!Mean && cudnn_enabled && all_floating<A, L>::value) {
+        if /*constexpr*/ (!Mean && cudnn_enabled && all_floating<A, L>) {
             impl::cudnn::bias_batch_mean_2d(a, lhs);
         } else {
             for (size_t k = 0; k < K; ++k) {

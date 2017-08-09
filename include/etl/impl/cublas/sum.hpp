@@ -40,7 +40,7 @@ namespace cublas {
  * \brief Compute the sum of a
  * \param a The lhs expression
  */
-template <typename A, cpp_enable_if(all_dma<A>::value && all_single_precision<A>::value)>
+template <typename A, cpp_enable_if(all_dma<A> && all_single_precision<A>)>
 float sum(const A& a) {
 #ifdef EGBLAS_HAS_SSUM
     a.ensure_gpu_up_to_date();
@@ -72,7 +72,7 @@ float sum(const A& a) {
 /*!
  * \copydoc sum
  */
-template <typename A, cpp_enable_if(all_dma<A>::value && all_double_precision<A>::value)>
+template <typename A, cpp_enable_if(all_dma<A> && all_double_precision<A>)>
 double sum(const A& a) {
 #ifdef EGBLAS_HAS_DSUM
     a.ensure_gpu_up_to_date();
@@ -95,7 +95,7 @@ double sum(const A& a) {
 /*!
  * \copydoc sum
  */
-template <typename A, cpp_enable_if((!all_dma<A>::value || !all_floating<A>::value))>
+template <typename A, cpp_enable_if((!all_dma<A> || !all_floating<A>))>
 value_t<A> sum(const A& /*a*/) {
     cpp_unreachable("CUBLAS not enabled/available");
     return 0.0;
@@ -105,7 +105,7 @@ value_t<A> sum(const A& /*a*/) {
  * \brief Compute the sum of a
  * \param a The lhs expression
  */
-template <typename A, cpp_enable_if(all_dma<A>::value && all_single_precision<A>::value)>
+template <typename A, cpp_enable_if(all_dma<A> && all_single_precision<A>)>
 float asum(const A& a) {
     decltype(auto) handle = start_cublas();
 
@@ -119,7 +119,7 @@ float asum(const A& a) {
 /*!
  * \copydoc sum
  */
-template <typename A, cpp_enable_if(all_dma<A>::value && all_double_precision<A>::value)>
+template <typename A, cpp_enable_if(all_dma<A> && all_double_precision<A>)>
 double asum(const A& a) {
     decltype(auto) handle = start_cublas();
 
@@ -133,7 +133,7 @@ double asum(const A& a) {
 /*!
  * \copydoc asum
  */
-template <typename A, cpp_enable_if((!all_dma<A>::value || !all_floating<A>::value))>
+template <typename A, cpp_enable_if((!all_dma<A> || !all_floating<A>))>
 value_t<A> asum(const A& /*a*/) {
     cpp_unreachable("CUBLAS not enabled/available");
     return 0.0;

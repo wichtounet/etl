@@ -33,9 +33,9 @@ namespace impl {
  */
 template<typename X, typename Y>
 cpp14_constexpr etl::pool_impl select_default_pool_impl() {
-    static_assert(all_dma<X, Y>::value, "DMA should be ensured at this point");
+    static_assert(all_dma<X, Y>, "DMA should be ensured at this point");
 
-    if (cublas_enabled && all_floating<X, Y>::value){
+    if (cublas_enabled && all_floating<X, Y>){
         return etl::pool_impl::CUDNN;
     }
 
@@ -56,7 +56,7 @@ etl::pool_impl select_pool_impl() {
         switch (forced) {
             // CUDNN cannot always be used
             case pool_impl::CUDNN:
-                if (!cudnn_enabled || !all_floating<X, Y>::value) {                                                                  //COVERAGE_EXCLUDE_LINE
+                if (!cudnn_enabled || !all_floating<X, Y>) {                                                                  //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUDNN pool implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                     return select_default_pool_impl<X, Y>();                                                                         //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                    //COVERAGE_EXCLUDE_LINE

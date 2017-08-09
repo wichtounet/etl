@@ -59,7 +59,7 @@ void scalar_add(T&& lhs, double rhs) {
  * \param lhs The matrix
  * \param rhs The scalar
  */
-template <typename T, cpp_enable_if(!all_floating<T>::value)>
+template <typename T, cpp_enable_if(!all_floating<T>)>
 void scalar_add(T&& lhs, value_t<T> rhs) {
     cpp_unused(lhs);
     cpp_unused(rhs);
@@ -100,7 +100,7 @@ void scalar_sub(T&& lhs, double rhs) {
  * \param lhs The matrix
  * \param rhs The scalar
  */
-template <typename T, cpp_enable_if(!all_floating<T>::value)>
+template <typename T, cpp_enable_if(!all_floating<T>)>
 void scalar_sub(T&& lhs, value_t<T> rhs) {
     cpp_unused(lhs);
     cpp_unused(rhs);
@@ -139,7 +139,7 @@ void scalar_mul(T&& lhs, double rhs) {
  * \param lhs The matrix
  * \param rhs The scalar
  */
-template <typename T, cpp_enable_if(!all_floating<T>::value)>
+template <typename T, cpp_enable_if(!all_floating<T>)>
 void scalar_mul(T&& lhs, value_t<T> rhs) {
     cpp_unused(lhs);
     cpp_unused(rhs);
@@ -178,7 +178,7 @@ void scalar_div(T&& lhs, double rhs) {
  * \param lhs The matrix
  * \param rhs The scalar
  */
-template <typename T, cpp_enable_if(!all_floating<T>::value)>
+template <typename T, cpp_enable_if(!all_floating<T>)>
 void scalar_div(T&& lhs, value_t<T> rhs) {
     cpp_unused(lhs);
     cpp_unused(rhs);

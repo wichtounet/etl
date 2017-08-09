@@ -185,7 +185,7 @@ auto one_if_max(E&& value) -> detail::left_binary_helper_op<E, scalar<value_t<E>
 template <typename E>
 auto real(E&& value) -> unary_expr<typename value_t<E>::value_type, detail::build_type<E>, real_unary_op<value_t<E>>> {
     static_assert(is_etl_expr<E>, "etl::real can only be used on ETL expressions");
-    static_assert(is_complex_t<value_t<E>>::value, "etl::real can only be used on ETL expressions containing complex numbers");
+    static_assert(is_complex_t<value_t<E>>, "etl::real can only be used on ETL expressions containing complex numbers");
     return unary_expr<typename value_t<E>::value_type, detail::build_type<E>, real_unary_op<value_t<E>>>{value};
 }
 
@@ -197,7 +197,7 @@ auto real(E&& value) -> unary_expr<typename value_t<E>::value_type, detail::buil
 template <typename E>
 auto imag(E&& value) -> unary_expr<typename value_t<E>::value_type, detail::build_type<E>, imag_unary_op<value_t<E>>> {
     static_assert(is_etl_expr<E>, "etl::imag can only be used on ETL expressions");
-    static_assert(is_complex_t<value_t<E>>::value, "etl::imag can only be used on ETL expressions containing complex numbers");
+    static_assert(is_complex_t<value_t<E>>, "etl::imag can only be used on ETL expressions containing complex numbers");
     return unary_expr<typename value_t<E>::value_type, detail::build_type<E>, imag_unary_op<value_t<E>>>{value};
 }
 
@@ -209,7 +209,7 @@ auto imag(E&& value) -> unary_expr<typename value_t<E>::value_type, detail::buil
 template <typename E>
 auto conj(E&& value) -> unary_expr<value_t<E>, detail::build_type<E>, conj_unary_op<value_t<E>>> {
     static_assert(is_etl_expr<E>, "etl::conj can only be used on ETL expressions");
-    static_assert(is_complex_t<value_t<E>>::value, "etl::conj can only be used on ETL expressions containing complex numbers");
+    static_assert(is_complex_t<value_t<E>>, "etl::conj can only be used on ETL expressions containing complex numbers");
     return unary_expr<value_t<E>, detail::build_type<E>, conj_unary_op<value_t<E>>>{value};
 }
 
@@ -609,7 +609,7 @@ value_t<A> dot(const A& a, const B& b) {
  * \param b The right expression
  * \return The dot product of the two expressions
  */
-template <typename A, typename B, cpp_enable_if_cst(all_fast<A, B>::value)>
+template <typename A, typename B, cpp_enable_if_cst(all_fast<A, B>)>
 etl::fast_vector<value_t<A>, 3> cross(const A& a, const B& b) {
     static_assert(etl::decay_traits<A>::dimensions() == 1, "Cross product is only valid for 1D vectors");
     static_assert(etl::decay_traits<B>::dimensions() == 1, "Cross product is only valid for 1D vectors");
@@ -625,7 +625,7 @@ etl::fast_vector<value_t<A>, 3> cross(const A& a, const B& b) {
  * \param b The right expression
  * \return The dot product of the two expressions
  */
-template <typename A, typename B, cpp_disable_if_cst(all_fast<A, B>::value)>
+template <typename A, typename B, cpp_disable_if_cst(all_fast<A, B>)>
 etl::dyn_vector<value_t<A>> cross(const A& a, const B& b) {
     static_assert(etl::decay_traits<A>::dimensions() == 1, "Cross product is only valid for 1D vectors");
     static_assert(etl::decay_traits<B>::dimensions() == 1, "Cross product is only valid for 1D vectors");

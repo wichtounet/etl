@@ -37,7 +37,7 @@ bool is_square(E&& expr) {
 template <typename E>
 bool is_real_matrix(E&& expr) {
     cpp_unused(expr);
-    return !is_complex<E>::value;
+    return !is_complex<E>;
 }
 
 /*!
@@ -48,7 +48,7 @@ bool is_real_matrix(E&& expr) {
 template <typename E>
 bool is_complex_matrix(E&& expr) {
     cpp_unused(expr);
-    return is_complex<E>::value;
+    return is_complex<E>;
 }
 
 /*!
@@ -89,7 +89,7 @@ bool is_sub_rectangular(E&& expr) {
 template <typename E>
 bool is_symmetric(E&& expr) {
     // symmetric_matrix<E> is already enforced to be symmetric
-    if (is_symmetric_matrix<E>::value) {
+    if (is_symmetric_matrix<E>) {
         return true;
     }
 
@@ -116,22 +116,22 @@ bool is_symmetric(E&& expr) {
 template <typename E>
 bool is_lower_triangular(E&& expr) {
     // lower_matrix<E> is already enforced to be lower triangular
-    if (is_lower_matrix<E>::value) {
+    if (is_lower_matrix<E>) {
         return true;
     }
 
     // strictly_lower_matrix<E> is already enforced to be lower triangular
-    if (is_strictly_lower_matrix<E>::value) {
+    if (is_strictly_lower_matrix<E>) {
         return true;
     }
 
     // uni_lower_matrix<E> is already enforced to be lower triangular
-    if (is_uni_lower_matrix<E>::value) {
+    if (is_uni_lower_matrix<E>) {
         return true;
     }
 
     // diagonal_matrix<E> is already enforced to be lower triangular
-    if (is_diagonal_matrix<E>::value) {
+    if (is_diagonal_matrix<E>) {
         return true;
     }
 
@@ -158,7 +158,7 @@ bool is_lower_triangular(E&& expr) {
 template <typename E>
 bool is_uni_lower_triangular(E&& expr) {
     // uni_lower_matrix<E> is already enforced to be uni lower triangular
-    if (is_uni_lower_matrix<E>::value) {
+    if (is_uni_lower_matrix<E>) {
         return true;
     }
 
@@ -189,7 +189,7 @@ bool is_uni_lower_triangular(E&& expr) {
 template <typename E>
 bool is_strictly_lower_triangular(E&& expr) {
     // strictly_lower_matrix<E> is already enforced to be strictly lower triangular
-    if (is_strictly_lower_matrix<E>::value) {
+    if (is_strictly_lower_matrix<E>) {
         return true;
     }
 
@@ -216,22 +216,22 @@ bool is_strictly_lower_triangular(E&& expr) {
 template <typename E>
 bool is_upper_triangular(E&& expr) {
     // upper_matrix<E> is already enforced to be upper triangular
-    if (is_upper_matrix<E>::value) {
+    if (is_upper_matrix<E>) {
         return true;
     }
 
     // strictly_upper_matrix<E> is already enforced to be upper triangular
-    if (is_strictly_upper_matrix<E>::value) {
+    if (is_strictly_upper_matrix<E>) {
         return true;
     }
 
     // uni_upper_matrix<E> is already enforced to be upper triangular
-    if (is_uni_upper_matrix<E>::value) {
+    if (is_uni_upper_matrix<E>) {
         return true;
     }
 
     // diagonal_matrix<E> is already enforced to be upper triangular
-    if (is_diagonal_matrix<E>::value) {
+    if (is_diagonal_matrix<E>) {
         return true;
     }
 
@@ -258,7 +258,7 @@ bool is_upper_triangular(E&& expr) {
 template <typename E>
 bool is_uni_upper_triangular(E&& expr) {
     // uni_upper_matrix<E> is already enforced to be uni upper triangular
-    if (is_uni_upper_matrix<E>::value) {
+    if (is_uni_upper_matrix<E>) {
         return true;
     }
 
@@ -289,7 +289,7 @@ bool is_uni_upper_triangular(E&& expr) {
 template <typename E>
 bool is_strictly_upper_triangular(E&& expr) {
     // strictly_upper_matrix<E> is already enforced to be strictly upper triangular
-    if (is_strictly_upper_matrix<E>::value) {
+    if (is_strictly_upper_matrix<E>) {
         return true;
     }
 
@@ -326,7 +326,7 @@ bool is_triangular(E&& expr) {
 template <typename E>
 bool is_diagonal(E&& expr) {
     // diagonal_matrix<E> is already enforced to be diagonal
-    if (is_diagonal_matrix<E>::value) {
+    if (is_diagonal_matrix<E>) {
         return true;
     }
 
@@ -417,10 +417,10 @@ bool is_permutation_matrix(E&& expr){
  * \param expr The expression to test
  * \return true if the given expression is an hermitian matrix, false otherwise.
  */
-template <typename E, cpp_enable_if(is_complex<E>::value)>
+template <typename E, cpp_enable_if(is_complex<E>)>
 bool is_hermitian(E&& expr){
     // hermitian_matrix<E> is already enforced to be hermitian
-    if (is_hermitian_matrix<E>::value) {
+    if (is_hermitian_matrix<E>) {
         return true;
     }
 
@@ -489,7 +489,7 @@ bool operator!=(L&& lhs, R&& rhs){
  * \param expr The expression to test
  * \return true if the given expression is an hermitian matrix, false otherwise.
  */
-template <typename E, cpp_disable_if(is_complex<E>::value)>
+template <typename E, cpp_disable_if(is_complex<E>)>
 bool is_hermitian(E&& expr){
     cpp_unused(expr);
     return false;

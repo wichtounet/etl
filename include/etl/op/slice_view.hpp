@@ -471,7 +471,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template <typename E, cpp_enable_if(all_dma<E>::value)>
+    template <typename E, cpp_enable_if(all_dma<E>)>
     bool alias(const E& rhs) const noexcept {
         return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
     }
@@ -481,7 +481,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template <typename E, cpp_disable_if(all_dma<E>::value)>
+    template <typename E, cpp_disable_if(all_dma<E>)>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
     }

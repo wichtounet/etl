@@ -714,7 +714,7 @@ void conv2_full_kernel(const T* a, size_t m1, size_t m2, const T* b, size_t n1, 
  * \param a The input expression
  * \param c The output expression
  */
-template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value && all_complex_single_precision<C>::value)>
+template<typename A, typename C, cpp_enable_if(all_single_precision<A> && all_complex_single_precision<C>)>
 void fft1(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -732,7 +732,7 @@ void fft1(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value && all_complex_double_precision<C>::value)>
+template<typename A, typename C, cpp_enable_if(all_double_precision<A> && all_complex_double_precision<C>)>
 void fft1(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -750,7 +750,7 @@ void fft1(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template<typename A, typename C, cpp_enable_if(all_complex<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex<A,C>)>
 void fft1(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -778,7 +778,7 @@ void ifft1(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
+template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>)>
 void ifft1_real(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -798,7 +798,7 @@ void ifft1_real(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
+template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>)>
 void ifft1_real(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -820,7 +820,7 @@ void ifft1_real(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template<typename A, typename C, cpp_enable_if(!all_complex<A>::value && all_complex<C>::value)>
+template<typename A, typename C, cpp_enable_if(!all_complex<A> && all_complex<C>)>
 void fft1_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -845,7 +845,7 @@ void fft1_many(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template<typename A, typename C, cpp_enable_if(all_complex<A, C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex<A, C>)>
 void fft1_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -923,7 +923,7 @@ void conv1_full(A&& a, B&& b, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
+template <typename A, typename C, cpp_enable_if(all_single_precision<A>)>
 void fft2(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -941,7 +941,7 @@ void fft2(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
+template <typename A, typename C, cpp_enable_if(all_double_precision<A>)>
 void fft2(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -959,7 +959,7 @@ void fft2(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
+template <typename A, typename C, cpp_enable_if(all_complex<A>)>
 void fft2(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -975,7 +975,7 @@ void fft2(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
+template <typename A, typename C, cpp_enable_if(all_single_precision<A>)>
 void fft2_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -1001,7 +1001,7 @@ void fft2_many(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
+template <typename A, typename C, cpp_enable_if(all_double_precision<A>)>
 void fft2_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -1027,7 +1027,7 @@ void fft2_many(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
+template <typename A, typename C, cpp_enable_if(all_complex<A>)>
 void fft2_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -1069,7 +1069,7 @@ void ifft2_many(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
+template <typename A, typename C, cpp_enable_if(all_complex<A>)>
 void ifft2(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 

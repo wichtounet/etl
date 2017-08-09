@@ -84,7 +84,7 @@ public:
      */
     template <typename R>
     static cpp14_constexpr etl::pool_impl select_default_impl() {
-        if (cudnn_enabled && all_floating<A, B, C, R>::value) {
+        if (cudnn_enabled && all_floating<A, B, C, R>) {
             return etl::pool_impl::CUDNN;
         }
 
@@ -103,7 +103,7 @@ public:
             switch (forced) {
                 // CUDNN cannot always be used
                 case pool_impl::CUDNN:
-                    if (!cudnn_enabled || !all_floating<A, B, C, R>::value) {                                                            //COVERAGE_EXCLUDE_LINE
+                    if (!cudnn_enabled || !all_floating<A, B, C, R>) {                                                            //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to CUDNN pool implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return select_default_impl<R>();                                                                                 //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                    //COVERAGE_EXCLUDE_LINE

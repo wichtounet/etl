@@ -28,7 +28,7 @@ struct dyn_matrix_view;
  * \tparam T The type of expression on which the view is made
  */
 template <typename T, size_t D>
-struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final :
+struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>>> final :
     iterable<dyn_matrix_view<T, D>, false>,
     value_testable<dyn_matrix_view<T, D>>,
     assignable<dyn_matrix_view<T, D>, value_t<T>>
@@ -310,7 +310,7 @@ public:
  * \tparam T The type of expression on which the view is made
  */
 template <typename T, size_t D>
-struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final :
+struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>>> final :
     iterable<dyn_matrix_view<T, D>, true>,
     value_testable<dyn_matrix_view<T, D>>,
     assignable<dyn_matrix_view<T, D>, value_t<T>>

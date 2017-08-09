@@ -33,7 +33,7 @@ namespace cublas {
  * \param b The rhs expression
  * \param c The output expression
  */
-template <typename A, typename B, cpp_enable_if(all_dma<A, B>::value && all_single_precision<A, B>::value)>
+template <typename A, typename B, cpp_enable_if(all_dma<A, B> && all_single_precision<A, B>)>
 float dot(const A& a, const B& b) {
     decltype(auto) handle = start_cublas();
 
@@ -48,7 +48,7 @@ float dot(const A& a, const B& b) {
 /*!
  * \copydoc batch_outer
  */
-template <typename A, typename B, cpp_enable_if(all_dma<A, B>::value && all_double_precision<A, B>::value)>
+template <typename A, typename B, cpp_enable_if(all_dma<A, B> && all_double_precision<A, B>)>
 double dot(const A& a, const B& b) {
     decltype(auto) handle = start_cublas();
 
@@ -63,7 +63,7 @@ double dot(const A& a, const B& b) {
 /*!
  * \copydoc dot
  */
-template <typename A, typename B, cpp_enable_if(!all_dma<A>::value)>
+template <typename A, typename B, cpp_enable_if(!all_dma<A>)>
 value_t<A> dot(const A& /*a*/, const B& /*b*/) {
     cpp_unreachable("BLAS not enabled/available");
     return 0.0;

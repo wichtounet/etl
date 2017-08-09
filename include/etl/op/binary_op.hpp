@@ -144,7 +144,7 @@ struct mul_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<V == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true>;
+    using vectorizable = cpp::bool_constant<V == vector_mode_t::AVX512 ? !is_complex_t<T> : true>;
 
     static constexpr bool linear    = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
@@ -199,7 +199,7 @@ struct div_binary_op {
      * Note: Integer division is not yet supported
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<is_floating_t<T>::value || (is_complex_t<T>::value && V != vector_mode_t::AVX512)>;
+    using vectorizable = cpp::bool_constant<is_floating_t<T> || (is_complex_t<T> && V != vector_mode_t::AVX512)>;
 
     static constexpr bool linear    = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
@@ -719,7 +719,7 @@ struct max_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -773,7 +773,7 @@ struct min_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs

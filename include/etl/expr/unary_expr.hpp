@@ -527,7 +527,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template <typename E, cpp_enable_if(has_direct_access<Expr>, all_dma<E>::value)>
+    template <typename E, cpp_enable_if(has_direct_access<Expr>, all_dma<E>)>
     bool alias(const E& rhs) const noexcept {
         return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
     }
@@ -537,7 +537,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template <typename E, cpp_disable_if(has_direct_access<Expr>&& all_dma<E>::value)>
+    template <typename E, cpp_disable_if(has_direct_access<Expr>&& all_dma<E>)>
     bool alias(const E& rhs) const noexcept {
         return value.alias(rhs);
     }
@@ -582,7 +582,7 @@ public:
      * \brief Returns the DDth dimension of the matrix
      * \return The DDth dimension of the matrix
      */
-    template <size_t DD, typename TT = this_type, cpp_enable_if(all_fast<TT>::value)>
+    template <size_t DD, typename TT = this_type, cpp_enable_if(all_fast<TT>)>
     static constexpr size_t dim() {
         return etl_traits<TT>::template dim<DD>();
     }
@@ -591,7 +591,7 @@ public:
      * \brief Returns the DDth dimension of the matrix
      * \return The DDth dimension of the matrix
      */
-    template <size_t DD, typename TT = this_type, cpp_disable_if(all_fast<TT>::value)>
+    template <size_t DD, typename TT = this_type, cpp_disable_if(all_fast<TT>)>
     size_t dim() const {
         return etl_traits<TT>::dim(*this, DD);
     }
@@ -798,7 +798,7 @@ private:
      * \brief Assign the given value to each eleemnt of the unary expression
      * \param e The value
      */
-    template<cpp_enable_if_cst(all_dma<Expr>::value)>
+    template<cpp_enable_if_cst(all_dma<Expr>)>
     void memory_set(const value_type& e){
         direct_fill(memory_start(), memory_end(), e);
     }
@@ -807,7 +807,7 @@ private:
      * \brief Assign the given value to each eleemnt of the unary expression
      * \param e The value
      */
-    template<cpp_enable_if_cst(!all_dma<Expr>::value)>
+    template<cpp_enable_if_cst(!all_dma<Expr>)>
     void memory_set(const value_type& e){
         for (size_t i = 0; i < size(*this); ++i) {
             (*this)[i] = e;

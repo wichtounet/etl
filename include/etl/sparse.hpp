@@ -760,7 +760,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template <typename E, cpp_enable_if(is_sparse_matrix<E>::value)>
+    template <typename E, cpp_enable_if(is_sparse_matrix<E>)>
     bool alias(const E& rhs) const noexcept {
         return this == &rhs;
     }
@@ -770,7 +770,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template <typename E, cpp_disable_if(is_sparse_matrix<E>::value)>
+    template <typename E, cpp_disable_if(is_sparse_matrix<E>)>
     bool alias(const E& rhs) const noexcept {
         return rhs.alias(*this);
     }

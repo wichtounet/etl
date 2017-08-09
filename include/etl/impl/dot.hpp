@@ -33,11 +33,11 @@ namespace detail {
  */
 template <typename A, typename B>
 cpp14_constexpr etl::dot_impl select_default_dot_impl() {
-    if (all_dma<A, B>::value && cblas_enabled) {
+    if (all_dma<A, B> && cblas_enabled) {
         return etl::dot_impl::BLAS;
     }
 
-    if (vec_enabled && all_vectorizable<vector_mode, A, B>::value && std::is_same<default_intrinsic_type<value_t<A>>, default_intrinsic_type<value_t<B>>>::value) {
+    if (vec_enabled && all_vectorizable<vector_mode, A, B> && std::is_same<default_intrinsic_type<value_t<A>>, default_intrinsic_type<value_t<B>>>::value) {
         return etl::dot_impl::VEC;
     }
 
@@ -58,7 +58,7 @@ etl::dot_impl select_dot_impl() {
         switch (forced) {
             //CUBLAS cannot always be used
             case dot_impl::CUBLAS:
-                if (!cublas_enabled || !all_dma<A, B>::value) {
+                if (!cublas_enabled || !all_dma<A, B>) {
                     std::cerr << "Forced selection to CUBLAS dot implementation, but not possible for this expression" << std::endl;
                     return select_default_dot_impl<A, B>();
                 }
@@ -67,7 +67,7 @@ etl::dot_impl select_dot_impl() {
 
             //BLAS cannot always be used
             case dot_impl::BLAS:
-                if (!cblas_enabled || !all_dma<A, B>::value) {
+                if (!cblas_enabled || !all_dma<A, B>) {
                     std::cerr << "Forced selection to BLAS dot implementation, but not possible for this expression" << std::endl;
                     return select_default_dot_impl<A, B>();
                 }

@@ -43,7 +43,7 @@ inline etl::conv_impl select_default_conv1_impl_new() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr bool floating = all_floating<I, K, C>::value;
+    static constexpr bool floating = all_floating<I, K, C>;
 
     //Only the standard implementation is able to handle column major
     if  /*constexpr*/ (!all_row_major<I, K, C>) {
@@ -83,7 +83,7 @@ inline etl::conv_impl select_conv1_impl_new() {
     if (local_context().conv_selector.forced) {
         auto forced = local_context().conv_selector.impl;
 
-        static constexpr bool floating    = all_floating<I, K, C>::value;
+        static constexpr bool floating    = all_floating<I, K, C>;
         static constexpr bool homogeneous = all_homogeneous<I, K, C>::value;
 
         switch (forced) {

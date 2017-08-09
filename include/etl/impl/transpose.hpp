@@ -39,7 +39,7 @@ namespace detail {
  */
 template<typename A, typename C>
 cpp14_constexpr transpose_impl select_default_transpose_impl(){
-    if(cublas_enabled && all_dma<A, C>::value && all_floating<A, C>::value){
+    if(cublas_enabled && all_dma<A, C> && all_floating<A, C>){
         return transpose_impl::CUBLAS;
     }
 
@@ -48,7 +48,7 @@ cpp14_constexpr transpose_impl select_default_transpose_impl(){
     return transpose_impl::STD;
 #else
     // Condition to use MKL
-    constexpr bool mkl_possible = mkl_enabled && all_dma<C>::value && all_floating<C>::value;
+    constexpr bool mkl_possible = mkl_enabled && all_dma<C> && all_floating<C>;
 
     if (mkl_possible) {
         return transpose_impl::MKL;
@@ -71,12 +71,12 @@ cpp14_constexpr transpose_impl select_default_transpose_impl(){
  */
 template<typename A, typename C>
 cpp14_constexpr transpose_impl select_default_in_square_transpose_impl(){
-    if(cublas_enabled && all_dma<A, C>::value && all_floating<A, C>::value){
+    if(cublas_enabled && all_dma<A, C> && all_floating<A, C>){
         return transpose_impl::CUBLAS;
     }
 
     // Condition to use MKL
-    constexpr bool mkl_possible = mkl_enabled && all_dma<C>::value && all_floating<C>::value;
+    constexpr bool mkl_possible = mkl_enabled && all_dma<C> && all_floating<C>;
 
     if (mkl_possible) {
         return transpose_impl::MKL;
@@ -99,7 +99,7 @@ transpose_impl select_transpose_impl(transpose_impl def) {
         switch (forced) {
             //CUBLAS cannot always be used
             case transpose_impl::CUBLAS:
-                if (!cublas_enabled || !all_dma<A, C>::value || !all_floating<A, C>::value) {
+                if (!cublas_enabled || !all_dma<A, C> || !all_floating<A, C>) {
                     std::cerr << "Forced selection to CUBLAS transpose implementation, but not possible for this expression" << std::endl;
                     return def;
                 }
@@ -108,7 +108,7 @@ transpose_impl select_transpose_impl(transpose_impl def) {
 
             //MKL cannot always be used
             case transpose_impl::MKL:
-                if (!mkl_enabled || !all_dma<A, C>::value || !all_floating<A, C>::value) {
+                if (!mkl_enabled || !all_dma<A, C> || !all_floating<A, C>) {
                     std::cerr << "Forced selection to MKL transpose implementation, but not possible for this expression" << std::endl;
                     return def;
                 }

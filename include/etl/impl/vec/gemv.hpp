@@ -597,9 +597,9 @@ void gemv(A&& a, B&& b, C&& c) {
     const auto n = columns(a);
 
     if (etl::size(a) < gemv_rm_small_threshold) {
-        gemv_small_kernel_rr<default_vec, all_padded<A, B, C>::value>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+        gemv_small_kernel_rr<default_vec, all_padded<A, B, C>>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
     } else {
-        gemv_large_kernel_rr<default_vec, all_padded<A, B, C>::value>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+        gemv_large_kernel_rr<default_vec, all_padded<A, B, C>>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
     }
 
     c.invalidate_gpu();
@@ -622,10 +622,10 @@ void gemv(A&& a, B&& b, C&& c) {
     const auto n = columns(a);
 
     if (etl::size(a) < gemv_cm_small_threshold) {
-        gemv_small_kernel_cc<default_vec, all_padded<A, B, C>::value>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+        gemv_small_kernel_cc<default_vec, all_padded<A, B, C>>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
     } else {
         c = 0;
-        gemv_large_kernel_cc<default_vec, all_padded<A, B, C>::value>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+        gemv_large_kernel_cc<default_vec, all_padded<A, B, C>>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
     }
 
     c.invalidate_gpu();
@@ -650,9 +650,9 @@ void gemv_t(A&& a, B&& b, C&& c) {
     const auto n = columns(a);
 
     if (etl::size(a) < gemv_rm_small_threshold) {
-        gemv_small_kernel_cc<default_vec, all_padded<A, B, C>::value>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+        gemv_small_kernel_cc<default_vec, all_padded<A, B, C>>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
     } else {
-        gemv_large_kernel_cc<default_vec, all_padded<A, B, C>::value>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+        gemv_large_kernel_cc<default_vec, all_padded<A, B, C>>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
     }
 
     c.invalidate_gpu();
@@ -675,10 +675,10 @@ void gemv_t(A&& a, B&& b, C&& c) {
     const auto n = columns(a);
 
     if (etl::size(a) < gemv_cm_small_threshold) {
-        gemv_small_kernel_rr<default_vec, all_padded<A, B, C>::value>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+        gemv_small_kernel_rr<default_vec, all_padded<A, B, C>>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
     } else {
         c = 0;
-        gemv_large_kernel_rr<default_vec, all_padded<A, B, C>::value>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+        gemv_large_kernel_rr<default_vec, all_padded<A, B, C>>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
     }
 
     c.invalidate_gpu();

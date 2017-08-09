@@ -30,7 +30,7 @@ namespace blas {
  * \param b The rhs expression
  * \param c The output expression
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>)>
 void outer(const A& a, const B& b, C&& c) {
     c = 0;
 
@@ -52,7 +52,7 @@ void outer(const A& a, const B& b, C&& c) {
 /*!
  * \copydoc outer
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>)>
 void outer(const A& a, const B& b, C&& c) {
     c = 0;
 
@@ -77,7 +77,7 @@ void outer(const A& a, const B& b, C&& c) {
  * \param b The rhs expression
  * \param c The output expression
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>)>
 void batch_outer(const A& a, const B& b, C&& c) {
     const size_t m = etl::rows(c);
     const size_t n = etl::columns(c);
@@ -102,7 +102,7 @@ void batch_outer(const A& a, const B& b, C&& c) {
 /*!
  * \copydoc batch_outer
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>)>
 void batch_outer(const A& a, const B& b, C&& c) {
     const size_t m = etl::rows(c);
     const size_t n = etl::columns(c);

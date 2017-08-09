@@ -315,9 +315,9 @@ TEMPLATE_TEST_CASE_2("etl_traits/has_direct_access", "has_direct_access", Z, flo
     REQUIRE_DIRECT(etl::has_direct_access<const mat_type_2&&>);
 
     //Values have direct access
-    REQUIRE_DIRECT(etl::is_fast_matrix<decltype(a)>::value);
+    REQUIRE_DIRECT(etl::is_fast_matrix<decltype(a)>);
     REQUIRE_DIRECT(etl::has_direct_access<decltype(a)>);
-    REQUIRE_DIRECT(etl::is_dyn_matrix<decltype(b)>::value);
+    REQUIRE_DIRECT(etl::is_dyn_matrix<decltype(b)>);
     REQUIRE_DIRECT(etl::has_direct_access<decltype(b)>);
 
     //Sub have direct access
@@ -358,8 +358,8 @@ TEMPLATE_TEST_CASE_2("etl_traits/has_direct_access", "has_direct_access", Z, flo
 
     if (etl::vec_enabled) {
         //Some unary can be vectorizable
-        REQUIRE_DIRECT((etl::all_vectorizable<etl::vector_mode, decltype(abs(a))>::value));
-        REQUIRE_DIRECT((etl::all_vectorizable<etl::vector_mode, decltype(abs(b))>::value));
+        REQUIRE_DIRECT((etl::all_vectorizable<etl::vector_mode, decltype(abs(a))>));
+        REQUIRE_DIRECT((etl::all_vectorizable<etl::vector_mode, decltype(abs(b))>));
     }
 }
 

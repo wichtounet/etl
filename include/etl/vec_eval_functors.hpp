@@ -58,7 +58,7 @@ struct VectorizedAssign : vectorized_base<V> {
 
         auto* lhs_mem = lhs.memory_start();
 
-        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
+        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>;
 
         const size_t last = remainder ? (N & size_t(-IT::size)) : N;
 
@@ -111,7 +111,7 @@ struct VectorizedAssignAdd : vectorized_base<V> {
 
         auto* lhs_mem = lhs.memory_start();
 
-        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
+        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>;
 
         const size_t last = remainder ? (N & size_t(-IT::size)) : N;
 
@@ -154,7 +154,7 @@ struct VectorizedAssignSub : vectorized_base<V> {
 
         auto* lhs_mem = lhs.memory_start();
 
-        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
+        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>;
 
         const size_t last = remainder ? (N & size_t(-IT::size)) : N;
 
@@ -197,7 +197,7 @@ struct VectorizedAssignMul : vectorized_base<V> {
 
         auto* lhs_mem = lhs.memory_start();
 
-        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
+        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>;
 
         const size_t last = remainder ? (N & size_t(-IT::size)) : N;
 
@@ -240,7 +240,7 @@ struct VectorizedAssignDiv : vectorized_base<V> {
 
         auto* lhs_mem = lhs.memory_start();
 
-        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
+        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>;
 
         const size_t last = remainder ? (N & size_t(-IT::size)) : N;
 

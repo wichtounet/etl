@@ -37,7 +37,7 @@ struct binary_function_expr : base_temporary_expr_bin<binary_function_expr<A, B,
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename C, cpp_enable_if(all_fast<A, B, C>::value)>
+    template <typename C, cpp_enable_if(all_fast<A, B, C>)>
     static void check(const A& a, const B& b, const C& c){
         static constexpr etl::order order_a = decay_traits<A>::storage_order;
         static constexpr etl::order order_b = decay_traits<B>::storage_order;
@@ -60,7 +60,7 @@ struct binary_function_expr : base_temporary_expr_bin<binary_function_expr<A, B,
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename C, cpp_disable_if(all_fast<A, B, C>::value)>
+    template <typename C, cpp_disable_if(all_fast<A, B, C>)>
     static void check(const A& a, const B& b, const C& c){
         static constexpr etl::order order_a = decay_traits<A>::storage_order;
         static constexpr etl::order order_b = decay_traits<B>::storage_order;
@@ -172,7 +172,7 @@ struct etl_traits<etl::binary_function_expr<A, B, Impl>> {
     static constexpr bool is_transformer = false;                      ///< Indicates if the type is a transformer
     static constexpr bool is_view        = false;                      ///< Indicates if the type is a view
     static constexpr bool is_magic_view  = false;                      ///< Indicates if the type is a magic view
-    static constexpr bool is_fast        = all_fast<A, B>::value;      ///< Indicates if the expression is fast
+    static constexpr bool is_fast        = all_fast<A, B>;      ///< Indicates if the expression is fast
     static constexpr bool is_linear      = false;                      ///< Indicates if the expression is linear
     static constexpr bool is_thread_safe = true;                       ///< Indicates if the expression is thread safe
     static constexpr bool is_value       = false;                      ///< Indicates if the expression is of value type

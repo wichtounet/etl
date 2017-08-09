@@ -175,98 +175,98 @@ struct etl_traits {
  * \tparam T The type to test
  */
 template <typename T>
-using is_fast_matrix = traits_detail::is_fast_matrix_impl<std::decay_t<T>>;
+constexpr bool is_fast_matrix = traits_detail::is_fast_matrix_impl<std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a fast matrix
  * \tparam T The type to test
  */
 template <typename T>
-using is_custom_fast_matrix = traits_detail::is_custom_fast_matrix_impl<std::decay_t<T>>;
+constexpr bool is_custom_fast_matrix = traits_detail::is_custom_fast_matrix_impl<std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a dyn matrix
  * \tparam T The type to test
  */
 template <typename T>
-using is_dyn_matrix = traits_detail::is_dyn_matrix_impl<std::decay_t<T>>;
+constexpr bool is_dyn_matrix = traits_detail::is_dyn_matrix_impl<std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a custom dyn matrix
  * \tparam T The type to test
  */
 template <typename T>
-using is_custom_dyn_matrix = traits_detail::is_custom_dyn_matrix_impl<std::decay_t<T>>;
+constexpr bool is_custom_dyn_matrix = traits_detail::is_custom_dyn_matrix_impl<std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a sparse matrix
  * \tparam T The type to test
  */
 template <typename T>
-using is_sparse_matrix = traits_detail::is_sparse_matrix_impl<std::decay_t<T>>;
+constexpr bool is_sparse_matrix = traits_detail::is_sparse_matrix_impl<std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a symmetric matrix
  * \tparam T The type to test
  */
 template <typename T>
-using is_symmetric_matrix = cpp::is_specialization_of<etl::symmetric_matrix, std::decay_t<T>>;
+constexpr bool is_symmetric_matrix = cpp::is_specialization_of<etl::symmetric_matrix, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a hermitian matrix
  * \tparam T The type to test
  */
 template <typename T>
-using is_hermitian_matrix = cpp::is_specialization_of<etl::hermitian_matrix, std::decay_t<T>>;
+constexpr bool is_hermitian_matrix = cpp::is_specialization_of<etl::hermitian_matrix, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a diagonal matrix
  * \tparam T The type to test
  */
 template <typename T>
-using is_diagonal_matrix = cpp::is_specialization_of<etl::diagonal_matrix, std::decay_t<T>>;
+constexpr bool is_diagonal_matrix = cpp::is_specialization_of<etl::diagonal_matrix, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is an upper triangular matrix
  * \tparam T The type to test
  */
 template <typename T>
-using is_upper_matrix = cpp::is_specialization_of<etl::upper_matrix, std::decay_t<T>>;
+constexpr bool is_upper_matrix = cpp::is_specialization_of<etl::upper_matrix, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a lower triangular matrix
  * \tparam T The type to test
  */
 template <typename T>
-using is_lower_matrix = cpp::is_specialization_of<etl::lower_matrix, std::decay_t<T>>;
+constexpr bool is_lower_matrix = cpp::is_specialization_of<etl::lower_matrix, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a strictly lower triangular matrix
  * \tparam T The type to test
  */
 template <typename T>
-using is_strictly_lower_matrix = cpp::is_specialization_of<etl::strictly_lower_matrix, std::decay_t<T>>;
+constexpr bool is_strictly_lower_matrix = cpp::is_specialization_of<etl::strictly_lower_matrix, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a strictly upper triangular matrix
  * \tparam T The type to test
  */
 template <typename T>
-using is_strictly_upper_matrix = cpp::is_specialization_of<etl::strictly_upper_matrix, std::decay_t<T>>;
+constexpr bool is_strictly_upper_matrix = cpp::is_specialization_of<etl::strictly_upper_matrix, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a uni lower triangular matrix
  * \tparam T The type to test
  */
 template <typename T>
-using is_uni_lower_matrix = cpp::is_specialization_of<etl::uni_lower_matrix, std::decay_t<T>>;
+constexpr bool is_uni_lower_matrix = cpp::is_specialization_of<etl::uni_lower_matrix, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a uni upper triangular matrix
  * \tparam T The type to test
  */
 template <typename T>
-using is_uni_upper_matrix = cpp::is_specialization_of<etl::uni_upper_matrix, std::decay_t<T>>;
+constexpr bool is_uni_upper_matrix = cpp::is_specialization_of<etl::uni_upper_matrix, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a unary expression.
@@ -403,7 +403,7 @@ using is_etl_value = cpp::bool_constant<decay_traits<T>::is_value>;
  * \tparam T The type to test
  */
 template <typename T>
-using is_etl_value_class = cpp::or_c<is_fast_matrix<T>, is_custom_fast_matrix<T>, is_dyn_matrix<T>, is_custom_dyn_matrix<T>, is_sparse_matrix<T>>;
+using is_etl_value_class = cpp::or_u<is_fast_matrix<T>, is_custom_fast_matrix<T>, is_dyn_matrix<T>, is_custom_dyn_matrix<T>, is_sparse_matrix<T>>;
 
 /*!
  * \brief Traits indicating if the given ETL type can be left hand side type
@@ -432,133 +432,139 @@ constexpr bool has_direct_access = decay_traits<T>::is_direct;
  * \tparam T The type
  */
 template <typename T>
-using is_single_precision_t = std::is_same<T, float>;
+constexpr bool is_single_precision_t = std::is_same<T, float>::value;
 
 /*!
  * \brief Traits to test if the given ETL expresion contains single precision numbers.
  * \tparam T The ETL expression type.
  */
 template <typename T>
-using is_single_precision = is_single_precision_t<value_t<T>>;
+constexpr bool is_single_precision = is_single_precision_t<value_t<T>>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types contains single precision numbers.
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_single_precision = cpp::and_c<is_single_precision<E>...>;
+constexpr bool all_single_precision = and_v<(is_single_precision<E>)...>;
 
 /*!
  * \brief Traits to test if the given type is double precision type.
  * \tparam T The type
  */
 template <typename T>
-using is_double_precision_t = std::is_same<T, double>;
+constexpr bool is_double_precision_t = std::is_same<T, double>::value;
 
 /*!
  * \brief Traits to test if the given ETL expresion contains double precision numbers.
  * \tparam T The ETL expression type.
  */
 template <typename T>
-using is_double_precision = is_double_precision_t<value_t<T>>;
+constexpr bool is_double_precision = is_double_precision_t<value_t<T>>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types contains double precision numbers.
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_double_precision = cpp::and_c<is_double_precision<E>...>;
+constexpr bool all_double_precision = and_v<(is_double_precision<E>)...>;
 
 /*!
  * \brief Traits to test if the given ETL expresion contains floating point numbers.
  * \tparam T The ETL expression type.
  */
 template <typename T>
-using is_floating = cpp::or_c<is_single_precision<T>, is_double_precision<T>>;
+constexpr bool is_floating = is_single_precision<T> || is_double_precision<T>;
 
 /*!
  * \brief Traits to test if the type is floating point numbers.
  * \tparam T The type.
  */
 template <typename T>
-using is_floating_t = cpp::or_c<is_single_precision_t<T>, is_double_precision_t<T>>;
+constexpr bool is_floating_t = is_single_precision_t<T> || is_double_precision_t<T>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types contains floating point numbers.
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_floating = cpp::and_c<is_floating<E>...>;
+constexpr bool all_floating = and_v<(is_floating<E>)...>;
 
 /*!
  * \brief Traits to test if all the given types are floating point numbers.
  * \tparam E The types.
  */
 template <typename... E>
-using all_floating_t = cpp::and_c<is_floating_t<E>...>;
+constexpr bool all_floating_t = and_v<(is_floating_t<E>)...>;
 
 /*!
  * \brief Traits to test if a type is a complex number type
  * \tparam T The type to test.
  */
 template <typename T>
-using is_complex_t = cpp::or_c<cpp::is_specialization_of<std::complex, std::decay_t<T>>, cpp::is_specialization_of<etl::complex, std::decay_t<T>>>;
+constexpr bool is_complex_t =
+            cpp::is_specialization_of<std::complex, std::decay_t<T>>::value
+        ||  cpp::is_specialization_of<etl::complex, std::decay_t<T>>::value;
 
 /*!
  * \brief Traits to test if a type is a single precision complex number type
  * \tparam T The type to test.
  */
 template <typename T>
-using is_complex_single_t = cpp::or_c<std::is_same<T, std::complex<float>>, std::is_same<T, etl::complex<float>>>;
+constexpr bool is_complex_single_t =
+            std::is_same<T, std::complex<float>>::value
+        ||  std::is_same<T, etl::complex<float>>::value;
 
 /*!
  * \brief Traits to test if a type is a double precision complex number type
  * \tparam T The type to test.
  */
 template <typename T>
-using is_complex_double_t = cpp::or_c<std::is_same<T, std::complex<double>>, std::is_same<T, etl::complex<double>>>;
+constexpr bool is_complex_double_t =
+            std::is_same<T, std::complex<double>>::value
+        ||  std::is_same<T, etl::complex<double>>::value;
 
 /*!
  * \brief Traits to test if the given ETL expresion type contains single precision complex numbers.
  * \tparam T The ETL expression type.
  */
 template <typename T>
-using is_complex_single_precision = is_complex_single_t<value_t<T>>;
+constexpr bool is_complex_single_precision = is_complex_single_t<value_t<T>>;
 
 /*!
  * \brief Traits to test if the given ETL expresion type contains double precision complex numbers.
  * \tparam T The ETL expression type.
  */
 template <typename T>
-using is_complex_double_precision = is_complex_double_t<value_t<T>>;
+constexpr bool is_complex_double_precision = is_complex_double_t<value_t<T>>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types contains single precision complex numbers.
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_complex_single_precision = cpp::and_c<is_complex_single_precision<E>...>;
+constexpr bool all_complex_single_precision = and_v<(is_complex_single_precision<E>)...>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types contains double precision complex numbers.
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_complex_double_precision = cpp::and_c<is_complex_double_precision<E>...>;
+constexpr bool all_complex_double_precision = and_v<(is_complex_double_precision<E>)...>;
 
 /*!
  * \brief Traits to test if the given ETL expresion type contains complex numbers.
  * \tparam T The ETL expression type.
  */
 template <typename T>
-using is_complex = cpp::or_c<is_complex_single_precision<T>, is_complex_double_precision<T>>;
+constexpr bool is_complex = is_complex_single_precision<T> || is_complex_double_precision<T>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types contains complex numbers.
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_complex = cpp::and_c<is_complex<E>...>;
+constexpr bool all_complex = and_v<(is_complex<E>)...>;
 
 /*!
  * \brief Traits to test if the given ETL expresion type has direct memory access (DMA).
@@ -572,7 +578,7 @@ constexpr bool is_dma = has_direct_access<E>;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_dma = cpp::and_u<(has_direct_access<E>)...>;
+constexpr bool all_dma = and_v<(has_direct_access<E>)...>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are row-major.
@@ -593,7 +599,7 @@ constexpr bool all_column_major = and_v<(decay_traits<E>::storage_order == order
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_fast = cpp::and_u<decay_traits<E>::is_fast...>;
+constexpr bool all_fast = and_v<decay_traits<E>::is_fast...>;
 
 /*!
  * \brief Traits to test if all the given types are ETL types.
@@ -635,21 +641,21 @@ constexpr bool is_4d = decay_traits<T>::dimensions() == 4;
  * \tparam E The ETL expression types.
  */
 template <vector_mode_t V, typename... E>
-using all_vectorizable = cpp::and_u<decay_traits<E>::template vectorizable<V>::value...>;
+constexpr bool all_vectorizable = and_v<(decay_traits<E>::template vectorizable<V>::value)...>;
 
 /*!
- * \brief Traits to test if the given ETL expresion type contain vectorizable types.
- * \tparam E The ETL expression type.
+ * \brief Traits to test if the given type are vectorizable types.
+ * \tparam E The type.
  */
 template <vector_mode_t V, typename E>
-using vectorizable_t = cpp::bool_constant<get_intrinsic_traits<V>::template type<value_t<E>>::vectorizable>;
+constexpr bool vectorizable_t = get_intrinsic_traits<V>::template type<value_t<E>>::vectorizable;
 
 /*!
- * \brief Traits to test if all the given ETL expresion types contain vectorizable types.
- * \tparam E The ETL expression types.
+ * \brief Traits to test if all the given types are vectorizable types.
+ * \tparam E The types.
  */
 template <vector_mode_t V, typename... E>
-using all_vectorizable_t = cpp::and_u<vectorizable_t<V, E>::value...>;
+constexpr bool all_vectorizable_t = and_v<(vectorizable_t<V, E>)...>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are
@@ -657,28 +663,28 @@ using all_vectorizable_t = cpp::and_u<vectorizable_t<V, E>::value...>;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_thread_safe = cpp::and_u<decay_traits<E>::is_thread_safe...>;
+constexpr bool all_thread_safe = and_v<(decay_traits<E>::is_thread_safe)...>;
 
 /*!
  * \brief Traits to test if the givn ETL expression is a padded value class.
  * \tparam T The ETL expression type.
  */
 template <typename T>
-constexpr bool is_padded_value = is_dyn_matrix<T>::value || is_fast_matrix<T>::value;
+constexpr bool is_padded_value = is_dyn_matrix<T> || is_fast_matrix<T>;
 
 /*!
  * \brief Traits to test if the givn ETL expression is an aligned value class.
  * \tparam T The ETL expression type.
  */
 template <typename T>
-constexpr bool is_aligned_value = is_dyn_matrix<T>::value || is_fast_matrix<T>::value;
+constexpr bool is_aligned_value = is_dyn_matrix<T> || is_fast_matrix<T>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are padded.
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-using all_padded = cpp::and_u<decay_traits<E>::is_padded...>;
+constexpr bool all_padded = and_v<(decay_traits<E>::is_padded)...>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are padded.
@@ -719,7 +725,7 @@ struct inplace_transpose_able;
  * \copydoc inplace_transpose_able
  */
 template <typename T>
-struct inplace_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_2d<T>>> {
+struct inplace_transpose_able<T, std::enable_if_t<all_fast<T> && is_2d<T>>> {
     /*!
      * \brief Indicates if T is inplace transpose-able
      */
@@ -730,7 +736,7 @@ struct inplace_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_2d<T>
  * \copydoc inplace_transpose_able
  */
 template <typename T>
-struct inplace_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_2d<T>>> {
+struct inplace_transpose_able<T, std::enable_if_t<!all_fast<T> && is_2d<T>>> {
     /*!
      * \brief Indicates if T is inplace transpose-able
      */
@@ -762,7 +768,7 @@ struct inplace_sub_transpose_able;
  * \copydoc inplace_sub_transpose_able
  */
 template <typename T>
-struct inplace_sub_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_3d<T>>> {
+struct inplace_sub_transpose_able<T, std::enable_if_t<all_fast<T> && is_3d<T>>> {
     /*!
      * \brief Indicates if T is inplace sub-transpose-able
      */
@@ -773,7 +779,7 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_3
  * \copydoc inplace_sub_transpose_able
  */
 template <typename T>
-struct inplace_sub_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_3d<T>>> {
+struct inplace_sub_transpose_able<T, std::enable_if_t<!all_fast<T> && is_3d<T>>> {
     /*!
      * \brief Indicates if T is inplace sub-transpose-able
      */
@@ -807,7 +813,7 @@ struct is_square_matrix {
  * \copydoc is_square_matrix
  */
 template <typename Matrix>
-struct is_square_matrix <Matrix, std::enable_if_t<all_fast<Matrix>::value && is_2d<Matrix>>> {
+struct is_square_matrix <Matrix, std::enable_if_t<all_fast<Matrix> && is_2d<Matrix>>> {
     /*!
      * \brief The value of the traits. True if the matrix is square, false otherwise
      */
@@ -818,7 +824,7 @@ struct is_square_matrix <Matrix, std::enable_if_t<all_fast<Matrix>::value && is_
  * \copydoc is_square_matrix
  */
 template <typename Matrix>
-struct is_square_matrix <Matrix, std::enable_if_t<!all_fast<Matrix>::value && is_2d<Matrix>>> {
+struct is_square_matrix <Matrix, std::enable_if_t<!all_fast<Matrix> && is_2d<Matrix>>> {
     /*!
      * \brief The value of the traits. True if the matrix is square, false otherwise
      */
@@ -860,9 +866,9 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
     static constexpr bool is_transformer  = false;                                                       ///< Indicates if the type is a transformer
     static constexpr bool is_view         = false;                                                       ///< Indicates if the type is a view
     static constexpr bool is_magic_view   = false;                                                       ///< Indicates if the type is a magic view
-    static constexpr bool is_fast         = is_fast_matrix<T>::value || is_custom_fast_matrix<T>::value; ///< Indicates if the expression is fast
+    static constexpr bool is_fast         = is_fast_matrix<T> || is_custom_fast_matrix<T>; ///< Indicates if the expression is fast
     static constexpr bool is_value        = true;                                                        ///< Indicates if the expression is of value type
-    static constexpr bool is_direct       = !is_sparse_matrix<T>::value;                                 ///< Indicates if the expression has direct memory access
+    static constexpr bool is_direct       = !is_sparse_matrix<T>;                                 ///< Indicates if the expression has direct memory access
     static constexpr bool is_thread_safe  = true;                                                        ///< Indicates if the expression is thread safe
     static constexpr bool is_linear       = true;                                                        ///< Indicates if the expression is linear
     static constexpr bool is_generator    = false;                                                       ///< Indicates if the expression is a generator expression
@@ -879,7 +885,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
     template <vector_mode_t V>
     using vectorizable = cpp::bool_constant<
                     get_intrinsic_traits<V>::template type<value_type>::vectorizable
-                &&  !is_sparse_matrix<T>::value
+                &&  !is_sparse_matrix<T>
             >;
 
     /*!
@@ -1075,7 +1081,7 @@ constexpr size_t dim(const E& e) noexcept {
  */
 template <size_t D, typename E>
 constexpr size_t dim() noexcept {
-    static_assert(all_fast<E>::value, "dim<D, E>() can only be used on statically-sized ETL expression");
+    static_assert(all_fast<E>, "dim<D, E>() can only be used on statically-sized ETL expression");
     return decay_traits<E>::template dim<D>();
 }
 
@@ -1197,7 +1203,7 @@ void safe_ensure_cpu_up_to_date(E&& expr){
  *
  * \param expr The expression
  */
-template <typename E, cpp_enable_if(all_dma<E>::value)>
+template <typename E, cpp_enable_if(all_dma<E>)>
 bool safe_is_gpu_up_to_date(E&& expr){
     return expr.is_gpu_up_to_date();
 }
@@ -1208,7 +1214,7 @@ bool safe_is_gpu_up_to_date(E&& expr){
  *
  * \param expr The expression
  */
-template <typename E, cpp_disable_if(all_dma<E>::value)>
+template <typename E, cpp_disable_if(all_dma<E>)>
 bool safe_is_gpu_up_to_date(E&& expr){
     cpp_unused(expr);
     return false;

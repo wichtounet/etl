@@ -27,7 +27,7 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
 
     auto n = etl::size(lhs);
 
-    static constexpr bool remainder = !padding || !all_padded<L, R>::value;
+    static constexpr bool remainder = !padding || !all_padded<L, R>;
     const size_t last               = remainder ? (n & size_t(-vec_size)) : n;
 
     size_t i = 0;

@@ -62,7 +62,7 @@ struct conv_4d_backward_expr : base_temporary_expr_bin<conv_4d_backward_expr<A, 
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C, cpp_disable_if(all_fast<A, B, C>::value)>
+    template <typename I, typename K, typename C, cpp_disable_if(all_fast<A, B, C>)>
     static void check(const I& input, const K& kernel, const C& conv){
         static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_backward");
         static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_backward");
@@ -83,7 +83,7 @@ struct conv_4d_backward_expr : base_temporary_expr_bin<conv_4d_backward_expr<A, 
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C, cpp_enable_if(all_fast<A, B, C>::value)>
+    template <typename I, typename K, typename C, cpp_enable_if(all_fast<A, B, C>)>
     static void check(const I& input, const K& kernel, const C& conv){
         static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_backward");
         static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_backward");
@@ -124,7 +124,7 @@ struct conv_4d_backward_expr : base_temporary_expr_bin<conv_4d_backward_expr<A, 
         if /* constexpr */ (Flipped) {
             // The GPU implementation needs the real forward parameters, not the
             // converted backward parameters
-            if /* constexpr*/ (cudnn_enabled && all_floating<A, B, C>::value) {
+            if /* constexpr*/ (cudnn_enabled && all_floating<A, B, C>) {
                 impl::cudnn::conv4_backward_data_flipped(make_temporary(input), make_temporary(kernel), conv, S1, S2, P1, P2);
                 return;
             }
@@ -155,7 +155,7 @@ struct conv_4d_backward_expr : base_temporary_expr_bin<conv_4d_backward_expr<A, 
         } else {
             // The GPU implementation needs the real forward parameters, not the
             // converted backward parameters
-            if /* constexpr*/ (cudnn_enabled && all_floating<A, B, C>::value) {
+            if /* constexpr*/ (cudnn_enabled && all_floating<A, B, C>) {
                 impl::cudnn::conv4_backward_data(make_temporary(input), make_temporary(kernel), conv, S1, S2, P1, P2);
                 return;
             }
@@ -259,7 +259,7 @@ struct etl_traits<etl::conv_4d_backward_expr<A, B, S1, S2, P1, P2, Flipped>> {
     static constexpr bool is_transformer  = false;                      ///< Indicates if the type is a transformer
     static constexpr bool is_view         = false;                      ///< Indicates if the type is a view
     static constexpr bool is_magic_view   = false;                      ///< Indicates if the type is a magic view
-    static constexpr bool is_fast         = all_fast<A, B>::value;      ///< Indicates if the expression is fast
+    static constexpr bool is_fast         = all_fast<A, B>;      ///< Indicates if the expression is fast
     static constexpr bool is_linear       = false;                       ///< Indicates if the expression is linear
     static constexpr bool is_thread_safe  = true;                       ///< Indicates if the expression is thread safe
     static constexpr bool is_value        = false;                      ///< Indicates if the expression is of value type

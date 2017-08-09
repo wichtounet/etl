@@ -189,7 +189,7 @@ auto identity_derivative(E&& value) {
  * \param value The ETL expression
  * \return An ETL expression representing the logistic sigmoid of the input.
  */
-template <typename E, cpp_enable_if(all_dma<E>::value)>
+template <typename E, cpp_enable_if(all_dma<E>)>
 auto sigmoid(E&& value) -> unary_function_expr<detail::build_type<E>, detail::sigmoid> {
     static_assert(is_etl_expr<E>, "etl::sigmoid can only be used on ETL expressions");
     return unary_function_expr<detail::build_type<E>, detail::sigmoid>(value);
@@ -200,7 +200,7 @@ auto sigmoid(E&& value) -> unary_function_expr<detail::build_type<E>, detail::si
  * \param value The ETL expression
  * \return An ETL expression representing the logistic sigmoid of the input.
  */
-template <typename E, cpp_disable_if(all_dma<E>::value)>
+template <typename E, cpp_disable_if(all_dma<E>)>
 auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
     static_assert(is_etl_expr<E>, "etl::sigmoid can only be used on ETL expressions");
     return 1.0 / (1.0 + exp(-value));
@@ -211,7 +211,7 @@ auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
  * \param value The ETL expression
  * \return An ETL expression representing the relu activation of the input.
  */
-template <typename E, cpp_enable_if(all_dma<E>::value)>
+template <typename E, cpp_enable_if(all_dma<E>)>
 auto relu(E&& value) -> unary_function_expr<detail::build_type<E>, detail::relu> {
     static_assert(is_etl_expr<E>, "etl::relu can only be used on ETL expressions");
     return unary_function_expr<detail::build_type<E>, detail::relu>(value);
@@ -222,7 +222,7 @@ auto relu(E&& value) -> unary_function_expr<detail::build_type<E>, detail::relu>
  * \param value The ETL expression
  * \return An ETL expression representing the relu activation of the input.
  */
-template <typename E, cpp_disable_if(all_dma<E>::value)>
+template <typename E, cpp_disable_if(all_dma<E>)>
 auto relu(E&& value) -> decltype(max(value, 0.0)) {
     static_assert(is_etl_expr<E>, "etl::relu can only be used on ETL expressions");
     return max(value, 0.0);

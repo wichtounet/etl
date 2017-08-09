@@ -31,7 +31,7 @@ namespace detail {
  */
 template <typename L, typename R>
 bool direct_add(L&& lhs, R&& rhs) {
-    if(!all_floating<L, R>::value){
+    if(!all_floating<L, R>){
         return false;
     }
 
@@ -50,7 +50,7 @@ bool direct_add(L&& lhs, R&& rhs) {
  */
 template <typename L, typename R>
 bool direct_sub(L&& lhs, R&& rhs) {
-    if(!all_floating<L, R>::value){
+    if(!all_floating<L, R>){
         return false;
     }
 
@@ -69,7 +69,7 @@ bool direct_sub(L&& lhs, R&& rhs) {
  */
 template <typename L, typename R>
 bool direct_mul(L&& lhs, R&& rhs) {
-    if(!all_floating<L, R>::value){
+    if(!all_floating<L, R>){
         return false;
     }
 
@@ -87,7 +87,7 @@ bool direct_mul(L&& lhs, R&& rhs) {
  */
 template <typename L, typename R>
 bool direct_div(L&& lhs, R&& rhs) {
-    if(!all_floating<L, R>::value){
+    if(!all_floating<L, R>){
         return false;
     }
 

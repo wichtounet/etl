@@ -33,7 +33,7 @@ constexpr bool conv1_possible =
                 vec_enabled
             &&  vectorize_impl
             &&  all_homogeneous<I, K, C>::value
-            &&  all_vectorizable<V, I, K, C>::value;
+            &&  all_vectorizable<V, I, K, C>;
 
 /*!
  * \brief Vectorized implementation of a 1D 'valid' convolution C = I * K

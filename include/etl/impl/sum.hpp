@@ -45,11 +45,11 @@ cpp14_constexpr etl::sum_impl select_default_sum_impl(bool gpu_up_to_date) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    if (cublas_enabled && all_dma<E>::value && all_floating<E>::value && gpu_up_to_date){
+    if (cublas_enabled && all_dma<E> && all_floating<E> && gpu_up_to_date){
         return etl::sum_impl::CUBLAS;
     }
 
-    if (vec_enabled && all_vectorizable<vector_mode, E>::value) {
+    if (vec_enabled && all_vectorizable<vector_mode, E>) {
         return etl::sum_impl::VEC;
     }
 
@@ -77,7 +77,7 @@ etl::sum_impl select_sum_impl(bool gpu_up_to_date) {
                 return forced;
 
             case sum_impl::CUBLAS:
-                if (!cublas_enabled || !all_dma<E>::value || !all_floating<E>::value) {                                //COVERAGE_EXCLUDE_LINE
+                if (!cublas_enabled || !all_dma<E> || !all_floating<E>) {                                //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUBLAS sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                     return select_default_sum_impl<E>(gpu_up_to_date);                                                                          //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 //COVERAGE_EXCLUDE_LINE
@@ -85,7 +85,7 @@ etl::sum_impl select_sum_impl(bool gpu_up_to_date) {
                 return forced;
 
             case sum_impl::BLAS:
-                if (!cblas_enabled || !all_dma<E>::value || !all_floating<E>::value) {                                //COVERAGE_EXCLUDE_LINE
+                if (!cblas_enabled || !all_dma<E> || !all_floating<E>) {                                //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                     return select_default_sum_impl<E>(gpu_up_to_date);                                                                          //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 //COVERAGE_EXCLUDE_LINE

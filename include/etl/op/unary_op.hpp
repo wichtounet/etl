@@ -39,7 +39,7 @@ struct abs_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
 
     /*!
      * The vectorization type for V
@@ -162,9 +162,9 @@ struct log_unary_op {
      */
     template <vector_mode_t V>
     using vectorizable = cpp::bool_constant<
-            (V == vector_mode_t::SSE3 && is_single_precision_t<T>::value)
-        ||  (V == vector_mode_t::AVX && is_single_precision_t<T>::value)
-        ||  (intel_compiler && !is_complex_t<T>::value)>;
+            (V == vector_mode_t::SSE3 && is_single_precision_t<T>)
+        ||  (V == vector_mode_t::AVX && is_single_precision_t<T>)
+        ||  (intel_compiler && !is_complex_t<T>)>;
 
     /*!
      * The vectorization type for V
@@ -222,7 +222,7 @@ struct sqrt_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -380,9 +380,9 @@ struct exp_unary_op {
      */
     template <vector_mode_t V>
     using vectorizable = cpp::bool_constant<
-            (V == vector_mode_t::SSE3 && !is_complex_t<T>::value)
-        ||  (V == vector_mode_t::AVX && !is_complex_t<T>::value)
-        ||  (intel_compiler && !is_complex_t<T>::value)>;
+            (V == vector_mode_t::SSE3 && !is_complex_t<T>)
+        ||  (V == vector_mode_t::AVX && !is_complex_t<T>)
+        ||  (intel_compiler && !is_complex_t<T>)>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -539,7 +539,7 @@ struct minus_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -736,7 +736,7 @@ struct cos_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<(V == vector_mode_t::SSE3 || V == vector_mode_t::AVX)&& is_single_precision_t<T>::value>;
+    using vectorizable = cpp::bool_constant<(V == vector_mode_t::SSE3 || V == vector_mode_t::AVX)&& is_single_precision_t<T>>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -788,7 +788,7 @@ struct sin_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<(V == vector_mode_t::SSE3 || V == vector_mode_t::AVX)&& is_single_precision_t<T>::value>;
+    using vectorizable = cpp::bool_constant<(V == vector_mode_t::SSE3 || V == vector_mode_t::AVX)&& is_single_precision_t<T>>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1044,7 +1044,7 @@ struct relu_derivative_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
 
     /*!
      * The vectorization type for V
@@ -1544,7 +1544,7 @@ struct min_scalar_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
 
     S s; ///< The scalar value
 
@@ -1606,7 +1606,7 @@ struct max_scalar_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
 
     S s; ///< The scalar value
 
@@ -1668,7 +1668,7 @@ struct clip_scalar_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>>;
 
     S min; ///< The minimum for clipping
     S max; ///< The maximum for clipping

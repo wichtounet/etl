@@ -195,19 +195,19 @@ namespace detail {
  * \brief The output value type of an FFT based on the input
  */
 template <typename A>
-using fft_value_type = std::conditional_t<is_complex<A>::value, value_t<A>, std::complex<value_t<A>>>;
+using fft_value_type = std::conditional_t<is_complex<A>, value_t<A>, std::complex<value_t<A>>>;
 
 /*!
  * \brief The output value type of an Inverse FFT based on the input
  */
 template <typename A>
-using ifft_value_type = std::conditional_t<is_complex<A>::value, value_t<A>, std::complex<value_t<A>>>;
+using ifft_value_type = std::conditional_t<is_complex<A>, value_t<A>, std::complex<value_t<A>>>;
 
 /*!
  * \brief The output value type of an Inverse FFT real based on the input
  */
 template <typename A>
-using ifft_real_value_type = std::conditional_t<is_complex<A>::value, typename value_t<A>::value_type, value_t<A>>;
+using ifft_real_value_type = std::conditional_t<is_complex<A>, typename value_t<A>::value_type, value_t<A>>;
 
 } //end of namespace detail
 

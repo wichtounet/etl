@@ -42,7 +42,7 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_enable_if(all_fast<A, B, C>::value)>
+    template <typename C, cpp_enable_if(all_fast<A, B, C>)>
     static void check(const A& a, const B& b, const C& c) {
         static_assert(etl::dimensions<A>() == 2, "The input of bias_add_2d is a 2D matrix");
         static_assert(etl::dimensions<B>() == 1, "The input of bias_add_2d is a vector of biases");
@@ -63,7 +63,7 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_disable_if(all_fast<A, B, C>::value)>
+    template <typename C, cpp_disable_if(all_fast<A, B, C>)>
     static void check(const A& a, const B& b, const C& c) {
         static_assert(etl::dimensions<A>() == 2, "The input of bias_add_2d is a 2D matrix");
         static_assert(etl::dimensions<B>() == 1, "The input of bias_add_2d is a vector of biases");
@@ -178,8 +178,8 @@ private:
      */
     template <typename C>
     static cpp14_constexpr etl::bias_add_impl select_default_impl(bool gpu) {
-        constexpr bool vec_possible = vec_enabled && vectorize_impl && all_vectorizable<vector_mode, A, B, C>::value && all_homogeneous<A, B, C>::value;
-        constexpr bool cudnn_possible = cudnn_enabled && all_floating<A, B, C>::value && all_homogeneous<A, B, C>::value;
+        constexpr bool vec_possible = vec_enabled && vectorize_impl && all_vectorizable<vector_mode, A, B, C> && all_homogeneous<A, B, C>::value;
+        constexpr bool cudnn_possible = cudnn_enabled && all_floating<A, B, C> && all_homogeneous<A, B, C>::value;
 
         if (cudnn_possible && gpu) {
             return etl::bias_add_impl::CUDNN;
@@ -207,7 +207,7 @@ private:
             switch (forced) {
                 //CUDNN cannot always be used
                 case bias_add_impl::CUDNN:
-                    if (!cudnn_enabled || !all_floating<A, B, C>::value || !all_homogeneous<A, B, C>::value) {
+                    if (!cudnn_enabled || !all_floating<A, B, C> || !all_homogeneous<A, B, C>::value) {
                         std::cerr << "Forced selection to cUDNN bias_add implementation, but not possible for this expression" << std::endl;
                         return def;
                     }
@@ -216,7 +216,7 @@ private:
 
                 //VEC cannot always be used
                 case bias_add_impl::VEC:
-                    if (!vec_enabled || !vectorize_impl || !all_vectorizable<vector_mode, A, B, C>::value || !all_homogeneous<A, B, C>::value) {
+                    if (!vec_enabled || !vectorize_impl || !all_vectorizable<vector_mode, A, B, C> || !all_homogeneous<A, B, C>::value) {
                         std::cerr << "Forced selection to VEC bias_add_2d implementation, but not possible for this expression" << std::endl;
                         return def;
                     }
@@ -249,7 +249,7 @@ struct etl_traits<etl::bias_add_2d_expr<A, B>> {
     static constexpr bool is_transformer  = false;                     ///< Indicates if the type is a transformer
     static constexpr bool is_view         = false;                     ///< Indicates if the type is a view
     static constexpr bool is_magic_view   = false;                     ///< Indicates if the type is a magic view
-    static constexpr bool is_fast         = all_fast<A, B>::value;     ///< Indicates if the expression is fast
+    static constexpr bool is_fast         = all_fast<A, B>;     ///< Indicates if the expression is fast
     static constexpr bool is_linear       = false;                      ///< Indicates if the expression is linear
     static constexpr bool is_thread_safe  = true;                      ///< Indicates if the expression is thread safe
     static constexpr bool is_value        = false;                     ///< Indicates if the expression is of value type

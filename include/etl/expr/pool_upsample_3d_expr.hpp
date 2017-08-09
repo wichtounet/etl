@@ -46,7 +46,7 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename R, cpp_enable_if(all_fast<A, B, C, R>::value)>
+    template <typename R, cpp_enable_if(all_fast<A, B, C, R>)>
     static void check(const A& a, const B& b, const C& c, const R& result) {
         cpp_unused(a);
         cpp_unused(b);
@@ -75,7 +75,7 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename R, cpp_disable_if(all_fast<A, B, C, R>::value)>
+    template <typename R, cpp_disable_if(all_fast<A, B, C, R>)>
     static void check(const A& a, const B& b, const C& c, const R& result) {
         cpp_unused(a);
         cpp_unused(b);
@@ -107,7 +107,7 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
      */
     template <typename R>
     static cpp14_constexpr etl::pool_impl select_default_impl() {
-        if (cudnn_enabled && all_floating<A, B, C, R>::value) {
+        if (cudnn_enabled && all_floating<A, B, C, R>) {
             return etl::pool_impl::CUDNN;
         }
 
@@ -126,7 +126,7 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
             switch (forced) {
                 // CUDNN cannot always be used
                 case pool_impl::CUDNN:
-                    if (!cudnn_enabled || !all_floating<A, B, C, R>::value) {                                                            //COVERAGE_EXCLUDE_LINE
+                    if (!cudnn_enabled || !all_floating<A, B, C, R>) {                                                            //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to CUDNN pool implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return select_default_impl<R>();                                                                                 //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                    //COVERAGE_EXCLUDE_LINE

@@ -46,7 +46,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \param b The right side matrix
      * \param c The result matrix
      */
-    template <typename C, cpp_disable_if(all_fast<A, B, C>::value)>
+    template <typename C, cpp_disable_if(all_fast<A, B, C>)>
     static void check(const A& a, const B& b, const C& c) {
         cpp_assert(
             dim<1>(a) == dim<0>(b)         //interior dimensions
@@ -64,7 +64,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \param b The right side matrix
      * \param c The result matrix
      */
-    template <typename C, cpp_enable_if(all_fast<A, B, C>::value)>
+    template <typename C, cpp_enable_if(all_fast<A, B, C>)>
     static void check(const A& a, const B& b, const C& c) {
         static_assert(
             dim<1, A>() == dim<0, B>()         //interior dimensions
@@ -102,7 +102,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
             return gemm_impl::BLAS;
         }
 
-        if(vec_enabled && homo && all_vectorizable_t<vector_mode, AA, BB, C>::value){
+        if(vec_enabled && homo && all_vectorizable_t<vector_mode, AA, BB, C>){
             return gemm_impl::VEC;
         }
 
@@ -144,7 +144,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
 
                 //VEC cannot always be used
                 case gemm_impl::VEC:
-                    if (!vec_enabled || !all_vectorizable_t<vector_mode, AA, BB, C>::value || !all_homogeneous<AA, BB, C>::value) {                                               //COVERAGE_EXCLUDE_LINE
+                    if (!vec_enabled || !all_vectorizable_t<vector_mode, AA, BB, C> || !all_homogeneous<AA, BB, C>::value) {                                               //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to VEC gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return def;                                                            //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                   //COVERAGE_EXCLUDE_LINE

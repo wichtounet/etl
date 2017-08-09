@@ -45,7 +45,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \param b The right side matrix
      * \param c The result matrix
      */
-    template <typename C, cpp_disable_if(all_fast<A, B, C>::value)>
+    template <typename C, cpp_disable_if(all_fast<A, B, C>)>
     static void check(const A& a, const B& b, const C& c) {
         cpp_assert(
             dim<0>(a) == dim<0>(b)         //exterior dimension 1
@@ -62,7 +62,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \param b The right side matrix
      * \param c The result matrix
      */
-    template <typename C, cpp_enable_if(all_fast<A, B, C>::value)>
+    template <typename C, cpp_enable_if(all_fast<A, B, C>)>
     static void check(const A& a, const B& b, const C& c) {
         static_assert(
             dim<0, A>() == dim<0, B>()         //exterior dimension 1
@@ -85,7 +85,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
     static inline cpp14_constexpr gemm_impl select_default_gevm_impl(const size_t n1, const size_t n2) {
         using T = value_t<A>;
 
-        constexpr bool vec_possible = all_vectorizable_t<vector_mode, A, B, C>::value && vec_enabled;
+        constexpr bool vec_possible = all_vectorizable_t<vector_mode, A, B, C> && vec_enabled;
         constexpr bool homo         = all_homogeneous<A, B, C>::value;
 
         if(cblas_enabled && homo){
@@ -100,7 +100,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
             return gemm_impl::VEC;
         }
 
-        if (cublas_enabled && homo && is_complex_single_t<T>::value && n1 * n2 > 1000 * 1000) {
+        if (cublas_enabled && homo && is_complex_single_t<T> && n1 * n2 > 1000 * 1000) {
             return gemm_impl::CUBLAS;
         }
 
@@ -139,7 +139,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
 
                 //VEC cannot always be used
                 case gemm_impl::VEC:
-                    if (!vec_enabled || !all_vectorizable<vector_mode, A, B, C>::value || !all_homogeneous<A, B, C>::value) {          //COVERAGE_EXCLUDE_LINE
+                    if (!vec_enabled || !all_vectorizable<vector_mode, A, B, C> || !all_homogeneous<A, B, C>::value) {          //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to VEC gevm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return select_default_gevm_impl<C>(n1, n2);                                                                    //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                  //COVERAGE_EXCLUDE_LINE
