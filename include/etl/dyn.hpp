@@ -115,9 +115,9 @@ public:
      * The number of dimesnions must be the same as the D template
      * parameter of the matrix.
      */
-    template <typename... S, cpp_enable_if(
-                                 (sizeof...(S) == D),
-                                 cpp::all_convertible_to<size_t, S...>::value
+    template <typename... S, cpp_enable_iff(
+                                 (sizeof...(S) == D)
+                                 && cpp::all_convertible_to<size_t, S...>::value
                                  )>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}}) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
@@ -127,7 +127,7 @@ public:
      * \brief Construct a matrix with the given dimensions and initializer_list
      * \param sizes The dimensions of the matrix followed by an initializer_list
      */
-    template <typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
+    template <typename... S, cpp_enable_iff(dyn_detail::is_initializer_list_constructor<S...>::value)>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(util::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...),
                                                               dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
@@ -142,9 +142,9 @@ public:
      * \brief Construct a matrix with the given dimensions and values
      * \param sizes The dimensions of the matrix followed by a values_t
      */
-    template <typename... S, cpp_enable_if(
-                                 (sizeof...(S) == D),
-                                 cpp::is_specialization_of<values_t, typename cpp::last_type<size_t, S...>::type>::value)>
+    template <typename... S, cpp_enable_iff(
+                                 (sizeof...(S) == D)
+                                 && cpp::is_specialization_of<values_t, typename cpp::last_type<size_t, S...>::type>::value)>
     explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                               dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
@@ -160,8 +160,8 @@ public:
      * Every element of the matrix will be set to this value.
      */
     template <typename... S, cpp_enable_if(
-                                              (sizeof...(S) == D),
-                                              !cpp::is_specialization_of<values_t, typename cpp::last_type<size_t, S...>::type>::value
+                                              (sizeof...(S) == D)
+                                              && !cpp::is_specialization_of<values_t, typename cpp::last_type<size_t, S...>::type>::value
                                               )>
     explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept : base_type(
                                                                util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
@@ -179,7 +179,7 @@ public:
      *
      * Only possible for 1D matrices
      */
-    template <typename Container, cpp_enable_if(std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_iff(std::is_convertible<typename Container::value_type, value_type>::value)>
     explicit dyn_matrix_impl(const Container& container)
             : base_type(container.size(), {{container.size()}}){
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
@@ -302,7 +302,7 @@ public:
      * \param e The expression containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>)>
+    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
     dyn_matrix_impl& operator=(E&& e) noexcept {
         // It is possible that the matrix was not initialized before
         // In the case, get the the dimensions from the expression and
@@ -338,7 +338,7 @@ public:
      * \param vec The container containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename Container, cpp_enable_if(!is_etl_expr<Container>, std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_if(!is_etl_expr<Container> && std::is_convertible<typename Container::value_type, value_type>::value)>
     dyn_matrix_impl& operator=(const Container& vec) {
         // Inherit from the dimensions if possible
         if(!_memory && D == 1){

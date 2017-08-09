@@ -654,7 +654,7 @@ void gevm_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
  * \param b The rhs matrix
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<B> && all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff((all_row_major<B> && all_homogeneous<A, B, C>))>
 void gevm(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -679,7 +679,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_column_major<B> && all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff((all_column_major<B> && all_homogeneous<A, B, C>))>
 void gevm(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -708,7 +708,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((all_row_major<B> && all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff((all_row_major<B> && all_homogeneous<A, B, C>))>
 void gevm_t(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -735,7 +735,7 @@ void gevm_t(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix
  * \param c The result vector
   && all_homogeneous<A, B, C>*/
-template <typename A, typename B, typename C, cpp_enable_if((all_column_major<B> && all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff((all_column_major<B> && all_homogeneous<A, B, C>))>
 void gevm_t(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -766,7 +766,7 @@ void gevm_t(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff((!all_homogeneous<A, B, C>))>
 void gevm(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -782,7 +782,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_if((!all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff((!all_homogeneous<A, B, C>))>
 void gevm_t(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);

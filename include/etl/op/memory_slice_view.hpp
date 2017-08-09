@@ -87,7 +87,7 @@ public:
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the expression
      */
-    template <typename V = default_vec, bool A = Aligned, cpp_enable_if(A)>
+    template <typename V = default_vec, bool A = Aligned, cpp_enable_iff(A)>
     auto load(size_t x) const noexcept {
         return sub.template load<V>(x + first );
     }
@@ -120,7 +120,7 @@ public:
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
      */
-    template <typename V = default_vec, bool A = Aligned, cpp_enable_if(A)>
+    template <typename V = default_vec, bool A = Aligned, cpp_enable_iff(A)>
     void store(vec_type<V> in, size_t i) noexcept {
         sub.template store<V>(in, first + i);
     }
@@ -153,7 +153,7 @@ public:
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
      */
-    template <typename V = default_vec, bool A = Aligned, cpp_enable_if(A)>
+    template <typename V = default_vec, bool A = Aligned, cpp_enable_iff(A)>
     void stream(vec_type<V> in, size_t i) noexcept {
         sub.template stream<V>(in, first + i);
     }

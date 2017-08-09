@@ -65,7 +65,7 @@ private:
     /*!
      * \brief Init the container if necessary
      */
-    template <typename S = ST, cpp_enable_if(matrix_detail::is_vector<S>::value)>
+    template <typename S = ST, cpp_enable_iff(matrix_detail::is_vector<S>::value)>
     void init() {
         _data.resize(alloc_size_mat<value_type>(size(), this_type::template dim<n_dimensions - 1>()));
     }
@@ -73,7 +73,7 @@ private:
     /*!
      * \copydoc init
      */
-    template <typename S = ST, cpp_disable_if(matrix_detail::is_vector<S>::value)>
+    template <typename S = ST, cpp_disable_iff(matrix_detail::is_vector<S>::value)>
     void init() noexcept {
         //Nothing else to init
     }
@@ -92,7 +92,7 @@ public:
      * \brief Construct a fast matrix filled with the same value
      * \param value the value to fill the matrix with
      */
-    template <typename VT, cpp_enable_if_or(std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value)>
+    template <typename VT, cpp_enable_iff(std::is_convertible<VT, value_type>::value || std::is_assignable<T&, VT>::value)>
     explicit fast_matrix_impl(const VT& value) noexcept: base_type()  {
         init();
         std::fill(begin(), end(), value);
@@ -139,7 +139,7 @@ public:
      * \brief Construct a fast matrix from the given STL container
      * \param container The container to get values from
      */
-    template <typename Container, cpp_enable_if(!is_complex_t<Container>, std::is_convertible<typename Container::value_type, value_type>::value, !is_etl_expr<Container>)>
+    template <typename Container, cpp_enable_iff(!is_complex_t<Container> && std::is_convertible<typename Container::value_type, value_type>::value && !is_etl_expr<Container>)>
     explicit fast_matrix_impl(const Container& container): base_type()  {
         init();
         validate_assign(*this, container);
@@ -178,7 +178,7 @@ public:
      * \param container The STL container to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename Container, cpp_enable_if(!std::is_same<Container, value_type>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_iff(!std::is_same<Container, value_type>::value && std::is_convertible<typename Container::value_type, value_type>::value)>
     fast_matrix_impl& operator=(const Container& container) noexcept {
         validate_assign(*this, container);
         std::copy(container.begin(), container.end(), begin());
@@ -190,7 +190,7 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_if(is_etl_expr<E>, std::is_convertible<value_t<E>, value_type>::value)>
+    template <typename E, cpp_enable_iff(is_etl_expr<E> && std::is_convertible<value_t<E>, value_type>::value)>
     fast_matrix_impl& operator=(E&& e) {
         validate_assign(*this, e);
 
@@ -217,7 +217,7 @@ public:
      * \param value The value to assign to each element
      * \return a reference to the fast matrix
      */
-    template <typename VT, cpp_enable_if_or(std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value)>
+    template <typename VT, cpp_enable_iff(std::is_convertible<VT, value_type>::value || std::is_assignable<T&, VT>::value)>
     fast_matrix_impl& operator=(const VT& value) noexcept {
         std::fill(begin(), end(), value);
 
@@ -318,7 +318,7 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_enable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_add_to(L&& lhs)  const {
         if(!detail::direct_add(lhs, *this)){
             std_add_evaluate(*this, lhs);
@@ -329,7 +329,7 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_disable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_add_to(L&& lhs)  const {
         std_add_evaluate(*this, lhs);
     }
@@ -338,7 +338,7 @@ public:
      * \brief Subtract from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_enable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_sub_to(L&& lhs)  const {
         if(!detail::direct_sub(lhs, *this)){
             std_sub_evaluate(*this, lhs);
@@ -349,7 +349,7 @@ public:
      * \brief Subtract from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_disable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_sub_to(L&& lhs)  const {
         std_sub_evaluate(*this, lhs);
     }
@@ -358,7 +358,7 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_enable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_mul_to(L&& lhs)  const {
         if(!detail::direct_mul(lhs, *this)){
             std_mul_evaluate(*this, lhs);
@@ -369,7 +369,7 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_disable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_mul_to(L&& lhs)  const {
         std_mul_evaluate(*this, lhs);
     }
@@ -377,7 +377,7 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_enable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_div_to(L&& lhs)  const {
         if(!detail::direct_div(lhs, *this)){
             std_div_evaluate(*this, lhs);
@@ -388,7 +388,7 @@ public:
      * \brief Divide to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_disable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_div_to(L&& lhs)  const {
         std_div_evaluate(*this, lhs);
     }

@@ -286,7 +286,7 @@ void conv2_full_kernel(const T* a, size_t m1, size_t m2, const T* b, size_t n1, 
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(!all_complex<A>)>
+template <typename A, typename C, cpp_enable_iff(!all_complex<A>)>
 void fft1(A&& a, C&& c) {
     c = a;
 
@@ -298,7 +298,7 @@ void fft1(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_complex<A>)>
+template <typename A, typename C, cpp_enable_iff(all_complex<A>)>
 void fft1(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
@@ -315,7 +315,7 @@ void fft1(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename A, typename C, cpp_enable_if(!all_complex<A>)>
+template <typename A, typename C, cpp_enable_iff(!all_complex<A>)>
 void fft1_many(A&& a, C&& c) {
     static constexpr size_t N = decay_traits<A>::dimensions();
 
@@ -334,7 +334,7 @@ void fft1_many(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename A, typename C, cpp_enable_if(all_complex<A>)>
+template <typename A, typename C, cpp_enable_iff(all_complex<A>)>
 void fft1_many(A&& a, C&& c) {
     static constexpr size_t N = decay_traits<A>::dimensions();
 
@@ -354,7 +354,7 @@ void fft1_many(A&& a, C&& c) {
  * \param c The result of the inverse FFT
  * \param factor The scaling factor
  */
-template <typename C, cpp_enable_if(all_complex_single_precision<C>)>
+template <typename C, cpp_enable_iff(all_complex_single_precision<C>)>
 void scale_back(C&& c, float factor) {
 #ifdef ETL_CUBLAS_MODE
     decltype(auto) handle = impl::cublas::start_cublas();
@@ -379,7 +379,7 @@ void scale_back(C&& c, float factor) {
  * \param c The result of the inverse FFT
  * \param factor The scaling factor
  */
-template <typename C, cpp_enable_if(all_complex_double_precision<C>)>
+template <typename C, cpp_enable_iff(all_complex_double_precision<C>)>
 void scale_back(C&& c, double factor) {
 #ifdef ETL_CUBLAS_MODE
     decltype(auto) handle = impl::cublas::start_cublas();
@@ -413,7 +413,7 @@ void scale_back(C&& c) {
  * \param a The result of the inverse FFT
  * \param c The final results
  */
-template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>)>
+template <typename A, typename C, cpp_enable_iff(all_complex_single_precision<A>)>
 void scale_back_real(A&& a, C&& c) {
 #ifdef ETL_CUBLAS_MODE
     c.ensure_gpu_allocated();
@@ -450,7 +450,7 @@ void scale_back_real(A&& a, C&& c) {
  * \param a The result of the inverse FFT
  * \param c The final results
  */
-template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>)>
+template <typename A, typename C, cpp_enable_iff(all_complex_double_precision<A>)>
 void scale_back_real(A&& a, C&& c) {
 #ifdef ETL_CUBLAS_MODE
     c.ensure_gpu_allocated();
@@ -594,7 +594,7 @@ void conv1_full(A&& a, B&& b, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(!all_complex<A>)>
+template <typename A, typename C, cpp_enable_iff(!all_complex<A>)>
 void fft2(A&& a, C&& c) {
     c = a;
 
@@ -606,7 +606,7 @@ void fft2(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_complex<A>)>
+template <typename A, typename C, cpp_enable_iff(all_complex<A>)>
 void fft2(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
@@ -652,7 +652,7 @@ void ifft2_real(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename A, typename C, cpp_enable_if(!all_complex<A>)>
+template <typename A, typename C, cpp_enable_iff(!all_complex<A>)>
 void fft2_many(A&& a, C&& c) {
     static constexpr size_t N = decay_traits<A>::dimensions();
 
@@ -672,7 +672,7 @@ void fft2_many(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename A, typename C, cpp_enable_if(all_complex<A>)>
+template <typename A, typename C, cpp_enable_iff(all_complex<A>)>
 void fft2_many(A&& a, C&& c) {
     static constexpr size_t N = decay_traits<A>::dimensions();
 

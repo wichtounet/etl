@@ -112,7 +112,7 @@ struct pmp_h_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 2)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_iff(etl::decay_traits<A>::dimensions() == 2)>
     static void apply(A&& a, C&& c) {
         static_assert(S1 == C1, "pmp_h does not support strides");
         static_assert(S2 == C2, "pmp_h does not support strides");
@@ -143,7 +143,7 @@ struct pmp_h_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 3)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_iff(etl::decay_traits<A>::dimensions() == 3)>
     static void apply(A&& a, C&& c) {
         static_assert(S1 == C1, "pmp_h does not support strides");
         static_assert(S2 == C2, "pmp_h does not support strides");
@@ -183,7 +183,7 @@ struct pmp_h_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 4)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_iff(etl::decay_traits<A>::dimensions() == 4)>
     static void apply(A&& a, C&& c) {
         static_assert(S1 == C1, "pmp_h does not support strides");
         static_assert(S2 == C2, "pmp_h does not support strides");
@@ -233,7 +233,7 @@ struct dyn_pmp_h_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 2)>
+    template <typename A, typename C, cpp_enable_iff(etl::decay_traits<A>::dimensions() == 2)>
     static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
@@ -269,7 +269,7 @@ struct dyn_pmp_h_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 3)>
+    template <typename A, typename C, cpp_enable_iff(etl::decay_traits<A>::dimensions() == 3)>
     static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
@@ -314,7 +314,7 @@ struct dyn_pmp_h_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 4)>
+    template <typename A, typename C, cpp_enable_iff(etl::decay_traits<A>::dimensions() == 4)>
     static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
@@ -461,7 +461,7 @@ struct pmp_p_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 2)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_iff(etl::decay_traits<A>::dimensions() == 2)>
     static void apply(A&& a, C&& c) {
         static_assert(S1 == C1, "pmp_p does not support strides");
         static_assert(S2 == C2, "pmp_p does not support strides");
@@ -492,7 +492,7 @@ struct pmp_p_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 3)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_iff(etl::decay_traits<A>::dimensions() == 3)>
     static void apply(A&& a, C&& c) {
         static_assert(S1 == C1, "pmp_p does not support strides");
         static_assert(S2 == C2, "pmp_p does not support strides");
@@ -532,7 +532,7 @@ struct pmp_p_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 4)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_iff(etl::decay_traits<A>::dimensions() == 4)>
     static void apply(A&& a, C&& c) {
         static_assert(S1 == C1, "pmp_p does not support strides");
         static_assert(S2 == C2, "pmp_p does not support strides");
@@ -582,7 +582,7 @@ struct dyn_pmp_p_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 2)>
+    template <typename A, typename C, cpp_enable_iff(etl::decay_traits<A>::dimensions() == 2)>
     static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
@@ -618,7 +618,7 @@ struct dyn_pmp_p_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 3)>
+    template <typename A, typename C, cpp_enable_iff(etl::decay_traits<A>::dimensions() == 3)>
     static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
@@ -663,7 +663,7 @@ struct dyn_pmp_p_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C, cpp_enable_if(etl::decay_traits<A>::dimensions() == 4)>
+    template <typename A, typename C, cpp_enable_iff(etl::decay_traits<A>::dimensions() == 4)>
     static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");

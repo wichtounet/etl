@@ -161,7 +161,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    template <bool C = matrix, cpp_enable_if(C)>
+    template <bool C = matrix, cpp_enable_iff(C)>
     value_type operator[](size_t i) const {
         size_t i_i = i / dim<1>(sub);
         size_t i_j = i % dim<1>(sub);
@@ -185,7 +185,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    template <bool C = matrix, cpp_enable_if(C)>
+    template <bool C = matrix, cpp_enable_iff(C)>
     value_type read_flat(size_t i) const {
         size_t i_i = i / dim<1>(sub);
         size_t i_j = i % dim<1>(sub);
@@ -300,7 +300,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    template <bool C = matrix, cpp_enable_if(C)>
+    template <bool C = matrix, cpp_enable_iff(C)>
     value_type operator[](size_t i) const {
         size_t i_i = i / dim<1>(sub);
         size_t i_j = i % dim<1>(sub);
@@ -324,7 +324,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    template <bool C = matrix, cpp_enable_if(C)>
+    template <bool C = matrix, cpp_enable_iff(C)>
     value_type read_flat(size_t i) const {
         size_t i_i = i / dim<1>(sub);
         size_t i_j = i % dim<1>(sub);

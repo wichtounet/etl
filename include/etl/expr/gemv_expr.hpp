@@ -63,7 +63,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \param b The right side matrix
      * \param c The result matrix
      */
-    template <typename C, cpp_enable_if(all_fast<A, B, C>)>
+    template <typename C, cpp_enable_iff(all_fast<A, B, C>)>
     static void check(const A& a, const B& b, const C& c) {
         static_assert(
             dim<1, A>() == dim<0, B>()        //interior dimensions
@@ -158,7 +158,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \param b The B matrix
      * \param c The C matrix (output)
      */
-    template <typename AA, typename BB, typename C, cpp_enable_if((is_transpose_expr<AA>))>
+    template <typename AA, typename BB, typename C, cpp_enable_iff((is_transpose_expr<AA>))>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         // The vector is always assigned in the same way
         standard_evaluator::pre_assign_rhs(b);
@@ -192,7 +192,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \param b The B matrix
      * \param c The C matrix (output)
      */
-    template <typename AA, typename BB, typename C, cpp_enable_if((!is_transpose_expr<AA>))>
+    template <typename AA, typename BB, typename C, cpp_enable_iff((!is_transpose_expr<AA>))>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         // The vector and matrix are always assigned in the same way
         standard_evaluator::pre_assign_rhs(a);
@@ -369,7 +369,7 @@ struct etl_traits<etl::gemv_expr<A, B>> {
  * \param b The right hand side vector
  * \return An expression representing the matrix-vector multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_if(is_2d<A>, is_1d<B>)>
+template <typename A, typename B, cpp_enable_iff(is_2d<A>, is_1d<B>)>
 gemv_expr<detail::build_type<A>, detail::build_type<B>> operator*(A&& a, B&& b) {
     return gemv_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
@@ -380,7 +380,7 @@ gemv_expr<detail::build_type<A>, detail::build_type<B>> operator*(A&& a, B&& b) 
  * \param b The right hand side vector
  * \return An expression representing the matrix-vector multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_if(is_2d<A>, is_1d<B>)>
+template <typename A, typename B, cpp_enable_iff(is_2d<A>, is_1d<B>)>
 gemv_expr<detail::build_type<A>, detail::build_type<B>> mul(A&& a, B&& b){
     return gemv_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
@@ -392,7 +392,7 @@ gemv_expr<detail::build_type<A>, detail::build_type<B>> mul(A&& a, B&& b){
  * \param c The expression used to store the result
  * \return An expression representing the matrix-vector multiplication of a and b
  */
-template <typename A, typename B, typename C, cpp_enable_if(is_2d<A>, is_1d<B>)>
+template <typename A, typename B, typename C, cpp_enable_iff(is_2d<A>, is_1d<B>)>
 auto mul(A&& a, B&& b, C&& c) {
     c = mul(a, b);
     return c;

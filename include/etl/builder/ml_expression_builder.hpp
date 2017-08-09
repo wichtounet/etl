@@ -378,7 +378,7 @@ decltype(auto) identity_backward(O&& output, E&& errors) {
  * \param errors The errors at output of this activation function
  * \return the backward activation of the activation function
  */
-template <typename O, typename E, cpp_enable_if(all_dma<O, E>)>
+template <typename O, typename E, cpp_enable_iff(all_dma<O, E>)>
 auto sigmoid_backward(O&& output, E&& errors) -> binary_function_expr<detail::build_type<E>, detail::build_type<E>, detail::sigmoid_backward>{
     static_assert(is_etl_expr<E>, "etl::sigmoid_backward can only be used on ETL expressions");
     return binary_function_expr<detail::build_type<E>, detail::build_type<E>, detail::sigmoid_backward>(output, errors);
@@ -390,7 +390,7 @@ auto sigmoid_backward(O&& output, E&& errors) -> binary_function_expr<detail::bu
  * \param errors The errors at output of this activation function
  * \return the backward activation of the activation function
  */
-template <typename O, typename E, cpp_disable_if(all_dma<O, E>)>
+template <typename O, typename E, cpp_disable_iff(all_dma<O, E>)>
 auto sigmoid_backward(O&& output, E&& errors){
     static_assert(is_etl_expr<E>, "etl::sigmoid_derivative can only be used on ETL expressions");
     return output >> (1.0 - output) >> errors;
@@ -402,7 +402,7 @@ auto sigmoid_backward(O&& output, E&& errors){
  * \param errors The errors at output of this activation function
  * \return the backward activation of the activation function
  */
-template <typename O, typename E, cpp_enable_if(all_dma<O, E>)>
+template <typename O, typename E, cpp_enable_iff(all_dma<O, E>)>
 auto relu_backward(O&& output, E&& errors) -> binary_function_expr<detail::build_type<E>, detail::build_type<E>, detail::relu_backward>{
     static_assert(is_etl_expr<E>, "etl::relu_backward can only be used on ETL expressions");
     return binary_function_expr<detail::build_type<E>, detail::build_type<E>, detail::relu_backward>(output, errors);
@@ -414,7 +414,7 @@ auto relu_backward(O&& output, E&& errors) -> binary_function_expr<detail::build
  * \param errors The errors at output of this activation function
  * \return the backward activation of the activation function
  */
-template <typename O, typename E, cpp_disable_if(all_dma<O, E>)>
+template <typename O, typename E, cpp_disable_iff(all_dma<O, E>)>
 auto relu_backward(O&& output, E&& errors) {
     static_assert(is_etl_expr<E>, "etl::relu_derivative can only be used on ETL expressions");
     return detail::unary_helper<E, relu_derivative_op>{output} >> errors;

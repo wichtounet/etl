@@ -173,7 +173,7 @@ inline cudnn_wrapper<cudnnPoolingDescriptor_t>::~cudnn_wrapper(){
  * \param input The input matrix
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
-template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 1)>
+template<typename I, cpp_enable_iff(decay_traits<I>::dimensions() == 1)>
 cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
     using T = value_t<I>;
 
@@ -192,7 +192,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
  * \param input The input matrix
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
-template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 2)>
+template<typename I, cpp_enable_iff(decay_traits<I>::dimensions() == 2)>
 cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
     using T = value_t<I>;
 
@@ -211,7 +211,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
  * \param input The input matrix
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
-template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 3)>
+template<typename I, cpp_enable_iff(decay_traits<I>::dimensions() == 3)>
 cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
     using T = value_t<I>;
 
@@ -230,7 +230,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
  * \param input The input matrix
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
-template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 4)>
+template<typename I, cpp_enable_iff(decay_traits<I>::dimensions() == 4)>
 cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
     using T = value_t<I>;
 
@@ -249,7 +249,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
  * \param input The input matrix
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
-template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 3)>
+template<typename I, cpp_enable_iff(decay_traits<I>::dimensions() == 3)>
 cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_5d(I&& input){
     using T = value_t<I>;
 
@@ -274,7 +274,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_5d(I&& input){
  * \param input The input matrix
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
-template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 4)>
+template<typename I, cpp_enable_iff(decay_traits<I>::dimensions() == 4)>
 cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_5d(I&& input){
     using T = value_t<I>;
 
@@ -319,7 +319,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_flat(I&& input){
  * \param input The input matrix
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
-template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 1)>
+template<typename I, cpp_enable_iff(decay_traits<I>::dimensions() == 1)>
 cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
     using T = value_t<I>;
 
@@ -338,7 +338,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
  * \param input The input matrix
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
-template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 2)>
+template<typename I, cpp_enable_iff(decay_traits<I>::dimensions() == 2)>
 cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
     using T = value_t<I>;
 
@@ -357,7 +357,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
  * \param input The input matrix
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
-template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 4)>
+template<typename I, cpp_enable_iff(decay_traits<I>::dimensions() == 4)>
 cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
     using T = value_t<I>;
 
@@ -376,7 +376,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
  * \param input The input matrix
  * \return a cudnn_wrapper around a created CUDNN filter tensor
  */
-template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 2)>
+template<typename I, cpp_enable_iff(decay_traits<I>::dimensions() == 2)>
 cudnn_wrapper<cudnnFilterDescriptor_t> create_filter(I&& kernel){
     using T = value_t<I>;
 
@@ -395,7 +395,7 @@ cudnn_wrapper<cudnnFilterDescriptor_t> create_filter(I&& kernel){
  * \param input The input matrix
  * \return a cudnn_wrapper around a created CUDNN filter tensor
  */
-template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 4)>
+template<typename I, cpp_enable_iff(decay_traits<I>::dimensions() == 4)>
 cudnn_wrapper<cudnnFilterDescriptor_t> create_filter(I&& kernel){
     using T = value_t<I>;
 

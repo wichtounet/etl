@@ -138,7 +138,7 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>)>
+    template <typename E, cpp_enable_iff(std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
     hermitian_matrix& operator=(E&& e) noexcept(false) {
         // Make sure the other matrix is hermitian
         if(!is_hermitian(e)){
@@ -180,7 +180,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R, cpp_enable_if(is_etl_expr<R>)>
+    template<typename R, cpp_enable_iff(is_etl_expr<R>)>
     hermitian_matrix& operator+=(R&& rhs){
         // Make sure the other matrix is hermitian
         if(!is_hermitian(rhs)){
@@ -207,7 +207,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R, cpp_enable_if(is_etl_expr<R>)>
+    template<typename R, cpp_enable_iff(is_etl_expr<R>)>
     hermitian_matrix& operator-=(R&& rhs){
         // Make sure the other matrix is hermitian
         if(!is_hermitian(rhs)){
@@ -234,7 +234,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R, cpp_enable_if(is_etl_expr<R>)>
+    template<typename R, cpp_enable_iff(is_etl_expr<R>)>
     hermitian_matrix& operator*=(R&& rhs) {
         // Make sure the other matrix is hermitian
         if(!is_hermitian(rhs)){
@@ -261,7 +261,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R, cpp_enable_if(is_etl_expr<R>)>
+    template<typename R, cpp_enable_iff(is_etl_expr<R>)>
     hermitian_matrix& operator>>=(R&& rhs) {
         // Make sure the other matrix is hermitian
         if(!is_hermitian(rhs)){
@@ -288,7 +288,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R, cpp_enable_if(is_etl_expr<R>)>
+    template<typename R, cpp_enable_iff(is_etl_expr<R>)>
     hermitian_matrix& operator/=(R&& rhs) {
         // Make sure the other matrix is hermitian
         if(!is_hermitian(rhs)){
@@ -315,7 +315,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R, cpp_enable_if(is_etl_expr<R>)>
+    template<typename R, cpp_enable_iff(is_etl_expr<R>)>
     hermitian_matrix& operator%=(R&& rhs){
         // Make sure the other matrix is hermitian
         if(!is_hermitian(rhs)){

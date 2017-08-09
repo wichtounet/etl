@@ -33,7 +33,7 @@ namespace cublas {
  * \param b The rhs expression
  * \param c The output expression
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>)>
+template <typename A, typename B, typename C, cpp_enable_iff(all_single_precision<A, B, C>)>
 void batch_outer(const A& a, const B& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
@@ -66,7 +66,7 @@ void batch_outer(const A& a, const B& b, C&& c) {
 /*!
  * \copydoc batch_outer
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>)>
+template <typename A, typename B, typename C, cpp_enable_iff(all_double_precision<A, B, C>)>
 void batch_outer(const A& a, const B& b, C&& c) {
     decltype(auto) handle = start_cublas();
 

@@ -217,7 +217,7 @@ protected:
      * \brief Move construct a dyn_base
      * \param rhs The dyn_base to move from
      */
-    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, derived_t>::value)>
+    template <typename E, cpp_enable_iff(!std::is_same<std::decay_t<E>, derived_t>::value)>
     explicit dyn_base(E&& rhs) : _size(etl::size(rhs)) {
         for (size_t d = 0; d < etl::dimensions(rhs); ++d) {
             _dimensions[d] = etl::dim(rhs, d);
@@ -370,7 +370,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \brief Move construct a dense_dyn_base
      * \param rhs The dense_dyn_base to move from
      */
-    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, derived_t>::value)>
+    template <typename E, cpp_enable_iff(!std::is_same<std::decay_t<E>, derived_t>::value)>
     explicit dense_dyn_base(E&& rhs) : base_type(std::move(rhs)) {
         //Nothing else to init
     }
@@ -382,7 +382,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      *
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
-    template <bool B = n_dimensions == 1, cpp_enable_if(B)>
+    template <bool B = n_dimensions == 1, cpp_enable_iff(B)>
     value_type& operator()(size_t i) noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
 
@@ -399,7 +399,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      *
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
-    template <bool B = n_dimensions == 1, cpp_enable_if(B)>
+    template <bool B = n_dimensions == 1, cpp_enable_iff(B)>
     const value_type& operator()(size_t i) const noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
 
@@ -413,9 +413,9 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param sizes The indices
      * \return The value at the position (sizes...)
      */
-    template <typename... S, cpp_enable_if(
-                                 (n_dimensions > 1),
-                                 (sizeof...(S) == n_dimensions),
+    template <typename... S, cpp_enable_iff(
+                                 (n_dimensions > 1) &&
+                                 (sizeof...(S) == n_dimensions) &&
                                  cpp::all_convertible_to<size_t, S...>::value)>
     const value_type& operator()(S... sizes) const noexcept(assert_nothrow) {
         ensure_cpu_up_to_date();
@@ -427,9 +427,9 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param sizes The indices
      * \return The value at the position (sizes...)
      */
-    template <typename... S, cpp_enable_if(
-                                 (n_dimensions > 1),
-                                 (sizeof...(S) == n_dimensions),
+    template <typename... S, cpp_enable_iff(
+                                 (n_dimensions > 1) &&
+                                 (sizeof...(S) == n_dimensions) &&
                                  cpp::all_convertible_to<size_t, S...>::value)>
     value_type& operator()(S... sizes) noexcept(assert_nothrow) {
         ensure_cpu_up_to_date();
@@ -483,7 +483,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E, cpp_enable_if(all_dma<E>)>
+    template<typename E, cpp_enable_iff(all_dma<E>)>
     bool alias(const E& rhs) const noexcept {
         return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
     }
@@ -535,7 +535,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
+    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
     auto operator()(size_t i) noexcept {
         return sub(as_derived(), i);
     }
@@ -545,7 +545,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
+    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
     auto operator()(size_t i) const noexcept {
         return sub(as_derived(), i);
     }

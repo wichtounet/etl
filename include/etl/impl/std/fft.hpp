@@ -1025,7 +1025,7 @@ void fft2_many(A&& a, C&& c) {
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_floating<A, B, C> && all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C, cpp_enable_iff(all_floating<A, B, C> && all_homogeneous<A, B, C>)>
 void conv1_full_fft(A&& a, B&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
@@ -1041,7 +1041,7 @@ void conv1_full_fft(A&& a, B&& b, C&& c) {
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename A, typename B, typename C, cpp_disable_if(all_floating<A, B, C> && all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C, cpp_disable_iff(all_floating<A, B, C> && all_homogeneous<A, B, C>)>
 void conv1_full_fft(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);

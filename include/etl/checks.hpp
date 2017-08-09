@@ -42,7 +42,7 @@ void validate_expression_impl(const LE& lhs, const RE& rhs) noexcept {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_if(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator), all_etl_expr<LE, RE>, !all_fast<LE, RE>)>
+template <typename LE, typename RE, cpp_enable_if(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator) && all_etl_expr<LE, RE>, !all_fast<LE, RE>)>
 void validate_expression_impl(const LE& lhs, const RE& rhs) {
     cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
@@ -58,7 +58,7 @@ void validate_expression_impl(const LE& lhs, const RE& rhs) {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_if(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator), all_etl_expr<LE, RE>, all_fast<LE, RE>)>
+template <typename LE, typename RE, cpp_enable_if(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator) && all_etl_expr<LE, RE>, all_fast<LE, RE>)>
 void validate_expression_impl(const LE& lhs, const RE& rhs) {
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
@@ -95,7 +95,7 @@ void validate_assign(const LE& lhs, const RE& rhs) noexcept {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_if(!etl_traits<RE>::is_generator, all_etl_expr<RE>, !all_fast<LE, RE>, !is_wrapper_expr<RE>)>
+template <typename LE, typename RE, cpp_enable_if(!etl_traits<RE>::is_generator  && all_etl_expr<RE>  && !all_fast<LE, RE>  && !is_wrapper_expr<RE>)>
 void validate_assign(const LE& lhs, const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
@@ -112,7 +112,7 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_if(!etl_traits<RE>::is_generator, all_etl_expr<RE>, all_fast<LE, RE>, !is_wrapper_expr<RE>)>
+template <typename LE, typename RE, cpp_enable_if(!etl_traits<RE>::is_generator  && all_etl_expr<RE>  && all_fast<LE, RE>  && !is_wrapper_expr<RE>)>
 void validate_assign(const LE& lhs, const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
@@ -129,7 +129,7 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_if(!all_etl_expr<RE>, !is_wrapper_expr<RE>)>
+template <typename LE, typename RE, cpp_enable_if(!all_etl_expr<RE>  && !is_wrapper_expr<RE>)>
 void validate_assign(const LE& lhs, const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(size(lhs) == rhs.size(), "Cannot perform element-wise operations on collections of different size");
@@ -196,7 +196,7 @@ namespace detail {
  * \tparam C2 The pooling ratio of the second dimension
  * \param e The expression to assert
  */
-template <size_t C1, size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 2, !etl_traits<E>::is_fast)>
+template <size_t C1, size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 2  && !etl_traits<E>::is_fast)>
 void validate_pmax_pooling_impl(const E& e) {
     cpp_assert(etl::template dim<0>(e) % C1 == 0 && etl::template dim<1>(e) % C2 == 0, "Dimensions not divisible by the pooling ratio");
     cpp_unused(e);
@@ -205,7 +205,7 @@ void validate_pmax_pooling_impl(const E& e) {
 /*!
  * \copydoc validate_pmax_pooling_impl
  */
-template <size_t C1, size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 3, !etl_traits<E>::is_fast)>
+template <size_t C1, size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 3  && !etl_traits<E>::is_fast)>
 void validate_pmax_pooling_impl(const E& e) {
     cpp_assert(etl::template dim<1>(e) % C1 == 0 && etl::template dim<2>(e) % C2 == 0, "Dimensions not divisible by the pooling ratio");
     cpp_unused(e);
@@ -214,7 +214,7 @@ void validate_pmax_pooling_impl(const E& e) {
 /*!
  * \copydoc validate_pmax_pooling_impl
  */
-template <size_t C1, size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 4, !etl_traits<E>::is_fast)>
+template <size_t C1, size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 4  && !etl_traits<E>::is_fast)>
 void validate_pmax_pooling_impl(const E& e) {
     cpp_assert(etl::template dim<2>(e) % C1 == 0 && etl::template dim<3>(e) % C2 == 0, "Dimensions not divisible by the pooling ratio");
     cpp_unused(e);
@@ -223,7 +223,7 @@ void validate_pmax_pooling_impl(const E& e) {
 /*!
  * \copydoc validate_pmax_pooling_impl
  */
-template <size_t C1, size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 2, etl_traits<E>::is_fast)>
+template <size_t C1, size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 2  && etl_traits<E>::is_fast)>
 void validate_pmax_pooling_impl(const E& /*unused*/) {
     static_assert(etl_traits<E>::template dim<0>() % C1 == 0 && etl_traits<E>::template dim<1>() % C2 == 0, "Dimensions not divisible by the pooling ratio");
 }
@@ -231,7 +231,7 @@ void validate_pmax_pooling_impl(const E& /*unused*/) {
 /*!
  * \copydoc validate_pmax_pooling_impl
  */
-template <size_t C1, size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 3, etl_traits<E>::is_fast)>
+template <size_t C1, size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 3  && etl_traits<E>::is_fast)>
 void validate_pmax_pooling_impl(const E& /*unused*/) {
     static_assert(etl_traits<E>::template dim<1>() % C1 == 0 && etl_traits<E>::template dim<2>() % C2 == 0, "Dimensions not divisible by the pooling ratio");
 }
@@ -239,7 +239,7 @@ void validate_pmax_pooling_impl(const E& /*unused*/) {
 /*!
  * \copydoc validate_pmax_pooling_impl
  */
-template <size_t C1, size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 4, etl_traits<E>::is_fast)>
+template <size_t C1, size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 4  && etl_traits<E>::is_fast)>
 void validate_pmax_pooling_impl(const E& /*unused*/) {
     static_assert(etl_traits<E>::template dim<2>() % C1 == 0 && etl_traits<E>::template dim<3>() % C2 == 0, "Dimensions not divisible by the pooling ratio");
 }

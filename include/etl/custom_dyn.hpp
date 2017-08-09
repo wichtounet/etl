@@ -95,7 +95,7 @@ public:
      * The memory won't be managed, meaning that it won't be
      * released once the matrix is destructed.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) == D))>
+    template <typename... S, cpp_enable_iff((sizeof...(S) == D))>
     explicit custom_dyn_matrix_impl(value_type* memory, S... sizes) noexcept : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}})
                                                     {
         _memory = memory;
@@ -147,7 +147,7 @@ public:
      * \param e The expression containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, custom_dyn_matrix_impl<T, SO, D>>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>)>
+    template <typename E, cpp_enable_iff(!std::is_same<std::decay_t<E>, custom_dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
     custom_dyn_matrix_impl& operator=(E&& e) noexcept {
         validate_assign(*this, e);
 
@@ -176,7 +176,7 @@ public:
      * \param vec The container containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename Container, cpp_enable_if(!is_etl_expr<Container>, std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_iff(!is_etl_expr<Container> && std::is_convertible<typename Container::value_type, value_type>::value)>
     custom_dyn_matrix_impl& operator=(const Container& vec) {
         validate_assign(*this, vec);
 
@@ -294,7 +294,7 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_enable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_add_to(L&& lhs)  const {
         if(!detail::direct_add(lhs, *this)){
             std_add_evaluate(*this, lhs);
@@ -305,7 +305,7 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_disable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_add_to(L&& lhs)  const {
         std_add_evaluate(*this, lhs);
     }
@@ -314,7 +314,7 @@ public:
      * \brief Subtract from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_enable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_sub_to(L&& lhs)  const {
         if(!detail::direct_sub(lhs, *this)){
             std_sub_evaluate(*this, lhs);
@@ -325,7 +325,7 @@ public:
      * \brief Subtract from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_disable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_sub_to(L&& lhs)  const {
         std_sub_evaluate(*this, lhs);
     }
@@ -334,7 +334,7 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_enable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_mul_to(L&& lhs)  const {
         if(!detail::direct_mul(lhs, *this)){
             std_mul_evaluate(*this, lhs);
@@ -345,7 +345,7 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_disable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_mul_to(L&& lhs)  const {
         std_mul_evaluate(*this, lhs);
     }
@@ -353,7 +353,7 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_enable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_enable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_div_to(L&& lhs)  const {
         if(!detail::direct_div(lhs, *this)){
             std_div_evaluate(*this, lhs);
@@ -364,7 +364,7 @@ public:
      * \brief Divide to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L, cpp_disable_if(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
+    template<typename L, cpp_disable_iff(std::is_same<value_t<L>, value_type>::value && is_dma<L>)>
     void assign_div_to(L&& lhs)  const {
         std_div_evaluate(*this, lhs);
     }

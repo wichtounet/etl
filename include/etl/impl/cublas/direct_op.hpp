@@ -32,7 +32,7 @@ namespace cublas {
  * \param lhs The lhs matrix
  * \param rhs The rhs matrix
  */
-template <typename L, typename R, cpp_enable_if(all_single_precision<L, R>)>
+template <typename L, typename R, cpp_enable_iff(all_single_precision<L, R>)>
 void direct_add(L&& lhs, R&& rhs) {
     decltype(auto) handle = start_cublas();
 
@@ -47,7 +47,7 @@ void direct_add(L&& lhs, R&& rhs) {
  * \param lhs The lhs matrix
  * \param rhs The rhs matrix
  */
-template <typename L, typename R, cpp_enable_if(all_double_precision<L, R>)>
+template <typename L, typename R, cpp_enable_iff(all_double_precision<L, R>)>
 void direct_add(L&& lhs, R&& rhs) {
     decltype(auto) handle = start_cublas();
 
@@ -62,7 +62,7 @@ void direct_add(L&& lhs, R&& rhs) {
  * \param lhs The lhs matrix
  * \param rhs The rhs matrix
  */
-template <typename L, typename R, cpp_enable_if(!all_floating<L, R>)>
+template <typename L, typename R, cpp_enable_iff(!all_floating<L, R>)>
 void direct_add(L&& lhs, R&& rhs) {
     cpp_unused(lhs);
     cpp_unused(rhs);
@@ -74,7 +74,7 @@ void direct_add(L&& lhs, R&& rhs) {
  * \param lhs The lhs matrix
  * \param rhs The rhs matrix
  */
-template <typename L, typename R, cpp_enable_if(all_single_precision<L, R>)>
+template <typename L, typename R, cpp_enable_iff(all_single_precision<L, R>)>
 void direct_sub(L&& lhs, R&& rhs) {
     decltype(auto) handle = start_cublas();
 
@@ -89,7 +89,7 @@ void direct_sub(L&& lhs, R&& rhs) {
  * \param lhs The lhs matrix
  * \param rhs The rhs matrix
  */
-template <typename L, typename R, cpp_enable_if(all_double_precision<L, R>)>
+template <typename L, typename R, cpp_enable_iff(all_double_precision<L, R>)>
 void direct_sub(L&& lhs, R&& rhs) {
     decltype(auto) handle = start_cublas();
 
@@ -104,7 +104,7 @@ void direct_sub(L&& lhs, R&& rhs) {
  * \param lhs The lhs matrix
  * \param rhs The rhs matrix
  */
-template <typename L, typename R, cpp_enable_if(!all_floating<L, R>)>
+template <typename L, typename R, cpp_enable_iff(!all_floating<L, R>)>
 void direct_sub(L&& lhs, R&& rhs) {
     cpp_unused(lhs);
     cpp_unused(rhs);
@@ -116,7 +116,7 @@ void direct_sub(L&& lhs, R&& rhs) {
  * \param lhs The lhs matrix
  * \param rhs The rhs matrix
  */
-template <typename L, typename R, cpp_enable_if(all_single_precision<L, R>)>
+template <typename L, typename R, cpp_enable_iff(all_single_precision<L, R>)>
 bool direct_mul(L&& lhs, R&& rhs) {
 #ifdef EGBLAS_HAS_SAXMY
     float alpha = 1.0;
@@ -137,7 +137,7 @@ bool direct_mul(L&& lhs, R&& rhs) {
  * \param lhs The lhs matrix
  * \param rhs The rhs matrix
  */
-template <typename L, typename R, cpp_enable_if(all_double_precision<L, R>)>
+template <typename L, typename R, cpp_enable_iff(all_double_precision<L, R>)>
 bool direct_mul(L&& lhs, R&& rhs) {
 #ifdef EGBLAS_HAS_DAXMY
     float alpha = 1.0;
@@ -158,7 +158,7 @@ bool direct_mul(L&& lhs, R&& rhs) {
  * \param lhs The lhs matrix
  * \param rhs The rhs matrix
  */
-template <typename L, typename R, cpp_enable_if(!all_floating<L, R>)>
+template <typename L, typename R, cpp_enable_iff(!all_floating<L, R>)>
 bool direct_mul(L&& lhs, R&& rhs) {
     cpp_unused(lhs);
     cpp_unused(rhs);
@@ -171,7 +171,7 @@ bool direct_mul(L&& lhs, R&& rhs) {
  * \param lhs The lhs matrix
  * \param rhs The rhs matrix
  */
-template <typename L, typename R, cpp_enable_if(all_single_precision<L, R>)>
+template <typename L, typename R, cpp_enable_iff(all_single_precision<L, R>)>
 bool direct_div(L&& lhs, R&& rhs) {
 #ifdef EGBLAS_HAS_SAXDY
     float alpha = 1.0;
@@ -192,7 +192,7 @@ bool direct_div(L&& lhs, R&& rhs) {
  * \param lhs The lhs matrix
  * \param rhs The rhs matrix
  */
-template <typename L, typename R, cpp_enable_if(all_double_precision<L, R>)>
+template <typename L, typename R, cpp_enable_iff(all_double_precision<L, R>)>
 bool direct_div(L&& lhs, R&& rhs) {
 #ifdef EGBLAS_HAS_DAXDY
     float alpha = 1.0;
@@ -213,7 +213,7 @@ bool direct_div(L&& lhs, R&& rhs) {
  * \param lhs The lhs matrix
  * \param rhs The rhs matrix
  */
-template <typename L, typename R, cpp_enable_if(!all_floating<L, R>)>
+template <typename L, typename R, cpp_enable_iff(!all_floating<L, R>)>
 bool direct_div(L&& lhs, R&& rhs) {
     cpp_unused(lhs);
     cpp_unused(rhs);

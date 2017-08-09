@@ -454,7 +454,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (D > 1), cpp_enable_if(B)>
+    template <bool B = (D > 1), cpp_enable_iff(B)>
     auto operator()(size_t i) noexcept {
         return etl::sub(*this, i);
     }
@@ -464,7 +464,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (D > 1), cpp_enable_if(B)>
+    template <bool B = (D > 1), cpp_enable_iff(B)>
     auto operator()(size_t i) const noexcept {
         return etl::sub(*this, i);
     }

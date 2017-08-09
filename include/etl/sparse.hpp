@@ -514,10 +514,7 @@ public:
      * \brief Construct a new sparse matrix of the given dimensions,
      * filled with zeroes
      */
-    template <typename... S, cpp_enable_if(
-                                 (sizeof...(S) == D),
-                                 cpp::all_convertible_to<size_t, S...>::value,
-                                 cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value)>
+    template <typename... S, cpp_enable_iff(sizeof...(S) == D && cpp::all_convertible_to<size_t, S...>::value)>
     explicit sparse_matrix_impl(S... sizes) noexcept : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}}),
                                                        _memory(nullptr),
                                                        _row_index(nullptr),
@@ -544,8 +541,8 @@ public:
      * and use the list of values list to fill the matrix
      */
     template <typename S1, typename... S, cpp_enable_if(
-                                              (sizeof...(S) == D),
-                                              cpp::is_specialization_of<values_t, typename cpp::last_type<S1, S...>::type>::value)>
+                                              (sizeof...(S) == D)
+                                              && cpp::is_specialization_of<values_t, typename cpp::last_type<S1, S...>::type>::value)>
     explicit sparse_matrix_impl(S1 s1, S... sizes) noexcept : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                         dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         auto list = cpp::last_value(sizes...).template list<value_type>();
@@ -581,7 +578,7 @@ public:
     /*!
      * \brief Assign an ETL expression to the sparse matrix
      */
-    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, sparse_matrix_impl<T, storage_format, D>>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>)>
+    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, sparse_matrix_impl<T, storage_format, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
     sparse_matrix_impl& operator=(E&& e) noexcept {
         // It is possible that the matrix was not initialized before
         // In the case, get the the dimensions from the expression and

@@ -239,7 +239,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
+    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
     auto operator()(size_t i) noexcept {
         return sub(as_derived(), i);
     }
@@ -249,7 +249,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
+    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
     auto operator()(size_t i) const noexcept {
         return sub(as_derived(), i);
     }
@@ -279,7 +279,7 @@ public:
      * \param args The position indices
      * \return The value of the element at (args...)
      */
-    template <typename... S, cpp_enable_if(sizeof...(S) == sizeof...(Dims))>
+    template <typename... S, cpp_enable_iff(sizeof...(S) == sizeof...(Dims))>
     value_type& operator()(S... args) noexcept(assert_nothrow) {
         static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
@@ -291,7 +291,7 @@ public:
      * \param args The position indices
      * \return The value of the element at (args...)
      */
-    template <typename... S, cpp_enable_if(sizeof...(S) == sizeof...(Dims))>
+    template <typename... S, cpp_enable_iff(sizeof...(S) == sizeof...(Dims))>
     const value_type& operator()(S... args) const noexcept(assert_nothrow) {
         static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
@@ -344,7 +344,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template <typename E, cpp_enable_if(all_dma<E>)>
+    template <typename E, cpp_enable_iff(all_dma<E>)>
     bool alias(const E& rhs) const noexcept {
         return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
     }

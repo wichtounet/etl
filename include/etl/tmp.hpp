@@ -140,7 +140,7 @@ struct nth_size final {
  * \tparam D The list of dimensions
  * \param d The index of the dimension to get
  */
-template <size_t... D, cpp_enable_if(sizeof...(D) == 0)>
+template <size_t... D, cpp_enable_iff(sizeof...(D) == 0)>
 size_t dyn_nth_size(size_t d) {
     cpp_unused(d);
     cpp_assert(false, "Should never be called");
@@ -278,7 +278,7 @@ struct forward_op_nc {
  * \brief Function to move or forward depending on a constant boolean flag
  * \tparam B Decides if return is moving (true) or forwarding (false)
  */
-template <bool B, typename T, cpp_enable_if(B)>
+template <bool B, typename T, cpp_enable_iff(B)>
 constexpr decltype(auto) optional_move(T&& t) {
     return std::move(t);
 }
@@ -286,7 +286,7 @@ constexpr decltype(auto) optional_move(T&& t) {
 /*!
  * \copydoc optional_move
  */
-template <bool B, typename T, cpp_disable_if(B)>
+template <bool B, typename T, cpp_disable_iff(B)>
 constexpr decltype(auto) optional_move(T&& t) {
     return std::forward<T>(t);
 }

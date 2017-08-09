@@ -59,7 +59,7 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_if(detail::standard_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::standard_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
         for (size_t i = 0; i < etl::size(result); ++i) {
             result[i] = expr.read_flat(i);
@@ -71,7 +71,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc assign_evaluate_impl
      */
-    template <typename E, typename R, cpp_enable_if(std::is_same<value_t<E>, value_t<R>>::value, detail::fast_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
 //TODO(CPP17) if constexpr
 #ifdef ETL_CUDA
@@ -106,7 +106,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc assign_evaluate_impl
      */
-    template <typename E, typename R, cpp_enable_if(!std::is_same<value_t<E>, value_t<R>>::value, detail::fast_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(!std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
         expr.ensure_cpu_up_to_date();
 
@@ -147,7 +147,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc assign_evaluate_impl
      */
-    template <typename E, typename R, cpp_enable_if(detail::direct_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::direct_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
@@ -164,7 +164,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc assign_evaluate_impl
      */
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::vectorized_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
@@ -187,7 +187,7 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::standard_compound<E, R>::value)>
     void add_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
 
@@ -203,7 +203,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc add_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::direct_compound<E, R>::value)>
     void add_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
 
@@ -224,7 +224,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc add_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound<E, R>::value)>
     void add_evaluate(E&& expr, R&& result) {
         constexpr auto V = detail::select_vector_mode<E, R>();
 
@@ -249,7 +249,7 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::standard_compound<E, R>::value)>
     void sub_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
 
@@ -268,7 +268,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc sub_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::direct_compound<E, R>::value)>
     void sub_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
 
@@ -289,7 +289,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc sub_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound<E, R>::value)>
     void sub_evaluate(E&& expr, R&& result) {
         constexpr auto V = detail::select_vector_mode<E, R>();
 
@@ -314,7 +314,7 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::standard_compound<E, R>::value)>
     void mul_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
 
@@ -333,7 +333,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc mul_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::direct_compound<E, R>::value)>
     void mul_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
 
@@ -354,7 +354,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc mul_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound<E, R>::value)>
     void mul_evaluate(E&& expr, R&& result) {
         constexpr auto V = detail::select_vector_mode<E, R>();
 
@@ -379,7 +379,7 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_if(detail::standard_compound_div<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::standard_compound_div<E, R>::value)>
     void div_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
 
@@ -398,7 +398,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc div_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(detail::direct_compound_div<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::direct_compound_div<E, R>::value)>
     void div_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
 
@@ -419,7 +419,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc div_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound_div<E, R>::value)>
+    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound_div<E, R>::value)>
     void div_evaluate(E&& expr, R&& result) {
         constexpr auto V = detail::select_vector_mode<E, R>();
 
@@ -492,7 +492,7 @@ struct direct_assign_compatible : cpp::or_u<
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_iff(direct_assign_compatible<Expr, Result>::value)>
 void std_assign_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::assign_evaluate(expr, result);
 }
@@ -502,7 +502,7 @@ void std_assign_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_iff(!direct_assign_compatible<Expr, Result>::value)>
 void std_assign_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::assign_evaluate(transpose(expr), result);
 }
@@ -512,7 +512,7 @@ void std_assign_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_iff(direct_assign_compatible<Expr, Result>::value)>
 void std_add_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::add_evaluate(expr, result);
 }
@@ -522,7 +522,7 @@ void std_add_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_iff(!direct_assign_compatible<Expr, Result>::value)>
 void std_add_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::add_evaluate(transpose(expr), result);
 }
@@ -532,7 +532,7 @@ void std_add_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_iff(direct_assign_compatible<Expr, Result>::value)>
 void std_sub_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::sub_evaluate(expr, result);
 }
@@ -542,7 +542,7 @@ void std_sub_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_iff(!direct_assign_compatible<Expr, Result>::value)>
 void std_sub_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::sub_evaluate(transpose(expr), result);
 }
@@ -552,7 +552,7 @@ void std_sub_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_iff(direct_assign_compatible<Expr, Result>::value)>
 void std_mul_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::mul_evaluate(expr, result);
 }
@@ -562,7 +562,7 @@ void std_mul_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_iff(!direct_assign_compatible<Expr, Result>::value)>
 void std_mul_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::mul_evaluate(transpose(expr), result);
 }
@@ -572,7 +572,7 @@ void std_mul_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_iff(direct_assign_compatible<Expr, Result>::value)>
 void std_div_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::div_evaluate(expr, result);
 }
@@ -582,7 +582,7 @@ void std_div_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_iff(!direct_assign_compatible<Expr, Result>::value)>
 void std_div_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::div_evaluate(transpose(expr), result);
 }
@@ -592,7 +592,7 @@ void std_div_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_iff(direct_assign_compatible<Expr, Result>::value)>
 void std_mod_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::mod_evaluate(expr, result);
 }
@@ -602,7 +602,7 @@ void std_mod_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_iff(!direct_assign_compatible<Expr, Result>::value)>
 void std_mod_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::mod_evaluate(transpose(expr), result);
 }

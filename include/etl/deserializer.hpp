@@ -33,7 +33,7 @@ struct deserializer {
      * \param value Reference to the value where to write
      * \return the deserializer
      */
-    template <typename T, cpp_enable_if(std::is_arithmetic<T>::value)>
+    template <typename T, cpp_enable_iff(std::is_arithmetic<T>::value)>
     deserializer& operator>>(T& value) {
         stream.read(reinterpret_cast<char_t*>(&value), sizeof(T));
         return *this;
@@ -44,7 +44,7 @@ struct deserializer {
      * \param value Reference to the ETL expression where to write
      * \return the deserializer
      */
-    template <typename T, cpp_disable_if(std::is_arithmetic<T>::value)>
+    template <typename T, cpp_disable_iff(std::is_arithmetic<T>::value)>
     deserializer& operator>>(T& value) {
         deserialize(*this, value);
         return *this;

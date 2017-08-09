@@ -62,7 +62,7 @@ auto abs(E&& value) -> detail::unary_helper<E, abs_unary_op> {
  * \param v The maximum
  * \return an expression representing the max(x, v) of each value x of the given expression
  */
-template <typename E, typename T, cpp_enable_if(std::is_arithmetic<T>::value)>
+template <typename E, typename T, cpp_enable_iff(std::is_arithmetic<T>::value)>
 auto max(E&& value, T v) {
     static_assert(is_etl_expr<E>, "etl::max can only be used on ETL expressions");
     return detail::make_stateful_unary_expr<E, max_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(v));
@@ -86,7 +86,7 @@ auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, max_binary_op<
  * \param v The minimum
  * \return an expression representing the min(x, v) of each value x of the given expression
  */
-template <typename E, typename T, cpp_enable_if(std::is_arithmetic<T>::value)>
+template <typename E, typename T, cpp_enable_iff(std::is_arithmetic<T>::value)>
 auto min(E&& value, T v) {
     static_assert(is_etl_expr<E>, "etl::min can only be used on ETL expressions");
     return detail::make_stateful_unary_expr<E, min_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(v));
@@ -381,7 +381,7 @@ auto rep_l(E&& value, size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_l_tra
  *
  * \return an expression representing the aggregated expression
  */
-template <typename E, cpp_enable_if((decay_traits<E>::dimensions() > 1))>
+template <typename E, cpp_enable_iff((decay_traits<E>::dimensions() > 1))>
 auto argmax(E&& value) -> detail::stable_transform_helper<E, argmax_transformer> {
     static_assert(is_etl_expr<E>, "etl::argmax can only be used on ETL expressions");
     return detail::make_transform_expr<E, argmax_transformer>(value);
@@ -395,7 +395,7 @@ auto argmax(E&& value) -> detail::stable_transform_helper<E, argmax_transformer>
  *
  * \return an expression representing the aggregated expression
  */
-template <typename E, cpp_enable_if((decay_traits<E>::dimensions() == 1))>
+template <typename E, cpp_enable_iff((decay_traits<E>::dimensions() == 1))>
 size_t argmax(E&& value) {
     static_assert(is_etl_expr<E>, "etl::argmax can only be used on ETL expressions");
     return max_index(value);
@@ -409,7 +409,7 @@ size_t argmax(E&& value) {
  *
  * \return an expression representing the aggregated expression
  */
-template <typename E, cpp_enable_if((decay_traits<E>::dimensions() > 1))>
+template <typename E, cpp_enable_iff((decay_traits<E>::dimensions() > 1))>
 auto argmin(E&& value) -> detail::stable_transform_helper<E, argmin_transformer> {
     static_assert(is_etl_expr<E>, "etl::argmax can only be used on ETL expressions");
     return detail::make_transform_expr<E, argmin_transformer>(value);
@@ -423,7 +423,7 @@ auto argmin(E&& value) -> detail::stable_transform_helper<E, argmin_transformer>
  *
  * \return an expression representing the aggregated expression
  */
-template <typename E, cpp_enable_if((decay_traits<E>::dimensions() == 1))>
+template <typename E, cpp_enable_iff((decay_traits<E>::dimensions() == 1))>
 size_t argmin(E&& value) {
     static_assert(is_etl_expr<E>, "etl::argmax can only be used on ETL expressions");
     return min_index(value);
@@ -873,7 +873,7 @@ auto sequence_generator(T current = 0) -> generator_expr<sequence_generator_op<T
  *
  * \return The expression
  */
-template <typename Expr, cpp_enable_if(is_etl_expr<Expr>)>
+template <typename Expr, cpp_enable_iff(is_etl_expr<Expr>)>
 decltype(auto) operator*(Expr&& expr) {
     force(expr);
     return std::forward<Expr>(expr);

@@ -49,7 +49,7 @@ void conv2_valid_flipped_micro_kernel_3x8(const T* in, size_t n1, size_t n2, con
 /*!
  * \copydoc conv2_valid_flipped_micro_kernel_3x8
  */
-template <typename V, typename T, cpp_enable_if(std::is_same<V, etl::avx_vec>::value && std::is_same<T, float>::value)>
+template <typename V, typename T, cpp_enable_iff(std::is_same<V, etl::avx_vec>::value && std::is_same<T, float>::value)>
 void conv2_valid_flipped_micro_kernel_3x8(const T* in, size_t n1, size_t n2, const T* kkk, T* out, T beta) {
     using vec_type = V;
 

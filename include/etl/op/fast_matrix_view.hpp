@@ -98,7 +98,7 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) == sizeof...(Dims)))>
+    template <typename... S, cpp_enable_iff((sizeof...(S) == sizeof...(Dims)))>
     return_type operator()(S... args) noexcept {
         static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
@@ -110,7 +110,7 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) == sizeof...(Dims)))>
+    template <typename... S, cpp_enable_iff((sizeof...(S) == sizeof...(Dims)))>
     const_return_type operator()(S... args) const noexcept {
         static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
 
@@ -122,7 +122,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
+    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
     auto operator()(size_t i) noexcept {
         return etl::sub(*this, i);
     }
@@ -132,7 +132,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
+    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
     auto operator()(size_t i) const noexcept {
         return etl::sub(*this, i);
     }
@@ -394,7 +394,7 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) == sizeof...(Dims)))>
+    template <typename... S, cpp_enable_iff((sizeof...(S) == sizeof...(Dims)))>
     return_type operator()(S... args) noexcept {
         static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
         cpp_assert(memory, "Memory has not been initialized");
@@ -408,7 +408,7 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) == sizeof...(Dims)))>
+    template <typename... S, cpp_enable_iff((sizeof...(S) == sizeof...(Dims)))>
     const_return_type operator()(S... args) const noexcept {
         static_assert(cpp::all_convertible_to<size_t, S...>::value, "Invalid size types");
         cpp_assert(memory, "Memory has not been initialized");
@@ -421,7 +421,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
+    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
     auto operator()(size_t i) noexcept {
         return etl::sub(*this, i);
     }
@@ -431,7 +431,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
+    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
     auto operator()(size_t i) const noexcept {
         return etl::sub(*this, i);
     }

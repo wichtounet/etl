@@ -117,7 +117,7 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
+    template <typename... S, cpp_enable_iff((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
     ETL_STRONG_INLINE(const_return_type) operator()(S... args) const {
         return sub_expr(i, static_cast<size_t>(args)...);
     }
@@ -127,7 +127,7 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
+    template <typename... S, cpp_enable_iff((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
     ETL_STRONG_INLINE(return_type) operator()(S... args) {
         return sub_expr(i, static_cast<size_t>(args)...);
     }
@@ -137,7 +137,7 @@ public:
      * \param x The index to use
      * \return a sub view of the matrix at position x.
      */
-    template <typename TT = sub_type, cpp_enable_if((decay_traits<TT>::dimensions() > 2))>
+    template <typename TT = sub_type, cpp_enable_iff((decay_traits<TT>::dimensions() > 2))>
     auto operator()(size_t x) const {
         return sub(*this, x);
     }
@@ -446,7 +446,7 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) == n_dimensions))>
+    template <typename... S, cpp_enable_iff((sizeof...(S) == n_dimensions))>
     ETL_STRONG_INLINE(const_return_type) operator()(S... args) const {
         ensure_cpu_up_to_date();
         return memory[dyn_index(*this, args...)];
@@ -457,7 +457,7 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) == n_dimensions))>
+    template <typename... S, cpp_enable_iff((sizeof...(S) == n_dimensions))>
     ETL_STRONG_INLINE(return_type) operator()(S... args) {
         ensure_cpu_up_to_date();
         return memory[dyn_index(*this, args...)];
@@ -534,7 +534,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template <typename E, cpp_enable_if(all_dma<E>)>
+    template <typename E, cpp_enable_iff(all_dma<E>)>
     bool alias(const E& rhs) const noexcept {
         return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
     }

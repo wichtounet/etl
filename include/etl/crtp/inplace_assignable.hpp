@@ -62,7 +62,7 @@ struct inplace_assignable {
     /*!
      * \brief Fully flip each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_if((etl_traits<S>::dimensions() > 3))>
+    template <typename S = D, cpp_enable_iff((etl_traits<S>::dimensions() > 3))>
     derived_t& deep_fflip_inplace() {
         decltype(auto) mat = as_derived();
 
@@ -76,7 +76,7 @@ struct inplace_assignable {
     /*!
      * \brief Fully flip each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_if((etl_traits<S>::dimensions() == 3))>
+    template <typename S = D, cpp_enable_iff((etl_traits<S>::dimensions() == 3))>
     derived_t& deep_fflip_inplace() {
         decltype(auto) mat = as_derived();
 
@@ -90,7 +90,7 @@ struct inplace_assignable {
     /*!
      * \brief Transpose each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_if(is_dyn_matrix<S> && (etl_traits<S>::dimensions() > 3))>
+    template <typename S = D, cpp_enable_iff(is_dyn_matrix<S> && (etl_traits<S>::dimensions() > 3))>
     derived_t& deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
@@ -109,7 +109,7 @@ struct inplace_assignable {
     /*!
      * \brief Transpose each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_if(is_dyn_matrix<S> && (etl_traits<S>::dimensions() == 3))>
+    template <typename S = D, cpp_enable_iff(is_dyn_matrix<S> && (etl_traits<S>::dimensions() == 3))>
     derived_t& deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
@@ -128,7 +128,7 @@ struct inplace_assignable {
     /*!
      * \brief Transpose each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_if(!is_dyn_matrix<S> && (etl_traits<S>::dimensions() > 3))>
+    template <typename S = D, cpp_enable_iff(!is_dyn_matrix<S> && (etl_traits<S>::dimensions() > 3))>
     derived_t& deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
@@ -142,7 +142,7 @@ struct inplace_assignable {
     /*!
      * \brief Transpose each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_if(!is_dyn_matrix<S> && (etl_traits<S>::dimensions() == 3))>
+    template <typename S = D, cpp_enable_iff(!is_dyn_matrix<S> && (etl_traits<S>::dimensions() == 3))>
     derived_t& deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
@@ -156,7 +156,7 @@ struct inplace_assignable {
     /*!
      * \brief Transpose each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_if((etl_traits<S>::dimensions() > 3))>
+    template <typename S = D, cpp_enable_iff((etl_traits<S>::dimensions() > 3))>
     derived_t& direct_deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
@@ -170,7 +170,7 @@ struct inplace_assignable {
     /*!
      * \brief Transpose each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_if((etl_traits<S>::dimensions() == 3))>
+    template <typename S = D, cpp_enable_iff((etl_traits<S>::dimensions() == 3))>
     derived_t& direct_deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
@@ -201,7 +201,7 @@ struct inplace_assignable {
      *
      * Only square fast matrix can be transpose in place, dyn matrix don't have any limitation.
      */
-    template <typename S = D, cpp_enable_if(is_dyn_matrix<S>)>
+    template <typename S = D, cpp_enable_iff(is_dyn_matrix<S>)>
     derived_t& transpose_inplace() {
         static_assert(etl_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be transposed");
 

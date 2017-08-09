@@ -35,7 +35,7 @@ namespace blas {
  * \param a The lhs expression
  * \return the sum
  */
-template <typename A, cpp_enable_if(all_dma<A>&& all_single_precision<A>)>
+template <typename A, cpp_enable_iff(all_dma<A>&& all_single_precision<A>)>
 value_t<A> sum(const A& a) {
     etl::dyn_vector<value_t<A>> ones(etl::size(a));
     ones = 1.0f;
@@ -51,7 +51,7 @@ value_t<A> sum(const A& a) {
 /*!
  * \copydoc sum
  */
-template <typename A, cpp_enable_if(all_dma<A>&& all_double_precision<A>)>
+template <typename A, cpp_enable_iff(all_dma<A>&& all_double_precision<A>)>
 value_t<A> sum(const A& a) {
     etl::dyn_vector<value_t<A>> ones(etl::size(a));
     ones = 1.0;
@@ -69,7 +69,7 @@ value_t<A> sum(const A& a) {
  * \param a The lhs expression
  * \return the asum
  */
-template <typename A, cpp_enable_if(all_dma<A>&& all_single_precision<A>)>
+template <typename A, cpp_enable_iff(all_dma<A>&& all_single_precision<A>)>
 value_t<A> asum(const A& a) {
     a.ensure_cpu_up_to_date();
     return cblas_sasum(etl::size(a), a.memory_start(), 1);
@@ -78,7 +78,7 @@ value_t<A> asum(const A& a) {
 /*!
  * \copydoc asum
  */
-template <typename A, cpp_enable_if(all_dma<A>&& all_double_precision<A>)>
+template <typename A, cpp_enable_iff(all_dma<A>&& all_double_precision<A>)>
 value_t<A> asum(const A& a) {
     a.ensure_cpu_up_to_date();
     return cblas_dasum(etl::size(a), a.memory_start(), 1);
@@ -89,7 +89,7 @@ value_t<A> asum(const A& a) {
 /*!
  * \copydoc sum
  */
-template <typename A, cpp_enable_if(!all_dma<A> || !all_floating<A>)>
+template <typename A, cpp_enable_iff(!all_dma<A> || !all_floating<A>)>
 value_t<A> sum(const A& /*a*/) {
     cpp_unreachable("BLAS not enabled/available");
     return 0.0;
@@ -98,7 +98,7 @@ value_t<A> sum(const A& /*a*/) {
 /*!
  * \copydoc asum
  */
-template <typename A, cpp_enable_if(!all_dma<A> || !all_floating<A>)>
+template <typename A, cpp_enable_iff(!all_dma<A> || !all_floating<A>)>
 value_t<A> asum(const A& /*a*/) {
     cpp_unreachable("BLAS not enabled/available");
     return 0.0;

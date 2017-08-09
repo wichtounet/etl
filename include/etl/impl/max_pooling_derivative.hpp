@@ -50,7 +50,7 @@ struct max_pool_derivative_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_if(is_2d<A>)>
+    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_iff(is_2d<A>)>
     static void apply(A&& in, B&& out, M&& m) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
@@ -98,7 +98,7 @@ struct max_pool_derivative_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename B, typename M, cpp_enable_if(is_2d<A>)>
+    template <typename A, typename B, typename M, cpp_enable_iff(is_2d<A>)>
     static void apply(A&& in, B&& out, M&& m, size_t c1, size_t c2, size_t c3) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
@@ -125,7 +125,7 @@ struct max_pool_derivative_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_if(!is_2d<A>)>
+    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_iff(!is_2d<A>)>
     static void apply(A&& in, B&& out, M& m) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
@@ -146,7 +146,7 @@ struct max_pool_derivative_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename B, typename M, cpp_enable_if(!is_2d<A>)>
+    template <typename A, typename B, typename M, cpp_enable_iff(!is_2d<A>)>
     static void apply(A&& in, B&& out, M& m, size_t c1, size_t c2, size_t c3) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
@@ -201,7 +201,7 @@ struct max_pool_derivative_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_if(is_3d<A>)>
+    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_iff(is_3d<A>)>
     static void apply(A&& in, B&& out, M&& m) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
@@ -255,7 +255,7 @@ struct max_pool_derivative_3d {
      * \param c2 The second dimension pooling ratio
      * \param c3 The third dimension pooling ratio
      */
-    template <typename A, typename B, typename M, cpp_enable_if(is_3d<A>)>
+    template <typename A, typename B, typename M, cpp_enable_iff(is_3d<A>)>
     static void apply(A&& in, B&& out, M&& m, size_t c1, size_t c2, size_t c3) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
@@ -282,7 +282,7 @@ struct max_pool_derivative_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_if(!is_3d<A>)>
+    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_iff(!is_3d<A>)>
     static void apply(A&& in, B&& out, M& m) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
@@ -303,7 +303,7 @@ struct max_pool_derivative_3d {
      * \param c2 The second dimension pooling ratio
      * \param c3 The third dimension pooling ratio
      */
-    template <typename A, typename B, typename M, cpp_enable_if(!is_3d<A>)>
+    template <typename A, typename B, typename M, cpp_enable_iff(!is_3d<A>)>
     static void apply(A&& in, B&& out, M& m, size_t c1, size_t c2, size_t c3) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();

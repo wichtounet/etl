@@ -175,7 +175,7 @@ void gemm_pico_kernel(size_t kc, const T* A, const T* B, T* AB) {
 /*!
  * \brief Optimized pico kernel for BLIS, for avx and float
  */
-template <typename V, typename T, cpp_enable_if(std::is_same<float, T>::value && vector_mode == vector_mode_t::AVX)>
+template <typename V, typename T, cpp_enable_iff(std::is_same<float, T>::value && vector_mode == vector_mode_t::AVX)>
 void gemm_pico_kernel(size_t kc, const T* ETL_RESTRICT A, const T* ETL_RESTRICT B, T* ETL_RESTRICT AB) {
     using vec_type = V;
 
@@ -346,7 +346,7 @@ void gemm_macro_kernel(size_t mc, size_t nc, size_t kc, T alpha, T beta, T* C, s
  * \param C The result matrix
  * \param beta The multipliying of the previous value
  */
-template <typename V, typename T, cpp_enable_if(all_floating_t<T>)>
+template <typename V, typename T, cpp_enable_iff(all_floating_t<T>)>
 void gemm_large_kernel_workspace_rr(const T* A, const T* B, T* C, size_t m, size_t n, size_t k, T beta) {
     static constexpr const size_t MC = gemm_config<T>::MC;
     static constexpr const size_t KC = gemm_config<T>::KC;

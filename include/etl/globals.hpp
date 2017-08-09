@@ -417,7 +417,7 @@ bool is_permutation_matrix(E&& expr){
  * \param expr The expression to test
  * \return true if the given expression is an hermitian matrix, false otherwise.
  */
-template <typename E, cpp_enable_if(is_complex<E>)>
+template <typename E, cpp_enable_iff(is_complex<E>)>
 bool is_hermitian(E&& expr){
     // hermitian_matrix<E> is already enforced to be hermitian
     if (is_hermitian_matrix<E>) {
@@ -444,7 +444,7 @@ bool is_hermitian(E&& expr){
  *
  * \return true if the expressions contains the same sequence of values, false othwerise.
  */
-template <typename L, typename R, cpp_enable_if(all_etl_expr<L, R>)>
+template <typename L, typename R, cpp_enable_iff(all_etl_expr<L, R>)>
 bool operator==(L&& lhs, R&& rhs){
     // Both expressions must have the same number of dimensions
     if (etl::dimensions(lhs) != etl::dimensions(rhs)) {
@@ -479,7 +479,7 @@ bool operator==(L&& lhs, R&& rhs){
  *
  * \return false if the expressions contains the same sequence of values, true othwerise.
  */
-template <typename L, typename R, cpp_enable_if(all_etl_expr<L, R>)>
+template <typename L, typename R, cpp_enable_iff(all_etl_expr<L, R>)>
 bool operator!=(L&& lhs, R&& rhs){
     return !(lhs == rhs);
 }
@@ -742,7 +742,7 @@ void shuffle_first(T& matrix){
  * \brief Shuffle all the elements of an ETL vector
  * \param vector The vector to shuffle
  */
-template<typename T, cpp_enable_if(decay_traits<T>::dimensions() == 1)>
+template<typename T, cpp_enable_iff(decay_traits<T>::dimensions() == 1)>
 void shuffle(T& vector){
     shuffle_flat(vector);
 }
@@ -752,7 +752,7 @@ void shuffle(T& vector){
  * \param vector The vector to shuffle
  * \param g The generator to use for random number generation
  */
-template<typename T, typename G, cpp_enable_if(decay_traits<T>::dimensions() == 1)>
+template<typename T, typename G, cpp_enable_iff(decay_traits<T>::dimensions() == 1)>
 void shuffle(T& vector, G&& g){
     shuffle_flat(vector, g);
 }
@@ -765,7 +765,7 @@ void shuffle(T& vector, G&& g){
  *
  * \param matrix The matrix to shuffle
  */
-template<typename T, cpp_enable_if((decay_traits<T>::dimensions() > 1))>
+template<typename T, cpp_enable_iff((decay_traits<T>::dimensions() > 1))>
 void shuffle(T& matrix){
     shuffle_first(matrix);
 }
@@ -779,7 +779,7 @@ void shuffle(T& matrix){
  * \param matrix The matrix to shuffle
  * \param g The generator to use for random number generation
  */
-template<typename T, typename G, cpp_enable_if((decay_traits<T>::dimensions() > 1))>
+template<typename T, typename G, cpp_enable_iff((decay_traits<T>::dimensions() > 1))>
 void shuffle(T& matrix, G&& g){
     shuffle_first(matrix, g);
 }
@@ -890,7 +890,7 @@ void parallel_shuffle_first(T1& m1, T2& m2){
  * \param v1 The first vector to shuffle
  * \param v2 The second vector to shuffle
  */
-template<typename T1, typename T2, cpp_enable_if(decay_traits<T1>::dimensions() == 1)>
+template<typename T1, typename T2, cpp_enable_iff(decay_traits<T1>::dimensions() == 1)>
 void parallel_shuffle(T1& v1, T2& v2){
     parallel_shuffle_flat(v1, v2);
 }
@@ -900,7 +900,7 @@ void parallel_shuffle(T1& v1, T2& v2){
  * \param v1 The first vector to shuffle
  * \param v2 The second vector to shuffle
  */
-template<typename T1, typename T2, typename G, cpp_enable_if(decay_traits<T1>::dimensions() == 1)>
+template<typename T1, typename T2, typename G, cpp_enable_iff(decay_traits<T1>::dimensions() == 1)>
 void parallel_shuffle(T1& v1, T2& v2, G&& g){
     parallel_shuffle_flat(v1, v2, g);
 }
@@ -914,7 +914,7 @@ void parallel_shuffle(T1& v1, T2& v2, G&& g){
  * \param m1 The first matrix to shuffle
  * \param m2 The first matrix to shuffle
  */
-template<typename T1, typename T2, cpp_enable_if((decay_traits<T1>::dimensions() > 1))>
+template<typename T1, typename T2, cpp_enable_iff((decay_traits<T1>::dimensions() > 1))>
 void parallel_shuffle(T1& m1, T2& m2){
     parallel_shuffle_first(m1, m2);
 }
@@ -928,7 +928,7 @@ void parallel_shuffle(T1& m1, T2& m2){
  * \param m1 The first matrix to shuffle
  * \param m2 The first matrix to shuffle
  */
-template<typename T1, typename T2, typename G, cpp_enable_if((decay_traits<T1>::dimensions() > 1))>
+template<typename T1, typename T2, typename G, cpp_enable_iff((decay_traits<T1>::dimensions() > 1))>
 void parallel_shuffle(T1& m1, T2& m2, G&& g){
     parallel_shuffle_first(m1, m2, g);
 }
