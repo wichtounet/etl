@@ -395,7 +395,7 @@ struct etl_traits<rep_r_transformer<T, D...>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Returns the size of the given expression
@@ -483,7 +483,7 @@ struct etl_traits<rep_l_transformer<T, D...>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Returns the size of the given expression
@@ -577,7 +577,7 @@ struct etl_traits<dyn_rep_r_transformer<T, D>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Returns the size of the given expression
@@ -637,7 +637,7 @@ struct etl_traits<dyn_rep_l_transformer<T, D>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Returns the size of the given expression

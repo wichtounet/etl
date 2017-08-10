@@ -280,7 +280,7 @@ struct etl_traits<etl::pool_upsample_2d_expr<A, B, C, C1, C2, Max>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::true_type;
+    static constexpr bool vectorizable = true;
 
     /*!
      * \brief Returns the DDth dimension of the expression

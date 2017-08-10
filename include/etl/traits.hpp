@@ -669,14 +669,14 @@ constexpr bool all_4d = and_v<is_4d<T>...>;
  * \tparam E The ETL expression types.
  */
 template <vector_mode_t V, typename... E>
-constexpr bool all_vectorizable = and_v<(decay_traits<E>::template vectorizable<V>::value)...>;
+constexpr bool all_vectorizable = and_v<(decay_traits<E>::template vectorizable<V>)...>;
 
 /*!
  * \brief Traits to test if the given type are vectorizable types.
  * \tparam E The type.
  */
 template <vector_mode_t V, typename E>
-constexpr bool vectorizable_t = get_intrinsic_traits<V>::template type<value_t<E>>::vectorizable;
+static constexpr bool vectorizable_t = get_intrinsic_traits<V>::template type<value_t<E>>::vectorizable;
 
 /*!
  * \brief Traits to test if all the given types are vectorizable types.
@@ -911,10 +911,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<
-                    get_intrinsic_traits<V>::template type<value_type>::vectorizable
-                &&  !is_sparse_matrix<T>
-            >;
+    static constexpr bool vectorizable = get_intrinsic_traits<V>::template type<value_type>::vectorizable && !is_sparse_matrix<T>;
 
     /*!
      * \brief Return the size of the given epxression

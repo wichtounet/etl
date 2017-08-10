@@ -144,7 +144,7 @@ struct etl_traits<etl::convmtx_2d_expr<A, K1, K2>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::true_type;
+    static constexpr bool vectorizable = true;
 
     /*!
      * \brief Returns the DDth dimension of the expression

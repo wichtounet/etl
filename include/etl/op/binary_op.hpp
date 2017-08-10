@@ -36,7 +36,7 @@ struct plus_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::true_type;
+    static constexpr bool vectorizable = true;
 
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
@@ -90,7 +90,7 @@ struct minus_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::true_type;
+    static constexpr bool vectorizable = true;
 
     static constexpr bool linear    = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
@@ -144,7 +144,7 @@ struct mul_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<V == vector_mode_t::AVX512 ? !is_complex_t<T> : true>;
+    static constexpr bool vectorizable = V == vector_mode_t::AVX512 ? !is_complex_t<T> : true;
 
     static constexpr bool linear    = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
@@ -199,7 +199,7 @@ struct div_binary_op {
      * Note: Integer division is not yet supported
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<is_floating_t<T> || (is_complex_t<T> && V != vector_mode_t::AVX512)>;
+    static constexpr bool vectorizable = is_floating_t<T> || (is_complex_t<T> && V != vector_mode_t::AVX512);
 
     static constexpr bool linear    = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
@@ -251,7 +251,7 @@ struct mod_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -287,7 +287,7 @@ struct equal_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -323,7 +323,7 @@ struct not_equal_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -359,7 +359,7 @@ struct less_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -395,7 +395,7 @@ struct less_equal_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -431,7 +431,7 @@ struct greater_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -467,7 +467,7 @@ struct greater_equal_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -503,7 +503,7 @@ struct logical_and_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -539,7 +539,7 @@ struct logical_or_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -575,7 +575,7 @@ struct logical_xor_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -623,7 +623,7 @@ struct ranged_noise_binary_g_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -669,7 +669,7 @@ struct ranged_noise_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -719,7 +719,7 @@ struct max_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
+    static constexpr bool vectorizable = !is_complex_t<T>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -773,7 +773,7 @@ struct min_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
+    static constexpr bool vectorizable = !is_complex_t<T>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -821,7 +821,7 @@ struct pow_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -857,7 +857,7 @@ struct one_if_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs

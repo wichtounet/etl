@@ -177,7 +177,7 @@ struct etl_traits<etl::dyn_conv_2d_valid_multi_expr<A, B, Flipped>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::true_type;
+    static constexpr bool vectorizable = true;
 
     /*!
      * \brief Returns the dth dimension of the expression

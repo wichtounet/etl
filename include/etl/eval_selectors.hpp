@@ -26,26 +26,27 @@ namespace detail {
  * \tparam R The result type
  */
 template <vector_mode_t V, typename E, typename R>
-using are_vectorizable_select = cpp::and_u<
+constexpr bool are_vectorizable_select = and_v<
                                vectorize_expr, // ETL must be allowed to vectorize expressions
-                               decay_traits<R>::template vectorizable<V>::value, // The LHS expression must be vectorizable
-                               decay_traits<E>::template vectorizable<V>::value, // The RHS expression must be vectorizable
+                               decay_traits<R>::template vectorizable<V>, // The LHS expression must be vectorizable
+                               decay_traits<E>::template vectorizable<V>, // The RHS expression must be vectorizable
                                decay_traits<E>::storage_order == decay_traits<R>::storage_order, // Both expressions must have the same order
                                get_intrinsic_traits<V>::template type<value_t<R>>::vectorizable, // The LHS type must be vectorizable
                                get_intrinsic_traits<V>::template type<value_t<E>>::vectorizable, // The RHS type must be vectorizable
                                std::is_same< /// Both vector types must be the same
                                     typename get_intrinsic_traits<V>::template type<value_t<R>>::intrinsic_type,
                                     typename get_intrinsic_traits<V>::template type<value_t<E>>::intrinsic_type
-                                >::value>;
+                                >::value
+                            >;
 
 /*!
  * \brief Integral constant indicating if vectorization is possible
  */
 template <typename E, typename R>
-using are_vectorizable = cpp::or_u<
-    avx512_enabled && are_vectorizable_select<vector_mode_t::AVX512, E, R>::value,
-    avx_enabled && are_vectorizable_select<vector_mode_t::AVX, E, R>::value,
-    sse3_enabled && are_vectorizable_select<vector_mode_t::SSE3, E, R>::value>;
+constexpr bool are_vectorizable =
+       (avx512_enabled && are_vectorizable_select<vector_mode_t::AVX512, E, R>)
+    || (avx_enabled && are_vectorizable_select<vector_mode_t::AVX, E, R>)
+    || (sse3_enabled && are_vectorizable_select<vector_mode_t::SSE3, E, R>);
 
 /*!
  * \brief Select a vector mode for the given assignment type
@@ -55,9 +56,9 @@ using are_vectorizable = cpp::or_u<
 template <typename E, typename R>
 inline constexpr vector_mode_t select_vector_mode(){
     return
-          (avx512_enabled && are_vectorizable_select<vector_mode_t::AVX512, E, R>::value) ? vector_mode_t::AVX512
-        : (avx_enabled && are_vectorizable_select<vector_mode_t::AVX, E, R>::value) ? vector_mode_t::AVX
-        : (sse3_enabled && are_vectorizable_select<vector_mode_t::SSE3, E, R>::value) ? vector_mode_t::SSE3
+          (avx512_enabled && are_vectorizable_select<vector_mode_t::AVX512, E, R>) ? vector_mode_t::AVX512
+        : (avx_enabled && are_vectorizable_select<vector_mode_t::AVX, E, R>) ? vector_mode_t::AVX
+        : (sse3_enabled && are_vectorizable_select<vector_mode_t::SSE3, E, R>) ? vector_mode_t::SSE3
                                                                                 : vector_mode_t::NONE;
 }
 
@@ -73,13 +74,13 @@ using fast_assign = cpp::and_u<has_direct_access<E>, has_direct_access<R>>;
  * \brief Integral constant indicating if a vectorized assign is possible
  */
 template <typename E, typename R>
-using vectorized_assign = cpp::and_u<!fast_assign<E, R>::value, are_vectorizable<E, R>::value>;
+using vectorized_assign = cpp::and_u<!fast_assign<E, R>::value, are_vectorizable<E, R>>;
 
 /*!
  * \brief Integral constant indicating if a direct assign is possible
  */
 template <typename E, typename R>
-using direct_assign = cpp::and_u<!are_vectorizable<E, R>::value, !has_direct_access<E>, has_direct_access<R>>;
+using direct_assign = cpp::and_u<!are_vectorizable<E, R>, !has_direct_access<E>, has_direct_access<R>>;
 
 /*!
  * \brief Integral constant indicating if a standard assign is necessary
@@ -94,7 +95,7 @@ using standard_assign = cpp::not_u<has_direct_access<R>>;
  */
 template <typename E, typename R>
 using vectorized_compound = cpp::and_u<
-                               are_vectorizable<E, R>::value>;
+                               are_vectorizable<E, R>>;
 
 /*!
  * \brief Integral constant indicating if a direct compound assign is possible
@@ -120,7 +121,7 @@ using standard_compound = cpp::and_u<
 template <typename E, typename R>
 using vectorized_compound_div = cpp::and_u<
     (is_floating_t<value_t<E>> || is_complex_t<value_t<E>>),
-    are_vectorizable<E, R>::value>;
+    are_vectorizable<E, R>>;
 
 /*!
  * \brief Integral constant indicating if a direct compound div assign is possible

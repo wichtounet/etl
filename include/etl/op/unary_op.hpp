@@ -39,7 +39,7 @@ struct abs_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
+    static constexpr bool vectorizable = !is_complex_t<T>;
 
     /*!
      * The vectorization type for V
@@ -91,7 +91,7 @@ struct floor_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -126,7 +126,7 @@ struct ceil_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -161,10 +161,10 @@ struct log_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<
-            (V == vector_mode_t::SSE3 && is_single_precision_t<T>)
-        ||  (V == vector_mode_t::AVX && is_single_precision_t<T>)
-        ||  (intel_compiler && !is_complex_t<T>)>;
+    static constexpr bool vectorizable =
+                (V == vector_mode_t::SSE3 && is_single_precision_t<T>)
+            ||  (V == vector_mode_t::AVX && is_single_precision_t<T>)
+            ||  (intel_compiler && !is_complex_t<T>);
 
     /*!
      * The vectorization type for V
@@ -222,7 +222,7 @@ struct sqrt_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
+    static constexpr bool vectorizable = !is_complex_t<T>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -268,7 +268,7 @@ struct invsqrt_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -303,7 +303,7 @@ struct cbrt_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -338,7 +338,7 @@ struct invcbrt_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -379,10 +379,10 @@ struct exp_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<
+    static constexpr bool vectorizable =
             (V == vector_mode_t::SSE3 && !is_complex_t<T>)
         ||  (V == vector_mode_t::AVX && !is_complex_t<T>)
-        ||  (intel_compiler && !is_complex_t<T>)>;
+        ||  (intel_compiler && !is_complex_t<T>);
 
     /*!
      * \brief Apply the unary operator on x
@@ -428,7 +428,7 @@ struct sign_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -463,7 +463,7 @@ struct sigmoid_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -498,7 +498,7 @@ struct softplus_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -539,7 +539,7 @@ struct minus_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
+    static constexpr bool vectorizable = !is_complex_t<T>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -591,7 +591,7 @@ struct plus_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::true_type;
+    static constexpr bool vectorizable = true;
 
     /*!
      * \brief Apply the unary operator on x
@@ -637,7 +637,7 @@ struct fast_sigmoid_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -695,7 +695,7 @@ struct tan_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -736,7 +736,7 @@ struct cos_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<(V == vector_mode_t::SSE3 || V == vector_mode_t::AVX)&& is_single_precision_t<T>>;
+    static constexpr bool vectorizable = (V == vector_mode_t::SSE3 || V == vector_mode_t::AVX) && is_single_precision_t<T>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -788,7 +788,7 @@ struct sin_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<(V == vector_mode_t::SSE3 || V == vector_mode_t::AVX)&& is_single_precision_t<T>>;
+    static constexpr bool vectorizable = (V == vector_mode_t::SSE3 || V == vector_mode_t::AVX) && is_single_precision_t<T>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -834,7 +834,7 @@ struct tanh_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -869,7 +869,7 @@ struct cosh_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -904,7 +904,7 @@ struct sinh_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -939,7 +939,7 @@ struct real_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -974,7 +974,7 @@ struct imag_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1009,7 +1009,7 @@ struct conj_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1044,7 +1044,7 @@ struct relu_derivative_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
+    static constexpr bool vectorizable = !is_complex_t<T>;
 
     /*!
      * The vectorization type for V
@@ -1096,7 +1096,7 @@ struct bernoulli_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1147,7 +1147,7 @@ public:
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1184,7 +1184,7 @@ struct reverse_bernoulli_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1235,7 +1235,7 @@ public:
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1272,7 +1272,7 @@ struct uniform_noise_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1323,7 +1323,7 @@ public:
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1360,7 +1360,7 @@ struct normal_noise_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1411,7 +1411,7 @@ public:
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1448,7 +1448,7 @@ struct logistic_noise_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1500,7 +1500,7 @@ public:
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1544,7 +1544,7 @@ struct min_scalar_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
+    static constexpr bool vectorizable = !is_complex_t<T>;
 
     S s; ///< The scalar value
 
@@ -1606,7 +1606,7 @@ struct max_scalar_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<!is_complex_t<T>>;
+    static constexpr bool vectorizable = !is_complex_t<T>;
 
     S s; ///< The scalar value
 
@@ -1668,7 +1668,7 @@ struct clip_scalar_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>>;
+    static constexpr bool vectorizable = intel_compiler && !is_complex_t<T>;
 
     S min; ///< The minimum for clipping
     S max; ///< The maximum for clipping

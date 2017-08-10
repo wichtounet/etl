@@ -145,7 +145,7 @@ struct etl_traits<etl::inv_expr<A>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::true_type;
+    static constexpr bool vectorizable = true;
 
     /*!
      * \brief Returns the DDth dimension of the expression

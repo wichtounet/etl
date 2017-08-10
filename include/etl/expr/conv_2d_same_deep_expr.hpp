@@ -188,7 +188,7 @@ struct etl_traits<etl::conv_2d_same_deep_expr<A, B, Flipped>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::true_type;
+    static constexpr bool vectorizable = true;
 
     /*!
      * \brief Returns the DDth dimension of the expression

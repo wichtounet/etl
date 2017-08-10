@@ -69,7 +69,7 @@ etl::sum_impl select_sum_impl(bool gpu_up_to_date) {
         switch (forced) {
             //VEC cannot always be used
             case sum_impl::VEC:
-                if (!vec_enabled || !decay_traits<E>::template vectorizable<vector_mode>::value) {                                //COVERAGE_EXCLUDE_LINE
+                if (!vec_enabled || !decay_traits<E>::template vectorizable<vector_mode>) {                                //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                     return select_default_sum_impl<E>(gpu_up_to_date);                                                                          //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 //COVERAGE_EXCLUDE_LINE

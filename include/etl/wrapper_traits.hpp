@@ -43,7 +43,7 @@ struct wrapper_traits {
      * The vectorization type for V
      */
     template <vector_mode_t V>
-    using vectorizable = typename sub_traits::template vectorizable<V>;
+    static constexpr bool vectorizable = sub_traits::template vectorizable<V>;
 
     /*!
      * \brief Returns the size of the given expression

@@ -19,9 +19,9 @@ TEMPLATE_TEST_CASE_2("etl_traits/fast_vector_1", "etl_traits<fast_vector>", ZZZ,
     REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
 
     if(etl::vec_enabled){
-        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>);
     } else {
-        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>);
     }
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
@@ -55,9 +55,9 @@ TEMPLATE_TEST_CASE_2("etl_traits/fast_matrix_1", "etl_traits<fast_matrix>", Z, f
     REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
 
     if(etl::vec_enabled){
-        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>);
     } else {
-        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>);
     }
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
@@ -98,9 +98,9 @@ TEMPLATE_TEST_CASE_2("etl_traits/fast_matrix_2", "etl_traits<fast_matrix>", Z, f
     REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
 
     if(etl::vec_enabled){
-        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>);
     } else {
-        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>);
     }
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
@@ -144,9 +144,9 @@ TEMPLATE_TEST_CASE_2("etl_traits/dyn_vector_1", "etl_traits<dyn_vector>", Z, flo
     REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
 
     if(etl::vec_enabled){
-        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>);
     } else {
-        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>);
     }
 }
 
@@ -167,9 +167,9 @@ TEMPLATE_TEST_CASE_2("etl_traits/dyn_matrix_1", "etl_traits<dyn_matrix>", Z, flo
     REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
 
     if(etl::vec_enabled){
-        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>);
     } else {
-        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>);
     }
 }
 
@@ -213,9 +213,9 @@ TEMPLATE_TEST_CASE_2("etl_traits/binary_dyn_mat", "etl_traits<binary<dyn_mat, dy
     REQUIRE_DIRECT(etl::etl_traits<expr_type>::is_padded);
 
     if(etl::vec_enabled){
-        REQUIRE_DIRECT(etl::etl_traits<expr_type>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<expr_type>::template vectorizable<etl::vector_mode>);
     } else {
-        REQUIRE_DIRECT(!etl::etl_traits<expr_type>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(!etl::etl_traits<expr_type>::template vectorizable<etl::vector_mode>);
     }
 }
 
@@ -372,52 +372,52 @@ TEMPLATE_TEST_CASE_2("etl_traits/vectorizable", "vectorizable", Z, float, double
 
     if(etl::vec_enabled){
         //Values have direct access
-        REQUIRE_DIRECT(etl::etl_traits<mat_type_1>::template vectorizable<etl::vector_mode>::value);
-        REQUIRE_DIRECT(etl::etl_traits<mat_type_2>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<mat_type_1>::template vectorizable<etl::vector_mode>);
+        REQUIRE_DIRECT(etl::etl_traits<mat_type_2>::template vectorizable<etl::vector_mode>);
 
         //Values have direct access
-        REQUIRE_DIRECT(etl::etl_traits<decltype(a)>::template vectorizable<etl::vector_mode>::value);
-        REQUIRE_DIRECT(etl::etl_traits<decltype(b)>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a)>::template vectorizable<etl::vector_mode>);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(b)>::template vectorizable<etl::vector_mode>);
 
         //Sub have direct access
-        REQUIRE_DIRECT(etl::etl_traits<decltype(a(1))>::template vectorizable<etl::vector_mode>::value);
-        REQUIRE_DIRECT(etl::etl_traits<decltype(b(2))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a(1))>::template vectorizable<etl::vector_mode>);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(b(2))>::template vectorizable<etl::vector_mode>);
 
         //Sub have direct access
-        REQUIRE_DIRECT(etl::etl_traits<decltype(a(0)(1))>::template vectorizable<etl::vector_mode>::value);
-        REQUIRE_DIRECT(etl::etl_traits<decltype(b(1)(2))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a(0)(1))>::template vectorizable<etl::vector_mode>);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(b(1)(2))>::template vectorizable<etl::vector_mode>);
 
         //Sub have direct access
-        REQUIRE_DIRECT(etl::etl_traits<decltype(a(0)(1)(3))>::template vectorizable<etl::vector_mode>::value);
-        REQUIRE_DIRECT(etl::etl_traits<decltype(b(1)(2)(0))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a(0)(1)(3))>::template vectorizable<etl::vector_mode>);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(b(1)(2)(0))>::template vectorizable<etl::vector_mode>);
 
         //Sub have direct access
-        REQUIRE_DIRECT(etl::etl_traits<decltype(a(1) + a(0))>::template vectorizable<etl::vector_mode>::value);
-        REQUIRE_DIRECT(etl::etl_traits<decltype(a(0) + a(1))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a(1) + a(0))>::template vectorizable<etl::vector_mode>);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a(0) + a(1))>::template vectorizable<etl::vector_mode>);
 
         //reshape have direct access
-        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape<8, 5>(a(1) + a(0)))>::template vectorizable<etl::vector_mode>::value);
-        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape<5>(a(1)(0) + a(0)(1)))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape<8, 5>(a(1) + a(0)))>::template vectorizable<etl::vector_mode>);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape<5>(a(1)(0) + a(0)(1)))>::template vectorizable<etl::vector_mode>);
 
         //reshape have direct access
-        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape(a(1) + a(0), 5, 8))>::template vectorizable<etl::vector_mode>::value);
-        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape(a(1)(0) + a(0)(1), 5))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape(a(1) + a(0), 5, 8))>::template vectorizable<etl::vector_mode>);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape(a(1)(0) + a(0)(1), 5))>::template vectorizable<etl::vector_mode>);
 
         //sub have direct access
-        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::sub(a(1) + a(0), 0))>::template vectorizable<etl::vector_mode>::value);
-        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::sub(a(1)(0) + a(0)(1), 1))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::sub(a(1) + a(0), 0))>::template vectorizable<etl::vector_mode>);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::sub(a(1)(0) + a(0)(1), 1))>::template vectorizable<etl::vector_mode>);
 
         //Temporary binary expressions have direct access
-        REQUIRE_DIRECT(etl::etl_traits<decltype(a(0)(0) * a(0)(0))>::template vectorizable<etl::vector_mode>::value);
-        REQUIRE_DIRECT(etl::etl_traits<decltype(b(0)(0) * b(0)(0))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a(0)(0) * a(0)(0))>::template vectorizable<etl::vector_mode>);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(b(0)(0) * b(0)(0))>::template vectorizable<etl::vector_mode>);
 
         //Binary is vectorizable
-        REQUIRE_DIRECT(etl::etl_traits<decltype(a + b)>::template vectorizable<etl::vector_mode>::value);
-        REQUIRE_DIRECT(etl::etl_traits<decltype(b + b)>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a + b)>::template vectorizable<etl::vector_mode>);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(b + b)>::template vectorizable<etl::vector_mode>);
 
         //abs is vectorizable
-        REQUIRE_DIRECT(etl::etl_traits<decltype(abs(a))>::template vectorizable<etl::vector_mode>::value);
-        REQUIRE_DIRECT(etl::etl_traits<decltype(abs(b))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(abs(a))>::template vectorizable<etl::vector_mode>);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(abs(b))>::template vectorizable<etl::vector_mode>);
     }
 }
 
@@ -560,15 +560,15 @@ TEST_CASE("etl_traits/vectorizable_bool", "[traits]") {
     using expr_type_1 = decltype(a + b);
 
     if(etl::sse3_enabled){
-        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>));
+        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>));
     }
 
     if(etl::avx_enabled){
-        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>));
     }
 }
 
@@ -582,19 +582,19 @@ TEST_CASE("etl_traits/vectorizable_short", "[traits]") {
     using expr_type_1 = decltype(a + b);
 
     if (etl::sse3_enabled) {
-        REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-        REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-        REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>));
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>));
+        REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>));
     }
 
     if(etl::avx2_enabled){
-        REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>));
     } else {
-        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>));
     }
 }
 
@@ -608,19 +608,19 @@ TEST_CASE("etl_traits/vectorizable_integer", "[traits]") {
     using expr_type_1 = decltype(a + b);
 
     if (etl::sse3_enabled) {
-        REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-        REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-        REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>));
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>));
+        REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>));
     }
 
     if(etl::avx2_enabled){
-        REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>));
     } else {
-        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>));
     }
 }
 
@@ -634,19 +634,19 @@ TEST_CASE("etl_traits/vectorizable_long", "[traits]") {
     using expr_type_1 = decltype(a + b);
 
     if (etl::sse3_enabled) {
-        REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-        REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-        REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>));
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>));
+        REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>));
     }
 
     if (etl::avx2_enabled) {
-        REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>));
     } else {
-        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>));
     }
 }
 
@@ -664,15 +664,15 @@ TEST_CASE("etl_traits/vectorize/expr/1", "[traits]") {
     using expr_2_t = decltype(expr_2);
 
     if (etl::sse3_enabled) {
-        REQUIRE_DIRECT((etl::decay_traits<expr_0_t>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-        REQUIRE_DIRECT((etl::decay_traits<expr_1_t>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-        REQUIRE_DIRECT((etl::decay_traits<expr_2_t>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+        REQUIRE_DIRECT((etl::decay_traits<expr_0_t>::template vectorizable<etl::vector_mode_t::SSE3>));
+        REQUIRE_DIRECT((etl::decay_traits<expr_1_t>::template vectorizable<etl::vector_mode_t::SSE3>));
+        REQUIRE_DIRECT((etl::decay_traits<expr_2_t>::template vectorizable<etl::vector_mode_t::SSE3>));
     }
 
     if (etl::avx_enabled) {
-        REQUIRE_DIRECT((etl::decay_traits<expr_0_t>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT((etl::decay_traits<expr_1_t>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT((etl::decay_traits<expr_2_t>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT((etl::decay_traits<expr_0_t>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT((etl::decay_traits<expr_1_t>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT((etl::decay_traits<expr_2_t>::template vectorizable<etl::vector_mode_t::AVX>));
     }
 }
 
@@ -690,15 +690,15 @@ TEST_CASE("etl_traits/vectorize/expr/2", "[traits]") {
     using expr_2_t = decltype(expr_2);
 
     if (etl::sse3_enabled) {
-        REQUIRE_DIRECT((etl::decay_traits<expr_0_t>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-        REQUIRE_DIRECT((etl::decay_traits<expr_1_t>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-        REQUIRE_DIRECT((etl::decay_traits<expr_2_t>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+        REQUIRE_DIRECT((etl::decay_traits<expr_0_t>::template vectorizable<etl::vector_mode_t::SSE3>));
+        REQUIRE_DIRECT((etl::decay_traits<expr_1_t>::template vectorizable<etl::vector_mode_t::SSE3>));
+        REQUIRE_DIRECT((etl::decay_traits<expr_2_t>::template vectorizable<etl::vector_mode_t::SSE3>));
     }
 
     if (etl::avx_enabled) {
-        REQUIRE_DIRECT((etl::decay_traits<expr_0_t>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT((etl::decay_traits<expr_1_t>::template vectorizable<etl::vector_mode_t::AVX>::value));
-        REQUIRE_DIRECT((etl::decay_traits<expr_2_t>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT((etl::decay_traits<expr_0_t>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT((etl::decay_traits<expr_1_t>::template vectorizable<etl::vector_mode_t::AVX>));
+        REQUIRE_DIRECT((etl::decay_traits<expr_2_t>::template vectorizable<etl::vector_mode_t::AVX>));
     }
 }
 

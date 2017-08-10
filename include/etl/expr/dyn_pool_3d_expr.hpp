@@ -153,7 +153,7 @@ struct etl_traits<etl::dyn_pool_3d_expr<A, Impl>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::true_type;
+    static constexpr bool vectorizable = true;
 
     /*!
      * \brief Returns the dth dimension of the expression

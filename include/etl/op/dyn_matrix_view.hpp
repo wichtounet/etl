@@ -764,7 +764,7 @@ struct etl_traits<etl::dyn_matrix_view<T, D>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<sub_traits::template vectorizable<V>::value && storage_order == order::RowMajor>;
+    static constexpr bool vectorizable = sub_traits::template vectorizable<V> && storage_order == order::RowMajor;
 
     /*!
      * \brief Returns the size of the given expression

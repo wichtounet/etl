@@ -220,7 +220,7 @@ struct etl_traits<etl::scalar<T>, void> {
      * \tparam VV The vector mode
      */
     template <vector_mode_t VV>
-    using vectorizable = std::true_type;
+    static constexpr bool vectorizable = true;
 
     /*!
      * \brief Return the size of the expression

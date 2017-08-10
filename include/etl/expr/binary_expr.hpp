@@ -322,8 +322,9 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<
-        etl_traits<left_expr_t>::template vectorizable<V>::value && etl_traits<right_expr_t>::template vectorizable<V>::value && BinaryOp::template vectorizable<V>::value>;
+    static constexpr bool vectorizable = etl_traits<left_expr_t>::template vectorizable<V>
+            && etl_traits<right_expr_t>::template vectorizable<V>
+            && BinaryOp::template vectorizable<V>;
 
     /*!
      * \brief Get reference to the main sub expression

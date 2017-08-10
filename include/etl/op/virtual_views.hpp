@@ -252,7 +252,7 @@ struct etl_traits<etl::magic_view<V>> {
      * \tparam VV The vector mode
      */
     template <vector_mode_t VV>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Returns the size of the given expression
@@ -312,7 +312,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
      * \tparam VV The vector mode
      */
     template <vector_mode_t VV>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Returns the size of an expression of this fast type.

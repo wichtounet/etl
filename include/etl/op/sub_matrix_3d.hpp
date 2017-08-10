@@ -336,7 +336,7 @@ struct etl_traits<etl::sub_matrix_3d<T, Aligned>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Returns the size of the given expression

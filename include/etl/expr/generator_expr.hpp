@@ -225,7 +225,7 @@ struct etl_traits<etl::generator_expr<Generator>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::false_type;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Return the size of the expression

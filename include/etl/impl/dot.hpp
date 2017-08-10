@@ -76,7 +76,7 @@ etl::dot_impl select_dot_impl() {
 
             //VEC cannot always be used
             case dot_impl::VEC:
-                if (!vec_enabled || !decay_traits<A>::template vectorizable<vector_mode>::value || !decay_traits<B>::template vectorizable<vector_mode>::value) {
+                if (!vec_enabled || !decay_traits<A>::template vectorizable<vector_mode> || !decay_traits<B>::template vectorizable<vector_mode>) {
                     std::cerr << "Forced selection to VEC dot implementation, but not possible for this expression" << std::endl;
                     return select_default_dot_impl<A, B>();
                 }

@@ -144,7 +144,7 @@ struct etl_traits<etl::upsample_3d_expr<A, C1, C2, C3, Impl>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::true_type;
+    static constexpr bool vectorizable = true;
 
     /*!
      * \brief Returns the DDth dimension of the expression

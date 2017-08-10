@@ -266,7 +266,7 @@ struct etl_traits<etl::bias_add_2d_expr<A, B>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = std::true_type;
+    static constexpr bool vectorizable = true;
 
     /*!
      * \brief Returns the DDth dimension of the expression
