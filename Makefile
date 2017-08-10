@@ -35,14 +35,17 @@ CXX_FLAGS += $(EXTRA_CXX_FLAGS)
 
 CXX_FLAGS += -ftemplate-backtrace-limit=0
 
+# Tune clang warnings
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-error=documentation
 CXX_FLAGS += -Wpessimizing-move
 endif
 
-# Silence some gcc warnings (in used libraries)
+# Tune GCC warnings
+ifeq (,$(findstring clang,$(CXX)))
 ifneq (,$(findstring g++,$(CXX)))
 CXX_FLAGS += -Wno-ignored-attributes -Wno-misleading-indentation
+endif
 endif
 
 ifneq (,$(ETL_MKL))
