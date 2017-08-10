@@ -1,7 +1,11 @@
 ETL 1.2 - Next version
 **********************
 
+* *Misc* Full cleanup of the traits
+* *Misc* Use of variable templates (C++14) for the traits
 * *Misc* Improved support for clang
+* *Bug* Fix bug in the GEMM kernel for CM = CM * CM
+* *Bug* GPU memory was not correctly handled when std::move is used
 
 ETL 1.1 - 04.08.2017
 ++++++++++++++++++++
