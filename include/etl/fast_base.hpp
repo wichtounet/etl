@@ -22,13 +22,19 @@ namespace matrix_detail {
  * \brief Traits to test if a type is a std::vector
  */
 template <typename N>
-struct is_vector : std::false_type {};
+struct is_vector_impl : std::false_type {};
 
 /*!
  * \copydoc is_vector
  */
 template <typename... Args>
-struct is_vector<std::vector<Args...>> : std::true_type {};
+struct is_vector_impl<std::vector<Args...>> : std::true_type {};
+
+/*!
+ * \brief Traits to test if a type is a std::vector
+ */
+template <typename N>
+constexpr bool is_vector = is_vector_impl<N>::value;
 
 /*!
  * \brief Traits to extract iterator types from a type
@@ -74,7 +80,7 @@ using const_iterator_t = typename iterator_type<T>::const_iterator;
 template <typename D, typename T, typename ST, order SO, size_t... Dims>
 struct fast_matrix_base {
     static constexpr size_t n_dimensions = sizeof...(Dims);         ///< The number of dimensions
-    static constexpr size_t etl_size     = mul_all<Dims...>::value; ///< The size of the matrix
+    static constexpr size_t etl_size     = mul_all<Dims...>; ///< The size of the matrix
 
     using value_type        = T;                 ///< The type of value
     using derived_t         = D;                 ///< The derived type
@@ -222,7 +228,7 @@ public:
      */
     template <size_t DD>
     static constexpr size_t dim() noexcept {
-        return nth_size<DD, 0, Dims...>::value;
+        return nth_size<DD, 0, Dims...>;
     }
 
     /*!

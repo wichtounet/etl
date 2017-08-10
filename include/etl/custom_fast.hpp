@@ -32,10 +32,10 @@ struct custom_fast_matrix_impl final :
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
-    static constexpr size_t n_dimensions = sizeof...(Dims);                      ///< The number of dimensions
-    static constexpr size_t etl_size     = mul_all<Dims...>::value;              ///< The size of the matrix
-    static constexpr order storage_order      = SO;                                   ///< The storage order
-    static constexpr bool array_impl          = !matrix_detail::is_vector<ST>::value; ///< true if the storage is an std::arraw, false otherwise
+    static constexpr size_t n_dimensions = sizeof...(Dims);               ///< The number of dimensions
+    static constexpr size_t etl_size     = mul_all<Dims...>;       ///< The size of the matrix
+    static constexpr order storage_order = SO;                            ///< The storage order
+    static constexpr bool array_impl     = !matrix_detail::is_vector<ST>; ///< true if the storage is an std::arraw, false otherwise
 
     using this_type          = custom_fast_matrix_impl<T, ST, SO, Dims...>;     ///< this type
     using base_type          = fast_matrix_base<this_type, T, ST, SO, Dims...>; ///< The base type

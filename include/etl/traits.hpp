@@ -1140,19 +1140,25 @@ constexpr size_t dim() noexcept {
  * \brief Utility to get the dimensions of an expressions, with support for generator
  */
 template <typename E, typename Enable = void>
-struct safe_dimensions;
+struct safe_dimensions_impl;
 
 /*!
  * \brief Utility to get the dimensions of an expressions, with support for generator
  */
 template <typename E>
-struct safe_dimensions<E, std::enable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<size_t, std::numeric_limits<size_t>::max()> {};
+struct safe_dimensions_impl<E, std::enable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<size_t, std::numeric_limits<size_t>::max()> {};
 
 /*!
  * \brief Utility to get the dimensions of an expressions, with support for generator
  */
 template <typename E>
-struct safe_dimensions<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<size_t, etl_traits<E>::dimensions()> {};
+struct safe_dimensions_impl<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<size_t, etl_traits<E>::dimensions()> {};
+
+/*!
+ * \brief Utility to get the dimensions of an expressions, with support for generator
+ */
+template <typename E, typename Enable = void>
+constexpr size_t safe_dimensions = safe_dimensions_impl<E>::value;
 
 /*!
  * \brief Convert a flat index into a 2D index

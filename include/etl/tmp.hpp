@@ -99,13 +99,21 @@ using const_memory_t = typename std::decay_t<S>::const_memory_type;
  * \brief Value traits to compute the multiplication of all the given values
  */
 template <size_t F, size_t... Dims>
-struct mul_all final : std::integral_constant<size_t, F * mul_all<Dims...>::value> {};
+struct mul_all_impl final : std::integral_constant<size_t, F * mul_all_impl<Dims...>::value> {};
 
 /*!
- * \copydoc mul_all
+ * \copydoc mul_all_impl
  */
 template <size_t F>
-struct mul_all<F> final : std::integral_constant<size_t, F> {};
+struct mul_all_impl<F> final : std::integral_constant<size_t, F> {};
+
+//CPP17: Can be totally replaced with variadic fold expansion
+
+/*!
+ * \brief Value traits to compute the multiplication of all the given values
+ */
+template <size_t F, size_t... Dims>
+constexpr size_t mul_all = mul_all_impl<F, Dims...>::value;
 
 /*!
  * \brief Traits to get the Sth dimension in Dims..
@@ -113,7 +121,7 @@ struct mul_all<F> final : std::integral_constant<size_t, F> {};
  * \tparam I The current index (start at zero)
  */
 template <size_t S, size_t I, size_t F, size_t... Dims>
-struct nth_size final {
+struct nth_size_impl final {
     /*!
      * \brief Helper traits to get the S2th dimension in Dims... (of
      * the parent class)
@@ -121,7 +129,7 @@ struct nth_size final {
      * \tparam I2 The current index (start at zero)
      */
     template <size_t S2, size_t I2, typename Enable = void>
-    struct nth_size_int : std::integral_constant<size_t, nth_size<S, I + 1, Dims...>::value> {};
+    struct nth_size_int : std::integral_constant<size_t, nth_size_impl<S, I + 1, Dims...>::value> {};
 
     /*!
      * \brief Helper traits to get the S2th dimension in Dims... (of
@@ -134,6 +142,14 @@ struct nth_size final {
 
     static constexpr size_t value = nth_size_int<S, I>::value; ///< The result value
 };
+
+/*!
+ * \brief Traits to get the Sth dimension in Dims..
+ * \tparam S The searched dimension
+ * \tparam I The current index (start at zero)
+ */
+template <size_t S, size_t I, size_t F, size_t... Dims>
+constexpr size_t nth_size = nth_size_impl<S, I, F, Dims...>::value;
 
 /*!
  * \brief Returns the dth (dynamic) dimension from the variadic list D

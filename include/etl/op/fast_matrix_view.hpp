@@ -740,7 +740,7 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
      */
     static cpp14_constexpr size_t size(const expr_t& v) {
         cpp_unused(v);
-        return mul_all<Dims...>::value;
+        return mul_all<Dims...>;
     }
 
     /*!
@@ -759,7 +759,7 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
      * \returns the size of an expression of this fast type.
      */
     static constexpr size_t size() {
-        return mul_all<Dims...>::value;
+        return mul_all<Dims...>;
     }
 
     /*!
@@ -769,7 +769,7 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
      */
     template <size_t D>
     static constexpr size_t dim() {
-        return nth_size<D, 0, Dims...>::value;
+        return nth_size<D, 0, Dims...>;
     }
 
     /*!

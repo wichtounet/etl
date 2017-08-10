@@ -33,9 +33,9 @@ struct fast_matrix_impl final :
 
 public:
     static constexpr size_t n_dimensions = sizeof...(Dims);                        ///< The number of dimensions
-    static constexpr size_t etl_size     = mul_all<Dims...>::value;                ///< The size of the matrix
+    static constexpr size_t etl_size     = mul_all<Dims...>;                ///< The size of the matrix
     static constexpr order storage_order = SO;                                     ///< The storage order
-    static constexpr bool array_impl     = !matrix_detail::is_vector<ST>::value;   ///< true if the storage is an std::arraw, false otherwise
+    static constexpr bool array_impl     = !matrix_detail::is_vector<ST>;          ///< true if the storage is an std::arraw, false otherwise
     static constexpr size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
 
     using this_type          = fast_matrix_impl<T, ST, SO, Dims...>;            ///< this type
@@ -65,7 +65,7 @@ private:
     /*!
      * \brief Init the container if necessary
      */
-    template <typename S = ST, cpp_enable_iff(matrix_detail::is_vector<S>::value)>
+    template <typename S = ST, cpp_enable_iff(matrix_detail::is_vector<S>)>
     void init() {
         _data.resize(alloc_size_mat<value_type>(size(), this_type::template dim<n_dimensions - 1>()));
     }
@@ -73,7 +73,7 @@ private:
     /*!
      * \copydoc init
      */
-    template <typename S = ST, cpp_disable_iff(matrix_detail::is_vector<S>::value)>
+    template <typename S = ST, cpp_disable_iff(matrix_detail::is_vector<S>)>
     void init() noexcept {
         //Nothing else to init
     }
@@ -445,7 +445,7 @@ static_assert(std::is_nothrow_destructible<fast_vector<double, 2>>::value, "fast
  */
 template <size_t... Dims, typename T>
 fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...> fast_matrix_over(T* memory) {
-    return fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...>(cpp::array_wrapper<T>(memory, mul_all<Dims...>::value));
+    return fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...>(cpp::array_wrapper<T>(memory, mul_all<Dims...>));
 }
 
 /*!
