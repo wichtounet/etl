@@ -1,3 +1,8 @@
+ETL 1.2 - Next version
+**********************
+
+* *Misc* Improved support for clang
+
 ETL 1.1 - 04.08.2017
 ++++++++++++++++++++
 
