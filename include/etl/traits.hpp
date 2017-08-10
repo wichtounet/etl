@@ -623,6 +623,13 @@ template <typename T>
 constexpr bool is_2d = decay_traits<T>::dimensions() == 2;
 
 /*!
+ * \brief Traits to test if all the given expression types are 2D
+ * \tparam T The ETL expression type
+ */
+template <typename... T>
+constexpr bool all_2d = and_v<is_2d<T>...>;
+
+/*!
  * \brief Traits to test if the given expression type is 3D
  * \tparam T The ETL expression type
  */
@@ -630,11 +637,25 @@ template <typename T>
 constexpr bool is_3d = decay_traits<T>::dimensions() == 3;
 
 /*!
+ * \brief Traits to test if all the given expression types are 3D
+ * \tparam T The ETL expression type
+ */
+template <typename... T>
+constexpr bool all_3d = and_v<is_3d<T>...>;
+
+/*!
  * \brief Traits to test if the given expression type is 4D
  * \tparam T The ETL expression type
  */
 template <typename T>
 constexpr bool is_4d = decay_traits<T>::dimensions() == 4;
+
+/*!
+ * \brief Traits to test if all the given expression types are 4D
+ * \tparam T The ETL expression type
+ */
+template <typename... T>
+constexpr bool all_4d = and_v<is_4d<T>...>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are vectorizable.
