@@ -37,8 +37,10 @@ CXX_FLAGS += -ftemplate-backtrace-limit=0
 
 # Tune clang warnings
 ifneq (,$(findstring clang,$(CXX)))
-CXX_FLAGS += -Wno-error=documentation
 CXX_FLAGS += -Wpessimizing-move
+
+# False positives for all variable templates with \tparam documentation
+CXX_FLAGS += -Wno-documentation
 endif
 
 # Tune GCC warnings
