@@ -494,7 +494,7 @@ auto mean_l(E&& value) -> detail::stable_transform_helper<E, mean_l_transformer>
 template <typename E>
 auto one_if_max_sub(const E& value) -> detail::stable_transform_helper<E, one_if_max_sub_transformer> {
     static_assert(is_etl_expr<E>, "etl::one_if_max_sub can only be used on ETL expressions");
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 2, "Can only use one_if_max_sub 2D matrix");
+    static_assert(decay_traits<E>::dimensions() == 2, "Can only use one_if_max_sub 2D matrix");
     return detail::make_transform_expr<E, one_if_max_sub_transformer>(value);
 }
 
@@ -506,7 +506,7 @@ auto one_if_max_sub(const E& value) -> detail::stable_transform_helper<E, one_if
 template <typename E>
 auto hflip(const E& value) -> detail::stable_transform_helper<E, hflip_transformer> {
     static_assert(is_etl_expr<E>, "etl::hflip can only be used on ETL expressions");
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
+    static_assert(decay_traits<E>::dimensions() <= 2, "Can only use flips on 1D/2D");
     return detail::make_transform_expr<E, hflip_transformer>(value);
 }
 
@@ -518,7 +518,7 @@ auto hflip(const E& value) -> detail::stable_transform_helper<E, hflip_transform
 template <typename E>
 auto vflip(const E& value) -> detail::stable_transform_helper<E, vflip_transformer> {
     static_assert(is_etl_expr<E>, "etl::vflip can only be used on ETL expressions");
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
+    static_assert(decay_traits<E>::dimensions() <= 2, "Can only use flips on 1D/2D");
     return detail::make_transform_expr<E, vflip_transformer>(value);
 }
 
@@ -530,7 +530,7 @@ auto vflip(const E& value) -> detail::stable_transform_helper<E, vflip_transform
 template <typename E>
 auto fflip(const E& value) -> detail::stable_transform_helper<E, fflip_transformer> {
     static_assert(is_etl_expr<E>, "etl::fflip can only be used on ETL expressions");
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
+    static_assert(decay_traits<E>::dimensions() <= 2, "Can only use flips on 1D/2D");
     return detail::make_transform_expr<E, fflip_transformer>(value);
 }
 

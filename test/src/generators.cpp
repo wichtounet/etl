@@ -67,7 +67,7 @@ TEMPLATE_TEST_CASE_2("sequence/fast_matrix_2", "generator", Z, float, double) {
 
     b = 0.1 * etl::sequence_generator();
 
-    REQUIRE_DIRECT(etl::etl_traits<std::decay_t<decltype(0.1 * etl::sequence_generator())>>::is_generator);
+    REQUIRE_DIRECT(etl::decay_traits<decltype(0.1 * etl::sequence_generator())>::is_generator);
 
     REQUIRE_EQUALS_APPROX(b(0, 0), 0.0);
     REQUIRE_EQUALS_APPROX(b(0, 1), 0.1);
