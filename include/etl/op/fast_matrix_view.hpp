@@ -383,7 +383,7 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type read_flat(size_t j) const noexcept {
+    value_type read_flat(size_t j) const noexcept(assert_nothrow) {
         cpp_assert(memory, "Memory has not been initialized");
         ensure_cpu_up_to_date();
         return memory[j];
@@ -395,7 +395,7 @@ public:
      * \return a reference to the element at the given position.
      */
     template <typename... S, cpp_enable_iff((sizeof...(S) == sizeof...(Dims)))>
-    return_type operator()(S... args) noexcept {
+    return_type operator()(S... args) noexcept(assert_nothrow) {
         static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
         cpp_assert(memory, "Memory has not been initialized");
         ensure_cpu_up_to_date();
@@ -409,7 +409,7 @@ public:
      * \return a reference to the element at the given position.
      */
     template <typename... S, cpp_enable_iff((sizeof...(S) == sizeof...(Dims)))>
-    const_return_type operator()(S... args) const noexcept {
+    const_return_type operator()(S... args) const noexcept(assert_nothrow) {
         static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
         cpp_assert(memory, "Memory has not been initialized");
         ensure_cpu_up_to_date();

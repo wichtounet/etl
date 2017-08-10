@@ -130,7 +130,7 @@ public:
      * \param j The index
      * \return the value at the given index.
      */
-    value_type read_flat(size_t j) const noexcept {
+    value_type read_flat(size_t j) const noexcept(assert_nothrow) {
         cpp_assert(j < m * n, "Invalid index inside sub_matrix_2d");
 
         if /*constexpr*/ (storage_order == order::RowMajor){

@@ -265,7 +265,7 @@ public:
      * \param d The dimension to get
      * \return The Dth dimension of the matrix
      */
-    size_t dim(size_t d) const noexcept {
+    size_t dim(size_t d) const noexcept(assert_nothrow) {
         cpp_assert(d < n_dimensions, "Invalid dimension");
 
         return _dimensions[d];
@@ -276,7 +276,7 @@ public:
      * \return The D2th dimension of the matrix
      */
     template <size_t D2>
-    size_t dim() const noexcept {
+    size_t dim() const noexcept(assert_nothrow) {
         cpp_assert(D2 < n_dimensions, "Invalid dimension");
 
         return _dimensions[D2];
@@ -442,7 +442,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    const value_type& operator[](size_t i) const noexcept {
+    const value_type& operator[](size_t i) const noexcept(assert_nothrow) {
         cpp_assert(i < _size, "Out of bounds");
 
         ensure_cpu_up_to_date();
@@ -455,7 +455,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type& operator[](size_t i) noexcept {
+    value_type& operator[](size_t i) noexcept(assert_nothrow) {
         cpp_assert(i < _size, "Out of bounds");
 
         ensure_cpu_up_to_date();
@@ -470,7 +470,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(size_t i) const noexcept {
+    value_type read_flat(size_t i) const noexcept(assert_nothrow) {
         cpp_assert(i < _size, "Out of bounds");
 
         ensure_cpu_up_to_date();
@@ -483,7 +483,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E, cpp_enable_iff(all_dma<E>)>
+    template<typename E, cpp_enable_iff(is_dma<E>)>
     bool alias(const E& rhs) const noexcept {
         return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
     }
@@ -493,7 +493,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E, cpp_disable_iff(all_dma<E>)>
+    template<typename E, cpp_disable_iff(is_dma<E>)>
     bool alias(const E& rhs) const noexcept {
         return rhs.alias(as_derived());
     }

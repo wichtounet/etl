@@ -156,7 +156,7 @@ public:
      * \param f The index
      * \return the value at the given index.
      */
-    value_type read_flat(size_t f) const noexcept {
+    value_type read_flat(size_t f) const noexcept(assert_nothrow) {
         cpp_assert(f < m * n * o * p, "Invalid index inside sub_matrix_4d");
 
         if /*constexpr*/ (storage_order == order::RowMajor){
