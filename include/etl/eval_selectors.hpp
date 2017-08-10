@@ -68,25 +68,25 @@ inline constexpr vector_mode_t select_vector_mode(){
  * \brief Integral constant indicating if a fast assign is possible
  */
 template <typename E, typename R>
-using fast_assign = cpp::and_u<has_direct_access<E>, has_direct_access<R>>;
+constexpr bool fast_assign = has_direct_access<E> && has_direct_access<R>;
 
 /*!
  * \brief Integral constant indicating if a vectorized assign is possible
  */
 template <typename E, typename R>
-using vectorized_assign = cpp::and_u<!fast_assign<E, R>::value, are_vectorizable<E, R>>;
+constexpr bool vectorized_assign = !fast_assign<E, R> && are_vectorizable<E, R>;
 
 /*!
  * \brief Integral constant indicating if a direct assign is possible
  */
 template <typename E, typename R>
-using direct_assign = cpp::and_u<!are_vectorizable<E, R>, !has_direct_access<E>, has_direct_access<R>>;
+constexpr bool direct_assign = !are_vectorizable<E, R> && !has_direct_access<E> && has_direct_access<R>;
 
 /*!
  * \brief Integral constant indicating if a standard assign is necessary
  */
 template <typename E, typename R>
-using standard_assign = cpp::not_u<has_direct_access<R>>;
+constexpr bool standard_assign = !has_direct_access<R>;
 
 //Selectors for compound operations
 
@@ -94,24 +94,19 @@ using standard_assign = cpp::not_u<has_direct_access<R>>;
  * \brief Integral constant indicating if a vectorized compound assign is possible
  */
 template <typename E, typename R>
-using vectorized_compound = cpp::and_u<
-                               are_vectorizable<E, R>>;
+constexpr bool vectorized_compound = are_vectorizable<E, R>;
 
 /*!
  * \brief Integral constant indicating if a direct compound assign is possible
  */
 template <typename E, typename R>
-using direct_compound = cpp::and_u<
-                           !vectorized_compound<E, R>::value,
-                           has_direct_access<R>>;
+constexpr bool direct_compound = !vectorized_compound<E, R> && has_direct_access<R>;
 
 /*!
  * \brief Integral constant indicating if a standard compound assign is necessary
  */
 template <typename E, typename R>
-using standard_compound = cpp::and_u<
-                             !vectorized_compound<E, R>::value,
-                             !direct_compound<E, R>::value>;
+constexpr bool standard_compound = !vectorized_compound<E, R> && !direct_compound<E, R>;
 
 //Selectors for compound div operation
 
@@ -119,25 +114,19 @@ using standard_compound = cpp::and_u<
  * \brief Integral constant indicating if a vectorized compound div assign is possible
  */
 template <typename E, typename R>
-using vectorized_compound_div = cpp::and_u<
-    (is_floating_t<value_t<E>> || is_complex_t<value_t<E>>),
-    are_vectorizable<E, R>>;
+constexpr bool vectorized_compound_div = (is_floating_t<value_t<E>> || is_complex_t<value_t<E>>) && are_vectorizable<E, R>;
 
 /*!
  * \brief Integral constant indicating if a direct compound div assign is possible
  */
 template <typename E, typename R>
-using direct_compound_div = cpp::and_u<
-                           !vectorized_compound_div<E, R>::value,
-                           has_direct_access<R>>;
+constexpr bool direct_compound_div = !vectorized_compound_div<E, R> && has_direct_access<R>;
 
 /*!
  * \brief Integral constant indicating if a standard compound div assign is necessary
  */
 template <typename E, typename R>
-using standard_compound_div = cpp::and_u<
-                             !vectorized_compound_div<E, R>::value,
-                             !direct_compound_div<E, R>::value>;
+constexpr bool standard_compound_div = !vectorized_compound_div<E, R> && !direct_compound_div<E, R>;
 
 } //end of namespace detail
 
