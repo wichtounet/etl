@@ -40,9 +40,9 @@ CXX_FLAGS += -Wno-error=documentation
 CXX_FLAGS += -Wpessimizing-move
 endif
 
-# Silence some gcc warnings (relative to vector types)
+# Silence some gcc warnings (in used libraries)
 ifneq (,$(findstring g++,$(CXX)))
-CXX_FLAGS += -Wno-ignored-attributes
+CXX_FLAGS += -Wno-ignored-attributes -Wno-misleading-indentation
 endif
 
 ifneq (,$(ETL_MKL))
