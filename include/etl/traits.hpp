@@ -133,7 +133,7 @@ std::false_type is_base_of_template_tb_impl(...);
 template <typename T, template <typename, bool> class C>
 constexpr bool is_base_of_template_tb = decltype(is_base_of_template_tb_impl<C>(std::declval<T*>()))::value;
 
-} //end of namespace traits_detail
+} // end of namespace traits_detail
 
 // CPP17: Remove and_v and use variadic &&
 
@@ -742,45 +742,7 @@ constexpr bool fast_sub_matrix_able = has_direct_access<T>;
 template <typename T>
 constexpr bool fast_slice_view_able = fast_sub_view_able<T>;
 
-/*!
- * \brief Traits to test if an expression is inplace transpose-able
- * \tparam T The type to test
- */
-template <typename T, typename Enable = void>
-struct inplace_transpose_able;
-
-/*!
- * \copydoc inplace_transpose_able
- */
-template <typename T>
-struct inplace_transpose_able<T, std::enable_if_t<all_fast<T> && is_2d<T>>> {
-    /*!
-     * \brief Indicates if T is inplace transpose-able
-     */
-    static constexpr bool value = decay_traits<T>::template dim<0>() == decay_traits<T>::template dim<1>();
-};
-
-/*!
- * \copydoc inplace_transpose_able
- */
-template <typename T>
-struct inplace_transpose_able<T, std::enable_if_t<!all_fast<T> && is_2d<T>>> {
-    /*!
-     * \brief Indicates if T is inplace transpose-able
-     */
-    static constexpr bool value = true;
-};
-
-/*!
- * \copydoc inplace_transpose_able
- */
-template <typename T>
-struct inplace_transpose_able<T, std::enable_if_t<!is_2d<T>>> {
-    /*!
-     * \brief Indicates if T is inplace transpose-able
-     */
-    static constexpr bool value = false;
-};
+namespace traits_detail {
 
 /*!
  * \brief Traits to test if an expression is inplace sub transpose-able.
@@ -790,13 +752,13 @@ struct inplace_transpose_able<T, std::enable_if_t<!is_2d<T>>> {
  * \tparam T The type to test
  */
 template <typename T, typename Enable = void>
-struct inplace_sub_transpose_able;
+struct inplace_sub_transpose_able_impl;
 
 /*!
- * \copydoc inplace_sub_transpose_able
+ * \copydoc inplace_sub_transpose_able_impl
  */
 template <typename T>
-struct inplace_sub_transpose_able<T, std::enable_if_t<all_fast<T> && is_3d<T>>> {
+struct inplace_sub_transpose_able_impl<T, std::enable_if_t<all_fast<T> && is_3d<T>>> {
     /*!
      * \brief Indicates if T is inplace sub-transpose-able
      */
@@ -804,10 +766,10 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<all_fast<T> && is_3d<T>>> 
 };
 
 /*!
- * \copydoc inplace_sub_transpose_able
+ * \copydoc inplace_sub_transpose_able_impl
  */
 template <typename T>
-struct inplace_sub_transpose_able<T, std::enable_if_t<!all_fast<T> && is_3d<T>>> {
+struct inplace_sub_transpose_able_impl<T, std::enable_if_t<!all_fast<T> && is_3d<T>>> {
     /*!
      * \brief Indicates if T is inplace sub-transpose-able
      */
@@ -815,22 +777,61 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<!all_fast<T> && is_3d<T>>>
 };
 
 /*!
- * \copydoc inplace_sub_transpose_able
+ * \copydoc inplace_sub_transpose_able_impl
  */
 template <typename T>
-struct inplace_sub_transpose_able<T, std::enable_if_t<!is_3d<T>>> {
+struct inplace_sub_transpose_able_impl<T, std::enable_if_t<!is_3d<T>>> {
     /*!
      * \brief Indicates if T is inplace sub-transpose-able
      */
     static constexpr bool value = false;
 };
 
+/*!
+ * \brief Traits to test if an expression is inplace transpose-able
+ * \tparam T The type to test
+ */
+template <typename T, typename Enable = void>
+struct inplace_transpose_able_impl;
+
+/*!
+ * \copydoc inplace_transpose_able_impl
+ */
+template <typename T>
+struct inplace_transpose_able_impl<T, std::enable_if_t<all_fast<T> && is_2d<T>>> {
+    /*!
+     * \brief Indicates if T is inplace transpose-able
+     */
+    static constexpr bool value = decay_traits<T>::template dim<0>() == decay_traits<T>::template dim<1>();
+};
+
+/*!
+ * \copydoc inplace_transpose_able_impl
+ */
+template <typename T>
+struct inplace_transpose_able_impl<T, std::enable_if_t<!all_fast<T> && is_2d<T>>> {
+    /*!
+     * \brief Indicates if T is inplace transpose-able
+     */
+    static constexpr bool value = true;
+};
+
+/*!
+ * \copydoc inplace_transpose_able_impl
+ */
+template <typename T>
+struct inplace_transpose_able_impl<T, std::enable_if_t<!is_2d<T>>> {
+    /*!
+     * \brief Indicates if T is inplace transpose-able
+     */
+    static constexpr bool value = false;
+};
 
 /*!
  * \brief Traits to test if a matrix is a square matrix, if this can be defined.
  */
 template <typename Matrix, typename Enable = void>
-struct is_square_matrix {
+struct is_square_matrix_impl {
     /*!
      * \brief The value of the traits. True if the matrix is square, false otherwise
      */
@@ -838,10 +839,10 @@ struct is_square_matrix {
 };
 
 /*!
- * \copydoc is_square_matrix
+ * \copydoc is_square_matrix_impl
  */
 template <typename Matrix>
-struct is_square_matrix <Matrix, std::enable_if_t<all_fast<Matrix> && is_2d<Matrix>>> {
+struct is_square_matrix_impl <Matrix, std::enable_if_t<all_fast<Matrix> && is_2d<Matrix>>> {
     /*!
      * \brief The value of the traits. True if the matrix is square, false otherwise
      */
@@ -849,15 +850,40 @@ struct is_square_matrix <Matrix, std::enable_if_t<all_fast<Matrix> && is_2d<Matr
 };
 
 /*!
- * \copydoc is_square_matrix
+ * \copydoc is_square_matrix_impl
  */
 template <typename Matrix>
-struct is_square_matrix <Matrix, std::enable_if_t<!all_fast<Matrix> && is_2d<Matrix>>> {
+struct is_square_matrix_impl <Matrix, std::enable_if_t<!all_fast<Matrix> && is_2d<Matrix>>> {
     /*!
      * \brief The value of the traits. True if the matrix is square, false otherwise
      */
     static constexpr bool value = true;
 };
+
+} //end of namespace traits_detail
+
+/*!
+ * \brief Traits to test if an expression is inplace transpose-able
+ * \tparam T The type to test
+ */
+template <typename T>
+constexpr bool inplace_transpose_able = traits_detail::inplace_transpose_able_impl<T>::value;
+
+/*!
+ * \brief Traits to test if an expression is inplace sub transpose-able.
+ *
+ * Sub-transpose able means that the last two dimensions can be transposed in place.
+ *
+ * \tparam T The type to test
+ */
+template <typename T>
+constexpr bool inplace_sub_transpose_able = traits_detail::inplace_sub_transpose_able_impl<T>::value;
+
+/*!
+ * \brief Traits to test if a matrix is a square matrix, if this can be defined.
+ */
+template <typename Matrix>
+constexpr bool is_square_matrix = traits_detail::is_square_matrix_impl<Matrix>::value;
 
 /*!
  * Builder to construct the type returned by a view.

@@ -31,7 +31,7 @@ struct strictly_upper_matrix final : adapter<Matrix>, iterable<const strictly_up
 
     static_assert(etl_traits<matrix_t>::is_value, "Strictly upper triangular matrix only works with value classes");
     static_assert(etl_traits<matrix_t>::dimensions() == 2, "Strictly upper triangular matrix must be two-dimensional");
-    static_assert(is_square_matrix<matrix_t>::value, "Strictly upper triangular matrix must be square");
+    static_assert(is_square_matrix<matrix_t>, "Strictly upper triangular matrix must be square");
 
     static constexpr size_t n_dimensions = etl_traits<matrix_t>::dimensions();  ///< The number of dimensions
     static constexpr order storage_order      = etl_traits<matrix_t>::storage_order; ///< The storage order

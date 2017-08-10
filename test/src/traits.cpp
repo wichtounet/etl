@@ -511,12 +511,12 @@ TEMPLATE_TEST_CASE_2("etl_traits/inplace_transpose_able", "inplace_transpose_abl
     using mat_type_5 = etl::dyn_matrix<Z, 4>;
     using mat_type_6 = etl::dyn_matrix<Z, 2>;
 
-    REQUIRE_DIRECT(!etl::inplace_transpose_able<mat_type_1>::value);
-    REQUIRE_DIRECT(!etl::inplace_transpose_able<mat_type_2>::value);
-    REQUIRE_DIRECT(etl::inplace_transpose_able<mat_type_3>::value);
-    REQUIRE_DIRECT(!etl::inplace_transpose_able<mat_type_4>::value);
-    REQUIRE_DIRECT(!etl::inplace_transpose_able<mat_type_5>::value);
-    REQUIRE_DIRECT(etl::inplace_transpose_able<mat_type_6>::value);
+    REQUIRE_DIRECT(!etl::inplace_transpose_able<mat_type_1>);
+    REQUIRE_DIRECT(!etl::inplace_transpose_able<mat_type_2>);
+    REQUIRE_DIRECT(etl::inplace_transpose_able<mat_type_3>);
+    REQUIRE_DIRECT(!etl::inplace_transpose_able<mat_type_4>);
+    REQUIRE_DIRECT(!etl::inplace_transpose_able<mat_type_5>);
+    REQUIRE_DIRECT(etl::inplace_transpose_able<mat_type_6>);
 }
 
 TEMPLATE_TEST_CASE_2("etl_traits/selected_expr", "[traits]", Z, float, double) {

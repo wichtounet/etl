@@ -45,7 +45,7 @@ struct hermitian_matrix final : adapter<Matrix>, iterable<const hermitian_matrix
 
     static_assert(etl_traits<matrix_t>::is_value, "Hermitian matrix only works with value classes");
     static_assert(etl_traits<matrix_t>::dimensions() == 2, "Hermitian matrix must be two-dimensional");
-    static_assert(is_square_matrix<matrix_t>::value, "Hermitian matrix must be square");
+    static_assert(is_square_matrix<matrix_t>, "Hermitian matrix must be square");
 
     static constexpr size_t n_dimensions = etl_traits<matrix_t>::dimensions();  ///< The number of dimensions
     static constexpr order storage_order      = etl_traits<matrix_t>::storage_order; ///< The storage order
