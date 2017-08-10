@@ -462,10 +462,10 @@ struct etl_traits<etl::gemm_expr<A, B, Strassen>> {
  * \param b The right hand side matrix
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_iff((is_2d<A> && is_2d<B>))>
+template <typename A, typename B, cpp_enable_iff((all_2d<A, B>))>
 gemm_expr<detail::build_type<A>, detail::build_type<B>, false> operator*(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>, "Matrix multiplication only supported for ETL expressions");
-    static_assert(is_2d<A> && is_2d<B>, "Matrix multiplication only works in 2D");
+    static_assert(all_2d<A, B>, "Matrix multiplication only works in 2D");
 
     return gemm_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b};
 }
@@ -476,10 +476,10 @@ gemm_expr<detail::build_type<A>, detail::build_type<B>, false> operator*(A&& a, 
  * \param b The right hand side matrix
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_iff((is_2d<A> && is_2d<B>))>
+template <typename A, typename B, cpp_enable_iff((all_2d<A, B>))>
 gemm_expr<detail::build_type<A>, detail::build_type<B>, false> mul(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>, "Matrix multiplication only supported for ETL expressions");
-    static_assert(is_2d<A> && is_2d<B>, "Matrix multiplication only works in 2D");
+    static_assert(all_2d<A, B>, "Matrix multiplication only works in 2D");
 
     return gemm_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b};
 }
@@ -491,10 +491,10 @@ gemm_expr<detail::build_type<A>, detail::build_type<B>, false> mul(A&& a, B&& b)
  * \param c The expression used to store the result
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
-template <typename A, typename B, typename C, cpp_enable_iff(is_2d<A> && is_2d<B> && is_2d<C>)>
+template <typename A, typename B, typename C, cpp_enable_iff(all_2d<A, B, C>)>
 auto mul(A&& a, B&& b, C&& c) {
     static_assert(all_etl_expr<A, B, C>, "Matrix multiplication only supported for ETL expressions");
-    static_assert(is_2d<A> && is_2d<B> && is_2d<C>, "Matrix multiplication only works in 2D");
+    static_assert(all_2d<A, B, C>, "Matrix multiplication only works in 2D");
 
     c = mul(a, b);
     return c;
@@ -509,7 +509,7 @@ auto mul(A&& a, B&& b, C&& c) {
 template <typename A, typename B>
 gemm_expr<detail::build_type<A>, detail::build_type<B>, true> strassen_mul(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>, "Matrix multiplication only supported for ETL expressions");
-    static_assert(is_2d<A> && is_2d<B>, "Matrix multiplication only works in 2D");
+    static_assert(all_2d<A, B>, "Matrix multiplication only works in 2D");
 
     return gemm_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b};
 }
@@ -524,7 +524,7 @@ gemm_expr<detail::build_type<A>, detail::build_type<B>, true> strassen_mul(A&& a
 template <typename A, typename B, typename C>
 auto strassen_mul(A&& a, B&& b, C&& c) {
     static_assert(all_etl_expr<A, B, C>, "Matrix multiplication only supported for ETL expressions");
-    static_assert(is_2d<A> && is_2d<B> && is_2d<C>, "Matrix multiplication only works in 2D");
+    static_assert(all_2d<A, B, C>, "Matrix multiplication only works in 2D");
 
     c = mul(a,b);
     return c;

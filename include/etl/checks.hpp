@@ -66,7 +66,7 @@ void validate_expression_impl(const LE& lhs, const RE& rhs) {
 }
 
 #define validate_expression(lhs, rhs)                                                                                                          \
-    static_assert(is_etl_expr<decltype(lhs)> && is_etl_expr<decltype(rhs)>, "ETL functions are only made for ETL expressions "); \
+    static_assert(all_etl_expr<decltype(lhs), decltype(rhs)>, "ETL functions are only made for ETL expressions "); \
     validate_expression_impl(lhs, rhs);
 
 /*!

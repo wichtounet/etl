@@ -686,6 +686,14 @@ template <vector_mode_t V, typename... E>
 constexpr bool all_vectorizable_t = and_v<(vectorizable_t<V, E>)...>;
 
 /*!
+ * \brief Traits to test if the given ETL expresion type is
+ * thread safe.
+ * \tparam E The ETL expression type
+ */
+template <typename... E>
+constexpr bool is_thread_safe = decay_traits<E>::is_thread_safe;
+
+/*!
  * \brief Traits to test if all the given ETL expresion types are
  * thread safe.
  * \tparam E The ETL expression types.

@@ -68,7 +68,7 @@ inline constexpr vector_mode_t select_vector_mode(){
  * \brief Integral constant indicating if a fast assign is possible
  */
 template <typename E, typename R>
-constexpr bool fast_assign = has_direct_access<E> && has_direct_access<R>;
+constexpr bool fast_assign = all_dma<E, R>;
 
 /*!
  * \brief Integral constant indicating if a vectorized assign is possible

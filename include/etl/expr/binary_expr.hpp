@@ -25,7 +25,7 @@ private:
                          (std::is_same<LeftExpr, scalar<T>>::value && std::is_same<RightExpr, scalar<T>>::value)
                       || (is_etl_expr<LeftExpr> && std::is_same<RightExpr, scalar<T>>::value)
                       || (is_etl_expr<RightExpr> && std::is_same<LeftExpr, scalar<T>>::value)
-                      || (is_etl_expr<LeftExpr> && is_etl_expr<RightExpr>),
+                      || (all_etl_expr<LeftExpr, RightExpr>),
                   "One argument must be an ETL expression and the other one convertible to T");
 
     using this_type = binary_expr<T, LeftExpr, BinaryOp, RightExpr>; ///< This type
