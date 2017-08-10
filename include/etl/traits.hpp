@@ -584,15 +584,36 @@ constexpr bool all_dma = and_v<(has_direct_access<E>)...>;
  * \brief Traits to test if all the given ETL expresion types are row-major.
  * \tparam E The ETL expression types.
  */
+template <typename E>
+constexpr bool is_row_major = decay_traits<E>::storage_order == order::RowMajor;
+
+/*!
+ * \brief Traits to test if all the given ETL expresion types are row-major.
+ * \tparam E The ETL expression types.
+ */
 template <typename... E>
-constexpr bool all_row_major = and_v<(decay_traits<E>::storage_order == order::RowMajor)...>;
+constexpr bool all_row_major = and_v<is_row_major<E>...>;
+
+/*!
+ * \brief Traits to test if all the given ETL expresion types are column-major.
+ * \tparam E The ETL expression types.
+ */
+template <typename E>
+constexpr bool is_column_major = decay_traits<E>::storage_order == order::ColumnMajor;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are column-major.
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_column_major = and_v<(decay_traits<E>::storage_order == order::ColumnMajor)...>;
+constexpr bool all_column_major = and_v<is_column_major<E>...>;
+
+/*!
+ * \brief Traits to test if the given ETL expresion type is fast (sizes known at compile-time)
+ * \tparam E The ETL expression type.
+ */
+template <typename E>
+constexpr bool is_fast = decay_traits<E>::is_fast;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are fast (sizes known at compile-time)
@@ -690,7 +711,7 @@ constexpr bool all_vectorizable_t = and_v<(vectorizable_t<V, E>)...>;
  * thread safe.
  * \tparam E The ETL expression type
  */
-template <typename... E>
+template <typename E>
 constexpr bool is_thread_safe = decay_traits<E>::is_thread_safe;
 
 /*!
@@ -766,7 +787,7 @@ struct inplace_sub_transpose_able_impl;
  * \copydoc inplace_sub_transpose_able_impl
  */
 template <typename T>
-struct inplace_sub_transpose_able_impl<T, std::enable_if_t<all_fast<T> && is_3d<T>>> {
+struct inplace_sub_transpose_able_impl<T, std::enable_if_t<is_fast<T> && is_3d<T>>> {
     /*!
      * \brief Indicates if T is inplace sub-transpose-able
      */
@@ -777,7 +798,7 @@ struct inplace_sub_transpose_able_impl<T, std::enable_if_t<all_fast<T> && is_3d<
  * \copydoc inplace_sub_transpose_able_impl
  */
 template <typename T>
-struct inplace_sub_transpose_able_impl<T, std::enable_if_t<!all_fast<T> && is_3d<T>>> {
+struct inplace_sub_transpose_able_impl<T, std::enable_if_t<!is_fast<T> && is_3d<T>>> {
     /*!
      * \brief Indicates if T is inplace sub-transpose-able
      */
@@ -806,7 +827,7 @@ struct inplace_transpose_able_impl;
  * \copydoc inplace_transpose_able_impl
  */
 template <typename T>
-struct inplace_transpose_able_impl<T, std::enable_if_t<all_fast<T> && is_2d<T>>> {
+struct inplace_transpose_able_impl<T, std::enable_if_t<is_fast<T> && is_2d<T>>> {
     /*!
      * \brief Indicates if T is inplace transpose-able
      */
@@ -817,7 +838,7 @@ struct inplace_transpose_able_impl<T, std::enable_if_t<all_fast<T> && is_2d<T>>>
  * \copydoc inplace_transpose_able_impl
  */
 template <typename T>
-struct inplace_transpose_able_impl<T, std::enable_if_t<!all_fast<T> && is_2d<T>>> {
+struct inplace_transpose_able_impl<T, std::enable_if_t<!is_fast<T> && is_2d<T>>> {
     /*!
      * \brief Indicates if T is inplace transpose-able
      */
@@ -850,7 +871,7 @@ struct is_square_matrix_impl {
  * \copydoc is_square_matrix_impl
  */
 template <typename Matrix>
-struct is_square_matrix_impl <Matrix, std::enable_if_t<all_fast<Matrix> && is_2d<Matrix>>> {
+struct is_square_matrix_impl <Matrix, std::enable_if_t<is_fast<Matrix> && is_2d<Matrix>>> {
     /*!
      * \brief The value of the traits. True if the matrix is square, false otherwise
      */
@@ -861,7 +882,7 @@ struct is_square_matrix_impl <Matrix, std::enable_if_t<all_fast<Matrix> && is_2d
  * \copydoc is_square_matrix_impl
  */
 template <typename Matrix>
-struct is_square_matrix_impl <Matrix, std::enable_if_t<!all_fast<Matrix> && is_2d<Matrix>>> {
+struct is_square_matrix_impl <Matrix, std::enable_if_t<!is_fast<Matrix> && is_2d<Matrix>>> {
     /*!
      * \brief The value of the traits. True if the matrix is square, false otherwise
      */
@@ -1140,7 +1161,7 @@ constexpr size_t dim(const E& e) noexcept {
  */
 template <size_t D, typename E>
 constexpr size_t dim() noexcept {
-    static_assert(all_fast<E>, "dim<D, E>() can only be used on statically-sized ETL expression");
+    static_assert(is_fast<E>, "dim<D, E>() can only be used on statically-sized ETL expression");
     return decay_traits<E>::template dim<D>();
 }
 
@@ -1268,7 +1289,7 @@ void safe_ensure_cpu_up_to_date(E&& expr){
  *
  * \param expr The expression
  */
-template <typename E, cpp_enable_iff(all_dma<E>)>
+template <typename E, cpp_enable_iff(is_dma<E>)>
 bool safe_is_gpu_up_to_date(E&& expr){
     return expr.is_gpu_up_to_date();
 }
@@ -1279,7 +1300,7 @@ bool safe_is_gpu_up_to_date(E&& expr){
  *
  * \param expr The expression
  */
-template <typename E, cpp_disable_iff(all_dma<E>)>
+template <typename E, cpp_disable_iff(is_dma<E>)>
 bool safe_is_gpu_up_to_date(E&& expr){
     cpp_unused(expr);
     return false;

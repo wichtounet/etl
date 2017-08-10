@@ -50,7 +50,7 @@ struct expr_result<E, true> {
  * \tparam E The temporary expression type
  */
 template <bool Fast, typename E>
-using expr_result_t = typename expr_result<E, Fast && all_fast<E>>::type;
+using expr_result_t = typename expr_result<E, Fast && is_fast<E>>::type;
 
 } // end of temporary_detail
 
@@ -157,7 +157,7 @@ protected:
     /*!
      * \brief Allocate the temporary
      */
-    template <bool B = all_fast<derived_t>, cpp_enable_iff(B)>
+    template <bool B = is_fast<derived_t>, cpp_enable_iff(B)>
     result_type* allocate() const {
         return new result_type;
     }
@@ -173,7 +173,7 @@ protected:
     /*!
      * \brief Allocate the temporary
      */
-    template <bool B = all_fast<derived_t>, cpp_disable_iff(B)>
+    template <bool B = is_fast<derived_t>, cpp_disable_iff(B)>
     result_type* allocate() const {
         return dyn_allocate(std::make_index_sequence<decay_traits<derived_t>::dimensions()>());
     }

@@ -344,7 +344,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_row_major<B, C> && all_column_major<A> && all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C, cpp_enable_iff(all_row_major<B, C> && is_column_major<A> && all_homogeneous<A, B, C>)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm(force_temporary_opp(a), b, c);
 }
@@ -355,7 +355,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_row_major<A, C> && all_column_major<B> && all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C, cpp_enable_iff(all_row_major<A, C> && is_column_major<B> && all_homogeneous<A, B, C>)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm(a, force_temporary_opp(b), c);
 }
@@ -366,7 +366,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_row_major<C> && all_column_major<A, B> && all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C, cpp_enable_iff(is_row_major<C> && all_column_major<A, B> && all_homogeneous<A, B, C>)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm(force_temporary_opp(a), force_temporary_opp(b), c);
 }
@@ -377,7 +377,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_row_major<A> && all_column_major<B, C> && all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C, cpp_enable_iff(is_row_major<A> && all_column_major<B, C> && all_homogeneous<A, B, C>)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm(force_temporary_opp(a), b, c);
 }
@@ -388,7 +388,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_row_major<B> && all_column_major<A, C> && all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C, cpp_enable_iff(is_row_major<B> && all_column_major<A, C> && all_homogeneous<A, B, C>)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm(a, force_temporary_opp(b), c);
 }
@@ -399,7 +399,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_row_major<A, B> && all_column_major<C> && all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C, cpp_enable_iff(all_row_major<A, B> && is_column_major<C> && all_homogeneous<A, B, C>)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm(force_temporary_opp(a), force_temporary_opp(b), c);
 }

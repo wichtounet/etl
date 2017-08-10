@@ -31,7 +31,7 @@ namespace detail {
  */
 template <typename A, bool Simple>
 cpp14_constexpr scalar_impl select_default_scalar_impl(bool gpu) {
-    if (all_floating<A>) {
+    if (is_floating<A>) {
         if (cublas_enabled && gpu){
             return scalar_impl::CUBLAS;
         } else if (cblas_enabled && !Simple) {
@@ -57,7 +57,7 @@ scalar_impl select_scalar_impl(bool gpu) {
         switch (forced) {
             //BLAS cannot always be used
             case scalar_impl::BLAS:
-                if (!cblas_enabled || !all_floating<A>) {
+                if (!cblas_enabled || !is_floating<A>) {
                     std::cerr << "Forced selection to BLAS scalar implementation, but not possible for this expression" << std::endl;
                     return select_default_scalar_impl<A, Simple>(gpu);
                 }
@@ -66,7 +66,7 @@ scalar_impl select_scalar_impl(bool gpu) {
 
             //CUBLAS cannot always be used
             case scalar_impl::CUBLAS:
-                if (!cublas_enabled || !all_floating<A>) {
+                if (!cublas_enabled || !is_floating<A>) {
                     std::cerr << "Forced selection to CUBLAS scalar implementation, but not possible for this expression" << std::endl;
                     return select_default_scalar_impl<A, Simple>(gpu);
                 }

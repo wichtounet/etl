@@ -63,7 +63,7 @@ double dot(const A& a, const B& b) {
 /*!
  * \copydoc dot
  */
-template <typename A, typename B, cpp_enable_iff(!all_dma<A>)>
+template <typename A, typename B, cpp_enable_iff(!is_dma<A>)>
 value_t<A> dot(const A& /*a*/, const B& /*b*/) {
     cpp_unreachable("BLAS not enabled/available");
     return 0.0;

@@ -48,7 +48,7 @@ cpp14_constexpr transpose_impl select_default_transpose_impl(){
     return transpose_impl::STD;
 #else
     // Condition to use MKL
-    constexpr bool mkl_possible = mkl_enabled && all_dma<C> && all_floating<C>;
+    constexpr bool mkl_possible = mkl_enabled && is_dma<C> && is_floating<C>;
 
     if (mkl_possible) {
         return transpose_impl::MKL;
@@ -76,7 +76,7 @@ cpp14_constexpr transpose_impl select_default_in_square_transpose_impl(){
     }
 
     // Condition to use MKL
-    constexpr bool mkl_possible = mkl_enabled && all_dma<C> && all_floating<C>;
+    constexpr bool mkl_possible = mkl_enabled && is_dma<C> && is_floating<C>;
 
     if (mkl_possible) {
         return transpose_impl::MKL;

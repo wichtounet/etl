@@ -71,7 +71,7 @@ void mkl_otrans(A&& a, C&& c) {
  * \brief MKL inplace transposition wrapper
  * \param c The left hand side
  */
-template <typename C, cpp_enable_iff(all_single_precision<C>)>
+template <typename C, cpp_enable_iff(is_single_precision<C>)>
 void mkl_itrans(C&& c) {
     c.ensure_cpu_up_to_date();
 
@@ -88,7 +88,7 @@ void mkl_itrans(C&& c) {
  * \brief MKL inplace transposition wrapper
  * \param c The left hand side
  */
-template <typename C, cpp_enable_iff(all_double_precision<C>)>
+template <typename C, cpp_enable_iff(is_double_precision<C>)>
 void mkl_itrans(C&& c) {
     c.ensure_cpu_up_to_date();
 
@@ -105,7 +105,7 @@ void mkl_itrans(C&& c) {
  * \brief Inplace transposition of the square matrix c
  * \param c The matrix to transpose
  */
-template <typename C, cpp_enable_iff(all_dma<C>&& all_floating<C>)>
+template <typename C, cpp_enable_iff(is_dma<C>&& is_floating<C>)>
 void inplace_square_transpose(C&& c) {
     mkl_itrans(c);
 }
@@ -114,7 +114,7 @@ void inplace_square_transpose(C&& c) {
  * \brief Inplace transposition of the rectangular matrix c
  * \param c The matrix to transpose
  */
-template <typename C, cpp_enable_iff(all_dma<C>&& all_floating<C>)>
+template <typename C, cpp_enable_iff(is_dma<C>&& is_floating<C>)>
 void inplace_rectangular_transpose(C&& c) {
     mkl_otrans(force_temporary(c), c);
 }
@@ -145,7 +145,7 @@ void transpose(A&& a, C&& c) {
  * \brief Inplace transposition of the square matrix c
  * \param c The matrix to transpose
  */
-template <typename C, cpp_disable_iff(all_dma<C>&& all_floating<C>)>
+template <typename C, cpp_disable_iff(is_dma<C>&& is_floating<C>)>
 void inplace_square_transpose(C&& c) {
     cpp_unused(c);
 }
@@ -153,7 +153,7 @@ void inplace_square_transpose(C&& c) {
 /*!
  * \brief Inplace transposition of the rectangular matrix c
  * \param c The matrix to transpose
- */ template <typename C, cpp_disable_iff(all_dma<C>&& all_floating<C>)>
+ */ template <typename C, cpp_disable_iff(is_dma<C>&& is_floating<C>)>
 void inplace_rectangular_transpose(C&& c) {
     cpp_unused(c);
 }

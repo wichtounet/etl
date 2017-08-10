@@ -95,7 +95,7 @@ void validate_assign(const LE& lhs, const RE& rhs) noexcept {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_iff(!etl_traits<RE>::is_generator  && all_etl_expr<RE>  && !all_fast<LE, RE>  && !is_wrapper_expr<RE>)>
+template <typename LE, typename RE, cpp_enable_iff(!etl_traits<RE>::is_generator  && is_etl_expr<RE>  && !all_fast<LE, RE>  && !is_wrapper_expr<RE>)>
 void validate_assign(const LE& lhs, const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
@@ -112,7 +112,7 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_iff(!etl_traits<RE>::is_generator  && all_etl_expr<RE>  && all_fast<LE, RE>  && !is_wrapper_expr<RE>)>
+template <typename LE, typename RE, cpp_enable_iff(!etl_traits<RE>::is_generator  && is_etl_expr<RE>  && all_fast<LE, RE>  && !is_wrapper_expr<RE>)>
 void validate_assign(const LE& lhs, const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
@@ -129,7 +129,7 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_iff(!all_etl_expr<RE>  && !is_wrapper_expr<RE>)>
+template <typename LE, typename RE, cpp_enable_iff(!is_etl_expr<RE>  && !is_wrapper_expr<RE>)>
 void validate_assign(const LE& lhs, const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(size(lhs) == rhs.size(), "Cannot perform element-wise operations on collections of different size");
@@ -162,7 +162,7 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  *
  * \param expr The expression to assert
  */
-template <typename E, cpp_enable_iff(all_fast<E>)>
+template <typename E, cpp_enable_iff(is_fast<E>)>
 void assert_square(E&& expr) {
     static_assert(is_2d<E>, "Function undefined for non-square matrix");
     static_assert(decay_traits<E>::template dim<0>() == decay_traits<E>::template dim<1>(), "Function undefined for non-square matrix");
@@ -177,7 +177,7 @@ void assert_square(E&& expr) {
  *
  * \param expr The expression to assert
  */
-template <typename E, cpp_disable_iff(all_fast<E>)>
+template <typename E, cpp_disable_iff(is_fast<E>)>
 void assert_square(E&& expr) {
     static_assert(is_2d<E>, "Function undefined for non-square matrix");
     cpp_assert(etl::dim<0>(expr) == etl::dim<1>(expr), "Function undefined for non-square matrix");

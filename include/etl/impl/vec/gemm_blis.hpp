@@ -346,7 +346,7 @@ void gemm_macro_kernel(size_t mc, size_t nc, size_t kc, T alpha, T beta, T* C, s
  * \param C The result matrix
  * \param beta The multipliying of the previous value
  */
-template <typename V, typename T, cpp_enable_iff(all_floating_t<T>)>
+template <typename V, typename T, cpp_enable_iff(is_floating_t<T>)>
 void gemm_large_kernel_workspace_rr(const T* A, const T* B, T* C, size_t m, size_t n, size_t k, T beta) {
     static constexpr const size_t MC = gemm_config<T>::MC;
     static constexpr const size_t KC = gemm_config<T>::KC;
@@ -403,7 +403,7 @@ void gemm_large_kernel_workspace_rr(const T* A, const T* B, T* C, size_t m, size
 /*!
  * \copydoc gemm_large_kernel_workspace_rr
  */
-template <typename V, typename T, cpp_disable_iff(all_floating_t<T>)>
+template <typename V, typename T, cpp_disable_iff(is_floating_t<T>)>
 void gemm_large_kernel_workspace_rr(const T* , const T* , T* , size_t , size_t , size_t , T ) {
     // Nothing to do here
 }
