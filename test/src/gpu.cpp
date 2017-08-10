@@ -13,10 +13,13 @@
  * GPU is used.
  */
 
+
 #include "test.hpp"
 #include "etl/stop.hpp"
 
 #include "mmul_test.hpp"
+
+#ifdef ETL_CUDA
 
 TEMPLATE_TEST_CASE_2("gpu/1", "[gpu]", T, float, double) {
     etl::fast_matrix<T, 200, 200> a;
@@ -109,3 +112,5 @@ TEMPLATE_TEST_CASE_2("gpu/3", "[gpu]", T, float, double) {
     REQUIRE_EQUALS(c1(2, 1), 800);
     REQUIRE_EQUALS(c1(2, 2), 800);
 }
+
+#endif
