@@ -131,7 +131,7 @@ std::false_type is_base_of_template_tb_impl(...);
  * \brief Traits to test if a type if inheriting from a given template.
  */
 template <typename T, template <typename, bool> class C>
-using is_base_of_template_tb = decltype(is_base_of_template_tb_impl<C>(std::declval<T*>()));
+constexpr bool is_base_of_template_tb = decltype(is_base_of_template_tb_impl<C>(std::declval<T*>()))::value;
 
 } //end of namespace traits_detail
 
@@ -389,7 +389,7 @@ constexpr bool is_transpose_expr = cpp::is_specialization_of_v<etl::transpose_ex
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_temporary_expr = traits_detail::is_base_of_template_tb<std::decay_t<T>, etl::base_temporary_expr>::value;
+constexpr bool is_temporary_expr = traits_detail::is_base_of_template_tb<std::decay_t<T>, etl::base_temporary_expr>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a value type.
