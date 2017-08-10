@@ -217,7 +217,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <typename DD = D, cpp_enable_iff((safe_dimensions<DD> > 1))>
+    template <typename DD = D, cpp_enable_iff(safe_dimensions<DD> > 1)>
     auto operator()(size_t i) const {
         return sub(as_derived(), i);
     }

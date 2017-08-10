@@ -62,7 +62,7 @@ struct inplace_assignable {
     /*!
      * \brief Fully flip each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_iff((etl_traits<S>::dimensions() > 3))>
+    template <typename S = D, cpp_enable_iff(etl_traits<S>::dimensions() > 3)>
     derived_t& deep_fflip_inplace() {
         decltype(auto) mat = as_derived();
 
@@ -76,7 +76,7 @@ struct inplace_assignable {
     /*!
      * \brief Fully flip each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_iff((is_3d<S>))>
+    template <typename S = D, cpp_enable_iff(is_3d<S>)>
     derived_t& deep_fflip_inplace() {
         decltype(auto) mat = as_derived();
 
@@ -156,7 +156,7 @@ struct inplace_assignable {
     /*!
      * \brief Transpose each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_iff((etl_traits<S>::dimensions() > 3))>
+    template <typename S = D, cpp_enable_iff(etl_traits<S>::dimensions() > 3)>
     derived_t& direct_deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
@@ -170,7 +170,7 @@ struct inplace_assignable {
     /*!
      * \brief Transpose each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_iff((is_3d<S>))>
+    template <typename S = D, cpp_enable_iff(is_3d<S>)>
     derived_t& direct_deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 

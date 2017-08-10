@@ -359,7 +359,7 @@ void conv1_valid_impl(const I& input, const K& kernel, C&& conv, size_t first, s
  * \param first The index where to start in the output matrix
  * \param last The index where to stop in the output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff((conv1_possible<vector_mode, I, K, C>))>
+template <typename I, typename K, typename C, cpp_enable_iff(conv1_possible<vector_mode, I, K, C>)>
 void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
     conv1_valid_impl<default_vec>(input, kernel, conv, first, last);
 }

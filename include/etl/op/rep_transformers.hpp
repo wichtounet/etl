@@ -521,7 +521,7 @@ struct etl_traits<rep_l_transformer<T, D...>> {
      * \tparam D2 The dimension to get
      * \return the D2th dimension of an expression of this type
      */
-    template <size_t D2, cpp_enable_iff((D2 >= sizeof...(D)))>
+    template <size_t D2, cpp_enable_iff(D2 >= sizeof...(D))>
     static constexpr size_t dim() {
         return etl_traits<sub_expr_t>::template dim<D2 - sizeof...(D)>();
     }
@@ -531,7 +531,7 @@ struct etl_traits<rep_l_transformer<T, D...>> {
      * \tparam D2 The dimension to get
      * \return the D2th dimension of an expression of this type
      */
-    template <size_t D2, cpp_disable_iff((D2 >= sizeof...(D)))>
+    template <size_t D2, cpp_disable_iff(D2 >= sizeof...(D))>
     static constexpr size_t dim() {
         return nth_size<D2, 0, D...>;
     }

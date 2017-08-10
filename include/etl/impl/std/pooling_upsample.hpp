@@ -336,7 +336,7 @@ struct max_pool_upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_iff((decay_traits<A>::dimensions() > 4))>
+    template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
     static void apply(A&& in, B&& out, C&& errors, M& m) {
         for(size_t i = 0; i < etl::dim<0>(in); ++i){
             apply<C1, C2>(in(i), out(i), errors(i), m(i));
@@ -350,7 +350,7 @@ struct max_pool_upsample_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename B, typename C, typename M, cpp_enable_iff((decay_traits<A>::dimensions() > 4))>
+    template <typename A, typename B, typename C, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
         for(size_t i = 0; i < etl::dim<0>(in); ++i){
             apply(in(i), out(i), errors(i), m(i), c1, c2);
@@ -928,7 +928,7 @@ struct avg_pool_upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_iff((decay_traits<A>::dimensions() > 4))>
+    template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
     static void apply(A&& in, B&& out, C&& errors, M& m) {
         for(size_t i = 0; i < etl::dim<0>(in); ++i){
             apply<C1, C2>(in(i), out(i), errors(i), m(i));
@@ -942,7 +942,7 @@ struct avg_pool_upsample_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename B, typename C, typename M, cpp_enable_iff((decay_traits<A>::dimensions() > 4))>
+    template <typename A, typename B, typename C, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
         for(size_t i = 0; i < etl::dim<0>(in); ++i){
             apply(in(i), out(i), errors(i), m(i), c1, c2);

@@ -95,7 +95,7 @@ double sum(const A& a) {
 /*!
  * \copydoc sum
  */
-template <typename A, cpp_enable_iff((!is_dma<A> || !is_floating<A>))>
+template <typename A, cpp_enable_iff(!is_dma<A> || !is_floating<A>)>
 value_t<A> sum(const A& /*a*/) {
     cpp_unreachable("CUBLAS not enabled/available");
     return 0.0;
@@ -133,7 +133,7 @@ double asum(const A& a) {
 /*!
  * \copydoc asum
  */
-template <typename A, cpp_enable_iff((!is_dma<A> || !is_floating<A>))>
+template <typename A, cpp_enable_iff(!is_dma<A> || !is_floating<A>)>
 value_t<A> asum(const A& /*a*/) {
     cpp_unreachable("CUBLAS not enabled/available");
     return 0.0;

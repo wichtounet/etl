@@ -95,7 +95,7 @@ public:
      * The memory won't be managed, meaning that it won't be
      * released once the matrix is destructed.
      */
-    template <typename... S, cpp_enable_iff((sizeof...(S) == D))>
+    template <typename... S, cpp_enable_iff(sizeof...(S) == D)>
     explicit custom_dyn_matrix_impl(value_type* memory, S... sizes) noexcept : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}})
                                                     {
         _memory = memory;

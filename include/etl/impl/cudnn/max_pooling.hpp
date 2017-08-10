@@ -101,7 +101,7 @@ struct max_pool_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename X, typename Y, cpp_enable_iff((decay_traits<X>::dimensions() < 5))>
+    template <typename X, typename Y, cpp_enable_iff(decay_traits<X>::dimensions() < 5)>
     static void apply(const X& x, Y&& y, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         pool_2d(CUDNN_POOLING_MAX, x, y, c1, c2, s1, s2, p1, p2);
     }
@@ -115,7 +115,7 @@ struct max_pool_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_iff((decay_traits<A>::dimensions > 4))>
+    template <typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions > 4)>
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         for(size_t i = 0; i < etl::dim<0>(sub); ++i){
             apply(sub(i), m(i), c1, c2, s1, s2, p1, p2);
@@ -134,7 +134,7 @@ struct avg_pool_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename X, typename Y, cpp_enable_iff((decay_traits<X>::dimensions() < 5))>
+    template <typename X, typename Y, cpp_enable_iff(decay_traits<X>::dimensions() < 5)>
     static void apply(const X& x, Y&& y, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         pool_2d(CUDNN_POOLING_AVERAGE_COUNT_INCLUDE_PADDING, x, y, c1, c2, s1, s2, p1, p2);
     }
@@ -148,7 +148,7 @@ struct avg_pool_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_iff((decay_traits<A>::dimensions > 4))>
+    template <typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions > 4)>
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         for(size_t i = 0; i < etl::dim<0>(sub); ++i){
             apply(sub(i), m(i), c1, c2, s1, s2, p1, p2);
@@ -167,7 +167,7 @@ struct max_pool_3d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename X, typename Y, cpp_enable_iff((decay_traits<X>::dimensions() < 5))>
+    template <typename X, typename Y, cpp_enable_iff(decay_traits<X>::dimensions() < 5)>
     static void apply(const X& x, Y&& y, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         pool_3d(CUDNN_POOLING_MAX, x, y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
     }
@@ -181,7 +181,7 @@ struct max_pool_3d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_iff((decay_traits<A>::dimensions > 4))>
+    template <typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions > 4)>
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         for(size_t i = 0; i < etl::dim<0>(sub); ++i){
             apply(sub(i), m(i), c1, c2, c3, s1, s2, s3, p1, p2, p3);
@@ -200,7 +200,7 @@ struct avg_pool_3d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename X, typename Y, cpp_enable_iff((decay_traits<X>::dimensions() < 5))>
+    template <typename X, typename Y, cpp_enable_iff(decay_traits<X>::dimensions() < 5)>
     static void apply(const X& x, Y&& y, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         pool_3d(CUDNN_POOLING_AVERAGE_COUNT_INCLUDE_PADDING, x, y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
     }
@@ -214,7 +214,7 @@ struct avg_pool_3d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_iff((decay_traits<A>::dimensions > 4))>
+    template <typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions > 4)>
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         for(size_t i = 0; i < etl::dim<0>(sub); ++i){
             apply(sub(i), m(i), c1, c2, c3, s1, s2, s3, p1, p2, p3);

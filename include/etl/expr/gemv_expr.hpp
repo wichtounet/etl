@@ -158,7 +158,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \param b The B matrix
      * \param c The C matrix (output)
      */
-    template <typename AA, typename BB, typename C, cpp_enable_iff((is_transpose_expr<AA>))>
+    template <typename AA, typename BB, typename C, cpp_enable_iff(is_transpose_expr<AA>)>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         // The vector is always assigned in the same way
         standard_evaluator::pre_assign_rhs(b);
@@ -192,7 +192,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \param b The B matrix
      * \param c The C matrix (output)
      */
-    template <typename AA, typename BB, typename C, cpp_enable_iff((!is_transpose_expr<AA>))>
+    template <typename AA, typename BB, typename C, cpp_enable_iff(!is_transpose_expr<AA>)>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         // The vector and matrix are always assigned in the same way
         standard_evaluator::pre_assign_rhs(a);

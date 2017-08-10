@@ -292,7 +292,7 @@ struct upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, typename A, typename M, cpp_enable_iff((decay_traits<A>::dimensions() > 4))>
+    template <size_t C1, size_t C2, typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
     static void apply(A&& in, M& m) {
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply<C1, C2>(in(i), m(i));
@@ -306,7 +306,7 @@ struct upsample_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_iff((decay_traits<A>::dimensions() > 4))>
+    template <typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
     static void apply(A&& in, M& m, size_t c1, size_t c2) {
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply(in(i), m(i), c1, c2);
@@ -528,7 +528,7 @@ struct upsample_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename M, cpp_enable_iff((decay_traits<A>::dimensions() > 4))>
+    template <size_t C1, size_t C2, size_t C3, typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
     static void apply(A&& in, M& m) {
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply<C1, C2, C3>(in(i), m(i));
@@ -543,7 +543,7 @@ struct upsample_3d {
      * \param c2 The second dimension pooling ratio
      * \param c3 The third dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_iff((decay_traits<A>::dimensions() > 4))>
+    template <typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
     static void apply(A&& in, M& m, size_t c1, size_t c2, size_t c3) {
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply(in(i), m(i), c1, c2, c3);

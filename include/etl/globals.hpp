@@ -765,7 +765,7 @@ void shuffle(T& vector, G&& g){
  *
  * \param matrix The matrix to shuffle
  */
-template<typename T, cpp_enable_iff((decay_traits<T>::dimensions() > 1))>
+template<typename T, cpp_enable_iff(decay_traits<T>::dimensions() > 1)>
 void shuffle(T& matrix){
     shuffle_first(matrix);
 }
@@ -779,7 +779,7 @@ void shuffle(T& matrix){
  * \param matrix The matrix to shuffle
  * \param g The generator to use for random number generation
  */
-template<typename T, typename G, cpp_enable_iff((decay_traits<T>::dimensions() > 1))>
+template<typename T, typename G, cpp_enable_iff(decay_traits<T>::dimensions() > 1)>
 void shuffle(T& matrix, G&& g){
     shuffle_first(matrix, g);
 }
@@ -914,7 +914,7 @@ void parallel_shuffle(T1& v1, T2& v2, G&& g){
  * \param m1 The first matrix to shuffle
  * \param m2 The first matrix to shuffle
  */
-template<typename T1, typename T2, cpp_enable_iff((decay_traits<T1>::dimensions() > 1))>
+template<typename T1, typename T2, cpp_enable_iff(decay_traits<T1>::dimensions() > 1)>
 void parallel_shuffle(T1& m1, T2& m2){
     parallel_shuffle_first(m1, m2);
 }
@@ -928,7 +928,7 @@ void parallel_shuffle(T1& m1, T2& m2){
  * \param m1 The first matrix to shuffle
  * \param m2 The first matrix to shuffle
  */
-template<typename T1, typename T2, typename G, cpp_enable_iff((decay_traits<T1>::dimensions() > 1))>
+template<typename T1, typename T2, typename G, cpp_enable_iff(decay_traits<T1>::dimensions() > 1)>
 void parallel_shuffle(T1& m1, T2& m2, G&& g){
     parallel_shuffle_first(m1, m2, g);
 }

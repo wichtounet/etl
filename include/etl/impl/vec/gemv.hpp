@@ -586,7 +586,7 @@ void gemv_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_iff((is_row_major<A> && all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff(is_row_major<A> && all_homogeneous<A, B, C>)>
 void gemv(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -611,7 +611,7 @@ void gemv(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_iff((is_column_major<A> && all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff(is_column_major<A> && all_homogeneous<A, B, C>)>
 void gemv(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -639,7 +639,7 @@ void gemv(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_iff((is_row_major<A> && all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff(is_row_major<A> && all_homogeneous<A, B, C>)>
 void gemv_t(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -664,7 +664,7 @@ void gemv_t(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_iff((is_column_major<A> && all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff(is_column_major<A> && all_homogeneous<A, B, C>)>
 void gemv_t(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
@@ -694,7 +694,7 @@ void gemv_t(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_iff((!all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
 void gemv(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -710,7 +710,7 @@ void gemv(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_iff((!all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
 void gemv_t(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);

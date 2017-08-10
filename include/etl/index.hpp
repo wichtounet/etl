@@ -167,7 +167,7 @@ cpp14_constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexce
  * \param sizes The indices to access
  * \return The flat position of (sizes...)
  */
-template <typename T, typename... S, cpp_enable_iff((sizeof...(S) > 4 && decay_traits<T>::storage_order == order::RowMajor))>
+template <typename T, typename... S, cpp_enable_iff(sizeof...(S) > 4 && decay_traits<T>::storage_order == order::RowMajor)>
 cpp14_constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for fast_index");
 
@@ -260,7 +260,7 @@ size_t dyn_index(const T& expression, size_t i, size_t j, size_t k, size_t l) no
  * \param sizes The indices to access
  * \return The flat position of (sizes...)
  */
-template <typename T, typename... S, cpp_enable_iff((sizeof...(S) > 4 && decay_traits<T>::storage_order == order::RowMajor))>
+template <typename T, typename... S, cpp_enable_iff(sizeof...(S) > 4 && decay_traits<T>::storage_order == order::RowMajor)>
 size_t dyn_index(const T& expression, S... sizes) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for dyn_index");
 
@@ -355,7 +355,7 @@ cpp14_constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexce
  * \param sizes The indices to access
  * \return The flat position of (sizes...)
  */
-template <typename T, typename... S, cpp_enable_iff((sizeof...(S) > 4 && decay_traits<T>::storage_order == order::ColumnMajor))>
+template <typename T, typename... S, cpp_enable_iff(sizeof...(S) > 4 && decay_traits<T>::storage_order == order::ColumnMajor)>
 cpp14_constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for fast_index");
 
@@ -446,7 +446,7 @@ size_t dyn_index(const T& expression, size_t i, size_t j, size_t k, size_t l) no
  * \param sizes The indices to access
  * \return The flat position of (sizes...)
  */
-template <typename T, typename... S, cpp_enable_iff((sizeof...(S) > 4 && decay_traits<T>::storage_order == order::ColumnMajor))>
+template <typename T, typename... S, cpp_enable_iff(sizeof...(S) > 4 && decay_traits<T>::storage_order == order::ColumnMajor)>
 size_t dyn_index(const T& expression, S... sizes) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for dyn_index");
 

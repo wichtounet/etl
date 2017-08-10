@@ -778,7 +778,7 @@ void gevm_t(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix
  * \param c The result matrix
  */
-template <typename A, typename B, typename C, cpp_enable_iff((!all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
 void gemm(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -794,7 +794,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_iff((!all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
 void gemm_nt(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -810,7 +810,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_iff((!all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
 void gemm_tn(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -826,7 +826,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C, cpp_enable_iff((!all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
 void gemm_tt(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -842,7 +842,7 @@ void gemm_tt(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_iff((!all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
 void gemv(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -858,7 +858,7 @@ void gemv(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_iff((!all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
 void gemv_t(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -874,7 +874,7 @@ void gemv_t(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_iff((!all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
 void gevm(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
@@ -890,7 +890,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_iff((!all_homogeneous<A, B, C>))>
+template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
 void gevm_t(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
