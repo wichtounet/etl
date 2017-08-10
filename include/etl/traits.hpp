@@ -616,6 +616,13 @@ template <typename T>
 constexpr bool is_1d = decay_traits<T>::dimensions() == 1;
 
 /*!
+ * \brief Traits to test if all the given expression types are 1D
+ * \tparam T The ETL expression type
+ */
+template <typename... T>
+constexpr bool all_1d = and_v<is_1d<T>...>;
+
+/*!
  * \brief Traits to test if the given expression type is 2D
  * \tparam T The ETL expression type
  */
