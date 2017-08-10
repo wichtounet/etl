@@ -121,14 +121,14 @@ CONV4_VALID_FLIPPED_TEST_CASE("conv_4d/valid_4", "[conv][conv4][valid]") {
 }
 
 CONV4_VALID_FLIPPED_TEST_CASE("conv_4d/valid_5", "[conv][conv4][valid]") {
-    etl::fast_matrix<T, 5, 4, 29, 30> I;
+    etl::fast_matrix<T, 5, 4, 27, 28> I;
     etl::fast_matrix<T, 2, 4, 15, 16> K;
 
     I = etl::sequence_generator(-10.0) * 0.04;
     K = etl::sequence_generator(-2.0) * 1.56;
 
-    etl::fast_matrix<T, 5, 2, 15, 15> ref;
-    etl::fast_matrix<T, 5, 2, 15, 15> c;
+    etl::fast_matrix<T, 5, 2, 13, 13> ref;
+    etl::fast_matrix<T, 5, 2, 13, 13> c;
 
     SELECTED_SECTION(etl::conv_impl::STD) {
         ref = 0.0;
@@ -149,14 +149,14 @@ CONV4_VALID_FLIPPED_TEST_CASE("conv_4d/valid_5", "[conv][conv4][valid]") {
 }
 
 CONV4_VALID_FLIPPED_TEST_CASE("conv_4d/valid_6", "[conv][conv4][valid]") {
-    etl::fast_matrix<T, 5, 4, 33, 33> I;
-    etl::fast_matrix<T, 2, 4, 19, 19> K;
+    etl::fast_matrix<T, 4, 3, 31, 31> I;
+    etl::fast_matrix<T, 2, 3, 19, 19> K;
 
     I = etl::sequence_generator(-10.0) * 0.04;
     K = etl::sequence_generator(-2.0) * 1.56;
 
-    etl::fast_matrix<T, 5, 2, 15, 15> ref;
-    etl::fast_matrix<T, 5, 2, 15, 15> c;
+    etl::fast_matrix<T, 4, 2, 13, 13> ref;
+    etl::fast_matrix<T, 4, 2, 13, 13> c;
 
     SELECTED_SECTION(etl::conv_impl::STD) {
         ref = 0.0;

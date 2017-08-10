@@ -143,10 +143,10 @@ GEMM_TEST_CASE_FAST("gemm/cm/8", "[gemm]") {
 }
 
 GEMM_TEST_CASE_FAST("gemm/cm/9", "[gemm]") {
-    etl::dyn_matrix_cm<T> a(128, 128);
-    etl::dyn_matrix_cm<T> b(128, 128);
-    etl::dyn_matrix_cm<T> c(128, 128);
-    etl::dyn_matrix_cm<T> r(128, 128);
+    etl::dyn_matrix_cm<T> a(96, 96);
+    etl::dyn_matrix_cm<T> b(96, 96);
+    etl::dyn_matrix_cm<T> c(96, 96);
+    etl::dyn_matrix_cm<T> r(96, 96);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);
