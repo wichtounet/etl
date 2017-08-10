@@ -21,7 +21,7 @@ struct one_if_max_sub_transformer {
 
     friend etl_traits<one_if_max_sub_transformer>;
 
-    static_assert(decay_traits<sub_type>::dimensions() == 2, "one_if_max_sub is only defined for 2D Matrix");
+    static_assert(is_2d<sub_type>, "one_if_max_sub is only defined for 2D Matrix");
 
 private:
     sub_type sub; ///< The subexpression
@@ -144,7 +144,7 @@ public:
     explicit hflip_transformer(sub_type expr)
             : sub(expr) {}
 
-    static constexpr bool matrix = decay_traits<sub_type>::dimensions() == 2; ///< INdicates if the sub type is a matrix or not
+    static constexpr bool matrix = is_2d<sub_type>; ///< INdicates if the sub type is a matrix or not
 
     /*!
      * \brief Returns the value at the given index
@@ -283,7 +283,7 @@ public:
     explicit vflip_transformer(sub_type expr)
             : sub(expr) {}
 
-    static constexpr bool matrix = decay_traits<sub_type>::dimensions() == 2; ///< Indicates if the sub type is a 2D matrix or not
+    static constexpr bool matrix = is_2d<sub_type>; ///< Indicates if the sub type is a 2D matrix or not
 
     /*!
      * \brief Returns the value at the given index

@@ -275,7 +275,7 @@ etl::dyn_matrix<value_t<I>, 2> pad_right_flip(const I& input, size_t pad){
  * \param pad The number of padding elements
  * \return a new matrix containing the result
  */
-template <typename I, cpp_enable_iff((decay_traits<I>::dimensions() == 3))>
+template <typename I, cpp_enable_iff((is_3d<I>))>
 etl::dyn_matrix<value_t<I>, 3> pad_right_multi(const I& input, size_t pad){
     using T = value_t<I>;
 
@@ -302,7 +302,7 @@ etl::dyn_matrix<value_t<I>, 3> pad_right_multi(const I& input, size_t pad){
  * \param pad The number of padding elements
  * \return a new matrix containing the result
  */
-template <typename I, cpp_enable_iff((decay_traits<I>::dimensions() == 4))>
+template <typename I, cpp_enable_iff((is_4d<I>))>
 etl::dyn_matrix<value_t<I>, 4> pad_right_multi(const I& input, size_t pad){
     using T = value_t<I>;
 
@@ -344,7 +344,7 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_multi(const I& input, size_t pad){
  *
  * \return a new matrix containing the result
  */
-template <typename I, cpp_enable_iff((decay_traits<I>::dimensions() == 4))>
+template <typename I, cpp_enable_iff((is_4d<I>))>
 etl::dyn_matrix<value_t<I>, 4> pad_right_multi_double(const I& input, size_t pad, size_t p1, size_t p2){
     using T = value_t<I>;
 
@@ -382,7 +382,7 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_multi_double(const I& input, size_t pad
  * \param pad The number of padding elements
  * \return a new matrix containing the result
  */
-template <typename I, cpp_enable_iff((decay_traits<I>::dimensions() == 3))>
+template <typename I, cpp_enable_iff((is_3d<I>))>
 etl::dyn_matrix<value_t<I>, 3> pad_right_flip_multi(const I& input, size_t pad){
     using T = value_t<I>;
 
@@ -419,7 +419,7 @@ etl::dyn_matrix<value_t<I>, 3> pad_right_flip_multi(const I& input, size_t pad){
  * \param pad The number of padding elements
  * \return a new matrix containing the result
  */
-template <typename I, cpp_enable_iff((decay_traits<I>::dimensions() == 4))>
+template <typename I, cpp_enable_iff((is_4d<I>))>
 etl::dyn_matrix<value_t<I>, 4> pad_right_flip_multi(const I& input, size_t pad){
     using T = value_t<I>;
 

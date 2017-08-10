@@ -44,7 +44,7 @@ struct hermitian_matrix final : adapter<Matrix>, iterable<const hermitian_matrix
     using this_type = hermitian_matrix<Matrix>; ///< The type of this matrix
 
     static_assert(etl_traits<matrix_t>::is_value, "Hermitian matrix only works with value classes");
-    static_assert(etl_traits<matrix_t>::dimensions() == 2, "Hermitian matrix must be two-dimensional");
+    static_assert(is_2d<matrix_t>, "Hermitian matrix must be two-dimensional");
     static_assert(is_square_matrix<matrix_t>, "Hermitian matrix must be square");
 
     static constexpr size_t n_dimensions = etl_traits<matrix_t>::dimensions();  ///< The number of dimensions

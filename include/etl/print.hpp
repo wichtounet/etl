@@ -37,7 +37,7 @@ std::string to_string(T&& m) {
  * \param m The expression to transform
  * \return a string representing the contents of the expression
  */
-template <typename T, cpp_enable_iff(decay_traits<T>::dimensions() == 1)>
+template <typename T, cpp_enable_iff(is_1d<T>)>
 std::string to_string(T&& m) {
     return to_octave(m);
 }
@@ -76,7 +76,7 @@ std::string to_octave(T&& m) {
  * \param m The expression to transform
  * \return a string representing the contents of the expression
  */
-template <bool Sub = false, typename T, cpp_enable_iff(decay_traits<T>::dimensions() == 1)>
+template <bool Sub = false, typename T, cpp_enable_iff(is_1d<T>)>
 std::string to_octave(T&& m) {
     etl::force(m);
 

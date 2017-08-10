@@ -23,7 +23,7 @@ namespace etl {
 template <typename A, typename B>
 auto lazy_mul(A&& a, B&& b) -> detail::stable_transform_binary_helper<A, B, mm_mul_transformer> {
     static_assert(all_etl_expr<A, B>, "Matrix multiplication only supported for ETL expressions");
-    static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
+    static_assert(is_2d<A> && is_2d<B>, "Matrix multiplication only works in 2D");
 
     return detail::stable_transform_binary_helper<A, B, mm_mul_transformer>{mm_mul_transformer<detail::build_type<A>, detail::build_type<B>>(a, b)};
 }

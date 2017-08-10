@@ -169,7 +169,7 @@ struct dyn_convmtx_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
 
-    static_assert(decay_traits<T>::dimensions() == 1, "convmtx can only be applied on vectors");
+    static_assert(is_1d<T>, "convmtx can only be applied on vectors");
 
     sub_type sub;  ///< The subexpression
     size_t h; ///< The convmtx transformation size
@@ -272,7 +272,7 @@ struct dyn_convmtx2_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
 
-    static_assert(decay_traits<T>::dimensions() == 2, "convmtx2 can only be applied on matrices");
+    static_assert(is_2d<T>, "convmtx2 can only be applied on matrices");
 
     sub_type sub;               ///< The subexpression
     const size_t k1;       ///< The first dimension of the kernel

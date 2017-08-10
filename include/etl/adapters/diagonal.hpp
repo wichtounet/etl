@@ -30,7 +30,7 @@ struct diagonal_matrix final : adapter<Matrix>, iterable<const diagonal_matrix<M
     using this_type = diagonal_matrix<Matrix>; ///< The type of this matrix
 
     static_assert(etl_traits<matrix_t>::is_value, "Diagonal matrix only works with value classes");
-    static_assert(etl_traits<matrix_t>::dimensions() == 2, "Diagonal matrix must be two-dimensional");
+    static_assert(is_2d<matrix_t>, "Diagonal matrix must be two-dimensional");
     static_assert(is_square_matrix<matrix_t>, "Diagonal matrix must be square");
 
     static constexpr size_t n_dimensions = etl_traits<matrix_t>::dimensions();  ///< The number of dimensions

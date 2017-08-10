@@ -254,7 +254,7 @@ inline etl::conv_impl select_default_conv_impl() {
 
     if (vec_enabled && vectorize_impl) {
         return etl::conv_impl::VEC;
-    } else if(cudnn_enabled && (TT == conv_type::VALID || TT == conv_type::FULL) && decay_traits<I>::dimensions() == 2){
+    } else if(cudnn_enabled && (TT == conv_type::VALID || TT == conv_type::FULL) && is_2d<I>){
         return etl::conv_impl::CUDNN;
     } else {
         return etl::conv_impl::STD;
@@ -737,7 +737,7 @@ inline etl::conv_multi_impl select_default_conv_valid_multi() {
 
     static constexpr bool cudnn = cudnn_enabled;
 
-    if(cudnn && decay_traits<I>::dimensions() == 2){
+    if(cudnn && is_2d<I>){
         //TODO Should only be used with (very?) large sizes
         return etl::conv_multi_impl::CUDNN;
     }

@@ -76,7 +76,7 @@ auto sub(E&& value, size_t i) -> sub_view<detail::build_identity_type<E>, false>
 template <typename E>
 auto sub(E&& value, size_t i, size_t j, size_t m, size_t n) -> sub_matrix_2d<detail::build_identity_type<E>, false> {
     static_assert(is_etl_expr<E>, "etl::sub can only be used on ETL expressions");
-    static_assert(decay_traits<E>::dimensions() == 2, "Cannot use sub on vector");
+    static_assert(is_2d<E>, "Cannot use sub on vector");
     return {value, i, j, m, n};
 }
 
@@ -92,7 +92,7 @@ auto sub(E&& value, size_t i, size_t j, size_t m, size_t n) -> sub_matrix_2d<det
 template <typename E>
 auto sub(E&& value, size_t i, size_t j, size_t k, size_t m, size_t n, size_t o) -> sub_matrix_3d<detail::build_identity_type<E>, false> {
     static_assert(is_etl_expr<E>, "etl::sub can only be used on ETL expressions");
-    static_assert(decay_traits<E>::dimensions() == 3, "Cannot use sub on vector");
+    static_assert(is_3d<E>, "Cannot use sub on vector");
     return {value, i, j, k, m, n, o};
 }
 
@@ -108,7 +108,7 @@ auto sub(E&& value, size_t i, size_t j, size_t k, size_t m, size_t n, size_t o) 
 template <typename E>
 auto sub(E&& value, size_t i, size_t j, size_t k, size_t l, size_t m, size_t n, size_t o, size_t p) -> sub_matrix_4d<detail::build_identity_type<E>, false> {
     static_assert(is_etl_expr<E>, "etl::sub can only be used on ETL expressions");
-    static_assert(decay_traits<E>::dimensions() == 4, "Cannot use sub on vector");
+    static_assert(is_4d<E>, "Cannot use sub on vector");
     return {value, i, j, k, l, m, n, o, p};
 }
 

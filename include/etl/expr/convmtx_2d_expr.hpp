@@ -206,7 +206,7 @@ struct etl_traits<etl::convmtx_2d_expr<A, K1, K2>> {
 template <size_t K1, size_t K2, typename A>
 convmtx_2d_expr<detail::build_type<A>, K1, K2> convmtx2_direct(A&& a) {
     static_assert(is_etl_expr<A>, "Convolution matrices only supported for ETL expressions");
-    static_assert(decay_traits<A>::dimensions() == 2, "Convolutional matrix only works in 2D");
+    static_assert(is_2d<A>, "Convolutional matrix only works in 2D");
 
     return convmtx_2d_expr<detail::build_type<A>, K1, K2>{a};
 }

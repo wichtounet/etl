@@ -30,7 +30,7 @@ struct lower_matrix final : adapter<Matrix>, iterable<const lower_matrix<Matrix>
     using this_type = lower_matrix<Matrix>; ///< The type of this matrix
 
     static_assert(etl_traits<matrix_t>::is_value, "Lower triangular matrix only works with value classes");
-    static_assert(etl_traits<matrix_t>::dimensions() == 2, "Lower triangular matrix must be two-dimensional");
+    static_assert(is_2d<matrix_t>, "Lower triangular matrix must be two-dimensional");
     static_assert(is_square_matrix<matrix_t>, "Lower triangular matrix must be square");
 
     static constexpr size_t n_dimensions = etl_traits<matrix_t>::dimensions();  ///< The number of dimensions

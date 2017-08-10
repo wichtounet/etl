@@ -395,7 +395,7 @@ auto argmax(E&& value) -> detail::stable_transform_helper<E, argmax_transformer>
  *
  * \return an expression representing the aggregated expression
  */
-template <typename E, cpp_enable_iff((decay_traits<E>::dimensions() == 1))>
+template <typename E, cpp_enable_iff((is_1d<E>))>
 size_t argmax(E&& value) {
     static_assert(is_etl_expr<E>, "etl::argmax can only be used on ETL expressions");
     return max_index(value);
@@ -423,7 +423,7 @@ auto argmin(E&& value) -> detail::stable_transform_helper<E, argmin_transformer>
  *
  * \return an expression representing the aggregated expression
  */
-template <typename E, cpp_enable_iff((decay_traits<E>::dimensions() == 1))>
+template <typename E, cpp_enable_iff((is_1d<E>))>
 size_t argmin(E&& value) {
     static_assert(is_etl_expr<E>, "etl::argmax can only be used on ETL expressions");
     return min_index(value);
@@ -494,7 +494,7 @@ auto mean_l(E&& value) -> detail::stable_transform_helper<E, mean_l_transformer>
 template <typename E>
 auto one_if_max_sub(const E& value) -> detail::stable_transform_helper<E, one_if_max_sub_transformer> {
     static_assert(is_etl_expr<E>, "etl::one_if_max_sub can only be used on ETL expressions");
-    static_assert(decay_traits<E>::dimensions() == 2, "Can only use one_if_max_sub 2D matrix");
+    static_assert(is_2d<E>, "Can only use one_if_max_sub 2D matrix");
     return detail::make_transform_expr<E, one_if_max_sub_transformer>(value);
 }
 
@@ -611,8 +611,8 @@ value_t<A> dot(const A& a, const B& b) {
  */
 template <typename A, typename B, cpp_enable_iff(all_fast<A, B>)>
 etl::fast_vector<value_t<A>, 3> cross(const A& a, const B& b) {
-    static_assert(etl::decay_traits<A>::dimensions() == 1, "Cross product is only valid for 1D vectors");
-    static_assert(etl::decay_traits<B>::dimensions() == 1, "Cross product is only valid for 1D vectors");
+    static_assert(etl::is_1d<A>, "Cross product is only valid for 1D vectors");
+    static_assert(etl::is_1d<B>, "Cross product is only valid for 1D vectors");
     static_assert(etl::decay_traits<A>::size() == 3, "Cross product is only valid for 1D vectors of size 3");
     static_assert(etl::decay_traits<B>::size() == 3, "Cross product is only valid for 1D vectors of size 3");
 
@@ -627,8 +627,8 @@ etl::fast_vector<value_t<A>, 3> cross(const A& a, const B& b) {
  */
 template <typename A, typename B, cpp_disable_iff(all_fast<A, B>)>
 etl::dyn_vector<value_t<A>> cross(const A& a, const B& b) {
-    static_assert(etl::decay_traits<A>::dimensions() == 1, "Cross product is only valid for 1D vectors");
-    static_assert(etl::decay_traits<B>::dimensions() == 1, "Cross product is only valid for 1D vectors");
+    static_assert(etl::is_1d<A>, "Cross product is only valid for 1D vectors");
+    static_assert(etl::is_1d<B>, "Cross product is only valid for 1D vectors");
 
     cpp_assert(etl::decay_traits<A>::size(a) == 3, "Cross product is only valid for 1D vectors of size 3");
     cpp_assert(etl::decay_traits<B>::size(b) == 3, "Cross product is only valid for 1D vectors of size 3");

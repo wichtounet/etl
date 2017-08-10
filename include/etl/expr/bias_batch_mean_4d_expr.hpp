@@ -429,7 +429,7 @@ struct etl_traits<etl::bias_batch_mean_4d_expr<A, Mean>> {
 template <typename E>
 bias_batch_mean_4d_expr<detail::build_type<E>, true> bias_batch_mean_4d(const E& value) {
     static_assert(is_etl_expr<E>, "etl::bias_batch_mean_4d can only be used on ETL expressions");
-    static_assert(decay_traits<E>::dimensions() == 4, "etl::bias_batch_mean_4d is only defined for 4D input");
+    static_assert(is_4d<E>, "etl::bias_batch_mean_4d is only defined for 4D input");
 
     return bias_batch_mean_4d_expr<detail::build_type<E>, true>{value};
 }
@@ -442,7 +442,7 @@ bias_batch_mean_4d_expr<detail::build_type<E>, true> bias_batch_mean_4d(const E&
 template <typename E>
 bias_batch_mean_4d_expr<detail::build_type<E>, false> bias_batch_sum_4d(const E& value) {
     static_assert(is_etl_expr<E>, "etl::bias_batch_sum_4d can only be used on ETL expressions");
-    static_assert(decay_traits<E>::dimensions() == 4, "etl::bias_batch_sum_4d is only defined for 4D input");
+    static_assert(is_4d<E>, "etl::bias_batch_sum_4d is only defined for 4D input");
 
     return bias_batch_mean_4d_expr<detail::build_type<E>, false>{value};
 }

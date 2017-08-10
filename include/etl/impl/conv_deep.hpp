@@ -27,7 +27,7 @@ struct conv2_valid_deep_impl {
      * \param kernel The kernel expression
      * \param conv The output expression
      */
-    template <typename I, typename K, typename C, cpp_enable_iff(decay_traits<I>::dimensions() == 3)>
+    template <typename I, typename K, typename C, cpp_enable_iff(is_3d<I>)>
     static void apply(const I& input, const K& kernel, C&& conv) {
         for (size_t i = 0; i < etl::dim<0>(input); ++i) {
             conv(i) = conv_2d_valid<S1, S2, P1, P2>(input(i), kernel(i));
@@ -59,7 +59,7 @@ struct conv2_valid_flipped_deep_impl {
      * \param kernel The kernel expression
      * \param conv The output expression
      */
-    template <typename I, typename K, typename C, cpp_enable_iff(decay_traits<I>::dimensions() == 3)>
+    template <typename I, typename K, typename C, cpp_enable_iff(is_3d<I>)>
     static void apply(const I& input, const K& kernel, C&& conv) {
         for (size_t i = 0; i < etl::dim<0>(input); ++i) {
             conv(i) = conv_2d_valid_flipped<S1, S2, P1, P2>(input(i), kernel(i));
@@ -90,7 +90,7 @@ struct conv2_same_deep_impl {
      * \param kernel The kernel expression
      * \param conv The output expression
      */
-    template <typename I, typename K, typename C, cpp_enable_iff(decay_traits<I>::dimensions() == 3)>
+    template <typename I, typename K, typename C, cpp_enable_iff(is_3d<I>)>
     static void apply(const I& input, const K& kernel, C&& conv) {
         for (size_t i = 0; i < etl::dim<0>(input); ++i) {
             conv(i) = conv_2d_same(input(i), kernel(i));
@@ -121,7 +121,7 @@ struct conv2_same_flipped_deep_impl {
      * \param kernel The kernel expression
      * \param conv The output expression
      */
-    template <typename I, typename K, typename C, cpp_enable_iff(decay_traits<I>::dimensions() == 3)>
+    template <typename I, typename K, typename C, cpp_enable_iff(is_3d<I>)>
     static void apply(const I& input, const K& kernel, C&& conv) {
         for (size_t i = 0; i < etl::dim<0>(input); ++i) {
             conv(i) = conv_2d_same_flipped(input(i), kernel(i));
@@ -152,7 +152,7 @@ struct conv2_full_deep_impl {
      * \param kernel The kernel expression
      * \param conv The output expression
      */
-    template <typename I, typename K, typename C, cpp_enable_iff(decay_traits<I>::dimensions() == 3)>
+    template <typename I, typename K, typename C, cpp_enable_iff(is_3d<I>)>
     static void apply(const I& input, const K& kernel, C&& conv) {
         for (size_t i = 0; i < etl::dim<0>(input); ++i) {
             conv(i) = conv_2d_full(input(i), kernel(i));
@@ -183,7 +183,7 @@ struct conv2_full_flipped_deep_impl {
      * \param kernel The kernel expression
      * \param conv The output expression
      */
-    template <typename I, typename K, typename C, cpp_enable_iff(decay_traits<I>::dimensions() == 3)>
+    template <typename I, typename K, typename C, cpp_enable_iff(is_3d<I>)>
     static void apply(const I& input, const K& kernel, C&& conv) {
         for (size_t i = 0; i < etl::dim<0>(input); ++i) {
             conv(i) = conv_2d_full_flipped(input(i), kernel(i));

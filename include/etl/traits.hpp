@@ -1180,7 +1180,7 @@ constexpr std::pair<size_t, size_t> index_to_2d(E&& sub, size_t i) {
  */
 template <typename E>
 size_t row_stride(E&& expr) {
-    static_assert(decay_traits<E>::dimensions() == 2, "row_stride() only makes sense on 2D matrices");
+    static_assert(is_2d<E>, "row_stride() only makes sense on 2D matrices");
     return decay_traits<E>::storage_order == order::RowMajor
                ? etl::dim<1>(expr)
                : 1;
@@ -1193,7 +1193,7 @@ size_t row_stride(E&& expr) {
  */
 template <typename E>
 size_t col_stride(E&& expr) {
-    static_assert(decay_traits<E>::dimensions() == 2, "col_stride() only makes sense on 2D matrices");
+    static_assert(is_2d<E>, "col_stride() only makes sense on 2D matrices");
     return decay_traits<E>::storage_order == order::RowMajor
                ? 1
                : etl::dim<0>(expr);
@@ -1206,7 +1206,7 @@ size_t col_stride(E&& expr) {
  */
 template <typename E>
 size_t minor_stride(E&& expr) {
-    static_assert(decay_traits<E>::dimensions() == 2, "minor_stride() only makes sense on 2D matrices");
+    static_assert(is_2d<E>, "minor_stride() only makes sense on 2D matrices");
     return decay_traits<E>::storage_order == order::RowMajor
                ? etl::dim<0>(expr)
                : etl::dim<1>(expr);
@@ -1219,7 +1219,7 @@ size_t minor_stride(E&& expr) {
  */
 template <typename E>
 size_t major_stride(E&& expr) {
-    static_assert(decay_traits<E>::dimensions() == 2, "major_stride() only makes sense on 2D matrices");
+    static_assert(is_2d<E>, "major_stride() only makes sense on 2D matrices");
     return decay_traits<E>::storage_order == order::RowMajor
                ? etl::dim<1>(expr)
                : etl::dim<0>(expr);
