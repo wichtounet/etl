@@ -82,7 +82,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \return The implementation to use
      */
     template <typename C>
-    static inline cpp14_constexpr gemm_impl select_default_gevm_impl(const size_t n1, const size_t n2) {
+    static inline constexpr gemm_impl select_default_gevm_impl(const size_t n1, const size_t n2) {
         using T = value_t<A>;
 
         constexpr bool vec_possible = all_vectorizable_t<vector_mode, A, B, C> && vec_enabled;

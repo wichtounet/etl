@@ -49,7 +49,7 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
      * \return The implementation to use
      */
     template <typename C>
-    static cpp14_constexpr etl::outer_impl select_default_outer_impl() {
+    static constexpr etl::outer_impl select_default_outer_impl() {
         if (cblas_enabled) {
             return etl::outer_impl::BLAS;
         } else {

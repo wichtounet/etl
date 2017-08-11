@@ -41,7 +41,7 @@ namespace detail {
  * \return The implementation to use
  */
 template <typename E>
-cpp14_constexpr etl::sum_impl select_default_sum_impl(bool gpu_up_to_date) {
+constexpr etl::sum_impl select_default_sum_impl(bool gpu_up_to_date) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 

@@ -32,7 +32,7 @@ namespace detail {
  * \return The implementation to use
  */
 template <typename A, typename B>
-cpp14_constexpr etl::dot_impl select_default_dot_impl() {
+constexpr etl::dot_impl select_default_dot_impl() {
     if (all_dma<A, B> && cblas_enabled) {
         return etl::dot_impl::BLAS;
     }

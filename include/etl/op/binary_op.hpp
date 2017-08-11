@@ -114,7 +114,7 @@ struct minus_binary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
+    static constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         return V::sub(lhs, rhs);
     }
 
@@ -168,7 +168,7 @@ struct mul_binary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
+    static constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         return V::mul(lhs, rhs);
     }
 
@@ -223,7 +223,7 @@ struct div_binary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
+    static constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         return V::div(lhs, rhs);
     }
 
@@ -739,7 +739,7 @@ struct max_binary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
+    static constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         return V::max(lhs, rhs);
     }
 
@@ -793,7 +793,7 @@ struct min_binary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
+    static constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         return V::min(lhs, rhs);
     }
 

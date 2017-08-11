@@ -83,7 +83,7 @@ public:
      * \return The implementation to use
      */
     template <typename R>
-    static cpp14_constexpr etl::pool_impl select_default_impl() {
+    static constexpr etl::pool_impl select_default_impl() {
         if (cudnn_enabled && all_floating<A, B, C, R>) {
             return etl::pool_impl::CUDNN;
         }

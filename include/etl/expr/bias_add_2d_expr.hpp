@@ -177,7 +177,7 @@ private:
      * \return The implementation to use
      */
     template <typename C>
-    static cpp14_constexpr etl::bias_add_impl select_default_impl(bool gpu) {
+    static constexpr etl::bias_add_impl select_default_impl(bool gpu) {
         constexpr bool vec_possible = vec_enabled && vectorize_impl && all_vectorizable<vector_mode, A, B, C> && all_homogeneous<A, B, C>;
         constexpr bool cudnn_possible = cudnn_enabled && all_floating<A, B, C> && all_homogeneous<A, B, C>;
 

@@ -63,7 +63,7 @@ struct abs_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::max(x, V::sub(V::template zero<T>(), x));
     }
 
@@ -188,7 +188,7 @@ struct log_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::log(x);
     }
 
@@ -240,7 +240,7 @@ struct sqrt_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::sqrt(x);
     }
 
@@ -400,7 +400,7 @@ struct exp_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::exp(x);
     }
 
@@ -557,7 +557,7 @@ struct minus_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::minus(x);
     }
 
@@ -609,7 +609,7 @@ struct plus_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return x;
     }
 
@@ -754,7 +754,7 @@ struct cos_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::cos(x);
     }
 
@@ -806,7 +806,7 @@ struct sin_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::sin(x);
     }
 
@@ -1068,7 +1068,7 @@ struct relu_derivative_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::round_up(V::min(V::set(T(1.0)), x));
     }
 
@@ -1571,7 +1571,7 @@ struct min_scalar_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs) const noexcept {
+    vec_type<V> load(const vec_type<V>& lhs) const noexcept {
         return V::min(lhs, V::set(s));
     }
 
@@ -1633,7 +1633,7 @@ struct max_scalar_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs) const noexcept {
+    vec_type<V> load(const vec_type<V>& lhs) const noexcept {
         return V::max(lhs, V::set(s));
     }
 
@@ -1698,7 +1698,7 @@ struct clip_scalar_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs) const noexcept {
+    vec_type<V> load(const vec_type<V>& lhs) const noexcept {
         return V::min(V::max(lhs, V::set(min)), V::set(max));
     }
 #endif

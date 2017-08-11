@@ -32,7 +32,7 @@ namespace impl {
  * \return The implementation to use
  */
 template<typename X, typename Y>
-cpp14_constexpr etl::pool_impl select_default_pool_impl() {
+constexpr etl::pool_impl select_default_pool_impl() {
     static_assert(all_dma<X, Y>, "DMA should be ensured at this point");
 
     if (cublas_enabled && all_floating<X, Y>){

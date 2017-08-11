@@ -54,7 +54,7 @@ struct matrix_leadingsize<M, 0> : std::integral_constant<size_t, 1> {};
  * \brief Compute the index inside the row major matrix
  */
 template <typename M, size_t I>
-inline cpp14_constexpr size_t rm_compute_index(size_t first) noexcept(assert_nothrow) {
+inline constexpr size_t rm_compute_index(size_t first) noexcept(assert_nothrow) {
     cpp_assert(first < decay_traits<M>::template dim<I>(), "Out of bounds");
     return first;
 }
@@ -63,7 +63,7 @@ inline cpp14_constexpr size_t rm_compute_index(size_t first) noexcept(assert_not
  * \brief Compute the index inside the row major matrix
  */
 template <typename M, size_t I, typename... S>
-inline cpp14_constexpr size_t rm_compute_index(size_t first, size_t second, S... args) noexcept(assert_nothrow) {
+inline constexpr size_t rm_compute_index(size_t first, size_t second, S... args) noexcept(assert_nothrow) {
     cpp_assert(first < decay_traits<M>::template dim<I>(), "Out of bounds");
     return matrix_subsize<M, I>::value * first + rm_compute_index<M, I + 1>(second, args...);
 }
@@ -72,7 +72,7 @@ inline cpp14_constexpr size_t rm_compute_index(size_t first, size_t second, S...
  * \brief Compute the index inside the column major matrix
  */
 template <typename M, size_t I>
-inline cpp14_constexpr size_t cm_compute_index(size_t first) noexcept(assert_nothrow) {
+inline constexpr size_t cm_compute_index(size_t first) noexcept(assert_nothrow) {
     cpp_assert(first < M::template dim<I>(), "Out of bounds");
     return matrix_leadingsize<M, I>::value * first;
 }
@@ -81,7 +81,7 @@ inline cpp14_constexpr size_t cm_compute_index(size_t first) noexcept(assert_not
  * \brief Compute the index inside the column major matrix
  */
 template <typename M, size_t I, typename... S>
-inline cpp14_constexpr size_t cm_compute_index(size_t first, size_t second, S... args) noexcept(assert_nothrow) {
+inline constexpr size_t cm_compute_index(size_t first, size_t second, S... args) noexcept(assert_nothrow) {
     cpp_assert(first < M::template dim<I>(), "Out of bounds");
     return matrix_leadingsize<M, I>::value * first + cm_compute_index<M, I + 1>(second, args...);
 }
@@ -99,7 +99,7 @@ inline cpp14_constexpr size_t cm_compute_index(size_t first, size_t second, S...
  * \return The flat position of (i)
  */
 template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::RowMajor)>
-cpp14_constexpr size_t fast_index(size_t i) noexcept(assert_nothrow) {
+constexpr size_t fast_index(size_t i) noexcept(assert_nothrow) {
     static_assert(is_1d<T>, "Invalid number of dimensions for fast_index");
 
     cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
@@ -114,7 +114,7 @@ cpp14_constexpr size_t fast_index(size_t i) noexcept(assert_nothrow) {
  * \return The flat position of (i,j)
  */
 template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::RowMajor)>
-cpp14_constexpr size_t fast_index(size_t i, size_t j) noexcept(assert_nothrow) {
+constexpr size_t fast_index(size_t i, size_t j) noexcept(assert_nothrow) {
     static_assert(is_2d<T>, "Invalid number of dimensions for fast_index");
 
     cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
@@ -131,7 +131,7 @@ cpp14_constexpr size_t fast_index(size_t i, size_t j) noexcept(assert_nothrow) {
  * \return The flat position of (i,j,k)
  */
 template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::RowMajor)>
-cpp14_constexpr size_t fast_index(size_t i, size_t j, size_t k) noexcept(assert_nothrow) {
+constexpr size_t fast_index(size_t i, size_t j, size_t k) noexcept(assert_nothrow) {
     static_assert(is_3d<T>, "Invalid number of dimensions for fast_index");
 
     cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
@@ -150,7 +150,7 @@ cpp14_constexpr size_t fast_index(size_t i, size_t j, size_t k) noexcept(assert_
  * \return The flat position of (i,j,k,l)
  */
 template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::RowMajor)>
-cpp14_constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexcept(assert_nothrow) {
+constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexcept(assert_nothrow) {
     static_assert(is_4d<T>, "Invalid number of dimensions for fast_index");
 
     cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
@@ -168,7 +168,7 @@ cpp14_constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexce
  * \return The flat position of (sizes...)
  */
 template <typename T, typename... S, cpp_enable_iff(sizeof...(S) > 4 && decay_traits<T>::storage_order == order::RowMajor)>
-cpp14_constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) {
+constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for fast_index");
 
     return detail::rm_compute_index<T, 0>(sizes...);
@@ -287,7 +287,7 @@ size_t dyn_index(const T& expression, S... sizes) noexcept(assert_nothrow) {
  * \return The flat position of (i)
  */
 template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::ColumnMajor)>
-cpp14_constexpr size_t fast_index(size_t i) noexcept(assert_nothrow) {
+constexpr size_t fast_index(size_t i) noexcept(assert_nothrow) {
     static_assert(is_1d<T>, "Invalid number of dimensions for fast_index");
 
     cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
@@ -302,7 +302,7 @@ cpp14_constexpr size_t fast_index(size_t i) noexcept(assert_nothrow) {
  * \return The flat position of (i,j)
  */
 template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::ColumnMajor)>
-cpp14_constexpr size_t fast_index(size_t i, size_t j) noexcept(assert_nothrow) {
+constexpr size_t fast_index(size_t i, size_t j) noexcept(assert_nothrow) {
     static_assert(is_2d<T>, "Invalid number of dimensions for fast_index");
 
     cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
@@ -319,7 +319,7 @@ cpp14_constexpr size_t fast_index(size_t i, size_t j) noexcept(assert_nothrow) {
  * \return The flat position of (i,j,k)
  */
 template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::ColumnMajor)>
-cpp14_constexpr size_t fast_index(size_t i, size_t j, size_t k) noexcept(assert_nothrow) {
+constexpr size_t fast_index(size_t i, size_t j, size_t k) noexcept(assert_nothrow) {
     static_assert(is_3d<T>, "Invalid number of dimensions for fast_index");
 
     cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
@@ -338,7 +338,7 @@ cpp14_constexpr size_t fast_index(size_t i, size_t j, size_t k) noexcept(assert_
  * \return The flat position of (i,j,k,l)
  */
 template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::ColumnMajor)>
-cpp14_constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexcept(assert_nothrow) {
+constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexcept(assert_nothrow) {
     static_assert(is_4d<T>, "Invalid number of dimensions for fast_index");
 
     cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
@@ -356,7 +356,7 @@ cpp14_constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexce
  * \return The flat position of (sizes...)
  */
 template <typename T, typename... S, cpp_enable_iff(sizeof...(S) > 4 && decay_traits<T>::storage_order == order::ColumnMajor)>
-cpp14_constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) {
+constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for fast_index");
 
     return detail::cm_compute_index<T, 0>(sizes...);

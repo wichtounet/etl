@@ -75,7 +75,7 @@ inline fft_impl select_forced_fft_impl(Functor func, Args&&... args) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline cpp14_constexpr fft_impl select_default_fft1_impl(const size_t n) {
+inline constexpr fft_impl select_default_fft1_impl(const size_t n) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
@@ -135,7 +135,7 @@ inline fft_impl select_fft1_impl(const size_t n) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline cpp14_constexpr fft_impl select_default_fft1_many_impl(const size_t batch, const size_t n) {
+inline constexpr fft_impl select_default_fft1_many_impl(const size_t batch, const size_t n) {
     cpp_unused(batch);
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
@@ -179,7 +179,7 @@ inline fft_impl select_fft1_many_impl(const size_t batch, const size_t n) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline cpp14_constexpr fft_impl select_default_ifft1_impl(const size_t n) {
+inline constexpr fft_impl select_default_ifft1_impl(const size_t n) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
@@ -233,7 +233,7 @@ inline fft_impl select_ifft1_impl(const size_t n) {
  * \param n2 The second dimension of the operation
  * \return The implementation to use
  */
-inline cpp14_constexpr fft_impl select_default_fft2_impl(const size_t n1, size_t n2) {
+inline constexpr fft_impl select_default_fft2_impl(const size_t n1, size_t n2) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
@@ -289,7 +289,7 @@ inline fft_impl select_fft2_impl(const size_t n1, size_t n2) {
  * \param n2 The second dimension of the operation
  * \return The implementation to use
  */
-inline cpp14_constexpr fft_impl select_default_fft2_many_impl(const size_t batch, const size_t n1, const size_t n2) {
+inline constexpr fft_impl select_default_fft2_many_impl(const size_t batch, const size_t n1, const size_t n2) {
     cpp_unused(batch);
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified

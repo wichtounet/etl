@@ -84,7 +84,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \return The implementation to use
      */
     template <typename C>
-    static inline cpp14_constexpr gemm_impl select_default_gemv_impl(const size_t n1, const size_t n2) {
+    static inline constexpr gemm_impl select_default_gemv_impl(const size_t n1, const size_t n2) {
         using T = value_t<A>;
 
         constexpr bool homo = all_homogeneous<A, B, C>;

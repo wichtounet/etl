@@ -49,7 +49,7 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
      * \return The implementation to use
      */
     template <typename C>
-    static cpp14_constexpr etl::outer_impl select_default_batch_outer_impl() {
+    static constexpr etl::outer_impl select_default_batch_outer_impl() {
         // TODO This should only be done with large matrices or if the data is already in memory
         if (cublas_enabled) {
             return etl::outer_impl::CUBLAS;

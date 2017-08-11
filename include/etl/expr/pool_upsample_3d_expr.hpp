@@ -106,7 +106,7 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
      * \return The implementation to use
      */
     template <typename R>
-    static cpp14_constexpr etl::pool_impl select_default_impl() {
+    static constexpr etl::pool_impl select_default_impl() {
         if (cudnn_enabled && all_floating<A, B, C, R>) {
             return etl::pool_impl::CUDNN;
         }

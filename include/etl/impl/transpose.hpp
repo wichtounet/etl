@@ -38,7 +38,7 @@ namespace detail {
  * \return The best default transpose implementation to use
  */
 template<typename A, typename C>
-cpp14_constexpr transpose_impl select_default_transpose_impl(){
+constexpr transpose_impl select_default_transpose_impl(){
     if(cublas_enabled && all_dma<A, C> && all_floating<A, C>){
         return transpose_impl::CUBLAS;
     }
@@ -70,7 +70,7 @@ cpp14_constexpr transpose_impl select_default_transpose_impl(){
  * \return The best default transpose implementation to use
  */
 template<typename A, typename C>
-cpp14_constexpr transpose_impl select_default_in_square_transpose_impl(){
+constexpr transpose_impl select_default_in_square_transpose_impl(){
     if(cublas_enabled && all_dma<A, C> && all_floating<A, C>){
         return transpose_impl::CUBLAS;
     }

@@ -30,7 +30,7 @@ namespace detail {
  * \return The implementation to use
  */
 template <typename A, bool Simple>
-cpp14_constexpr scalar_impl select_default_scalar_impl(bool gpu) {
+constexpr scalar_impl select_default_scalar_impl(bool gpu) {
     if (is_floating<A>) {
         if (cublas_enabled && gpu){
             return scalar_impl::CUBLAS;

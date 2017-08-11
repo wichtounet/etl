@@ -86,7 +86,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \return The implementation to use
      */
     template <typename AA, typename BB, typename C>
-    static inline cpp14_constexpr gemm_impl select_default_gemm_impl(const size_t n1, const size_t n2, const size_t n3) {
+    static inline constexpr gemm_impl select_default_gemm_impl(const size_t n1, const size_t n2, const size_t n3) {
         cpp_unused(n1);
         cpp_unused(n2);
         cpp_unused(n3);
