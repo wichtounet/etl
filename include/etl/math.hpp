@@ -55,7 +55,7 @@ inline double softplus(double x) {
  * \return The sign of x
  */
 template <typename W>
-inline constexpr double sign(W v) noexcept {
+constexpr double sign(W v) noexcept {
     return v == W(0) ? W(0) : (v > W(0) ? W(1) : W(-1));
 }
 
@@ -64,7 +64,7 @@ inline constexpr double sign(W v) noexcept {
  * \param n The number to test
  * \return true if the number is a power of two, false otherwise
  */
-inline constexpr bool is_power_of_two(int64_t n) {
+constexpr bool is_power_of_two(int64_t n) {
     return (n & (n - 1)) == 0;
 }
 

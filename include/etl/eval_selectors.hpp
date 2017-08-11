@@ -54,7 +54,7 @@ constexpr bool are_vectorizable =
  * \tparam R The result type
  */
 template <typename E, typename R>
-inline constexpr vector_mode_t select_vector_mode(){
+constexpr vector_mode_t select_vector_mode(){
     return
           (avx512_enabled && are_vectorizable_select<vector_mode_t::AVX512, E, R>) ? vector_mode_t::AVX512
         : (avx_enabled && are_vectorizable_select<vector_mode_t::AVX, E, R>) ? vector_mode_t::AVX

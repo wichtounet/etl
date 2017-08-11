@@ -26,7 +26,7 @@ namespace vec {
  * \return true if padding is to be used, false otherwise.
  */
 template<typename T>
-inline constexpr bool need_padding(size_t k1, size_t k2, size_t p1, size_t p2){
+constexpr bool need_padding(size_t k1, size_t k2, size_t p1, size_t p2){
     constexpr bool single = std::is_same<T, float>::value;
     constexpr size_t AS   = single ? 8 : 4;
     constexpr size_t SS   = AS / 2;
@@ -46,7 +46,7 @@ inline constexpr bool need_padding(size_t k1, size_t k2, size_t p1, size_t p2){
  * \return The amount of padding for the second dimension of the kernel and input.
  */
 template<typename T>
-inline constexpr size_t select_pad(size_t k1, size_t k2){
+constexpr size_t select_pad(size_t k1, size_t k2){
     constexpr bool single = std::is_same<T, float>::value;
     constexpr size_t AS   = single ? 8 : 4;
     constexpr size_t SS   = AS / 2;

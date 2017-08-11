@@ -54,7 +54,7 @@ struct matrix_leadingsize<M, 0> : std::integral_constant<size_t, 1> {};
  * \brief Compute the index inside the row major matrix
  */
 template <typename M, size_t I>
-inline constexpr size_t rm_compute_index(size_t first) noexcept(assert_nothrow) {
+constexpr size_t rm_compute_index(size_t first) noexcept(assert_nothrow) {
     cpp_assert(first < decay_traits<M>::template dim<I>(), "Out of bounds");
     return first;
 }
@@ -63,7 +63,7 @@ inline constexpr size_t rm_compute_index(size_t first) noexcept(assert_nothrow) 
  * \brief Compute the index inside the row major matrix
  */
 template <typename M, size_t I, typename... S>
-inline constexpr size_t rm_compute_index(size_t first, size_t second, S... args) noexcept(assert_nothrow) {
+constexpr size_t rm_compute_index(size_t first, size_t second, S... args) noexcept(assert_nothrow) {
     cpp_assert(first < decay_traits<M>::template dim<I>(), "Out of bounds");
     return matrix_subsize<M, I>::value * first + rm_compute_index<M, I + 1>(second, args...);
 }
@@ -72,7 +72,7 @@ inline constexpr size_t rm_compute_index(size_t first, size_t second, S... args)
  * \brief Compute the index inside the column major matrix
  */
 template <typename M, size_t I>
-inline constexpr size_t cm_compute_index(size_t first) noexcept(assert_nothrow) {
+constexpr size_t cm_compute_index(size_t first) noexcept(assert_nothrow) {
     cpp_assert(first < M::template dim<I>(), "Out of bounds");
     return matrix_leadingsize<M, I>::value * first;
 }
@@ -81,7 +81,7 @@ inline constexpr size_t cm_compute_index(size_t first) noexcept(assert_nothrow) 
  * \brief Compute the index inside the column major matrix
  */
 template <typename M, size_t I, typename... S>
-inline constexpr size_t cm_compute_index(size_t first, size_t second, S... args) noexcept(assert_nothrow) {
+constexpr size_t cm_compute_index(size_t first, size_t second, S... args) noexcept(assert_nothrow) {
     cpp_assert(first < M::template dim<I>(), "Out of bounds");
     return matrix_leadingsize<M, I>::value * first + cm_compute_index<M, I + 1>(second, args...);
 }
