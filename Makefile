@@ -7,6 +7,9 @@ default: release
 include make-utils/flags.mk
 include make-utils/cpp-utils.mk
 
+# Use C++14
+$(eval $(call use_cpp14))
+
 # Configure the BLAS package to use
 ifneq (,$(ETL_BLAS_PKG))
 BLAS_PKG = $(ETL_BLAS_PKG)
