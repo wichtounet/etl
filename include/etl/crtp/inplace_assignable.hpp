@@ -249,8 +249,6 @@ struct inplace_assignable {
 
         detail::fft1_impl::apply(mat, mat);
 
-        mat.ensure_cpu_up_to_date();
-
         return mat;
     }
 
@@ -267,8 +265,6 @@ struct inplace_assignable {
 
         detail::fft1_many_impl::apply(mat, mat);
 
-        mat.ensure_cpu_up_to_date();
-
         return mat;
     }
 
@@ -282,8 +278,6 @@ struct inplace_assignable {
         decltype(auto) mat = as_derived();
 
         detail::ifft1_impl::apply(mat, mat);
-
-        mat.ensure_cpu_up_to_date();
 
         return mat;
     }
@@ -299,8 +293,6 @@ struct inplace_assignable {
 
         detail::ifft1_many_impl::apply(mat, mat);
 
-        mat.ensure_cpu_up_to_date();
-
         return mat;
     }
 
@@ -314,8 +306,6 @@ struct inplace_assignable {
         decltype(auto) mat = as_derived();
 
         detail::fft2_impl::apply(mat, mat);
-
-        mat.ensure_cpu_up_to_date();
 
         return mat;
     }
@@ -333,8 +323,6 @@ struct inplace_assignable {
 
         detail::fft2_many_impl::apply(mat, mat);
 
-        mat.ensure_cpu_up_to_date();
-
         return mat;
     }
 
@@ -349,8 +337,6 @@ struct inplace_assignable {
 
         detail::ifft2_impl::apply(mat, mat);
 
-        mat.ensure_cpu_up_to_date();
-
         return mat;
     }
 
@@ -364,8 +350,6 @@ struct inplace_assignable {
         decltype(auto) mat = as_derived();
 
         detail::ifft2_many_impl::apply(mat, mat);
-
-        mat.ensure_cpu_up_to_date();
 
         return mat;
     }
