@@ -172,15 +172,11 @@ This library is completely header-only, there is no need to build it.
 However, this library makes extensive use of C++11 and C++14,
 therefore, a recent compiler is necessary to use it. This library is
 tested on the following compilers:
- * GCC 4.9.1 and greater
- * CLang 3.7 and greater
- * icc 15.0.2 and greater
+ * GCC 6.3.0 and greater
+ * CLang 3.9 and greater
 
-Although compilation should work on all these compilers, I advice to
-use GCC >= 4.9.1. For some reason clang has huge memory consumption
-on this library. icc produces the fastest executable but it is quite
-slow to compile. Compilation on clang <3.7 should work, but only
-without debug symbols.
+If compilation does not work on one of these compilers, or produces warnings,
+please open an issue on Github and I'll do my best to fix the issue.
 
 The library has never been tested on Windows.
 
