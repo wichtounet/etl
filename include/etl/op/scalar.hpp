@@ -62,7 +62,7 @@ struct scalar {
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    constexpr vec_type<V> load(size_t d) const noexcept {
+    vec_type<V> load(size_t d) const noexcept {
         return (void)d, V::set(value);
     }
 
@@ -73,7 +73,7 @@ struct scalar {
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    constexpr vec_type<V> loadu(size_t d) const noexcept {
+    vec_type<V> loadu(size_t d) const noexcept {
         return (void)d, V::set(value);
     }
 

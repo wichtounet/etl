@@ -63,7 +63,7 @@ struct abs_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::max(x, V::sub(V::template zero<T>(), x));
     }
 
@@ -188,7 +188,7 @@ struct log_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::log(x);
     }
 
@@ -240,7 +240,7 @@ struct sqrt_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::sqrt(x);
     }
 
@@ -400,7 +400,7 @@ struct exp_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::exp(x);
     }
 
@@ -557,7 +557,7 @@ struct minus_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::minus(x);
     }
 
@@ -609,7 +609,7 @@ struct plus_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static vec_type<V> load(const vec_type<V>& x) noexcept {
         return x;
     }
 
@@ -754,7 +754,7 @@ struct cos_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::cos(x);
     }
 
@@ -806,7 +806,7 @@ struct sin_unary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+    static vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::sin(x);
     }
 
