@@ -567,6 +567,24 @@ template <typename... E>
 constexpr bool all_complex = and_v<(is_complex<E>)...>;
 
 /*!
+ * \brief Traits to test if the given ETL expresion type contains
+ * single precision floating point or single precision complex numbers.
+ *
+ * \tparam T The ETL expression type.
+ */
+template <typename T>
+constexpr bool is_deep_single_precision = is_complex_single_precision<T> || is_single_precision<T>;
+
+/*!
+ * \brief Traits to test if the given ETL expresion type contains
+ * double precision floating point or double precision complex numbers.
+ *
+ * \tparam T The ETL expression type.
+ */
+template <typename T>
+constexpr bool is_deep_double_precision = is_complex_double_precision<T> || is_double_precision<T>;
+
+/*!
  * \brief Traits to test if the given ETL expresion type has direct memory access (DMA).
  * \tparam E The ETL expression type.
  */
