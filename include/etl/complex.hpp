@@ -84,7 +84,8 @@ struct complex {
      * \param rhs The complex number to add
      * \return a reference to this
      */
-    complex& operator+=(const complex& rhs) {
+    template<typename X>
+    complex& operator+=(const complex<X>& rhs) {
         real += rhs.real;
         imag += rhs.imag;
 
@@ -96,7 +97,8 @@ struct complex {
      * \param rhs The complex number to add
      * \return a reference to this
      */
-    complex& operator-=(const complex& rhs) {
+    template<typename X>
+    complex& operator-=(const complex<X>& rhs) {
         real -= rhs.real;
         imag -= rhs.imag;
 
@@ -108,7 +110,8 @@ struct complex {
      * \param rhs The complex number to add
      * \return a reference to this
      */
-    complex& operator*=(const complex& rhs) {
+    template<typename X>
+    complex& operator*=(const complex<X>& rhs) {
         T ac = real * rhs.real;
         T bd = imag * rhs.imag;
 
@@ -126,7 +129,8 @@ struct complex {
      * \param rhs The complex number to add
      * \return a reference to this
      */
-    complex& operator/=(const complex& rhs) {
+    template<typename X>
+    complex& operator/=(const complex<X>& rhs) {
         T ac = real * rhs.real;
         T bd = imag * rhs.imag;
 
