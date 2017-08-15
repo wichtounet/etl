@@ -26,18 +26,17 @@ namespace detail {
  * \tparam R The result type
  */
 template <vector_mode_t V, typename E, typename R>
-constexpr bool are_vectorizable_select = and_v<
-                               vectorize_expr, // ETL must be allowed to vectorize expressions
-                               decay_traits<R>::template vectorizable<V>, // The LHS expression must be vectorizable
-                               decay_traits<E>::template vectorizable<V>, // The RHS expression must be vectorizable
-                               decay_traits<E>::storage_order == decay_traits<R>::storage_order, // Both expressions must have the same order
-                               get_intrinsic_traits<V>::template type<value_t<R>>::vectorizable, // The LHS type must be vectorizable
-                               get_intrinsic_traits<V>::template type<value_t<E>>::vectorizable, // The RHS type must be vectorizable
-                               std::is_same< /// Both vector types must be the same
+constexpr bool are_vectorizable_select =
+                               vectorize_expr // ETL must be allowed to vectorize expressions
+                               && decay_traits<R>::template vectorizable<V> // The LHS expression must be vectorizable
+                               && decay_traits<E>::template vectorizable<V> // The RHS expression must be vectorizable
+                               && decay_traits<E>::storage_order == decay_traits<R>::storage_order // Both expressions must have the same order
+                               && get_intrinsic_traits<V>::template type<value_t<R>>::vectorizable // The LHS type must be vectorizable
+                               && get_intrinsic_traits<V>::template type<value_t<E>>::vectorizable // The RHS type must be vectorizable
+                               && std::is_same< /// Both vector types must be the same
                                     typename get_intrinsic_traits<V>::template type<value_t<R>>::intrinsic_type,
                                     typename get_intrinsic_traits<V>::template type<value_t<E>>::intrinsic_type
-                                >::value
-                            >;
+                                >::value;
 
 /*!
  * \brief Integral constant indicating if vectorization is possible

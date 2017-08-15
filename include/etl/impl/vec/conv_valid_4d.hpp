@@ -69,7 +69,7 @@ constexpr size_t select_pad(size_t k1, size_t k2){
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename KK, typename CC>
+template <typename I, typename KK, typename CC, cpp_enable_iff(conv2_possible<vector_mode, I, KK, CC>)>
 void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
@@ -247,7 +247,7 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename KK, typename CC>
+template <typename I, typename KK, typename CC, cpp_enable_iff(conv2_possible<vector_mode, I, KK, CC>)>
 void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
@@ -428,7 +428,7 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename KK, typename CC>
+template <typename I, typename KK, typename CC, cpp_enable_iff(conv2_possible<vector_mode, I, KK, CC>)>
 void conv4_valid_back(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
@@ -608,7 +608,7 @@ void conv4_valid_back(const I& input, const KK& kernel, CC&& conv, size_t s1, si
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename KK, typename CC>
+template <typename I, typename KK, typename CC, cpp_enable_iff(conv2_possible<vector_mode, I, KK, CC>)>
 void conv4_valid_back_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
@@ -790,7 +790,7 @@ void conv4_valid_back_flipped(const I& input, const KK& kernel, CC&& conv, size_
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename KK, typename CC>
+template <typename I, typename KK, typename CC, cpp_enable_iff(conv2_possible<vector_mode, I, KK, CC>)>
 void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
@@ -1018,7 +1018,7 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename KK, typename CC>
+template <typename I, typename KK, typename CC, cpp_enable_iff(conv2_possible<vector_mode, I, KK, CC>)>
 void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
@@ -1238,6 +1238,120 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
 
         conv.invalidate_gpu();
     }
+}
+
+/*!
+ * \brief SSE implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename KK, typename CC, cpp_disable_iff(conv2_possible<vector_mode, I, KK, CC>)>
+void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::conv4_valid");
+}
+
+/*!
+ * \brief SSE implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename KK, typename CC, cpp_disable_iff(conv2_possible<vector_mode, I, KK, CC>)>
+void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::conv4_valid_flipped");
+}
+
+/*!
+ * \brief SSE implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename KK, typename CC, cpp_disable_iff(conv2_possible<vector_mode, I, KK, CC>)>
+void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::conv4_valid_filter");
+}
+
+/*!
+ * \brief SSE implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename KK, typename CC, cpp_disable_iff(conv2_possible<vector_mode, I, KK, CC>)>
+void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::conv4_valid_filter_flipped");
+}
+
+/*!
+ * \brief SSE implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename KK, typename CC, cpp_disable_iff(conv2_possible<vector_mode, I, KK, CC>)>
+void conv4_valid_back(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::conv4_valid_back");
+}
+
+/*!
+ * \brief SSE implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename KK, typename CC, cpp_disable_iff(conv2_possible<vector_mode, I, KK, CC>)>
+void conv4_valid_flipped_back(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::conv4_valid_back_flipped");
 }
 
 } //end of namespace vec

@@ -1347,7 +1347,7 @@ void conv2_full_multi_flipped(I&& input, K&& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename KK, typename CC>
+template <typename I, typename KK, typename CC, cpp_enable_iff(conv2_possible<I, KK, CC>)>
 void conv4_full(I&& input, KK&& kernel, CC&& conv) {
     using T = value_t<I>;
 
@@ -1468,7 +1468,7 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename II, typename KK, typename CC>
+template <typename II, typename KK, typename CC, cpp_enable_iff(conv2_possible<II, KK, CC>)>
 void conv4_full_flipped(II&& input, KK&& kernel, CC&& conv) {
     using T = value_t<II>;
 
@@ -1608,6 +1608,36 @@ void conv4_full_flipped(II&& input, KK&& kernel, CC&& conv) {
 
         conv.invalidate_gpu();
     }
+}
+
+/*!
+ * \brief Perform the 4D full convolution of a with b and store the result in c
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename II, typename KK, typename CC, cpp_disable_iff(conv2_possible<II, KK, CC>)>
+void conv4_full(II&& input, KK&& kernel, CC&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+
+    cpp_unreachable("Invalid call to blas::conv4_full");
+}
+
+/*!
+ * \brief Perform the 4D full convolution of a with b and store the result in c
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename II, typename KK, typename CC, cpp_disable_iff(conv2_possible<II, KK, CC>)>
+void conv4_full_flipped(II&& input, KK&& kernel, CC&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+
+    cpp_unreachable("Invalid call to blas::conv4_full_flipped");
 }
 
 /*!

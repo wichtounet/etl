@@ -58,7 +58,7 @@ inline etl::conv_impl select_default_conv1_impl_new() {
     if(cufft_enabled && TT == conv_type::FULL && floating){
         //TODO This should only be done for some sizes
         return etl::conv_impl::FFT_CUFFT;
-    } else if(mkl_enabled && TT == conv_type::FULL && floating){
+    } else if(impl::blas::conv2_possible<I, K, C> && TT == conv_type::FULL && floating){
         //TODO This should only be done for some sizes
         return etl::conv_impl::FFT_MKL;
     } else if (impl::vec::conv1_possible<vector_mode, I, K, C>) {
@@ -89,7 +89,7 @@ inline etl::conv_impl select_conv1_impl_new() {
         switch (forced) {
             //MKL cannot always be used
             case conv_impl::FFT_MKL:
-                if (!mkl_enabled || !floating || !homogeneous) {
+                if (!impl::blas::conv2_possible<I, K, C> || !floating || !homogeneous) {
                     std::cerr << "Forced selection to MKL fft_conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
@@ -387,8 +387,8 @@ inline etl::conv4_impl select_conv4_valid_impl(size_t i1, size_t i2, size_t k1, 
 
         switch (forced) {
             //VEC cannot always be used
-            case conv4_impl::BLAS_VEC:
-            case conv4_impl::VEC:
+        case etl::conv4_impl::BLAS_VEC:
+        case etl::conv4_impl::VEC:
                 if (!vec_enabled || !vectorize_impl) {                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC conv4 implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_valid_impl<I, K, C>(i1, i2, k1, k2);                                                             // COVERAGE_EXCLUDE_LINE
@@ -397,7 +397,7 @@ inline etl::conv4_impl select_conv4_valid_impl(size_t i1, size_t i2, size_t k1, 
                 return forced;
 
             //BLAS cannot always be used
-            case conv4_impl::BLAS_MKL:
+        case etl::conv4_impl::BLAS_MKL:
                 if (!cblas_enabled) {                                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_valid_impl<I, K, C>(i1, i2, k1, k2);                                                               // COVERAGE_EXCLUDE_LINE
@@ -406,7 +406,7 @@ inline etl::conv4_impl select_conv4_valid_impl(size_t i1, size_t i2, size_t k1, 
                 return forced;
 
             //CUDNN cannot always be used
-            case conv4_impl::CUDNN:
+        case etl::conv4_impl::CUDNN:
                 if (!impl::cudnn::conv_possible<I, K, C>) {                                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_valid_impl<I, K, C>(i1, i2, k1, k2);                                                               // COVERAGE_EXCLUDE_LINE
@@ -482,8 +482,8 @@ inline etl::conv4_impl select_conv4_valid_filter_impl(size_t i1, size_t i2, size
 
         switch (forced) {
             //VEC cannot always be used
-            case conv4_impl::BLAS_VEC:
-            case conv4_impl::VEC:
+        case etl::conv4_impl::BLAS_VEC:
+        case etl::conv4_impl::VEC:
                 if (!vec_enabled || !vectorize_impl) {                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC conv4_valid_filter implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_valid_filter_impl<I, K, C>(i1, i2, k1, k2);                                        // COVERAGE_EXCLUDE_LINE
@@ -492,7 +492,7 @@ inline etl::conv4_impl select_conv4_valid_filter_impl(size_t i1, size_t i2, size
                 return forced;
 
             //BLAS cannot always be used
-            case conv4_impl::BLAS_MKL:
+        case etl::conv4_impl::BLAS_MKL:
                 if (!cblas_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_valid_filter_impl<I, K, C>(i1, i2, k1, k2);                                         // COVERAGE_EXCLUDE_LINE
@@ -571,8 +571,8 @@ inline etl::conv4_impl select_conv4_valid_back_impl(size_t i1, size_t i2, size_t
 
         switch (forced) {
             //VEC cannot always be used
-            case conv4_impl::BLAS_VEC:
-            case conv4_impl::VEC:
+        case etl::conv4_impl::BLAS_VEC:
+        case etl::conv4_impl::VEC:
                 if (!vec_enabled || !vectorize_impl) {                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC conv4_valid_back implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_valid_back_impl<I, K, C>(i1, i2, k1, k2);                                                             // COVERAGE_EXCLUDE_LINE
@@ -581,7 +581,7 @@ inline etl::conv4_impl select_conv4_valid_back_impl(size_t i1, size_t i2, size_t
                 return forced;
 
             //BLAS cannot always be used
-            case conv4_impl::BLAS_MKL:
+        case etl::conv4_impl::BLAS_MKL:
                 if (!cblas_enabled) {                                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_valid_back_impl<I, K, C>(i1, i2, k1, k2);                                                               // COVERAGE_EXCLUDE_LINE
@@ -627,14 +627,14 @@ inline etl::conv4_impl select_default_conv4_full_impl(size_t k1, size_t k2) {
     }
 
     // CUFFT is generally faster than the other, but anyway in GPU mode, CUDNN should be available
-    if(cufft_enabled){
+    if(impl::cufft::conv2_possible<I, K, C>){
         return etl::conv4_impl::FFT_CUFFT;
     }
 
     // MKL is generally faster than VEC
     // This could be improved for small batch size where VEC is interesting
-    if (mkl_enabled) {
-        if(vectorize_impl && vec_enabled && k1 == k2 && (k2 == 3 || k2 == 5)){
+    if (impl::blas::conv2_possible<I, K, C>) {
+        if(impl::vec::conv2_possible<vector_mode, I, K, C> && k1 == k2 && (k2 == 3 || k2 == 5)){
             return etl::conv4_impl::VEC;
         }
 
@@ -642,7 +642,7 @@ inline etl::conv4_impl select_default_conv4_full_impl(size_t k1, size_t k2) {
     }
 
     // If possible, use vectorized implementations
-    if(vectorize_impl && vec_enabled){
+    if(impl::vec::conv2_possible<vector_mode, I, K, C>){
         return etl::conv4_impl::VEC;
     }
 
@@ -664,38 +664,38 @@ inline etl::conv4_impl select_conv4_full_impl(size_t k1, size_t k2) {
 
         switch (forced) {
             //VEC cannot always be used
-            case conv4_impl::VEC:
-                if (!sse3_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+            case etl::conv4_impl::VEC:
+                if (!impl::vec::conv2_possible<vector_mode, I, K, C>) {                                                                  // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC conv4_full implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv4_full_impl<I, K, C>(k1, k2);                                                                   // COVERAGE_EXCLUDE_LINE
-                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_full_impl<I, K, C>(k1, k2);                                                              // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                        // COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
             //CUDNN cannot always be used
-            case conv4_impl::CUDNN:
-                if (!impl::cudnn::conv_possible<I, K, C>) {                                                                                               // COVERAGE_EXCLUDE_LINE
+            case etl::conv4_impl::CUDNN:
+                if (!impl::cudnn::conv_possible<I, K, C>) {                                                                          // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv4_full_impl<I, K, C>(k1, k2);                                                                   // COVERAGE_EXCLUDE_LINE
-                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_full_impl<I, K, C>(k1, k2);                                                          // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                    // COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
             //CUFFT cannot always be used
-            case conv4_impl::FFT_CUFFT:
-                if (!cufft_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+            case etl::conv4_impl::FFT_CUFFT:
+                if (!impl::cufft::conv2_possible<I, K, C>) {                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to FFT_CUFFT conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv4_full_impl<I, K, C>(k1, k2);                                                                   // COVERAGE_EXCLUDE_LINE
-                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_full_impl<I, K, C>(k1, k2);                                                              // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                        // COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
             //MKL cannot always be used
-            case conv4_impl::FFT_MKL:
-                if (!mkl_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+            case etl::conv4_impl::FFT_MKL:
+                if (!impl::blas::conv2_possible<I, K, C>) {                                                                            // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to FFT_MKL conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv4_full_impl<I, K, C>(k1, k2);                                                                   // COVERAGE_EXCLUDE_LINE
-                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_full_impl<I, K, C>(k1, k2);                                                            // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                      // COVERAGE_EXCLUDE_LINE
 
                 return forced;
 

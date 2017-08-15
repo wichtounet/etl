@@ -123,29 +123,6 @@ void conv2_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p
 }
 
 /*!
- * \brief CUDNN implementation of a 2D 'valid' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- * \param s1 The first dimension stride
- * \param s2 The second dimension stride
- * \param p1 The first dimension padding (left and right)
- * \param p2 The second dimension padding (top and bottom)
- */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
-void conv2_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unreachable("Invalid call to cudnn::conv2_valid");
-}
-
-/*!
  * \brief CUDNN implementation of a 2D 'valid' convolution
  * C = I * K, with flipped kernels.
  * \param input The input matrix
@@ -159,30 +136,6 @@ void conv2_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p
 template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
 void conv2_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv2_valid_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
-}
-
-/*!
- * \brief CUDNN implementation of a 2D 'valid' convolution
- * C = I * K, with flipped kernels.
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- * \param s1 The first dimension stride
- * \param s2 The second dimension stride
- * \param p1 The first dimension padding (left and right)
- * \param p2 The second dimension padding (top and bottom)
- */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
-void conv2_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unreachable("Invalid call to cudnn::conv2_valid");
 }
 
 /*!
@@ -252,7 +205,7 @@ void conv4_forward_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
 void conv4_forward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv4_forward_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
 }
@@ -263,7 +216,7 @@ void conv4_forward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
 void conv4_forward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv4_forward_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
 }
@@ -339,7 +292,7 @@ void conv4_backward_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
 void conv4_backward_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv4_backward_filter_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
 }
@@ -352,7 +305,7 @@ void conv4_backward_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
 void conv4_backward_filter_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv4_backward_filter_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
 }
@@ -435,39 +388,9 @@ void conv2_full(I&& input, K&& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
-void conv2_full(I&& input, K&& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-
-    cpp_unreachable("Invalid call to cudnn::conv2_full");
-}
-
-/*!
- * \brief cudnn implementation of a 2D 'full' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
 template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
 void conv2_full_flipped(I&& input, K&& kernel, C&& conv) {
     conv2_full_set(input, kernel, conv, CUDNN_CONVOLUTION);
-}
-
-/*!
- * \brief cudnn implementation of a 2D 'full' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
-void conv2_full_flipped(I&& input, K&& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-
-    cpp_unreachable("Invalid call to cudnn::conv2_full_flipped");
 }
 
 /*!
@@ -552,7 +475,7 @@ void conv2_valid_multi_set(I& input, K&& kernel, C&& conv, size_t s1, size_t s2,
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
 void conv2_valid_multi(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv2_valid_multi_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
 }
@@ -563,7 +486,7 @@ void conv2_valid_multi(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
 void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv2_valid_multi_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
 }
@@ -635,7 +558,7 @@ void conv4_backward_data_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMo
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
 void conv4_backward_data(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv4_backward_data_set(input, kernel, conv, CUDNN_CROSS_CORRELATION, s1, s2, p1, p2);
 }
@@ -646,7 +569,7 @@ void conv4_backward_data(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
 void conv4_backward_data_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv4_backward_data_set(input, kernel, conv, CUDNN_CONVOLUTION, s1, s2, p1, p2);
 }
@@ -657,7 +580,7 @@ void conv4_backward_data_flipped(I&& input, K&& kernel, C&& conv, size_t s1, siz
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
 void conv4_backward_data_full(I&& input, K&& kernel, C&& conv) {
     conv4_backward_data_set(input, kernel, conv, CUDNN_CROSS_CORRELATION, 1, 1, 0, 0);
 }
@@ -668,12 +591,12 @@ void conv4_backward_data_full(I&& input, K&& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
 void conv4_backward_data_full_flipped(I&& input, K&& kernel, C&& conv) {
     conv4_backward_data_set(input, kernel, conv, CUDNN_CONVOLUTION, 1, 1, 0, 0);
 }
 
-#else
+#endif
 
 //COVERAGE_EXCLUDE_BEGIN
 
@@ -687,7 +610,7 @@ void conv4_backward_data_full_flipped(I&& input, K&& kernel, C&& conv) {
  * \param p1 The first dimension padding (left and right)
  * \param p2 The second dimension padding (top and bottom)
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
 void conv2_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -709,7 +632,7 @@ void conv2_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p
  * \param p1 The first dimension padding (left and right)
  * \param p2 The second dimension padding (top and bottom)
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
 void conv2_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -727,7 +650,7 @@ void conv2_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
 void conv4_forward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -745,7 +668,7 @@ void conv4_forward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
 void conv4_forward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -765,7 +688,7 @@ void conv4_forward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
 void conv4_backward_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -785,7 +708,7 @@ void conv4_backward_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
 void conv4_backward_filter_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -803,7 +726,7 @@ void conv4_backward_filter_flipped(I&& input, K&& kernel, C&& conv, size_t s1, s
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
 void conv2_full(I&& input, K&& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -817,7 +740,7 @@ void conv2_full(I&& input, K&& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
 void conv2_full_flipped(I&& input, K&& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -831,7 +754,7 @@ void conv2_full_flipped(I&& input, K&& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
 void conv4_backward_data_full(I&& input, K&& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -845,7 +768,7 @@ void conv4_backward_data_full(I&& input, K&& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
 void conv4_backward_data_full_flipped(I&& input, K&& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -859,7 +782,7 @@ void conv4_backward_data_full_flipped(I&& input, K&& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
 void conv2_valid_multi(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -877,7 +800,7 @@ void conv2_valid_multi(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
 void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -895,7 +818,7 @@ void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
 void conv4_backward_data(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -913,7 +836,7 @@ void conv4_backward_data(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
 void conv4_backward_data_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -926,8 +849,6 @@ void conv4_backward_data_flipped(I&& input, K&& kernel, C&& conv, size_t s1, siz
 }
 
 //COVERAGE_EXCLUDE_END
-
-#endif
 
 } //end of namespace cudnn
 

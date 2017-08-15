@@ -362,30 +362,6 @@ void conv4_full(const I& input, const KK& kernel, CC&& conv) {
 }
 
 /*!
- * \brief SSE implementation of a 4D 'full' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C>
-void conv4_full(const I& input, const K& kernel, C&& conv) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
-
-    if(avx_enabled && sse3_enabled){
-        const size_t k2 = etl::dim<3>(kernel);
-
-        if (detail::prefer_sse<value_t<I>>(k2)) {
-            return conv4_full<detail::safe_avx_vec>(input, kernel, conv);
-        } else {
-            return conv4_full<detail::safe_sse_vec>(input, kernel, conv);
-        }
-    } else {
-        return conv4_full<default_vec>(input, kernel, conv);
-    }
-}
-
-/*!
  * \brief Optimized implementation of a 4D 'full' convolution C = I * K for small kernels.
  *
  * This returns true if it was able to perform the optimized
@@ -633,12 +609,36 @@ bool conv4_full_flipped_padding(const I& input, const KK& kernel, CC&& conv) {
 }
 
 /*!
+ * \brief SSE implementation of a 4D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K, C>)>
+void conv4_full(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
+    if(avx_enabled && sse3_enabled){
+        const size_t k2 = etl::dim<3>(kernel);
+
+        if (detail::prefer_sse<value_t<I>>(k2)) {
+            return conv4_full<detail::safe_avx_vec>(input, kernel, conv);
+        } else {
+            return conv4_full<detail::safe_sse_vec>(input, kernel, conv);
+        }
+    } else {
+        return conv4_full<default_vec>(input, kernel, conv);
+    }
+}
+
+/*!
  * \brief Vectorized implementation of a 4D 'full' convolution C = I * K
  * \param input The input matrix
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename KK, typename CC>
+template <typename I, typename KK, typename CC, cpp_enable_iff(conv2_possible<vector_mode, I, KK, CC>)>
 void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
@@ -711,6 +711,36 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
 
         conv.invalidate_gpu();
     }
+}
+
+/*!
+ * \brief Vectorized implementation of a 4D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename KK, typename CC, cpp_disable_iff(conv2_possible<vector_mode, I, KK, CC>)>
+void conv4_full(const I& input, const KK& kernel, CC&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+
+    cpp_unreachable("Invalid call to vec::conv4_full");
+}
+
+/*!
+ * \brief Vectorized implementation of a 4D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename KK, typename CC, cpp_disable_iff(conv2_possible<vector_mode, I, KK, CC>)>
+void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+
+    cpp_unreachable("Invalid call to vec::conv4_full_flipped");
 }
 
 } //end of namespace vec
