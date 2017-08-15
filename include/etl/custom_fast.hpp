@@ -193,6 +193,7 @@ public:
      */
     const auto& gpu_compute() const {
         return *this;
+    }
 
     // Swap operations
 

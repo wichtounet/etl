@@ -409,6 +409,7 @@ public:
      */
     const auto& gpu_compute() const {
         return *this;
+    }
 
     /*!
      * \brief Swap the content of the matrix with the content of the given matrix
