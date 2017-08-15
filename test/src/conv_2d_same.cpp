@@ -277,3 +277,45 @@ CONV2_SAME_TEST_CASE("convolution_2d/sub_2", "convolution_2d_same") {
     REQUIRE_EQUALS(c(0, 2, 1), T(1.5));
     REQUIRE_EQUALS(c(0, 2, 2), T(0.5));
 }
+
+// Mixed tests
+
+TEST_CASE("conv2/same/mixed/0", "convolution_2d_same") {
+    etl::fast_matrix<float, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<double, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
+    etl::fast_matrix<float, 3, 3> c;
+
+    c = conv_2d_same(a, b);
+
+    REQUIRE_EQUALS(c(0, 0), 3.5);
+    REQUIRE_EQUALS(c(0, 1), 4.5);
+    REQUIRE_EQUALS(c(0, 2), 1.5);
+
+    REQUIRE_EQUALS(c(1, 0), 4.5);
+    REQUIRE_EQUALS(c(1, 1), 3.0);
+    REQUIRE_EQUALS(c(1, 2), 0.5);
+
+    REQUIRE_EQUALS(c(2, 0), 2.5);
+    REQUIRE_EQUALS(c(2, 1), 1.5);
+    REQUIRE_EQUALS(c(2, 2), 0.5);
+}
+
+TEST_CASE("conv2/same/mixed/1", "convolution_2d_same") {
+    etl::fast_matrix<float, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix_cm<float, 2, 2> b = {2.0, 0.5, 0.0, 0.5};
+    etl::fast_matrix<float, 3, 3> c;
+
+    c = conv_2d_same(a, b);
+
+    REQUIRE_EQUALS(c(0, 0), 3.5);
+    REQUIRE_EQUALS(c(0, 1), 4.5);
+    REQUIRE_EQUALS(c(0, 2), 1.5);
+
+    REQUIRE_EQUALS(c(1, 0), 4.5);
+    REQUIRE_EQUALS(c(1, 1), 3.0);
+    REQUIRE_EQUALS(c(1, 2), 0.5);
+
+    REQUIRE_EQUALS(c(2, 0), 2.5);
+    REQUIRE_EQUALS(c(2, 1), 1.5);
+    REQUIRE_EQUALS(c(2, 2), 0.5);
+}

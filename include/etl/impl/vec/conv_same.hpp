@@ -49,7 +49,7 @@ void conv1_same(const I& input, const K& kernel, C&& conv, size_t first, size_t 
  * \param conv The output matrix
  */
 template <typename V, typename I, typename K, typename C>
-void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
+void conv2_same_flipped_impl(const I& input, const K& kernel, C&& conv) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
@@ -132,29 +132,13 @@ void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
 }
 
 /*!
- * \brief SSE implementation of a 2D 'same' convolution C = I * K, with the
- * flipped kernels of K.
- *
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C>
-void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
-
-    conv2_same_flipped<default_vec>(input, kernel, conv);
-}
-
-/*!
  * \brief SSE implementation of a 2D 'same' convolution C = I * K
  * \param input The input matrix
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
 template <typename V, typename I, typename K, typename C>
-void conv2_same(const I& input, const K& kernel, C&& conv) {
+void conv2_same_impl(const I& input, const K& kernel, C&& conv) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
@@ -170,9 +154,39 @@ void conv2_same(const I& input, const K& kernel, C&& conv) {
 
     std::reverse_copy(kernel.memory_start(), kernel.memory_start() + k1 * k2, kernel_reverse.memory_start());
 
-    conv2_same_flipped<V>(input, kernel_reverse, conv);
+    conv2_same_flipped_impl<V>(input, kernel_reverse, conv);
 
     conv.invalidate_gpu();
+}
+
+/*!
+ * \brief SSE implementation of a 2D 'same' convolution C = I * K, with the
+ * flipped kernels of K.
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K, C>)>
+void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
+    conv2_same_flipped_impl<default_vec>(input, kernel, conv);
+}
+
+/*!
+ * \brief SSE implementation of a 2D 'same' convolution C = I * K, with the
+ * flipped kernels of K.
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K, C>)>
+void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+
+    cpp_unreachable("Invalid call to vec::conv2_same_flipped");
 }
 
 /*!
@@ -181,12 +195,24 @@ void conv2_same(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K, C>)>
 void conv2_same(const I& input, const K& kernel, C&& conv) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+    conv2_same_impl<default_vec>(input, kernel, conv);
+}
 
-    conv2_same<default_vec>(input, kernel, conv);
+/*!
+ * \brief SSE implementation of a 2D 'same' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K, C>)>
+void conv2_same(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+
+    cpp_unreachable("Invalid call to vec::conv2_same");
 }
 
 /*!
@@ -205,7 +231,7 @@ void conv2_same_multi(const I& input, const K& kernel, C&& conv) {
 
     auto batch_fun_k = [&input, &kernel, &conv](const size_t first, const size_t last) {
         for (size_t k = first; k < last; ++k) {
-            conv2_same<default_vec>(input, kernel(k), conv(k));
+            conv2_same_impl<default_vec>(input, kernel(k), conv(k));
         }
     };
 
@@ -228,7 +254,7 @@ void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
 
     auto batch_fun_k = [&input, &kernel, &conv](const size_t first, const size_t last) {
         for (size_t k = first; k < last; ++k) {
-            conv2_same_flipped<default_vec>(input, kernel(k), conv(k));
+            conv2_same_flipped_impl<default_vec>(input, kernel(k), conv(k));
         }
     };
 

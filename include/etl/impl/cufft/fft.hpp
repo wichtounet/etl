@@ -29,6 +29,48 @@ namespace impl {
 
 namespace cufft {
 
+/*!
+ * \brief Traits indicating if 1D FFT with CUFFT is
+ * possible for the given configuration.
+ *
+ * \param A The type of the input matrix
+ * \param B The type of the output matrix
+ */
+template <typename A, typename B>
+constexpr bool fft1_possible =
+                cufft_enabled
+            &&  ((is_deep_single_precision<A> && is_deep_single_precision<B>) || (is_deep_double_precision<A> && is_deep_double_precision<B>))
+            &&  all_dma<A, B>;
+
+/*!
+ * \brief Traits indicating if 2D FFT with CUFFT is
+ * possible for the given configuration.
+ *
+ * \param A The type of the input matrix
+ * \param B The type of the output matrix
+ */
+template <typename A, typename B>
+constexpr bool fft2_possible =
+                cufft_enabled
+            &&  ((is_deep_single_precision<A> && is_deep_single_precision<B>) || (is_deep_double_precision<A> && is_deep_double_precision<B>))
+            &&  all_row_major<A, B>
+            &&  all_dma<A, B>;
+
+/*!
+ * \brief Traits indicating if 2D Convolution with CUFFT is
+ * possible for the given configuration.
+ *
+ * \param I The type of the input matrix
+ * \param K The type of the kernel matrix
+ * \param C The type of the output matrix
+ */
+template <typename I, typename K, typename C>
+constexpr bool conv2_possible =
+                cufft_enabled
+            &&  all_homogeneous<I, K, C>
+            &&  all_row_major<I, K, C>
+            &&  all_dma<I, K, C>;
+
 #ifdef ETL_CUFFT_MODE
 
 namespace detail {
@@ -279,76 +321,6 @@ void conv2_full_kernel(const T* a, size_t m1, size_t m2, const T* b, size_t n1, 
     b_padded.gpu_evict();
 }
 
-} //End of namespace detail
-
-/*!
- * \brief Perform the 1D FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- */
-template <typename A, typename C, cpp_enable_iff(!is_complex<A>)>
-void fft1(A&& a, C&& c) {
-    c = a;
-
-    detail::inplace_fft1_kernel(c, etl::size(a));
-}
-
-/*!
- * \brief Perform the 1D FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- */
-template <typename A, typename C, cpp_enable_iff(is_complex<A>)>
-void fft1(A&& a, C&& c) {
-    a.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
-
-    c.gpu_copy_from(a.gpu_memory());
-
-    detail::inplace_fft1_kernel(c, etl::size(c));
-}
-
-/*!
- * \brief Perform many 1D FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- *
- * The first dimension of a and c are considered batch dimensions
- */
-template <typename A, typename C, cpp_enable_iff(!is_complex<A>)>
-void fft1_many(A&& a, C&& c) {
-    static constexpr size_t N = decay_traits<A>::dimensions();
-
-    size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    size_t batch = etl::size(a) / n;   //Number of batch
-
-    c = a;
-
-    detail::inplace_fft1_many_kernel(c, batch, n);
-}
-
-/*!
- * \brief Perform many 1D FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- *
- * The first dimension of a and c are considered batch dimensions
- */
-template <typename A, typename C, cpp_enable_iff(is_complex<A>)>
-void fft1_many(A&& a, C&& c) {
-    static constexpr size_t N = decay_traits<A>::dimensions();
-
-    size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    size_t batch = etl::size(a) / n;   //Number of batch
-
-    a.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
-
-    c.gpu_copy_from(a.gpu_memory());
-
-    detail::inplace_fft1_many_kernel(c, batch, n);
-}
-
 /*!
  * \brief Scale back the results after the inverse FFT
  * \param c The result of the inverse FFT
@@ -482,6 +454,76 @@ void scale_back_real(A&& a, C&& c) {
 #endif
 }
 
+} //End of namespace detail
+
+/*!
+ * \brief Perform the 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
+template <typename A, typename C, cpp_enable_iff(!is_complex<A>)>
+void fft1(A&& a, C&& c) {
+    c = a;
+
+    detail::inplace_fft1_kernel(c, etl::size(a));
+}
+
+/*!
+ * \brief Perform the 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
+template <typename A, typename C, cpp_enable_iff(is_complex<A>)>
+void fft1(A&& a, C&& c) {
+    a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+
+    c.gpu_copy_from(a.gpu_memory());
+
+    detail::inplace_fft1_kernel(c, etl::size(c));
+}
+
+/*!
+ * \brief Perform many 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
+template <typename A, typename C, cpp_enable_iff(!is_complex<A>)>
+void fft1_many(A&& a, C&& c) {
+    static constexpr size_t N = decay_traits<A>::dimensions();
+
+    size_t n     = etl::dim<N - 1>(a); //Size of the transform
+    size_t batch = etl::size(a) / n;   //Number of batch
+
+    c = a;
+
+    detail::inplace_fft1_many_kernel(c, batch, n);
+}
+
+/*!
+ * \brief Perform many 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
+template <typename A, typename C, cpp_enable_iff(is_complex<A>)>
+void fft1_many(A&& a, C&& c) {
+    static constexpr size_t N = decay_traits<A>::dimensions();
+
+    size_t n     = etl::dim<N - 1>(a); //Size of the transform
+    size_t batch = etl::size(a) / n;   //Number of batch
+
+    a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+
+    c.gpu_copy_from(a.gpu_memory());
+
+    detail::inplace_fft1_many_kernel(c, batch, n);
+}
+
 /*!
  * \brief Perform the 1D Inverse FFT on a and store the result in c
  * \param a The input expression
@@ -495,7 +537,7 @@ void ifft1(A&& a, C&& c) {
 
     detail::inplace_ifft1_kernel(c, etl::size(c));
 
-    scale_back(c);
+    detail::scale_back(c);
 }
 
 /*!
@@ -509,7 +551,7 @@ void ifft1_real(A&& a, C&& c) {
 
     detail::inplace_ifft1_kernel(tmp, etl::size(tmp));
 
-    scale_back_real(tmp, c);
+    detail::scale_back_real(tmp, c);
 }
 
 /*!
@@ -532,7 +574,7 @@ void ifft1_many(A&& a, C&& c) {
 
     detail::inplace_ifft1_many_kernel(c, batch, n);
 
-    scale_back(c, 1.0 / double(n));
+    detail::scale_back(c, 1.0 / double(n));
 }
 
 /*!
@@ -628,7 +670,7 @@ void ifft2(A&& a, C&& c) {
 
     detail::inplace_ifft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
 
-    scale_back(c);
+    detail::scale_back(c);
 }
 
 /*!
@@ -642,7 +684,7 @@ void ifft2_real(A&& a, C&& c) {
 
     detail::inplace_ifft2_kernel(tmp, etl::dim<0>(tmp), etl::dim<1>(tmp));
 
-    scale_back_real(tmp, c);
+    detail::scale_back_real(tmp, c);
 }
 
 /*!
@@ -708,7 +750,7 @@ void ifft2_many(A&& a, C&& c) {
 
     detail::inplace_ifft2_many_kernel(c, batch, n1, n2);
 
-    scale_back(c, 1.0 / double(n1 * n2));
+    detail::scale_back(c, 1.0 / double(n1 * n2));
 }
 
 /*!
@@ -717,7 +759,7 @@ void ifft2_many(A&& a, C&& c) {
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<I, K, C>)>
 void conv2_full(I&& a, K&& b, C&& c) {
     using T = value_t<I>;
 
@@ -729,6 +771,21 @@ void conv2_full(I&& a, K&& b, C&& c) {
 }
 
 /*!
+ * \brief Perform the 2D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
+template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<I, K, C>)>
+void conv2_full(I&& a, K&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+
+    cpp_unreachable("Invalid call to cufft::conv2_full");
+}
+
+/*!
  * \brief Perform the 2D full convolution of a with b and store the result in c,
  * with the flipped kernels of b.
  *
@@ -736,7 +793,7 @@ void conv2_full(I&& a, K&& b, C&& c) {
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<I, K, C>)>
 void conv2_full_flipped(I&& a, K&& b, C&& c) {
     using T = value_t<I>;
 
@@ -751,6 +808,23 @@ void conv2_full_flipped(I&& a, K&& b, C&& c) {
 
     detail::conv2_full_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), prepared_b.memory_start(), etl::dim<0>(b), etl::dim<1>(b), c.memory_start(), T(0.0));
     c.invalidate_gpu();
+}
+
+/*!
+ * \brief Perform the 2D full convolution of a with b and store the result in c,
+ * with the flipped kernels of b.
+ *
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
+template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<I, K, C>)>
+void conv2_full_flipped(I&& a, K&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+
+    cpp_unreachable("Invalid call to cufft::conv2_full_flipped");
 }
 
 /*!

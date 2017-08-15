@@ -19,6 +19,48 @@ namespace impl {
 
 namespace blas {
 
+/*!
+ * \brief Traits indicating if 1D FFT with BLAS is
+ * possible for the given configuration.
+ *
+ * \param A The type of the input matrix
+ * \param B The type of the output matrix
+ */
+template <typename A, typename B>
+constexpr bool fft1_possible =
+                mkl_enabled
+            &&  ((is_deep_single_precision<A> && is_deep_single_precision<B>) || (is_deep_double_precision<A> && is_deep_double_precision<B>))
+            &&  all_dma<A, B>;
+
+/*!
+ * \brief Traits indicating if 2D FFT with BLAS is
+ * possible for the given configuration.
+ *
+ * \param A The type of the input matrix
+ * \param B The type of the output matrix
+ */
+template <typename A, typename B>
+constexpr bool fft2_possible =
+                mkl_enabled
+            &&  ((is_deep_single_precision<A> && is_deep_single_precision<B>) || (is_deep_double_precision<A> && is_deep_double_precision<B>))
+            &&  all_row_major<A, B>
+            &&  all_dma<A, B>;
+
+/*!
+ * \brief Traits indicating if 2D Convolution with BLAS is
+ * possible for the given configuration.
+ *
+ * \param I The type of the input matrix
+ * \param K The type of the kernel matrix
+ * \param C The type of the output matrix
+ */
+template <typename I, typename K, typename C>
+constexpr bool conv2_possible =
+                mkl_enabled
+            &&  all_homogeneous<I, K, C>
+            &&  all_row_major<I, K, C>
+            &&  all_dma<I, K, C>;
+
 #ifdef ETL_MKL_MODE
 
 namespace mkl_detail {
@@ -1104,7 +1146,7 @@ void ifft2_real(A&& a, C&& c) {
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<I, K, C>)>
 void conv2_full(I&& a, K&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
@@ -1115,6 +1157,21 @@ void conv2_full(I&& a, K&& b, C&& c) {
 }
 
 /*!
+ * \brief Perform the 2D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
+template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<I, K, C>)>
+void conv2_full(I&& a, K&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+
+    cpp_unreachable("Invalid call to blas::conv2_full");
+}
+
+/*!
  * \brief Perform the 2D full convolution of a with b and store the result in c,
  * with the flipped kernels of b.
  *
@@ -1122,7 +1179,7 @@ void conv2_full(I&& a, K&& b, C&& c) {
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<I, K, C>)>
 void conv2_full_flipped(I&& a, K&& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
@@ -1136,6 +1193,23 @@ void conv2_full_flipped(I&& a, K&& b, C&& c) {
     mkl_detail::conv2_full_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), prepared_b.memory_start(), etl::dim<0>(b), etl::dim<1>(b), c.memory_start(), value_t<I>(0.0));
 
     c.invalidate_gpu();
+}
+
+/*!
+ * \brief Perform the 2D full convolution of a with b and store the result in c,
+ * with the flipped kernels of b.
+ *
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
+template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<I, K, C>)>
+void conv2_full_flipped(I&& a, K&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+
+    cpp_unreachable("Invalid call to blas::conv2_full");
 }
 
 /*!

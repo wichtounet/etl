@@ -16,26 +16,6 @@ namespace impl {
 namespace vec {
 
 /*!
- * \brief Traits indicating if vectorized 1D convolution is possible
- * for the given configuration.
- *
- * A 1D convolution can be optimized if vectorization is enabled,
- * vectorization of algorithms is enabled, all the types are the
- * same and all the types are vectorizable.
- *
- * \param V The vector mode
- * \param I The type of the input matrix
- * \param K The type of the kernel matrix
- * \param C The type of the output matrix
- */
-template <vector_mode_t V, typename I, typename K, typename C>
-constexpr bool conv1_possible =
-                vec_enabled
-            &&  vectorize_impl
-            &&  all_homogeneous<I, K, C>
-            &&  all_vectorizable<V, I, K, C>;
-
-/*!
  * \brief Vectorized implementation of a 1D 'valid' convolution C = I * K
  * \param input The input matrix
  * \param kernel The kernel matrix

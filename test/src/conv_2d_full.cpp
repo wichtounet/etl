@@ -414,3 +414,45 @@ CONV2_FULL_FLIPPED_TEST_CASE("conv/2d/full/flipped/3", "convolution_2d_full") {
     REQUIRE_EQUALS_APPROX_E(c(3, 2), T(417946), base_eps * 10);
     REQUIRE_EQUALS_APPROX_E(c(3, 3), T(516210), base_eps * 10);
 }
+
+/* Mixed tests */
+
+TEST_CASE("conv2/full/mixed/0", "convolution_2d_full") {
+    etl::fast_matrix<float, 2, 2> a = {1.0, 2.0, 3.0, 2.0};
+    etl::fast_matrix<double, 2, 2> b = {2.0, 1.0, 0.5, 0.5};
+    etl::fast_matrix<float, 3, 3> c;
+
+    c = conv_2d_full(a, b);
+
+    REQUIRE_EQUALS_APPROX(c(0, 0), float(2.0));
+    REQUIRE_EQUALS_APPROX(c(0, 1), float(5.0));
+    REQUIRE_EQUALS_APPROX(c(0, 2), float(2.0));
+
+    REQUIRE_EQUALS_APPROX(c(1, 0), float(6.5));
+    REQUIRE_EQUALS_APPROX(c(1, 1), float(8.5));
+    REQUIRE_EQUALS_APPROX(c(1, 2), float(3.0));
+
+    REQUIRE_EQUALS_APPROX(c(2, 0), float(1.5));
+    REQUIRE_EQUALS_APPROX(c(2, 1), float(2.5));
+    REQUIRE_EQUALS_APPROX(c(2, 2), float(1.0));
+}
+
+TEST_CASE("conv2/full/mixed/1", "convolution_2d_full") {
+    etl::fast_matrix<float, 2, 2> a = {1.0, 2.0, 3.0, 2.0};
+    etl::fast_matrix_cm<float, 2, 2> b = {2.0, 0.5, 1.0, 0.5};
+    etl::fast_matrix<float, 3, 3> c;
+
+    c = conv_2d_full(a, b);
+
+    REQUIRE_EQUALS_APPROX(c(0, 0), float(2.0));
+    REQUIRE_EQUALS_APPROX(c(0, 1), float(5.0));
+    REQUIRE_EQUALS_APPROX(c(0, 2), float(2.0));
+
+    REQUIRE_EQUALS_APPROX(c(1, 0), float(6.5));
+    REQUIRE_EQUALS_APPROX(c(1, 1), float(8.5));
+    REQUIRE_EQUALS_APPROX(c(1, 2), float(3.0));
+
+    REQUIRE_EQUALS_APPROX(c(2, 0), float(1.5));
+    REQUIRE_EQUALS_APPROX(c(2, 1), float(2.5));
+    REQUIRE_EQUALS_APPROX(c(2, 2), float(1.0));
+}

@@ -260,3 +260,33 @@ CONV2_VALID_FLIPPED_TEST_CASE("conv/2d/flipped/valid/2", "[conv][conv2][valid]")
     REQUIRE_EQUALS(c(3, 2), 9312);
     REQUIRE_EQUALS(c(3, 3), 5832);
 }
+
+/* Mixed tests */
+
+TEST_CASE("conv2/valid/mixed/0", "convolution_2d_valid") {
+    etl::fast_matrix<float, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<double, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
+    etl::fast_matrix<float, 2, 2> c;
+
+    c = etl::conv_2d_valid(a, b);
+
+    REQUIRE_EQUALS(c(0, 0), 3.5);
+    REQUIRE_EQUALS(c(0, 1), 4.5);
+
+    REQUIRE_EQUALS(c(1, 0), 4.5);
+    REQUIRE_EQUALS(c(1, 1), 3.0);
+}
+
+TEST_CASE("conv2/valid/mixed/1", "convolution_2d_valid") {
+    etl::fast_matrix<float, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix_cm<float, 2, 2> b = {2.0, 0.5, 0.0, 0.5};
+    etl::fast_matrix<float, 2, 2> c;
+
+    c = etl::conv_2d_valid(a, b);
+
+    REQUIRE_EQUALS(c(0, 0), 3.5);
+    REQUIRE_EQUALS(c(0, 1), 4.5);
+
+    REQUIRE_EQUALS(c(1, 0), 4.5);
+    REQUIRE_EQUALS(c(1, 1), 3.0);
+}
