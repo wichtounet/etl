@@ -396,6 +396,21 @@ public:
     }
 
     /*!
+     * \brief Return a GPU computed version of this expression
+     * \return a GPU-computed ETL expression for this expression
+     */
+    auto& gpu_compute(){
+        return *this;
+    }
+
+    /*!
+     * \brief Return a GPU computed version of this expression
+     * \return a GPU-computed ETL expression for this expression
+     */
+    const auto& gpu_compute() const {
+        return *this;
+
+    /*!
      * \brief Swap the content of the matrix with the content of the given matrix
      * \param other The other matrix to swap content with
      */
