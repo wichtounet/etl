@@ -116,6 +116,37 @@ void basic() {
     etl::dump_counters();
 }
 
+void expr() {
+    std::cout << "Expr" << std::endl;
+
+#ifdef ETL_CUDA
+    etl::gpu_memory_allocator::clear();
+#endif
+
+    etl::reset_counters();
+
+    {
+        etl::dyn_matrix<float, 2> A(4096, 4096);
+        etl::dyn_matrix<float, 2> B(4096, 4096);
+        etl::dyn_matrix<float, 2> C(4096, 4096);
+        etl::dyn_matrix<float, 2> D(4096, 4096);
+        etl::dyn_matrix<float, 2> E(4096, 4096);
+
+        A = 1e-4 >> etl::sequence_generator<float>(1.0);
+        B = 1e-4 >> etl::sequence_generator<float>(1.0);
+        C = 1e-4 >> etl::sequence_generator<float>(1.0);
+        D = 1e-4 >> etl::sequence_generator<float>(1.0);
+        E = 1e-4 >> etl::sequence_generator<float>(1.0);
+
+        for (size_t i = 0; i < 10; ++i) {
+            A = A + B + C + D;
+            E = A - D + C;
+        }
+    }
+
+    etl::dump_counters();
+}
+
 void sub() {
     std::cout << "Sub" << std::endl;
 
@@ -259,6 +290,7 @@ int main() {
 
     simple();
     basic();
+    expr();
     sub();
     ml();
 
