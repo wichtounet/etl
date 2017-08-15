@@ -314,7 +314,7 @@ void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename V, typename I, typename KK, typename CC>
-void conv4_full(const I& input, const KK& kernel, CC&& conv) {
+void conv4_full_impl(const I& input, const KK& kernel, CC&& conv) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
@@ -623,12 +623,12 @@ void conv4_full(const I& input, const K& kernel, C&& conv) {
         const size_t k2 = etl::dim<3>(kernel);
 
         if (detail::prefer_sse<value_t<I>>(k2)) {
-            return conv4_full<detail::safe_avx_vec>(input, kernel, conv);
+            return conv4_full_impl<detail::safe_avx_vec>(input, kernel, conv);
         } else {
-            return conv4_full<detail::safe_sse_vec>(input, kernel, conv);
+            return conv4_full_impl<detail::safe_sse_vec>(input, kernel, conv);
         }
     } else {
-        return conv4_full<default_vec>(input, kernel, conv);
+        return conv4_full_impl<default_vec>(input, kernel, conv);
     }
 }
 
