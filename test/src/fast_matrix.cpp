@@ -1064,3 +1064,21 @@ TEMPLATE_TEST_CASE_2("one_if_max_sub/2", "[fast]", Z, float, double) {
     REQUIRE_EQUALS(b(2, 0), Z(1.0));
     REQUIRE_EQUALS(b(2, 1), Z(0.0));
 }
+
+TEST_CASE("fast_matrix/mixed/0", "fast_matrix::operator*=") {
+    etl::fast_matrix<float, 3, 3> a = {-1.0, 2.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+    etl::fast_matrix<double, 3, 3> b = {2.5, 3.0, 4.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+    etl::fast_matrix<float, 3, 3> c;
+
+    c = a >> b;
+
+    REQUIRE_EQUALS(c[0], -2.5);
+    REQUIRE_EQUALS(c[1], 6.0);
+    REQUIRE_EQUALS(c[2], 20.0);
+    REQUIRE_EQUALS(c[3], 1.0);
+    REQUIRE_EQUALS(c[4], 4.0);
+    REQUIRE_EQUALS(c[5], 9.0);
+    REQUIRE_EQUALS(c[6], 16.0);
+    REQUIRE_EQUALS(c[7], 25.0);
+    REQUIRE_EQUALS(c[8], 36.0);
+}

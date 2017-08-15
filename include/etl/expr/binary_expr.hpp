@@ -301,20 +301,24 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
 
     using sub_expr_t = std::conditional_t<left_directed, left_expr_t, right_expr_t>; ///< The type of sub expression
 
-    static constexpr bool is_etl                  = true;                                                                                                                     ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer          = false;                                                                                                                    ///< Indicates if the type is a transformer
-    static constexpr bool is_view                 = false;                                                                                                                    ///< Indicates if the type is a view
-    static constexpr bool is_magic_view           = false;                                                                                                                    ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                                                                                          ///< Indicates if the expression is fast
-    static constexpr bool is_linear               = etl_traits<left_expr_t>::is_linear && etl_traits<right_expr_t>::is_linear && BinaryOp::linear;                            ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe           = etl_traits<left_expr_t>::is_thread_safe && etl_traits<right_expr_t>::is_thread_safe && BinaryOp::thread_safe;             ///< Indicates if the expression is linear
-    static constexpr bool is_value                = false;                                                                                                                    ///< Indicates if the expression is of value type
-    static constexpr bool is_direct                = false;                                                                                                                    ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator            = etl_traits<left_expr_t>::is_generator && etl_traits<right_expr_t>::is_generator;                                          ///< Indicates if the expression is a generator expression
-    static constexpr bool is_temporary = etl_traits<left_expr_t>::is_temporary || etl_traits<right_expr_t>::is_temporary;                    ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr bool is_padded               = is_linear && etl_traits<left_expr_t>::is_padded && etl_traits<right_expr_t>::is_padded;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned               = is_linear && etl_traits<left_expr_t>::is_aligned && etl_traits<right_expr_t>::is_aligned;                          ///< Indicates if the expression is padded
-    static constexpr order storage_order          = etl_traits<left_expr_t>::is_generator ? etl_traits<right_expr_t>::storage_order : etl_traits<left_expr_t>::storage_order; ///< The expression storage order
+    using sub_traits   = etl_traits<sub_expr_t>;   ///< The sub traits
+    using left_traits  = etl_traits<left_expr_t>;  ///< The left traits
+    using right_traits = etl_traits<right_expr_t>; ///< The right traits
+
+    static constexpr bool is_etl         = true;                                                                                 ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                                                                                ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                                                                ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                                                                ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = sub_traits::is_fast;                                                                  ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = left_traits::is_linear && right_traits::is_linear && BinaryOp::linear;                ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = left_traits::is_thread_safe && right_traits::is_thread_safe && BinaryOp::thread_safe; ///< Indicates if the expression is linear
+    static constexpr bool is_value       = false;                                                                                ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = false;                                                                                ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = left_traits::is_generator && right_traits::is_generator;                              ///< Indicates if the expression is a generator expression
+    static constexpr bool is_temporary   = left_traits::is_temporary || right_traits::is_temporary;                              ///< Indicates if the expression needs an evaluator visitor
+    static constexpr bool is_padded      = is_linear && left_traits::is_padded && right_traits::is_padded;                       ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = is_linear && left_traits::is_aligned && right_traits::is_aligned;                     ///< Indicates if the expression is padded
+    static constexpr order storage_order = left_traits::is_generator ? right_traits::storage_order : left_traits::storage_order; ///< The expression storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -322,9 +326,11 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable = etl_traits<left_expr_t>::template vectorizable<V>
-            && etl_traits<right_expr_t>::template vectorizable<V>
-            && BinaryOp::template vectorizable<V>;
+    static constexpr bool vectorizable =
+                all_homogeneous<LeftExpr, RightExpr>
+            &&  left_traits::template vectorizable<V>
+            &&  right_traits::template vectorizable<V>
+            &&  BinaryOp::template vectorizable<V>;
 
     /*!
      * \brief Get reference to the main sub expression
@@ -352,7 +358,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
      * \returns the size of the given expression
      */
     static size_t size(const expr_t& v) {
-        return etl_traits<sub_expr_t>::size(get(v));
+        return sub_traits::size(get(v));
     }
 
     /*!
@@ -362,7 +368,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
      * \return The dth dimension of the given expression
      */
     static size_t dim(const expr_t& v, size_t d) {
-        return etl_traits<sub_expr_t>::dim(get(v), d);
+        return sub_traits::dim(get(v), d);
     }
 
     /*!
@@ -370,7 +376,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
      * \returns the size of an expression of this fast type.
      */
     static constexpr size_t size() {
-        return etl_traits<sub_expr_t>::size();
+        return sub_traits::size();
     }
 
     /*!
@@ -380,7 +386,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
      */
     template <size_t D>
     static constexpr size_t dim() {
-        return etl_traits<sub_expr_t>::template dim<D>();
+        return sub_traits::template dim<D>();
     }
 
     /*!
@@ -388,7 +394,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
      * \return the number of dimensions of this type
      */
     static constexpr size_t dimensions() {
-        return etl_traits<sub_expr_t>::dimensions();
+        return sub_traits::dimensions();
     }
 };
 
