@@ -479,3 +479,41 @@ TEST_CASE("conv1/same/mixed/0", "[conv1][conv]") {
     REQUIRE_EQUALS_APPROX(c[1], 2.5);
     REQUIRE_EQUALS_APPROX(c[2], 4.0);
 }
+
+TEST_CASE("conv1/full/mixed/1", "[conv1][conv]") {
+    etl::fast_vector<float, 3> a = {1.0, 2.0, 3.0};
+    etl::fast_vector_cm<float, 3> b = {0.0, 1.0, 0.5};
+    etl::fast_vector<float, 5> c;
+
+    c = conv_1d_full(a, b);
+
+    REQUIRE_EQUALS_APPROX(c[0], 0.0);
+    REQUIRE_EQUALS_APPROX(c[1], 1.0);
+    REQUIRE_EQUALS_APPROX(c[2], 2.5);
+    REQUIRE_EQUALS_APPROX(c[3], 4.0);
+    REQUIRE_EQUALS_APPROX(c[4], 1.5);
+}
+
+TEST_CASE("conv1/valid/mixed/1", "[conv1][conv]") {
+    etl::fast_vector<float, 5> a = {1.0, 2.0, 3.0, 4.0, 5.0};
+    etl::fast_vector_cm<float, 3> b = {0.5, 1.0, 1.5};
+    etl::fast_vector<float, 3> c;
+
+    c = conv_1d_valid(a, b, c);
+
+    REQUIRE_EQUALS(c[0], 5.0);
+    REQUIRE_EQUALS(c[1], 8.0);
+    REQUIRE_EQUALS(c[2], 11);
+}
+
+TEST_CASE("conv1/same/mixed/1", "[conv1][conv]") {
+    etl::fast_vector<float, 3> a = {1.0, 2.0, 3.0};
+    etl::fast_vector_cm<float, 3> b = {0.0, 1.0, 0.5};
+    etl::fast_vector<float, 3> c;
+
+    c = conv_1d_same(a, b, c);
+
+    REQUIRE_EQUALS_APPROX(c[0], 1.0);
+    REQUIRE_EQUALS_APPROX(c[1], 2.5);
+    REQUIRE_EQUALS_APPROX(c[2], 4.0);
+}
