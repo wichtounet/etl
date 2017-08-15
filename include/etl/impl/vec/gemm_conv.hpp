@@ -190,7 +190,7 @@ void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K_T, typename C>
+template <typename I, typename K_T, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K_T, C>)>
 void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
@@ -268,7 +268,7 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K_T, typename C>
+template <typename I, typename K_T, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K_T, C>)>
 void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
@@ -333,6 +333,44 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
     }
 
     conv.invalidate_gpu();
+}
+
+/*!
+ * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple images and multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K_T, C>)>
+void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernels);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::blas_conv2_valid_multi_multi");
+}
+
+/*!
+ * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple images and multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K_T, C>)>
+void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernels);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::blas_conv2_valid_multi_multi_flipped");
 }
 
 /*!

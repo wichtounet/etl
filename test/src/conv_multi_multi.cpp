@@ -157,3 +157,55 @@ CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE("conv_2d/valid/multi_multi_flipped/3",
         REQUIRE_EQUALS_APPROX(C[i], C_ref[i]);
     }
 }
+
+/* Mixed tests */
+
+TEST_CASE("conv2/valid/multi_multi/mixed/0", "[conv][conv2][conv_multi_multi]") {
+    etl::fast_matrix<float, 5, 7, 7> I;
+    etl::fast_matrix<double, 3, 5, 3> K;
+
+    etl::fast_matrix<float, 3, 5, 3, 5> C;
+    etl::fast_matrix<float, 3, 5, 3, 5> C_ref;
+
+    I = 0.5 * etl::sequence_generator(1.0);
+    K = 0.123 * etl::sequence_generator(1.0);
+
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        for (size_t k = 0; k < etl::dim<0>(K); ++k) {
+            for (size_t i = 0; i < etl::dim<0>(I); ++i) {
+                C_ref(k)(i) = conv_2d_valid(I(i), K(k));
+            }
+        }
+    }
+
+    C = etl::conv_2d_valid_multi_multi(I, K);
+
+    for (size_t i = 0; i < etl::size(C_ref); ++i) {
+        REQUIRE_EQUALS_APPROX(C[i], C_ref[i]);
+    }
+}
+
+TEST_CASE("conv2/valid/multi_multi/mixed/1", "[conv][conv2][conv_multi_multi]") {
+    etl::fast_matrix<float, 5, 7, 7> I;
+    etl::fast_matrix_cm<float, 3, 5, 3> K;
+
+    etl::fast_matrix<float, 3, 5, 3, 5> C;
+    etl::fast_matrix<float, 3, 5, 3, 5> C_ref;
+
+    I = 0.5 * etl::sequence_generator(1.0);
+    K = 0.123 * etl::sequence_generator(1.0);
+
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        for (size_t k = 0; k < etl::dim<0>(K); ++k) {
+            for (size_t i = 0; i < etl::dim<0>(I); ++i) {
+                C_ref(k)(i) = conv_2d_valid(I(i), K(k));
+            }
+        }
+    }
+
+    C = etl::conv_2d_valid_multi_multi(I, K);
+
+    for (size_t i = 0; i < etl::size(C_ref); ++i) {
+        REQUIRE_EQUALS_APPROX(C[i], C_ref[i]);
+    }
+}
