@@ -1,10 +1,12 @@
 ETL 1.2 - Next version
 **********************
 
+* *Feature* Support for convolutions for matrices of different data types
 * *Misc* Full cleanup of the traits
 * *Misc* Use of variable templates (C++14) for the traits
 * *Misc* Improved support for clang
 * *Bug* Fix bug in the GEMM kernel for CM = CM * CM
+* *Bug* Vectorization bug for binary operations with different data types
 * *Bug* GPU memory was not correctly handled when std::move is used
 
 ETL 1.1 - 04.08.2017
