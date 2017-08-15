@@ -1102,7 +1102,9 @@ void conv2_full_fft_flipped(II&& a, KK&& b, CC&& c) {
  */
 template <typename II, typename KK, typename CC>
 void conv2_full_multi_fft(II&& input, KK&& kernel, CC&& conv) {
-    using T = value_t<II>;
+    using T1 = value_t<II>;
+    using T2 = value_t<KK>;
+    using T3 = value_t<CC>;
 
     const auto K = etl::dim<0>(kernel);
 
@@ -1123,7 +1125,7 @@ void conv2_full_multi_fft(II&& input, KK&& kernel, CC&& conv) {
         const auto s2  = m2 + n2 - 1;
         const auto n   = s1 * s2;
 
-        dyn_matrix<etl::complex<T>, 2> a_padded(s1, s2);
+        dyn_matrix<etl::complex<T1>, 2> a_padded(s1, s2);
 
         for (size_t i = 0; i < m1; ++i) {
             direct_copy_n(input.memory_start() + i * m2, a_padded.memory_start() + i * s2, m2);
@@ -1138,12 +1140,12 @@ void conv2_full_multi_fft(II&& input, KK&& kernel, CC&& conv) {
         auto batch_fun_k = [&](const size_t first, const size_t last) {
             SERIAL_SECTION {
                 for (size_t k = first; k < last; ++k) {
-                    const T* b = kernel.memory_start() + k * k_s;
-                    T* c       = conv.memory_start() + k * c_s;
+                    const auto* b = kernel.memory_start() + k * k_s;
+                    auto* c       = conv.memory_start() + k * c_s;
 
                     // 0. Pad a and b to the size of c
 
-                    dyn_matrix<etl::complex<T>, 2> b_padded(s1, s2);
+                    dyn_matrix<etl::complex<T2>, 2> b_padded(s1, s2);
 
                     for (size_t i = 0; i < n1; ++i) {
                         direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
@@ -1178,7 +1180,7 @@ void conv2_full_multi_fft(II&& input, KK&& kernel, CC&& conv) {
                     // Note: Since the conjugate does not change the real part, it is not necessary
 
                     for (size_t i = 0; i < etl::size(b_padded); ++i){
-                        c[i] = b_padded[i].real / T(n);
+                        c[i] = b_padded[i].real / T3(n);
                     }
                 }
             }
