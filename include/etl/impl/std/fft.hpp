@@ -720,16 +720,16 @@ void conv1_full_kernel(const T* a, size_t m, const T* b, size_t n, T* c){
  * \param c The output
  * \param beta Indicates how the output is modified c = beta * c + o
  */
-template<typename T>
-void conv2_full_kernel(const T* a, size_t m1, size_t m2, const T* b, size_t n1, size_t n2, T* c, T beta){
+template<typename T1, typename T2, typename T3>
+void conv2_full_kernel(const T1* a, size_t m1, size_t m2, const T2* b, size_t n1, size_t n2, T3* c, T3 beta){
     const size_t s1 = m1 + n1 - 1;
     const size_t s2 = m2 + n2 - 1;
     const size_t n = s1 * s2;
 
     // 0. Pad a and b to the size of c
 
-    dyn_matrix<etl::complex<T>, 2> a_padded(s1, s2);
-    dyn_matrix<etl::complex<T>, 2> b_padded(s1, s2);
+    dyn_matrix<etl::complex<T1>, 2> a_padded(s1, s2);
+    dyn_matrix<etl::complex<T2>, 2> b_padded(s1, s2);
 
     for (size_t i = 0; i < m1; ++i) {
         direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
@@ -772,13 +772,13 @@ void conv2_full_kernel(const T* a, size_t m1, size_t m2, const T* b, size_t n1, 
 
     // c = real(conj(a) / n)
     // Note: Since the conjugate does not change the real part, it is not necessary
-    if(beta == T(0.0)){
+    if(beta == T3(0.0)){
         for (size_t i = 0; i < n; ++i) {
-            c[i] = a_padded[i].real / T(n);
+            c[i] = a_padded[i].real / T3(n);
         }
     } else {
         for (size_t i = 0; i < n; ++i) {
-            c[i] = beta * c[i] + a_padded[i].real / T(n);
+            c[i] = beta * c[i] + a_padded[i].real / T3(n);
         }
     }
 }
