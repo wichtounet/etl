@@ -738,11 +738,11 @@ inline etl::conv_multi_impl select_default_conv_valid_multi() {
 
     if (mkl_enabled && conv_valid_fft) {
         return etl::conv_multi_impl::VALID_FFT_MKL;
-    } else if (cblas_enabled) {
+    } else if (impl::blas::blas_conv2_possible<I, K, C>) {
         return etl::conv_multi_impl::BLAS_MKL;
     }
 
-    if (vectorize_impl && vec_enabled) {
+    if (impl::vec::conv2_possible<vector_mode, I, K, C>) {
         // TODO When to use VEC and BLAS_VEC ?
         return etl::conv_multi_impl::BLAS_VEC;
     }
@@ -774,12 +774,12 @@ inline etl::conv_multi_impl select_default_conv_valid_multi_multi_impl() {
         return etl::conv_multi_impl::STD;
     }
 
-    if (vectorize_impl && vec_enabled) {
+    if (impl::vec::conv2_possible<vector_mode, I, K, C>) {
         // TODO When to use VEC and BLAS_VEC ?
         return etl::conv_multi_impl::BLAS_VEC;
     }
 
-    if (cblas_enabled) {
+    if (impl::blas::blas_conv2_possible<I, K, C>) {
         return etl::conv_multi_impl::BLAS_MKL;
     } else if (mkl_enabled && conv_valid_fft) {
         return etl::conv_multi_impl::VALID_FFT_MKL;
@@ -821,7 +821,7 @@ inline etl::conv_multi_impl select_conv_valid_multi_impl() {
 
             //BLAS cannot always be used
             case conv_multi_impl::BLAS_MKL:
-                if (!cblas_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                if (!impl::blas::blas_conv2_possible<I, K, C>) {                                                                                               // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv_valid_multi<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
@@ -838,7 +838,7 @@ inline etl::conv_multi_impl select_conv_valid_multi_impl() {
                 return forced;
 
             case conv_multi_impl::BLAS_VEC:
-                if (!vec_enabled || !vectorize_impl) {
+                if (!impl::vec::conv2_possible<vector_mode, I, K, C>) {
                     std::cerr << "Forced selection to BLAS_VEC conv_valid_multi implementation, but not possible for this expression" << std::endl;
                     return select_default_conv_valid_multi<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }
@@ -870,7 +870,7 @@ inline etl::conv_multi_impl select_conv_valid_multi_multi_impl() {
         switch (forced) {
             //BLAS cannot always be used
             case conv_multi_impl::BLAS_MKL:
-                if (!cblas_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                if (!impl::blas::blas_conv2_possible<I, K, C>) {                                                                                               // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv_valid_multi<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
@@ -880,7 +880,7 @@ inline etl::conv_multi_impl select_conv_valid_multi_multi_impl() {
             //VEC cannot always be used
             case conv_multi_impl::BLAS_VEC:
             case conv_multi_impl::VEC:
-                if (!vec_enabled || !vectorize_impl) {
+                if (!impl::vec::conv2_possible<vector_mode, I, K, C>) {
                     std::cerr << "Forced selection to VEC conv_valid_multi_multi implementation, but not possible for this expression" << std::endl;
                     return select_default_conv_valid_multi_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }

@@ -833,7 +833,7 @@ void conv2_full_flipped(I&& a, K&& b, C&& c) {
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename I, typename KK, typename C>
+template <typename I, typename KK, typename C, cpp_enable_iff(conv2_possible<I, KK, C>)>
 void conv2_full_multi(I&& input, KK&& kernel, C&& conv) {
     using T = value_t<I>;
 
@@ -867,7 +867,7 @@ void conv2_full_multi(I&& input, KK&& kernel, C&& conv) {
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename I, typename KK, typename C>
+template <typename I, typename KK, typename C, cpp_enable_iff(conv2_possible<I, KK, C>)>
 void conv2_full_multi_flipped(I&& input, KK&& kernel, C&& conv) {
     using T = value_t<I>;
 
@@ -900,6 +900,36 @@ void conv2_full_multi_flipped(I&& input, KK&& kernel, C&& conv) {
     }
 
     conv.invalidate_gpu();
+}
+
+/*!
+ * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
+template <typename I, typename KK, typename C, cpp_disable_iff(conv2_possible<I, KK, C>)>
+void conv2_full_multi(I&& input, KK&& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+
+    cpp_unreachable("Invalid call to cufft::conv2_full_multi");
+}
+
+/*!
+ * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
+template <typename I, typename KK, typename C, cpp_disable_iff(conv2_possible<I, KK, C>)>
+void conv2_full_multi_flipped(I&& input, KK&& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+
+    cpp_unreachable("Invalid call to cufft::conv2_full_multi_flipped");
 }
 
 /*!

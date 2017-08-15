@@ -1218,7 +1218,7 @@ void conv2_full_flipped(I&& a, K&& b, C&& c) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<I, K, C>)>
 void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
     using T = value_t<I>;
 
@@ -1296,7 +1296,7 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<I, K, C>)>
 void conv2_full_multi_flipped(I&& input, K&& kernel, C&& conv) {
     using T = value_t<I>;
 
@@ -1309,6 +1309,36 @@ void conv2_full_multi_flipped(I&& input, K&& kernel, C&& conv) {
     prepared_k.deep_fflip_inplace();
 
     conv2_full_multi(input, prepared_k, conv);
+}
+
+/*!
+ * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<I, K, C>)>
+void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+
+    cpp_unreachable("Invalid call to blas::conv2_full_multi");
+}
+
+/*!
+ * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<I, K, C>)>
+void conv2_full_multi_flipped(I&& input, K&& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+
+    cpp_unreachable("Invalid call to blas::conv2_full_multi_flipped");
 }
 
 /*!

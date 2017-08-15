@@ -95,7 +95,7 @@ struct conv_2d_same_multi_expr : base_temporary_expr_bin<conv_2d_same_multi_expr
             return etl::conv_multi_impl::STD;
         }
 
-        if (vec_enabled && vectorize_impl) {
+        if (impl::vec::conv2_possible<vector_mode, A, B, C>) {
             return etl::conv_multi_impl::VEC;
         }
 
@@ -117,7 +117,7 @@ struct conv_2d_same_multi_expr : base_temporary_expr_bin<conv_2d_same_multi_expr
             switch (forced) {
                 //VEC cannot always be used
                 case conv_multi_impl::VEC:
-                    if (!vec_enabled || !vectorize_impl) {
+                    if (!impl::vec::conv2_possible<vector_mode, A, B, C>) {
                         std::cerr << "Forced selection to VEC conv2_same_multi implementation, but not possible for this expression" << std::endl;
                         return default_impl;
                     }

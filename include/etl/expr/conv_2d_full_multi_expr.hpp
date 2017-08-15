@@ -95,7 +95,7 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
             return etl::conv_multi_impl::STD;
         }
 
-        if (vectorize_impl && vec_enabled) {
+        if (impl::vec::conv2_possible<vector_mode, A, B, C>) {
             return etl::conv_multi_impl::VEC;
         }
 
@@ -124,7 +124,7 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
 
                 //VEC cannot always be used
                 case conv_multi_impl::VEC:
-                    if (!vec_enabled || !vectorize_impl) {
+                    if (!impl::vec::conv2_possible<vector_mode, A, B, C>) {
                         std::cerr << "Forced selection to VEC conv2_full_multi implementation, but not possible for this expression" << std::endl;
                         return select_default_impl<C>();                                                                   // COVERAGE_EXCLUDE_LINE
                     }

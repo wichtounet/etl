@@ -231,7 +231,7 @@ void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
  * \param p1 The first dimension padding (left and right)
  * \param p2 The second dimension padding (top and bottom)
  */
-template <typename I, typename KK, typename C>
+template <typename I, typename KK, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, KK, C>)>
 void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
@@ -310,7 +310,7 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
  * \param p1 The first dimension padding (left and right)
  * \param p2 The second dimension padding (top and bottom)
  */
-template <typename I, typename KK, typename C>
+template <typename I, typename KK, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, KK, C>)>
 void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
@@ -557,6 +557,52 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
     }
 
     conv.invalidate_gpu();
+}
+
+/*!
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ */
+template <typename I, typename KK, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, KK, C>)>
+void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::conv2_valid_multi");
+}
+
+/*!
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ */
+template <typename I, typename KK, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, KK, C>)>
+void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::conv2_valid_multi_flipped");
 }
 
 } //end of namespace vec

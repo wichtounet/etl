@@ -222,7 +222,7 @@ void conv2_same(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K, C>)>
 void conv2_same_multi(const I& input, const K& kernel, C&& conv) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
@@ -245,7 +245,7 @@ void conv2_same_multi(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K, C>)>
 void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
@@ -259,6 +259,38 @@ void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
     };
 
     engine_dispatch_1d(batch_fun_k, 0, Kn, 2UL);
+}
+
+/*!
+ * \brief VEC implementation of a 2D 'same' convolution C = I * K, with multiple kernels, with kernels flipped.
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K, C>)>
+void conv2_same_multi(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+
+    cpp_unreachable("Invalid call to vec::conv2_same_multi");
+}
+
+/*!
+ * \brief VEC implementation of a 2D 'same' convolution C = I * K, with multiple kernels, with kernels flipped.
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K, C>)>
+void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+
+    cpp_unreachable("Invalid call to vec::conv2_same_multi_flipped");
 }
 
 } //end of namespace vec
