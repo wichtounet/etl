@@ -40,13 +40,27 @@ struct complex {
      * \param im The imaginary part
      */
     constexpr complex(const T& re = T(), const T& im = T())
-            : real(re), imag(im) {}
+            : real(re), imag(im) {
+        // Nothing else to init
+    }
 
     /*!
      * \brief Construct a complex number by copy
      * \param rhs The complex to copy from
      */
     constexpr complex(const complex& rhs) = default;
+
+    /*!
+     * \brief Construct a complex number by copy from another complex with
+     * different inner type.
+     *
+     * \param rhs The complex to copy from
+     */
+    template <typename X>
+    constexpr complex(const complex<X>& rhs)
+            : real(rhs.real), imag(rhs.imag) {
+        // Nothing else to init
+    }
 
     /*!
      * \brief Assign a real part to the complex number
