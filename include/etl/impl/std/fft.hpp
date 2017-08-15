@@ -1221,7 +1221,9 @@ void conv2_full_multi_flipped_fft(II&& input, KK&& kernel, CC&& conv) {
  */
 template <typename II, typename KK, typename CC>
 void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
-    using T = value_t<II>;
+    using T1 = value_t<II>;
+    using T2 = value_t<KK>;
+    using T3 = value_t<CC>;
 
     if (etl::dim<1>(kernel) > 0) {
         input.ensure_cpu_up_to_date();
@@ -1255,11 +1257,11 @@ void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
                 SERIAL_SECTION {
                     for (size_t i = first; i < last; ++i) {
                         for (size_t k = 0; k < etl::dim<0>(kernel); ++k) {
-                            const T* a = input.memory_start() + i * input_i_inc + k * input_k_inc; //input(i)(k)
+                            const auto* a = input.memory_start() + i * input_i_inc + k * input_k_inc; //input(i)(k)
 
-                            dyn_matrix<etl::complex<T>, 2> a_padded(s1, s2);
-                            dyn_matrix<etl::complex<T>, 2> b_padded(s1, s2);
-                            dyn_matrix<etl::complex<T>, 2> tmp(s1, s2);
+                            dyn_matrix<etl::complex<T1>, 2> a_padded(s1, s2);
+                            dyn_matrix<etl::complex<T2>, 2> b_padded(s1, s2);
+                            dyn_matrix<etl::complex<T1>, 2> tmp(s1, s2);
 
                             a_padded = 0;
 
@@ -1274,8 +1276,8 @@ void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
                             a_padded.transpose_inplace();
 
                             for (size_t c = 0; c < etl::dim<1>(kernel); ++c) {
-                                const T* b = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc; //kernel(k)(c)
-                                T* cc      = conv.memory_start() + i * conv_i_inc + c * conv_c_inc;       //conv(i)(c)
+                                const auto* b = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc; //kernel(k)(c)
+                                auto* cc      = conv.memory_start() + i * conv_i_inc + c * conv_c_inc;       //conv(i)(c)
 
                                 // 0. Pad a and b to the size of cc
 
@@ -1312,7 +1314,7 @@ void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
                                 // 4. Keep only the real part of the inverse FFT
 
                                 for (size_t i = 0; i < n; ++i) {
-                                    cc[i] += tmp[i].real / T(n);
+                                    cc[i] += tmp[i].real / T3(n);
                                 }
                             }
                         }
