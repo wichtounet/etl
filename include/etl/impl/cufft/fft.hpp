@@ -57,6 +57,21 @@ constexpr bool fft2_possible =
             &&  all_dma<A, B>;
 
 /*!
+ * \brief Traits indicating if 1D Convolution with CUFFT is
+ * possible for the given configuration.
+ *
+ * \param I The type of the input matrix
+ * \param K The type of the kernel matrix
+ * \param C The type of the output matrix
+ */
+template <typename I, typename K, typename C>
+constexpr bool conv1_possible =
+                cufft_enabled
+            &&  all_homogeneous<I, K, C>
+            &&  all_floating<I, K, C>
+            &&  all_dma<I, K, C>;
+
+/*!
  * \brief Traits indicating if 2D Convolution with CUFFT is
  * possible for the given configuration.
  *
@@ -68,6 +83,7 @@ template <typename I, typename K, typename C>
 constexpr bool conv2_possible =
                 cufft_enabled
             &&  all_homogeneous<I, K, C>
+            &&  all_floating<I, K, C>
             &&  all_row_major<I, K, C>
             &&  all_dma<I, K, C>;
 

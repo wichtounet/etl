@@ -39,29 +39,21 @@ namespace detail {
  * \return the implementation to be used
  */
 template <conv_type TT, typename I, typename K, typename C>
-inline etl::conv_impl select_default_conv1_impl_new() {
+constexpr etl::conv_impl select_default_conv1_impl_new() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr bool floating = all_floating<I, K, C>;
-
-    //Only the standard implementation is able to handle column major
-    if  /*constexpr*/ (!all_row_major<I, K, C>) {
-        return etl::conv_impl::STD;
+    if(TT == conv_type::FULL){
+        if(impl::cufft::conv1_possible<I, K, C>){
+            //TODO This should only be done for some sizes
+            return etl::conv_impl::FFT_CUFFT;
+        } else if(impl::blas::conv1_possible<I, K, C>){
+            //TODO This should only be done for some sizes
+            return etl::conv_impl::FFT_MKL;
+        }
     }
 
-    // Only the standar dimplementation is able to handle heterogeneous types
-    if /*constexpr*/ (!all_homogeneous<I, K, C>) {
-        return etl::conv_impl::STD;
-    }
-
-    if(cufft_enabled && TT == conv_type::FULL && floating){
-        //TODO This should only be done for some sizes
-        return etl::conv_impl::FFT_CUFFT;
-    } else if(impl::blas::conv2_possible<I, K, C> && TT == conv_type::FULL && floating){
-        //TODO This should only be done for some sizes
-        return etl::conv_impl::FFT_MKL;
-    } else if (impl::vec::conv1_possible<vector_mode, I, K, C>) {
+    if (impl::vec::conv1_possible<vector_mode, I, K, C>) {
         return etl::conv_impl::VEC;
     } else {
         return etl::conv_impl::STD;
@@ -83,13 +75,10 @@ inline etl::conv_impl select_conv1_impl_new() {
     if (local_context().conv_selector.forced) {
         auto forced = local_context().conv_selector.impl;
 
-        static constexpr bool floating    = all_floating<I, K, C>;
-        static constexpr bool homogeneous = all_homogeneous<I, K, C>;
-
         switch (forced) {
             //MKL cannot always be used
             case conv_impl::FFT_MKL:
-                if (!impl::blas::conv2_possible<I, K, C> || !floating || !homogeneous) {
+                if (!impl::blas::conv1_possible<I, K, C>) {
                     std::cerr << "Forced selection to MKL fft_conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
@@ -98,7 +87,7 @@ inline etl::conv_impl select_conv1_impl_new() {
 
             //CUFFT cannot always be used
             case conv_impl::FFT_CUFFT:
-                if (!cufft_enabled || !floating || !homogeneous) {
+                if (!impl::cufft::conv1_possible<I, K, C>) {
                     std::cerr << "Forced selection to CUFFT fft_conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
