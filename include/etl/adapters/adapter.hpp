@@ -249,6 +249,22 @@ public:
         return value.alias(rhs);
     }
 
+    /*!
+     * \brief Return a GPU computed version of this expression
+     * \return a GPU-computed ETL expression for this expression
+     */
+    auto& gpu_compute(){
+        return value;
+    }
+
+    /*!
+     * \brief Return a GPU computed version of this expression
+     * \return a GPU-computed ETL expression for this expression
+     */
+    const auto& gpu_compute() const {
+        return value;
+    }
+
     // Assignment functions
 
     /*!
