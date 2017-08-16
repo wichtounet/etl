@@ -674,6 +674,7 @@ struct etl_traits<T, std::enable_if_t<
     static constexpr bool is_padded               = false;                                           ///< Indicates if the expression is padded
     static constexpr bool is_aligned              = false;                                           ///< Indicates if the expression is padded
     static constexpr bool is_temporary = etl_traits<sub_expr_t>::is_temporary; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
     /*!
@@ -755,6 +756,7 @@ struct etl_traits<T, std::enable_if_t<
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_temporary = etl_traits<sub_expr_t>::is_temporary; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
     /*!

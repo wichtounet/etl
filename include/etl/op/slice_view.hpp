@@ -737,6 +737,7 @@ struct etl_traits<etl::slice_view<T>> {
     static constexpr bool is_padded               = false;                               ///< Indicates if the expression is padded
     static constexpr bool is_aligned              = false;                               ///< Indicates if the expression is padded
     static constexpr bool is_temporary = sub_traits::is_temporary; ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order          = sub_traits::storage_order;           ///< The expression's storage order
 
     /*!

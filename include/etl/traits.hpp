@@ -762,6 +762,24 @@ template <typename... E>
 constexpr bool all_padded = and_v<(decay_traits<E>::is_padded)...>;
 
 /*!
+ * \brief Traits indicating if the given ETL expression's type is computable
+ * on GPU.
+ *
+ * \tparam T The type to test
+ */
+template <typename T>
+constexpr bool is_gpu_computable = decay_traits<T>::gpu_computable;
+
+/*!
+ * \brief Traits indicating if all the given ETL expresion types are computable
+ * on GPU.
+ *
+ * \tparam E The ETL expression types.
+ */
+template <typename... E>
+constexpr bool all_gpu_computatble = and_v<(decay_traits<E>::gpu_computable)...>;
+
+/*!
  * \brief Traits to test if all the given ETL expresion types are padded.
  * \tparam E The ETL expression types.
  */
@@ -963,20 +981,21 @@ template <typename T>
 struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>>> {
     using value_type = typename T::value_type; ///< The value type of the expression
 
-    static constexpr bool is_etl          = true;                                                        ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer  = false;                                                       ///< Indicates if the type is a transformer
-    static constexpr bool is_view         = false;                                                       ///< Indicates if the type is a view
-    static constexpr bool is_magic_view   = false;                                                       ///< Indicates if the type is a magic view
-    static constexpr bool is_fast         = is_fast_matrix<T> || is_custom_fast_matrix<T>; ///< Indicates if the expression is fast
-    static constexpr bool is_value        = true;                                                        ///< Indicates if the expression is of value type
-    static constexpr bool is_direct       = !is_sparse_matrix<T>;                                 ///< Indicates if the expression has direct memory access
-    static constexpr bool is_thread_safe  = true;                                                        ///< Indicates if the expression is thread safe
-    static constexpr bool is_linear       = true;                                                        ///< Indicates if the expression is linear
-    static constexpr bool is_generator    = false;                                                       ///< Indicates if the expression is a generator expression
-    static constexpr bool is_temporary = false;                                                       ///< Indicates if the expression needs an evaluator visitor
-    static constexpr bool is_padded       = is_padded_value<T>;                                   ///< Indicates if the expression is padded
-    static constexpr bool is_aligned      = is_aligned_value<T>;                                  ///< Indicates if the expression is aligned
-    static constexpr order storage_order  = T::storage_order;                                            ///< The expression storage order
+    static constexpr bool is_etl         = true;                                          ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                                         ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                         ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                         ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = is_fast_matrix<T> || is_custom_fast_matrix<T>; ///< Indicates if the expression is fast
+    static constexpr bool is_value       = true;                                          ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = !is_sparse_matrix<T>;                          ///< Indicates if the expression has direct memory access
+    static constexpr bool is_thread_safe = true;                                          ///< Indicates if the expression is thread safe
+    static constexpr bool is_linear      = true;                                          ///< Indicates if the expression is linear
+    static constexpr bool is_generator   = false;                                         ///< Indicates if the expression is a generator expression
+    static constexpr bool is_temporary   = false;                                         ///< Indicates if the expression needs an evaluator visitor
+    static constexpr bool is_padded      = is_padded_value<T>;                            ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = is_aligned_value<T>;                           ///< Indicates if the expression is aligned
+    static constexpr order storage_order = T::storage_order;                              ///< The expression storage order
+    static constexpr bool gpu_computable = true;                                          ///< Indicates if the expression can be computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

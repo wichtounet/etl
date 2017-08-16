@@ -244,6 +244,7 @@ struct etl_traits<etl::magic_view<V>> {
     static constexpr bool is_temporary = false;           ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr bool is_padded               = false;           ///< Indicates if the expression is padded
     static constexpr bool is_aligned              = false;           ///< Indicates if the expression is padded
+    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order          = order::RowMajor; ///< The expression's storage order
 
     /*!
@@ -304,6 +305,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
     static constexpr bool is_temporary = false;           ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr bool is_padded               = false;           ///< Indicates if the expression is padded
     static constexpr bool is_aligned              = false;           ///< Indicates if the expression is padded
+    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order          = order::RowMajor; ///< The expression's storage order
 
     /*!

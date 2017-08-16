@@ -295,20 +295,21 @@ struct etl_traits<etl::gemv_expr<A, B>> {
     using right_traits = etl_traits<right_expr_t>;   ///< The right sub traits
     using value_type   = value_t<A>;                 ///< The value type of the expression
 
-    static constexpr bool is_etl                  = true;                                          ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer          = false;                                         ///< Indicates if the type is a transformer
-    static constexpr bool is_view                 = false;                                         ///< Indicates if the type is a view
-    static constexpr bool is_magic_view           = false;                                         ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = left_traits::is_fast && right_traits::is_fast; ///< Indicates if the expression is fast
-    static constexpr bool is_linear               = false;                                          ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe          = true;                                          ///< Indicates if the expression is thread safe
-    static constexpr bool is_value                = false;                                         ///< Indicates if the expression is of value type
-    static constexpr bool is_direct               = true;                                          ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator            = false;                                         ///< Indicates if the expression is a generator
-    static constexpr bool is_padded               = false;                                         ///< Indicates if the expression is padded
-    static constexpr bool is_aligned              = true;                                          ///< Indicates if the expression is padded
-    static constexpr bool is_temporary = true;                                          ///< Indicates if the expression needs a evaluator visitor
-    static constexpr order storage_order          = left_traits::storage_order;                     ///< The expression's storage order
+    static constexpr bool is_etl         = true;                                          ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                                         ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                         ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                         ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = left_traits::is_fast && right_traits::is_fast; ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                         ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = true;                                          ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                         ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = true;                                          ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                         ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                                         ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = true;                                          ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = true;                                          ///< Indicates if the expression needs a evaluator visitor
+    static constexpr order storage_order = left_traits::storage_order;                    ///< The expression's storage order
+    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

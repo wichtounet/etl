@@ -1240,6 +1240,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     static constexpr bool is_padded      = is_linear && sub_traits::is_padded;                                 ///< Indicates if the expression is padded
     static constexpr bool is_aligned     = is_linear && sub_traits::is_aligned;                                ///< Indicates if the expression is padded
     static constexpr order storage_order = sub_traits::storage_order;                                          ///< The expression storage order
+    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

@@ -132,6 +132,7 @@ struct etl_traits<etl::fft_expr<A, T, Impl>> {
     static constexpr bool is_padded               = false;                     ///< Indicates if the expression is padded
     static constexpr bool is_aligned              = true;                      ///< Indicates if the expression is padded
     static constexpr bool is_temporary = true;                      ///< Indicates if the expression needs a evaluator visitor
+    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order          = sub_traits::storage_order; ///< The expression's storage order
 
     /*!
