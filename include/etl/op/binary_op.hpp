@@ -18,11 +18,14 @@
 #include "etl/math.hpp"
 
 #ifdef ETL_CUBLAS_MODE
-
 #include "etl/impl/cublas/cuda.hpp"
 #include "etl/impl/cublas/cublas.hpp"
 #include "etl/impl/cublas/axpy.hpp"
+#endif
 
+#ifdef ETL_EGBLAS_MODE
+#include "etl/impl/egblas/axmy.hpp"
+#include "etl/impl/egblas/axdy.hpp"
 #endif
 
 namespace etl {
@@ -218,6 +221,18 @@ struct mul_binary_op {
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
+#ifdef EGBLAS_HAS_SAXMY
+    static constexpr bool gpu_computable_s = true;
+#else
+    static constexpr bool gpu_computable_s = false;
+#endif
+
+#ifdef EGBLAS_HAS_DAXMY
+    static constexpr bool gpu_computable_d = true;
+#else
+    static constexpr bool gpu_computable_d = false;
+#endif
+
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
@@ -226,10 +241,16 @@ struct mul_binary_op {
     template <vector_mode_t V>
     static constexpr bool vectorizable = V == vector_mode_t::AVX512 ? !is_complex_t<T> : true;
 
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
-    static constexpr bool linear    = true;  ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func = false; ///< Indicates if the description must be printed as function
+    /*!
+     * \brief Indicates if the operator can be computd on GPU
+     */
+    static constexpr bool gpu_computable =
+            egblas_enabled
+        &&  ((is_single_precision_t<T> && gpu_computable_s) || (is_double_precision_t<T> && gpu_computable_d));
+
+    static constexpr bool linear         = true;                               ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe    = true;                               ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func      = false;                              ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -253,6 +274,39 @@ struct mul_binary_op {
         return V::mul(lhs, rhs);
     }
 
+#ifdef ETL_EGBLAS_MODE
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R>
+    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+        decltype(auto) t1 = lhs.gpu_compute();
+        decltype(auto) t2 = rhs.gpu_compute();
+
+        t1.ensure_gpu_up_to_date();
+        t2.ensure_gpu_up_to_date();
+
+        auto t3 = force_temporary(t1);
+        t3.ensure_gpu_up_to_date();
+
+        value_t<L> alpha(1);
+
+        impl::egblas::axmy(size(lhs), &alpha, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
+
+        t3.validate_gpu();
+        t3.invalidate_cpu();
+
+        return t3;
+    }
+
+#endif
+
     /*!
      * \brief Returns a textual representation of the operator
      * \return a string representing the operator
@@ -273,6 +327,18 @@ struct div_binary_op {
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
+#ifdef EGBLAS_HAS_SAXDY
+    static constexpr bool gpu_computable_s = true;
+#else
+    static constexpr bool gpu_computable_s = false;
+#endif
+
+#ifdef EGBLAS_HAS_DAXDY
+    static constexpr bool gpu_computable_d = true;
+#else
+    static constexpr bool gpu_computable_d = false;
+#endif
+
     /*!
      * \brief Indicates if the expression is vectorizable using the given vector mode
      * \tparam V The vector mode
@@ -282,10 +348,16 @@ struct div_binary_op {
     template <vector_mode_t V>
     static constexpr bool vectorizable = is_floating_t<T> || (is_complex_t<T> && V != vector_mode_t::AVX512);
 
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
-    static constexpr bool linear    = true;  ///< Indicates if the operator is linear or not
+    /*!
+     * \brief Indicates if the operator can be computd on GPU
+     */
+    static constexpr bool gpu_computable =
+            egblas_enabled
+        &&  ((is_single_precision_t<T> && gpu_computable_s) || (is_double_precision_t<T> && gpu_computable_d));
+
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func = false; ///< Indicates if the description must be printed as function
+    static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -308,6 +380,39 @@ struct div_binary_op {
     static vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         return V::div(lhs, rhs);
     }
+
+#ifdef ETL_EGBLAS_MODE
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R>
+    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+        decltype(auto) t1 = lhs.gpu_compute();
+        decltype(auto) t2 = rhs.gpu_compute();
+
+        t1.ensure_gpu_up_to_date();
+        t2.ensure_gpu_up_to_date();
+
+        auto t3 = force_temporary(t1);
+        t3.ensure_gpu_up_to_date();
+
+        value_t<L> alpha(1);
+
+        impl::egblas::axdy(size(lhs), &alpha, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
+
+        t3.validate_gpu();
+        t3.invalidate_cpu();
+
+        return t3;
+    }
+
+#endif
 
     /*!
      * \brief Returns a textual representation of the operator
