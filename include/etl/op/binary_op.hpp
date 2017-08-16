@@ -17,6 +17,13 @@
 
 #include "etl/math.hpp"
 
+#ifdef ETL_CUBLAS_MODE
+
+#include "etl/impl/cublas/cuda.hpp"
+#include "etl/impl/cublas/cublas.hpp"
+
+#endif
+
 namespace etl {
 
 /*!
@@ -38,10 +45,10 @@ struct plus_binary_op {
     template <vector_mode_t V>
     static constexpr bool vectorizable = true;
 
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
-    static constexpr bool linear         = true;  ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe    = true;  ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func      = false; ///< Indicates if the description must be printed as function
+    static constexpr bool gpu_computable = cublas_enabled; ///< Indicates if the operator can be computed on GPU
+    static constexpr bool linear         = true;           ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe    = true;           ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func      = false;          ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -52,6 +59,41 @@ struct plus_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs + rhs;
     }
+
+#ifdef ETL_CUBLAS_MODE
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R>
+    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+        decltype(auto) t1 = lhs.gpu_compute();
+        decltype(auto) t2 = rhs.gpu_compute();
+
+        t1.ensure_gpu_up_to_date();
+        t2.ensure_gpu_up_to_date();
+
+        auto t3 = force_temporary(t2);
+        t3.ensure_gpu_up_to_date();
+
+        decltype(auto) handle = impl::cublas::start_cublas();
+
+        value_t<L> alpha(1);
+
+        cublasSaxpy(handle.get(), size(lhs), &alpha, t1.gpu_memory(), 1, t3.gpu_memory(), 1);
+
+        t3.validate_gpu();
+        t3.invalidate_cpu();
+
+        return t3;
+    }
+
+#endif
 
     /*!
      * \brief Compute several applications of the operator at a time

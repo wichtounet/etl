@@ -185,6 +185,14 @@ public:
         return etl::slice(*this, first, last);
     }
 
+    /*!
+     * \brief Return a GPU computed version of this expression
+     * \return a GPU-computed ETL expression for this expression
+     */
+    decltype(auto) gpu_compute() const {
+        return BinaryOp::gpu_compute(lhs, rhs);
+    }
+
     // Assignment functions
 
     /*!
