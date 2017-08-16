@@ -318,7 +318,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
     static constexpr bool is_temporary   = left_traits::is_temporary || right_traits::is_temporary;                              ///< Indicates if the expression needs an evaluator visitor
     static constexpr bool is_padded      = is_linear && left_traits::is_padded && right_traits::is_padded;                       ///< Indicates if the expression is padded
     static constexpr bool is_aligned     = is_linear && left_traits::is_aligned && right_traits::is_aligned;                     ///< Indicates if the expression is padded
-    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
+    static constexpr bool gpu_computable = false;                                                                                ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order = left_traits::is_generator ? right_traits::storage_order : left_traits::storage_order; ///< The expression storage order
 
     /*!
