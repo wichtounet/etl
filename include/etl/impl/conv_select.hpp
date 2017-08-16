@@ -124,13 +124,13 @@ inline etl::conv_impl select_conv1_impl_new() {
  * \return the implementation to be used
  */
 template <conv_type TT, typename I, typename K, typename C>
-inline etl::conv_impl select_default_conv2_impl_new() {
+constexpr etl::conv_impl select_default_conv2_impl_new() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr order input_order  = decay_traits<I>::storage_order;
-    static constexpr order kernel_order = decay_traits<K>::storage_order;
-    static constexpr order output_order = decay_traits<C>::storage_order;
+    constexpr order input_order  = decay_traits<I>::storage_order;
+    constexpr order kernel_order = decay_traits<K>::storage_order;
+    constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
@@ -228,13 +228,13 @@ inline etl::conv_impl select_conv2_impl_new() {
  * \return the implementation to be used
  */
 template <conv_type TT, typename I, typename K, typename C>
-inline etl::conv_impl select_default_conv_impl() {
+constexpr etl::conv_impl select_default_conv_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr order input_order  = decay_traits<I>::storage_order;
-    static constexpr order kernel_order = decay_traits<K>::storage_order;
-    static constexpr order output_order = decay_traits<C>::storage_order;
+    constexpr order input_order  = decay_traits<I>::storage_order;
+    constexpr order kernel_order = decay_traits<K>::storage_order;
+    constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
@@ -323,13 +323,13 @@ inline etl::conv_impl select_conv_impl() {
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv4_impl select_default_conv4_valid_impl(size_t i1, size_t i2, size_t k1, size_t k2) {
+constexpr etl::conv4_impl select_default_conv4_valid_impl(size_t i1, size_t i2, size_t k1, size_t k2) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr order input_order  = decay_traits<I>::storage_order;
-    static constexpr order kernel_order = decay_traits<K>::storage_order;
-    static constexpr order output_order = decay_traits<C>::storage_order;
+    constexpr order input_order  = decay_traits<I>::storage_order;
+    constexpr order kernel_order = decay_traits<K>::storage_order;
+    constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
@@ -422,13 +422,13 @@ inline etl::conv4_impl select_conv4_valid_impl(size_t i1, size_t i2, size_t k1, 
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv4_impl select_default_conv4_valid_filter_impl(size_t i1, size_t i2, size_t k1, size_t k2) {
+constexpr etl::conv4_impl select_default_conv4_valid_filter_impl(size_t i1, size_t i2, size_t k1, size_t k2) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr order input_order  = decay_traits<I>::storage_order;
-    static constexpr order kernel_order = decay_traits<K>::storage_order;
-    static constexpr order output_order = decay_traits<C>::storage_order;
+    constexpr order input_order  = decay_traits<I>::storage_order;
+    constexpr order kernel_order = decay_traits<K>::storage_order;
+    constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
@@ -508,13 +508,13 @@ inline etl::conv4_impl select_conv4_valid_filter_impl(size_t i1, size_t i2, size
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv4_impl select_default_conv4_valid_back_impl(size_t i1, size_t i2, size_t k1, size_t k2) {
+constexpr etl::conv4_impl select_default_conv4_valid_back_impl(size_t i1, size_t i2, size_t k1, size_t k2) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr order input_order  = decay_traits<I>::storage_order;
-    static constexpr order kernel_order = decay_traits<K>::storage_order;
-    static constexpr order output_order = decay_traits<C>::storage_order;
+    constexpr order input_order  = decay_traits<I>::storage_order;
+    constexpr order kernel_order = decay_traits<K>::storage_order;
+    constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
@@ -597,13 +597,13 @@ inline etl::conv4_impl select_conv4_valid_back_impl(size_t i1, size_t i2, size_t
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv4_impl select_default_conv4_full_impl(size_t k1, size_t k2) {
+constexpr etl::conv4_impl select_default_conv4_full_impl(size_t k1, size_t k2) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr order input_order  = decay_traits<I>::storage_order;
-    static constexpr order kernel_order = decay_traits<K>::storage_order;
-    static constexpr order output_order = decay_traits<C>::storage_order;
+    constexpr order input_order  = decay_traits<I>::storage_order;
+    constexpr order kernel_order = decay_traits<K>::storage_order;
+    constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
@@ -707,13 +707,13 @@ inline etl::conv4_impl select_conv4_full_impl(size_t k1, size_t k2) {
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv_multi_impl select_default_conv_valid_multi() {
+constexpr etl::conv_multi_impl select_default_conv_valid_multi() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr order input_order  = decay_traits<I>::storage_order;
-    static constexpr order kernel_order = decay_traits<K>::storage_order;
-    static constexpr order output_order = decay_traits<C>::storage_order;
+    constexpr order input_order  = decay_traits<I>::storage_order;
+    constexpr order kernel_order = decay_traits<K>::storage_order;
+    constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
@@ -750,13 +750,13 @@ inline etl::conv_multi_impl select_default_conv_valid_multi() {
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv_multi_impl select_default_conv_valid_multi_multi_impl() {
+constexpr etl::conv_multi_impl select_default_conv_valid_multi_multi_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr order input_order  = decay_traits<I>::storage_order;
-    static constexpr order kernel_order = decay_traits<K>::storage_order;
-    static constexpr order output_order = decay_traits<C>::storage_order;
+    constexpr order input_order  = decay_traits<I>::storage_order;
+    constexpr order kernel_order = decay_traits<K>::storage_order;
+    constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
