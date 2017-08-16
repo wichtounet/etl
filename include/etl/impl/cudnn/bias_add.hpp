@@ -125,7 +125,7 @@ void bias_add_2d(I&& x, K&& b, C&& y) {
         decltype(auto) handle = etl::impl::cublas::start_cublas();
 
         for (size_t i = 0; i < etl::dim<0>(x); ++i) {
-            cublas_axpy(handle.get(), etl::dim<1>(y), alpha, b.gpu_memory(), 1, y.gpu_memory() + i * etl::dim<1>(y), 1);
+            impl::cublas::cublas_axpy(handle.get(), etl::dim<1>(y), alpha, b.gpu_memory(), 1, y.gpu_memory() + i * etl::dim<1>(y), 1);
         }
     }
 
