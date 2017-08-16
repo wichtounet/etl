@@ -75,7 +75,7 @@ constexpr bool fast_assign = all_dma<E, R>;
  * \brief Integral constant indicating if a GPU assign is possible
  */
 template <typename E, typename R>
-constexpr bool gpu_assign = !fast_assign<E, R> && all_gpu_computable<E, R> && has_direct_access<R>;
+constexpr bool gpu_assign = !fast_assign<E, R> && all_gpu_computable<E, R> && has_direct_access<R> && !is_scalar<E>;
 
 /*!
  * \brief Integral constant indicating if a vectorized assign is possible
