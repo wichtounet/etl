@@ -141,8 +141,8 @@ void expr() {
         E = 1e-4 >> etl::sequence_generator<float>(1.0);
 
         for (size_t i = 0; i < 10; ++i) {
-            A = A + B + C + D;
-            E = A - D + C;
+            A = A / B + C >> D;
+            E = A - D * C;
         }
     }
 
