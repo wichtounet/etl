@@ -290,11 +290,11 @@ public:
 /*!
  * \brief Specialization for binary_expr.
  */
-template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
-    using expr_t       = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>; ///< The type of the expression
-    using left_expr_t  = std::decay_t<LeftExpr>;                             ///< The type of the left expression
-    using right_expr_t = std::decay_t<RightExpr>;                            ///< The type of the right expression
+template <typename T, typename LE, typename BinaryOp, typename RE>
+struct etl_traits<etl::binary_expr<T, LE, BinaryOp, RE>> {
+    using expr_t       = etl::binary_expr<T, LE, BinaryOp, RE>; ///< The type of the expression
+    using left_expr_t  = std::decay_t<LE>;                             ///< The type of the left expression
+    using right_expr_t = std::decay_t<RE>;                            ///< The type of the right expression
     using value_type   = T;                                                  ///< The value type
 
     static constexpr bool left_directed = cpp::not_u<etl_traits<left_expr_t>::is_generator>::value; ///< True if directed by the left expression, false otherwise
@@ -318,7 +318,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
     static constexpr bool is_temporary   = left_traits::is_temporary || right_traits::is_temporary;                              ///< Indicates if the expression needs an evaluator visitor
     static constexpr bool is_padded      = is_linear && left_traits::is_padded && right_traits::is_padded;                       ///< Indicates if the expression is padded
     static constexpr bool is_aligned     = is_linear && left_traits::is_aligned && right_traits::is_aligned;                     ///< Indicates if the expression is padded
-    static constexpr bool gpu_computable = false;                                                                                ///< Indicates if the expression can be computed on GPU
+    static constexpr bool gpu_computable = all_gpu_computable<LE, RE> && BinaryOp::gpu_computable;                               ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order = left_traits::is_generator ? right_traits::storage_order : left_traits::storage_order; ///< The expression storage order
 
     /*!
@@ -328,7 +328,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable =
-        all_homogeneous<LeftExpr, RightExpr>&& left_traits::template vectorizable<V>&& right_traits::template vectorizable<V>&& BinaryOp::template vectorizable<V>;
+        all_homogeneous<LE, RE>&& left_traits::template vectorizable<V>&& right_traits::template vectorizable<V>&& BinaryOp::template vectorizable<V>;
 
     /*!
      * \brief Get reference to the main sub expression

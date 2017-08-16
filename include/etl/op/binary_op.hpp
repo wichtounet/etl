@@ -38,9 +38,10 @@ struct plus_binary_op {
     template <vector_mode_t V>
     static constexpr bool vectorizable = true;
 
-    static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
+    static constexpr bool linear         = true;  ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe    = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func      = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -92,6 +93,7 @@ struct minus_binary_op {
     template <vector_mode_t V>
     static constexpr bool vectorizable = true;
 
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear    = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func = false; ///< Indicates if the description must be printed as function
@@ -146,6 +148,7 @@ struct mul_binary_op {
     template <vector_mode_t V>
     static constexpr bool vectorizable = V == vector_mode_t::AVX512 ? !is_complex_t<T> : true;
 
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear    = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func = false; ///< Indicates if the description must be printed as function
@@ -201,6 +204,7 @@ struct div_binary_op {
     template <vector_mode_t V>
     static constexpr bool vectorizable = is_floating_t<T> || (is_complex_t<T> && V != vector_mode_t::AVX512);
 
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear    = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func = false; ///< Indicates if the description must be printed as function
@@ -241,6 +245,7 @@ struct div_binary_op {
  */
 template <typename T>
 struct mod_binary_op {
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear    = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func = false; ///< Indicates if the description must be printed as function
@@ -277,6 +282,7 @@ struct mod_binary_op {
  */
 template <typename T>
 struct equal_binary_op {
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -313,6 +319,7 @@ struct equal_binary_op {
  */
 template <typename T>
 struct not_equal_binary_op {
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -349,6 +356,7 @@ struct not_equal_binary_op {
  */
 template <typename T>
 struct less_binary_op {
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -385,6 +393,7 @@ struct less_binary_op {
  */
 template <typename T>
 struct less_equal_binary_op {
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -421,6 +430,7 @@ struct less_equal_binary_op {
  */
 template <typename T>
 struct greater_binary_op {
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -457,6 +467,7 @@ struct greater_binary_op {
  */
 template <typename T>
 struct greater_equal_binary_op {
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -493,6 +504,7 @@ struct greater_equal_binary_op {
  */
 template <typename T>
 struct logical_and_binary_op {
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -529,6 +541,7 @@ struct logical_and_binary_op {
  */
 template <typename T>
 struct logical_or_binary_op {
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -565,6 +578,7 @@ struct logical_or_binary_op {
  */
 template <typename T>
 struct logical_xor_binary_op {
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -604,6 +618,7 @@ struct logical_xor_binary_op {
  */
 template <typename G, typename T, typename E>
 struct ranged_noise_binary_g_op {
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = true;  ///< Indicates if the description must be printed as function
@@ -659,6 +674,7 @@ struct ranged_noise_binary_g_op {
  */
 template <typename T, typename E>
 struct ranged_noise_binary_op {
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = true;  ///< Indicates if the description must be printed as function
@@ -709,6 +725,7 @@ struct max_binary_op {
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear    = true; ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func = true; ///< Indicates if the description must be printed as function
@@ -763,6 +780,7 @@ struct min_binary_op {
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear    = true; ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func = true; ///< Indicates if the description must be printed as function
@@ -811,6 +829,7 @@ struct min_binary_op {
  */
 template <typename T, typename E>
 struct pow_binary_op {
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear    = true; ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func = true; ///< Indicates if the description must be printed as function
@@ -847,6 +866,7 @@ struct pow_binary_op {
  */
 template <typename T, typename E>
 struct one_if_binary_op {
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear    = true; ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func = true; ///< Indicates if the description must be printed as function
