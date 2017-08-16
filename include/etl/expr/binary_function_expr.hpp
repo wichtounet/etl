@@ -172,7 +172,7 @@ struct etl_traits<etl::binary_function_expr<A, B, Impl>> {
     static constexpr bool is_transformer = false;                      ///< Indicates if the type is a transformer
     static constexpr bool is_view        = false;                      ///< Indicates if the type is a view
     static constexpr bool is_magic_view  = false;                      ///< Indicates if the type is a magic view
-    static constexpr bool is_fast        = all_fast<A, B>;      ///< Indicates if the expression is fast
+    static constexpr bool is_fast        = all_fast<A, B>;             ///< Indicates if the expression is fast
     static constexpr bool is_linear      = false;                      ///< Indicates if the expression is linear
     static constexpr bool is_thread_safe = true;                       ///< Indicates if the expression is thread safe
     static constexpr bool is_value       = false;                      ///< Indicates if the expression is of value type
@@ -181,7 +181,7 @@ struct etl_traits<etl::binary_function_expr<A, B, Impl>> {
     static constexpr bool is_padded      = false;                      ///< Indicates if the expression is padded
     static constexpr bool is_aligned     = true;                       ///< Indicates if the expression is padded
     static constexpr bool is_temporary   = true;                       ///< Indicates if the expression needs a evaluator visitor
-    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
+    static constexpr bool gpu_computable = cuda_enabled;               ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order = left_traits::storage_order; ///< The expression's storage order
 
     /*!
