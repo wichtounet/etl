@@ -55,7 +55,7 @@ struct plus_binary_op {
     static constexpr bool gpu_computable =
             ((!is_scalar<L> && !is_scalar<R>) && cublas_enabled)
         ||  (
-                    (is_scalar<L> || is_scalar<R>)
+                    (is_scalar<L> != is_scalar<R>)
                 &&  (
                             (is_single_precision_t<T> && impl::egblas::has_scalar_sadd)
                         ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dadd)
@@ -174,7 +174,7 @@ struct plus_binary_op {
         auto t3 = force_temporary(t2);
         t3.ensure_gpu_up_to_date();
 
-        impl::egblas::scalar_add(t3.gpu_memory(), size(rhs), 1, &s);
+        impl::egblas::scalar_add(t3.gpu_memory(), size(lhs), 1, &s);
 
         t3.validate_gpu();
         t3.invalidate_cpu();
