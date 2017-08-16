@@ -777,7 +777,7 @@ constexpr bool is_gpu_computable = decay_traits<T>::gpu_computable;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_gpu_computatble = and_v<(decay_traits<E>::gpu_computable)...>;
+constexpr bool all_gpu_computable = and_v<(decay_traits<E>::gpu_computable)...>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are padded.
