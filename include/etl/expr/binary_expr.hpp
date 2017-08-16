@@ -332,7 +332,7 @@ struct etl_traits<etl::binary_expr<T, LE, BinaryOp, RE>> {
      * \brief Indicates if the expression can be computed on GPU
      */
     static constexpr bool gpu_computable =
-        all_gpu_computable<LE, RE> && BinaryOp::gpu_computable && (all_floating<LE, RE> || all_complex<LE, RE>) && all_homogeneous<LE, RE>;
+        all_gpu_computable<LE, RE> && BinaryOp::template gpu_computable<LE, RE> && (all_floating<LE, RE> || all_complex<LE, RE>) && all_homogeneous<LE, RE>;
 
     template <vector_mode_t V>
     static constexpr bool vectorizable =

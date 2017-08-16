@@ -26,6 +26,7 @@
 #ifdef ETL_EGBLAS_MODE
 #include "etl/impl/egblas/axmy.hpp"
 #include "etl/impl/egblas/axdy.hpp"
+#include "etl/impl/egblas/scalar_add.hpp"
 #endif
 
 namespace etl {
@@ -35,11 +36,9 @@ namespace etl {
  */
 template <typename T>
 struct plus_binary_op {
-    /*!
-     * The vectorization type for V
-     */
-    template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    static constexpr bool linear         = true;           ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe    = true;           ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func      = false;          ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -49,10 +48,28 @@ struct plus_binary_op {
     template <vector_mode_t V>
     static constexpr bool vectorizable = true;
 
-    static constexpr bool gpu_computable = cublas_enabled; ///< Indicates if the operator can be computed on GPU
-    static constexpr bool linear         = true;           ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe    = true;           ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func      = false;          ///< Indicates if the description must be printed as function
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable =
+            ((!is_scalar<L> && !is_scalar<R>) && cublas_enabled)
+        ||  (
+                    (is_scalar<L> || is_scalar<R>)
+                &&  (
+                            (is_single_precision_t<T> && impl::egblas::has_scalar_sadd)
+                        ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dadd)
+                        ||  (is_complex_single_t<T> && impl::egblas::has_scalar_cadd)
+                        ||  (is_complex_double_t<T> && impl::egblas::has_scalar_zadd)
+                    )
+            )
+        ;
+
+    /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -86,7 +103,7 @@ struct plus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R>
+    template <typename L, typename R, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
         decltype(auto) t1 = lhs.gpu_compute();
         decltype(auto) t2 = rhs.gpu_compute();
@@ -112,6 +129,60 @@ struct plus_binary_op {
 #endif
 
     /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
+    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+        auto s = lhs.value;
+
+        decltype(auto) t2 = rhs.gpu_compute();
+
+        t2.ensure_gpu_up_to_date();
+
+        auto t3 = force_temporary(t2);
+        t3.ensure_gpu_up_to_date();
+
+        impl::egblas::scalar_add(t3.gpu_memory(), size(rhs), 1, &s);
+
+        t3.validate_gpu();
+        t3.invalidate_cpu();
+
+        return t3;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
+    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+        auto s = rhs.value;
+
+        decltype(auto) t2 = lhs.gpu_compute();
+
+        t2.ensure_gpu_up_to_date();
+
+        auto t3 = force_temporary(t2);
+        t3.ensure_gpu_up_to_date();
+
+        impl::egblas::scalar_add(t3.gpu_memory(), size(rhs), 1, &s);
+
+        t3.validate_gpu();
+        t3.invalidate_cpu();
+
+        return t3;
+    }
+
+    /*!
      * \brief Returns a textual representation of the operator
      * \return a string representing the operator
      */
@@ -125,11 +196,9 @@ struct plus_binary_op {
  */
 template <typename T>
 struct minus_binary_op {
-    /*!
-     * The vectorization type for V
-     */
-    template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    static constexpr bool linear         = true;           ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe    = true;           ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func      = false;          ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -139,10 +208,17 @@ struct minus_binary_op {
     template <vector_mode_t V>
     static constexpr bool vectorizable = true;
 
-    static constexpr bool gpu_computable = cublas_enabled; ///< Indicates if the operator can be computed on GPU
-    static constexpr bool linear         = true;           ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe    = true;           ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func      = false;          ///< Indicates if the description must be printed as function
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = (!is_scalar<L> && !is_scalar<R>) && cublas_enabled;
+
+    /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -215,11 +291,9 @@ struct minus_binary_op {
  */
 template <typename T>
 struct mul_binary_op {
-    /*!
-     * The vectorization type for V
-     */
-    template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    static constexpr bool linear         = true;                               ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe    = true;                               ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func      = false;                              ///< Indicates if the description must be printed as function
 
 #ifdef EGBLAS_HAS_SAXMY
     static constexpr bool gpu_computable_s = true;
@@ -244,13 +318,16 @@ struct mul_binary_op {
     /*!
      * \brief Indicates if the operator can be computd on GPU
      */
+    template<typename L, typename R>
     static constexpr bool gpu_computable =
-            egblas_enabled
+            (!is_scalar<L> && !is_scalar<R>)
+        &&  egblas_enabled
         &&  ((is_single_precision_t<T> && gpu_computable_s) || (is_double_precision_t<T> && gpu_computable_d));
-
-    static constexpr bool linear         = true;                               ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe    = true;                               ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func      = false;                              ///< Indicates if the description must be printed as function
+    /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -321,11 +398,9 @@ struct mul_binary_op {
  */
 template <typename T>
 struct div_binary_op {
-    /*!
-     * The vectorization type for V
-     */
-    template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
 
 #ifdef EGBLAS_HAS_SAXDY
     static constexpr bool gpu_computable_s = true;
@@ -351,13 +426,17 @@ struct div_binary_op {
     /*!
      * \brief Indicates if the operator can be computd on GPU
      */
+    template<typename L, typename R>
     static constexpr bool gpu_computable =
-            egblas_enabled
+            (!is_scalar<L> && !is_scalar<R>)
+        &&  egblas_enabled
         &&  ((is_single_precision_t<T> && gpu_computable_s) || (is_double_precision_t<T> && gpu_computable_d));
 
-    static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
+    /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -428,10 +507,9 @@ struct div_binary_op {
  */
 template <typename T>
 struct mod_binary_op {
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
-    static constexpr bool linear    = true;  ///< Indicates if the operator is linear or not
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func = false; ///< Indicates if the description must be printed as function
+    static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -440,6 +518,12 @@ struct mod_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -465,7 +549,6 @@ struct mod_binary_op {
  */
 template <typename T>
 struct equal_binary_op {
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -477,6 +560,12 @@ struct equal_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -502,7 +591,6 @@ struct equal_binary_op {
  */
 template <typename T>
 struct not_equal_binary_op {
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -514,6 +602,12 @@ struct not_equal_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -539,7 +633,6 @@ struct not_equal_binary_op {
  */
 template <typename T>
 struct less_binary_op {
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -551,6 +644,12 @@ struct less_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -576,7 +675,6 @@ struct less_binary_op {
  */
 template <typename T>
 struct less_equal_binary_op {
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -588,6 +686,12 @@ struct less_equal_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -613,7 +717,6 @@ struct less_equal_binary_op {
  */
 template <typename T>
 struct greater_binary_op {
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -625,6 +728,12 @@ struct greater_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -650,7 +759,6 @@ struct greater_binary_op {
  */
 template <typename T>
 struct greater_equal_binary_op {
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -662,6 +770,12 @@ struct greater_equal_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -687,7 +801,6 @@ struct greater_equal_binary_op {
  */
 template <typename T>
 struct logical_and_binary_op {
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -699,6 +812,12 @@ struct logical_and_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -724,7 +843,6 @@ struct logical_and_binary_op {
  */
 template <typename T>
 struct logical_or_binary_op {
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -736,6 +854,12 @@ struct logical_or_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -761,7 +885,6 @@ struct logical_or_binary_op {
  */
 template <typename T>
 struct logical_xor_binary_op {
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
@@ -773,6 +896,12 @@ struct logical_xor_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -801,10 +930,23 @@ struct logical_xor_binary_op {
  */
 template <typename G, typename T, typename E>
 struct ranged_noise_binary_g_op {
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = true;  ///< Indicates if the description must be printed as function
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
 
     G& rand_engine; ///< The random engine
 
@@ -814,14 +956,6 @@ struct ranged_noise_binary_g_op {
     ranged_noise_binary_g_op(G& rand_engine) : rand_engine(rand_engine) {
         //Nothing else to init
     }
-
-    /*!
-     * \brief Indicates if the expression is vectorizable using the
-     * given vector mode
-     * \tparam V The vector mode
-     */
-    template <vector_mode_t V>
-    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -857,7 +991,6 @@ struct ranged_noise_binary_g_op {
  */
 template <typename T, typename E>
 struct ranged_noise_binary_op {
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = true;  ///< Indicates if the description must be printed as function
@@ -869,6 +1002,12 @@ struct ranged_noise_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -902,13 +1041,6 @@ struct ranged_noise_binary_op {
  */
 template <typename T, typename E>
 struct max_binary_op {
-    /*!
-     * The vectorization type for V
-     */
-    template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
-
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear    = true; ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func = true; ///< Indicates if the description must be printed as function
@@ -920,6 +1052,18 @@ struct max_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = !is_complex_t<T>;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
+
+    /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -957,13 +1101,6 @@ struct max_binary_op {
  */
 template <typename T, typename E>
 struct min_binary_op {
-    /*!
-     * The vectorization type for V
-     */
-    template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
-
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear    = true; ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func = true; ///< Indicates if the description must be printed as function
@@ -975,6 +1112,19 @@ struct min_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = !is_complex_t<T>;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
+
+    /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
+
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -1012,10 +1162,9 @@ struct min_binary_op {
  */
 template <typename T, typename E>
 struct pow_binary_op {
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
-    static constexpr bool linear    = true; ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func = true; ///< Indicates if the description must be printed as function
+    static constexpr bool linear         = true;  ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe    = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func      = true;  ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -1024,6 +1173,12 @@ struct pow_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename L, typename R>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -1049,7 +1204,6 @@ struct pow_binary_op {
  */
 template <typename T, typename E>
 struct one_if_binary_op {
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator can be computed on GPU
     static constexpr bool linear    = true; ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func = true; ///< Indicates if the description must be printed as function
@@ -1061,6 +1215,12 @@ struct one_if_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template<typename L, typename R>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
