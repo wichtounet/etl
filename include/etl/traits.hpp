@@ -428,6 +428,13 @@ template <typename T>
 constexpr bool has_direct_access = decay_traits<T>::is_direct;
 
 /*!
+ * \brief Traits to test if a type is a scalar type
+ * \tparam T The type to test.
+ */
+template <typename T>
+constexpr bool is_scalar = cpp::is_specialization_of_v<etl::scalar, std::decay_t<T>>;
+
+/*!
  * \brief Traits to test if the given type is single precision type.
  * \tparam T The type
  */
