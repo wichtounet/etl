@@ -122,6 +122,8 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_iff(detail::gpu_assign<E, R>)>
     void assign_evaluate_impl(E&& expr, R&& result) {
+        inc_counter("gpu:assign");
+
         result.ensure_gpu_allocated();
 
         auto t1 = expr.gpu_compute();
