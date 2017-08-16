@@ -21,6 +21,7 @@
 
 #include "etl/impl/cublas/cuda.hpp"
 #include "etl/impl/cublas/cublas.hpp"
+#include "etl/impl/cublas/axpy.hpp"
 
 #endif
 
@@ -97,7 +98,7 @@ struct plus_binary_op {
 
         value_t<L> alpha(1);
 
-        cublas_check(cublasSaxpy(handle.get(), size(lhs), &alpha, t1.gpu_memory(), 1, t3.gpu_memory(), 1));
+        impl::cublas::cublas_axpy(handle.get(), size(lhs), &alpha, t1.gpu_memory(), 1, t3.gpu_memory(), 1);
 
         t3.validate_gpu();
         t3.invalidate_cpu();
@@ -187,7 +188,7 @@ struct minus_binary_op {
 
         value_t<L> alpha(-1);
 
-        cublas_check(cublasSaxpy(handle.get(), size(lhs), &alpha, t2.gpu_memory(), 1, t3.gpu_memory(), 1));
+        impl::cublas::cublas_axpy(handle.get(), size(lhs), &alpha, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
 
         t3.validate_gpu();
         t3.invalidate_cpu();
