@@ -295,18 +295,6 @@ struct mul_binary_op {
     static constexpr bool thread_safe    = true;                               ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func      = false;                              ///< Indicates if the description must be printed as function
 
-#ifdef EGBLAS_HAS_SAXMY
-    static constexpr bool gpu_computable_s = true;
-#else
-    static constexpr bool gpu_computable_s = false;
-#endif
-
-#ifdef EGBLAS_HAS_DAXMY
-    static constexpr bool gpu_computable_d = true;
-#else
-    static constexpr bool gpu_computable_d = false;
-#endif
-
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
@@ -322,7 +310,7 @@ struct mul_binary_op {
     static constexpr bool gpu_computable =
             (!is_scalar<L> && !is_scalar<R>)
         &&  egblas_enabled
-        &&  ((is_single_precision_t<T> && gpu_computable_s) || (is_double_precision_t<T> && gpu_computable_d));
+        &&  ((is_single_precision_t<T> && impl::egblas::has_saxmy) || (is_double_precision_t<T> && impl::egblas::has_daxmy));
     /*!
      * The vectorization type for V
      */
@@ -402,18 +390,6 @@ struct div_binary_op {
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
 
-#ifdef EGBLAS_HAS_SAXDY
-    static constexpr bool gpu_computable_s = true;
-#else
-    static constexpr bool gpu_computable_s = false;
-#endif
-
-#ifdef EGBLAS_HAS_DAXDY
-    static constexpr bool gpu_computable_d = true;
-#else
-    static constexpr bool gpu_computable_d = false;
-#endif
-
     /*!
      * \brief Indicates if the expression is vectorizable using the given vector mode
      * \tparam V The vector mode
@@ -430,7 +406,7 @@ struct div_binary_op {
     static constexpr bool gpu_computable =
             (!is_scalar<L> && !is_scalar<R>)
         &&  egblas_enabled
-        &&  ((is_single_precision_t<T> && gpu_computable_s) || (is_double_precision_t<T> && gpu_computable_d));
+        &&  ((is_single_precision_t<T> && impl::egblas::has_saxdy) || (is_double_precision_t<T> && impl::egblas::has_daxdy));
 
     /*!
      * The vectorization type for V

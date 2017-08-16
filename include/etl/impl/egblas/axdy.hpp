@@ -28,6 +28,8 @@ namespace egblas {
 
 #ifdef EGBLAS_HAS_SAXDY
 
+static constexpr bool has_saxdy = true;
+
 /*!
  * \brief Wrappers for single-precision egblas axdy operation
  * \param n The size of the vector
@@ -41,9 +43,15 @@ inline void axdy(size_t n, float* alpha, float* A , size_t lda, float* B , size_
     egblas_saxdy(n, *alpha, A, lda, B, ldb);
 }
 
+#else
+
+static constexpr bool has_saxdy = false;
+
 #endif
 
 #ifdef EGBLAS_HAS_DAXDY
+
+static constexpr bool has_daxdy = true;
 
 /*!
  * \brief Wrappers for double-precision egblas axdy operation
@@ -57,6 +65,10 @@ inline void axdy(size_t n, float* alpha, float* A , size_t lda, float* B , size_
 inline void axdy(size_t n, double* alpha, double* A , size_t lda, double* B , size_t ldb){
     egblas_daxdy(n, *alpha, A, lda, B, ldb);
 }
+
+#else
+
+static constexpr bool has_daxdy = false;
 
 #endif
 
