@@ -81,7 +81,7 @@ constexpr bool gpu_assign = !fast_assign<E, R> && all_gpu_computable<E, R> && ha
  * \brief Integral constant indicating if a vectorized assign is possible
  */
 template <typename E, typename R>
-constexpr bool vectorized_assign = !gpu_assign<E, R> && are_vectorizable<E, R>;
+constexpr bool vectorized_assign = !fast_assign<E, R> && !gpu_assign<E, R> && are_vectorizable<E, R>;
 
 /*!
  * \brief Integral constant indicating if a direct assign is possible
