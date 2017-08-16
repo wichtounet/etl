@@ -64,22 +64,30 @@ constexpr vector_mode_t select_vector_mode(){
 //Selectors for assign
 
 /*!
- * \brief Integral constant indicating if a fast assign is possible
+ * \brief Integral constant indicating if a fast assign is possible.
+ *
+ * A fast assign is a simple memory copy from E into R.
  */
 template <typename E, typename R>
 constexpr bool fast_assign = all_dma<E, R>;
 
 /*!
+ * \brief Integral constant indicating if a GPU assign is possible
+ */
+template <typename E, typename R>
+constexpr bool gpu_assign = !fast_assign<E, R> && all_gpu_computable<E, R>;
+
+/*!
  * \brief Integral constant indicating if a vectorized assign is possible
  */
 template <typename E, typename R>
-constexpr bool vectorized_assign = !fast_assign<E, R> && are_vectorizable<E, R>;
+constexpr bool vectorized_assign = !gpu_assign<E, R> && are_vectorizable<E, R>;
 
 /*!
  * \brief Integral constant indicating if a direct assign is possible
  */
 template <typename E, typename R>
-constexpr bool direct_assign = !are_vectorizable<E, R> && !has_direct_access<E> && has_direct_access<R>;
+constexpr bool direct_assign = !gpu_assign<E, R> && !are_vectorizable<E, R> && !has_direct_access<E> && has_direct_access<R>;
 
 /*!
  * \brief Integral constant indicating if a standard assign is necessary

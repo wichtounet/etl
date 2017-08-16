@@ -115,6 +115,23 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
+    // GPU assign version
+
+    /*!
+     * \copydoc assign_evaluate_impl
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_assign<E, R>)>
+    void assign_evaluate_impl(E&& expr, R&& result) {
+        result.ensure_gpu_allocated();
+
+        auto t1 = expr.gpu_compute();
+        result.gpu_copy_from(t1.gpu_memory());
+
+        // Validate the GPU and invalidates the CPU
+        result.validate_gpu();
+        result.invalidate_cpu();
+    }
+
     //Parallel assign version
 
 // CPP17: if constexpr here
