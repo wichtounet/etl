@@ -76,6 +76,11 @@ constexpr bool cblas_enabled = ETL_BLAS_MODE_BOOL;
 constexpr bool is_blas_parallel = ETL_BLAS_THREADS_BOOL;
 
 /*!
+ * \brief Indicates if CUDA is available.
+ */
+constexpr bool cuda_enabled = ETL_CUDA_BOOL;
+
+/*!
  * \brief Indicates if the NVIDIA CUBLAS library is available for ETL.
  */
 constexpr bool cublas_enabled = ETL_CUBLAS_MODE_BOOL;

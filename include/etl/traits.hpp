@@ -995,7 +995,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>>> {
     static constexpr bool is_padded      = is_padded_value<T>;                            ///< Indicates if the expression is padded
     static constexpr bool is_aligned     = is_aligned_value<T>;                           ///< Indicates if the expression is aligned
     static constexpr order storage_order = T::storage_order;                              ///< The expression storage order
-    static constexpr bool gpu_computable = true;                                          ///< Indicates if the expression can be computed on GPU
+    static constexpr bool gpu_computable = cuda_enabled;                                  ///< Indicates if the expression can be computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
