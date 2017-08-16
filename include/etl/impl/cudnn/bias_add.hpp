@@ -16,6 +16,7 @@
 
 #include "etl/impl/cublas/cuda.hpp"
 #include "etl/impl/cublas/cublas.hpp"
+#include "etl/impl/cublas/axpy.hpp"
 #include "etl/impl/cudnn/cudnn.hpp"
 
 #endif
@@ -76,34 +77,6 @@ void bias_add_4d(I&& x, K&& b, C&& y) {
 
     // Release the resources
     cudnn_check(cudnnDestroyTensorDescriptor(b_tensor));
-}
-
-/*!
- * \brief Wrappers for single-precision cublas axpy operation
- * \param handle The CUBLAS handle
- * \param n The size of the vector
- * \param alpha The scaling factor alpha
- * \param A The memory of the vector a
- * \param lda The leading dimension of a
- * \param B The memory of the vector b
- * \param ldb The leading dimension of b
- */
-inline void cublas_axpy(cublasHandle_t handle, size_t n, float* alpha, float* A , size_t lda, float* B , size_t ldb){
-    cublas_check(cublasSaxpy(handle, n, alpha, A, lda, B, ldb));
-}
-
-/*!
- * \brief Wrappers for double-precision cublas axpy operation
- * \param handle The CUBLAS handle
- * \param n The size of the vector
- * \param alpha The scaling factor alpha
- * \param A The memory of the vector a
- * \param lda The leading dimension of a
- * \param B The memory of the vector b
- * \param ldb The leading dimension of b
- */
-inline void cublas_axpy(cublasHandle_t handle, size_t n, double* alpha, double* A , size_t lda, double* B , size_t ldb){
-    cublas_check(cublasDaxpy(handle, n, alpha, A, lda, B, ldb));
 }
 
 /*!
