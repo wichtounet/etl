@@ -180,7 +180,7 @@ struct etl_traits<etl::conv_2d_valid_multi_expr<A, B, S1, S2, P1, P2, Flipped>> 
     static constexpr bool is_aligned      = true;                       ///< Indicates if the expression is padded
     static constexpr bool is_temporary = true;                       ///< Indicates if the expression needs a evaluator visitor
     static constexpr order storage_order  = left_traits::storage_order; ///< The expression's storage order
-    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
+    static constexpr bool gpu_computable = cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

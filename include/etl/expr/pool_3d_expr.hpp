@@ -134,7 +134,7 @@ struct etl_traits<etl::pool_3d_expr<A, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>
     static constexpr bool is_padded               = false;                     ///< Indicates if the expression is padded
     static constexpr bool is_aligned              = true;                      ///< Indicates if the expression is padded
     static constexpr bool is_temporary = true;                      ///< Indicates if the expression needs a evaluator visitor
-    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
+    static constexpr bool gpu_computable = cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order          = sub_traits::storage_order; ///< The expression's storage order
 
     /*!
