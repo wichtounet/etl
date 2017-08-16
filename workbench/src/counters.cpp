@@ -19,6 +19,8 @@
 
 #include "etl/etl.hpp"
 
+namespace {
+
 typedef std::chrono::high_resolution_clock timer_clock;
 typedef std::chrono::milliseconds milliseconds;
 
@@ -284,6 +286,8 @@ void ml() {
 
     etl::dump_counters();
 }
+
+} // end of anonymous namespace
 
 int main() {
     auto start_time = timer_clock::now();
