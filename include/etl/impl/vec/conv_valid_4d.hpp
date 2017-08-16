@@ -1342,7 +1342,7 @@ void conv4_valid_back(const I& input, const KK& kernel, CC&& conv, size_t s1, si
  * \param conv The output matrix
  */
 template <typename I, typename KK, typename CC, cpp_disable_iff(conv2_possible<vector_mode, I, KK, CC>)>
-void conv4_valid_flipped_back(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void conv4_valid_back_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
