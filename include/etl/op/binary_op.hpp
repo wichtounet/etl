@@ -97,7 +97,7 @@ struct plus_binary_op {
 
         value_t<L> alpha(1);
 
-        cublasSaxpy(handle.get(), size(lhs), &alpha, t1.gpu_memory(), 1, t3.gpu_memory(), 1);
+        cublas_check(cublasSaxpy(handle.get(), size(lhs), &alpha, t1.gpu_memory(), 1, t3.gpu_memory(), 1));
 
         t3.validate_gpu();
         t3.invalidate_cpu();
@@ -187,7 +187,7 @@ struct minus_binary_op {
 
         value_t<L> alpha(-1);
 
-        cublasSaxpy(handle.get(), size(lhs), &alpha, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
+        cublas_check(cublasSaxpy(handle.get(), size(lhs), &alpha, t2.gpu_memory(), 1, t3.gpu_memory(), 1));
 
         t3.validate_gpu();
         t3.invalidate_cpu();

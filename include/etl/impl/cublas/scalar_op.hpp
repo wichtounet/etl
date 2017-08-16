@@ -55,7 +55,7 @@ void scalar_add(T&& lhs, float rhs) {
 
 #pragma GCC diagnostic pop
 
-    cublasSaxpy(handle.get(), size(lhs), &rhs, ones.get(), 1, lhs.gpu_memory(), 1);
+    cublas_check(cublasSaxpy(handle.get(), size(lhs), &rhs, ones.get(), 1, lhs.gpu_memory(), 1));
 #endif
 
     lhs.invalidate_cpu();
@@ -81,7 +81,7 @@ void scalar_add(T&& lhs, double rhs) {
 
     ones.ensure_gpu_up_to_date();
 
-    cublasDaxpy(handle.get(), size(lhs), &rhs, ones.gpu_memory(), 1, lhs.gpu_memory(), 1);
+    cublas_check(cublasDaxpy(handle.get(), size(lhs), &rhs, ones.gpu_memory(), 1, lhs.gpu_memory(), 1));
 #endif
 
     lhs.invalidate_cpu();
@@ -126,7 +126,7 @@ void scalar_sub(T&& lhs, float rhs) {
 
 #pragma GCC diagnostic pop
 
-    cublasSaxpy(handle.get(), size(lhs), &rhs, ones.get(), 1, lhs.gpu_memory(), 1);
+    cublas_check(cublasSaxpy(handle.get(), size(lhs), &rhs, ones.get(), 1, lhs.gpu_memory(), 1));
 #endif
 
     lhs.invalidate_cpu();
@@ -152,7 +152,7 @@ void scalar_sub(T&& lhs, double rhs) {
 
     ones.ensure_gpu_up_to_date();
 
-    cublasDaxpy(handle.get(), size(lhs), &rhs, ones.gpu_memory(), 1, lhs.gpu_memory(), 1);
+    cublas_check(cublasDaxpy(handle.get(), size(lhs), &rhs, ones.gpu_memory(), 1, lhs.gpu_memory(), 1));
 #endif
 
     lhs.invalidate_cpu();
@@ -180,7 +180,7 @@ void scalar_mul(T&& lhs, float rhs) {
 
     lhs.ensure_gpu_up_to_date();
 
-    cublasSscal(handle.get(), size(lhs), &rhs, lhs.gpu_memory(), 1);
+    cublas_check(cublasSscal(handle.get(), size(lhs), &rhs, lhs.gpu_memory(), 1));
 
     lhs.invalidate_cpu();
 }
@@ -196,7 +196,7 @@ void scalar_mul(T&& lhs, double rhs) {
 
     lhs.ensure_gpu_up_to_date();
 
-    cublasDscal(handle.get(), size(lhs), &rhs, lhs.gpu_memory(), 1);
+    cublas_check(cublasDscal(handle.get(), size(lhs), &rhs, lhs.gpu_memory(), 1));
 
     lhs.invalidate_cpu();
 }
@@ -224,7 +224,7 @@ void scalar_div(T&& lhs, float rhs) {
     lhs.ensure_gpu_up_to_date();
 
     float rhs_down = 1.0f / rhs;
-    cublasSscal(handle.get(), size(lhs), &rhs_down, lhs.gpu_memory(), 1);
+    cublas_check(cublasSscal(handle.get(), size(lhs), &rhs_down, lhs.gpu_memory(), 1));
 
     lhs.invalidate_cpu();
 }
@@ -241,7 +241,7 @@ void scalar_div(T&& lhs, double rhs) {
     lhs.ensure_gpu_up_to_date();
 
     double rhs_down = 1.0 / rhs;
-    cublasDscal(handle.get(), size(lhs), &rhs_down, lhs.gpu_memory(), 1);
+    cublas_check(cublasDscal(handle.get(), size(lhs), &rhs_down, lhs.gpu_memory(), 1));
 
     lhs.invalidate_cpu();
 }

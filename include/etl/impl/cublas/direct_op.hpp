@@ -37,7 +37,7 @@ void direct_add(L&& lhs, R&& rhs) {
     decltype(auto) handle = start_cublas();
 
     float alpha = 1.0;
-    cublasSaxpy(handle.get(), size(lhs), &alpha, rhs.gpu_memory(), 1, lhs.gpu_memory(), 1);
+    cublas_check(cublasSaxpy(handle.get(), size(lhs), &alpha, rhs.gpu_memory(), 1, lhs.gpu_memory(), 1));
 
     lhs.invalidate_cpu();
 }
@@ -52,7 +52,7 @@ void direct_add(L&& lhs, R&& rhs) {
     decltype(auto) handle = start_cublas();
 
     double alpha = 1.0;
-    cublasDaxpy(handle.get(), size(lhs), &alpha, rhs.gpu_memory(), 1, lhs.gpu_memory(), 1);
+    cublas_check(cublasDaxpy(handle.get(), size(lhs), &alpha, rhs.gpu_memory(), 1, lhs.gpu_memory(), 1));
 
     lhs.invalidate_cpu();
 }
@@ -79,7 +79,7 @@ void direct_sub(L&& lhs, R&& rhs) {
     decltype(auto) handle = start_cublas();
 
     float alpha = -1.0;
-    cublasSaxpy(handle.get(), size(lhs), &alpha, rhs.gpu_memory(), 1, lhs.gpu_memory(), 1);
+    cublas_check(cublasSaxpy(handle.get(), size(lhs), &alpha, rhs.gpu_memory(), 1, lhs.gpu_memory(), 1));
 
     lhs.invalidate_cpu();
 }
@@ -94,7 +94,7 @@ void direct_sub(L&& lhs, R&& rhs) {
     decltype(auto) handle = start_cublas();
 
     double alpha = -1.0;
-    cublasDaxpy(handle.get(), size(lhs), &alpha, rhs.gpu_memory(), 1, lhs.gpu_memory(), 1);
+    cublas_check(cublasDaxpy(handle.get(), size(lhs), &alpha, rhs.gpu_memory(), 1, lhs.gpu_memory(), 1));
 
     lhs.invalidate_cpu();
 }

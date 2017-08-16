@@ -332,7 +332,7 @@ void scale_back(C&& c, float factor) {
     decltype(auto) handle = impl::cublas::start_cublas();
 
     cuComplex alpha = make_cuComplex(factor, 0.0);
-    cublasCscal(handle.get(), etl::size(c), &alpha, reinterpret_cast<cuComplex*>(c.gpu_memory()), 1);
+    cublas_check(cublasCscal(handle.get(), etl::size(c), &alpha, reinterpret_cast<cuComplex*>(c.gpu_memory()), 1));
 
     //The CPU memory is not up-to-date
     c.invalidate_cpu();
@@ -357,7 +357,7 @@ void scale_back(C&& c, double factor) {
     decltype(auto) handle = impl::cublas::start_cublas();
 
     cuDoubleComplex alpha = make_cuDoubleComplex(factor, 0.0);
-    cublasZscal(handle.get(), etl::size(c), &alpha, reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), 1);
+    cublas_check(cublasZscal(handle.get(), etl::size(c), &alpha, reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), 1));
 
     //The CPU memory is not up-to-date
     c.invalidate_cpu();
@@ -393,11 +393,11 @@ void scale_back_real(A&& a, C&& c) {
     decltype(auto) handle = impl::cublas::start_cublas();
 
     //Copy the real part of a to c
-    cublasScopy(handle.get(), etl::size(c), reinterpret_cast<float*>(a.gpu_memory()), 2, reinterpret_cast<float*>(c.gpu_memory()), 1);
+    cublas_check(cublasScopy(handle.get(), etl::size(c), reinterpret_cast<float*>(a.gpu_memory()), 2, reinterpret_cast<float*>(c.gpu_memory()), 1));
 
     //Scale c
     float alpha = 1.0 / etl::size(c);
-    cublasSscal(handle.get(), etl::size(c), &alpha, c.gpu_memory(), 1);
+    cublas_check(cublasSscal(handle.get(), etl::size(c), &alpha, c.gpu_memory(), 1));
 
     //The CPU memory is not up-to-date
     c.validate_gpu();
@@ -430,11 +430,11 @@ void scale_back_real(A&& a, C&& c) {
     decltype(auto) handle = impl::cublas::start_cublas();
 
     //Copy the real part of a to c
-    cublasDcopy(handle.get(), etl::size(c), reinterpret_cast<double*>(a.gpu_memory()), 2, reinterpret_cast<double*>(c.gpu_memory()), 1);
+    cublas_check(cublasDcopy(handle.get(), etl::size(c), reinterpret_cast<double*>(a.gpu_memory()), 2, reinterpret_cast<double*>(c.gpu_memory()), 1));
 
     //Scale c
     double alpha = 1.0 / etl::size(c);
-    cublasDscal(handle.get(), etl::size(c), &alpha, c.gpu_memory(), 1);
+    cublas_check(cublasDscal(handle.get(), etl::size(c), &alpha, c.gpu_memory(), 1));
 
     //The CPU memory is not up-to-date
     c.validate_gpu();

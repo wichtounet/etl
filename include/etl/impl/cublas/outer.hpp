@@ -49,7 +49,7 @@ void batch_outer(const A& a, const B& b, C&& c) {
     b.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
 
-    cublasSgemm(
+    cublas_check(cublasSgemm(
         handle.get(),
         CUBLAS_OP_N, CUBLAS_OP_T,
         etl::columns(c), etl::rows(c), etl::rows(b),
@@ -57,7 +57,7 @@ void batch_outer(const A& a, const B& b, C&& c) {
         b.gpu_memory(), etl::columns(b),
         a.gpu_memory(), etl::columns(a),
         &beta,
-        c.gpu_memory(), etl::columns(b));
+        c.gpu_memory(), etl::columns(b)));
 
     c.validate_gpu();
     c.invalidate_cpu();
@@ -77,7 +77,7 @@ void batch_outer(const A& a, const B& b, C&& c) {
     b.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
 
-    cublasDgemm(
+    cublas_check(cublasDgemm(
         handle.get(),
         CUBLAS_OP_N, CUBLAS_OP_T,
         etl::columns(c), etl::rows(c), etl::rows(b),
@@ -85,7 +85,7 @@ void batch_outer(const A& a, const B& b, C&& c) {
         b.gpu_memory(), etl::columns(b),
         a.gpu_memory(), etl::columns(a),
         &beta,
-        c.gpu_memory(), etl::columns(b));
+        c.gpu_memory(), etl::columns(b)));
 
     c.validate_gpu();
     c.invalidate_cpu();
