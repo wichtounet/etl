@@ -595,6 +595,9 @@ void conv1_full(A&& a, B&& b, C&& c) {
     dyn_vector<etl::complex<type>> a_padded(size);
     dyn_vector<etl::complex<type>> b_padded(size);
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     direct_copy(a.memory_start(), a.memory_end(), a_padded.memory_start());
     direct_copy(b.memory_start(), b.memory_end(), b_padded.memory_start());
 
