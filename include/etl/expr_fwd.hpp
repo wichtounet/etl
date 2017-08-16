@@ -85,4 +85,7 @@ struct transpose_expr;
 template <typename D, bool Fast>
 struct base_temporary_expr;
 
+template <typename T>
+struct scalar;
+
 } //end of namespace etl
