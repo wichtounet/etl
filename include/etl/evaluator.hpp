@@ -275,6 +275,8 @@ namespace standard_evaluator {
     void add_evaluate(E&& expr, R&& result) {
         inc_counter("gpu:assign");
 
+        pre_assign_rhs(expr);
+
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
@@ -367,6 +369,8 @@ namespace standard_evaluator {
     template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R>)>
     void sub_evaluate(E&& expr, R&& result) {
         inc_counter("gpu:assign");
+
+        pre_assign_rhs(expr);
 
         result.ensure_gpu_up_to_date();
 
@@ -461,6 +465,8 @@ namespace standard_evaluator {
     void mul_evaluate(E&& expr, R&& result) {
         inc_counter("gpu:assign");
 
+        pre_assign_rhs(expr);
+
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
@@ -548,9 +554,11 @@ namespace standard_evaluator {
     /*!
      * \copydoc sub_evaluate
      */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R>)>
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound_div<E, R>)>
     void div_evaluate(E&& expr, R&& result) {
         inc_counter("gpu:assign");
+
+        pre_assign_rhs(expr);
 
         result.ensure_gpu_up_to_date();
 
