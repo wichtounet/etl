@@ -27,6 +27,7 @@
 #include "etl/impl/egblas/axmy.hpp"
 #include "etl/impl/egblas/axdy.hpp"
 #include "etl/impl/egblas/scalar_add.hpp"
+#include "etl/impl/egblas/scalar_div.hpp"
 
 namespace etl {
 
@@ -469,9 +470,24 @@ struct div_binary_op {
      */
     template<typename L, typename R>
     static constexpr bool gpu_computable =
-            (!is_scalar<L> && !is_scalar<R>)
-        &&  egblas_enabled
-        &&  ((is_single_precision_t<T> && impl::egblas::has_saxdy) || (is_double_precision_t<T> && impl::egblas::has_daxdy));
+            (
+                    (!is_scalar<L> && !is_scalar<R>)
+                &&  egblas_enabled
+                &&  (
+                        (is_single_precision_t<T> && impl::egblas::has_saxdy)
+                    ||  (is_double_precision_t<T> && impl::egblas::has_daxdy))
+            )
+        ||  (
+                    (!is_scalar<L> && is_scalar<R>)
+                &&  cublas_enabled
+            )
+        ||  (
+                    (is_scalar<L> && !is_scalar<R>)
+                && (
+                        (is_single_precision_t<T> && impl::egblas::has_scalar_sdiv)
+                    ||  (is_double_precision_t<T> && impl::egblas::has_scalar_ddiv))
+            )
+            ;
 
     /*!
      * The vectorization type for V
@@ -511,7 +527,7 @@ struct div_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R>
+    template <typename L, typename R, cpp_enable_iff(!is_scalar<L> && !is_scalar<R>)>
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
         decltype(auto) t1 = lhs.gpu_compute();
         decltype(auto) t2 = rhs.gpu_compute();
@@ -533,6 +549,65 @@ struct div_binary_op {
     }
 
 #endif
+
+#ifdef ETL_CUBLAS_MODE
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
+    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+        auto s = T(1) / rhs.value;
+
+        decltype(auto) t2 = lhs.gpu_compute();
+
+        t2.ensure_gpu_up_to_date();
+
+        auto t3 = force_temporary(t2);
+        t3.ensure_gpu_up_to_date();
+
+        decltype(auto) handle = impl::cublas::start_cublas();
+        impl::cublas::cublas_scal(handle.get(), size(lhs), &s, t3.gpu_memory(), 1);
+
+        t3.validate_gpu();
+        t3.invalidate_cpu();
+
+        return t3;
+    }
+
+#endif
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
+    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+        auto s = lhs.value;
+
+        decltype(auto) t2 = rhs.gpu_compute();
+
+        t2.ensure_gpu_up_to_date();
+
+        auto t3 = force_temporary(t2);
+        t3.ensure_gpu_up_to_date();
+
+        impl::egblas::scalar_div(&s, t3.gpu_memory(), size(rhs), 1);
+
+        t3.validate_gpu();
+        t3.invalidate_cpu();
+
+        return t3;
+    }
 
     /*!
      * \brief Returns a textual representation of the operator
