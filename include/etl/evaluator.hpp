@@ -128,7 +128,6 @@ namespace standard_evaluator {
 
         // Compute the GPU representation of the expression
         auto t1 = expr.gpu_compute();
-        t1.ensure_gpu_up_to_date();
 
         // Copy the GPU memory from the expression to the result
         result.gpu_copy_from(t1.gpu_memory());

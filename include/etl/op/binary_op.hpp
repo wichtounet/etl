@@ -108,9 +108,6 @@ struct plus_binary_op {
         decltype(auto) t1 = lhs.gpu_compute();
         decltype(auto) t2 = rhs.gpu_compute();
 
-        t1.ensure_gpu_up_to_date();
-        t2.ensure_gpu_up_to_date();
-
         auto t3 = force_temporary(t2);
         t3.ensure_gpu_up_to_date();
 
@@ -142,8 +139,6 @@ struct plus_binary_op {
 
         decltype(auto) t2 = rhs.gpu_compute();
 
-        t2.ensure_gpu_up_to_date();
-
         auto t3 = force_temporary(t2);
         t3.ensure_gpu_up_to_date();
 
@@ -168,8 +163,6 @@ struct plus_binary_op {
         auto s = rhs.value;
 
         decltype(auto) t2 = lhs.gpu_compute();
-
-        t2.ensure_gpu_up_to_date();
 
         auto t3 = force_temporary(t2);
         t3.ensure_gpu_up_to_date();
@@ -266,9 +259,6 @@ struct minus_binary_op {
         decltype(auto) t1 = lhs.gpu_compute();
         decltype(auto) t2 = rhs.gpu_compute();
 
-        t1.ensure_gpu_up_to_date();
-        t2.ensure_gpu_up_to_date();
-
         auto t3 = force_temporary(t1);
         t3.ensure_gpu_up_to_date();
 
@@ -298,8 +288,6 @@ struct minus_binary_op {
 
         decltype(auto) t2 = lhs.gpu_compute();
 
-        t2.ensure_gpu_up_to_date();
-
         auto t3 = force_temporary(t2);
         t3.ensure_gpu_up_to_date();
 
@@ -324,8 +312,6 @@ struct minus_binary_op {
         auto s = lhs.value;
 
         decltype(auto) t2 = rhs.gpu_compute();
-
-        t2.ensure_gpu_up_to_date();
 
         auto t3 = force_temporary(t2);
         t3.ensure_gpu_up_to_date();
@@ -428,9 +414,6 @@ struct mul_binary_op {
         decltype(auto) t1 = lhs.gpu_compute();
         decltype(auto) t2 = rhs.gpu_compute();
 
-        t1.ensure_gpu_up_to_date();
-        t2.ensure_gpu_up_to_date();
-
         auto t3 = force_temporary(t1);
         t3.ensure_gpu_up_to_date();
 
@@ -462,8 +445,6 @@ struct mul_binary_op {
 
         decltype(auto) t2 = rhs.gpu_compute();
 
-        t2.ensure_gpu_up_to_date();
-
         auto t3 = force_temporary(t2);
         t3.ensure_gpu_up_to_date();
 
@@ -489,8 +470,6 @@ struct mul_binary_op {
         auto s = rhs.value;
 
         decltype(auto) t2 = lhs.gpu_compute();
-
-        t2.ensure_gpu_up_to_date();
 
         auto t3 = force_temporary(t2);
         t3.ensure_gpu_up_to_date();
@@ -600,9 +579,6 @@ struct div_binary_op {
         decltype(auto) t1 = lhs.gpu_compute();
         decltype(auto) t2 = rhs.gpu_compute();
 
-        t1.ensure_gpu_up_to_date();
-        t2.ensure_gpu_up_to_date();
-
         auto t3 = force_temporary(t1);
         t3.ensure_gpu_up_to_date();
 
@@ -634,8 +610,6 @@ struct div_binary_op {
 
         decltype(auto) t2 = lhs.gpu_compute();
 
-        t2.ensure_gpu_up_to_date();
-
         auto t3 = force_temporary(t2);
         t3.ensure_gpu_up_to_date();
 
@@ -663,8 +637,6 @@ struct div_binary_op {
         auto s = lhs.value;
 
         decltype(auto) t2 = rhs.gpu_compute();
-
-        t2.ensure_gpu_up_to_date();
 
         auto t3 = force_temporary(t2);
         t3.ensure_gpu_up_to_date();
