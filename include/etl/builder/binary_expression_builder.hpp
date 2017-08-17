@@ -202,7 +202,7 @@ auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_
  * \param rhs The right hand side expression
  * \return An expression representing the division of lhs and rhs (scalar)
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible<RE, value_t<LE>>::value && is_etl_expr<LE> && !is_div_strict, std::is_floating_point<RE>::value)>
+template <typename LE, typename RE, cpp_enable_iff(std::is_convertible<RE, value_t<LE>>::value && is_etl_expr<LE> && !is_div_strict && std::is_floating_point<RE>::value)>
 auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {
     return {lhs, scalar<value_t<LE>>(value_t<LE>(1.0) / rhs)};
 }
