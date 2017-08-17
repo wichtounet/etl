@@ -127,7 +127,7 @@ namespace standard_evaluator {
         result.ensure_gpu_allocated();
 
         // Compute the GPU representation of the expression
-        auto t1 = expr.gpu_compute();
+        decltype(auto) t1 = expr.gpu_compute();
 
         // Copy the GPU memory from the expression to the result
         result.gpu_copy_from(t1.gpu_memory());
@@ -280,7 +280,7 @@ namespace standard_evaluator {
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
-        auto t1 = expr.gpu_compute();
+        decltype(auto) t1 = expr.gpu_compute();
 
         decltype(auto) handle = impl::cublas::start_cublas();
 
@@ -375,7 +375,7 @@ namespace standard_evaluator {
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
-        auto t1 = expr.gpu_compute();
+        decltype(auto) t1 = expr.gpu_compute();
 
         decltype(auto) handle = impl::cublas::start_cublas();
 
@@ -470,7 +470,7 @@ namespace standard_evaluator {
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
-        auto t1 = expr.gpu_compute();
+        decltype(auto) t1 = expr.gpu_compute();
 
         value_t<E> alpha(1);
         impl::egblas::axmy(size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
@@ -563,7 +563,7 @@ namespace standard_evaluator {
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
-        auto t1 = expr.gpu_compute();
+        decltype(auto) t1 = expr.gpu_compute();
 
         value_t<E> alpha(1);
         impl::egblas::axdy(size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
