@@ -212,7 +212,16 @@ struct minus_binary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template<typename L, typename R>
-    static constexpr bool gpu_computable = (!is_scalar<L> && !is_scalar<R>) && cublas_enabled;
+    static constexpr bool gpu_computable =
+            ((!is_scalar<L> && !is_scalar<R>) && cublas_enabled)
+        ||  (
+                    (is_scalar<L> != is_scalar<R>)
+                &&  (
+                            (is_single_precision_t<T> && impl::egblas::has_scalar_sadd && cublas_enabled)
+                        ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dadd && cublas_enabled)
+                    )
+            )
+        ;
 
     /*!
      * The vectorization type for V
@@ -252,7 +261,7 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R>
+    template <typename L, typename R, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
         decltype(auto) t1 = lhs.gpu_compute();
         decltype(auto) t2 = rhs.gpu_compute();
@@ -268,6 +277,65 @@ struct minus_binary_op {
         value_t<L> alpha(-1);
 
         impl::cublas::cublas_axpy(handle.get(), size(lhs), &alpha, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
+
+        t3.validate_gpu();
+        t3.invalidate_cpu();
+
+        return t3;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
+    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+        auto s = -rhs.value;
+
+        decltype(auto) t2 = lhs.gpu_compute();
+
+        t2.ensure_gpu_up_to_date();
+
+        auto t3 = force_temporary(t2);
+        t3.ensure_gpu_up_to_date();
+
+        impl::egblas::scalar_add(t3.gpu_memory(), size(lhs), 1, &s);
+
+        t3.validate_gpu();
+        t3.invalidate_cpu();
+
+        return t3;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
+    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+        auto s = lhs.value;
+
+        decltype(auto) t2 = rhs.gpu_compute();
+
+        t2.ensure_gpu_up_to_date();
+
+        auto t3 = force_temporary(t2);
+        t3.ensure_gpu_up_to_date();
+
+        value_t<L> alpha(-1);
+
+        decltype(auto) handle = impl::cublas::start_cublas();
+        impl::cublas::cublas_scal(handle.get(), size(rhs), &alpha, t3.gpu_memory(), 1);
+
+        impl::egblas::scalar_add(t3.gpu_memory(), size(rhs), 1, &s);
 
         t3.validate_gpu();
         t3.invalidate_cpu();
