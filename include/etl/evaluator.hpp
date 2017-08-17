@@ -264,6 +264,34 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
+    // GPU assign add version
+
+#ifdef ETL_CUBLAS_MODE
+
+    /*!
+     * \copydoc add_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R>)>
+    void add_evaluate(E&& expr, R&& result) {
+        inc_counter("gpu:assign");
+
+        result.ensure_gpu_up_to_date();
+
+        // Compute the GPU representation of the expression
+        auto t1 = expr.gpu_compute();
+
+        decltype(auto) handle = impl::cublas::start_cublas();
+
+        value_t<E> alpha(1);
+        impl::cublas::cublas_axpy(handle.get(), size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
+
+        // Validate the GPU and invalidates the CPU
+        result.validate_gpu();
+        result.invalidate_cpu();
+    }
+
+#endif
+
     //Standard sub assign
 
     /*!
@@ -328,6 +356,34 @@ namespace standard_evaluator {
 
         result.invalidate_gpu();
     }
+
+    // GPU assign add version
+
+#ifdef ETL_CUBLAS_MODE
+
+    /*!
+     * \copydoc sub_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R>)>
+    void sub_evaluate(E&& expr, R&& result) {
+        inc_counter("gpu:assign");
+
+        result.ensure_gpu_up_to_date();
+
+        // Compute the GPU representation of the expression
+        auto t1 = expr.gpu_compute();
+
+        decltype(auto) handle = impl::cublas::start_cublas();
+
+        value_t<E> alpha(-1);
+        impl::cublas::cublas_axpy(handle.get(), size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
+
+        // Validate the GPU and invalidates the CPU
+        result.validate_gpu();
+        result.invalidate_cpu();
+    }
+
+#endif
 
     //Standard Mul Assign
 
@@ -394,6 +450,32 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
+    // GPU assign mul version
+
+#ifdef ETL_EGBLAS_MODE
+
+    /*!
+     * \copydoc sub_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R>)>
+    void mul_evaluate(E&& expr, R&& result) {
+        inc_counter("gpu:assign");
+
+        result.ensure_gpu_up_to_date();
+
+        // Compute the GPU representation of the expression
+        auto t1 = expr.gpu_compute();
+
+        value_t<E> alpha(1);
+        impl::egblas::axmy(size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
+
+        // Validate the GPU and invalidates the CPU
+        result.validate_gpu();
+        result.invalidate_cpu();
+    }
+
+#endif
+
     //Standard Div Assign
 
     /*!
@@ -458,6 +540,32 @@ namespace standard_evaluator {
 
         result.invalidate_gpu();
     }
+
+    // GPU assign div version
+
+#ifdef ETL_EGBLAS_MODE
+
+    /*!
+     * \copydoc sub_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R>)>
+    void div_evaluate(E&& expr, R&& result) {
+        inc_counter("gpu:assign");
+
+        result.ensure_gpu_up_to_date();
+
+        // Compute the GPU representation of the expression
+        auto t1 = expr.gpu_compute();
+
+        value_t<E> alpha(1);
+        impl::egblas::axdy(size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
+
+        // Validate the GPU and invalidates the CPU
+        result.validate_gpu();
+        result.invalidate_cpu();
+    }
+
+#endif
 
     //Standard Mod Evaluate (no optimized versions for mod)
 

@@ -98,42 +98,54 @@ constexpr bool standard_assign = !has_direct_access<R>;
 //Selectors for compound operations
 
 /*!
+ * \brief Integral constant indicating if a GPU compound assign is possible
+ */
+template <typename E, typename R>
+constexpr bool gpu_compound = all_gpu_computable<E, R> && has_direct_access<R> && !is_scalar<E> && cublas_enabled && egblas_enabled;
+
+/*!
  * \brief Integral constant indicating if a vectorized compound assign is possible
  */
 template <typename E, typename R>
-constexpr bool vectorized_compound = are_vectorizable<E, R>;
+constexpr bool vectorized_compound = !gpu_compound<E, R> && are_vectorizable<E, R>;
 
 /*!
  * \brief Integral constant indicating if a direct compound assign is possible
  */
 template <typename E, typename R>
-constexpr bool direct_compound = !vectorized_compound<E, R> && has_direct_access<R>;
+constexpr bool direct_compound = !gpu_compound<E, R> && !vectorized_compound<E, R> && has_direct_access<R>;
 
 /*!
  * \brief Integral constant indicating if a standard compound assign is necessary
  */
 template <typename E, typename R>
-constexpr bool standard_compound = !vectorized_compound<E, R> && !direct_compound<E, R>;
+constexpr bool standard_compound = !gpu_compound<E, R> && !vectorized_compound<E, R> && !direct_compound<E, R>;
 
 //Selectors for compound div operation
+
+/*!
+ * \brief Integral constant indicating if a GPU compound assign is possible
+ */
+template <typename E, typename R>
+constexpr bool gpu_compound_div = all_gpu_computable<E, R> && has_direct_access<R> && !is_scalar<E> && cublas_enabled && egblas_enabled;
 
 /*!
  * \brief Integral constant indicating if a vectorized compound div assign is possible
  */
 template <typename E, typename R>
-constexpr bool vectorized_compound_div = (is_floating_t<value_t<E>> || is_complex_t<value_t<E>>) && are_vectorizable<E, R>;
+constexpr bool vectorized_compound_div = !gpu_compound_div<E, R> && (is_floating_t<value_t<E>> || is_complex_t<value_t<E>>) && are_vectorizable<E, R>;
 
 /*!
  * \brief Integral constant indicating if a direct compound div assign is possible
  */
 template <typename E, typename R>
-constexpr bool direct_compound_div = !vectorized_compound_div<E, R> && has_direct_access<R>;
+constexpr bool direct_compound_div = !gpu_compound_div<E, R> && !vectorized_compound_div<E, R> && has_direct_access<R>;
 
 /*!
  * \brief Integral constant indicating if a standard compound div assign is necessary
  */
 template <typename E, typename R>
-constexpr bool standard_compound_div = !vectorized_compound_div<E, R> && !direct_compound_div<E, R>;
+constexpr bool standard_compound_div = !gpu_compound_div<E, R> && !vectorized_compound_div<E, R> && !direct_compound_div<E, R>;
 
 } //end of namespace detail
 
