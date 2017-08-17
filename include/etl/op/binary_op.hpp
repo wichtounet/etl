@@ -23,11 +23,9 @@
 #include "etl/impl/cublas/axpy.hpp"
 #endif
 
-#ifdef ETL_EGBLAS_MODE
 #include "etl/impl/egblas/axmy.hpp"
 #include "etl/impl/egblas/axdy.hpp"
 #include "etl/impl/egblas/scalar_add.hpp"
-#endif
 
 namespace etl {
 
