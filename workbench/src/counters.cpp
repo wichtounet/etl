@@ -17,6 +17,9 @@
 
 #define IF_DEBUG if(false)
 
+// To test more expressions
+#define ETL_STRICT_DIV
+
 #include "etl/etl.hpp"
 
 namespace {
@@ -141,8 +144,8 @@ void expr() {
         E = 1e-4 >> etl::sequence_generator<float>(1.0);
 
         for (size_t i = 0; i < 10; ++i) {
-            A = (A / B) + (C >> D);
-            E = A - D * C + 2.0;
+            A = 1.1 * (A / B) + (C >> D) / 1.2;
+            E = 1.2 / A - D * C + 2.0;
             D = 1.1 + E;
         }
     }
