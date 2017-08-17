@@ -64,7 +64,7 @@ inline void scalar_add(double* x, size_t n, size_t s, double* beta){
 
 #else
 
-static constexpr bool has_scalar_sadd = false;
+static constexpr bool has_scalar_dadd = false;
 
 #endif
 
