@@ -96,6 +96,22 @@ protected:
     gpu_memory_handler<T> _gpu; ///< The GPU memory handler
 
     /*!
+     * \brief Init the container if necessary
+     */
+    template <typename S = ST, cpp_enable_iff(matrix_detail::is_vector<S>)>
+    void init() {
+        _data.resize(alloc_size_mat<value_type>(size(), dim<n_dimensions - 1>()));
+    }
+
+    /*!
+     * \copydoc init
+     */
+    template <typename S = ST, cpp_disable_iff(matrix_detail::is_vector<S>)>
+    void init() noexcept {
+        //Nothing else to init
+    }
+
+    /*!
      * \brief Compute the 1D index from the given indices
      * \param args The access indices
      * \return The 1D index inside the storage container
@@ -133,7 +149,7 @@ public:
      * \brief Construct a default fast_matrix_base
      */
     fast_matrix_base() : _data() {
-        // Nothing else to init
+        init();
     }
 
     /*!
@@ -152,6 +168,8 @@ public:
         // Only perform the copy if the CPU is up to date
         if(rhs._gpu.is_cpu_up_to_date()){
             _data = rhs._data;
+        } else {
+            init();
         }
 
         // The GPU updates are handled by gpu_handler
@@ -165,6 +183,8 @@ public:
         // Only perform the copy if the CPU is up to date
         if(rhs._gpu.is_cpu_up_to_date()){
             _data = std::move(rhs._data);
+        } else {
+            init();
         }
 
         // The GPU updates are handled by gpu_handler

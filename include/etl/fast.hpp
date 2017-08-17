@@ -62,22 +62,6 @@ public:
 private:
     using base_type::_data;
 
-    /*!
-     * \brief Init the container if necessary
-     */
-    template <typename S = ST, cpp_enable_iff(matrix_detail::is_vector<S>)>
-    void init() {
-        _data.resize(alloc_size_mat<value_type>(size(), this_type::template dim<n_dimensions - 1>()));
-    }
-
-    /*!
-     * \copydoc init
-     */
-    template <typename S = ST, cpp_disable_iff(matrix_detail::is_vector<S>)>
-    void init() noexcept {
-        //Nothing else to init
-    }
-
 public:
     /// Construction
 
@@ -85,7 +69,7 @@ public:
      * \brief Construct an empty fast matrix
      */
     fast_matrix_impl() noexcept: base_type()  {
-        init();
+        // Nothing else to init
     }
 
     /*!
@@ -94,7 +78,7 @@ public:
      */
     template <typename VT, cpp_enable_iff(std::is_convertible<VT, value_type>::value || std::is_assignable<T&, VT>::value)>
     explicit fast_matrix_impl(const VT& value) noexcept: base_type()  {
-        init();
+        // Fill the matrix
         std::fill(begin(), end(), value);
     }
 
@@ -103,8 +87,6 @@ public:
      * \param l the list of values to fill the matrix with
      */
     fast_matrix_impl(std::initializer_list<value_type> l): base_type()  {
-        init();
-
         cpp_assert(l.size() == size(), "Cannot copy from an initializer of different size");
 
         std::copy(l.begin(), l.end(), begin());
@@ -123,10 +105,7 @@ public:
      * \param rhs The fast matrix to copy from
      */
     fast_matrix_impl(const fast_matrix_impl& rhs) noexcept : base_type(rhs) {
-        // If the CPU is not up to date, simply prepare new memory
-        if(!this->is_cpu_up_to_date()){
-            init();
-        }
+        // Nothing else to init
     }
 
     /*!
@@ -134,10 +113,7 @@ public:
      * \param rhs The fast matrix to move from
      */
     fast_matrix_impl(fast_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)) {
-        // If the CPU is not up to date, simply prepare new memory
-        if(!this->is_cpu_up_to_date()){
-            init();
-        }
+        // Nothing else to init
     }
 
     /*!
@@ -146,7 +122,6 @@ public:
      */
     template <typename Container, cpp_enable_iff(!is_complex_t<Container> && std::is_convertible<typename Container::value_type, value_type>::value && !is_etl_expr<Container>)>
     explicit fast_matrix_impl(const Container& container): base_type()  {
-        init();
         validate_assign(*this, container);
         std::copy(container.begin(), container.end(), begin());
     }
@@ -167,8 +142,6 @@ public:
             // If necessary, perform the actual copy to CPU
             if(this->is_cpu_up_to_date()){
                 _data = rhs._data;
-            } else {
-                init();
             }
         }
 
@@ -189,8 +162,6 @@ public:
             // If necessary, perform the actual copy to CPU
             if(this->is_cpu_up_to_date()){
                 _data = std::move(rhs._data);
-            } else {
-                init();
             }
         }
 
