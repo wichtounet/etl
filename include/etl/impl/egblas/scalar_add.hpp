@@ -132,6 +132,27 @@ static constexpr bool has_scalar_zadd = false;
 
 #endif
 
+#ifndef ETL_EGBLAS_MODE
+
+/*!
+ * \brief Adds the scalar beta to each element of the single-precision vector x
+ * \param x The vector to add the scalar to (GPU pointer)
+ * \param n The size of the vector
+ * \param s The stride of the vector
+ * \param beta The scalar to add
+ */
+template<typename T>
+inline void scalar_add(T* x, size_t n, size_t s, T* beta){
+    cpp_unused(x);
+    cpp_unused(n);
+    cpp_unused(s);
+    cpp_unused(beta);
+
+    cpp_unreachable("Invalid call to egblas::scalar_add");
+}
+
+#endif
+
 } //end of namespace egblas
 } //end of namespace impl
 } //end of namespace etl
