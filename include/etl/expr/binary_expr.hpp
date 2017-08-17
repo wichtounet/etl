@@ -190,6 +190,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     decltype(auto) gpu_compute() const {
+        this->ensure_gpu_up_to_date();
         return BinaryOp::gpu_compute(lhs, rhs);
     }
 

@@ -184,6 +184,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     auto& gpu_compute(){
+        this->ensure_gpu_up_to_date();
         return *this;
     }
 
@@ -192,6 +193,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     const auto& gpu_compute() const {
+        this->ensure_gpu_up_to_date();
         return *this;
     }
 
