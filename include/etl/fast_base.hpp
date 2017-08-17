@@ -148,7 +148,7 @@ public:
      * \brief Copy Construct a fast_matrix_base
      * \param rhs The right hand side
      */
-    fast_matrix_base(const fast_matrix_base& rhs) : _gpu(rhs._gpu) {
+    fast_matrix_base(const fast_matrix_base& rhs) : _data(), _gpu(rhs._gpu) {
         // Only perform the copy if the CPU is up to date
         if(rhs._gpu.is_cpu_up_to_date()){
             _data = rhs._data;
@@ -161,7 +161,7 @@ public:
      * \brief Move Construct a fast_matrix_base
      * \param rhs The right hand side
      */
-    fast_matrix_base(fast_matrix_base&& rhs) noexcept : _gpu(rhs._gpu) {
+    fast_matrix_base(fast_matrix_base&& rhs) noexcept : _data(), _gpu(rhs._gpu) {
         // Only perform the copy if the CPU is up to date
         if(rhs._gpu.is_cpu_up_to_date()){
             _data = std::move(rhs._data);
