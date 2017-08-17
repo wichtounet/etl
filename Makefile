@@ -148,9 +148,11 @@ CXX_FLAGS += -DSONAR_ANALYSIS
 endif
 
 # Enable Clang sanitizers in debug mode
+ifneq (,$(ETL_SANITIZE))
 ifneq (,$(findstring clang,$(CXX)))
 ifeq (,$(ETL_CUBLAS))
 DEBUG_FLAGS += -fsanitize=address,undefined
+endif
 endif
 endif
 
