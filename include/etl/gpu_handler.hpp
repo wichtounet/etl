@@ -234,8 +234,40 @@ private:
 public:
     gpu_memory_handler() = default;
 
-    gpu_memory_handler(const gpu_memory_handler& rhs) = default;
-    gpu_memory_handler& operator=(const gpu_memory_handler& rhs) = default;
+    gpu_memory_handler(const gpu_memory_handler& rhs) : gpu_memory_size(rhs.gpu_memory_size), cpu_up_to_date(rhs.cpu_up_to_date), gpu_up_to_date(rhs.gpu_up_to_date) {
+        if(rhs.gpu_up_to_date){
+            gpu_allocate_impl(gpu_memory_size);
+
+            gpu_copy_from(rhs.gpu_memory_, gpu_memory_size);
+        } else {
+            gpu_memory_ = nullptr;
+        }
+    }
+
+    gpu_memory_handler& operator=(const gpu_memory_handler& rhs){
+        if (this != &rhs) {
+            // Release the previous memory, if any
+            if (gpu_memory_) {
+                gpu_memory_allocator::release(gpu_memory_, gpu_memory_size);
+            }
+
+            // Copy the basic values from rhs
+            gpu_memory_size = rhs.gpu_memory_size;
+            cpu_up_to_date  = rhs.cpu_up_to_date;
+            gpu_up_to_date  = rhs.gpu_up_to_date;
+
+            // Copy the contents of rhs
+            if (rhs.gpu_up_to_date) {
+                gpu_allocate_impl(gpu_memory_size);
+
+                gpu_copy_from(rhs.gpu_memory_, gpu_memory_size);
+            } else {
+                gpu_memory_ = nullptr;
+            }
+        }
+
+        return *this;
+    }
 
     /*!
      * \brief Move construct a gpu_memory_handler
@@ -250,13 +282,24 @@ public:
      * \brief Move assign a gpu_memory_handler
      */
     gpu_memory_handler& operator=(gpu_memory_handler&& rhs) noexcept {
-        gpu_memory_         = rhs.gpu_memory_;
-        gpu_memory_size     = rhs.gpu_memory_size;
-        cpu_up_to_date      = rhs.cpu_up_to_date;
-        gpu_up_to_date      = rhs.gpu_up_to_date;
+        if (this != &rhs) {
+            // Release the previous memory, if any
+            if (gpu_memory_) {
+                gpu_memory_allocator::release(gpu_memory_, gpu_memory_size);
+            }
 
-        rhs.gpu_memory_     = nullptr;
-        rhs.gpu_memory_size = 0;
+            // Steal the values and contents from rhs
+            gpu_memory_     = rhs.gpu_memory_;
+            gpu_memory_size = rhs.gpu_memory_size;
+            cpu_up_to_date  = rhs.cpu_up_to_date;
+            gpu_up_to_date  = rhs.gpu_up_to_date;
+
+            // Make sure rhs does not have point to the memory
+            rhs.gpu_memory_     = nullptr;
+            rhs.gpu_memory_size = 0;
+        }
+
+        return *this;
     }
 
     /*!
@@ -468,7 +511,7 @@ struct gpu_memory_handler {
      * \return true if the CPU memory is up to date, false otherwise.
      */
     bool is_cpu_up_to_date() const noexcept {
-        return false;
+        return true;
     }
 
     /*!
