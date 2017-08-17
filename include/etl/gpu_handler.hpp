@@ -249,6 +249,7 @@ public:
             // Release the previous memory, if any
             if (gpu_memory_) {
                 gpu_memory_allocator::release(gpu_memory_, gpu_memory_size);
+                gpu_memory_ = nullptr;
             }
 
             // Copy the basic values from rhs
@@ -286,6 +287,7 @@ public:
             // Release the previous memory, if any
             if (gpu_memory_) {
                 gpu_memory_allocator::release(gpu_memory_, gpu_memory_size);
+                gpu_memory_ = nullptr;
             }
 
             // Steal the values and contents from rhs
