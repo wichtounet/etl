@@ -148,13 +148,32 @@ public:
      * \brief Copy Construct a fast_matrix_base
      * \param rhs The right hand side
      */
-    fast_matrix_base(const fast_matrix_base& rhs) = default;
+    fast_matrix_base(const fast_matrix_base& rhs) : _gpu(rhs._gpu) {
+        // Only perform the copy if the CPU is up to date
+        if(rhs._gpu.is_cpu_up_to_date()){
+            _data = rhs._data;
+        }
+
+        // The GPU updates are handled by gpu_handler
+    }
 
     /*!
      * \brief Move Construct a fast_matrix_base
      * \param rhs The right hand side
      */
-    fast_matrix_base(fast_matrix_base&& rhs) noexcept = default;
+    fast_matrix_base(fast_matrix_base&& rhs) noexcept : _gpu(rhs._gpu) {
+        // Only perform the copy if the CPU is up to date
+        if(rhs._gpu.is_cpu_up_to_date()){
+            _data = std::move(rhs._data);
+        }
+
+        // The GPU updates are handled by gpu_handler
+    }
+
+    // Assignment must be handled by the derived class!
+
+    fast_matrix_base& operator=(const fast_matrix_base& rhs) = delete;
+    fast_matrix_base& operator=(fast_matrix_base&& rhs) = delete;
 
     /*!
      * \brief Returns a pointer to the first element in memory.

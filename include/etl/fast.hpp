@@ -122,9 +122,11 @@ public:
      * \brief Copy construct a fast matrix
      * \param rhs The fast matrix to copy from
      */
-    fast_matrix_impl(const fast_matrix_impl& rhs) noexcept : base_type() {
-        init();
-        direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+    fast_matrix_impl(const fast_matrix_impl& rhs) noexcept : base_type(rhs) {
+        // If the CPU is not up to date, simply prepare new memory
+        if(!this->is_cpu_up_to_date()){
+            init();
+        }
     }
 
     /*!
@@ -132,7 +134,10 @@ public:
      * \param rhs The fast matrix to move from
      */
     fast_matrix_impl(fast_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)) {
-        // Nothing else
+        // If the CPU is not up to date, simply prepare new memory
+        if(!this->is_cpu_up_to_date()){
+            init();
+        }
     }
 
     /*!
@@ -154,22 +159,58 @@ public:
      * \return a reference to the fast matrix
      */
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
+        // Avoid copy to self
         if (this != &rhs) {
-            direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+            // This will handle the possible copy to GPU
+            this->_gpu = rhs._gpu;
+
+            // If necessary, perform the actual copy to CPU
+            if(this->is_cpu_up_to_date()){
+                _data = rhs._data;
+            } else {
+                init();
+            }
         }
 
         return *this;
     }
 
     /*!
-     * \brief Copy assign a fast matrix from a different matrix fast matrix type
+     * \brief Copy assign a fast matrix
+     * \param rhs The fast matrix to copy from
+     * \return a reference to the fast matrix
+     */
+    fast_matrix_impl& operator=(fast_matrix_impl&& rhs) noexcept {
+        // Avoid move to self
+        if (this != &rhs) {
+            // This will handle the possible copy to GPU
+            this->_gpu = std::move(rhs._gpu);
+
+            // If necessary, perform the actual copy to CPU
+            if(this->is_cpu_up_to_date()){
+                _data = std::move(rhs._data);
+            } else {
+                init();
+            }
+        }
+
+        return *this;
+    }
+
+    /*!
+     * \brief Copy assign a fast matrix from a matrix fast matrix type
      * \param rhs The fast matrix to copy from
      * \return a reference to the fast matrix
      */
     template <size_t... SDims>
     fast_matrix_impl& operator=(const fast_matrix_impl<T, ST, SO, SDims...>& rhs) noexcept {
+        // Make sure the assign is valid
         validate_assign(*this, rhs);
+
+        // Since the type is different, it is handled by the
+        // evaluator which will handle all the possible cases
         rhs.assign_to(*this);
+
         return *this;
     }
 
@@ -178,7 +219,7 @@ public:
      * \param container The STL container to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename Container, cpp_enable_iff(!std::is_same<Container, value_type>::value && std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_iff(!std::is_same<Container, value_type>::value && std::is_convertible<typename Container::value_type, value_type>::value && !is_etl_expr<Container>)>
     fast_matrix_impl& operator=(const Container& container) noexcept {
         validate_assign(*this, container);
         std::copy(container.begin(), container.end(), begin());
@@ -190,7 +231,7 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_iff(is_etl_expr<E> && std::is_convertible<value_t<E>, value_type>::value)>
+    template <typename E, cpp_enable_iff(is_etl_expr<E> && std::is_convertible<value_t<E>, value_type>::value && !std::is_same<std::decay_t<E>, this_type>::value)>
     fast_matrix_impl& operator=(E&& e) {
         validate_assign(*this, e);
 
@@ -220,19 +261,6 @@ public:
     template <typename VT, cpp_enable_iff(std::is_convertible<VT, value_type>::value || std::is_assignable<T&, VT>::value)>
     fast_matrix_impl& operator=(const VT& value) noexcept {
         std::fill(begin(), end(), value);
-
-        return *this;
-    }
-
-    /*!
-     * \brief Move assign a fast matrix
-     * \param rhs The fast matrix to move from
-     * \return a reference to the fast matrix
-     */
-    fast_matrix_impl& operator=(fast_matrix_impl&& rhs) noexcept {
-        if (this != &rhs) {
-            _data               = std::move(rhs._data);
-        }
 
         return *this;
     }
