@@ -176,7 +176,7 @@ void direct() {
         B.ensure_gpu_up_to_date();
         C.ensure_gpu_up_to_date();
 
-        for (size_t i = 0; i < 100; ++i) {
+        for (size_t i = 0; i < 10; ++i) {
             A += B;
             C -= A;
             B >>= C;
