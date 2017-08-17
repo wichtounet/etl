@@ -339,8 +339,8 @@ int main() {
     basic();
     expr();
     direct();
-    sub();
     ml();
+    sub();
 
     auto end_time = timer_clock::now();
     auto duration = std::chrono::duration_cast<milliseconds>(end_time - start_time);
