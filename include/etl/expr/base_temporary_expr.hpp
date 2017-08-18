@@ -131,6 +131,15 @@ protected:
         return _c.get();
     }
 
+    /*!
+     * \brief Indicates if the temporary has been evaluated
+     *
+     * \return true if the temporary has been evaluted, false otherwise
+     */
+    bool is_evaluated() const noexcept {
+        return *evaluated;
+    }
+
 protected:
     /*!
      * \brief Evaluate the expression, if not evaluated
@@ -406,7 +415,7 @@ public:
         return result().is_gpu_up_to_date();
     }
 
-private:
+protected:
     /*!
      * \brief Returns the expression containing the result of the expression.
      * \return a reference to the expression containing the result of the expression
