@@ -244,6 +244,15 @@ public:
         }
     }
 
+    /*!
+     * \brief Move construct a gpu_memory_handler
+     */
+    gpu_memory_handler(gpu_memory_handler&& rhs)
+            noexcept : gpu_memory_(rhs.gpu_memory_), gpu_memory_size(rhs.gpu_memory_size), cpu_up_to_date(rhs.cpu_up_to_date), gpu_up_to_date(rhs.gpu_up_to_date) {
+        rhs.gpu_memory_     = nullptr;
+        rhs.gpu_memory_size = 0;
+    }
+
     gpu_memory_handler& operator=(const gpu_memory_handler& rhs){
         if (this != &rhs) {
             // Release the previous memory, if any
@@ -252,10 +261,8 @@ public:
                 gpu_memory_ = nullptr;
             }
 
-            // Copy the basic values from rhs
+            // Copy the size from rhs
             gpu_memory_size = rhs.gpu_memory_size;
-            cpu_up_to_date  = rhs.cpu_up_to_date;
-            gpu_up_to_date  = rhs.gpu_up_to_date;
 
             // Copy the contents of rhs
             if (rhs.gpu_up_to_date) {
@@ -265,18 +272,13 @@ public:
             } else {
                 gpu_memory_ = nullptr;
             }
+
+            // Copy the status (at the end, otherwise gpu_copy_from will screw them)
+            cpu_up_to_date  = rhs.cpu_up_to_date;
+            gpu_up_to_date  = rhs.gpu_up_to_date;
         }
 
         return *this;
-    }
-
-    /*!
-     * \brief Move construct a gpu_memory_handler
-     */
-    gpu_memory_handler(gpu_memory_handler&& rhs)
-            noexcept : gpu_memory_(rhs.gpu_memory_), gpu_memory_size(rhs.gpu_memory_size), cpu_up_to_date(rhs.cpu_up_to_date), gpu_up_to_date(rhs.gpu_up_to_date) {
-        rhs.gpu_memory_     = nullptr;
-        rhs.gpu_memory_size = 0;
     }
 
     /*!
