@@ -30,6 +30,12 @@ struct identity_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = true;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 };
 
 /*!
@@ -48,6 +54,12 @@ struct transform_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 };
 
 /*!
@@ -71,6 +83,12 @@ struct stateful_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = Sub::template vectorizable<V>;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 };
 
 /*!
@@ -189,6 +207,14 @@ public:
     template <typename E>
     bool alias(const E& rhs) const noexcept {
         return value.alias(rhs);
+    }
+
+    /*!
+     * \brief Return a GPU computed version of this expression
+     * \return a GPU-computed ETL expression for this expression
+     */
+    decltype(auto) gpu_compute() const {
+        return UnaryOp::gpu_compute(value);
     }
 
     // Assignment functions
@@ -1240,7 +1266,11 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     static constexpr bool is_padded      = is_linear && sub_traits::is_padded;                                 ///< Indicates if the expression is padded
     static constexpr bool is_aligned     = is_linear && sub_traits::is_aligned;                                ///< Indicates if the expression is padded
     static constexpr order storage_order = sub_traits::storage_order;                                          ///< The expression storage order
-    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
+
+    /*!
+     * \brief Indicates if the expression can be computed on GPU
+     */
+    static constexpr bool gpu_computable = is_gpu_computable<Expr> && UnaryOp::template gpu_computable<Expr> && (is_floating<Expr> || is_complex<Expr>);
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

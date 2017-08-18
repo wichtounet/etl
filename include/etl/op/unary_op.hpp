@@ -42,6 +42,12 @@ struct abs_unary_op {
     static constexpr bool vectorizable = !is_complex_t<T>;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
@@ -94,6 +100,12 @@ struct floor_unary_op {
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -127,6 +139,12 @@ struct ceil_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -165,6 +183,12 @@ struct log_unary_op {
                 (V == vector_mode_t::SSE3 && is_single_precision_t<T>)
             ||  (V == vector_mode_t::AVX && is_single_precision_t<T>)
             ||  (intel_compiler && !is_complex_t<T>);
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * The vectorization type for V
@@ -225,6 +249,12 @@ struct sqrt_unary_op {
     static constexpr bool vectorizable = !is_complex_t<T>;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -271,6 +301,12 @@ struct invsqrt_unary_op {
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -306,6 +342,12 @@ struct cbrt_unary_op {
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -339,6 +381,12 @@ struct invcbrt_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -383,6 +431,12 @@ struct exp_unary_op {
             (V == vector_mode_t::SSE3 && !is_complex_t<T>)
         ||  (V == vector_mode_t::AVX && !is_complex_t<T>)
         ||  (intel_compiler && !is_complex_t<T>);
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -431,6 +485,12 @@ struct sign_unary_op {
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -466,6 +526,12 @@ struct sigmoid_unary_op {
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -499,6 +565,12 @@ struct softplus_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -540,6 +612,12 @@ struct minus_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = !is_complex_t<T>;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -594,6 +672,12 @@ struct plus_unary_op {
     static constexpr bool vectorizable = true;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -638,6 +722,12 @@ struct fast_sigmoid_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -698,6 +788,12 @@ struct tan_unary_op {
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -737,6 +833,12 @@ struct cos_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = (V == vector_mode_t::SSE3 || V == vector_mode_t::AVX) && is_single_precision_t<T>;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -791,6 +893,12 @@ struct sin_unary_op {
     static constexpr bool vectorizable = (V == vector_mode_t::SSE3 || V == vector_mode_t::AVX) && is_single_precision_t<T>;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -837,6 +945,12 @@ struct tanh_unary_op {
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -870,6 +984,12 @@ struct cosh_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -907,6 +1027,12 @@ struct sinh_unary_op {
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -940,6 +1066,12 @@ struct real_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -977,6 +1109,12 @@ struct imag_unary_op {
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -1012,6 +1150,12 @@ struct conj_unary_op {
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -1045,6 +1189,12 @@ struct relu_derivative_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = !is_complex_t<T>;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * The vectorization type for V
@@ -1099,6 +1249,12 @@ struct bernoulli_unary_op {
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -1150,6 +1306,12 @@ public:
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -1185,6 +1347,12 @@ struct reverse_bernoulli_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1238,6 +1406,12 @@ public:
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -1273,6 +1447,12 @@ struct uniform_noise_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1326,6 +1506,12 @@ public:
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -1361,6 +1547,12 @@ struct normal_noise_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1414,6 +1606,12 @@ public:
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -1449,6 +1647,12 @@ struct logistic_noise_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1503,6 +1707,12 @@ public:
     static constexpr bool vectorizable = false;
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -1545,6 +1755,12 @@ struct min_scalar_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = !is_complex_t<T>;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     S s; ///< The scalar value
 
@@ -1608,6 +1824,12 @@ struct max_scalar_op {
     template <vector_mode_t V>
     static constexpr bool vectorizable = !is_complex_t<T>;
 
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
     S s; ///< The scalar value
 
     /*!
@@ -1669,6 +1891,12 @@ struct clip_scalar_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable = intel_compiler && !is_complex_t<T>;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
 
     S min; ///< The minimum for clipping
     S max; ///< The maximum for clipping

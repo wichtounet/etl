@@ -380,11 +380,12 @@ struct etl_traits<rep_r_transformer<T, D...>> {
     static constexpr bool is_linear               = false;                                           ///< Indicates if the expression is linear
     static constexpr bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe;          ///< Indicates if the expression is thread safe
     static constexpr bool is_value                = false;                                           ///< Indicates if the expression is of value type
-    static constexpr bool is_direct               = false;           ///< Indicates if the expression has direct memory access
+    static constexpr bool is_direct               = false;                                           ///< Indicates if the expression has direct memory access
     static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generated
-    static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_temporary = etl_traits<sub_expr_t>::is_temporary; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr bool is_padded               = false;                                           ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = false;                                           ///< Indicates if the expression is padded
+    static constexpr bool is_temporary            = etl_traits<sub_expr_t>::is_temporary;            ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr bool gpu_computable          = false;                                           ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
     static constexpr size_t sub_d = etl_traits<sub_expr_t>::dimensions(); ///< The number of dimensions of the sub type
@@ -462,20 +463,21 @@ struct etl_traits<rep_l_transformer<T, D...>> {
     using sub_expr_t = std::decay_t<T>;                             ///< The sub expression type
     using value_type = typename etl_traits<sub_expr_t>::value_type; ///< The value type of this expression
 
-    static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer          = true;                                            ///< Indicates if the type is a transformer
-    static constexpr bool is_view                 = false;                                           ///< Indicates if the type is a view
-    static constexpr bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                 ///< Indicates if the expression is fast
-    static constexpr bool is_linear               = false;                                           ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe                 = etl_traits<sub_expr_t>::is_thread_safe;                 ///< Indicates if the expression is thread safe
-    static constexpr bool is_value                = false;                                           ///< Indicates if the expression is of value type
-    static constexpr bool is_direct               = false;           ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generated
-    static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_temporary = etl_traits<sub_expr_t>::is_temporary; ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
+    static constexpr bool is_etl         = true;                                   ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = true;                                   ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                  ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                  ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = etl_traits<sub_expr_t>::is_fast;        ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                  ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = etl_traits<sub_expr_t>::is_thread_safe; ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                  ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = false;                                  ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                  ///< Indicates if the expression is a generated
+    static constexpr bool is_padded      = false;                                  ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = false;                                  ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = etl_traits<sub_expr_t>::is_temporary;   ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr bool gpu_computable = false;                                  ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order = etl_traits<sub_expr_t>::storage_order;  ///< The expression storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -554,20 +556,21 @@ struct etl_traits<dyn_rep_r_transformer<T, D>> {
     using sub_expr_t = std::decay_t<T>;                             ///< The sub expression type
     using value_type = typename etl_traits<sub_expr_t>::value_type; ///< The value type of this expression
 
-    static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer          = true;                                            ///< Indicates if the type is a transformer
-    static constexpr bool is_view                 = false;                                           ///< Indicates if the type is a view
-    static constexpr bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = false;                                           ///< Indicates if the expression is fast
-    static constexpr bool is_linear               = false;                                           ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe                 = etl_traits<sub_expr_t>::is_thread_safe;                 ///< Indicates if the expression is thread safe
-    static constexpr bool is_value                = false;                                           ///< Indicates if the expression is of value type
-    static constexpr bool is_direct               = false;           ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generated
-    static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_temporary = etl_traits<sub_expr_t>::is_temporary; ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
+    static constexpr bool is_etl         = true;                                   ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = true;                                   ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                  ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                  ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = false;                                  ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                  ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = etl_traits<sub_expr_t>::is_thread_safe; ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                  ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = false;                                  ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                  ///< Indicates if the expression is a generated
+    static constexpr bool is_padded      = false;                                  ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = false;                                  ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = etl_traits<sub_expr_t>::is_temporary;   ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr bool gpu_computable = false;                                  ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order = etl_traits<sub_expr_t>::storage_order;  ///< The expression storage order
 
     static constexpr size_t sub_d = etl_traits<sub_expr_t>::dimensions(); ///< The number of dimensions of the sub type
 
@@ -616,20 +619,21 @@ struct etl_traits<dyn_rep_l_transformer<T, D>> {
     using sub_expr_t = std::decay_t<T>;                             ///< The sub expression type
     using value_type = typename etl_traits<sub_expr_t>::value_type; ///< The value type of this expression
 
-    static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer          = true;                                            ///< Indicates if the type is a transformer
-    static constexpr bool is_view                 = false;                                           ///< Indicates if the type is a view
-    static constexpr bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = false;                                           ///< Indicates if the expression is fast
-    static constexpr bool is_linear               = false;                                           ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe                 = etl_traits<sub_expr_t>::is_thread_safe;                 ///< Indicates if the expression is thread safe
-    static constexpr bool is_value                = false;                                           ///< Indicates if the expression is of value type
-    static constexpr bool is_direct               = false;           ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generated
-    static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_temporary = etl_traits<sub_expr_t>::is_temporary; ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
+    static constexpr bool is_etl         = true;                                   ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = true;                                   ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                  ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                  ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = false;                                  ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                  ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = etl_traits<sub_expr_t>::is_thread_safe; ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                  ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = false;                                  ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                  ///< Indicates if the expression is a generated
+    static constexpr bool is_padded      = false;                                  ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = false;                                  ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = etl_traits<sub_expr_t>::is_temporary;   ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr bool gpu_computable = false;                                  ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order = etl_traits<sub_expr_t>::storage_order;  ///< The expression storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
