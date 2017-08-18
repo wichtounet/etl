@@ -108,7 +108,7 @@ struct plus_binary_op {
         decltype(auto) t1 = lhs.gpu_compute();
         decltype(auto) t2 = rhs.gpu_compute();
 
-        auto t3 = force_temporary(t2);
+        auto t3 = force_temporary_gpu(t2);
 
         decltype(auto) handle = impl::cublas::start_cublas();
 
@@ -138,7 +138,7 @@ struct plus_binary_op {
 
         decltype(auto) t2 = rhs.gpu_compute();
 
-        auto t3 = force_temporary(t2);
+        auto t3 = force_temporary_gpu(t2);
 
         impl::egblas::scalar_add(t3.gpu_memory(), size(rhs), 1, &s);
 
@@ -162,7 +162,7 @@ struct plus_binary_op {
 
         decltype(auto) t2 = lhs.gpu_compute();
 
-        auto t3 = force_temporary(t2);
+        auto t3 = force_temporary_gpu(t2);
 
         impl::egblas::scalar_add(t3.gpu_memory(), size(lhs), 1, &s);
 
@@ -256,7 +256,7 @@ struct minus_binary_op {
         decltype(auto) t1 = lhs.gpu_compute();
         decltype(auto) t2 = rhs.gpu_compute();
 
-        auto t3 = force_temporary(t1);
+        auto t3 = force_temporary_gpu(t1);
 
         decltype(auto) handle = impl::cublas::start_cublas();
 
@@ -284,7 +284,7 @@ struct minus_binary_op {
 
         decltype(auto) t2 = lhs.gpu_compute();
 
-        auto t3 = force_temporary(t2);
+        auto t3 = force_temporary_gpu(t2);
 
         impl::egblas::scalar_add(t3.gpu_memory(), size(lhs), 1, &s);
 
@@ -308,7 +308,7 @@ struct minus_binary_op {
 
         decltype(auto) t2 = rhs.gpu_compute();
 
-        auto t3 = force_temporary(t2);
+        auto t3 = force_temporary_gpu(t2);
 
         value_t<L> alpha(-1);
 
@@ -410,7 +410,7 @@ struct mul_binary_op {
         decltype(auto) t1 = lhs.gpu_compute();
         decltype(auto) t2 = rhs.gpu_compute();
 
-        auto t3 = force_temporary(t1);
+        auto t3 = force_temporary_gpu(t1);
 
         value_t<L> alpha(1);
 
@@ -440,7 +440,7 @@ struct mul_binary_op {
 
         decltype(auto) t2 = rhs.gpu_compute();
 
-        auto t3 = force_temporary(t2);
+        auto t3 = force_temporary_gpu(t2);
 
         decltype(auto) handle = impl::cublas::start_cublas();
         impl::cublas::cublas_scal(handle.get(), size(rhs), &s, t3.gpu_memory(), 1);
@@ -465,7 +465,7 @@ struct mul_binary_op {
 
         decltype(auto) t2 = lhs.gpu_compute();
 
-        auto t3 = force_temporary(t2);
+        auto t3 = force_temporary_gpu(t2);
 
         decltype(auto) handle = impl::cublas::start_cublas();
         impl::cublas::cublas_scal(handle.get(), size(lhs), &s, t3.gpu_memory(), 1);
@@ -576,7 +576,7 @@ struct div_binary_op {
         decltype(auto) t1 = lhs.gpu_compute();
         decltype(auto) t2 = rhs.gpu_compute();
 
-        auto t3 = force_temporary(t1);
+        auto t3 = force_temporary_gpu(t1);
 
         value_t<L> alpha(1);
 
@@ -606,7 +606,7 @@ struct div_binary_op {
 
         decltype(auto) t2 = lhs.gpu_compute();
 
-        auto t3 = force_temporary(t2);
+        auto t3 = force_temporary_gpu(t2);
 
         decltype(auto) handle = impl::cublas::start_cublas();
         impl::cublas::cublas_scal(handle.get(), size(lhs), &s, t3.gpu_memory(), 1);
@@ -633,7 +633,7 @@ struct div_binary_op {
 
         decltype(auto) t2 = rhs.gpu_compute();
 
-        auto t3 = force_temporary(t2);
+        auto t3 = force_temporary_gpu(t2);
 
         impl::egblas::scalar_div(&s, t3.gpu_memory(), size(rhs), 1);
 
