@@ -75,27 +75,34 @@ namespace standard_evaluator {
     void assign_evaluate_impl(E&& expr, R&& result) {
 //TODO(CPP17) if constexpr
 #ifdef ETL_CUDA
+        cpp_assert(expr.is_cpu_up_to_date() || expr.is_gpu_up_to_date(), "expr must be in valid state");
+
         if(expr.is_cpu_up_to_date()){
             direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
 
             result.validate_cpu();
-        } else {
-            result.invalidate_cpu();
         }
 
         if(expr.is_gpu_up_to_date()){
-            bool cpu_status = result.is_cpu_up_to_date();
+            bool cpu_status = expr.is_cpu_up_to_date();
 
             result.ensure_gpu_allocated();
             result.gpu_copy_from(expr.gpu_memory());
-
-            result.validate_gpu();
 
             // Restore CPU status because gpu_copy_from will erase it
             if(cpu_status){
                 result.validate_cpu();
             }
-        } else {
+        }
+
+        // Invalidation must be done after validation to preserve
+        // valid CPU/GPU state
+
+        if (!expr.is_cpu_up_to_date()) {
+            result.invalidate_cpu();
+        }
+
+        if (!expr.is_gpu_up_to_date()) {
             result.invalidate_gpu();
         }
 #else
