@@ -143,6 +143,9 @@ public:
             if(this->is_cpu_up_to_date()){
                 _data = rhs._data;
             }
+
+            cpp_assert(rhs.is_cpu_up_to_date() == this->is_cpu_up_to_date(), "fast::operator= must preserve CPU status");
+            cpp_assert(rhs.is_gpu_up_to_date() == this->is_gpu_up_to_date(), "fast::operator= must preserve GPU status");
         }
 
         return *this;

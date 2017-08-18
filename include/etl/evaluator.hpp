@@ -105,6 +105,9 @@ namespace standard_evaluator {
         if (!expr.is_gpu_up_to_date()) {
             result.invalidate_gpu();
         }
+
+        cpp_assert(expr.is_cpu_up_to_date() == result.is_cpu_up_to_date(), "fast_assign must preserve CPU status");
+        cpp_assert(expr.is_gpu_up_to_date() == result.is_gpu_up_to_date(), "fast_assign must preserve GPU status");
 #else
         direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
 #endif
