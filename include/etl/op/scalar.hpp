@@ -212,7 +212,7 @@ struct etl_traits<etl::scalar<T>, void> {
     static constexpr bool is_temporary   = false;           ///< Indicaes if the expression needs an evaluator visitor
     static constexpr bool is_padded      = true;            ///< Indicates if the expression is padded
     static constexpr bool is_aligned     = true;            ///< Indicates if the expression is padded
-    static constexpr bool gpu_computable = true;            ///< Indicates if the expression can be computed on GPU
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;            ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order = order::RowMajor; ///< The expression storage order
 
     /*!

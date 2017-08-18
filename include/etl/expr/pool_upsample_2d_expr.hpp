@@ -272,7 +272,7 @@ struct etl_traits<etl::pool_upsample_2d_expr<A, B, C, C1, C2, Max>> {
     static constexpr bool is_padded      = false;                     ///< Indicates if the expression is padded
     static constexpr bool is_aligned     = true;                      ///< Indicates if the expression is padded
     static constexpr bool is_temporary   = true;                      ///< Indicates if the expression needs a evaluator visitor
-    static constexpr bool gpu_computable = cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order = sub_traits::storage_order; ///< The expression's storage order
 
     /*!
