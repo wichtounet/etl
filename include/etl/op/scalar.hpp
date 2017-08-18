@@ -229,6 +229,13 @@ struct etl_traits<etl::scalar<T>, void> {
     static constexpr size_t size() {
         return 0;
     }
+
+    /*!
+     * \brief Return the number of dimensions of the expression
+     */
+    static constexpr size_t dimensions() {
+        return 0;
+    }
 };
 
 } //end of namespace etl
