@@ -240,6 +240,7 @@ $(eval $(call add_test_executable,etl_test_diagonal,src/test.cpp src/diagonal.cp
 BENCH_FILES=$(wildcard benchmark/src/benchmark*cpp)
 
 $(eval $(call add_executable,benchmark,$(BENCH_FILES)))
+$(eval $(call add_executable,benchmark_benchmark,benchmark/src/benchmark.cpp))
 $(eval $(call add_executable,benchmark_cdbn,benchmark/src/benchmark.cpp benchmark/src/benchmark_cdbn.cpp))
 $(eval $(call add_executable,benchmark_conv,benchmark/src/benchmark.cpp benchmark/src/benchmark_conv.cpp))
 $(eval $(call add_executable,benchmark_conv_extended,benchmark/src/benchmark.cpp benchmark/src/benchmark_conv_extended.cpp))
