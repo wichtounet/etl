@@ -21,6 +21,7 @@
 #include <ctime>
 
 #include "etl/math.hpp"
+#include "etl/impl/cudnn/sigmoid.hpp"
 
 namespace etl {
 
@@ -523,13 +524,22 @@ struct sigmoid_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable = false;
+    static constexpr bool vectorizable =
+            (V == vector_mode_t::SSE3 && !is_complex_t<T>)
+        ||  (V == vector_mode_t::AVX && !is_complex_t<T>)
+        ||  (intel_compiler && !is_complex_t<T>);
 
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable = is_floating<E> && cudnn_enabled;
+
+    /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -538,6 +548,40 @@ struct sigmoid_unary_op {
      */
     static constexpr T apply(const T& x) {
         return math::logistic_sigmoid(x);
+    }
+
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
+    template <typename V = default_vec>
+    static vec_type<V> load(const vec_type<V>& x) noexcept {
+        auto one = V::set(T(1));
+
+        auto t1 = V::minus(x);
+        auto t2 = V::exp(t1);
+        auto t3 = V::add(one, t2);
+        return V::div(one, t3);
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param expr The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on expr. The result must be a GPU computed expression.
+     */
+    template <typename E>
+    static auto gpu_compute(const E& expr) noexcept {
+        decltype(auto) t1 = expr.gpu_compute();
+
+        auto t2 = force_temporary_gpu(t1);
+
+        impl::cudnn::sigmoid(t1, t2);
+
+        return t2;
     }
 
     /*!

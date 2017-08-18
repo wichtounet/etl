@@ -185,28 +185,6 @@ auto identity_derivative(E&& value) {
 #ifdef ETL_CUDNN_MODE
 
 /*!
- * \brief Return the logistic sigmoid of the given ETL expression.
- * \param value The ETL expression
- * \return An ETL expression representing the logistic sigmoid of the input.
- */
-template <typename E, cpp_enable_iff(is_dma<E>)>
-auto sigmoid(E&& value) -> unary_function_expr<detail::build_type<E>, detail::sigmoid> {
-    static_assert(is_etl_expr<E>, "etl::sigmoid can only be used on ETL expressions");
-    return unary_function_expr<detail::build_type<E>, detail::sigmoid>(value);
-}
-
-/*!
- * \brief Return the logistic sigmoid of the given ETL expression.
- * \param value The ETL expression
- * \return An ETL expression representing the logistic sigmoid of the input.
- */
-template <typename E, cpp_disable_iff(is_dma<E>)>
-auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
-    static_assert(is_etl_expr<E>, "etl::sigmoid can only be used on ETL expressions");
-    return 1.0 / (1.0 + exp(-value));
-}
-
-/*!
  * \brief Return the relu activation of the given ETL expression.
  * \param value The ETL expression
  * \return An ETL expression representing the relu activation of the input.
@@ -231,17 +209,6 @@ auto relu(E&& value) -> decltype(max(value, 0.0)) {
 #else
 
 /*!
- * \brief Return the logistic sigmoid of the given ETL expression.
- * \param value The ETL expression
- * \return An ETL expression representing the logistic sigmoid of the input.
- */
-template <typename E>
-auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
-    static_assert(is_etl_expr<E>, "etl::sigmoid can only be used on ETL expressions");
-    return 1.0 / (1.0 + exp(-value));
-}
-
-/*!
  * \brief Return the relu activation of the given ETL expression.
  * \param value The ETL expression
  * \return An ETL expression representing the relu activation of the input.
@@ -253,6 +220,17 @@ auto relu(E&& value) -> decltype(max(value, 0.0)) {
 }
 
 #endif
+
+/*!
+ * \brief Return the logistic sigmoid of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the logistic sigmoid of the input.
+ */
+template <typename E>
+auto sigmoid(const E& value) -> detail::unary_helper<E, sigmoid_unary_op> {
+    static_assert(is_etl_expr<E>, "etl::fast_sigmoid can only be used on ETL expressions");
+    return detail::unary_helper<E, sigmoid_unary_op>{value};
+}
 
 /*!
  * \brief Return the derivative of the logistic sigmoid of the given ETL expression.
