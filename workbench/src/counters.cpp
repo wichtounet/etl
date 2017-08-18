@@ -34,16 +34,20 @@ float fake = 0;
  * Current values are (alloc/release/gpu_to_cpu/cpu_to_gpu):
  *
  * No pool
- * Simple: 13 /  13 /   0 /   2 (Optimal!)
- * Basic:  25 /  25 /   0 /   3 (Optimal!)
- * Sub:   163 / 163 / 160 / 480
- * ML:    179 / 179 /  10 /  19
+ * Simple:   3 /   3 /   0 /   2 (Optimal!)
+ * Basic:   15 /  15 /   0 /   3 (Optimal!)
+ * Expr:   125 / 125 /   0 /   4 (Optimal!)
+ * Direct:  43 /  43 /   0 /   3 (Optimal!)
+ * ML:     270 / 270 /   0 /  10 (Optimal!)
+ * Sub:    163 / 163 / 160 / 480
  *
  * GPU pool
- * Simple:  4 / 0 /   0 /   2 (Optimal!)
- * Basic:   2 / 0 /   0 /   3 (Optimal!)
- * Sub:     4 / 0 / 160 / 480
- * ML:     40 / 8 /  90 /  91
+ * Simple:  3 /  0 /   0 /   2 (Optimal!)
+ * Basic:   6 /  0 /   0 /   3 (Optimal!)
+ * Expr:    8 /  0 /   0 /   4 (Optimal!)
+ * Direct:  4 /  0 /   0 /   3 (Optimal!)
+ * ML:     48 / 16 /   0 /  10 (Optimal!)
+ * Sub:     4 /  0 / 160 / 480
  */
 
 void simple() {
