@@ -144,22 +144,14 @@ public:
     }
 
     /*!
-     * \brief Multiply each element by the right hand side scalar
-     * \param rhs The right hand side scalar
-     * \return a reference to the matrix
-     */
-    diagonal_matrix& operator+=(const value_type& rhs) noexcept {
-        detail::scalar_add::apply(*this, rhs);
-        return *this;
-    }
-
-    /*!
      * \brief Multiply each element by the value of the elements in the right hand side expression
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R, cpp_enable_iff(is_etl_expr<R>)>
+    template<typename R>
     diagonal_matrix& operator+=(R&& rhs){
+        static_assert(is_etl_expr<R>, "Can only add ETL expression to diagonal matrix");
+
         // Make sure the other matrix is diagonal
         if(!is_diagonal(rhs)){
             throw diagonal_exception();
@@ -171,22 +163,14 @@ public:
     }
 
     /*!
-     * \brief Multiply each element by the right hand side scalar
-     * \param rhs The right hand side scalar
-     * \return a reference to the matrix
-     */
-    diagonal_matrix& operator-=(const value_type& rhs) noexcept {
-        detail::scalar_sub::apply(*this, rhs);
-        return *this;
-    }
-
-    /*!
      * \brief Multiply each element by the value of the elements in the right hand side expression
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R, cpp_enable_iff(is_etl_expr<R>)>
+    template<typename R>
     diagonal_matrix& operator-=(R&& rhs){
+        static_assert(is_etl_expr<R>, "Can only subtract ETL expression from diagonal matrix");
+
         // Make sure the other matrix is diagonal
         if(!is_diagonal(rhs)){
             throw diagonal_exception();
