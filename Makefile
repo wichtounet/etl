@@ -213,6 +213,8 @@ $(eval $(call add_test_executable,etl_test_gevm_mixed,src/test.cpp src/gevm_mixe
 $(eval $(call add_test_executable,etl_test_gemm_types,src/test.cpp src/gemm_types.cpp))
 $(eval $(call add_test_executable,etl_test_column_major,src/test.cpp src/column_major.cpp))
 $(eval $(call add_test_executable,etl_test_fast_matrix,src/test.cpp src/fast_matrix.cpp))
+$(eval $(call add_test_executable,etl_test_fast_dyn_matrix,src/test.cpp src/fast_dyn_matrix.cpp))
+$(eval $(call add_test_executable,etl_test_fast_vector,src/test.cpp src/fast_vector.cpp))
 $(eval $(call add_test_executable,etl_test_sub_matrix_2d,src/test.cpp src/sub_matrix_2d.cpp))
 $(eval $(call add_test_executable,etl_test_sub_matrix_3d,src/test.cpp src/sub_matrix_3d.cpp))
 $(eval $(call add_test_executable,etl_test_sub_matrix_4d,src/test.cpp src/sub_matrix_4d.cpp))
