@@ -592,6 +592,18 @@ template <typename T>
 constexpr bool is_deep_double_precision = is_complex_double_precision<T> || is_double_precision<T>;
 
 /*!
+ * \brief Traits to test if the given type contains a type that can
+ * be computed on a GPU.
+ *
+ * Currently, GPU on ETL only supports floating points and complex
+ * numbers.
+ *
+ * \tparam T The type.
+ */
+template <typename T>
+constexpr bool is_gpu_t = is_floating_t<T> || is_complex_t<T>;
+
+/*!
  * \brief Traits to test if the given ETL expresion type has direct memory access (DMA).
  * \tparam E The ETL expression type.
  */
