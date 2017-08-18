@@ -430,6 +430,8 @@ public:
      */
     void gpu_copy_from(const T* gpu_memory, size_t etl_size) const {
         cpp_assert(is_gpu_allocated(), "GPU must be allocated before copy");
+        cpp_assert(gpu_memory, "Cannot copy from invalid memory");
+        cpp_assert(etl_size, "Cannot copy with a size of zero");
 
         cuda_check(cudaMemcpy(
             const_cast<std::remove_const_t<T>*>(gpu_memory_),
