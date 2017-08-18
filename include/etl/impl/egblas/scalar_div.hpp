@@ -128,7 +128,7 @@ inline void scalar_div(etl::complex<double>* beta, etl::complex<double>* x, size
 
 #else
 
-static constexpr bool has_scalar_cdiv = false;
+static constexpr bool has_scalar_zdiv = false;
 
 #endif
 
