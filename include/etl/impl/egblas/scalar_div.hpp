@@ -68,6 +68,70 @@ static constexpr bool has_scalar_ddiv = false;
 
 #endif
 
+#ifdef EGBLAS_HAS_SCALAR_CDIV
+
+static constexpr bool has_scalar_cdiv = true;
+
+/*!
+ * \brief Divide the scalar beta by each element of the complex single-precision vector x
+ * \param beta The scalar to be divide
+ * \param x The vector to divide the scalar by (GPU pointer)
+ * \param n The size of the vector
+ * \param s The stride of the vector
+ */
+inline void scalar_div(std::complex<float>* beta, std::complex<float>* x, size_t n, size_t s){
+    egblas_scalar_cdiv(*reinterpret_cast<cuComplex*>(beta), reinterpret_cast<cuComplex*>(x), n, s);
+}
+
+/*!
+ * \brief Divide the scalar beta by each element of the complex single-precision vector x
+ * \param beta The scalar to be divide
+ * \param x The vector to divide the scalar by (GPU pointer)
+ * \param n The size of the vector
+ * \param s The stride of the vector
+ */
+inline void scalar_div(etl::complex<float>* beta, etl::complex<float>* x, size_t n, size_t s){
+    egblas_scalar_cdiv(*reinterpret_cast<cuComplex*>(beta), reinterpret_cast<cuComplex*>(x), n, s);
+}
+
+#else
+
+static constexpr bool has_scalar_cdiv = false;
+
+#endif
+
+#ifdef EGBLAS_HAS_SCALAR_ZDIV
+
+static constexpr bool has_scalar_zdiv = true;
+
+/*!
+ * \brief Divide the scalar beta by each element of the complex double-precision vector x
+ * \param beta The scalar to be divide
+ * \param x The vector to divide the scalar by (GPU pointer)
+ * \param n The size of the vector
+ * \param s The stride of the vector
+ */
+inline void scalar_div(std::complex<double>* beta, std::complex<double>* x, size_t n, size_t s){
+    egblas_scalar_zdiv(*reinterpret_cast<cuDoubleComplex*>(beta), reinterpret_cast<cuDoubleComplex*>(x), n, s);
+}
+
+/*!
+ * \brief Divide the scalar beta by each element of the complex double-precision vector x
+ * \param beta The scalar to be divide
+ * \param x The vector to divide the scalar by (GPU pointer)
+ * \param n The size of the vector
+ * \param s The stride of the vector
+ */
+inline void scalar_div(etl::complex<double>* beta, etl::complex<double>* x, size_t n, size_t s){
+    egblas_scalar_zdiv(*reinterpret_cast<cuDoubleComplex*>(beta), reinterpret_cast<cuDoubleComplex*>(x), n, s);
+}
+
+#else
+
+static constexpr bool has_scalar_cdiv = false;
+
+#endif
+
 #ifndef ETL_EGBLAS_MODE
 
 /*!

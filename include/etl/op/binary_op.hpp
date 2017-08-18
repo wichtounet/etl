@@ -368,6 +368,8 @@ struct mul_binary_op {
                 &&  (
                             (is_single_precision_t<T> && impl::egblas::has_saxmy)
                         ||  (is_double_precision_t<T> && impl::egblas::has_daxmy)
+                        ||  (is_complex_single_t<T> && impl::egblas::has_caxmy)
+                        ||  (is_complex_double_t<T> && impl::egblas::has_zaxmy)
                     )
             )
         ;
@@ -522,7 +524,9 @@ struct div_binary_op {
                 &&  egblas_enabled
                 &&  (
                         (is_single_precision_t<T> && impl::egblas::has_saxdy)
-                    ||  (is_double_precision_t<T> && impl::egblas::has_daxdy))
+                    ||  (is_double_precision_t<T> && impl::egblas::has_daxdy)
+                    ||  (is_complex_single_t<T> && impl::egblas::has_caxdy)
+                    ||  (is_complex_double_t<T> && impl::egblas::has_zaxdy))
             )
         ||  (
                     (!is_scalar<L> && is_scalar<R>)
@@ -532,7 +536,9 @@ struct div_binary_op {
                     (is_scalar<L> && !is_scalar<R>)
                 && (
                         (is_single_precision_t<T> && impl::egblas::has_scalar_sdiv)
-                    ||  (is_double_precision_t<T> && impl::egblas::has_scalar_ddiv))
+                    ||  (is_double_precision_t<T> && impl::egblas::has_scalar_ddiv)
+                    ||  (is_complex_single_t<T> && impl::egblas::has_scalar_cdiv)
+                    ||  (is_complex_double_t<T> && impl::egblas::has_scalar_zdiv))
             )
             ;
 

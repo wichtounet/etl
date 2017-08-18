@@ -72,6 +72,78 @@ static constexpr bool has_daxmy = false;
 
 #endif
 
+#ifdef EGBLAS_HAS_CAXMY
+
+static constexpr bool has_caxmy = true;
+
+/*!
+ * \brief Wrappers for complex single-precision egblas axmy operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void axmy(size_t n, std::complex<float>* alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+    egblas_caxmy(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+}
+
+/*!
+ * \brief Wrappers for complex single-precision egblas axmy operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void axmy(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+    egblas_caxmy(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+}
+
+#else
+
+static constexpr bool has_caxmy = false;
+
+#endif
+
+#ifdef EGBLAS_HAS_ZAXMY
+
+static constexpr bool has_zaxmy = true;
+
+/*!
+ * \brief Wrappers for complex double-precision egblas axmy operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void axmy(size_t n, std::complex<double>* alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+    egblas_zaxmy(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+}
+
+/*!
+ * \brief Wrappers for complex double-precision egblas axmy operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void axmy(size_t n, etl::complex<double>* alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+    egblas_zaxmy(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+}
+
+#else
+
+static constexpr bool has_zaxmy = false;
+
+#endif
+
 } //end of namespace egblas
 } //end of namespace impl
 } //end of namespace etl
