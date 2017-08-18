@@ -53,6 +53,8 @@ struct inplace_assignable {
         static_assert(etl_traits<derived_t>::dimensions() <= 2, "Impossible to fflip a matrix of D > 2");
 
         if (is_2d<derived_t>) {
+            as_derived().ensure_cpu_up_to_date();
+
             std::reverse(as_derived().begin(), as_derived().end());
         }
 
