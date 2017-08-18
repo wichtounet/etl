@@ -7,7 +7,7 @@
 
 /*!
  * \file
- * \brief EGBLAS wrappers for the axdy operation.
+ * \brief EGBLAS wrappers for the scalar_add operation.
  */
 
 #pragma once
