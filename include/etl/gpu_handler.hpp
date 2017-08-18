@@ -357,6 +357,8 @@ public:
      */
     void invalidate_cpu() const noexcept {
         cpu_up_to_date = false;
+
+        cpp_assert(gpu_up_to_date, "Cannot invalidate the CPU if the GPU is not up to date");
     }
 
     /*!
@@ -364,6 +366,8 @@ public:
      */
     void invalidate_gpu() const noexcept {
         gpu_up_to_date = false;
+
+        cpp_assert(cpu_up_to_date, "Cannot invalidate the GPU if the CPU is not up to date");
     }
 
     /*!
