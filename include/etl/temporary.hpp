@@ -200,4 +200,68 @@ decltype(auto) make_temporary(E&& expr) {
     return force_temporary(std::forward<E>(expr));
 }
 
+/*!
+ * \brief Force a temporary out of the expression.
+ *
+ * This has the same behaviour as force_temporary(expr), but has
+ * stricter conditions of for use. It can only be used on DMA
+ * expressions and the result is guaranteed to preserve CPU and GPU
+ * status.
+ *
+ * In case of a fast matrix, a fast matrix with vector storage is created  even
+ * if the input has array storage.
+ *
+ * \param expr The expression to make a temporary from
+ * \return a temporary of the expression
+ */
+template <typename E, cpp_enable_iff(decay_traits<E>::is_fast)>
+decltype(auto) force_temporary_gpu(E&& expr) {
+    cpp_assert(is_dma<E>, "force_temporary_gpu should only be used on DMA expressions");
+
+    typename detail::build_fast_dyn_matrix_type<E, std::make_index_sequence<decay_traits<E>::dimensions()>>::type mat;
+    mat = expr;
+
+    if(expr.is_cpu_up_to_date()){
+        cpp_assert(mat.is_cpu_up_to_date(), "force_temporary_gpu() should preserve CPU status");
+    }
+
+    if(expr.is_gpu_up_to_date()){
+        cpp_assert(mat.is_gpu_up_to_date(), "force_temporary_gpu() should preserve GPU status");
+    }
+
+    return mat;
+}
+
+/*!
+ * \brief Force a temporary out of the expression
+ *
+ * This has the same behaviour as force_temporary(expr), but has
+ * stricter conditions of for use. It can only be used on DMA
+ * expressions and the result is guaranteed to preserve CPU and GPU
+ * status.
+ *
+ * In case of a fast matrix, a fast matrix with vector storage is created  even
+ * if the input has array storage.
+ *
+ * \param expr The expression to make a temporary from
+ * \return a temporary of the expression
+ */
+template <typename E, cpp_enable_iff(!decay_traits<E>::is_fast)>
+decltype(auto) force_temporary_gpu(E&& expr) {
+    cpp_assert(is_dma<E>, "force_temporary_gpu should only be used on DMA expressions");
+
+    dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()> mat;
+    mat = expr;
+
+    if(expr.is_cpu_up_to_date()){
+        cpp_assert(mat.is_cpu_up_to_date(), "force_temporary_gpu() should preserve CPU status");
+    }
+
+    if(expr.is_gpu_up_to_date()){
+        cpp_assert(mat.is_gpu_up_to_date(), "force_temporary_gpu() should preserve GPU status");
+    }
+
+    return mat;
+}
+
 } //end of namespace etl
