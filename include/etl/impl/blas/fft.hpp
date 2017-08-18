@@ -806,6 +806,7 @@ void fft1(A&& a, C&& c) {
 
     mkl_detail::fft_kernel(a_complex.get(), a.size(), c.memory_start());
 
+    c.validate_cpu();
     c.invalidate_gpu();
 }
 
@@ -824,6 +825,7 @@ void fft1(A&& a, C&& c) {
 
     mkl_detail::fft_kernel(a_complex.get(), a.size(), c.memory_start());
 
+    c.validate_cpu();
     c.invalidate_gpu();
 }
 
@@ -838,6 +840,7 @@ void fft1(A&& a, C&& c) {
 
     mkl_detail::fft_kernel(a.memory_start(), etl::size(a), c.memory_start());
 
+    c.validate_cpu();
     c.invalidate_gpu();
 }
 
@@ -852,6 +855,7 @@ void ifft1(A&& a, C&& c) {
 
     mkl_detail::ifft_kernel(a.memory_start(), etl::size(a), c.memory_start());
 
+    c.validate_cpu();
     c.invalidate_gpu();
 }
 
@@ -872,6 +876,7 @@ void ifft1_real(A&& a, C&& c) {
         c[i] = c_complex[i].real();
     }
 
+    c.validate_cpu();
     c.invalidate_gpu();
 }
 
@@ -892,6 +897,7 @@ void ifft1_real(A&& a, C&& c) {
         c[i] = c_complex[i].real();
     }
 
+    c.validate_cpu();
     c.invalidate_gpu();
 }
 
@@ -917,6 +923,7 @@ void fft1_many(A&& a, C&& c) {
 
     mkl_detail::fft_many_kernel(a_complex.get(), batch, n, c.memory_start());
 
+    c.validate_cpu();
     c.invalidate_gpu();
 }
 
@@ -938,6 +945,7 @@ void fft1_many(A&& a, C&& c) {
 
     mkl_detail::fft_many_kernel(a.memory_start(), batch, n, c.memory_start());
 
+    c.validate_cpu();
     c.invalidate_gpu();
 }
 
@@ -959,6 +967,7 @@ void ifft1_many(A&& a, C&& c) {
 
     mkl_detail::ifft_many_kernel(a.memory_start(), batch, n, c.memory_start());
 
+    c.validate_cpu();
     c.invalidate_gpu();
 }
 
@@ -1283,7 +1292,7 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
 
                     auto b_padded = mkl_detail::pad_one_fft2(kernel(k), s1, s2);
 
-                    b_padded = b_padded >> a_padded;
+                    b_padded >>= a_padded;
 
                     b_padded.ensure_cpu_up_to_date();
 
@@ -1308,6 +1317,7 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
             mkl_set_num_threads(mkl_threads);
         }
 
+        conv.validate_cpu();
         conv.invalidate_gpu();
     }
 }
