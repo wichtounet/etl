@@ -71,6 +71,11 @@ struct dyn_conv_4d_valid_expr : base_temporary_expr_bin<dyn_conv_4d_valid_expr<A
     void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, B, C>, "conv4_valid only supported for ETL expressions");
 
+        if(this->is_evaluated()){
+            c = this->result();
+            return;
+        }
+
         auto& a = this->a();
         auto& b = this->b();
 

@@ -88,6 +88,11 @@ struct binary_function_expr : base_temporary_expr_bin<binary_function_expr<A, B,
     void assign_to(C&& c)  const {
         static_assert(all_etl_expr<A, B, C>, "binary_function only supported for ETL expressions");
 
+        if(this->is_evaluated()){
+            c = this->result();
+            return;
+        }
+
         auto& a = this->a();
         auto& b = this->b();
 

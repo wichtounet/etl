@@ -124,6 +124,11 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
     void assign_to(C&& c)  const {
         static_assert(all_etl_expr<A, C>, "Transpose only supported for ETL expressions");
 
+        if(this->is_evaluated()){
+            c = this->result();
+            return;
+        }
+
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);

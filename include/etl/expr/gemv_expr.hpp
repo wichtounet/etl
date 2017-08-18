@@ -221,6 +221,11 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
     void assign_to(C&& c)  const {
         static_assert(all_etl_expr<A, B, C>, "gemm only supported for ETL expressions");
 
+        if(this->is_evaluated()){
+            c = this->result();
+            return;
+        }
+
         check(this->a(), this->b(), c);
 
         apply_raw(this->a(), this->b(), c);

@@ -80,6 +80,11 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
     void assign_to(C&& conv)  const {
         static_assert(all_etl_expr<A, B, C>, "conv1_full only supported for ETL expressions");
 
+        if(this->is_evaluated()){
+            conv = this->result();
+            return;
+        }
+
         auto& input_raw = this->a();
         auto& kernel_raw = this->b();
 

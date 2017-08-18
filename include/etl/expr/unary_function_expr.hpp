@@ -80,6 +80,11 @@ struct unary_function_expr : base_temporary_expr_un<unary_function_expr<A, Impl>
     void assign_to(C&& c)  const {
         static_assert(all_etl_expr<A, C>, "Function expression only supported for ETL expressions");
 
+        if(this->is_evaluated()){
+            c = this->result();
+            return;
+        }
+
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
