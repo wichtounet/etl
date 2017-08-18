@@ -752,6 +752,8 @@ void conv2_full_kernel(const T* a, size_t m1, size_t m2, const T* b, size_t n1, 
 
     a_padded *= b_padded;
 
+    a_padded.ensure_cpu_up_to_date();
+
     inplace_ifft2_kernel(safe_cast(a_padded.memory_start()), s1, s2);
 
     if (beta == T(0.0)) {
@@ -966,6 +968,8 @@ void conv1_full(A&& a, B&& b, C&& c) {
     mkl_detail::inplace_fft_kernel(reinterpret_cast<std::complex<type>*>(b_padded.memory_start()), size);
 
     a_padded *= b_padded;
+
+    a_padded.ensure_cpu_up_to_date();
 
     mkl_detail::inplace_ifft_kernel(reinterpret_cast<std::complex<type>*>(a_padded.memory_start()), size);
 
@@ -1281,6 +1285,8 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
 
                     b_padded >>= a_padded;
 
+                    b_padded.ensure_cpu_up_to_date();
+
                     mkl_detail::inplace_ifft2_kernel(reinterpret_cast<std::complex<T>*>(b_padded.memory_start()), s1, s2);
 
                     for (size_t i = 0; i < size; ++i) {
@@ -1444,6 +1450,8 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
 
                                 tmp = a_padded >> b_padded(k)(c);
 
+                                tmp.ensure_cpu_up_to_date();
+
                                 mkl_detail::inplace_ifft2_kernel(safe_cast(tmp.memory_start()), s1, s2);
 
                                 for (size_t i = 0; i < size; ++i) {
@@ -1568,6 +1576,8 @@ void conv4_full_flipped(II&& input, KK&& kernel, CC&& conv) {
 
                             tmp = a_padded >> b_padded(0)(c);
 
+                            tmp.ensure_cpu_up_to_date();
+
                             mkl_detail::inplace_ifft2_kernel(safe_cast(tmp.memory_start()), s1, s2);
 
                             for (size_t i = 0; i < size; ++i) {
@@ -1591,6 +1601,8 @@ void conv4_full_flipped(II&& input, KK&& kernel, CC&& conv) {
                                 T* cc      = conv.memory_start() + i * conv_i_inc + c * conv_c_inc;       // conv(i)(c)
 
                                 tmp = a_padded >> b_padded(k)(c);
+
+                                tmp.ensure_cpu_up_to_date();
 
                                 mkl_detail::inplace_ifft2_kernel(safe_cast(tmp.memory_start()), s1, s2);
 

@@ -308,12 +308,7 @@ void conv2_full_kernel(const T* a, size_t m1, size_t m2, const T* b, size_t n1, 
 
     // Element-wise matrix multiplication
 
-    a_padded.ensure_cpu_up_to_date();
-    b_padded.ensure_cpu_up_to_date();
-
     a_padded *= b_padded;
-
-    a_padded.invalidate_gpu();
 
     // Inverse FFT
 
@@ -332,9 +327,6 @@ void conv2_full_kernel(const T* a, size_t m1, size_t m2, const T* b, size_t n1, 
             c[i] = beta * c[i] + a_padded[i].real * (T(1.0) / size);
         }
     }
-
-    a_padded.gpu_evict();
-    b_padded.gpu_evict();
 }
 
 /*!
@@ -624,12 +616,7 @@ void conv1_full(A&& a, B&& b, C&& c) {
 
     // Element wise multiplication of the two vectors
 
-    a_padded.ensure_cpu_up_to_date();
-    b_padded.ensure_cpu_up_to_date();
-
     a_padded *= b_padded;
-
-    a_padded.invalidate_gpu();
 
     // Inverse FFT of the result
 
@@ -644,10 +631,6 @@ void conv1_full(A&& a, B&& b, C&& c) {
     }
 
     c.invalidate_gpu();
-
-    //Get rid of the GPU memory
-    a_padded.gpu_evict();
-    b_padded.gpu_evict();
 }
 
 /*!

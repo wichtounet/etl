@@ -702,6 +702,8 @@ void conv1_full_kernel(const T* a, size_t m, const T* b, size_t n, T* c){
 
     a_padded *= b_padded;
 
+    a_padded.ensure_cpu_up_to_date();
+
     detail::ifft1_kernel(reinterpret_cast<std::complex<T>*>(a_padded.memory_start()), size, reinterpret_cast<std::complex<T>*>(a_padded.memory_start()));
 
     for (size_t i = 0; i < size; ++i) {
