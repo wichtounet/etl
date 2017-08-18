@@ -632,7 +632,10 @@ namespace standard_evaluator {
  */
 template <typename Expr, typename Result>
 constexpr bool direct_assign_compatible =
-    decay_traits<Expr>::is_generator || decay_traits<Expr>::storage_order == decay_traits<Result>::storage_order;
+        decay_traits<Expr>::is_generator                                            // No dimensions, always possible to assign
+    ||  decay_traits<Expr>::storage_order == decay_traits<Result>::storage_order // Same storage always possible to assign
+    ||  all_1d<Expr, Result>                                                     // Vectors can be directly assigned, regardless of the storage order
+    ;
 
 /*!
  * \brief Evaluation of the expr into result
@@ -651,6 +654,7 @@ void std_assign_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_iff(!direct_assign_compatible<Expr, Result>)>
 void std_assign_evaluate(Expr&& expr, Result&& result) {
+    static_assert(all_2d<Expr, Result>, "Invalid assign configuration");
     standard_evaluator::assign_evaluate(transpose(expr), result);
 }
 

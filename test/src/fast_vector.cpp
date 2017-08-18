@@ -815,3 +815,38 @@ TEMPLATE_TEST_CASE_2("fast_vector/swap_1", "fast_vector::swap", Z, float, double
     REQUIRE_EQUALS(b[1], 2.0);
     REQUIRE_EQUALS(b[2], 5.0);
 }
+
+// Column Major
+
+TEMPLATE_TEST_CASE_2("fast_vector/cm/1", "[fast][cm]", Z, float, double) {
+    etl::fast_vector_cm<Z, 3> a;
+    etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
+
+    a = b;
+
+    REQUIRE_EQUALS(a[0], 2.5);
+    REQUIRE_EQUALS(a[1], 3.0);
+    REQUIRE_EQUALS(a[2], 4.0);
+}
+
+TEMPLATE_TEST_CASE_2("fast_vector/cm/2", "[fast][cm]", Z, float, double) {
+    etl::fast_vector<Z, 3> a;
+    etl::fast_vector_cm<Z, 3> b = {2.5, 3.0, 4.0};
+
+    a = b;
+
+    REQUIRE_EQUALS(a[0], 2.5);
+    REQUIRE_EQUALS(a[1], 3.0);
+    REQUIRE_EQUALS(a[2], 4.0);
+}
+
+TEMPLATE_TEST_CASE_2("fast_vector/cm/3", "[fast][cm]", Z, float, double) {
+    etl::fast_vector_cm<Z, 3> a;
+    etl::fast_vector_cm<Z, 3> b = {2.5, 3.0, 4.0};
+
+    a = b;
+
+    REQUIRE_EQUALS(a[0], 2.5);
+    REQUIRE_EQUALS(a[1], 3.0);
+    REQUIRE_EQUALS(a[2], 4.0);
+}
