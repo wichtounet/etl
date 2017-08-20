@@ -182,45 +182,6 @@ auto identity_derivative(E&& value) {
 //Note: Use of decltype here should not be necessary, but g++ does
 //not like it without it for some reason
 
-#ifdef ETL_CUDNN_MODE
-
-/*!
- * \brief Return the relu activation of the given ETL expression.
- * \param value The ETL expression
- * \return An ETL expression representing the relu activation of the input.
- */
-template <typename E, cpp_enable_iff(is_dma<E>)>
-auto relu(E&& value) -> unary_function_expr<detail::build_type<E>, detail::relu> {
-    static_assert(is_etl_expr<E>, "etl::relu can only be used on ETL expressions");
-    return unary_function_expr<detail::build_type<E>, detail::relu>(value);
-}
-
-/*!
- * \brief Return the relu activation of the given ETL expression.
- * \param value The ETL expression
- * \return An ETL expression representing the relu activation of the input.
- */
-template <typename E, cpp_disable_iff(is_dma<E>)>
-auto relu(E&& value) -> decltype(max(value, 0.0)) {
-    static_assert(is_etl_expr<E>, "etl::relu can only be used on ETL expressions");
-    return max(value, 0.0);
-}
-
-#else
-
-/*!
- * \brief Return the relu activation of the given ETL expression.
- * \param value The ETL expression
- * \return An ETL expression representing the relu activation of the input.
- */
-template <typename E>
-auto relu(E&& value) -> decltype(max(value, 0.0)) {
-    static_assert(is_etl_expr<E>, "etl::relu can only be used on ETL expressions");
-    return max(value, 0.0);
-}
-
-#endif
-
 /*!
  * \brief Return the logistic sigmoid of the given ETL expression.
  * \param value The ETL expression
@@ -230,6 +191,17 @@ template <typename E>
 auto sigmoid(const E& value) -> detail::unary_helper<E, sigmoid_unary_op> {
     static_assert(is_etl_expr<E>, "etl::fast_sigmoid can only be used on ETL expressions");
     return detail::unary_helper<E, sigmoid_unary_op>{value};
+}
+
+/*!
+ * \brief Return the relu activation of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the relu activation of the input.
+ */
+template <typename E>
+auto relu(const E& value) -> detail::unary_helper<E, relu_unary_op> {
+    static_assert(is_etl_expr<E>, "etl::relu can only be used on ETL expressions");
+    return detail::unary_helper<E, relu_unary_op>{value};
 }
 
 /*!
