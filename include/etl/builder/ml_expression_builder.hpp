@@ -370,48 +370,6 @@ decltype(auto) identity_backward(O&& output, E&& errors) {
     return std::forward<E>(errors);
 }
 
-#ifdef ETL_CUDNN_MODE
-
-/*!
- * \brief Return the backward activation of the RELU function
- * \param output The output of the forward activation function
- * \param errors The errors at output of this activation function
- * \return the backward activation of the activation function
- */
-template <typename O, typename E, cpp_enable_iff(all_dma<O, E>)>
-auto relu_backward(O&& output, E&& errors) -> binary_function_expr<detail::build_type<E>, detail::build_type<E>, detail::relu_backward>{
-    static_assert(is_etl_expr<E>, "etl::relu_backward can only be used on ETL expressions");
-    return binary_function_expr<detail::build_type<E>, detail::build_type<E>, detail::relu_backward>(output, errors);
-}
-
-/*!
- * \brief Return the backward activation of the RELU function
- * \param output The output of the forward activation function
- * \param errors The errors at output of this activation function
- * \return the backward activation of the activation function
- */
-template <typename O, typename E, cpp_disable_iff(all_dma<O, E>)>
-auto relu_backward(O&& output, E&& errors) {
-    static_assert(is_etl_expr<E>, "etl::relu_derivative can only be used on ETL expressions");
-    return detail::unary_helper<E, relu_derivative_op>{output} >> errors;
-}
-
-#else
-
-/*!
- * \brief Return the backward activation of the RELU function
- * \param output The output of the forward activation function
- * \param errors The errors at output of this activation function
- * \return the backward activation of the activation function
- */
-template <typename O, typename E>
-auto relu_backward(O&& output, E&& errors) {
-    static_assert(is_etl_expr<E>, "etl::relu_derivative can only be used on ETL expressions");
-    return detail::unary_helper<E, relu_derivative_op>{output} >> errors;
-}
-
-#endif
-
 /*!
  * \brief Return the backward activation of the sigmoid function
  * \param output The output of the forward activation function
@@ -420,6 +378,17 @@ auto relu_backward(O&& output, E&& errors) {
  */
 template <typename O, typename E>
 auto sigmoid_backward(O&& output, E&& errors) -> detail::left_binary_helper<O, E, sigmoid_derivative_binary_op> {
+    return {output, errors};
+}
+
+/*!
+ * \brief Return the backward activation of the RELU function
+ * \param output The output of the forward activation function
+ * \param errors The errors at output of this activation function
+ * \return the backward activation of the activation function
+ */
+template <typename O, typename E>
+auto relu_backward(O&& output, E&& errors) -> detail::left_binary_helper<O, E, sigmoid_derivative_binary_op> {
     return {output, errors};
 }
 
