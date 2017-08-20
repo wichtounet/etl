@@ -388,7 +388,7 @@ auto sigmoid_backward(O&& output, E&& errors) -> detail::left_binary_helper<O, E
  * \return the backward activation of the activation function
  */
 template <typename O, typename E>
-auto relu_backward(O&& output, E&& errors) -> detail::left_binary_helper<O, E, sigmoid_derivative_binary_op> {
+auto relu_backward(O&& output, E&& errors) -> detail::left_binary_helper<O, E, relu_derivative_binary_op> {
     return {output, errors};
 }
 

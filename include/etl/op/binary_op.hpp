@@ -1412,7 +1412,7 @@ struct sigmoid_derivative_binary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template<typename L, typename R>
-    static constexpr bool gpu_computable = (!is_scalar<L> && !is_scalar<R>) && cudnn_enabled;
+    static constexpr bool gpu_computable = cudnn_enabled;
 
     /*!
      * The vectorization type for V
@@ -1496,7 +1496,7 @@ struct relu_derivative_binary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template<typename L, typename R>
-    static constexpr bool gpu_computable = (!is_scalar<L> && !is_scalar<R>) && cudnn_enabled;
+    static constexpr bool gpu_computable = cudnn_enabled;
 
     /*!
      * The vectorization type for V
@@ -1536,7 +1536,7 @@ struct relu_derivative_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
+    template <typename L, typename R>
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
         decltype(auto) t1 = lhs.gpu_compute();
         decltype(auto) t2 = rhs.gpu_compute();
