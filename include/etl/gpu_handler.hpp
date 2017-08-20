@@ -92,9 +92,19 @@ public:
 #else // ETL_GPU_POOL
 
 #ifdef ETL_GPU_POOL_SIZE
-    static constexpr size_t limit = ETL_GPU_POOL_SIZE; ///< The limit of the pool
+    static constexpr size_t entries = ETL_GPU_POOL_SIZE;  ///< The entries limit of the pool
 #else
-    static constexpr size_t limit = 32; ///< The limit of the pool
+#ifdef ETL_GPU_POOL_LIMIT
+    static constexpr size_t entries = 256; ///< The entries limit of the pool
+#else
+    static constexpr size_t entries = 64; ///< The entries limit of the pool
+#endif
+#endif
+
+#ifdef ETL_GPU_POOL_LIMIT
+    static constexpr size_t limit   = ETL_GPU_POOL_LIMIT; ///< The size limit of the pool
+#else
+    static constexpr size_t limit   = 1024 * 1024 * 1024; ///< The size limit of the pool
 #endif
 
     /*!
@@ -115,7 +125,7 @@ public:
      * this may greatly reduce the overhead of memory allocation.
      */
     struct mini_pool {
-        std::array<mini_pool_entry, limit> cache; ///< The cache of GPU memory addresses
+        std::array<mini_pool_entry, entries> cache; ///< The cache of GPU memory addresses
     };
 
     /*!
@@ -125,6 +135,15 @@ public:
     static mini_pool& get_pool(){
         static mini_pool pool;
         return pool;
+    }
+
+    /*!
+     * \brief Return a reference to the GPU pool size
+     * \return a reference to the GPU pool size
+     */
+    static size_t& get_pool_size(){
+        static size_t pool_size = 0;
+        return pool_size;
     }
 
     /*!
@@ -151,11 +170,16 @@ public:
         {
             std::lock_guard<std::mutex> l(get_lock());
 
-            for(auto& slot : get_pool().cache){
-                if(slot.memory && slot.size == real_size){
-                    auto memory = slot.memory;
-                    slot.memory = nullptr;
-                    return static_cast<T*>(memory);
+            if (get_pool_size()) {
+                for (auto& slot : get_pool().cache) {
+                    if (slot.memory && slot.size == real_size) {
+                        auto memory = slot.memory;
+                        slot.memory = nullptr;
+
+                        get_pool_size() -= size;
+
+                        return static_cast<T*>(memory);
+                    }
                 }
             }
         }
@@ -177,12 +201,16 @@ public:
         {
             std::lock_guard<std::mutex> l(get_lock());
 
-            for(auto& slot : get_pool().cache){
-                if(!slot.memory){
-                    slot.memory = const_cast<void*>(static_cast<const void*>(gpu_memory));
-                    slot.size   = size * sizeof(T);
+            if (get_pool_size() + size < limit) {
+                for (auto& slot : get_pool().cache) {
+                    if (!slot.memory) {
+                        slot.memory = const_cast<void*>(static_cast<const void*>(gpu_memory));
+                        slot.size   = size * sizeof(T);
 
-                    return;
+                        get_pool_size() += size;
+
+                        return;
+                    }
                 }
             }
         }
@@ -212,6 +240,8 @@ public:
                 slot.size   = 0;
             }
         }
+
+        get_pool_size() = 0;
     }
 #endif
 };
