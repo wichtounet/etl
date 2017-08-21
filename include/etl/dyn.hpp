@@ -81,10 +81,13 @@ public:
      * \brief Copy construct a matrix
      * \param rhs The matrix to copy
      */
-    dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept : base_type(rhs) {
+    dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept(assert_nothrow) : base_type(rhs) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+
+        cpp_assert(rhs.is_cpu_up_to_date() == this->is_cpu_up_to_date(), "dyn_matrix_impl(&) must preserve CPU status");
+        cpp_assert(rhs.is_gpu_up_to_date() == this->is_gpu_up_to_date(), "dyn_matrix_impl(&) must preserve GPU status");
     }
 
     /*!
@@ -198,7 +201,7 @@ public:
      * \param rhs The matrix to copy from
      * \return A reference to the matrix
      */
-    dyn_matrix_impl& operator=(const dyn_matrix_impl& rhs) noexcept {
+    dyn_matrix_impl& operator=(const dyn_matrix_impl& rhs) noexcept(assert_nothrow) {
         if (this != &rhs) {
             if (!_size) {
                 _size       = rhs._size;
@@ -213,6 +216,9 @@ public:
         }
 
         check_invariants();
+
+        cpp_assert(rhs.is_cpu_up_to_date() == this->is_cpu_up_to_date(), "dyn_matrix_impl::operator= must preserve CPU status");
+        cpp_assert(rhs.is_gpu_up_to_date() == this->is_gpu_up_to_date(), "dyn_matrix_impl::operator= must preserve GPU status");
 
         return *this;
     }
@@ -629,12 +635,14 @@ private:
     }
 };
 
+#ifndef CPP_UTILS_ASSERT_EXCEPTION
 static_assert(std::is_nothrow_default_constructible<dyn_vector<double>>::value, "dyn_vector should be nothrow default constructible");
 static_assert(std::is_nothrow_copy_constructible<dyn_vector<double>>::value, "dyn_vector should be nothrow copy constructible");
 static_assert(std::is_nothrow_move_constructible<dyn_vector<double>>::value, "dyn_vector should be nothrow move constructible");
 static_assert(std::is_nothrow_copy_assignable<dyn_vector<double>>::value, "dyn_vector should be nothrow copy assignable");
 static_assert(std::is_nothrow_move_assignable<dyn_vector<double>>::value, "dyn_vector should be nothrow move assignable");
 static_assert(std::is_nothrow_destructible<dyn_vector<double>>::value, "dyn_vector should be nothrow destructible");
+#endif
 
 /*!
  * \brief Helper to create a dyn matrix using the dimensions.
