@@ -1427,7 +1427,7 @@ struct sigmoid_derivative_binary_op {
      * \return The result of applying the binary operator on lhs and rhs
      */
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
-        return lhs >> (1.0 - lhs) >> rhs;
+        return lhs * (1.0 - lhs) * rhs;
     }
 
     /*!
