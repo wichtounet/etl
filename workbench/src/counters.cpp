@@ -194,10 +194,10 @@ void direct() {
             B /= A * C;
 
             // Test scalar compound
-            A += 1.1;
-            B -= 1.1;
-            C *= 1.1;
-            A /= 1.1;
+            A += 1.1f;
+            B -= 1.1f;
+            C *= 1.1f;
+            A /= 1.1f;
         }
     }
 
