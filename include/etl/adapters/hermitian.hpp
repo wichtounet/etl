@@ -171,7 +171,7 @@ public:
      * \return a reference to the matrix
      */
     hermitian_matrix& operator+=(const value_type& rhs) noexcept {
-        detail::scalar_add::apply(*this, rhs);
+        etl::scalar<value_type>(rhs).assign_add_to(*this);
         return *this;
     }
 
@@ -198,7 +198,7 @@ public:
      * \return a reference to the matrix
      */
     hermitian_matrix& operator-=(const value_type& rhs) noexcept {
-        detail::scalar_sub::apply(*this, rhs);
+        etl::scalar<value_type>(rhs).assign_sub_to(*this);
         return *this;
     }
 
@@ -225,7 +225,7 @@ public:
      * \return a reference to the matrix
      */
     hermitian_matrix& operator*=(const value_type& rhs) noexcept {
-        detail::scalar_mul::apply(*this, rhs);
+        etl::scalar<value_type>(rhs).assign_mul_to(*this);
         return *this;
     }
 
@@ -252,7 +252,7 @@ public:
      * \return a reference to the matrix
      */
     hermitian_matrix& operator>>=(const value_type& rhs) noexcept {
-        detail::scalar_mul::apply(*this, rhs);
+        etl::scalar<value_type>(rhs).assign_mul_to(*this);
         return *this;
     }
 
@@ -279,7 +279,7 @@ public:
      * \return a reference to the matrix
      */
     hermitian_matrix& operator/=(const value_type& rhs) noexcept {
-        detail::scalar_div::apply(*this, rhs);
+        etl::scalar<value_type>(rhs).assign_div_to(*this);
         return *this;
     }
 
@@ -306,7 +306,7 @@ public:
      * \return a reference to the matrix
      */
     hermitian_matrix& operator%=(const value_type& rhs) noexcept {
-        detail::scalar_mod::apply(*this, rhs);
+        etl::scalar<value_type>(rhs).assign_mod_to(*this);
         return *this;
     }
 

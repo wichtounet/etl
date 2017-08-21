@@ -281,7 +281,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc add_evaluate
      */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R>)>
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
     void add_evaluate(E&& expr, R&& result) {
         inc_counter("gpu:assign");
 
@@ -296,6 +296,27 @@ namespace standard_evaluator {
 
         value_t<E> alpha(1);
         impl::cublas::cublas_axpy(handle.get(), size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
+
+        // Validate the GPU and invalidates the CPU
+        result.validate_gpu();
+        result.invalidate_cpu();
+    }
+
+#endif
+
+#ifdef ETL_EGBLAS_MODE
+
+    /*!
+     * \copydoc add_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
+    void add_evaluate(E&& expr, R&& result) {
+        inc_counter("gpu:assign");
+
+        result.ensure_gpu_up_to_date();
+
+        // Compute the GPU representation of the expression
+        impl::egblas::scalar_add(result.gpu_memory(), size(result), 1, &expr.value);
 
         // Validate the GPU and invalidates the CPU
         result.validate_gpu();
@@ -376,7 +397,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc sub_evaluate
      */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R>)>
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
     void sub_evaluate(E&& expr, R&& result) {
         inc_counter("gpu:assign");
 
@@ -391,6 +412,28 @@ namespace standard_evaluator {
 
         value_t<E> alpha(-1);
         impl::cublas::cublas_axpy(handle.get(), size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
+
+        // Validate the GPU and invalidates the CPU
+        result.validate_gpu();
+        result.invalidate_cpu();
+    }
+
+#endif
+
+#ifdef ETL_EGBLAS_MODE
+
+    /*!
+     * \copydoc sub_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
+    void sub_evaluate(E&& expr, R&& result) {
+        inc_counter("gpu:assign");
+
+        result.ensure_gpu_up_to_date();
+
+        // Compute the GPU representation of the expression
+        auto value = -expr.value;
+        impl::egblas::scalar_add(result.gpu_memory(), size(result), 1, &value);
 
         // Validate the GPU and invalidates the CPU
         result.validate_gpu();
@@ -471,7 +514,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc sub_evaluate
      */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R>)>
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
     void mul_evaluate(E&& expr, R&& result) {
         inc_counter("gpu:assign");
 
@@ -484,6 +527,28 @@ namespace standard_evaluator {
 
         value_t<E> alpha(1);
         impl::egblas::axmy(size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
+
+        // Validate the GPU and invalidates the CPU
+        result.validate_gpu();
+        result.invalidate_cpu();
+    }
+
+#endif
+
+#ifdef ETL_CUBLAS_MODE
+
+    /*!
+     * \copydoc mul_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
+    void mul_evaluate(E&& expr, R&& result) {
+        inc_counter("gpu:assign");
+
+        result.ensure_gpu_up_to_date();
+
+        // Compute the GPU representation of the expression
+        decltype(auto) handle = impl::cublas::start_cublas();
+        impl::cublas::cublas_scal(handle.get(), size(result), &expr.value, result.gpu_memory(), 1);
 
         // Validate the GPU and invalidates the CPU
         result.validate_gpu();
@@ -564,7 +629,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc sub_evaluate
      */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound_div<E, R>)>
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound_div<E, R> && !is_scalar<E>)>
     void div_evaluate(E&& expr, R&& result) {
         inc_counter("gpu:assign");
 
@@ -577,6 +642,29 @@ namespace standard_evaluator {
 
         value_t<E> alpha(1);
         impl::egblas::axdy(size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
+
+        // Validate the GPU and invalidates the CPU
+        result.validate_gpu();
+        result.invalidate_cpu();
+    }
+
+#endif
+
+#ifdef ETL_CUBLAS_MODE
+
+    /*!
+     * \copydoc mul_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound_div<E, R> && is_scalar<E>)>
+    void div_evaluate(E&& expr, R&& result) {
+        inc_counter("gpu:assign");
+
+        result.ensure_gpu_up_to_date();
+
+        // Compute the GPU representation of the expression
+        auto value = value_t<E>(1.0) / expr.value;
+        decltype(auto) handle = impl::cublas::start_cublas();
+        impl::cublas::cublas_scal(handle.get(), size(result), &value, result.gpu_memory(), 1);
 
         // Validate the GPU and invalidates the CPU
         result.validate_gpu();

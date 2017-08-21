@@ -12,9 +12,6 @@
 
 #pragma once
 
-//Include implementations
-#include "etl/impl/scalar_op.hpp"
-
 namespace etl {
 
 /*!
@@ -250,7 +247,7 @@ auto operator%(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<R
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_arithmetic<RE>::value && is_simple_lhs<LE>)>
 LE& operator+=(LE&& lhs, RE rhs) {
-    detail::scalar_add::apply(lhs, rhs);
+    etl::scalar<RE>(rhs).assign_add_to(lhs);
     return lhs;
 }
 
@@ -275,7 +272,7 @@ LE& operator+=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_arithmetic<RE>::value && is_simple_lhs<LE>)>
 LE& operator-=(LE&& lhs, RE rhs) {
-    detail::scalar_sub::apply(lhs, rhs);
+    etl::scalar<RE>(rhs).assign_sub_to(lhs);
     return lhs;
 }
 
@@ -300,7 +297,7 @@ LE& operator-=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_arithmetic<RE>::value && is_simple_lhs<LE>)>
 LE& operator*=(LE&& lhs, RE rhs) {
-    detail::scalar_mul::apply(lhs, rhs);
+    etl::scalar<RE>(rhs).assign_mul_to(lhs);
     return lhs;
 }
 
@@ -325,7 +322,7 @@ LE& operator*=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_arithmetic<RE>::value && is_simple_lhs<LE>)>
 LE& operator>>=(LE&& lhs, RE rhs) {
-    detail::scalar_mul::apply(lhs, rhs);
+    etl::scalar<RE>(rhs).assign_mul_to(lhs);
     return lhs;
 }
 
@@ -350,7 +347,7 @@ LE& operator>>=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_arithmetic<RE>::value && is_simple_lhs<LE>)>
 LE& operator/=(LE&& lhs, RE rhs) {
-    detail::scalar_div::apply(lhs, rhs);
+    etl::scalar<RE>(rhs).assign_div_to(lhs);
     return lhs;
 }
 
@@ -375,7 +372,7 @@ LE& operator/=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_arithmetic<RE>::value && is_simple_lhs<LE>)>
 LE& operator%=(LE&& lhs, RE rhs) {
-    detail::scalar_mod::apply(lhs, rhs);
+    etl::scalar<RE>(rhs).assign_mod_to(lhs);
     return lhs;
 }
 

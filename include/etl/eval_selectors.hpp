@@ -101,7 +101,7 @@ constexpr bool standard_assign = !has_direct_access<R>;
  * \brief Integral constant indicating if a GPU compound assign is possible
  */
 template <typename E, typename R>
-constexpr bool gpu_compound = all_homogeneous<E, R> && all_gpu_computable<E, R> && has_direct_access<R> && !is_scalar<E> && cublas_enabled && egblas_enabled;
+constexpr bool gpu_compound = all_homogeneous<E, R> && all_gpu_computable<E, R> && has_direct_access<R> && cublas_enabled && egblas_enabled;
 
 /*!
  * \brief Integral constant indicating if a vectorized compound assign is possible
@@ -127,7 +127,7 @@ constexpr bool standard_compound = !gpu_compound<E, R> && !vectorized_compound<E
  * \brief Integral constant indicating if a GPU compound assign is possible
  */
 template <typename E, typename R>
-constexpr bool gpu_compound_div = all_homogeneous<E, R> && all_gpu_computable<E, R> && has_direct_access<R> && !is_scalar<E> && cublas_enabled && egblas_enabled;
+constexpr bool gpu_compound_div = all_homogeneous<E, R> && all_gpu_computable<E, R> && has_direct_access<R> && cublas_enabled && egblas_enabled;
 
 /*!
  * \brief Integral constant indicating if a vectorized compound div assign is possible
