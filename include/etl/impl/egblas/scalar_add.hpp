@@ -37,7 +37,7 @@ static constexpr bool has_scalar_sadd = true;
  * \param s The stride of the vector
  * \param beta The scalar to add
  */
-inline void scalar_add(float* x, size_t n, size_t s, float* beta){
+inline void scalar_add(float* x, size_t n, size_t s, const float* beta){
     egblas_scalar_sadd(x, n, s, *beta);
 }
 
@@ -58,7 +58,7 @@ static constexpr bool has_scalar_dadd = true;
  * \param s The stride of the vector
  * \param beta The scalar to add
  */
-inline void scalar_add(double* x, size_t n, size_t s, double* beta){
+inline void scalar_add(double* x, size_t n, size_t s, const double* beta){
     egblas_scalar_dadd(x, n, s, *beta);
 }
 
@@ -79,8 +79,8 @@ static constexpr bool has_scalar_cadd = true;
  * \param s The stride of the vector
  * \param beta The scalar to add
  */
-inline void scalar_add(etl::complex<float>* x, size_t n, size_t s, etl::complex<float>* beta){
-    egblas_scalar_cadd(reinterpret_cast<cuComplex*>(x), n, s, *reinterpret_cast<cuComplex*>(beta));
+inline void scalar_add(etl::complex<float>* x, size_t n, size_t s, const etl::complex<float>* beta){
+    egblas_scalar_cadd(reinterpret_cast<cuComplex*>(x), n, s, *reinterpret_cast<const cuComplex*>(beta));
 }
 
 /*!
@@ -90,8 +90,8 @@ inline void scalar_add(etl::complex<float>* x, size_t n, size_t s, etl::complex<
  * \param s The stride of the vector
  * \param beta The scalar to add
  */
-inline void scalar_add(std::complex<float>* x, size_t n, size_t s, std::complex<float>* beta){
-    egblas_scalar_cadd(reinterpret_cast<cuComplex*>(x), n, s, *reinterpret_cast<cuComplex*>(beta));
+inline void scalar_add(std::complex<float>* x, size_t n, size_t s, const std::complex<float>* beta){
+    egblas_scalar_cadd(reinterpret_cast<cuComplex*>(x), n, s, *reinterpret_cast<const cuComplex*>(beta));
 }
 
 #else
@@ -111,8 +111,8 @@ static constexpr bool has_scalar_zadd = true;
  * \param s The stride of the vector
  * \param beta The scalar to add
  */
-inline void scalar_add(etl::complex<double>* x, size_t n, size_t s, etl::complex<double>* beta){
-    egblas_scalar_zadd(reinterpret_cast<cuDoubleComplex*>(x), n, s, *reinterpret_cast<cuDoubleComplex*>(beta));
+inline void scalar_add(etl::complex<double>* x, size_t n, size_t s, const etl::complex<double>* beta){
+    egblas_scalar_zadd(reinterpret_cast<cuDoubleComplex*>(x), n, s, *reinterpret_cast<const cuDoubleComplex*>(beta));
 }
 
 /*!
@@ -122,8 +122,8 @@ inline void scalar_add(etl::complex<double>* x, size_t n, size_t s, etl::complex
  * \param s The stride of the vector
  * \param beta The scalar to add
  */
-inline void scalar_add(std::complex<double>* x, size_t n, size_t s, std::complex<double>* beta){
-    egblas_scalar_zadd(reinterpret_cast<cuDoubleComplex*>(x), n, s, *reinterpret_cast<cuDoubleComplex*>(beta));
+inline void scalar_add(std::complex<double>* x, size_t n, size_t s, const std::complex<double>* beta){
+    egblas_scalar_zadd(reinterpret_cast<cuDoubleComplex*>(x), n, s, *reinterpret_cast<const cuDoubleComplex*>(beta));
 }
 
 #else
@@ -142,7 +142,7 @@ static constexpr bool has_scalar_zadd = false;
  * \param beta The scalar to add
  */
 template<typename T>
-inline void scalar_add(T* x, size_t n, size_t s, T* beta){
+inline void scalar_add(T* x, size_t n, size_t s, const T* beta){
     cpp_unused(x);
     cpp_unused(n);
     cpp_unused(s);
