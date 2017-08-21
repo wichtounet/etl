@@ -181,15 +181,23 @@ void direct() {
         C.ensure_gpu_up_to_date();
 
         for (size_t i = 0; i < 10; ++i) {
+            // Test direct compound
             A += B;
             C -= A;
             B >>= C;
             B /= A;
 
+            // Test expression compound
             A += A * B;
             C -= A * B;
             B >>= C * B;
             B /= A * C;
+
+            // Test scalar compound
+            A += 1.1;
+            B -= 1.1;
+            C *= 1.1;
+            A /= 1.1;
         }
     }
 
