@@ -746,6 +746,8 @@ etl::dyn_vector<etl::complex<etl::value_t<I>>> pad_one_fft2(const I& input, size
 
     mkl_detail::inplace_fft2_kernel(safe_cast(input_padded.memory_start()), s1, s2);
 
+    input_padded.invalidate_gpu();
+
     return input_padded;
 }
 
@@ -1297,6 +1299,8 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
                     b_padded.ensure_cpu_up_to_date();
 
                     mkl_detail::inplace_ifft2_kernel(reinterpret_cast<std::complex<T>*>(b_padded.memory_start()), s1, s2);
+
+                    b_padded.invalidate_gpu();
 
                     for (size_t i = 0; i < size; ++i) {
                         c[i] = b_padded[i].real;
