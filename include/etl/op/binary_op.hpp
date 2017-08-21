@@ -1443,7 +1443,7 @@ struct sigmoid_derivative_binary_op {
         auto t1 = V::sub(one, lhs);
         auto t2 = V::mul(lhs, t1);
 
-        return V::mul(t1, rhs);
+        return V::mul(t2, rhs);
     }
 
     /*!
