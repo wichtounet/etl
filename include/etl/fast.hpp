@@ -133,7 +133,7 @@ public:
      * \param rhs The fast matrix to copy from
      * \return a reference to the fast matrix
      */
-    fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
+    fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept(assert_nothrow) {
         // Avoid copy to self
         if (this != &rhs) {
             // This will handle the possible copy to GPU
@@ -406,12 +406,14 @@ public:
     }
 };
 
+#ifndef CPP_UTILS_ASSERT_EXCEPTION
 static_assert(std::is_nothrow_default_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow default constructible");
 static_assert(std::is_nothrow_copy_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow copy constructible");
 static_assert(std::is_nothrow_move_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow move constructible");
 static_assert(std::is_nothrow_copy_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow copy assignable");
 static_assert(std::is_nothrow_move_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow move assignable");
 static_assert(std::is_nothrow_destructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow destructible");
+#endif
 
 /*!
  * \brief Create a fast_matrix of the given dimensions over the given memory
