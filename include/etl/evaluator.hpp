@@ -122,6 +122,7 @@ namespace standard_evaluator {
 
         direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -190,6 +191,7 @@ namespace standard_evaluator {
             detail::Assign::apply(result, expr);
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -209,6 +211,7 @@ namespace standard_evaluator {
             detail::VectorizedAssign<V>::apply(result, expr);
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -227,6 +230,7 @@ namespace standard_evaluator {
             result[i] += expr[i];
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -248,6 +252,7 @@ namespace standard_evaluator {
             detail::AssignAdd::apply(result, expr);
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -271,6 +276,7 @@ namespace standard_evaluator {
             detail::VectorizedAssignAdd<V>::apply(result, expr);
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -343,6 +349,7 @@ namespace standard_evaluator {
             result[i] -= expr[i];
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -364,6 +371,7 @@ namespace standard_evaluator {
             detail::AssignSub::apply(result, expr);
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -387,6 +395,7 @@ namespace standard_evaluator {
             detail::VectorizedAssignSub<V>::apply(result, expr);
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -460,6 +469,7 @@ namespace standard_evaluator {
             result[i] *= expr[i];
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -481,6 +491,7 @@ namespace standard_evaluator {
             detail::AssignMul::apply(result, expr);
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -504,6 +515,7 @@ namespace standard_evaluator {
             detail::VectorizedAssignMul<V>::apply(result, expr);
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -575,6 +587,7 @@ namespace standard_evaluator {
             result[i] /= expr[i];
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -596,6 +609,7 @@ namespace standard_evaluator {
             detail::AssignDiv::apply(result, expr);
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -619,6 +633,7 @@ namespace standard_evaluator {
             detail::VectorizedAssignDiv<V>::apply(result, expr);
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
@@ -691,6 +706,7 @@ namespace standard_evaluator {
             result[i] %= expr[i];
         }
 
+        result.validate_cpu();
         result.invalidate_gpu();
     }
 
