@@ -360,6 +360,9 @@ public:
 
         std::copy(vec.begin(), vec.end(), begin());
 
+        this->validate_cpu();
+        this->invalidate_gpu();
+
         check_invariants();
 
         return *this;
@@ -372,6 +375,9 @@ public:
      */
     dyn_matrix_impl& operator=(const value_type& value) noexcept {
         std::fill(begin(), end(), value);
+
+        this->validate_cpu();
+        this->invalidate_gpu();
 
         check_invariants();
 

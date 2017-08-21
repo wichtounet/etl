@@ -137,6 +137,10 @@ public:
     custom_fast_matrix_impl& operator=(const C& container) noexcept {
         validate_assign(*this, container);
         std::copy(container.begin(), container.end(), begin());
+
+        this->validate_cpu();
+        this->invalidate_gpu();
+
         return *this;
     }
 
@@ -175,6 +179,9 @@ public:
     template <typename VT, cpp_enable_iff(std::is_convertible<VT, value_type>::value || std::is_assignable<T&, VT>::value)>
     custom_fast_matrix_impl& operator=(const VT& value) noexcept {
         std::fill(_data.begin(), _data.end(), value);
+
+        this->validate_cpu();
+        this->invalidate_gpu();
 
         return *this;
     }
