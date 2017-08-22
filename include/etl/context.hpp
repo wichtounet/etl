@@ -24,6 +24,7 @@ struct forced_impl {
 struct context {
     bool serial   = false; ///< Force serial execution
     bool parallel = false; ///< Force parallel execution
+    bool cpu      = false; ///< Force CPU evaluation
 
     forced_impl<scalar_impl> scalar_selector;         ///< Force selector for scalar operations
     forced_impl<sum_impl> sum_selector;               ///< Forced selector for sum
@@ -221,6 +222,39 @@ struct parallel_context {
 };
 
 /*!
+ * \brief RAII helper for setting the context to cpu
+ */
+struct cpu_context {
+    bool old_cpu; ///< The previous value of cpu
+
+    /*!
+     * \brief Default construct a cpu context
+     *
+     * This saves the previous cpu value and sets cpu to true
+     */
+    cpu_context() {
+        old_cpu = etl::local_context().cpu;
+        etl::local_context().cpu = true;
+    }
+
+    /*!
+     * \brief Destruct a cpu context
+     *
+     * This restores the cpu state
+     */
+    ~cpu_context() {
+        etl::local_context().cpu = old_cpu;
+    }
+
+    /*!
+     * \brief Does nothing, simple trick for section to be nice
+     */
+    operator bool() {
+        return true;
+    }
+};
+
+/*!
  * \brief RAII helper for setting the context to a selected
  * implementation
  */
@@ -271,6 +305,11 @@ struct selected_context {
  * \brief Define the start of an ETL parallel section
  */
 #define PARALLEL_SECTION if (auto etl_parallel_context__ = etl::detail::parallel_context())
+
+/*!
+ * \brief Define the start of an ETL CPU section
+ */
+#define CPU_SECTION if (auto etl_cpu_context__ = etl::detail::cpu_context())
 
 /*!
  * \brief Define the start of an ETL selected section
