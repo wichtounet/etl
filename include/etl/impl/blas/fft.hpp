@@ -1288,22 +1288,24 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
         auto a_padded = mkl_detail::pad_one_fft2(input, s1, s2);
 
         auto batch_fun_k = [&](const size_t first, const size_t last) {
-            SERIAL_SECTION {
-                for (size_t k = first; k < last; ++k) {
-                    T* c = conv.memory_start() + k * c_s;
+            CPU_SECTION {
+                SERIAL_SECTION {
+                    for (size_t k = first; k < last; ++k) {
+                        T* c = conv.memory_start() + k * c_s;
 
-                    auto b_padded = mkl_detail::pad_one_fft2(kernel(k), s1, s2);
+                        auto b_padded = mkl_detail::pad_one_fft2(kernel(k), s1, s2);
 
-                    b_padded >>= a_padded;
+                        b_padded >>= a_padded;
 
-                    b_padded.ensure_cpu_up_to_date();
+                        b_padded.ensure_cpu_up_to_date();
 
-                    mkl_detail::inplace_ifft2_kernel(reinterpret_cast<std::complex<T>*>(b_padded.memory_start()), s1, s2);
+                        mkl_detail::inplace_ifft2_kernel(reinterpret_cast<std::complex<T>*>(b_padded.memory_start()), s1, s2);
 
-                    b_padded.invalidate_gpu();
+                        b_padded.invalidate_gpu();
 
-                    for (size_t i = 0; i < size; ++i) {
-                        c[i] = b_padded[i].real;
+                        for (size_t i = 0; i < size; ++i) {
+                            c[i] = b_padded[i].real;
+                        }
                     }
                 }
             }
