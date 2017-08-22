@@ -1,6 +1,7 @@
 ETL 1.2 - Next version
 **********************
 
+* *Feature* GPU support for basic expressions (such as c = 1.0 * b + d + e - 1.0)
 * *Feature* Support for convolutions for matrices of different data types
 * *Misc* Full cleanup of the traits
 * *Misc* Use of variable templates (C++14) for the traits
