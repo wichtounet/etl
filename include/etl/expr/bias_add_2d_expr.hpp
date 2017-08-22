@@ -186,7 +186,7 @@ private:
         constexpr bool vec_possible = vec_enabled && vectorize_impl && all_vectorizable<vector_mode, A, B, C> && all_homogeneous<A, B, C>;
         constexpr bool cudnn_possible = cudnn_enabled && all_floating<A, B, C> && all_homogeneous<A, B, C>;
 
-        if (cudnn_possible && gpu) {
+        if (cudnn_possible && gpu && !local_context().cpu) {
             return etl::bias_add_impl::CUDNN;
         }
 
@@ -212,7 +212,7 @@ private:
             switch (forced) {
                 //CUDNN cannot always be used
                 case bias_add_impl::CUDNN:
-                    if (!cudnn_enabled || !all_floating<A, B, C> || !all_homogeneous<A, B, C>) {
+                    if (!cudnn_enabled || !all_floating<A, B, C> || !all_homogeneous<A, B, C> || local_context().cpu) {
                         std::cerr << "Forced selection to cUDNN bias_add implementation, but not possible for this expression" << std::endl;
                         return def;
                     }

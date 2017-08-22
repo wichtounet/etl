@@ -39,12 +39,12 @@ namespace detail {
  * \return the implementation to be used
  */
 template <conv_type TT, typename I, typename K, typename C>
-constexpr etl::conv_impl select_default_conv1_impl_new() {
+etl::conv_impl select_default_conv1_impl_new() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
     if(TT == conv_type::FULL){
-        if(impl::cufft::conv1_possible<I, K, C>){
+        if(impl::cufft::conv1_possible<I, K, C> && !local_context().cpu){
             //TODO This should only be done for some sizes
             return etl::conv_impl::FFT_CUFFT;
         } else if(impl::blas::conv1_possible<I, K, C>){
@@ -87,7 +87,7 @@ inline etl::conv_impl select_conv1_impl_new() {
 
             //CUFFT cannot always be used
             case conv_impl::FFT_CUFFT:
-                if (!impl::cufft::conv1_possible<I, K, C>) {
+                if (!impl::cufft::conv1_possible<I, K, C> || local_context().cpu) {
                     std::cerr << "Forced selection to CUFFT fft_conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
@@ -124,7 +124,7 @@ inline etl::conv_impl select_conv1_impl_new() {
  * \return the implementation to be used
  */
 template <conv_type TT, typename I, typename K, typename C>
-constexpr etl::conv_impl select_default_conv2_impl_new() {
+inline etl::conv_impl select_default_conv2_impl_new() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
@@ -139,11 +139,11 @@ constexpr etl::conv_impl select_default_conv2_impl_new() {
 
     // Full has more options
     if (TT == conv_type::FULL) {
-        if (impl::cufft::conv2_possible<I, K, C>) {
+        if (impl::cufft::conv2_possible<I, K, C> && !local_context().cpu) {
             return etl::conv_impl::FFT_CUFFT;
         } else if (impl::blas::conv2_possible<I, K, C>) {
             return etl::conv_impl::FFT_MKL;
-        } else if (impl::cudnn::conv_possible<I, K, C>) {
+        } else if (impl::cudnn::conv_possible<I, K, C> && !local_context().cpu) {
             return etl::conv_impl::CUDNN;
         }
     }
@@ -182,7 +182,7 @@ inline etl::conv_impl select_conv2_impl_new() {
 
             //CUDNN cannot always be used
             case conv_impl::CUDNN:
-                if (!impl::cudnn::conv_possible<I, K, C>) {
+                if (!impl::cudnn::conv_possible<I, K, C> || local_context().cpu) {
                     std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
@@ -200,7 +200,7 @@ inline etl::conv_impl select_conv2_impl_new() {
 
             //CUFFT cannot always be used
             case conv_impl::FFT_CUFFT:
-                if (!impl::cufft::conv2_possible<I, K, C>) {
+                if (!impl::cufft::conv2_possible<I, K, C> || local_context().cpu) {
                     std::cerr << "Forced selection to CUFFT conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
@@ -243,7 +243,7 @@ constexpr etl::conv_impl select_default_conv_impl() {
 
     if (impl::vec::conv2_possible<vector_mode, I, K, C>) {
         return etl::conv_impl::VEC;
-    } else if(impl::cudnn::conv_possible<I, K, C> && (TT == conv_type::VALID || TT == conv_type::FULL) && is_2d<I>){
+    } else if(impl::cudnn::conv_possible<I, K, C> && (TT == conv_type::VALID || TT == conv_type::FULL) && is_2d<I> && !local_context().cpu){
         return etl::conv_impl::CUDNN;
     } else {
         return etl::conv_impl::STD;
@@ -277,7 +277,7 @@ inline etl::conv_impl select_conv_impl() {
 
             //CUFFT cannot always be used
             case conv_impl::FFT_CUFFT:
-                if (!impl::cufft::conv2_possible<I, K, C>) {
+                if (!impl::cufft::conv2_possible<I, K, C> || local_context().cpu) {
                     std::cerr << "Forced selection to CUFFT fft_conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
@@ -286,7 +286,7 @@ inline etl::conv_impl select_conv_impl() {
 
             //CUDNN cannot always be used
             case conv_impl::CUDNN:
-                if (!impl::cudnn::conv_possible<I, K, C>) {
+                if (!impl::cudnn::conv_possible<I, K, C> || local_context().cpu) {
                     std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
@@ -336,7 +336,7 @@ constexpr etl::conv4_impl select_default_conv4_valid_impl(size_t i1, size_t i2, 
         return etl::conv4_impl::STD;
     }
 
-    if(impl::cudnn::conv_possible<I, K, C>){
+    if(impl::cudnn::conv_possible<I, K, C> && !local_context().cpu){
         return etl::conv4_impl::CUDNN;
     }
 
@@ -396,7 +396,7 @@ inline etl::conv4_impl select_conv4_valid_impl(size_t i1, size_t i2, size_t k1, 
 
             //CUDNN cannot always be used
         case etl::conv4_impl::CUDNN:
-                if (!impl::cudnn::conv_possible<I, K, C>) {                                                                                             // COVERAGE_EXCLUDE_LINE
+                if (!impl::cudnn::conv_possible<I, K, C> || local_context().cpu) {                                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_valid_impl<I, K, C>(i1, i2, k1, k2);                                                               // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                    // COVERAGE_EXCLUDE_LINE
@@ -597,7 +597,7 @@ inline etl::conv4_impl select_conv4_valid_back_impl(size_t i1, size_t i2, size_t
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-constexpr etl::conv4_impl select_default_conv4_full_impl(size_t k1, size_t k2) {
+etl::conv4_impl select_default_conv4_full_impl(size_t k1, size_t k2) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
@@ -611,12 +611,12 @@ constexpr etl::conv4_impl select_default_conv4_full_impl(size_t k1, size_t k2) {
     }
 
     // CUDNN is always faster than the others
-    if(impl::cudnn::conv_possible<I, K, C>){
+    if(impl::cudnn::conv_possible<I, K, C> && !local_context().cpu){
         return etl::conv4_impl::CUDNN;
     }
 
     // CUFFT is generally faster than the other, but anyway in GPU mode, CUDNN should be available
-    if(impl::cufft::conv2_possible<I, K, C>){
+    if(impl::cufft::conv2_possible<I, K, C> && !local_context().cpu){
         return etl::conv4_impl::FFT_CUFFT;
     }
 
@@ -663,7 +663,7 @@ inline etl::conv4_impl select_conv4_full_impl(size_t k1, size_t k2) {
 
             //CUDNN cannot always be used
             case etl::conv4_impl::CUDNN:
-                if (!impl::cudnn::conv_possible<I, K, C>) {                                                                          // COVERAGE_EXCLUDE_LINE
+                if (!impl::cudnn::conv_possible<I, K, C> || local_context().cpu) {                                                                          // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_full_impl<I, K, C>(k1, k2);                                                          // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                    // COVERAGE_EXCLUDE_LINE
@@ -672,7 +672,7 @@ inline etl::conv4_impl select_conv4_full_impl(size_t k1, size_t k2) {
 
             //CUFFT cannot always be used
             case etl::conv4_impl::FFT_CUFFT:
-                if (!impl::cufft::conv2_possible<I, K, C>) {                                                                             // COVERAGE_EXCLUDE_LINE
+                if (!impl::cufft::conv2_possible<I, K, C> || local_context().cpu) {                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to FFT_CUFFT conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_full_impl<I, K, C>(k1, k2);                                                              // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                        // COVERAGE_EXCLUDE_LINE
@@ -720,7 +720,7 @@ constexpr etl::conv_multi_impl select_default_conv_valid_multi() {
         return etl::conv_multi_impl::STD;
     }
 
-    if(impl::cudnn::conv_possible<I, K, C> && is_2d<I>){
+    if(impl::cudnn::conv_possible<I, K, C> && is_2d<I> && !local_context().cpu){
         //TODO Should only be used with (very?) large sizes
         return etl::conv_multi_impl::CUDNN;
     }

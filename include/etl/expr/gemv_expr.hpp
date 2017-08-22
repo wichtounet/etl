@@ -97,7 +97,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
             return gemm_impl::BLAS;
         }
 
-        if (cublas_enabled && is_complex_single_t<T> && n1 * n2 > 1000 * 1000 && homo) {
+        if (cublas_enabled && is_complex_single_t<T> && n1 * n2 > 1000 * 1000 && homo && !local_context().cpu) {
             return gemm_impl::CUBLAS;
         }
 
@@ -118,7 +118,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
             switch (forced) {
                 //CUBLAS cannot always be used
                 case gemm_impl::CUBLAS:
-                    if (!cublas_enabled || !all_homogeneous<A, B, C>) {                                                                                     //COVERAGE_EXCLUDE_LINE
+                    if (!cublas_enabled || !all_homogeneous<A, B, C> || local_context().cpu) {                                                                                     //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to CUBLAS gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return select_default_gemv_impl<C>(n1, n2);                                                                  //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                     //COVERAGE_EXCLUDE_LINE

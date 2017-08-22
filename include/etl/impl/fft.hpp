@@ -54,7 +54,7 @@ inline fft_impl select_forced_fft_impl(Functor func, Args&&... args) {
 
         //CUFFT cannot always be used
         case fft_impl::CUFFT:
-            if (!cufft) {                                                                                                       //COVERAGE_EXCLUDE_LINE
+            if (!cufft || local_context().cpu) {                                                                                                       //COVERAGE_EXCLUDE_LINE
                 std::cerr << "Forced selection to CUFFT fft implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                 return func(args...);                                                                                           //COVERAGE_EXCLUDE_LINE
             }                                                                                                                   //COVERAGE_EXCLUDE_LINE
@@ -75,12 +75,12 @@ inline fft_impl select_forced_fft_impl(Functor func, Args&&... args) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-constexpr fft_impl select_default_fft1_impl(const size_t n) {
+inline fft_impl select_default_fft1_impl(const size_t n) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
 
-    if (cufft) {
+    if (cufft && !local_context().cpu) {
         if (math::is_power_of_two(n)) {
             if (n <= 64) {
                 return fft_impl::STD;
@@ -135,7 +135,7 @@ inline fft_impl select_fft1_impl(const size_t n) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-constexpr fft_impl select_default_fft1_many_impl(const size_t batch, const size_t n) {
+inline  fft_impl select_default_fft1_many_impl(const size_t batch, const size_t n) {
     cpp_unused(batch);
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
@@ -144,7 +144,7 @@ constexpr fft_impl select_default_fft1_many_impl(const size_t batch, const size_
 
     //Note: more testing would probably improve this selection
 
-    if (cufft) {
+    if (cufft && !local_context().cpu) {
         if (n <= 250000 && mkl) {
             return fft_impl::MKL;
         }
@@ -179,12 +179,12 @@ inline fft_impl select_fft1_many_impl(const size_t batch, const size_t n) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-constexpr fft_impl select_default_ifft1_impl(const size_t n) {
+inline fft_impl select_default_ifft1_impl(const size_t n) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
 
-    if (cufft) {
+    if (cufft && !local_context().cpu) {
         if (math::is_power_of_two(n)) {
             if (n <= 1024) {
                 if (mkl) {
@@ -233,12 +233,12 @@ inline fft_impl select_ifft1_impl(const size_t n) {
  * \param n2 The second dimension of the operation
  * \return The implementation to use
  */
-constexpr fft_impl select_default_fft2_impl(const size_t n1, size_t n2) {
+inline fft_impl select_default_fft2_impl(const size_t n1, size_t n2) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
 
-    if (cufft) {
+    if (cufft && !local_context().cpu) {
         if (math::is_power_of_two(n1) && math::is_power_of_two(n2)) {
             if (n1 * n2 < 150 * 150) {
                 if (mkl) {
@@ -289,7 +289,7 @@ inline fft_impl select_fft2_impl(const size_t n1, size_t n2) {
  * \param n2 The second dimension of the operation
  * \return The implementation to use
  */
-constexpr fft_impl select_default_fft2_many_impl(const size_t batch, const size_t n1, const size_t n2) {
+inline fft_impl select_default_fft2_many_impl(const size_t batch, const size_t n1, const size_t n2) {
     cpp_unused(batch);
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
@@ -298,7 +298,7 @@ constexpr fft_impl select_default_fft2_many_impl(const size_t batch, const size_
 
     //Note: more testing would probably improve this selection
 
-    if (cufft) {
+    if (cufft && !local_context().cpu) {
         if (n1 * n2 <= 768 * 768 && mkl) {
             return fft_impl::MKL;
         }

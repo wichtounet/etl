@@ -49,9 +49,9 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
      * \return The implementation to use
      */
     template <typename C>
-    static constexpr etl::outer_impl select_default_batch_outer_impl() {
+    static etl::outer_impl select_default_batch_outer_impl() {
         // TODO This should only be done with large matrices or if the data is already in memory
-        if (cublas_enabled) {
+        if (cublas_enabled && !local_context().cpu) {
             return etl::outer_impl::CUBLAS;
         }
 
@@ -88,7 +88,7 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
 
                 //CUBLAS cannot always be used
                 case outer_impl::CUBLAS:
-                    if (!cublas_enabled) {
+                    if (!cublas_enabled || local_context().cpu) {
                         std::cerr << "Forced selection to CUBLAS outer implementation, but not possible for this expression" << std::endl;
                         return select_default_batch_outer_impl<C>();
                     }

@@ -107,7 +107,7 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
      */
     template <typename R>
     static constexpr etl::pool_impl select_default_impl() {
-        if (cudnn_enabled && all_floating<A, B, C, R>) {
+        if (cudnn_enabled && all_floating<A, B, C, R> && !local_context().cpu) {
             return etl::pool_impl::CUDNN;
         }
 
@@ -126,7 +126,7 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
             switch (forced) {
                 // CUDNN cannot always be used
                 case pool_impl::CUDNN:
-                    if (!cudnn_enabled || !all_floating<A, B, C, R>) {                                                            //COVERAGE_EXCLUDE_LINE
+                    if (!cudnn_enabled || !all_floating<A, B, C, R> || local_context().cpu) {                                                            //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to CUDNN pool implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return select_default_impl<R>();                                                                                 //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                    //COVERAGE_EXCLUDE_LINE

@@ -38,8 +38,8 @@ namespace detail {
  * \return The best default transpose implementation to use
  */
 template<typename A, typename C>
-constexpr transpose_impl select_default_transpose_impl(){
-    if(cublas_enabled && all_dma<A, C> && all_floating<A, C>){
+transpose_impl select_default_transpose_impl(){
+    if(cublas_enabled && all_dma<A, C> && all_floating<A, C> && !local_context().cpu){
         return transpose_impl::CUBLAS;
     }
 
@@ -70,8 +70,8 @@ constexpr transpose_impl select_default_transpose_impl(){
  * \return The best default transpose implementation to use
  */
 template<typename A, typename C>
-constexpr transpose_impl select_default_in_square_transpose_impl(){
-    if(cublas_enabled && all_dma<A, C> && all_floating<A, C>){
+transpose_impl select_default_in_square_transpose_impl(){
+    if(cublas_enabled && all_dma<A, C> && all_floating<A, C> && !local_context().cpu){
         return transpose_impl::CUBLAS;
     }
 
@@ -99,7 +99,7 @@ transpose_impl select_transpose_impl(transpose_impl def) {
         switch (forced) {
             //CUBLAS cannot always be used
             case transpose_impl::CUBLAS:
-                if (!cublas_enabled || !all_dma<A, C> || !all_floating<A, C>) {
+                if (!cublas_enabled || !all_dma<A, C> || !all_floating<A, C> || local_context().cpu) {
                     std::cerr << "Forced selection to CUBLAS transpose implementation, but not possible for this expression" << std::endl;
                     return def;
                 }

@@ -96,7 +96,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
         constexpr bool cublas = cublas_enabled;
         constexpr bool homo   = all_homogeneous<AA, BB, C>;
 
-        if (cublas && homo) {
+        if (cublas && homo && !local_context().cpu) {
             return gemm_impl::CUBLAS;
         } else if (blas && homo) {
             return gemm_impl::BLAS;
@@ -126,7 +126,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
             switch (forced) {
                 //CUBLAS cannot always be used
                 case gemm_impl::CUBLAS:
-                    if (!cublas_enabled || !all_homogeneous<AA, BB, C>) {                                                                                     //COVERAGE_EXCLUDE_LINE
+                    if (!cublas_enabled || !all_homogeneous<AA, BB, C> || local_context().cpu) {                                                                                     //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to CUBLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                         return def;                                                              //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                     //COVERAGE_EXCLUDE_LINE

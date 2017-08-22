@@ -41,11 +41,11 @@ namespace detail {
  * \return The implementation to use
  */
 template <typename E>
-constexpr etl::sum_impl select_default_sum_impl(bool gpu_up_to_date) {
+etl::sum_impl select_default_sum_impl(bool gpu_up_to_date) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    if (cublas_enabled && is_dma<E> && is_floating<E> && gpu_up_to_date){
+    if (cublas_enabled && is_dma<E> && is_floating<E> && gpu_up_to_date && !local_context().cpu){
         return etl::sum_impl::CUBLAS;
     }
 
@@ -77,7 +77,7 @@ etl::sum_impl select_sum_impl(bool gpu_up_to_date) {
                 return forced;
 
             case sum_impl::CUBLAS:
-                if (!cublas_enabled || !is_dma<E> || !is_floating<E>) {                                //COVERAGE_EXCLUDE_LINE
+                if (!cublas_enabled || !is_dma<E> || !is_floating<E> || local_context().cpu) {                                //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUBLAS sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                     return select_default_sum_impl<E>(gpu_up_to_date);                                                                          //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 //COVERAGE_EXCLUDE_LINE
