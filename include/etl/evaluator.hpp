@@ -52,27 +52,61 @@ namespace standard_evaluator {
         expr.visit(eval_visitor);
     }
 
-    //Standard assign version
-
+// CPP17: if constexpr here
+#ifdef ETL_PARALLEL_SUPPORT
     /*!
-     * \brief Assign the result of the expression expression to the result
+     * \brief Assign the result of the expression to the result with the given Functor, using parallel implementation
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::standard_assign<E, R>)>
-    void assign_evaluate_impl(E&& expr, R&& result) {
+    template <typename Fun, typename E, typename R>
+    void par_exec(E&& expr, R&& result) {
+        auto slice_functor = [&](auto&& lhs, auto&& rhs){
+            Fun::apply(lhs, rhs);
+        };
+
+        engine_dispatch_1d_slice_binary(result, expr, slice_functor, 0);
+    }
+#else
+    /*!
+     * \brief Assign the result of the expression to the result with the given Functor, using parallel implementation
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
+    template <typename Fun, typename E, typename R>
+    void par_exec(E&& expr, R&& result) {
+        Fun::apply(result, expr);
+    }
+#endif
+
+    // Assign functions implementations
+
+    /*!
+     * \brief Assign the result of the expression to the result.
+     *
+     * This is done using the standard [] and read_flat operators.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
+    template <typename E, typename R>
+    void standard_assign_impl(E& expr, R& result) {
         for (size_t i = 0; i < etl::size(result); ++i) {
             result[i] = expr.read_flat(i);
         }
     }
 
-    //Fast assign version (memory copy)
-
     /*!
-     * \copydoc assign_evaluate_impl
+     * \brief Assign the result of the expression to the result.
+     *
+     * This is done using direct memory copy between the two
+     * expressions, handling possible GPU memory.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign<E, R>)>
-    void assign_evaluate_impl(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void fast_assign_impl_full(E& expr, R& result) {
 //TODO(CPP17) if constexpr
 #ifdef ETL_CUDA
         cpp_assert(expr.is_cpu_up_to_date() || expr.is_gpu_up_to_date(), "expr must be in valid state");
@@ -114,10 +148,16 @@ namespace standard_evaluator {
     }
 
     /*!
-     * \copydoc assign_evaluate_impl
+     * \brief Assign the result of the expression to the result.
+     *
+     * This is done using direct memory copy between the two
+     * expressions.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(!std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign<E, R>)>
-    void assign_evaluate_impl(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void fast_assign_impl(E& expr, R& result) {
         expr.ensure_cpu_up_to_date();
 
         direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
@@ -126,13 +166,16 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    // GPU assign version
-
     /*!
-     * \copydoc assign_evaluate_impl
+     * \brief Assign the result of the expression to the result.
+     *
+     * This is done using a full GPU computation.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_assign<E, R>)>
-    void assign_evaluate_impl(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void gpu_assign_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
 
         result.ensure_gpu_allocated();
@@ -148,40 +191,17 @@ namespace standard_evaluator {
         result.invalidate_cpu();
     }
 
-    //Parallel assign version
-
-// CPP17: if constexpr here
-#ifdef ETL_PARALLEL_SUPPORT
     /*!
-     * \brief Assign the result of the expression expression to the result with the given Functor, using parallel implementation
+     * \brief Assign the result of the expression to the result.
+     *
+     * This is done using a direct computation and stored in memory,
+     * possibly in parallel.
+     *
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename Fun, typename E, typename R>
-    void par_exec(E&& expr, R&& result) {
-        auto slice_functor = [&](auto&& lhs, auto&& rhs){
-            Fun::apply(lhs, rhs);
-        };
-
-        engine_dispatch_1d_slice_binary(result, expr, slice_functor, 0);
-    }
-#else
-    /*!
-     * \brief Assign the result of the expression expression to the result with the given Functor, using parallel implementation
-     * \param expr The right hand side expression
-     * \param result The left hand side
-     */
-    template <typename Fun, typename E, typename R>
-    void par_exec(E&& expr, R&& result) {
-        Fun::apply(result, expr);
-    }
-#endif
-
-    /*!
-     * \copydoc assign_evaluate_impl
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_assign<E, R>)>
-    void assign_evaluate_impl(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void direct_assign_impl(E& expr, R& result) {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
@@ -196,10 +216,16 @@ namespace standard_evaluator {
     }
 
     /*!
-     * \copydoc assign_evaluate_impl
+     * \brief Assign the result of the expression to the result.
+     *
+     * This is done using a vectorized computation and stored in
+     * memory, possibly in parallel.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_assign<E, R>)>
-    void assign_evaluate_impl(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void vectorized_assign_impl(E& expr, R& result) {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
@@ -215,15 +241,70 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    //Standard Add Assign
+    // Selector versions
 
     /*!
-     * \brief Add the result of the expression expression to the result
+     * \brief Assign the result of the expression to the result
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::standard_compound<E, R>)>
-    void add_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R, cpp_enable_iff(detail::standard_assign<E, R>)>
+    void assign_evaluate_impl(E&& expr, R&& result) {
+        standard_assign_impl(expr, result);
+    }
+
+    /*!
+     * \copydoc assign_evaluate_impl
+     */
+    template <typename E, typename R, cpp_enable_iff(std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign<E, R>)>
+    void assign_evaluate_impl(E&& expr, R&& result) {
+        fast_assign_impl_full(expr, result);
+    }
+
+    /*!
+     * \copydoc assign_evaluate_impl
+     */
+    template <typename E, typename R, cpp_enable_iff(!std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign<E, R>)>
+    void assign_evaluate_impl(E&& expr, R&& result) {
+        fast_assign_impl(expr, result);
+    }
+
+    /*!
+     * \copydoc assign_evaluate_impl
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_assign<E, R>)>
+    void assign_evaluate_impl(E&& expr, R&& result) {
+        gpu_assign_impl(expr, result);
+    }
+
+    /*!
+     * \copydoc assign_evaluate_impl
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::direct_assign<E, R>)>
+    void assign_evaluate_impl(E&& expr, R&& result) {
+        direct_assign_impl(expr, result);
+    }
+
+    /*!
+     * \copydoc assign_evaluate_impl
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::vectorized_assign<E, R>)>
+    void assign_evaluate_impl(E&& expr, R&& result) {
+        vectorized_assign_impl(expr, result);
+    }
+
+    // Compound Assign Add functions implementations
+
+    /*!
+     * \brief Add the result of the expression to the result.
+     *
+     * This is performed using standard computation with operator[].
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
+    template <typename E, typename R>
+    void standard_compound_add_impl(E& expr, R& result) {
         pre_assign_rhs(expr);
 
         for (size_t i = 0; i < etl::size(result); ++i) {
@@ -234,13 +315,17 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    //Parallel direct add assign
-
     /*!
-     * \copydoc add_evaluate
+     * \brief Add the result of the expression to the result.
+     *
+     * This is performed using direct computation with, possibly in
+     * parallel.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_compound<E, R>)>
-    void add_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void direct_compound_add_impl(E& expr, R& result) {
         pre_assign_rhs(expr);
 
         safe_ensure_cpu_up_to_date(expr);
@@ -256,19 +341,23 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    //Parallel vectorized add assign
-
     /*!
-     * \copydoc add_evaluate
+     * \brief Add the result of the expression to the result.
+     *
+     * This is performed using vectorized computation with, possibly in
+     * parallel.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound<E, R>)>
-    void add_evaluate(E&& expr, R&& result) {
-        constexpr auto V = detail::select_vector_mode<E, R>();
-
+    template <typename E, typename R>
+    void vectorized_compound_add_impl(E& expr, R& result) {
         pre_assign_rhs(expr);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
+
+        constexpr auto V = detail::select_vector_mode<E, R>();
 
         if(is_thread_safe<E> && select_parallel(etl::size(result))){
             par_exec<detail::VectorizedAssignAdd<V>>(expr, result);
@@ -280,15 +369,19 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    // GPU assign add version
-
 #ifdef ETL_CUBLAS_MODE
 
     /*!
-     * \copydoc add_evaluate
+     * \brief Add the result of the expression to the result.
+     *
+     * This is performed using full GPU computation with, possibly in
+     * parallel.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
-    void add_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void gpu_assign_add_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
 
         pre_assign_rhs(expr);
@@ -313,10 +406,16 @@ namespace standard_evaluator {
 #ifdef ETL_EGBLAS_MODE
 
     /*!
-     * \copydoc add_evaluate
+     * \brief Add the result of the expression to the result.
+     *
+     * This is performed using full GPU computation with, possibly in
+     * parallel.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
-    void add_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void gpu_assign_add_scalar_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
 
         result.ensure_gpu_up_to_date();
@@ -331,15 +430,70 @@ namespace standard_evaluator {
 
 #endif
 
-    //Standard sub assign
+    // Selector functions
 
     /*!
-     * \brief Subtract the result of the expression expression from the result
+     * \brief Add the result of the expression to the result
      * \param expr The right hand side expression
      * \param result The left hand side
      */
     template <typename E, typename R, cpp_enable_iff(detail::standard_compound<E, R>)>
-    void sub_evaluate(E&& expr, R&& result) {
+    void add_evaluate(E&& expr, R&& result) {
+        standard_compound_add_impl(expr, result);
+    }
+
+    /*!
+     * \copydoc add_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::direct_compound<E, R>)>
+    void add_evaluate(E&& expr, R&& result) {
+        direct_compound_add_impl(expr, result);
+    }
+
+    /*!
+     * \copydoc add_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound<E, R>)>
+    void add_evaluate(E&& expr, R&& result) {
+        vectorized_compound_add_impl(expr, result);
+    }
+
+#ifdef ETL_CUBLAS_MODE
+
+    /*!
+     * \copydoc add_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
+    void add_evaluate(E&& expr, R&& result) {
+        gpu_assign_add_impl(expr, result);
+    }
+
+#endif
+
+#ifdef ETL_EGBLAS_MODE
+
+    /*!
+     * \copydoc add_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
+    void add_evaluate(E&& expr, R&& result) {
+        gpu_assign_add_scalar_impl(expr, result);
+    }
+
+#endif
+
+    // Compound assign sub implementation functions
+
+    /*!
+     * \brief Subtract the result of the expression from the result
+     *
+     * This is performed using standard operator[].
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
+    template <typename E, typename R>
+    void standard_compound_sub_impl(E& expr, R& result) {
         pre_assign_rhs(expr);
 
         safe_ensure_cpu_up_to_date(expr);
@@ -353,13 +507,17 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    //Parallel direct sub assign
-
     /*!
-     * \copydoc sub_evaluate
+     * \brief Subtract the result of the expression from the result
+     *
+     * This is performed using direct compution into memory,
+     * possibly in parallel.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_compound<E, R>)>
-    void sub_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void direct_compound_sub_impl(E& expr, R& result) {
         pre_assign_rhs(expr);
 
         safe_ensure_cpu_up_to_date(expr);
@@ -375,19 +533,23 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    //Parallel vectorized sub assign
-
     /*!
-     * \copydoc sub_evaluate
+     * \brief Subtract the result of the expression from the result
+     *
+     * This is performed using vectorized compution into memory,
+     * possibly in parallel.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound<E, R>)>
-    void sub_evaluate(E&& expr, R&& result) {
-        constexpr auto V = detail::select_vector_mode<E, R>();
-
+    template <typename E, typename R>
+    void vectorized_compound_sub_impl(E& expr, R& result) {
         pre_assign_rhs(expr);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
+
+        constexpr auto V = detail::select_vector_mode<E, R>();
 
         if(is_thread_safe<E> && select_parallel(etl::size(result))){
             par_exec<detail::VectorizedAssignSub<V>>(expr, result);
@@ -399,15 +561,18 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    // GPU assign add version
-
 #ifdef ETL_CUBLAS_MODE
 
     /*!
-     * \copydoc sub_evaluate
+     * \brief Subtract the result of the expression from the result
+     *
+     * This is performed using full GPU compution into memory.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
-    void sub_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void gpu_compound_sub_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
 
         pre_assign_rhs(expr);
@@ -432,10 +597,15 @@ namespace standard_evaluator {
 #ifdef ETL_EGBLAS_MODE
 
     /*!
-     * \copydoc sub_evaluate
+     * \brief Subtract the result of the expression from the result
+     *
+     * This is performed using full GPU compution into memory.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
-    void sub_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void gpu_compound_sub_scalar_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
 
         result.ensure_gpu_up_to_date();
@@ -451,15 +621,70 @@ namespace standard_evaluator {
 
 #endif
 
-    //Standard Mul Assign
+    // Selector functions
 
     /*!
-     * \brief Multiply the result by the result of the expression expression
+     * \brief Subtract the result of the expression from the result
      * \param expr The right hand side expression
      * \param result The left hand side
      */
     template <typename E, typename R, cpp_enable_iff(detail::standard_compound<E, R>)>
-    void mul_evaluate(E&& expr, R&& result) {
+    void sub_evaluate(E&& expr, R&& result) {
+        standard_compound_sub_impl(expr, result);
+    }
+
+    /*!
+     * \copydoc sub_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::direct_compound<E, R>)>
+    void sub_evaluate(E&& expr, R&& result) {
+        direct_compound_sub_impl(expr, result);
+    }
+
+    /*!
+     * \copydoc sub_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound<E, R>)>
+    void sub_evaluate(E&& expr, R&& result) {
+        vectorized_compound_sub_impl(expr, result);
+    }
+
+#ifdef ETL_CUBLAS_MODE
+
+    /*!
+     * \copydoc sub_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
+    void sub_evaluate(E&& expr, R&& result) {
+        gpu_compound_sub_impl(expr, result);
+    }
+
+#endif
+
+#ifdef ETL_EGBLAS_MODE
+
+    /*!
+     * \copydoc sub_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
+    void sub_evaluate(E&& expr, R&& result) {
+        gpu_compound_sub_scalar_impl(expr, result);
+    }
+
+#endif
+
+    // Compound assign mul implmentation functions
+
+    /*!
+     * \brief Multiply the result by the result of the expression
+     *
+     * This is performed with standard computation with operator[]
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
+    template <typename E, typename R>
+    void standard_compound_mul_impl(E& expr, R& result) {
         pre_assign_rhs(expr);
 
         safe_ensure_cpu_up_to_date(expr);
@@ -473,13 +698,17 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    //Parallel direct mul assign
-
     /*!
-     * \copydoc mul_evaluate
+     * \brief Multiply the result by the result of the expression
+     *
+     * This is performed with direct computation into memory,
+     * possibly in parallel.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_compound<E, R>)>
-    void mul_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void direct_compound_mul_impl(E& expr, R& result) {
         pre_assign_rhs(expr);
 
         safe_ensure_cpu_up_to_date(expr);
@@ -495,19 +724,23 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    //Parallel vectorized mul assign
-
     /*!
-     * \copydoc mul_evaluate
+     * \brief Multiply the result by the result of the expression
+     *
+     * This is performed with vectorized computation into memory,
+     * possibly in parallel.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound<E, R>)>
-    void mul_evaluate(E&& expr, R&& result) {
-        constexpr auto V = detail::select_vector_mode<E, R>();
-
+    template <typename E, typename R>
+    void vectorized_compound_mul_impl(E& expr, R& result) {
         pre_assign_rhs(expr);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
+
+        constexpr auto V = detail::select_vector_mode<E, R>();
 
         if(is_thread_safe<E> && select_parallel(etl::size(result))){
             par_exec<detail::VectorizedAssignMul<V>>(expr, result);
@@ -519,15 +752,18 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    // GPU assign mul version
-
 #ifdef ETL_EGBLAS_MODE
 
     /*!
-     * \copydoc sub_evaluate
+     * \brief Multiply the result by the result of the expression
+     *
+     * This is performed with full GPU computation into memory.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
-    void mul_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void gpu_compound_mul_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
 
         pre_assign_rhs(expr);
@@ -550,10 +786,15 @@ namespace standard_evaluator {
 #ifdef ETL_CUBLAS_MODE
 
     /*!
-     * \copydoc mul_evaluate
+     * \brief Multiply the result by the result of the expression
+     *
+     * This is performed with full GPU computation into memory.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
-    void mul_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void gpu_compound_mul_scalar_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
 
         result.ensure_gpu_up_to_date();
@@ -569,15 +810,74 @@ namespace standard_evaluator {
 
 #endif
 
-    //Standard Div Assign
+    // Selector functions
 
     /*!
-     * \brief Divide the result by the result of the expression expression
+     * \brief Multiply the result by the result of the expression
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::standard_compound_div<E, R>)>
-    void div_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R, cpp_enable_iff(detail::standard_compound<E, R>)>
+    void mul_evaluate(E&& expr, R&& result) {
+        standard_compound_mul_impl(expr, result);
+    }
+
+    /*!
+     * \copydoc mul_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::direct_compound<E, R>)>
+    void mul_evaluate(E&& expr, R&& result) {
+        direct_compound_mul_impl(expr, result);
+    }
+
+    //Parallel vectorized mul assign
+
+    /*!
+     * \copydoc mul_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound<E, R>)>
+    void mul_evaluate(E&& expr, R&& result) {
+        vectorized_compound_mul_impl(expr, result);
+    }
+
+    // GPU assign mul version
+
+#ifdef ETL_EGBLAS_MODE
+
+    /*!
+     * \copydoc sub_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
+    void mul_evaluate(E&& expr, R&& result) {
+        gpu_compound_mul_impl(expr, result);
+    }
+
+#endif
+
+#ifdef ETL_CUBLAS_MODE
+
+    /*!
+     * \copydoc mul_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
+    void mul_evaluate(E&& expr, R&& result) {
+        gpu_compound_mul_scalar_impl(expr, result);
+    }
+
+#endif
+
+    // Compound Assign Div implementation functions
+
+    /*!
+     * \brief Divide the result by the result of the expression
+     *
+     * This is performed using standard computation with operator[]
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
+    template <typename E, typename R>
+    void standard_compound_div_impl(E& expr, R& result) {
         pre_assign_rhs(expr);
 
         safe_ensure_cpu_up_to_date(expr);
@@ -591,13 +891,17 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    //Parallel direct Div assign
-
     /*!
-     * \copydoc div_evaluate
+     * \brief Divide the result by the result of the expression
+     *
+     * This is performed using direct computation into memory,
+     * possibly in parallel.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_compound_div<E, R>)>
-    void div_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void direct_compound_div_impl(E& expr, R& result) {
         pre_assign_rhs(expr);
 
         safe_ensure_cpu_up_to_date(expr);
@@ -613,19 +917,23 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    //Parallel vectorized div assign
-
     /*!
-     * \copydoc div_evaluate
+     * \brief Divide the result by the result of the expression
+     *
+     * This is performed using vectorized computation into memory,
+     * possibly in parallel.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound_div<E, R>)>
-    void div_evaluate(E&& expr, R&& result) {
-        constexpr auto V = detail::select_vector_mode<E, R>();
-
+    template <typename E, typename R>
+    void vectorized_compound_div_impl(E& expr, R& result) {
         pre_assign_rhs(expr);
 
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
+
+        constexpr auto V = detail::select_vector_mode<E, R>();
 
         if(is_thread_safe<E> && select_parallel(etl::size(result))){
             par_exec<detail::VectorizedAssignDiv<V>>(expr, result);
@@ -637,15 +945,18 @@ namespace standard_evaluator {
         result.invalidate_gpu();
     }
 
-    // GPU assign div version
-
 #ifdef ETL_EGBLAS_MODE
 
     /*!
-     * \copydoc sub_evaluate
+     * \brief Divide the result by the result of the expression
+     *
+     * This is performed using full GPU computation into memory.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound_div<E, R> && !is_scalar<E>)>
-    void div_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void gpu_compound_div_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
 
         pre_assign_rhs(expr);
@@ -668,10 +979,15 @@ namespace standard_evaluator {
 #ifdef ETL_CUBLAS_MODE
 
     /*!
-     * \copydoc mul_evaluate
+     * \brief Divide the result by the result of the expression
+     *
+     * This is performed using full GPU computation into memory.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound_div<E, R> && is_scalar<E>)>
-    void div_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void gpu_compound_div_scalar_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
 
         result.ensure_gpu_up_to_date();
@@ -688,10 +1004,62 @@ namespace standard_evaluator {
 
 #endif
 
+    // Selector functions
+
+    /*!
+     * \brief Divide the result by the result of the expression
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::standard_compound_div<E, R>)>
+    void div_evaluate(E&& expr, R&& result) {
+        standard_compound_div_impl(expr, result);
+    }
+
+    /*!
+     * \copydoc div_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::direct_compound_div<E, R>)>
+    void div_evaluate(E&& expr, R&& result) {
+        direct_compound_div_impl(expr, result);
+    }
+
+    /*!
+     * \copydoc div_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound_div<E, R>)>
+    void div_evaluate(E&& expr, R&& result) {
+        vectorized_compound_div_impl(expr, result);
+    }
+
+#ifdef ETL_EGBLAS_MODE
+
+    /*!
+     * \copydoc sub_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound_div<E, R> && !is_scalar<E>)>
+    void div_evaluate(E&& expr, R&& result) {
+        gpu_compound_div_impl(expr, result);
+    }
+
+#endif
+
+#ifdef ETL_CUBLAS_MODE
+
+    /*!
+     * \copydoc mul_evaluate
+     */
+    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound_div<E, R> && is_scalar<E>)>
+    void div_evaluate(E&& expr, R&& result) {
+        gpu_compound_div_scalar_impl(expr, result);
+    }
+
+#endif
+
     //Standard Mod Evaluate (no optimized versions for mod)
 
     /*!
-     * \brief Modulo the result by the result of the expression expression
+     * \brief Modulo the result by the result of the expression
      * \param expr The right hand side expression
      * \param result The left hand side
      */
@@ -711,7 +1079,7 @@ namespace standard_evaluator {
     }
 
     /*!
-     * \brief Assign the result of the expression expression to the result
+     * \brief Assign the result of the expression to the result
      * \param expr The right hand side expression
      * \param result The left hand side
      */
