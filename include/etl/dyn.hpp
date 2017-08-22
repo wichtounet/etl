@@ -84,7 +84,9 @@ public:
     dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept(assert_nothrow) : base_type(rhs) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
-        direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+        if(rhs.is_cpu_up_to_date()){
+            direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+        }
 
         cpp_assert(rhs.is_cpu_up_to_date() == this->is_cpu_up_to_date(), "dyn_matrix_impl(&) must preserve CPU status");
         cpp_assert(rhs.is_gpu_up_to_date() == this->is_gpu_up_to_date(), "dyn_matrix_impl(&) must preserve GPU status");

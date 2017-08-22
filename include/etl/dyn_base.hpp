@@ -321,7 +321,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \brief Copy construct a dense_dyn_base
      * \param rhs The dense_dyn_base to copy from
      */
-    dense_dyn_base(const dense_dyn_base& rhs) noexcept : base_type(rhs) {
+    dense_dyn_base(const dense_dyn_base& rhs) noexcept : base_type(rhs), _gpu(rhs._gpu) {
         //Nothing else to init
     }
 
@@ -333,7 +333,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      *
      * \param rhs The derived_t to copy from
      */
-    dense_dyn_base(const derived_t& rhs) noexcept : base_type(rhs) {
+    dense_dyn_base(const derived_t& rhs) noexcept : base_type(rhs), _gpu(rhs._gpu) {
         //Nothing else to init
     }
 
