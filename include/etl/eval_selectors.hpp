@@ -147,6 +147,78 @@ constexpr bool direct_compound_div = !gpu_compound_div<E, R> && !vectorized_comp
 template <typename E, typename R>
 constexpr bool standard_compound_div = !gpu_compound_div<E, R> && !vectorized_compound_div<E, R> && !direct_compound_div<E, R>;
 
+#ifdef ETL_CUDA
+
+//Selectors without GPU
+
+/*!
+ * \brief Integral constant indicating if a fast assign is possible.
+ *
+ * A fast assign is a simple memory copy from E into R.
+ */
+template <typename E, typename R>
+constexpr bool fast_assign_no_gpu = all_dma<E, R>;
+
+/*!
+ * \brief Integral constant indicating if a vectorized assign is possible
+ */
+template <typename E, typename R>
+constexpr bool vectorized_assign_no_gpu = !fast_assign_no_gpu<E, R> && are_vectorizable<E, R>;
+
+/*!
+ * \brief Integral constant indicating if a direct assign is possible
+ */
+template <typename E, typename R>
+constexpr bool direct_assign_no_gpu = !are_vectorizable<E, R> && !has_direct_access<E> && has_direct_access<R>;
+
+/*!
+ * \brief Integral constant indicating if a standard assign is necessary
+ */
+template <typename E, typename R>
+constexpr bool standard_assign_no_gpu = !has_direct_access<R>;
+
+//Selectors for compound operations
+
+/*!
+ * \brief Integral constant indicating if a vectorized compound assign is possible
+ */
+template <typename E, typename R>
+constexpr bool vectorized_compound_no_gpu = are_vectorizable<E, R>;
+
+/*!
+ * \brief Integral constant indicating if a direct compound assign is possible
+ */
+template <typename E, typename R>
+constexpr bool direct_compound_no_gpu = !vectorized_compound_no_gpu<E, R> && has_direct_access<R>;
+
+/*!
+ * \brief Integral constant indicating if a standard compound assign is necessary
+ */
+template <typename E, typename R>
+constexpr bool standard_compound_no_gpu = !vectorized_compound_no_gpu<E, R> && !direct_compound_no_gpu<E, R>;
+
+//Selectors for compound div operation
+
+/*!
+ * \brief Integral constant indicating if a vectorized compound div assign is possible
+ */
+template <typename E, typename R>
+constexpr bool vectorized_compound_div_no_gpu = (is_floating_t<value_t<E>> || is_complex_t<value_t<E>>) && are_vectorizable<E, R>;
+
+/*!
+ * \brief Integral constant indicating if a direct compound div assign is possible
+ */
+template <typename E, typename R>
+constexpr bool direct_compound_div_no_gpu = !vectorized_compound_div_no_gpu<E, R> && has_direct_access<R>;
+
+/*!
+ * \brief Integral constant indicating if a standard compound div assign is necessary
+ */
+template <typename E, typename R>
+constexpr bool standard_compound_div_no_gpu = !vectorized_compound_div_no_gpu<E, R> && !direct_compound_div_no_gpu<E, R>;
+
+#endif
+
 } //end of namespace detail
 
 } //end of namespace etl
