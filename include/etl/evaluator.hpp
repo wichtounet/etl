@@ -259,7 +259,7 @@ namespace standard_evaluator {
     }
 
     /*!
-     * \copydoc assign_evaluate_impl
+     * \copydoc assign_evaluate_impl_no_gpu
      */
     template <typename E, typename R, cpp_enable_iff(std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign_no_gpu<E, R>)>
     void assign_evaluate_impl_no_gpu(E&& expr, R&& result) {
@@ -267,7 +267,7 @@ namespace standard_evaluator {
     }
 
     /*!
-     * \copydoc assign_evaluate_impl
+     * \copydoc assign_evaluate_impl_no_gpu
      */
     template <typename E, typename R, cpp_enable_iff(!std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign_no_gpu<E, R>)>
     void assign_evaluate_impl_no_gpu(E&& expr, R&& result) {
@@ -275,7 +275,7 @@ namespace standard_evaluator {
     }
 
     /*!
-     * \copydoc assign_evaluate_impl
+     * \copydoc assign_evaluate_impl_no_gpu
      */
     template <typename E, typename R, cpp_enable_iff(detail::direct_assign_no_gpu<E, R>)>
     void assign_evaluate_impl_no_gpu(E&& expr, R&& result) {
@@ -283,7 +283,7 @@ namespace standard_evaluator {
     }
 
     /*!
-     * \copydoc assign_evaluate_impl
+     * \copydoc assign_evaluate_impl_no_gpu
      */
     template <typename E, typename R, cpp_enable_iff(detail::vectorized_assign_no_gpu<E, R>)>
     void assign_evaluate_impl_no_gpu(E&& expr, R&& result) {
@@ -489,7 +489,10 @@ namespace standard_evaluator {
 #ifdef ETL_CUDA
 
     /*!
-     * \brief Add the result of the expression to the result
+     * \brief Add the result of the expression to the result.
+     *
+     * This does not consider the GPU.
+     *
      * \param expr The right hand side expression
      * \param result The left hand side
      */
@@ -499,7 +502,7 @@ namespace standard_evaluator {
     }
 
     /*!
-     * \copydoc add_evaluate
+     * \copydoc add_evaluate_no_gpu
      */
     template <typename E, typename R, cpp_enable_iff(detail::direct_compound_no_gpu<E, R>)>
     void add_evaluate_no_gpu(E&& expr, R&& result) {
@@ -507,7 +510,7 @@ namespace standard_evaluator {
     }
 
     /*!
-     * \copydoc add_evaluate
+     * \copydoc add_evaluate_no_gpu
      */
     template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound_no_gpu<E, R>)>
     void add_evaluate_no_gpu(E&& expr, R&& result) {
@@ -515,7 +518,6 @@ namespace standard_evaluator {
     }
 
 #endif
-
 
     /*!
      * \brief Add the result of the expression to the result
@@ -720,6 +722,9 @@ namespace standard_evaluator {
 
     /*!
      * \brief Subtract the result of the expression from the result
+     *
+     * This does not consider the GPU.
+     *
      * \param expr The right hand side expression
      * \param result The left hand side
      */
@@ -729,7 +734,7 @@ namespace standard_evaluator {
     }
 
     /*!
-     * \copydoc sub_evaluate
+     * \copydoc sub_evaluate_no_gpu
      */
     template <typename E, typename R, cpp_enable_iff(detail::direct_compound_no_gpu<E, R>)>
     void sub_evaluate_no_gpu(E&& expr, R&& result) {
@@ -737,7 +742,7 @@ namespace standard_evaluator {
     }
 
     /*!
-     * \copydoc sub_evaluate
+     * \copydoc sub_evaluate_no_gpu
      */
     template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound_no_gpu<E, R>)>
     void sub_evaluate_no_gpu(E&& expr, R&& result) {
@@ -948,6 +953,9 @@ namespace standard_evaluator {
 
     /*!
      * \brief Multiply the result by the result of the expression
+     *
+     * This does not consider the GPU.
+     *
      * \param expr The right hand side expression
      * \param result The left hand side
      */
@@ -957,17 +965,15 @@ namespace standard_evaluator {
     }
 
     /*!
-     * \copydoc mul_evaluate
+     * \copydoc mul_evaluate_no_gpu
      */
     template <typename E, typename R, cpp_enable_iff(detail::direct_compound_no_gpu<E, R>)>
     void mul_evaluate_no_gpu(E&& expr, R&& result) {
         direct_compound_mul_impl(expr, result);
     }
 
-    //Parallel vectorized mul assign
-
     /*!
-     * \copydoc mul_evaluate
+     * \copydoc mul_evaluate_no_gpu
      */
     template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound_no_gpu<E, R>)>
     void mul_evaluate_no_gpu(E&& expr, R&& result) {
@@ -975,7 +981,6 @@ namespace standard_evaluator {
     }
 
 #endif
-
 
     /*!
      * \brief Multiply the result by the result of the expression
@@ -1178,7 +1183,10 @@ namespace standard_evaluator {
 #ifdef ETL_CUDA
 
     /*!
-     * \brief Divide the result by the result of the expression
+     * \brief Divide the result by the result of the expression.
+     *
+     * This does not consider the GPU.
+     *
      * \param expr The right hand side expression
      * \param result The left hand side
      */
@@ -1188,7 +1196,7 @@ namespace standard_evaluator {
     }
 
     /*!
-     * \copydoc div_evaluate
+     * \copydoc div_evaluate_no_gpu
      */
     template <typename E, typename R, cpp_enable_iff(detail::direct_compound_div_no_gpu<E, R>)>
     void div_evaluate_no_gpu(E&& expr, R&& result) {
@@ -1196,7 +1204,7 @@ namespace standard_evaluator {
     }
 
     /*!
-     * \copydoc div_evaluate
+     * \copydoc div_evaluate_no_gpu
      */
     template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound_div_no_gpu<E, R>)>
     void div_evaluate_no_gpu(E&& expr, R&& result) {
@@ -1204,7 +1212,6 @@ namespace standard_evaluator {
     }
 
 #endif
-
 
     /*!
      * \brief Divide the result by the result of the expression
