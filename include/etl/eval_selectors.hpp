@@ -147,8 +147,6 @@ constexpr bool direct_compound_div = !gpu_compound_div<E, R> && !vectorized_comp
 template <typename E, typename R>
 constexpr bool standard_compound_div = !gpu_compound_div<E, R> && !vectorized_compound_div<E, R> && !direct_compound_div<E, R>;
 
-#ifdef ETL_CUDA
-
 //Selectors without GPU
 
 /*!
@@ -216,8 +214,6 @@ constexpr bool direct_compound_div_no_gpu = !vectorized_compound_div_no_gpu<E, R
  */
 template <typename E, typename R>
 constexpr bool standard_compound_div_no_gpu = !vectorized_compound_div_no_gpu<E, R> && !direct_compound_div_no_gpu<E, R>;
-
-#endif
 
 } //end of namespace detail
 

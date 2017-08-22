@@ -243,8 +243,6 @@ namespace standard_evaluator {
 
     // Selector versions
 
-#ifdef ETL_CUDA
-
     /*!
      * \brief Assign the result of the expression to the result.
      *
@@ -289,9 +287,6 @@ namespace standard_evaluator {
     void assign_evaluate_impl_no_gpu(E&& expr, R&& result) {
         vectorized_assign_impl(expr, result);
     }
-
-#endif
-
 
     /*!
      * \brief Assign the result of the expression to the result
@@ -486,8 +481,6 @@ namespace standard_evaluator {
 
     // Selector functions
 
-#ifdef ETL_CUDA
-
     /*!
      * \brief Add the result of the expression to the result.
      *
@@ -516,8 +509,6 @@ namespace standard_evaluator {
     void add_evaluate_no_gpu(E&& expr, R&& result) {
         vectorized_compound_add_impl(expr, result);
     }
-
-#endif
 
     /*!
      * \brief Add the result of the expression to the result
@@ -718,8 +709,6 @@ namespace standard_evaluator {
 
     // Selector functions
 
-#ifdef ETL_CUDA
-
     /*!
      * \brief Subtract the result of the expression from the result
      *
@@ -748,9 +737,6 @@ namespace standard_evaluator {
     void sub_evaluate_no_gpu(E&& expr, R&& result) {
         vectorized_compound_sub_impl(expr, result);
     }
-
-#endif
-
 
     /*!
      * \brief Subtract the result of the expression from the result
@@ -949,8 +935,6 @@ namespace standard_evaluator {
 
     // Selector functions
 
-#ifdef ETL_CUDA
-
     /*!
      * \brief Multiply the result by the result of the expression
      *
@@ -979,8 +963,6 @@ namespace standard_evaluator {
     void mul_evaluate_no_gpu(E&& expr, R&& result) {
         vectorized_compound_mul_impl(expr, result);
     }
-
-#endif
 
     /*!
      * \brief Multiply the result by the result of the expression
@@ -1180,8 +1162,6 @@ namespace standard_evaluator {
 
     // Selector functions
 
-#ifdef ETL_CUDA
-
     /*!
      * \brief Divide the result by the result of the expression.
      *
@@ -1210,8 +1190,6 @@ namespace standard_evaluator {
     void div_evaluate_no_gpu(E&& expr, R&& result) {
         vectorized_compound_div_impl(expr, result);
     }
-
-#endif
 
     /*!
      * \brief Divide the result by the result of the expression
