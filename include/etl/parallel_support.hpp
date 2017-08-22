@@ -74,6 +74,90 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, siz
 }
 
 /*!
+ * \brief Dispatch the elements of a range to a functor in a parallel
+ * manner, using the global thread engine. The spawned thread will
+ * be prevented from opening new threads, by using a serial section.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
+ * \param threshold The threshold for parallelization
+ */
+template <typename Functor>
+inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t last, size_t threshold) {
+    auto serial_functor = [&functor](size_t first, size_t last){
+        SERIAL_SECTION {
+            functor(first, last);
+        }
+    };
+
+    engine_dispatch_1d(serial_functor, first, last, threshold);
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel
+ * manner, using the global thread engine. The spawned thread will
+ * be prevented from using the GPU, by using a CPU-only section.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
+ * \param threshold The threshold for parallelization
+ */
+template <typename Functor>
+inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last, size_t threshold) {
+    auto cpu_functor = [&functor](size_t first, size_t last){
+        CPU_SECTION {
+            functor(first, last);
+        }
+    };
+
+    engine_dispatch_1d(cpu_functor, first, last, threshold);
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel
+ * manner, using the global thread engine. The spawned thread will
+ * be prevented from opening new threads or using the GPU, by
+ * using a serial section and a CPU-only section.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
+ * \param threshold The threshold for parallelization
+ */
+template <typename Functor>
+inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_t last, size_t threshold) {
+    auto serial_cpu_functor = [&functor](size_t first, size_t last) {
+        SERIAL_SECTION {
+            CPU_SECTION {
+                functor(first, last);
+            }
+        }
+    };
+
+    engine_dispatch_1d(serial_cpu_functor, first, last, threshold);
+}
+
+/*!
  * \brief Split a matrix into blocks for each thread for parallel
  * dispatching
  * \param M The first dimension of the matrix
@@ -202,6 +286,92 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, boo
             functor(first, last);
         }
     }
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel
+ * manner, using the global thread engine. The spawned threads will
+ * be prevented from opening new threads by constraining the functor
+ * into a serial section.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
+ * \param select The selector for parallelization
+ */
+template <typename Functor>
+inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t last, bool select) {
+    auto serial_functor = [&functor](size_t first, size_t last){
+        SERIAL_SECTION {
+            functor(first, last);
+        }
+    };
+
+    engine_dispatch_1d(serial_functor, first, last, select);
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel
+ * manner, using the global thread engine. The spawned threads will
+ * be prevented from opening new threads and using the GPU by
+ * constraining the functor into a serial section and a CPU-only section.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
+ * \param select The selector for parallelization
+ */
+template <typename Functor>
+inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_t last, bool select) {
+    auto serial_cpu_functor = [&functor](size_t first, size_t last) {
+        SERIAL_SECTION {
+            CPU_SECTION {
+                functor(first, last);
+            }
+        }
+    };
+
+    engine_dispatch_1d(serial_cpu_functor, first, last, select);
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel
+ * manner, using the global thread engine. The spawned threads will
+ * be prevented from using the GPU by constraining the functor
+ * into a CPU-only section.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
+ * \param select The selector for parallelization
+ */
+template <typename Functor>
+inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last, bool select) {
+    auto cpu_functor = [&functor](size_t first, size_t last){
+        CPU_SECTION {
+            functor(first, last);
+        }
+    };
+
+    engine_dispatch_1d(cpu_functor, first, last, select);
 }
 
 /*!
@@ -525,6 +695,66 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, siz
  * \param functor The functor to execute
  * \param first The beginning of the range
  * \param last The end of the range. Must be bigger or equal to first.
+ * \param threshold The threshold for parallelization
+ */
+template <typename Functor>
+inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t last, size_t threshold) {
+    engine_dispatch_1d(functor, first, last, threshold);
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel
+ * manner, using the global thread engine.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
+ * \param threshold The threshold for parallelization
+ */
+template <typename Functor>
+inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_t last, size_t threshold) {
+    engine_dispatch_1d(functor, first, last, threshold);
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel
+ * manner, using the global thread engine.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
+ * \param threshold The threshold for parallelization
+ */
+template <typename Functor>
+inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last, size_t threshold) {
+    engine_dispatch_1d(functor, first, last, threshold);
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel
+ * manner, using the global thread engine.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
  */
 template <typename Functor>
 inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, bool select) {
@@ -537,6 +767,63 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, boo
     if (n) {
         functor(first, last);
     }
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel
+ * manner, using the global thread engine.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
+ */
+template <typename Functor>
+inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t last, bool select) {
+    engine_dispatch_1d(functor, first, last, select);
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel
+ * manner, using the global thread engine.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
+ */
+template <typename Functor>
+inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_t last, bool select) {
+    engine_dispatch_1d(functor, first, last, select);
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel
+ * manner, using the global thread engine.
+ *
+ * The dispatching will be done in batch. That is to say that the
+ * functor will be called with a range of data.
+ *
+ * This will only be dispatched in parallel if etl is running in
+ * parallel mode and if the range is bigger than the treshold.
+ *
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range. Must be bigger or equal to first.
+ */
+template <typename Functor>
+inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last, bool select) {
+    engine_dispatch_1d(functor, first, last, select);
 }
 
 /*!
