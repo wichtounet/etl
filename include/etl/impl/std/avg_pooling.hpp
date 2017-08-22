@@ -300,20 +300,18 @@ struct avg_pool_2d {
     static void apply(const A& sub, M&& m) {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
             if (last - first) {
-                SERIAL_SECTION {
-                    if (cpp_likely(!P1 && !P2)) {
-                        for (size_t n = first; n < last; ++n) {
-                            for (size_t j = 0; j < etl::dim<1>(m); ++j) {
-                                for (size_t k = 0; k < etl::dim<2>(m); ++k) {
-                                    m(n, j, k) = pool_block_3d<C1, C2, S1, S2>(sub, n, j, k);
-                                }
+                if (cpp_likely(!P1 && !P2)) {
+                    for (size_t n = first; n < last; ++n) {
+                        for (size_t j = 0; j < etl::dim<1>(m); ++j) {
+                            for (size_t k = 0; k < etl::dim<2>(m); ++k) {
+                                m(n, j, k) = pool_block_3d<C1, C2, S1, S2>(sub, n, j, k);
                             }
                         }
-                    } else {
-                        // In the general case, we use the regular algorithm
-                        for (size_t n = first; n < last; ++n) {
-                            apply<C1, C2, S1, S2, P1, P2>(sub(n), m(n));
-                        }
+                    }
+                } else {
+                    // In the general case, we use the regular algorithm
+                    for (size_t n = first; n < last; ++n) {
+                        apply<C1, C2, S1, S2, P1, P2>(sub(n), m(n));
                     }
                 }
             }
@@ -321,7 +319,7 @@ struct avg_pool_2d {
 
         const size_t N = etl::dim<0>(m);
 
-        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
     }
 
     /*!
@@ -335,19 +333,17 @@ struct avg_pool_2d {
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
             if (last - first) {
-                SERIAL_SECTION {
-                    if (cpp_likely(!p1 && !p2)) {
-                        for (size_t n = first; n < last; ++n) {
-                            for (size_t j = 0; j < etl::dim<1>(m); ++j) {
-                                for (size_t k = 0; k < etl::dim<2>(m); ++k) {
-                                    m(n, j, k) = pool_block_3d(sub, n, j, k, c1, c2, s1, s2);
-                                }
+                if (cpp_likely(!p1 && !p2)) {
+                    for (size_t n = first; n < last; ++n) {
+                        for (size_t j = 0; j < etl::dim<1>(m); ++j) {
+                            for (size_t k = 0; k < etl::dim<2>(m); ++k) {
+                                m(n, j, k) = pool_block_3d(sub, n, j, k, c1, c2, s1, s2);
                             }
                         }
-                    } else {
-                        for (size_t n = first; n < last; ++n) {
-                            apply(sub(n), m(n), c1, c2, s1, s2, p1, p2);
-                        }
+                    }
+                } else {
+                    for (size_t n = first; n < last; ++n) {
+                        apply(sub(n), m(n), c1, c2, s1, s2, p1, p2);
                     }
                 }
             }
@@ -355,7 +351,7 @@ struct avg_pool_2d {
 
         const size_t N = etl::dim<0>(m);
 
-        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
     }
 
     /*
@@ -377,22 +373,20 @@ struct avg_pool_2d {
     static void apply(const A& sub, M&& m) {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
             if (last - first) {
-                SERIAL_SECTION {
-                    if (cpp_likely(!P1 && !P2)) {
-                        for (size_t mm = first; mm < last; ++mm) {
-                            for (size_t n = 0; n < etl::dim<1>(m); ++n) {
-                                for (size_t j = 0; j < etl::dim<2>(m); ++j) {
-                                    for (size_t k = 0; k < etl::dim<3>(m); ++k) {
-                                        m(mm, n, j, k) = pool_block_4d<C1, C2, S1, S2>(sub, mm, n, j, k);
-                                    }
+                if (cpp_likely(!P1 && !P2)) {
+                    for (size_t mm = first; mm < last; ++mm) {
+                        for (size_t n = 0; n < etl::dim<1>(m); ++n) {
+                            for (size_t j = 0; j < etl::dim<2>(m); ++j) {
+                                for (size_t k = 0; k < etl::dim<3>(m); ++k) {
+                                    m(mm, n, j, k) = pool_block_4d<C1, C2, S1, S2>(sub, mm, n, j, k);
                                 }
                             }
                         }
-                    } else {
-                        for (size_t mm = first; mm < last; ++mm) {
-                            for (size_t n = 0; n < etl::dim<1>(m); ++n) {
-                                apply<C1, C2, S1, S2, P1, P2>(sub(mm)(n), m(mm)(n));
-                            }
+                    }
+                } else {
+                    for (size_t mm = first; mm < last; ++mm) {
+                        for (size_t n = 0; n < etl::dim<1>(m); ++n) {
+                            apply<C1, C2, S1, S2, P1, P2>(sub(mm)(n), m(mm)(n));
                         }
                     }
                 }
@@ -401,7 +395,7 @@ struct avg_pool_2d {
 
         const size_t N = etl::dim<0>(m);
 
-        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
     }
 
     /*!
@@ -415,22 +409,20 @@ struct avg_pool_2d {
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
             if (last - first) {
-                SERIAL_SECTION {
-                    if (cpp_likely(!p1 && !p2)) {
-                        for (size_t mm = first; mm < last; ++mm) {
-                            for (size_t n = 0; n < etl::dim<1>(m); ++n) {
-                                for (size_t j = 0; j < etl::dim<2>(m); ++j) {
-                                    for (size_t k = 0; k < etl::dim<3>(m); ++k) {
-                                        m(mm, n, j, k) = pool_block_4d(sub, mm, n, j, k, c1, c2, s1, s2);
-                                    }
+                if (cpp_likely(!p1 && !p2)) {
+                    for (size_t mm = first; mm < last; ++mm) {
+                        for (size_t n = 0; n < etl::dim<1>(m); ++n) {
+                            for (size_t j = 0; j < etl::dim<2>(m); ++j) {
+                                for (size_t k = 0; k < etl::dim<3>(m); ++k) {
+                                    m(mm, n, j, k) = pool_block_4d(sub, mm, n, j, k, c1, c2, s1, s2);
                                 }
                             }
                         }
-                    } else {
-                        for (size_t mm = first; mm < last; ++mm) {
-                            for (size_t n = 0; n < etl::dim<1>(m); ++n) {
-                                apply(sub(mm)(n), m(mm)(n), c1, c2, s1, s2, p1, p2);
-                            }
+                    }
+                } else {
+                    for (size_t mm = first; mm < last; ++mm) {
+                        for (size_t n = 0; n < etl::dim<1>(m); ++n) {
+                            apply(sub(mm)(n), m(mm)(n), c1, c2, s1, s2, p1, p2);
                         }
                     }
                 }
@@ -439,7 +431,7 @@ struct avg_pool_2d {
 
         const size_t N = etl::dim<0>(m);
 
-        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
     }
 
     // Deep handling
@@ -798,22 +790,20 @@ struct avg_pool_3d {
     static void apply(const A& sub, M&& m) {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
             if (last - first) {
-                SERIAL_SECTION {
-                    if (cpp_likely(!P1 && !P2 && !P3)) {
-                        for (size_t n = first; n < last; ++n) {
-                            for (size_t i = 0; i < etl::dim<1>(m); ++i) {
-                                for (size_t j = 0; j < etl::dim<2>(m); ++j) {
-                                    for (size_t k = 0; k < etl::dim<3>(m); ++k) {
-                                        m(n, i, j, k) = pool_block_4d<C1, C2, C3, S1, S2, S3>(sub, n, i, j, k);
-                                    }
+                if (cpp_likely(!P1 && !P2 && !P3)) {
+                    for (size_t n = first; n < last; ++n) {
+                        for (size_t i = 0; i < etl::dim<1>(m); ++i) {
+                            for (size_t j = 0; j < etl::dim<2>(m); ++j) {
+                                for (size_t k = 0; k < etl::dim<3>(m); ++k) {
+                                    m(n, i, j, k) = pool_block_4d<C1, C2, C3, S1, S2, S3>(sub, n, i, j, k);
                                 }
                             }
                         }
-                    } else {
-                        // In the general case, we use the regular algorithm
-                        for (size_t n = first; n < last; ++n) {
-                            apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(sub(n), m(n));
-                        }
+                    }
+                } else {
+                    // In the general case, we use the regular algorithm
+                    for (size_t n = first; n < last; ++n) {
+                        apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(sub(n), m(n));
                     }
                 }
             }
@@ -821,7 +811,7 @@ struct avg_pool_3d {
 
         const size_t N = etl::dim<0>(m);
 
-        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
     }
 
     /*!
@@ -836,21 +826,19 @@ struct avg_pool_3d {
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
             if (last - first) {
-                SERIAL_SECTION {
-                    if (cpp_likely(!p1 && !p2 && !p3)) {
-                        for (size_t n = first; n < last; ++n) {
-                            for (size_t i = 0; i < etl::dim<1>(m); ++i) {
-                                for (size_t j = 0; j < etl::dim<2>(m); ++j) {
-                                    for (size_t k = 0; k < etl::dim<3>(m); ++k) {
-                                        m(n, i, j, k) = pool_block_4d(sub, n, i, j, k, c1, c2, c3, s1, s2, s3);
-                                    }
+                if (cpp_likely(!p1 && !p2 && !p3)) {
+                    for (size_t n = first; n < last; ++n) {
+                        for (size_t i = 0; i < etl::dim<1>(m); ++i) {
+                            for (size_t j = 0; j < etl::dim<2>(m); ++j) {
+                                for (size_t k = 0; k < etl::dim<3>(m); ++k) {
+                                    m(n, i, j, k) = pool_block_4d(sub, n, i, j, k, c1, c2, c3, s1, s2, s3);
                                 }
                             }
                         }
-                    } else {
-                        for (size_t n = first; n < last; ++n) {
-                            apply(sub(n), m(n), c1, c2, c3, s1, s2, s3, p1, p2, p3);
-                        }
+                    }
+                } else {
+                    for (size_t n = first; n < last; ++n) {
+                        apply(sub(n), m(n), c1, c2, c3, s1, s2, s3, p1, p2, p3);
                     }
                 }
             }
@@ -858,7 +846,7 @@ struct avg_pool_3d {
 
         const size_t N = etl::dim<0>(m);
 
-        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
     }
 
     // Deep handling

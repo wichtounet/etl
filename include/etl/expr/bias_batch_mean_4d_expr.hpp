@@ -95,27 +95,24 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
         } else {
             const auto N     = etl::size(a) / etl::size(lhs);
             const auto K     = etl::size(lhs);
+
             auto batch_fun_k = [&](const size_t first, const size_t last) {
-                if (last - first) {
-                    SERIAL_SECTION {
-                        for (size_t k = first; k < last; ++k) {
-                            T mean(0);
+                for (size_t k = first; k < last; ++k) {
+                    T mean(0);
 
-                            for (size_t b = 0; b < etl::dim<0>(a); ++b) {
-                                mean += sum(a(b)(k));
-                            }
+                    for (size_t b = 0; b < etl::dim<0>(a); ++b) {
+                        mean += sum(a(b)(k));
+                    }
 
-                            if /*constexpr*/ (Mean) {
-                                lhs(k) = mean / N;
-                            } else {
-                                lhs(k) = mean;
-                            }
-                        }
+                    if /*constexpr*/ (Mean) {
+                        lhs(k) = mean / N;
+                    } else {
+                        lhs(k) = mean;
                     }
                 }
             };
 
-            engine_dispatch_1d(batch_fun_k, 0, K, 2UL);
+            engine_dispatch_1d_serial(batch_fun_k, 0, K, 2UL);
         }
     }
 
@@ -139,26 +136,22 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
         check(a, lhs);
 
         auto batch_fun_k = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t k = first; k < last; ++k) {
-                        T mean(0);
+            for (size_t k = first; k < last; ++k) {
+                T mean(0);
 
-                        for (size_t b = 0; b < etl::dim<0>(a); ++b) {
-                            mean += sum(a(b)(k));
-                        }
+                for (size_t b = 0; b < etl::dim<0>(a); ++b) {
+                    mean += sum(a(b)(k));
+                }
 
-                        if /*constexpr*/ (Mean){
-                            lhs(k) += mean / N;
-                        } else {
-                            lhs(k) += mean;
-                        }
-                    }
+                if /*constexpr*/ (Mean) {
+                    lhs(k) += mean / N;
+                } else {
+                    lhs(k) += mean;
                 }
             }
         };
 
-        engine_dispatch_1d(batch_fun_k, 0, K, 2UL);
+        engine_dispatch_1d_serial(batch_fun_k, 0, K, 2UL);
     }
 
     /*!
@@ -181,26 +174,22 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
         check(a, lhs);
 
         auto batch_fun_k = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t k = first; k < last; ++k) {
-                        T mean(0);
+            for (size_t k = first; k < last; ++k) {
+                T mean(0);
 
-                        for (size_t b = 0; b < etl::dim<0>(a); ++b) {
-                            mean += sum(a(b)(k));
-                        }
+                for (size_t b = 0; b < etl::dim<0>(a); ++b) {
+                    mean += sum(a(b)(k));
+                }
 
-                        if /*constexpr*/ (Mean){
-                            lhs(k) -= mean / N;
-                        } else {
-                            lhs(k) -= mean;
-                        }
-                    }
+                if /*constexpr*/ (Mean) {
+                    lhs(k) -= mean / N;
+                } else {
+                    lhs(k) -= mean;
                 }
             }
         };
 
-        engine_dispatch_1d(batch_fun_k, 0, K, 2UL);
+        engine_dispatch_1d_serial(batch_fun_k, 0, K, 2UL);
     }
 
     /*!
@@ -223,26 +212,22 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
         check(a, lhs);
 
         auto batch_fun_k = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t k = first; k < last; ++k) {
-                        T mean(0);
+            for (size_t k = first; k < last; ++k) {
+                T mean(0);
 
-                        for (size_t b = 0; b < etl::dim<0>(a); ++b) {
-                            mean += sum(a(b)(k));
-                        }
+                for (size_t b = 0; b < etl::dim<0>(a); ++b) {
+                    mean += sum(a(b)(k));
+                }
 
-                        if /*constexpr*/ (Mean){
-                            lhs(k) *= mean / N;
-                        } else {
-                            lhs(k) *= mean;
-                        }
-                    }
+                if /*constexpr*/ (Mean) {
+                    lhs(k) *= mean / N;
+                } else {
+                    lhs(k) *= mean;
                 }
             }
         };
 
-        engine_dispatch_1d(batch_fun_k, 0, K, 2UL);
+        engine_dispatch_1d_serial(batch_fun_k, 0, K, 2UL);
     }
 
     /*!
@@ -265,26 +250,22 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
         check(a, lhs);
 
         auto batch_fun_k = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t k = first; k < last; ++k) {
-                        T mean(0);
+            for (size_t k = first; k < last; ++k) {
+                T mean(0);
 
-                        for (size_t b = 0; b < etl::dim<0>(a); ++b) {
-                            mean += sum(a(b)(k));
-                        }
+                for (size_t b = 0; b < etl::dim<0>(a); ++b) {
+                    mean += sum(a(b)(k));
+                }
 
-                        if /*constexpr*/ (Mean){
-                            lhs(k) /= mean / N;
-                        } else {
-                            lhs(k) /= mean;
-                        }
-                    }
+                if /*constexpr*/ (Mean) {
+                    lhs(k) /= mean / N;
+                } else {
+                    lhs(k) /= mean;
                 }
             }
         };
 
-        engine_dispatch_1d(batch_fun_k, 0, K, 2UL);
+        engine_dispatch_1d_serial(batch_fun_k, 0, K, 2UL);
     }
 
     /*!
@@ -307,26 +288,22 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
         check(a, lhs);
 
         auto batch_fun_k = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t k = first; k < last; ++k) {
-                        T mean(0);
+            for (size_t k = first; k < last; ++k) {
+                T mean(0);
 
-                        for (size_t b = 0; b < etl::dim<0>(a); ++b) {
-                            mean += sum(a(b)(k));
-                        }
+                for (size_t b = 0; b < etl::dim<0>(a); ++b) {
+                    mean += sum(a(b)(k));
+                }
 
-                        if /*constexpr*/ (Mean){
-                            lhs(k) %= mean / N;
-                        } else {
-                            lhs(k) %= mean;
-                        }
-                    }
+                if /*constexpr*/ (Mean) {
+                    lhs(k) %= mean / N;
+                } else {
+                    lhs(k) %= mean;
                 }
             }
         };
 
-        engine_dispatch_1d(batch_fun_k, 0, K, 2UL);
+        engine_dispatch_1d_serial(batch_fun_k, 0, K, 2UL);
     }
 
     /*!

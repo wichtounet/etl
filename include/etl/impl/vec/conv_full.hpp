@@ -338,24 +338,20 @@ void conv4_full_impl(const I& input, const KK& kernel, CC&& conv) {
         prepared_k.deep_fflip_inplace();
 
         auto batch_fun_nc = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t nc = first; nc < last; ++nc) {
-                        const size_t i = nc / C;
-                        const size_t c = nc % C;
+            for (size_t nc = first; nc < last; ++nc) {
+                const size_t i = nc / C;
+                const size_t c = nc % C;
 
-                        // k = 0
-                        conv2_full_flipped_impl<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
+                // k = 0
+                conv2_full_flipped_impl<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
 
-                        for (size_t k = 1; k < K; ++k) {
-                            conv2_full_flipped_impl<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
-                        }
-                    }
+                for (size_t k = 1; k < K; ++k) {
+                    conv2_full_flipped_impl<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
                 }
             }
         };
 
-        engine_dispatch_1d(batch_fun_nc, 0, N * C, 2UL);
+        engine_dispatch_1d_serial(batch_fun_nc, 0, N * C, 2UL);
 
         conv.invalidate_gpu();
     }

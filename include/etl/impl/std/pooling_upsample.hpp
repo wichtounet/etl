@@ -219,14 +219,10 @@ struct max_pool_upsample_2d {
     template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_iff(is_3d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M&& m) {
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t q = first; q < last; ++q) {
-                        for (size_t i = 0; i < etl::dim<1>(out); ++i) {
-                            for (size_t j = 0; j < etl::dim<2>(out); ++j) {
-                                pool_block_3d<C1, C2>(in, out, errors, m, q, i, j);
-                            }
-                        }
+            for (size_t q = first; q < last; ++q) {
+                for (size_t i = 0; i < etl::dim<1>(out); ++i) {
+                    for (size_t j = 0; j < etl::dim<2>(out); ++j) {
+                        pool_block_3d<C1, C2>(in, out, errors, m, q, i, j);
                     }
                 }
             }
@@ -234,7 +230,7 @@ struct max_pool_upsample_2d {
 
         const size_t N = etl::dim<0>(out);
 
-        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
     }
 
     /*!
@@ -247,14 +243,10 @@ struct max_pool_upsample_2d {
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(is_3d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M&& m, size_t c1, size_t c2) {
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t q = first; q < last; ++q) {
-                        for (size_t i = 0; i < etl::dim<1>(out); ++i) {
-                            for (size_t j = 0; j < etl::dim<2>(out); ++j) {
-                                pool_block_3d(in, out, errors, m, q, i, j, c1, c2);
-                            }
-                        }
+            for (size_t q = first; q < last; ++q) {
+                for (size_t i = 0; i < etl::dim<1>(out); ++i) {
+                    for (size_t j = 0; j < etl::dim<2>(out); ++j) {
+                        pool_block_3d(in, out, errors, m, q, i, j, c1, c2);
                     }
                 }
             }
@@ -262,7 +254,7 @@ struct max_pool_upsample_2d {
 
         const size_t N = etl::dim<0>(out);
 
-        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
     }
 
     // 4D Handling
@@ -277,15 +269,11 @@ struct max_pool_upsample_2d {
     template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M&& m) {
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t p = first; p < last; ++p) {
-                        for (size_t q = 0; q < etl::dim<1>(out); ++q) {
-                            for (size_t i = 0; i < etl::dim<2>(out); ++i) {
-                                for (size_t j = 0; j < etl::dim<3>(out); ++j) {
-                                    pool_block_4d<C1, C2>(in, out, errors, m, p, q, i, j);
-                                }
-                            }
+            for (size_t p = first; p < last; ++p) {
+                for (size_t q = 0; q < etl::dim<1>(out); ++q) {
+                    for (size_t i = 0; i < etl::dim<2>(out); ++i) {
+                        for (size_t j = 0; j < etl::dim<3>(out); ++j) {
+                            pool_block_4d<C1, C2>(in, out, errors, m, p, q, i, j);
                         }
                     }
                 }
@@ -294,7 +282,7 @@ struct max_pool_upsample_2d {
 
         const size_t N = etl::dim<0>(out);
 
-        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
     }
 
     /*!
@@ -307,15 +295,11 @@ struct max_pool_upsample_2d {
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M&& m, size_t c1, size_t c2) {
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t p = first; p < last; ++p) {
-                        for (size_t q = 0; q < etl::dim<1>(out); ++q) {
-                            for (size_t i = 0; i < etl::dim<2>(out); ++i) {
-                                for (size_t j = 0; j < etl::dim<3>(out); ++j) {
-                                    pool_block_4d(in, out, errors, m, p, q, i, j, c1, c2);
-                                }
-                            }
+            for (size_t p = first; p < last; ++p) {
+                for (size_t q = 0; q < etl::dim<1>(out); ++q) {
+                    for (size_t i = 0; i < etl::dim<2>(out); ++i) {
+                        for (size_t j = 0; j < etl::dim<3>(out); ++j) {
+                            pool_block_4d(in, out, errors, m, p, q, i, j, c1, c2);
                         }
                     }
                 }
@@ -324,7 +308,7 @@ struct max_pool_upsample_2d {
 
         const size_t N = etl::dim<0>(out);
 
-        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
     }
 
     // Deep handling
@@ -539,15 +523,11 @@ struct max_pool_upsample_3d {
     template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M& m) {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t n = first; n < last; ++n) {
-                        for (size_t i = 0; i < etl::dim<1>(out); ++i) {
-                            for (size_t j = 0; j < etl::dim<2>(out); ++j) {
-                                for (size_t k = 0; k < etl::dim<3>(out); ++k) {
-                                    max_pool_upsample_3d::pool_block_4d<C1, C2, C3>(in, out, errors, m, n, i, j, k);
-                                }
-                            }
+            for (size_t n = first; n < last; ++n) {
+                for (size_t i = 0; i < etl::dim<1>(out); ++i) {
+                    for (size_t j = 0; j < etl::dim<2>(out); ++j) {
+                        for (size_t k = 0; k < etl::dim<3>(out); ++k) {
+                            max_pool_upsample_3d::pool_block_4d<C1, C2, C3>(in, out, errors, m, n, i, j, k);
                         }
                     }
                 }
@@ -556,7 +536,7 @@ struct max_pool_upsample_3d {
 
         const size_t N = etl::dim<0>(out);
 
-        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
     }
 
     /*!
@@ -570,15 +550,11 @@ struct max_pool_upsample_3d {
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t c3) {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t n = first; n < last; ++n) {
-                        for (size_t i = 0; i < etl::dim<1>(out); ++i) {
-                            for (size_t j = 0; j < etl::dim<2>(out); ++j) {
-                                for (size_t k = 0; k < etl::dim<3>(out); ++k) {
-                                    max_pool_upsample_3d::pool_block_4d(in, out, errors, m, n, i, j, k, c1, c2, c3);
-                                }
-                            }
+            for (size_t n = first; n < last; ++n) {
+                for (size_t i = 0; i < etl::dim<1>(out); ++i) {
+                    for (size_t j = 0; j < etl::dim<2>(out); ++j) {
+                        for (size_t k = 0; k < etl::dim<3>(out); ++k) {
+                            max_pool_upsample_3d::pool_block_4d(in, out, errors, m, n, i, j, k, c1, c2, c3);
                         }
                     }
                 }
@@ -587,7 +563,7 @@ struct max_pool_upsample_3d {
 
         const size_t N = etl::dim<0>(out);
 
-        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
     }
 
     // Deep handling
@@ -799,14 +775,10 @@ struct avg_pool_upsample_2d {
     template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_iff(is_3d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M&& m) {
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t q = first; q < last; ++q) {
-                        for (size_t i = 0; i < etl::dim<1>(out); ++i) {
-                            for (size_t j = 0; j < etl::dim<2>(out); ++j) {
-                                pool_block_3d<C1, C2>(errors, m, q, i, j);
-                            }
-                        }
+            for (size_t q = first; q < last; ++q) {
+                for (size_t i = 0; i < etl::dim<1>(out); ++i) {
+                    for (size_t j = 0; j < etl::dim<2>(out); ++j) {
+                        pool_block_3d<C1, C2>(errors, m, q, i, j);
                     }
                 }
             }
@@ -814,7 +786,7 @@ struct avg_pool_upsample_2d {
 
         const size_t N = etl::dim<0>(out);
 
-        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
 
         cpp_unused(in);
         cpp_unused(out);
@@ -830,14 +802,10 @@ struct avg_pool_upsample_2d {
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(is_3d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M&& m, size_t c1, size_t c2) {
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t q = first; q < last; ++q) {
-                        for (size_t i = 0; i < etl::dim<1>(out); ++i) {
-                            for (size_t j = 0; j < etl::dim<2>(out); ++j) {
-                                pool_block_3d(errors, m, q, i, j, c1, c2);
-                            }
-                        }
+            for (size_t q = first; q < last; ++q) {
+                for (size_t i = 0; i < etl::dim<1>(out); ++i) {
+                    for (size_t j = 0; j < etl::dim<2>(out); ++j) {
+                        pool_block_3d(errors, m, q, i, j, c1, c2);
                     }
                 }
             }
@@ -845,7 +813,7 @@ struct avg_pool_upsample_2d {
 
         const size_t N = etl::dim<0>(out);
 
-        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
 
         cpp_unused(in);
         cpp_unused(out);
@@ -863,15 +831,11 @@ struct avg_pool_upsample_2d {
     template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M&& m) {
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t p = first; p < last; ++p) {
-                        for (size_t q = 0; q < etl::dim<1>(out); ++q) {
-                            for (size_t i = 0; i < etl::dim<2>(out); ++i) {
-                                for (size_t j = 0; j < etl::dim<3>(out); ++j) {
-                                    pool_block_4d<C1, C2>(errors, m, p, q, i, j);
-                                }
-                            }
+            for (size_t p = first; p < last; ++p) {
+                for (size_t q = 0; q < etl::dim<1>(out); ++q) {
+                    for (size_t i = 0; i < etl::dim<2>(out); ++i) {
+                        for (size_t j = 0; j < etl::dim<3>(out); ++j) {
+                            pool_block_4d<C1, C2>(errors, m, p, q, i, j);
                         }
                     }
                 }
@@ -880,7 +844,7 @@ struct avg_pool_upsample_2d {
 
         const size_t N = etl::dim<0>(out);
 
-        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
 
         cpp_unused(in);
         cpp_unused(out);
@@ -896,15 +860,11 @@ struct avg_pool_upsample_2d {
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M&& m, size_t c1, size_t c2) {
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t p = first; p < last; ++p) {
-                        for (size_t q = 0; q < etl::dim<1>(out); ++q) {
-                            for (size_t i = 0; i < etl::dim<2>(out); ++i) {
-                                for (size_t j = 0; j < etl::dim<3>(out); ++j) {
-                                    pool_block_4d(errors, m, p, q, i, j, c1, c2);
-                                }
-                            }
+            for (size_t p = first; p < last; ++p) {
+                for (size_t q = 0; q < etl::dim<1>(out); ++q) {
+                    for (size_t i = 0; i < etl::dim<2>(out); ++i) {
+                        for (size_t j = 0; j < etl::dim<3>(out); ++j) {
+                            pool_block_4d(errors, m, p, q, i, j, c1, c2);
                         }
                     }
                 }
@@ -913,7 +873,7 @@ struct avg_pool_upsample_2d {
 
         const size_t N = etl::dim<0>(out);
 
-        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
 
         cpp_unused(in);
         cpp_unused(out);
@@ -1113,15 +1073,11 @@ struct avg_pool_upsample_3d {
     template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M& m) {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t n = first; n < last; ++n) {
-                        for (size_t i = 0; i < etl::dim<1>(out); ++i) {
-                            for (size_t j = 0; j < etl::dim<2>(out); ++j) {
-                                for (size_t k = 0; k < etl::dim<3>(out); ++k) {
-                                    avg_pool_upsample_3d::pool_block_4d<C1, C2, C3>(errors, m, n, i, j, k);
-                                }
-                            }
+            for (size_t n = first; n < last; ++n) {
+                for (size_t i = 0; i < etl::dim<1>(out); ++i) {
+                    for (size_t j = 0; j < etl::dim<2>(out); ++j) {
+                        for (size_t k = 0; k < etl::dim<3>(out); ++k) {
+                            avg_pool_upsample_3d::pool_block_4d<C1, C2, C3>(errors, m, n, i, j, k);
                         }
                     }
                 }
@@ -1130,7 +1086,7 @@ struct avg_pool_upsample_3d {
 
         const size_t N = etl::dim<0>(out);
 
-        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
 
         cpp_unused(in);
         cpp_unused(out);
@@ -1147,15 +1103,11 @@ struct avg_pool_upsample_3d {
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t c3) {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t n = first; n < last; ++n) {
-                        for (size_t i = 0; i < etl::dim<1>(out); ++i) {
-                            for (size_t j = 0; j < etl::dim<2>(out); ++j) {
-                                for (size_t k = 0; k < etl::dim<3>(out); ++k) {
-                                    avg_pool_upsample_3d::pool_block_4d(errors, m, n, i, j, k, c1, c2, c3);
-                                }
-                            }
+            for (size_t n = first; n < last; ++n) {
+                for (size_t i = 0; i < etl::dim<1>(out); ++i) {
+                    for (size_t j = 0; j < etl::dim<2>(out); ++j) {
+                        for (size_t k = 0; k < etl::dim<3>(out); ++k) {
+                            avg_pool_upsample_3d::pool_block_4d(errors, m, n, i, j, k, c1, c2, c3);
                         }
                     }
                 }
@@ -1164,7 +1116,7 @@ struct avg_pool_upsample_3d {
 
         const size_t N = etl::dim<0>(out);
 
-        engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
 
         cpp_unused(in);
         cpp_unused(out);

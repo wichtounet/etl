@@ -1182,19 +1182,46 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
 
     auto batch_fun_n = [&](const size_t first, const size_t last) {
         if (last - first) {
-            SERIAL_SECTION {
-                // unit-strided result dimensions
-                const size_t sc1 = (n1 - m1 + 2 * p1) + 1;
-                const size_t sc2 = (n2 - m2 + 2 * p2) + 1;
+            // unit-strided result dimensions
+            const size_t sc1 = (n1 - m1 + 2 * p1) + 1;
+            const size_t sc2 = (n2 - m2 + 2 * p2) + 1;
 
-                etl::dyn_matrix<T, 2> input_col(m1 * m2, sc1 * sc2);
+            etl::dyn_matrix<T, 2> input_col(m1 * m2, sc1 * sc2);
 
-                // Optimize for the most common case
-                if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
-                    for (size_t i = first; i < last; ++i) {
-                        for (size_t c = 0; c < C; ++c) {
+            // Optimize for the most common case
+            if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
+                for (size_t i = first; i < last; ++i) {
+                    for (size_t c = 0; c < C; ++c) {
+                        im2col_direct_tr(input_col, input(i)(c), m1, m2);
+
+                        cblas_gemm(
+                            CblasRowMajor,
+                            CblasNoTrans, CblasNoTrans,
+                            K, sc1 * sc2, m1 * m2,
+                            T(1.0),
+                            kernels(c).memory_start(), m1 * m2,
+                            input_col.memory_start(), sc1 * sc2,
+                            T(1.0),
+                            conv(i).memory_start(), sc1 * sc2);
+                    }
+                }
+            } else {
+                etl::dyn_matrix<T, 2> input_padded(n1 + 2 * p1, n2 + 2 * p2);
+                etl::dyn_matrix<T, 3> tmp_result(K, sc1, sc2);
+
+                for (size_t i = first; i < last; ++i) {
+                    for (size_t c = 0; c < C; ++c) {
+                        if (p1 || p2) {
+                            input_padded = T(0.0);
+
+                            impl::common::pad_2d_input(input(i)(c), input_padded, p1, p2);
+
+                            im2col_direct_tr(input_col, input_padded, m1, m2);
+                        } else {
                             im2col_direct_tr(input_col, input(i)(c), m1, m2);
+                        }
 
+                        if (s1 > 1 || s2 > 1) {
                             cblas_gemm(
                                 CblasRowMajor,
                                 CblasNoTrans, CblasNoTrans,
@@ -1202,57 +1229,27 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
                                 T(1.0),
                                 kernels(c).memory_start(), m1 * m2,
                                 input_col.memory_start(), sc1 * sc2,
-                                T(1.0),
-                                conv(i).memory_start(), sc1 * sc2);
+                                T(0.0),
+                                tmp_result.memory_start(), sc1 * sc2);
 
-                        }
-                    }
-                } else {
-                    etl::dyn_matrix<T, 2> input_padded(n1 + 2 * p1, n2 + 2 * p2);
-                    etl::dyn_matrix<T, 3> tmp_result(K, sc1, sc2);
-
-                    for (size_t i = first; i < last; ++i) {
-                        for (size_t c = 0; c < C; ++c) {
-                            if (p1 || p2) {
-                                input_padded = T(0.0);
-
-                                impl::common::pad_2d_input(input(i)(c), input_padded, p1, p2);
-
-                                im2col_direct_tr(input_col, input_padded, m1, m2);
-                            } else {
-                                im2col_direct_tr(input_col, input(i)(c), m1, m2);
-                            }
-
-                            if (s1 > 1 || s2 > 1) {
-                                cblas_gemm(
-                                    CblasRowMajor,
-                                    CblasNoTrans, CblasNoTrans,
-                                    K, sc1 * sc2, m1 * m2,
-                                    T(1.0),
-                                    kernels(c).memory_start(), m1 * m2,
-                                    input_col.memory_start(), sc1 * sc2,
-                                    T(0.0),
-                                    tmp_result.memory_start(), sc1 * sc2);
-
-                                // Strided copy of the large result into the small result
-                                for (size_t k = 0; k < K; ++k) {
-                                    for (size_t ii = 0; ii < c1; ++ii) {
-                                        for (size_t j = 0; j < c2; ++j) {
-                                            conv(i, k, ii, j) += tmp_result(k, ii * s1, j * s2);
-                                        }
+                            // Strided copy of the large result into the small result
+                            for (size_t k = 0; k < K; ++k) {
+                                for (size_t ii = 0; ii < c1; ++ii) {
+                                    for (size_t j = 0; j < c2; ++j) {
+                                        conv(i, k, ii, j) += tmp_result(k, ii * s1, j * s2);
                                     }
                                 }
-                            } else {
-                                cblas_gemm(
-                                    CblasRowMajor,
-                                    CblasNoTrans, CblasNoTrans,
-                                    K, c1 * c2, m1 * m2,
-                                    T(1.0),
-                                    kernels(c).memory_start(), m1 * m2,
-                                    input_col.memory_start(), sc1 * sc2,
-                                    T(1.0),
-                                    conv(i).memory_start(), c1 * c2);
                             }
+                        } else {
+                            cblas_gemm(
+                                CblasRowMajor,
+                                CblasNoTrans, CblasNoTrans,
+                                K, c1 * c2, m1 * m2,
+                                T(1.0),
+                                kernels(c).memory_start(), m1 * m2,
+                                input_col.memory_start(), sc1 * sc2,
+                                T(1.0),
+                                conv(i).memory_start(), c1 * c2);
                         }
                     }
                 }
@@ -1260,7 +1257,7 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
         }
     };
 
-    engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
+    engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
 
     conv.invalidate_gpu();
 }
@@ -1362,14 +1359,56 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
 
     auto batch_fun_c = [&](const size_t first, const size_t last) {
         if (last - first) {
-            SERIAL_SECTION {
-                for (size_t c = first; c < last; ++c) {
-                    etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
+            for (size_t c = first; c < last; ++c) {
+                etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
 
-                    for (size_t i = 0; i < I; ++i) {
-                        // Optimize for the most common case
-                        if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
+                for (size_t i = 0; i < I; ++i) {
+                    // Optimize for the most common case
+                    if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
+                        im2col_direct_tr(input_col, input(i)(c), k1, k2);
+                        cblas_gemm(
+                            CblasRowMajor,
+                            CblasNoTrans, CblasNoTrans,
+                            K, c1 * c2, k1 * k2,
+                            T(1.0),
+                            kernel(i).memory_start(), k1 * k2,
+                            input_col.memory_start(), c1 * c2,
+                            T(1.0),
+                            conv_temp(c).memory_start(), f1 * f2);
+                    } else {
+                        if (p1 || p2) {
+                            etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
+                            input_padded = T(0);
+
+                            impl::common::pad_2d_input(input(i)(c), input_padded, p1, p2);
+
+                            im2col_direct_tr(input_col, input_padded, k1, k2);
+                        } else {
                             im2col_direct_tr(input_col, input(i)(c), k1, k2);
+                        }
+
+                        if (s1 > 1 || s2 > 1) {
+                            etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
+
+                            cblas_gemm(
+                                CblasRowMajor,
+                                CblasNoTrans, CblasNoTrans,
+                                K, c1 * c2, k1 * k2,
+                                T(1.0),
+                                kernel(i).memory_start(), k1 * k2,
+                                input_col.memory_start(), c1 * c2,
+                                T(0.0),
+                                tmp_result.memory_start(), c1 * c2);
+
+                            // Strided copy of the large result into the small result
+                            for (size_t k = 0; k < K; ++k) {
+                                for (size_t ii = 0; ii < f1; ++ii) {
+                                    for (size_t j = 0; j < f2; ++j) {
+                                        conv_temp(c, k, ii, j) += tmp_result(k, ii * s1, j * s2);
+                                    }
+                                }
+                            }
+                        } else {
                             cblas_gemm(
                                 CblasRowMajor,
                                 CblasNoTrans, CblasNoTrans,
@@ -1379,64 +1418,20 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                                 input_col.memory_start(), c1 * c2,
                                 T(1.0),
                                 conv_temp(c).memory_start(), f1 * f2);
-                        } else {
-                            if (p1 || p2) {
-                                etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
-                                input_padded = T(0);
-
-                                impl::common::pad_2d_input(input(i)(c), input_padded, p1, p2);
-
-                                im2col_direct_tr(input_col, input_padded, k1, k2);
-                            } else {
-                                im2col_direct_tr(input_col, input(i)(c), k1, k2);
-                            }
-
-                            if (s1 > 1 || s2 > 1) {
-                                etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
-
-                                cblas_gemm(
-                                    CblasRowMajor,
-                                    CblasNoTrans, CblasNoTrans,
-                                    K, c1 * c2, k1 * k2,
-                                    T(1.0),
-                                    kernel(i).memory_start(), k1 * k2,
-                                    input_col.memory_start(), c1 * c2,
-                                    T(0.0),
-                                    tmp_result.memory_start(), c1 * c2);
-
-                                // Strided copy of the large result into the small result
-                                for (size_t k = 0; k < K; ++k) {
-                                    for (size_t ii = 0; ii < f1; ++ii) {
-                                        for (size_t j = 0; j < f2; ++j) {
-                                            conv_temp(c, k, ii, j) += tmp_result(k, ii * s1, j * s2);
-                                        }
-                                    }
-                                }
-                            } else {
-                                cblas_gemm(
-                                    CblasRowMajor,
-                                    CblasNoTrans, CblasNoTrans,
-                                    K, c1 * c2, k1 * k2,
-                                    T(1.0),
-                                    kernel(i).memory_start(), k1 * k2,
-                                    input_col.memory_start(), c1 * c2,
-                                    T(1.0),
-                                    conv_temp(c).memory_start(), f1 * f2);
-                            }
                         }
                     }
                 }
+            }
 
-                for (size_t c = 0; c < C; ++c) {
-                    for (size_t k = 0; k < K; ++k) {
-                        conv(k)(c) = conv_temp(c)(k);
-                    }
+            for (size_t c = 0; c < C; ++c) {
+                for (size_t k = 0; k < K; ++k) {
+                    conv(k)(c) = conv_temp(c)(k);
                 }
             }
         }
     };
 
-    engine_dispatch_1d(batch_fun_c, 0, C, 2UL);
+    engine_dispatch_1d_serial(batch_fun_c, 0, C, 2UL);
 
     conv.invalidate_gpu();
 }
@@ -1512,11 +1507,10 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
 
     auto batch_fun_n = [&](const size_t first, const size_t last) {
         if (last - first) {
-            SERIAL_SECTION {
-                etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
+            etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
 
-                // Optimize for the most common case
-                if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
+            // Optimize for the most common case
+            if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
                 for (size_t i = first; i < last; ++i) {
                     for (size_t k = 0; k < K; ++k) {
                         // use im2col on input(i)(k)
@@ -1535,56 +1529,55 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
                             conv(i).memory_start(), f1 * f2);
                     }
                 }
-                } else {
-                    etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
-                    etl::dyn_matrix<T, 3> tmp_result(C, c1, c2);
+            } else {
+                etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
+                etl::dyn_matrix<T, 3> tmp_result(C, c1, c2);
 
-                    for (size_t i = first; i < last; ++i) {
-                        for (size_t k = 0; k < K; ++k) {
-                            // use im2col on input(i)(k)
+                for (size_t i = first; i < last; ++i) {
+                    for (size_t k = 0; k < K; ++k) {
+                        // use im2col on input(i)(k)
 
-                            if (p1 || p2) {
-                                input_padded = T(0);
+                        if (p1 || p2) {
+                            input_padded = T(0);
 
-                                impl::common::pad_2d_input(input(i)(k), input_padded, p1, p2);
+                            impl::common::pad_2d_input(input(i)(k), input_padded, p1, p2);
 
-                                im2col_direct_tr(input_col, input_padded, k1, k2);
-                            } else {
-                                im2col_direct_tr(input_col, input(i)(k), k1, k2);
-                            }
+                            im2col_direct_tr(input_col, input_padded, k1, k2);
+                        } else {
+                            im2col_direct_tr(input_col, input(i)(k), k1, k2);
+                        }
 
-                            if (s1 > 1 || s2 > 1) {
-                                // tmp_result = kernel(k) * input_col
-                                cblas_gemm(
-                                    CblasRowMajor,
-                                    CblasNoTrans, CblasNoTrans,
-                                    C, c1 * c2, k1 * k2,
-                                    T(1.0),
-                                    kernel(k).memory_start(), k1 * k2,
-                                    input_col.memory_start(), c1 * c2,
-                                    T(0.0),
-                                    tmp_result.memory_start(), c1 * c2);
+                        if (s1 > 1 || s2 > 1) {
+                            // tmp_result = kernel(k) * input_col
+                            cblas_gemm(
+                                CblasRowMajor,
+                                CblasNoTrans, CblasNoTrans,
+                                C, c1 * c2, k1 * k2,
+                                T(1.0),
+                                kernel(k).memory_start(), k1 * k2,
+                                input_col.memory_start(), c1 * c2,
+                                T(0.0),
+                                tmp_result.memory_start(), c1 * c2);
 
-                                // Strided copy of the large result into the small result
-                                for (size_t c = 0; c < C; ++c) {
-                                    for (size_t m = 0; m < f1; ++m) {
-                                        for (size_t n = 0; n < f2; ++n) {
-                                            conv(i, c, m, n) += tmp_result(c, m * s1, n * s2);
-                                        }
+                            // Strided copy of the large result into the small result
+                            for (size_t c = 0; c < C; ++c) {
+                                for (size_t m = 0; m < f1; ++m) {
+                                    for (size_t n = 0; n < f2; ++n) {
+                                        conv(i, c, m, n) += tmp_result(c, m * s1, n * s2);
                                     }
                                 }
-                            } else {
-                                // conv(i) = kernel(k) * input_col
-                                cblas_gemm(
-                                    CblasRowMajor,
-                                    CblasNoTrans, CblasNoTrans,
-                                    C, c1 * c2, k1 * k2,
-                                    T(1.0),
-                                    kernel(k).memory_start(), k1 * k2,
-                                    input_col.memory_start(), c1 * c2,
-                                    T(1.0),
-                                    conv(i).memory_start(), f1 * f2);
                             }
+                        } else {
+                            // conv(i) = kernel(k) * input_col
+                            cblas_gemm(
+                                CblasRowMajor,
+                                CblasNoTrans, CblasNoTrans,
+                                C, c1 * c2, k1 * k2,
+                                T(1.0),
+                                kernel(k).memory_start(), k1 * k2,
+                                input_col.memory_start(), c1 * c2,
+                                T(1.0),
+                                conv(i).memory_start(), f1 * f2);
                         }
                     }
                 }
@@ -1592,7 +1585,7 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
         }
     };
 
-    engine_dispatch_1d(batch_fun_n, 0, N, 2UL);
+    engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
 
     conv.invalidate_gpu();
 }

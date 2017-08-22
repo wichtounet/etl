@@ -175,14 +175,10 @@ struct upsample_2d {
     template <size_t C1, size_t C2, typename A, typename M, cpp_enable_iff(is_3d<A>)>
     static void apply(A&& in, M&& m) {
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t q = first; q < last; ++q) {
-                        for (size_t j = 0; j < etl::dim<1>(in); ++j) {
-                            for (size_t k = 0; k < etl::dim<2>(in); ++k) {
-                                upsample_block_3d<C1, C2>(in, m, q, j, k);
-                            }
-                        }
+            for (size_t q = first; q < last; ++q) {
+                for (size_t j = 0; j < etl::dim<1>(in); ++j) {
+                    for (size_t k = 0; k < etl::dim<2>(in); ++k) {
+                        upsample_block_3d<C1, C2>(in, m, q, j, k);
                     }
                 }
             }
@@ -190,7 +186,7 @@ struct upsample_2d {
 
         const size_t N = etl::dim<0>(in);
 
-        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
     }
 
     /*!
@@ -203,14 +199,10 @@ struct upsample_2d {
     template <typename A, typename M, cpp_enable_iff(is_3d<A>)>
     static void apply(A&& in, M&& m, size_t c1, size_t c2) {
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t q = first; q < last; ++q) {
-                        for (size_t j = 0; j < etl::dim<1>(in); ++j) {
-                            for (size_t k = 0; k < etl::dim<2>(in); ++k) {
-                                upsample_block_3d(in, m, q, j, k, c1, c2);
-                            }
-                        }
+            for (size_t q = first; q < last; ++q) {
+                for (size_t j = 0; j < etl::dim<1>(in); ++j) {
+                    for (size_t k = 0; k < etl::dim<2>(in); ++k) {
+                        upsample_block_3d(in, m, q, j, k, c1, c2);
                     }
                 }
             }
@@ -218,7 +210,7 @@ struct upsample_2d {
 
         const size_t N = etl::dim<0>(in);
 
-        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
     }
 
     // 4D handling
@@ -233,15 +225,11 @@ struct upsample_2d {
     template <size_t C1, size_t C2, typename A, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, M&& m) {
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t p = first; p < last; ++p) {
-                        for (size_t q = 0; q < etl::dim<1>(in); ++q) {
-                            for (size_t j = 0; j < etl::dim<2>(in); ++j) {
-                                for (size_t k = 0; k < etl::dim<3>(in); ++k) {
-                                    upsample_block_4d<C1, C2>(in, m, p, q, j, k);
-                                }
-                            }
+            for (size_t p = first; p < last; ++p) {
+                for (size_t q = 0; q < etl::dim<1>(in); ++q) {
+                    for (size_t j = 0; j < etl::dim<2>(in); ++j) {
+                        for (size_t k = 0; k < etl::dim<3>(in); ++k) {
+                            upsample_block_4d<C1, C2>(in, m, p, q, j, k);
                         }
                     }
                 }
@@ -250,7 +238,7 @@ struct upsample_2d {
 
         const size_t N = etl::dim<0>(in);
 
-        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
     }
 
     /*!
@@ -263,15 +251,11 @@ struct upsample_2d {
     template <typename A, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, M&& m, size_t c1, size_t c2) {
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t p = first; p < last; ++p) {
-                        for (size_t q = 0; q < etl::dim<1>(in); ++q) {
-                            for (size_t j = 0; j < etl::dim<2>(in); ++j) {
-                                for (size_t k = 0; k < etl::dim<3>(in); ++k) {
-                                    upsample_block_4d(in, m, p, q, j, k, c1, c2);
-                                }
-                            }
+            for (size_t p = first; p < last; ++p) {
+                for (size_t q = 0; q < etl::dim<1>(in); ++q) {
+                    for (size_t j = 0; j < etl::dim<2>(in); ++j) {
+                        for (size_t k = 0; k < etl::dim<3>(in); ++k) {
+                            upsample_block_4d(in, m, p, q, j, k, c1, c2);
                         }
                     }
                 }
@@ -280,7 +264,7 @@ struct upsample_2d {
 
         const size_t N = etl::dim<0>(in);
 
-        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
     }
 
     // Deep Handling
@@ -467,15 +451,11 @@ struct upsample_3d {
     template <size_t C1, size_t C2, size_t C3, typename A, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, M&& m) {
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t q = first; q < last; ++q) {
-                        for (size_t i = 0; i < etl::dim<1>(in); ++i) {
-                            for (size_t j = 0; j < etl::dim<2>(in); ++j) {
-                                for (size_t k = 0; k < etl::dim<3>(in); ++k) {
-                                    upsample_block_4d<C1, C2, C3>(in, m, q, i, j, k);
-                                }
-                            }
+            for (size_t q = first; q < last; ++q) {
+                for (size_t i = 0; i < etl::dim<1>(in); ++i) {
+                    for (size_t j = 0; j < etl::dim<2>(in); ++j) {
+                        for (size_t k = 0; k < etl::dim<3>(in); ++k) {
+                            upsample_block_4d<C1, C2, C3>(in, m, q, i, j, k);
                         }
                     }
                 }
@@ -484,7 +464,7 @@ struct upsample_3d {
 
         const size_t N = etl::dim<0>(in);
 
-        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
     }
 
     /*!
@@ -498,15 +478,11 @@ struct upsample_3d {
     template <typename A, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t c3) {
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (size_t q = first; q < last; ++q) {
-                        for (size_t i = 0; i < etl::dim<1>(in); ++i) {
-                            for (size_t j = 0; j < etl::dim<2>(in); ++j) {
-                                for (size_t k = 0; k < etl::dim<3>(in); ++k) {
-                                    upsample_block_4d(in, m, q, i, j, k, c1, c2, c3);
-                                }
-                            }
+            for (size_t q = first; q < last; ++q) {
+                for (size_t i = 0; i < etl::dim<1>(in); ++i) {
+                    for (size_t j = 0; j < etl::dim<2>(in); ++j) {
+                        for (size_t k = 0; k < etl::dim<3>(in); ++k) {
+                            upsample_block_4d(in, m, q, i, j, k, c1, c2, c3);
                         }
                     }
                 }
@@ -515,7 +491,7 @@ struct upsample_3d {
 
         const size_t N = etl::dim<0>(in);
 
-        engine_dispatch_1d(batch_fun, 0, N, 2UL);
+        engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
     }
 
     // Deep Handling
