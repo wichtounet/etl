@@ -715,7 +715,7 @@ void conv1_full_kernel(const T* a, size_t m, const T* b, size_t n, T* c){
     detail::fft1_kernel(reinterpret_cast<std::complex<T>*>(a_padded.memory_start()), size, reinterpret_cast<std::complex<T>*>(a_padded.memory_start()));
     detail::fft1_kernel(reinterpret_cast<std::complex<T>*>(b_padded.memory_start()), size, reinterpret_cast<std::complex<T>*>(b_padded.memory_start()));
 
-    a_padded.validate_cpuju();
+    a_padded.validate_cpu();
     a_padded.invalidate_gpu();
 
     b_padded.validate_cpu();
@@ -745,71 +745,73 @@ void conv1_full_kernel(const T* a, size_t m, const T* b, size_t n, T* c){
  */
 template<typename T1, typename T2, typename T3>
 void conv2_full_kernel(const T1* a, size_t m1, size_t m2, const T2* b, size_t n1, size_t n2, T3* c, T3 beta){
-    const size_t s1 = m1 + n1 - 1;
-    const size_t s2 = m2 + n2 - 1;
-    const size_t n = s1 * s2;
+    CPU_SECTION {
+        const size_t s1 = m1 + n1 - 1;
+        const size_t s2 = m2 + n2 - 1;
+        const size_t n  = s1 * s2;
 
-    // 0. Pad a and b to the size of c
+        // 0. Pad a and b to the size of c
 
-    dyn_matrix<etl::complex<T1>, 2> a_padded(s1, s2);
-    dyn_matrix<etl::complex<T2>, 2> b_padded(s1, s2);
+        dyn_matrix<etl::complex<T1>, 2> a_padded(s1, s2);
+        dyn_matrix<etl::complex<T2>, 2> b_padded(s1, s2);
 
-    for (size_t i = 0; i < m1; ++i) {
-        direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
-    }
-
-    a_padded.invalidate_gpu();
-    a_padded.validate_cpu();
-
-    for (size_t i = 0; i < n1; ++i) {
-        direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
-    }
-
-    b_padded.invalidate_gpu();
-    b_padded.validate_cpu();
-
-    // 1. FFT of a and b
-
-    // a = fft2(a)
-    detail::safe_fft_n_many_inplace(a_padded, s1, s2);
-    a_padded.transpose_inplace();
-    detail::safe_fft_n_many_inplace(a_padded, s2, s1);
-    a_padded.transpose_inplace();
-
-    // b = fft2(b)
-    detail::safe_fft_n_many_inplace(b_padded, s1, s2);
-    b_padded.transpose_inplace();
-    detail::safe_fft_n_many_inplace(b_padded, s1, s2);
-    b_padded.transpose_inplace();
-
-    // 2. Elementwise multiplication of and b
-
-    a_padded >>= b_padded;
-
-    // 3. Inverse FFT of a
-
-    // a = conj(a)
-    a_padded = conj(a_padded);
-
-    // a = fft2(a)
-    detail::safe_fft_n_many_inplace(a_padded, s2, s1);
-    a_padded.transpose_inplace();
-    detail::safe_fft_n_many_inplace(a_padded, s2, s1);
-    a_padded.transpose_inplace();
-
-    // 4. Keep only the real part of the inverse FFT
-
-    a_padded.ensure_cpu_up_to_date();
-
-    // c = real(conj(a) / n)
-    // Note: Since the conjugate does not change the real part, it is not necessary
-    if(beta == T3(0.0)){
-        for (size_t i = 0; i < n; ++i) {
-            c[i] = a_padded[i].real / T3(n);
+        for (size_t i = 0; i < m1; ++i) {
+            direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
         }
-    } else {
-        for (size_t i = 0; i < n; ++i) {
-            c[i] = beta * c[i] + a_padded[i].real / T3(n);
+
+        a_padded.validate_cpu();
+        a_padded.invalidate_gpu();
+
+        for (size_t i = 0; i < n1; ++i) {
+            direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
+        }
+
+        b_padded.validate_cpu();
+        b_padded.invalidate_gpu();
+
+        // 1. FFT of a and b
+
+        // a = fft2(a)
+        detail::safe_fft_n_many_inplace(a_padded, s1, s2);
+        a_padded.transpose_inplace();
+        detail::safe_fft_n_many_inplace(a_padded, s2, s1);
+        a_padded.transpose_inplace();
+
+        // b = fft2(b)
+        detail::safe_fft_n_many_inplace(b_padded, s1, s2);
+        b_padded.transpose_inplace();
+        detail::safe_fft_n_many_inplace(b_padded, s2, s1);
+        b_padded.transpose_inplace();
+
+        // 2. Elementwise multiplication of and b
+
+        a_padded >>= b_padded;
+
+        // 3. Inverse FFT of a
+
+        // a = conj(a)
+        a_padded = conj(a_padded);
+
+        // a = fft2(a)
+        detail::safe_fft_n_many_inplace(a_padded, s1, s2);
+        a_padded.transpose_inplace();
+        detail::safe_fft_n_many_inplace(a_padded, s2, s1);
+        a_padded.transpose_inplace();
+
+        // 4. Keep only the real part of the inverse FFT
+
+        a_padded.ensure_cpu_up_to_date();
+
+        // c = real(conj(a) / n)
+        // Note: Since the conjugate does not change the real part, it is not necessary
+        if (beta == T3(0.0)) {
+            for (size_t i = 0; i < n; ++i) {
+                c[i] = a_padded[i].real / T3(n);
+            }
+        } else {
+            for (size_t i = 0; i < n; ++i) {
+                c[i] = beta * c[i] + a_padded[i].real / T3(n);
+            }
         }
     }
 }
@@ -1055,6 +1057,7 @@ void fft2_many(A&& a, C&& c) {
 }
 
 //Note: CPP17 constexpr
+
 /*!
  * \brief Perform the 1D full convolution of a with b and store the result in c
  * \param a The input matrix
@@ -1183,61 +1186,63 @@ void conv2_full_multi_fft(const II& input, const KK& kernel, CC& conv) {
         // a = fft2(a)
         detail::safe_fft_n_many_inplace(a_padded, s1, s2);
         a_padded.transpose_inplace();
-        detail::safe_fft_n_many_inplace(a_padded, s1, s2);
+        detail::safe_fft_n_many_inplace(a_padded, s2, s1);
         a_padded.transpose_inplace();
 
         auto batch_fun_k = [&](const size_t first, const size_t last) {
-            SERIAL_SECTION {
-                for (size_t k = first; k < last; ++k) {
-                    const auto* b = kernel.memory_start() + k * k_s;
-                    auto* c       = conv.memory_start() + k * c_s;
+            CPU_SECTION {
+                SERIAL_SECTION {
+                    for (size_t k = first; k < last; ++k) {
+                        const auto* b = kernel.memory_start() + k * k_s;
+                        auto* c       = conv.memory_start() + k * c_s;
 
-                    // 0. Pad a and b to the size of c
+                        // 0. Pad a and b to the size of c
 
-                    dyn_matrix<etl::complex<T2>, 2> b_padded(s1, s2);
-                    b_padded = 0;
+                        dyn_matrix<etl::complex<T2>, 2> b_padded(s1, s2);
+                        b_padded = 0;
 
-                    b_padded.ensure_cpu_up_to_date();
+                        b_padded.ensure_cpu_up_to_date();
 
-                    for (size_t i = 0; i < n1; ++i) {
-                        direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
-                    }
+                        for (size_t i = 0; i < n1; ++i) {
+                            direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
+                        }
 
-                    b_padded.validate_cpu();
-                    b_padded.invalidate_gpu();
+                        b_padded.validate_cpu();
+                        b_padded.invalidate_gpu();
 
-                    // 1. FFT of a and b
+                        // 1. FFT of a and b
 
-                    // b = fft2(b)
-                    detail::safe_fft_n_many_inplace(b_padded, s1, s2);
-                    b_padded.transpose_inplace();
-                    detail::safe_fft_n_many_inplace(b_padded, s2, s1);
-                    b_padded.transpose_inplace();
+                        // b = fft2(b)
+                        detail::safe_fft_n_many_inplace(b_padded, s1, s2);
+                        b_padded.transpose_inplace();
+                        detail::safe_fft_n_many_inplace(b_padded, s2, s1);
+                        b_padded.transpose_inplace();
 
-                    // 2. Elementwise multiplication of and b
+                        // 2. Elementwise multiplication of and b
 
-                    b_padded >>= a_padded;
+                        b_padded >>= a_padded;
 
-                    // 3. Inverse FFT of a
+                        // 3. Inverse FFT of a
 
-                    // a = conj(a)
-                    b_padded = conj(b_padded);
+                        // a = conj(a)
+                        b_padded = conj(b_padded);
 
-                    // a = fft2(a)
-                    detail::safe_fft_n_many_inplace(b_padded, s1, s2);
-                    b_padded.transpose_inplace();
-                    detail::safe_fft_n_many_inplace(b_padded, s2, s1);
-                    b_padded.transpose_inplace();
+                        // a = fft2(a)
+                        detail::safe_fft_n_many_inplace(b_padded, s1, s2);
+                        b_padded.transpose_inplace();
+                        detail::safe_fft_n_many_inplace(b_padded, s2, s1);
+                        b_padded.transpose_inplace();
 
-                    // 4. Keep only the real part of the inverse FFT
+                        // 4. Keep only the real part of the inverse FFT
 
-                    // c = real(conj(a) / n)
-                    // Note: Since the conjugate does not change the real part, it is not necessary
+                        // c = real(conj(a) / n)
+                        // Note: Since the conjugate does not change the real part, it is not necessary
 
-                    b_padded.ensure_cpu_up_to_date();
+                        b_padded.ensure_cpu_up_to_date();
 
-                    for (size_t i = 0; i < etl::size(b_padded); ++i){
-                        c[i] = b_padded[i].real / T3(n);
+                        for (size_t i = 0; i < etl::size(b_padded); ++i) {
+                            c[i] = b_padded[i].real / T3(n);
+                        }
                     }
                 }
             }
