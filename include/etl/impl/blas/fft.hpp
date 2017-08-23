@@ -766,7 +766,6 @@ template <typename A, typename B, typename C, typename T>
 void conv2_full_kernel(const A& a, size_t m1, size_t m2, const B& b, size_t n1, size_t n2, C& c, T beta) {
     const size_t s1 = m1 + n1 - 1;
     const size_t s2 = m2 + n2 - 1;
-    const size_t size = s1 * s2;
 
     auto a_padded = pad_one_fft2(a, s1, s2);
     auto b_padded = pad_one_fft2(b, s1, s2);
@@ -778,13 +777,9 @@ void conv2_full_kernel(const A& a, size_t m1, size_t m2, const B& b, size_t n1, 
     inplace_ifft2_kernel(safe_cast(a_padded.memory_start()), s1, s2);
 
     if (beta == T(0.0)) {
-        for (size_t i = 0; i < size; ++i) {
-            c[i] = a_padded[i].real;
-        }
+        c = real(a_padded);
     } else {
-        for (size_t i = 0; i < size; ++i) {
-            c[i] = beta * c[i] + a_padded[i].real;
-        }
+        c = beta * c + real(a_padded);
     }
 
     c.validate_cpu();
