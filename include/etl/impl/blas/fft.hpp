@@ -1363,16 +1363,20 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
             }
         };
 
-        size_t mkl_threads = 0;
-        if(is_blas_parallel){
-            mkl_threads = mkl_get_max_threads();
-            mkl_set_num_threads(1);
-        }
+        if (etl::is_parallel) {
+            size_t mkl_threads = 0;
+            if (is_blas_parallel) {
+                mkl_threads = mkl_get_max_threads();
+                mkl_set_num_threads(1);
+            }
 
-        engine_dispatch_1d_serial_cpu(batch_fun_k, 0, KK, 2UL);
+            engine_dispatch_1d_serial_cpu(batch_fun_k, 0, KK, 2UL);
 
-        if(is_blas_parallel){
-            mkl_set_num_threads(mkl_threads);
+            if (is_blas_parallel) {
+                mkl_set_num_threads(mkl_threads);
+            }
+        } else {
+            batch_fun_k(0, KK);
         }
 
         conv.validate_cpu();
