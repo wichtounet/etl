@@ -923,7 +923,11 @@ void fft1_many(A&& a, C&& c) {
 
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
-    mkl_detail::fft_many_kernel(a_complex.get(), batch, n, c.memory_start());
+    auto batch_fun = [&](const size_t first, const size_t last) {
+        mkl_detail::fft_many_kernel(a_complex.get() + first * n, last - first, n, c.memory_start() + first * n);
+    };
+
+    engine_dispatch_1d(batch_fun, 0, batch, 16UL);
 
     c.validate_cpu();
     c.invalidate_gpu();
@@ -945,7 +949,11 @@ void fft1_many(A&& a, C&& c) {
     size_t n     = etl::dim<N - 1>(a); //Size of the transform
     size_t batch = etl::size(a) / n;   //Number of batch
 
-    mkl_detail::fft_many_kernel(a.memory_start(), batch, n, c.memory_start());
+    auto batch_fun = [&](const size_t first, const size_t last) {
+        mkl_detail::fft_many_kernel(a.memory_start() + first * n, last - first, n, c.memory_start() + first * n);
+    };
+
+    engine_dispatch_1d(batch_fun, 0, batch, 16UL);
 
     c.validate_cpu();
     c.invalidate_gpu();
@@ -967,7 +975,11 @@ void ifft1_many(A&& a, C&& c) {
     size_t n     = etl::dim<N - 1>(a); //Size of the transform
     size_t batch = etl::size(a) / n;   //Number of batch
 
-    mkl_detail::ifft_many_kernel(a.memory_start(), batch, n, c.memory_start());
+    auto batch_fun = [&](const size_t first, const size_t last) {
+        mkl_detail::ifft_many_kernel(a.memory_start() + first * n, last - first, n, c.memory_start() + first * n);
+    };
+
+    engine_dispatch_1d(batch_fun, 0, batch, 16UL);
 
     c.validate_cpu();
     c.invalidate_gpu();
@@ -1084,7 +1096,11 @@ void fft2_many(A&& a, C&& c) {
 
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
-    mkl_detail::fft2_many_kernel(a_complex.get(), batch, n1, n2, c.memory_start());
+    auto batch_fun = [&](const size_t first, const size_t last) {
+        mkl_detail::fft2_many_kernel(a_complex.get() + first * n1 * n1, last - first, n1, n2, c.memory_start() + first * n1 * n1);
+    };
+
+    engine_dispatch_1d(batch_fun, 0, batch, 2UL);
 
     c.invalidate_gpu();
 }
@@ -1110,7 +1126,11 @@ void fft2_many(A&& a, C&& c) {
 
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
-    mkl_detail::fft2_many_kernel(a_complex.get(), batch, n1, n2, c.memory_start());
+    auto batch_fun = [&](const size_t first, const size_t last) {
+        mkl_detail::fft2_many_kernel(a_complex.get() + first * n1 * n1, last - first, n1, n2, c.memory_start() + first * n1 * n1);
+    };
+
+    engine_dispatch_1d(batch_fun, 0, batch, 2UL);
 
     c.invalidate_gpu();
 }
@@ -1132,7 +1152,11 @@ void fft2_many(A&& a, C&& c) {
     size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
     size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
-    mkl_detail::fft2_many_kernel(a.memory_start(), batch, n1, n2, c.memory_start());
+    auto batch_fun = [&](const size_t first, const size_t last) {
+        mkl_detail::fft2_many_kernel(a.memory_start() + first * n1 * n1, last - first, n1, n2, c.memory_start() + first * n1 * n1);
+    };
+
+    engine_dispatch_1d(batch_fun, 0, batch, 2UL);
 
     c.invalidate_gpu();
 }
@@ -1154,7 +1178,11 @@ void ifft2_many(A&& a, C&& c) {
     size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
     size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
-    mkl_detail::ifft2_many_kernel(safe_cast(a.memory_start()), batch, n1, n2, safe_cast(c.memory_start()));
+    auto batch_fun = [&](const size_t first, const size_t last) {
+        mkl_detail::ifft2_many_kernel(safe_cast(a.memory_start() + first * n1 * n1), last - first, n1, n2, safe_cast(c.memory_start() + first * n1 * n1));
+    };
+
+    engine_dispatch_1d(batch_fun, 0, batch, 2UL);
 
     c.invalidate_gpu();
 }
