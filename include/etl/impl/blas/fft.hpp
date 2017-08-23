@@ -1030,9 +1030,7 @@ void conv1_full(A&& a, B&& b, C&& c) {
 
     mkl_detail::inplace_ifft_kernel(reinterpret_cast<std::complex<type>*>(a_padded.memory_start()), size);
 
-    for (size_t i = 0; i < size; ++i) {
-        c[i] = a_padded[i].real;
-    }
+    c = real(a_padded);
 
     c.invalidate_gpu();
 }
