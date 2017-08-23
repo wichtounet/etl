@@ -331,6 +331,10 @@ clean: base_clean
 	rm -rf reports
 	rm -rf latex/ html/
 
+# Fight against my fingers
+clena: clean
+claen: clean
+
 version:
 	@echo `git rev-parse HEAD`
 
