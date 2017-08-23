@@ -1,4 +1,4 @@
-Expression Templates Library (ETL) 1.1
+Expression Templates Library (ETL) 1.2
 ======================================
 
 |logo|    |coverage| |jenkins| |license| |doc|
