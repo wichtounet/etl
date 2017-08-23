@@ -927,7 +927,11 @@ void fft1_many(A&& a, C&& c) {
         mkl_detail::fft_many_kernel(a_complex.get() + first * n, last - first, n, c.memory_start() + first * n);
     };
 
-    engine_dispatch_1d(batch_fun, 0, batch, 16UL);
+    if(is_blas_parallel){
+        batch_fun(0, batch);
+    } else {
+        engine_dispatch_1d(batch_fun, 0, batch, 16UL);
+    }
 
     c.validate_cpu();
     c.invalidate_gpu();
@@ -953,7 +957,11 @@ void fft1_many(A&& a, C&& c) {
         mkl_detail::fft_many_kernel(a.memory_start() + first * n, last - first, n, c.memory_start() + first * n);
     };
 
-    engine_dispatch_1d(batch_fun, 0, batch, 16UL);
+    if(is_blas_parallel){
+        batch_fun(0, batch);
+    } else {
+        engine_dispatch_1d(batch_fun, 0, batch, 16UL);
+    }
 
     c.validate_cpu();
     c.invalidate_gpu();
@@ -979,7 +987,11 @@ void ifft1_many(A&& a, C&& c) {
         mkl_detail::ifft_many_kernel(a.memory_start() + first * n, last - first, n, c.memory_start() + first * n);
     };
 
-    engine_dispatch_1d(batch_fun, 0, batch, 16UL);
+    if(is_blas_parallel){
+        batch_fun(0, batch);
+    } else {
+        engine_dispatch_1d(batch_fun, 0, batch, 16UL);
+    }
 
     c.validate_cpu();
     c.invalidate_gpu();
@@ -1100,7 +1112,11 @@ void fft2_many(A&& a, C&& c) {
         mkl_detail::fft2_many_kernel(a_complex.get() + first * n1 * n1, last - first, n1, n2, c.memory_start() + first * n1 * n1);
     };
 
-    engine_dispatch_1d(batch_fun, 0, batch, 2UL);
+    if(is_blas_parallel){
+        batch_fun(0, batch);
+    } else {
+        engine_dispatch_1d(batch_fun, 0, batch, 2UL);
+    }
 
     c.invalidate_gpu();
 }
@@ -1130,7 +1146,11 @@ void fft2_many(A&& a, C&& c) {
         mkl_detail::fft2_many_kernel(a_complex.get() + first * n1 * n1, last - first, n1, n2, c.memory_start() + first * n1 * n1);
     };
 
-    engine_dispatch_1d(batch_fun, 0, batch, 2UL);
+    if(is_blas_parallel){
+        batch_fun(0, batch);
+    } else {
+        engine_dispatch_1d(batch_fun, 0, batch, 2UL);
+    }
 
     c.invalidate_gpu();
 }
@@ -1156,7 +1176,11 @@ void fft2_many(A&& a, C&& c) {
         mkl_detail::fft2_many_kernel(a.memory_start() + first * n1 * n1, last - first, n1, n2, c.memory_start() + first * n1 * n1);
     };
 
-    engine_dispatch_1d(batch_fun, 0, batch, 2UL);
+    if(is_blas_parallel){
+        batch_fun(0, batch);
+    } else {
+        engine_dispatch_1d(batch_fun, 0, batch, 2UL);
+    }
 
     c.invalidate_gpu();
 }
@@ -1182,7 +1206,11 @@ void ifft2_many(A&& a, C&& c) {
         mkl_detail::ifft2_many_kernel(safe_cast(a.memory_start() + first * n1 * n1), last - first, n1, n2, safe_cast(c.memory_start() + first * n1 * n1));
     };
 
-    engine_dispatch_1d(batch_fun, 0, batch, 2UL);
+    if(is_blas_parallel){
+        batch_fun(0, batch);
+    } else {
+        engine_dispatch_1d(batch_fun, 0, batch, 2UL);
+    }
 
     c.invalidate_gpu();
 }
