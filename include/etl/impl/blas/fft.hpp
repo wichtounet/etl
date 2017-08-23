@@ -1350,7 +1350,9 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
 
                 b_padded.invalidate_gpu();
 
-                c = real(b_padded);
+                for (size_t i = 0; i < size; ++i) {
+                    c[i] = b_padded[i].real;
+                }
             }
         };
 
