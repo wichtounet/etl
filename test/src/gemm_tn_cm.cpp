@@ -147,8 +147,8 @@ GEMM_TN_TEST_CASE("gemm_tn/cm/7", "[gemm]") {
 }
 
 GEMM_TN_TEST_CASE("gemm_tn/cm/8", "[gemm]") {
-    etl::dyn_matrix_cm<T> a(128, 84);
-    etl::dyn_matrix_cm<T> b(128, 84);
+    etl::dyn_matrix_cm<T> a(96, 84);
+    etl::dyn_matrix_cm<T> b(96, 84);
     etl::dyn_matrix_cm<T> c(84, 84);
     etl::dyn_matrix_cm<T> r(84, 84);
 
@@ -171,10 +171,10 @@ GEMM_TN_TEST_CASE("gemm_tn/cm/8", "[gemm]") {
 }
 
 GEMM_TN_TEST_CASE("gemm_tn/cm/9", "[gemm]") {
-    etl::dyn_matrix_cm<T> a(84, 156);
-    etl::dyn_matrix_cm<T> b(84, 128);
-    etl::dyn_matrix_cm<T> c(156, 128);
-    etl::dyn_matrix_cm<T> r(156, 128);
+    etl::dyn_matrix_cm<T> a(84, 128);
+    etl::dyn_matrix_cm<T> b(84, 96);
+    etl::dyn_matrix_cm<T> c(128, 96);
+    etl::dyn_matrix_cm<T> r(128, 96);
 
     a = 0.01 * etl::sequence_generator(1.0);
     b = -0.032 * etl::sequence_generator(1.0);

@@ -107,7 +107,7 @@ TEMPLATE_TEST_CASE_2("unaligned/add", "[unaligned][add]", Z, double, float) {
 
     a = etl::uniform_generator(-1000.0, 5000.0);
     b = etl::uniform_generator(-1000.0, 5000.0);
-    c = 1200.0;
+    c = 1203.0;
 
     c += a + b;
 

@@ -9,8 +9,8 @@
 #include "conv_test.hpp"
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward/0", "[conv][conv4][backward]", T, float, double) {
-    etl::fast_matrix<T, 10, 12, 5, 5> I;
-    etl::fast_matrix<T, 12, 2, 3, 3> K;
+    etl::fast_matrix<T, 10, 8, 5, 5> I;
+    etl::fast_matrix<T, 8, 2, 3, 3> K;
 
     I = etl::sequence_generator(3.0) * 0.4;
     K = etl::sequence_generator(2.0) * 0.3;
@@ -25,8 +25,8 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward/0", "[conv][conv4][backward]", T, float, 
 }
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward/1", "[conv][conv4][backward]", T, float, double) {
-    etl::fast_matrix<T, 10, 12, 5, 5> I;
-    etl::fast_matrix<T, 12, 2, 3, 3> K;
+    etl::fast_matrix<T, 10, 8, 5, 5> I;
+    etl::fast_matrix<T, 8, 2, 3, 3> K;
 
     I = etl::sequence_generator(3.0) * 0.4;
     K = etl::sequence_generator(2.0) * 0.3;
@@ -41,8 +41,8 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward/1", "[conv][conv4][backward]", T, float, 
 }
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward/2", "[conv][conv4][backward]", T, float, double) {
-    etl::fast_matrix<T, 10, 12, 7, 7> I;
-    etl::fast_matrix<T, 12, 2, 3, 3> K;
+    etl::fast_matrix<T, 10, 8, 7, 7> I;
+    etl::fast_matrix<T, 8, 2, 3, 3> K;
 
     I = etl::sequence_generator(3.0) * 0.4;
     K = etl::sequence_generator(2.0) * 0.3;
@@ -57,8 +57,8 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward/2", "[conv][conv4][backward]", T, float, 
 }
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward/3", "[conv][conv4][backward]", T, float, double) {
-    etl::fast_matrix<T, 10, 12, 16, 16> I;
-    etl::fast_matrix<T, 12, 2, 7, 7> K;
+    etl::fast_matrix<T, 10, 8, 16, 16> I;
+    etl::fast_matrix<T, 8, 2, 7, 7> K;
 
     I = etl::sequence_generator(3.0) * 0.4;
     K = etl::sequence_generator(2.0) * 0.3;
@@ -73,8 +73,8 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward/3", "[conv][conv4][backward]", T, float, 
 }
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward/4", "[conv][conv4][backward]", T, float, double) {
-    etl::fast_matrix<T, 10, 12, 4, 4> I;
-    etl::fast_matrix<T, 12, 2, 5, 5> K;
+    etl::fast_matrix<T, 10, 8, 4, 4> I;
+    etl::fast_matrix<T, 8, 2, 5, 5> K;
 
     I = etl::sequence_generator(3.0) * 0.4;
     K = etl::sequence_generator(2.0) * 0.3;
@@ -91,8 +91,8 @@ TEMPLATE_TEST_CASE_2("conv/4d/backward/4", "[conv][conv4][backward]", T, float, 
 }
 
 TEMPLATE_TEST_CASE_2("conv/4d/backward/5", "[conv][conv4][backward]", T, float, double) {
-    etl::fast_matrix<T, 10, 12, 4, 4> I;
-    etl::fast_matrix<T, 12, 2, 5, 5> K;
+    etl::fast_matrix<T, 10, 8, 4, 4> I;
+    etl::fast_matrix<T, 8, 2, 5, 5> K;
 
     I = etl::sequence_generator(3.0) * 0.4;
     K = etl::sequence_generator(2.0) * 0.3;

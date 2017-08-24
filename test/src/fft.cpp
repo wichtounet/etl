@@ -474,13 +474,13 @@ TEMPLATE_TEST_CASE_2("fft_1d_many/4", "[fast][fft]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("fft_1d_many/5", "[fast][fft]", Z, float, double) {
-    etl::fast_dyn_matrix<std::complex<Z>, 9, 1033> a;
-    etl::fast_dyn_matrix<std::complex<Z>, 9, 1033> c_1;
-    etl::fast_dyn_matrix<std::complex<Z>, 9, 1033> c_2;
+    etl::fast_dyn_matrix<std::complex<Z>, 7, 1033> a;
+    etl::fast_dyn_matrix<std::complex<Z>, 7, 1033> c_1;
+    etl::fast_dyn_matrix<std::complex<Z>, 7, 1033> c_2;
 
     c_1 = etl::fft_1d_many(a);
 
-    for(size_t i = 0; i < 9; ++i){
+    for(size_t i = 0; i < 7; ++i){
         c_2(i) = etl::fft_1d(a(i));
     }
 
@@ -490,13 +490,13 @@ TEMPLATE_TEST_CASE_2("fft_1d_many/5", "[fast][fft]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("fft_1d_many/6", "[fast][fft]", Z, float, double) {
-    etl::fast_dyn_matrix<std::complex<Z>, 9, 1045> a;
-    etl::fast_dyn_matrix<std::complex<Z>, 9, 1045> c_1;
-    etl::fast_dyn_matrix<std::complex<Z>, 9, 1045> c_2;
+    etl::fast_dyn_matrix<std::complex<Z>, 7, 1045> a;
+    etl::fast_dyn_matrix<std::complex<Z>, 7, 1045> c_1;
+    etl::fast_dyn_matrix<std::complex<Z>, 7, 1045> c_2;
 
     c_1 = etl::fft_1d_many(a);
 
-    for(size_t i = 0; i < 9; ++i){
+    for(size_t i = 0; i < 7; ++i){
         c_2(i) = etl::fft_1d(a(i));
     }
 
