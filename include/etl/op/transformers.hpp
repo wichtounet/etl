@@ -49,7 +49,7 @@ struct mm_mul_transformer {
         const auto m = etl::dim<0>(left);
         const auto n = etl::dim<1>(right);
 
-        if /*constexpr*/ (etl::decay_traits<left_type>::storage_order == order::RowMajor){
+        if /* constexpr */ (etl::decay_traits<left_type>::storage_order == order::RowMajor){
             return operator()(i / n, i % n);
         } else {
             return operator()(i % m, i / m);
@@ -66,7 +66,7 @@ struct mm_mul_transformer {
         const auto m = etl::dim<0>(left);
         const auto n = etl::dim<1>(right);
 
-        if /*constexpr*/ (etl::decay_traits<left_type>::storage_order == order::RowMajor){
+        if /* constexpr */ (etl::decay_traits<left_type>::storage_order == order::RowMajor){
             return operator()(i / n, i % n);
         } else {
             return operator()(i % m, i / m);

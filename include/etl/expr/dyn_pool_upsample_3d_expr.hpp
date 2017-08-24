@@ -140,7 +140,7 @@ public:
 
         auto impl = select_impl<R>();
 
-        if /*constexpr*/ (Max) {
+        if /* constexpr */ (Max) {
             if (impl == pool_impl::STD) {
                 impl::standard::max_pool_upsample_3d::apply(
                     make_temporary(a),

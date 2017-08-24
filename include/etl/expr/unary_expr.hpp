@@ -759,7 +759,7 @@ public:
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
      */
     void ensure_gpu_up_to_date() const {
-        if /*constexpr*/ (has_direct_access<Expr>) {
+        if /* constexpr */ (has_direct_access<Expr>) {
             cpp::static_if<has_direct_access<Expr>>([&,this](auto f){
                 f(_gpu).ensure_gpu_up_to_date(f(this)->memory_start(), etl::size(f(value)));
             });
@@ -773,7 +773,7 @@ public:
      * necessary.
      */
     void ensure_cpu_up_to_date() const {
-        if /*constexpr*/ (has_direct_access<Expr>) {
+        if /* constexpr */ (has_direct_access<Expr>) {
             cpp::static_if<has_direct_access<Expr>>([&,this](auto f){
                 f(_gpu).ensure_cpu_up_to_date(f(this)->memory_start(), etl::size(f(value)));
             });

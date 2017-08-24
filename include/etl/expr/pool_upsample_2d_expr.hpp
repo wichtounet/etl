@@ -160,7 +160,7 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
 
         auto impl = select_impl<R>();
 
-        if /*constexpr*/ (Max) {
+        if /* constexpr */ (Max) {
             if (impl == pool_impl::STD) {
                 impl::standard::max_pool_upsample_2d::apply<C1, C2>(
                     make_temporary(a),
