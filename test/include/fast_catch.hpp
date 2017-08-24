@@ -17,22 +17,22 @@ inline void evaluate_result_direct(const char* file, size_t line, const char* ex
 }
 
 template<typename L, typename R>
-void evaluate_result(const char* file, size_t line, const char* exp, L lhs, R rhs){
+void evaluate_result(const char* file, size_t line, const char* exp, L lhs, R rhs, const char* lhs_exp, const char* rhs_exp){
     Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
     result.setResultType(lhs == rhs);
-    result.setLhs(Catch::toString(lhs));
-    result.setRhs(Catch::toString(rhs));
+    result.setLhs(lhs_exp);
+    result.setRhs(rhs_exp);
     result.setOp("==");
     result.endExpression();
     result.react();
 }
 
 template<typename L>
-void evaluate_result_approx(const char* file, size_t line, const char* exp, L lhs, decltype(lhs) rhs, double eps = base_eps){
+void evaluate_result_approx(const char* file, size_t line, const char* exp, L lhs, decltype(lhs) rhs, double eps, const char* lhs_exp, const char* rhs_exp){
     Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
     result.setResultType(std::abs(lhs - rhs) < eps * (1.0 + std::max(std::abs(lhs), std::abs(rhs))));
-    result.setLhs(Catch::toString(lhs));
-    result.setRhs("Approx(" + Catch::toString(rhs) + ")");
+    result.setLhs(lhs_exp);
+    result.setRhs(rhs_exp);
     result.setOp("==");
     result.endExpression();
     result.react();
@@ -42,13 +42,13 @@ void evaluate_result_approx(const char* file, size_t line, const char* exp, L lh
     evaluate_result_direct(__FILE__, __LINE__, #value, value);
 
 #define REQUIRE_EQUALS(lhs, rhs) \
-    evaluate_result(__FILE__, __LINE__, #lhs " == " #rhs, lhs, rhs);
+    evaluate_result(__FILE__, __LINE__, #lhs " == " #rhs, lhs, rhs, #lhs, #rhs);
 
 #define REQUIRE_EQUALS_APPROX(lhs, rhs) \
-    evaluate_result_approx(__FILE__, __LINE__, #lhs " == " #rhs, lhs, rhs);
+    evaluate_result_approx(__FILE__, __LINE__, #lhs " == " #rhs, lhs, rhs, base_eps, #lhs, "Approx(" #rhs ")");
 
 #define REQUIRE_EQUALS_APPROX_E(lhs, rhs, eps) \
-    evaluate_result_approx(__FILE__, __LINE__, #lhs " == " #rhs, lhs, rhs, eps);
+    evaluate_result_approx(__FILE__, __LINE__, #lhs " == " #rhs, lhs, rhs, eps, #lhs, "Approx(" #rhs ")");
 
 #else
 
