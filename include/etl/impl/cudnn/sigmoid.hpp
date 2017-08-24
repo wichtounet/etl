@@ -44,8 +44,8 @@ void activation(I&& x, C&& y, cudnnActivationMode_t mode) {
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
-    auto x_tensor = create_tensor_flat(x);
-    auto y_tensor = create_tensor_flat(y);
+    auto x_tensor = create_tensor_flat_wrapper(x);
+    auto y_tensor = create_tensor_flat_wrapper(y);
 
     cudnnActivationDescriptor_t func_tensor;
     cudnn_check(cudnnCreateActivationDescriptor(&func_tensor));
@@ -86,9 +86,9 @@ void backward_activation(Y&& y, DY&& dy, DX&& dx, cudnnActivationMode_t mode) {
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
-    auto y_tensor  = create_tensor_flat(y);
-    auto dy_tensor = create_tensor_flat(dy);
-    auto dx_tensor = create_tensor_flat(dx);
+    auto y_tensor  = create_tensor_flat_wrapper(y);
+    auto dy_tensor = create_tensor_flat_wrapper(dy);
+    auto dx_tensor = create_tensor_flat_wrapper(dx);
 
     cudnnActivationDescriptor_t func_tensor;
     cudnn_check(cudnnCreateActivationDescriptor(&func_tensor));

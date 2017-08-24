@@ -47,8 +47,8 @@ void bias_add_4d(I&& x, K&& b, C&& y) {
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
-    auto x_tensor = create_tensor(x);
-    auto y_tensor = create_tensor(y);
+    auto x_tensor = create_tensor_wrapper(x);
+    auto y_tensor = create_tensor_wrapper(y);
 
     cudnnTensorDescriptor_t b_tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&b_tensor));
@@ -97,8 +97,8 @@ void bias_add_2d(I&& x, K&& b, C&& y) {
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
-    auto x_tensor = create_tensor(x);
-    auto y_tensor = create_tensor(y);
+    auto x_tensor = create_tensor_wrapper(x);
+    auto y_tensor = create_tensor_wrapper(y);
 
     cudnnTensorDescriptor_t b_tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&b_tensor));

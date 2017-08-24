@@ -35,7 +35,7 @@ void unpool_2d(cudnnPoolingMode_t mode, A&& in, B&& out, C&& errors, M& m, size_
 
     decltype(auto) handle = start_cudnn();
 
-    auto pooling_desc = create_pooling_descriptor(mode, c1, c2, c1, c2, 0, 0);
+    auto pooling_desc = create_pooling_desc_wrapper(mode, c1, c2, c1, c2, 0, 0);
 
     auto in_tensor     = create_tensor(in);
     auto out_tensor    = create_tensor(out);
@@ -77,12 +77,12 @@ void unpool_3d(cudnnPoolingMode_t mode, A&& in, B&& out, C&& errors, M& m, size_
 
     decltype(auto) handle = start_cudnn();
 
-    auto pooling_desc = create_pooling_descriptor(mode, c1, c2, c3, c1, c2, c3, 0, 0, 0);
+    auto pooling_desc = create_pooling_desc_wrapper(mode, c1, c2, c3, c1, c2, c3, 0, 0, 0);
 
-    auto in_tensor     = create_tensor_5d(in);
-    auto out_tensor    = create_tensor_5d(out);
-    auto errors_tensor = create_tensor_5d(errors);
-    auto m_tensor      = create_tensor_5d(m);
+    auto in_tensor     = create_tensor_wrapper_5d(in);
+    auto out_tensor    = create_tensor_wrapper_5d(out);
+    auto errors_tensor = create_tensor_wrapper_5d(errors);
+    auto m_tensor      = create_tensor_wrapper_5d(m);
 
     type alpha[] = {1.0f};
     type beta[] = {0.0f};

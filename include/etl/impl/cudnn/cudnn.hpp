@@ -174,7 +174,7 @@ inline cudnn_wrapper<cudnnPoolingDescriptor_t>::~cudnn_wrapper(){
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
 template<typename I, cpp_enable_iff(is_1d<I>)>
-cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_wrapper(I&& input){
     using T = value_t<I>;
 
     auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -193,7 +193,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
 template<typename I, cpp_enable_iff(is_2d<I>)>
-cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_wrapper(I&& input){
     using T = value_t<I>;
 
     auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -212,7 +212,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
 template<typename I, cpp_enable_iff(is_3d<I>)>
-cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_wrapper(I&& input){
     using T = value_t<I>;
 
     auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -231,7 +231,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
 template<typename I, cpp_enable_iff(is_4d<I>)>
-cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_wrapper(I&& input){
     using T = value_t<I>;
 
     auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -250,7 +250,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
 template<typename I, cpp_enable_iff(is_3d<I>)>
-cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_5d(I&& input){
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_wrapper_5d(I&& input){
     using T = value_t<I>;
 
     auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -275,7 +275,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_5d(I&& input){
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
 template<typename I, cpp_enable_iff(is_4d<I>)>
-cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_5d(I&& input){
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_wrapper_5d(I&& input){
     using T = value_t<I>;
 
     auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -301,7 +301,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_5d(I&& input){
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
 template<typename I>
-cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_flat(I&& input){
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_flat_wrapper(I&& input){
     using T = value_t<I>;
 
     auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -320,7 +320,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_flat(I&& input){
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
 template<typename I, cpp_enable_iff(is_1d<I>)>
-cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front_wrapper(I&& input){
     using T = value_t<I>;
 
     auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -339,7 +339,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
 template<typename I, cpp_enable_iff(is_2d<I>)>
-cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front_wrapper(I&& input){
     using T = value_t<I>;
 
     auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -358,7 +358,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
 template<typename I, cpp_enable_iff(is_4d<I>)>
-cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
+cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front_wrapper(I&& input){
     using T = value_t<I>;
 
     auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -377,7 +377,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front(I&& input){
  * \return a cudnn_wrapper around a created CUDNN filter tensor
  */
 template<typename I, cpp_enable_iff(is_2d<I>)>
-cudnn_wrapper<cudnnFilterDescriptor_t> create_filter(I&& kernel){
+cudnn_wrapper<cudnnFilterDescriptor_t> create_filter_wrapper(I&& kernel){
     using T = value_t<I>;
 
     auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -396,7 +396,7 @@ cudnn_wrapper<cudnnFilterDescriptor_t> create_filter(I&& kernel){
  * \return a cudnn_wrapper around a created CUDNN filter tensor
  */
 template<typename I, cpp_enable_iff(is_4d<I>)>
-cudnn_wrapper<cudnnFilterDescriptor_t> create_filter(I&& kernel){
+cudnn_wrapper<cudnnFilterDescriptor_t> create_filter_wrapper(I&& kernel){
     using T = value_t<I>;
 
     auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -413,7 +413,7 @@ cudnn_wrapper<cudnnFilterDescriptor_t> create_filter(I&& kernel){
  * \brief Create a CUDNN pooling descriptor for the given input matrix
  * \return a cudnn_wrapper around a created CUDNN filter tensor
  */
-inline cudnn_wrapper<cudnnPoolingDescriptor_t> create_pooling_descriptor(cudnnPoolingMode_t mode, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2){
+inline cudnn_wrapper<cudnnPoolingDescriptor_t> create_pooling_desc_wrapper(cudnnPoolingMode_t mode, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2){
     cudnnPoolingDescriptor_t pooling_desc;
     cudnn_check(cudnnCreatePoolingDescriptor(&pooling_desc));
     cudnn_check(cudnnSetPooling2dDescriptor(pooling_desc, mode, CUDNN_PROPAGATE_NAN, c1, c2, p1, p2, s1, s2));
@@ -425,7 +425,7 @@ inline cudnn_wrapper<cudnnPoolingDescriptor_t> create_pooling_descriptor(cudnnPo
  * \brief Create a CUDNN pooling descriptor for the given input matrix
  * \return a cudnn_wrapper around a created CUDNN filter tensor
  */
-inline cudnn_wrapper<cudnnPoolingDescriptor_t> create_pooling_descriptor(cudnnPoolingMode_t mode, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3){
+inline cudnn_wrapper<cudnnPoolingDescriptor_t> create_pooling_desc_wrapper(cudnnPoolingMode_t mode, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3){
     int c[] = {int(c1), int(c2), int(c3)};
     int s[] = {int(s1), int(s2), int(s3)};
     int p[] = {int(p1), int(p2), int(p3)};

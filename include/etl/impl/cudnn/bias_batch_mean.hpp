@@ -42,8 +42,8 @@ void bias_batch_mean_4d(X&& x, Y&& y) {
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
-    auto x_tensor = create_tensor(x);
-    auto y_tensor = create_tensor(y);
+    auto x_tensor = create_tensor_wrapper(x);
+    auto y_tensor = create_tensor_wrapper(y);
 
     // Allocate GPU memory, if necessary
 
@@ -75,8 +75,8 @@ void bias_batch_mean_2d(X&& x, Y&& y) {
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
-    auto x_tensor = create_tensor_front(x);
-    auto y_tensor = create_tensor(y);
+    auto x_tensor = create_tensor_front_wrapper(x);
+    auto y_tensor = create_tensor_wrapper(y);
 
     // Allocate GPU memory, if necessary
 

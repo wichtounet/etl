@@ -62,9 +62,9 @@ void conv2_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
-    auto input_tensor  = create_tensor(input);
-    auto output_tensor = create_tensor(conv);
-    auto filter        = create_filter(kernel);
+    auto input_tensor  = create_tensor_wrapper(input);
+    auto output_tensor = create_tensor_wrapper(conv);
+    auto filter        = create_filter_wrapper(kernel);
 
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
@@ -154,9 +154,9 @@ void conv4_forward_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
-    auto input_tensor  = create_tensor(input);
-    auto output_tensor = create_tensor(conv);
-    auto filter        = create_filter(kernel);
+    auto input_tensor  = create_tensor_wrapper(input);
+    auto output_tensor = create_tensor_wrapper(conv);
+    auto filter        = create_filter_wrapper(kernel);
 
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
@@ -239,9 +239,9 @@ void conv4_backward_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
-    auto input_tensor  = create_tensor(input);
-    auto output_tensor = create_tensor(kernel);
-    auto filter        = create_filter(conv);
+    auto input_tensor  = create_tensor_wrapper(input);
+    auto output_tensor = create_tensor_wrapper(kernel);
+    auto filter        = create_filter_wrapper(conv);
 
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
@@ -326,9 +326,9 @@ void conv2_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
-    auto input_tensor  = create_tensor(input);
-    auto output_tensor = create_tensor(conv);
-    auto filter        = create_filter(kernel);
+    auto input_tensor  = create_tensor_wrapper(input);
+    auto output_tensor = create_tensor_wrapper(conv);
+    auto filter        = create_filter_wrapper(kernel);
 
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
@@ -507,9 +507,9 @@ void conv4_backward_data_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMo
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
-    auto input_tensor  = create_tensor(input);
-    auto output_tensor = create_tensor(conv);
-    auto filter        = create_filter(kernel);
+    auto input_tensor  = create_tensor_wrapper(input);
+    auto output_tensor = create_tensor_wrapper(conv);
+    auto filter        = create_filter_wrapper(kernel);
 
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;

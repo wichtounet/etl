@@ -35,7 +35,7 @@ void pool_2d(cudnnPoolingMode_t mode, const X& x, Y&& y, size_t c1, size_t c2, s
 
     decltype(auto) handle = start_cudnn();
 
-    auto pooling_desc = create_pooling_descriptor(mode, c1, c2, s1, s2, p1, p2);
+    auto pooling_desc = create_pooling_desc_wrapper(mode, c1, c2, s1, s2, p1, p2);
 
     auto x_tensor = create_tensor(x);
     auto y_tensor = create_tensor(y);
@@ -69,10 +69,10 @@ void pool_3d(cudnnPoolingMode_t mode, const X& x, Y&& y, size_t c1, size_t c2, s
 
     decltype(auto) handle = start_cudnn();
 
-    auto pooling_desc = create_pooling_descriptor(mode, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+    auto pooling_desc = create_pooling_desc_wrapper(mode, c1, c2, c3, s1, s2, s3, p1, p2, p3);
 
-    auto x_tensor = create_tensor_5d(x);
-    auto y_tensor = create_tensor_5d(y);
+    auto x_tensor = create_tensor_wrapper_5d(x);
+    auto y_tensor = create_tensor_wrapper_5d(y);
 
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
