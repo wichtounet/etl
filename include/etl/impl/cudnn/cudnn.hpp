@@ -406,7 +406,7 @@ cudnnTensorDescriptor_t create_tensor_front(I&& input){
  * \param input The input matrix
  * \return a cudnn_wrapper around a created CUDNN tensor
  */
-template<typename I, cpp_enable_iff(is_4d<I>)>
+template<typename I>
 cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front_wrapper(I&& input){
     return cudnn_wrapper<cudnnTensorDescriptor_t>{create_tensor_front(input)};
 }
