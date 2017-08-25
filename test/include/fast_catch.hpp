@@ -8,19 +8,27 @@
 #ifdef ETL_FAST_CATCH
 
 inline void evaluate_result_direct(const char* file, size_t line, const char* exp, bool value){
-    Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
-    result.setResultType(value);
-    result.setLhs(value ? "true" : "false");
-    result.setOp("");
-    result.endExpression();
-    result.react();
+#ifdef ETL_VERY_FAST_CATCH
+    if (!value) {
+#endif
+        Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
+        result.setResultType(value);
+        result.setLhs(value ? "true" : "false");
+        result.setOp("");
+        result.endExpression();
+        result.react();
+#ifdef ETL_VERY_FAST_CATCH
+    }
+#endif
 }
 
 template<typename L, typename R>
 void evaluate_result(const char* file, size_t line, const char* exp, L lhs, R rhs){
     bool bool_result = lhs == rhs;
 
+#ifdef ETL_VERY_FAST_CATCH
     if (!bool_result) {
+#endif
         Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
         result.setResultType(bool_result);
 
@@ -34,14 +42,18 @@ void evaluate_result(const char* file, size_t line, const char* exp, L lhs, R rh
 
         result.endExpression();
         result.react();
+#ifdef ETL_VERY_FAST_CATCH
     }
+#endif
 }
 
 template<typename L>
 void evaluate_result_approx(const char* file, size_t line, const char* exp, L lhs, decltype(lhs) rhs, double eps = base_eps){
     bool bool_result = std::abs(lhs - rhs) < eps * (1.0 + std::max(std::abs(lhs), std::abs(rhs)));
 
+#ifdef ETL_VERY_FAST_CATCH
     if (!bool_result) {
+#endif
         Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
         result.setResultType(bool_result);
 
@@ -55,7 +67,9 @@ void evaluate_result_approx(const char* file, size_t line, const char* exp, L lh
 
         result.endExpression();
         result.react();
+#ifdef ETL_VERY_FAST_CATCH
     }
+#endif
 }
 
 #define REQUIRE_DIRECT(value) \

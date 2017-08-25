@@ -137,6 +137,11 @@ endif
 
 LD_FLAGS += -pthread
 
+# Enable very fast test if asked
+ifneq (,$(ETL_FAST_TEST))
+CXX_FLAGS += -DETL_VERY_FAST_CATCH
+endif
+
 # Enable coverage if not disabled by the user
 ifneq (,$(ETL_COVERAGE))
 $(eval $(call enable_coverage))
