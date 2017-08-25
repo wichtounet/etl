@@ -590,15 +590,19 @@ public:
         }
 
         // Avoid aliasing issues
-        if (!decay_traits<E>::is_linear && e.alias(*this)) {
-            // Create a temporary to hold the result
-            this_type tmp;
+        if /* constexpr */ (!decay_traits<E>::is_linear) {
+            if (e.alias(*this)) {
+                // Create a temporary to hold the result
+                this_type tmp(*this);
 
-            // Assign the expression to the temporary
-            tmp = e;
+                // Assign the expression to the temporary
+                tmp = e;
 
-            // Assign the temporary to this matrix
-            *this = tmp;
+                // Assign the temporary to this matrix
+                *this = tmp;
+            } else {
+                e.assign_to(*this);
+            }
         } else {
             // Direct assignment of the expression into this matrix
             e.assign_to(*this);
