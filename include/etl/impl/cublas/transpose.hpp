@@ -137,7 +137,7 @@ void inplace_square_transpose(C&& c) {
 
     cuda_check(cudaMemcpy(a_gpu.get(), c.gpu_memory(), etl::size(c) * sizeof(T), cudaMemcpyDeviceToDevice));
 
-    if(row_major){
+    if (row_major) {
         cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(c), etl::dim<1>(c), &alpha, a_gpu.get(), etl::dim<1>(c), &beta, a_gpu.get(), etl::dim<1>(c), c.gpu_memory(), etl::dim<0>(c));
     } else {
         cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<1>(c), etl::dim<0>(c), &alpha, a_gpu.get(), etl::dim<0>(c), &beta, a_gpu.get(), etl::dim<0>(c), c.gpu_memory(), etl::dim<1>(c));
@@ -172,7 +172,7 @@ void transpose(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
 
-    if(row_major){
+    if (row_major) {
         cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(a), etl::dim<1>(a), &alpha, a.gpu_memory(), etl::dim<1>(a), &beta, a.gpu_memory(), etl::dim<1>(a), c.gpu_memory(), etl::dim<1>(c));
     } else {
         cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<1>(a), etl::dim<0>(a), &alpha, a.gpu_memory(), etl::dim<0>(a), &beta, a.gpu_memory(), etl::dim<0>(a), c.gpu_memory(), etl::dim<0>(c));

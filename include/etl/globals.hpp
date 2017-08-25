@@ -89,23 +89,23 @@ bool is_sub_rectangular(E&& expr) {
 template <typename E>
 bool is_symmetric(E&& expr) {
     // symmetric_matrix<E> is already enforced to be symmetric
-    if (is_symmetric_matrix<E>) {
+    if /* constexpr */ (is_symmetric_matrix<E>) {
         return true;
-    }
-
-    if (is_square(expr)) {
-        for (size_t i = 0; i < etl::dim<0>(expr) - 1; ++i) {
-            for (size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
-                if (expr(i, j) != expr(j, i)) {
-                    return false;
+    } else {
+        if (is_square(expr)) {
+            for (size_t i = 0; i < etl::dim<0>(expr) - 1; ++i) {
+                for (size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
+                    if (expr(i, j) != expr(j, i)) {
+                        return false;
+                    }
                 }
             }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
-
-    return false;
 }
 
 /*!
@@ -116,38 +116,35 @@ bool is_symmetric(E&& expr) {
 template <typename E>
 bool is_lower_triangular(E&& expr) {
     // lower_matrix<E> is already enforced to be lower triangular
-    if (is_lower_matrix<E>) {
+    if /* constexpr */ (is_lower_matrix<E>) {
         return true;
     }
-
     // strictly_lower_matrix<E> is already enforced to be lower triangular
-    if (is_strictly_lower_matrix<E>) {
+    else if (is_strictly_lower_matrix<E>) {
         return true;
     }
-
     // uni_lower_matrix<E> is already enforced to be lower triangular
-    if (is_uni_lower_matrix<E>) {
+    else if (is_uni_lower_matrix<E>) {
         return true;
     }
-
     // diagonal_matrix<E> is already enforced to be lower triangular
-    if (is_diagonal_matrix<E>) {
+    else if (is_diagonal_matrix<E>) {
         return true;
-    }
-
-    if (is_square(expr)) {
-        for (size_t i = 0; i < etl::dim<0>(expr) - 1; ++i) {
-            for (size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
-                if (expr(i, j) != 0.0) {
-                    return false;
+    } else {
+        if (is_square(expr)) {
+            for (size_t i = 0; i < etl::dim<0>(expr) - 1; ++i) {
+                for (size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
+                    if (expr(i, j) != 0.0) {
+                        return false;
+                    }
                 }
             }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
-
-    return false;
 }
 
 /*!
@@ -158,27 +155,27 @@ bool is_lower_triangular(E&& expr) {
 template <typename E>
 bool is_uni_lower_triangular(E&& expr) {
     // uni_lower_matrix<E> is already enforced to be uni lower triangular
-    if (is_uni_lower_matrix<E>) {
+    if /* constexpr */ (is_uni_lower_matrix<E>) {
         return true;
-    }
-
-    if (is_square(expr)) {
-        for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
-            if (expr(i, i) != 1.0) {
-                return false;
-            }
-
-            for (size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
-                if (expr(i, j) != 0.0) {
+    } else {
+        if (is_square(expr)) {
+            for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
+                if (expr(i, i) != 1.0) {
                     return false;
                 }
+
+                for (size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
+                    if (expr(i, j) != 0.0) {
+                        return false;
+                    }
+                }
             }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
-
-    return false;
 }
 
 /*!
@@ -189,23 +186,23 @@ bool is_uni_lower_triangular(E&& expr) {
 template <typename E>
 bool is_strictly_lower_triangular(E&& expr) {
     // strictly_lower_matrix<E> is already enforced to be strictly lower triangular
-    if (is_strictly_lower_matrix<E>) {
+    if /* constexpr */ (is_strictly_lower_matrix<E>) {
         return true;
-    }
-
-    if (is_square(expr)) {
-        for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
-            for (size_t j = i; j < etl::dim<0>(expr); ++j) {
-                if (expr(i, j) != 0.0) {
-                    return false;
+    } else {
+        if (is_square(expr)) {
+            for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
+                for (size_t j = i; j < etl::dim<0>(expr); ++j) {
+                    if (expr(i, j) != 0.0) {
+                        return false;
+                    }
                 }
             }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
-
-    return false;
 }
 
 /*!
@@ -216,38 +213,35 @@ bool is_strictly_lower_triangular(E&& expr) {
 template <typename E>
 bool is_upper_triangular(E&& expr) {
     // upper_matrix<E> is already enforced to be upper triangular
-    if (is_upper_matrix<E>) {
+    if /* constexpr */ (is_upper_matrix<E>) {
         return true;
     }
-
     // strictly_upper_matrix<E> is already enforced to be upper triangular
-    if (is_strictly_upper_matrix<E>) {
+    else if (is_strictly_upper_matrix<E>) {
         return true;
     }
-
     // uni_upper_matrix<E> is already enforced to be upper triangular
-    if (is_uni_upper_matrix<E>) {
+    else if (is_uni_upper_matrix<E>) {
         return true;
     }
-
     // diagonal_matrix<E> is already enforced to be upper triangular
-    if (is_diagonal_matrix<E>) {
+    else if (is_diagonal_matrix<E>) {
         return true;
-    }
-
-    if (is_square(expr)) {
-        for (size_t i = 1; i < etl::dim<0>(expr); ++i) {
-            for (size_t j = 0; j < i; ++j) {
-                if (expr(i, j) != 0.0) {
-                    return false;
+    } else {
+        if (is_square(expr)) {
+            for (size_t i = 1; i < etl::dim<0>(expr); ++i) {
+                for (size_t j = 0; j < i; ++j) {
+                    if (expr(i, j) != 0.0) {
+                        return false;
+                    }
                 }
             }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
-
-    return false;
 }
 
 /*!
@@ -258,27 +252,27 @@ bool is_upper_triangular(E&& expr) {
 template <typename E>
 bool is_uni_upper_triangular(E&& expr) {
     // uni_upper_matrix<E> is already enforced to be uni upper triangular
-    if (is_uni_upper_matrix<E>) {
+    if /* constexpr */ (is_uni_upper_matrix<E>) {
         return true;
-    }
-
-    if (is_square(expr)) {
-        for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
-            if(expr(i, i) != 1.0){
-                return false;
-            }
-
-            for (size_t j = 0; j < i; ++j) {
-                if (expr(i, j) != 0.0) {
+    } else {
+        if (is_square(expr)) {
+            for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
+                if (expr(i, i) != 1.0) {
                     return false;
                 }
+
+                for (size_t j = 0; j < i; ++j) {
+                    if (expr(i, j) != 0.0) {
+                        return false;
+                    }
+                }
             }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
-
-    return false;
 }
 
 /*!
@@ -289,23 +283,23 @@ bool is_uni_upper_triangular(E&& expr) {
 template <typename E>
 bool is_strictly_upper_triangular(E&& expr) {
     // strictly_upper_matrix<E> is already enforced to be strictly upper triangular
-    if (is_strictly_upper_matrix<E>) {
+    if /* constexpr */ (is_strictly_upper_matrix<E>) {
         return true;
-    }
-
-    if (is_square(expr)) {
-        for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
-            for (size_t j = 0; j <= i; ++j) {
-                if (expr(i, j) != 0.0) {
-                    return false;
+    } else {
+        if (is_square(expr)) {
+            for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
+                for (size_t j = 0; j <= i; ++j) {
+                    if (expr(i, j) != 0.0) {
+                        return false;
+                    }
                 }
             }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
-
-    return false;
 }
 
 /*!
@@ -326,23 +320,23 @@ bool is_triangular(E&& expr) {
 template <typename E>
 bool is_diagonal(E&& expr) {
     // diagonal_matrix<E> is already enforced to be diagonal
-    if (is_diagonal_matrix<E>) {
+    if /* constexpr */ (is_diagonal_matrix<E>) {
         return true;
-    }
-
-    if (is_square(expr)) {
-        for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
-            for (size_t j = 0; j < etl::dim<0>(expr); ++j) {
-                if (i != j && expr(i, j) != 0.0) {
-                    return false;
+    } else {
+        if (is_square(expr)) {
+            for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
+                for (size_t j = 0; j < etl::dim<0>(expr); ++j) {
+                    if (i != j && expr(i, j) != 0.0) {
+                        return false;
+                    }
                 }
             }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
-
-    return false;
 }
 
 /*!
@@ -420,23 +414,23 @@ bool is_permutation_matrix(E&& expr){
 template <typename E, cpp_enable_iff(is_complex<E>)>
 bool is_hermitian(E&& expr){
     // hermitian_matrix<E> is already enforced to be hermitian
-    if (is_hermitian_matrix<E>) {
+    if /* constexpr */ (is_hermitian_matrix<E>) {
         return true;
-    }
+    } else {
+        if (!is_square(expr)) {
+            return false;
+        }
 
-    if(!is_square(expr)){
-        return false;
-    }
-
-    for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
-        for (size_t j = 0; j < etl::dim<0>(expr); ++j) {
-            if(i != j && expr(i, j) != get_conj(expr(j, i))){
-                return false;
+        for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
+            for (size_t j = 0; j < etl::dim<0>(expr); ++j) {
+                if (i != j && expr(i, j) != get_conj(expr(j, i))) {
+                    return false;
+                }
             }
         }
-    }
 
-    return true;
+        return true;
+    }
 }
 
 /*!

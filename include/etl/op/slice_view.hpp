@@ -67,7 +67,7 @@ public:
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](size_t j) const {
-        if(decay_traits<sub_type>::storage_order == order::RowMajor){
+        if /* constexpr */ (decay_traits<sub_type>::storage_order == order::RowMajor) {
             return sub[first * (size(sub) / dim<0>(sub)) + j];
         } else {
             const auto sa = dim<0>(sub);
@@ -82,7 +82,7 @@ public:
      * \return a reference to the element at the given index.
      */
     return_type operator[](size_t j) {
-        if(decay_traits<sub_type>::storage_order == order::RowMajor){
+        if /* constexpr */ (decay_traits<sub_type>::storage_order == order::RowMajor) {
             return sub[first * (size(sub) / dim<0>(sub)) + j];
         } else {
             const auto sa = dim<0>(sub);
@@ -98,7 +98,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(size_t j) const noexcept {
-        if(decay_traits<sub_type>::storage_order == order::RowMajor){
+        if /* constexpr */ (decay_traits<sub_type>::storage_order == order::RowMajor) {
             return sub.read_flat(first * (size(sub) / dim<0>(sub)) + j);
         } else {
             const auto sa = dim<0>(sub);
