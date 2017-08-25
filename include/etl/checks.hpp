@@ -132,7 +132,7 @@ void validate_assign(const LE& lhs, const RE& rhs) {
 template <typename LE, typename RE, cpp_enable_iff(!is_etl_expr<RE>  && !is_wrapper_expr<RE>)>
 void validate_assign(const LE& lhs, const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
-    cpp_assert(size(lhs) == rhs.size(), "Cannot perform element-wise operations on collections of different size");
+    cpp_assert(etl::size(lhs) == rhs.size(), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
     cpp_unused(rhs);
 }
@@ -149,7 +149,7 @@ void validate_assign(const LE& lhs, const RE& rhs) {
 template <typename LE, typename RE, cpp_enable_iff(is_wrapper_expr<RE>)>
 void validate_assign(const LE& lhs, const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
-    cpp_assert(size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
+    cpp_assert(etl::size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
     cpp_unused(rhs);
 }
