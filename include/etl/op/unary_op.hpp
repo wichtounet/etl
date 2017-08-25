@@ -22,6 +22,7 @@
 
 #include "etl/math.hpp"
 #include "etl/impl/cudnn/sigmoid.hpp"
+#include "etl/impl/egblas/sqrt.hpp"
 
 namespace etl {
 
@@ -253,7 +254,7 @@ struct sqrt_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable = is_floating_t<T> && egblas_enabled;
 
     /*!
      * \brief Apply the unary operator on x
@@ -273,6 +274,25 @@ struct sqrt_unary_op {
     template <typename V = default_vec>
     static vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::sqrt(x);
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param expr The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on expr. The result must be a GPU computed expression.
+     */
+    template <typename E>
+    static auto gpu_compute(const E& expr) noexcept {
+        decltype(auto) t1 = expr.gpu_compute();
+
+        auto t2 = force_temporary_gpu(t1);
+
+        T alpha(1.0);
+        impl::egblas::sqrt(etl::size(expr), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+
+        return t2;
     }
 
     /*!
