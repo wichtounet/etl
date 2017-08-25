@@ -347,7 +347,7 @@ constexpr etl::conv4_impl select_default_conv4_valid_impl(size_t i1, size_t i2, 
         } else {
             if (cblas_enabled) {
                 return etl::conv4_impl::BLAS_MKL;
-            } else if (vec_enabled && vectorize_impl) {
+            } else if (impl::vec::conv2_possible<vector_mode, I, K, C>) {
                 return etl::conv4_impl::BLAS_VEC;
             }
         }
@@ -378,7 +378,7 @@ inline etl::conv4_impl select_conv4_valid_impl(size_t i1, size_t i2, size_t k1, 
             //VEC cannot always be used
         case etl::conv4_impl::BLAS_VEC:
         case etl::conv4_impl::VEC:
-                if (!vec_enabled || !vectorize_impl) {                                                                             // COVERAGE_EXCLUDE_LINE
+                if (!impl::vec::conv2_possible<vector_mode, I, K, C>) {                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC conv4 implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_valid_impl<I, K, C>(i1, i2, k1, k2);                                                             // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                  // COVERAGE_EXCLUDE_LINE
@@ -442,7 +442,7 @@ constexpr etl::conv4_impl select_default_conv4_valid_filter_impl(size_t i1, size
         } else {
             if (cblas_enabled) {
                 return etl::conv4_impl::BLAS_MKL;
-            } else if (vec_enabled && vectorize_impl) {
+            } else if (impl::vec::conv2_possible<vector_mode, I, K, C>) {
                 return etl::conv4_impl::BLAS_VEC;
             }
         }
@@ -473,7 +473,7 @@ inline etl::conv4_impl select_conv4_valid_filter_impl(size_t i1, size_t i2, size
             //VEC cannot always be used
         case etl::conv4_impl::BLAS_VEC:
         case etl::conv4_impl::VEC:
-                if (!vec_enabled || !vectorize_impl) {                                                                             // COVERAGE_EXCLUDE_LINE
+                if (!impl::vec::conv2_possible<vector_mode, I, K, C>) {                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC conv4_valid_filter implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_valid_filter_impl<I, K, C>(i1, i2, k1, k2);                                        // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                  // COVERAGE_EXCLUDE_LINE
@@ -530,7 +530,7 @@ constexpr etl::conv4_impl select_default_conv4_valid_back_impl(size_t i1, size_t
         } else {
             if (cblas_enabled) {
                 return etl::conv4_impl::BLAS_MKL;
-            } else if (vec_enabled && vectorize_impl) {
+            } else if (impl::vec::conv2_possible<vector_mode, I, K, C>) {
                 return etl::conv4_impl::BLAS_VEC;
             }
         }
@@ -562,7 +562,7 @@ inline etl::conv4_impl select_conv4_valid_back_impl(size_t i1, size_t i2, size_t
             //VEC cannot always be used
         case etl::conv4_impl::BLAS_VEC:
         case etl::conv4_impl::VEC:
-                if (!vec_enabled || !vectorize_impl) {                                                                             // COVERAGE_EXCLUDE_LINE
+                if (!impl::vec::conv2_possible<vector_mode, I, K, C>) {                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC conv4_valid_back implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_valid_back_impl<I, K, C>(i1, i2, k1, k2);                                                             // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                  // COVERAGE_EXCLUDE_LINE
