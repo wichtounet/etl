@@ -108,7 +108,7 @@ void basic() {
             IF_DEBUG std::cout << i << ":1 D = A * trans(A)" << std::endl;
             D = A * trans(A);
             IF_DEBUG std::cout << i << ":2 D *= 1.1" << std::endl;
-            D *= 1.1;
+            D *= 1.1f;
             IF_DEBUG std::cout << i << ":3 E = D" << std::endl;
             E = D;
             IF_DEBUG std::cout << i << ":4 D += C" << std::endl;
@@ -148,10 +148,11 @@ void expr() {
         E = 1e-4 >> etl::sequence_generator<float>(1.0);
 
         for (size_t i = 0; i < 10; ++i) {
-            A = 1.1 * (A / B) + (C >> D) / 1.2;
-            E = 1.2 / A - D * C + 2.0;
-            D = 1.1 + E;
-            B = (1.4 - D) - 2.3;
+            A = 1.1f * (A / B) + (C >> D) / 1.2f;
+            E = 1.2f / A - D * C + 2.0f;
+            D = 1.1f + E;
+            B = (1.4f - D) - 2.3f;
+            D = etl::sqrt(B);
         }
     }
 
