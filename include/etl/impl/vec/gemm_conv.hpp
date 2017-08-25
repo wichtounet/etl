@@ -482,7 +482,7 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
  * \param p1 The padding of the first dimension
  * \param p2 The padding of the second dimension
  */
-template <typename I_T, typename K_T, typename C_T>
+template <typename I_T, typename K_T, typename C_T, cpp_enable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
 void blas_conv4_valid(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     const auto K = etl::dim<0>(kernel); // The number of kernels
     const auto C = etl::dim<1>(input);  // The number of channels
@@ -511,7 +511,7 @@ void blas_conv4_valid(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s
  * \param p1 The padding of the first dimension
  * \param p2 The padding of the second dimension
  */
-template <typename I_T, typename K_T, typename C_T>
+template <typename I_T, typename K_T, typename C_T, cpp_enable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
 void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     const auto K = etl::dim<0>(kernel); // The number of kernels
     const auto C = etl::dim<1>(input);  // The number of channels
@@ -528,6 +528,52 @@ void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, 
     }
 
     blas_conv4_valid_prepared(input, kernel, kernels, conv, s1, s2, p1, p2);
+}
+
+/*!
+ * \brief Compute a 4D valid convolution using a vectorized matrix multiplication kernel
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The stride of the first dimension
+ * \param s2 The stride of the second dimension
+ * \param p1 The padding of the first dimension
+ * \param p2 The padding of the second dimension
+ */
+template <typename I_T, typename K_T, typename C_T, cpp_disable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
+void blas_conv4_valid(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::blas_conv4_valid");
+}
+
+/*!
+ * \brief Compute a 4D valid convolution using a vectorized matrix multiplication kernel
+ * \param input The input matrix
+ * \param kernel The kernel matrix, with flipped kernels
+ * \param conv The output matrix
+ * \param s1 The stride of the first dimension
+ * \param s2 The stride of the second dimension
+ * \param p1 The padding of the first dimension
+ * \param p2 The padding of the second dimension
+ */
+template <typename I_T, typename K_T, typename C_T, cpp_disable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
+void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::blas_conv4_valid_flipped");
 }
 
 /*!
@@ -639,7 +685,7 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
  * \param p1 The padding of the first dimension
  * \param p2 The padding of the second dimension
  */
-template <typename I_T, typename K_T, typename C_T>
+template <typename I_T, typename K_T, typename C_T, cpp_enable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
 void blas_conv4_valid_filter(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     auto prepared_k = force_temporary(kernel);
 
@@ -659,9 +705,55 @@ void blas_conv4_valid_filter(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, s
  * \param p1 The padding of the first dimension
  * \param p2 The padding of the second dimension
  */
-template <typename I_T, typename K_T, typename C_T>
+template <typename I_T, typename K_T, typename C_T, cpp_enable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
 void blas_conv4_valid_filter_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     blas_conv4_valid_filter_prepared(input, kernel, conv, s1, s2, p1, p2);
+}
+
+/*!
+ * \brief Compute a 4D valid filter convolution using a vectorized matrix multiplication kernel
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The stride of the first dimension
+ * \param s2 The stride of the second dimension
+ * \param p1 The padding of the first dimension
+ * \param p2 The padding of the second dimension
+ */
+template <typename I_T, typename K_T, typename C_T, cpp_disable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
+void blas_conv4_valid_filter(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::blas_conv4_valid_filter");
+}
+
+/*!
+ * \brief Compute a 4D valid filter convolution using a vectorized matrix multiplication kernel
+ * \param input The input matrix
+ * \param kernel The kernel matrix, with flipped kernels
+ * \param conv The output matrix
+ * \param s1 The stride of the first dimension
+ * \param s2 The stride of the second dimension
+ * \param p1 The padding of the first dimension
+ * \param p2 The padding of the second dimension
+ */
+template <typename I_T, typename K_T, typename C_T, cpp_disable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
+void blas_conv4_valid_filter_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::blas_conv4_filter_back");
 }
 
 /*!
@@ -772,7 +864,7 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
  * \param p1 The padding of the first dimension
  * \param p2 The padding of the second dimension
  */
-template <typename I_T, typename K_T, typename C_T>
+template <typename I_T, typename K_T, typename C_T, cpp_enable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
 void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     auto prepared_k = force_temporary(kernel);
 
@@ -792,9 +884,55 @@ void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, siz
  * \param p1 The padding of the first dimension
  * \param p2 The padding of the second dimension
  */
-template <typename I_T, typename K_T, typename C_T>
+template <typename I_T, typename K_T, typename C_T, cpp_enable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
 void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     blas_conv4_valid_back_prepared(input, kernel, conv, s1, s2, p1, p2);
+}
+
+/*!
+ * \brief Compute a 4D valid backward convolution, using a BLAS matrix multiplication kernel
+ * \param input The input matrix
+ * \param kernel The kernel matrix, with flipped kernels
+ * \param conv The output matrix
+ * \param s1 The stride of the first dimension
+ * \param s2 The stride of the second dimension
+ * \param p1 The padding of the first dimension
+ * \param p2 The padding of the second dimension
+ */
+template <typename I_T, typename K_T, typename C_T, cpp_disable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
+void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::blas_conv4_valid_back");
+}
+
+/*!
+ * \brief Compute a 4D valid backward convolution, with flipped kernels,  using a BLAS matrix multiplication kernel
+ * \param input The input matrix
+ * \param kernel The kernel matrix, with flipped kernels
+ * \param conv The output matrix
+ * \param s1 The stride of the first dimension
+ * \param s2 The stride of the second dimension
+ * \param p1 The padding of the first dimension
+ * \param p2 The padding of the second dimension
+ */
+template <typename I_T, typename K_T, typename C_T, cpp_disable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
+void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+
+    cpp_unreachable("Invalid call to vec::blas_conv4_valid_back_flipped");
 }
 
 } //end of namespace vec
