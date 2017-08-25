@@ -44,7 +44,7 @@ void validate_expression_impl(const LE& lhs, const RE& rhs) noexcept {
  */
 template <typename LE, typename RE, cpp_enable_iff(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator) && all_etl_expr<LE, RE> && !all_fast<LE, RE>)>
 void validate_expression_impl(const LE& lhs, const RE& rhs) {
-    cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
+    cpp_assert(etl::size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
     cpp_unused(rhs);
 }
@@ -98,7 +98,7 @@ void validate_assign(const LE& lhs, const RE& rhs) noexcept {
 template <typename LE, typename RE, cpp_enable_iff(!etl_traits<RE>::is_generator  && is_etl_expr<RE>  && !all_fast<LE, RE>  && !is_wrapper_expr<RE>)>
 void validate_assign(const LE& lhs, const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
-    cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
+    cpp_assert(etl::size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
     cpp_unused(rhs);
 }
