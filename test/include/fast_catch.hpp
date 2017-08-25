@@ -18,24 +18,44 @@ inline void evaluate_result_direct(const char* file, size_t line, const char* ex
 
 template<typename L, typename R>
 void evaluate_result(const char* file, size_t line, const char* exp, L lhs, R rhs){
-    Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
-    result.setResultType(lhs == rhs);
-    result.setLhs(Catch::toString(lhs));
-    result.setRhs(Catch::toString(rhs));
-    result.setOp("==");
-    result.endExpression();
-    result.react();
+    bool bool_result = lhs == rhs;
+
+    if (!bool_result) {
+        Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
+        result.setResultType(bool_result);
+
+        // Note: This will break the display is successfull tests are
+        // displayed
+        if (!bool_result) {
+            result.setLhs(Catch::toString(lhs));
+            result.setRhs(Catch::toString(rhs));
+            result.setOp("==");
+        }
+
+        result.endExpression();
+        result.react();
+    }
 }
 
 template<typename L>
 void evaluate_result_approx(const char* file, size_t line, const char* exp, L lhs, decltype(lhs) rhs, double eps = base_eps){
-    Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
-    result.setResultType(std::abs(lhs - rhs) < eps * (1.0 + std::max(std::abs(lhs), std::abs(rhs))));
-    result.setLhs(Catch::toString(lhs));
-    result.setRhs("Approx(" + Catch::toString(rhs) + ")");
-    result.setOp("==");
-    result.endExpression();
-    result.react();
+    bool bool_result = std::abs(lhs - rhs) < eps * (1.0 + std::max(std::abs(lhs), std::abs(rhs)));
+
+    if (!bool_result) {
+        Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
+        result.setResultType(bool_result);
+
+        // Note: This will break the display is successfull tests are
+        // displayed
+        if (!bool_result) {
+            result.setLhs(Catch::toString(lhs));
+            result.setRhs("Approx(" + Catch::toString(rhs) + ")");
+            result.setOp("==");
+        }
+
+        result.endExpression();
+        result.react();
+    }
 }
 
 #define REQUIRE_DIRECT(value) \
