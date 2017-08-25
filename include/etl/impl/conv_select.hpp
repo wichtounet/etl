@@ -342,7 +342,7 @@ constexpr etl::conv4_impl select_default_conv4_valid_impl(size_t i1, size_t i2, 
 
     // Small kernels
     if(k1 == k2 && k1 <= 5){
-        if(i1 == i2 && i1 > 100){
+        if(impl::vec::conv2_possible<vector_mode, I, K, C> && i1 == i2 && i1 > 100){
             return etl::conv4_impl::VEC;
         } else {
             if (cblas_enabled) {
@@ -353,7 +353,7 @@ constexpr etl::conv4_impl select_default_conv4_valid_impl(size_t i1, size_t i2, 
         }
     }
 
-    if (vec_enabled && vectorize_impl) {
+    if (impl::vec::conv2_possible<vector_mode, I, K, C>) {
         return etl::conv4_impl::VEC;
     } else if (cblas_enabled) {
         return etl::conv4_impl::BLAS_MKL;
@@ -437,7 +437,7 @@ constexpr etl::conv4_impl select_default_conv4_valid_filter_impl(size_t i1, size
 
     // Small kernels
     if(k1 == k2 && k1 <= 5){
-        if(i1 == i2 && i1 > 100){
+        if(impl::vec::conv2_possible<vector_mode, I, K, C> && i1 == i2 && i1 > 100){
             return etl::conv4_impl::VEC;
         } else {
             if (cblas_enabled) {
@@ -448,7 +448,7 @@ constexpr etl::conv4_impl select_default_conv4_valid_filter_impl(size_t i1, size
         }
     }
 
-    if (vec_enabled && vectorize_impl) {
+    if (impl::vec::conv2_possible<vector_mode, I, K, C>) {
         return etl::conv4_impl::VEC;
     } else if (cblas_enabled) {
         return etl::conv4_impl::BLAS_MKL;
@@ -524,7 +524,7 @@ constexpr etl::conv4_impl select_default_conv4_valid_back_impl(size_t i1, size_t
     // Small kernels
     if(k1 == k2 && k1 <= 5){
         if(i1 == i2 && i1 > 100){
-            if (vec_enabled && vectorize_impl) {
+            if (impl::vec::conv2_possible<vector_mode, I, K, C>) {
                 return etl::conv4_impl::VEC;
             }
         } else {
@@ -536,7 +536,7 @@ constexpr etl::conv4_impl select_default_conv4_valid_back_impl(size_t i1, size_t
         }
     }
 
-    if (vec_enabled && vectorize_impl) {
+    if (impl::vec::conv2_possible<vector_mode, I, K, C>) {
         return etl::conv4_impl::VEC;
     } else if (cblas_enabled) {
         return etl::conv4_impl::BLAS_MKL;
