@@ -311,7 +311,7 @@ CONV4_VALID_FILTER_FLIPPED_TEST_CASE("conv/4d/stride/valid/filter/flipped/1", "[
         for (size_t i = 0; i < etl::dim<0>(I); ++i) {
             for (size_t k = 0; k < etl::dim<1>(K); ++k) {
                 for (size_t c = 0; c < etl::dim<1>(I); ++c) {
-                    ref(k)(c) += etl::conv_2d_valid_flipped<2, 2, 0, 0>(I(i)(c), fflip(K(i)(k)));
+                    ref(k)(c) += etl::conv_2d_valid<2, 2, 0, 0>(I(i)(c), K(i)(k));
                 }
             }
         }
