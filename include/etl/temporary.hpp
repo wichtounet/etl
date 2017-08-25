@@ -218,6 +218,12 @@ template <typename E, cpp_enable_iff(decay_traits<E>::is_fast)>
 decltype(auto) force_temporary_gpu(E&& expr) {
     cpp_assert(is_dma<E>, "force_temporary_gpu should only be used on DMA expressions");
 
+    // ETL always preserve CPU and GPU, so discarding the CPU here
+    // may save some CPU copies
+    if (expr.is_gpu_up_to_date()) {
+        expr.invalidate_cpu();
+    }
+
     typename detail::build_fast_dyn_matrix_type<E, std::make_index_sequence<decay_traits<E>::dimensions()>>::type mat;
     mat = expr;
 
