@@ -1340,6 +1340,29 @@ void safe_ensure_cpu_up_to_date(E&& expr){
 }
 
 /*!
+ * \brief Indicates if the CPU memory is up to date. If the expression does
+ * not have direct memory access, return true
+ *
+ * \param expr The expression
+ */
+template <typename E, cpp_enable_iff(is_dma<E>)>
+bool safe_is_cpu_up_to_date(E&& expr){
+    return expr.is_gpu_up_to_date();
+}
+
+/*!
+ * \brief Indicates if the CPU memory is up to date. If the expression does
+ * not have direct memory access, return true
+ *
+ * \param expr The expression
+ */
+template <typename E, cpp_disable_iff(is_dma<E>)>
+bool safe_is_cpu_up_to_date(E&& expr){
+    cpp_unused(expr);
+    return true;
+}
+
+/*!
  * \brief Indicates if the GPU memory is up to date. If the expression does
  * not have direct memory access, return false
  *
