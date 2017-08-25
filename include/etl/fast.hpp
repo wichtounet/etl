@@ -405,7 +405,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const fast_matrix_impl& matrix) {
         cpp_unused(matrix);
 
-        if (sizeof...(Dims) == 1) {
+        if /* constexpr */ (sizeof...(Dims) == 1) {
             return os << "V[" << concat_sizes(Dims...) << "]";
         }
 

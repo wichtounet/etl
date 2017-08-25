@@ -155,7 +155,7 @@ protected:
         cpp_assert(reinterpret_cast<uintptr_t>(memory) % alignment == 0, "Failed to align memory of matrix");
 
         //In case of non-trivial type, we need to call the constructors
-        if (!std::is_trivial<M>::value) {
+        if /* constexpr */ (!std::is_trivial<M>::value) {
             new (memory) M[n]();
         }
 
@@ -174,7 +174,7 @@ protected:
     template <typename M>
     static void release(M* ptr, size_t n) {
         //In case of non-trivial type, we need to call the destructors
-        if (!std::is_trivial<M>::value) {
+        if /* constexpr */ (!std::is_trivial<M>::value) {
             for (size_t i = 0; i < n; ++i) {
                 ptr[i].~M();
             }

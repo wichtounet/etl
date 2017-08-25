@@ -922,7 +922,7 @@ void fft1_many(A&& a, C&& c) {
         mkl_detail::fft_many_kernel(a_complex.get() + first * n, last - first, n, c.memory_start() + first * n);
     };
 
-    if(is_blas_parallel){
+    if /* constexpr */ (is_blas_parallel) {
         batch_fun(0, batch);
     } else {
         engine_dispatch_1d(batch_fun, 0, batch, 16UL);
@@ -952,7 +952,7 @@ void fft1_many(A&& a, C&& c) {
         mkl_detail::fft_many_kernel(a.memory_start() + first * n, last - first, n, c.memory_start() + first * n);
     };
 
-    if(is_blas_parallel){
+    if /* constexpr */ (is_blas_parallel) {
         batch_fun(0, batch);
     } else {
         engine_dispatch_1d(batch_fun, 0, batch, 16UL);
@@ -982,7 +982,7 @@ void ifft1_many(A&& a, C&& c) {
         mkl_detail::ifft_many_kernel(a.memory_start() + first * n, last - first, n, c.memory_start() + first * n);
     };
 
-    if(is_blas_parallel){
+    if /* constexpr */ (is_blas_parallel) {
         batch_fun(0, batch);
     } else {
         engine_dispatch_1d(batch_fun, 0, batch, 16UL);
@@ -1105,7 +1105,7 @@ void fft2_many(A&& a, C&& c) {
         mkl_detail::fft2_many_kernel(a_complex.get() + first * n1 * n1, last - first, n1, n2, c.memory_start() + first * n1 * n1);
     };
 
-    if(is_blas_parallel){
+    if /* constexpr */ (is_blas_parallel) {
         batch_fun(0, batch);
     } else {
         engine_dispatch_1d(batch_fun, 0, batch, 2UL);
@@ -1139,7 +1139,7 @@ void fft2_many(A&& a, C&& c) {
         mkl_detail::fft2_many_kernel(a_complex.get() + first * n1 * n1, last - first, n1, n2, c.memory_start() + first * n1 * n1);
     };
 
-    if(is_blas_parallel){
+    if /* constexpr */ (is_blas_parallel) {
         batch_fun(0, batch);
     } else {
         engine_dispatch_1d(batch_fun, 0, batch, 2UL);
@@ -1169,7 +1169,7 @@ void fft2_many(A&& a, C&& c) {
         mkl_detail::fft2_many_kernel(a.memory_start() + first * n1 * n1, last - first, n1, n2, c.memory_start() + first * n1 * n1);
     };
 
-    if(is_blas_parallel){
+    if /* constexpr */ (is_blas_parallel) {
         batch_fun(0, batch);
     } else {
         engine_dispatch_1d(batch_fun, 0, batch, 2UL);
@@ -1199,7 +1199,7 @@ void ifft2_many(A&& a, C&& c) {
         mkl_detail::ifft2_many_kernel(safe_cast(a.memory_start() + first * n1 * n1), last - first, n1, n2, safe_cast(c.memory_start() + first * n1 * n1));
     };
 
-    if(is_blas_parallel){
+    if /* constexpr */ (is_blas_parallel) {
         batch_fun(0, batch);
     } else {
         engine_dispatch_1d(batch_fun, 0, batch, 2UL);
@@ -1356,16 +1356,16 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
             }
         };
 
-        if (etl::is_parallel) {
+        if /* constexpr */ (etl::is_parallel) {
             size_t mkl_threads = 0;
-            if (is_blas_parallel) {
+            if /* constexpr */ (is_blas_parallel) {
                 mkl_threads = mkl_get_max_threads();
                 mkl_set_num_threads(1);
             }
 
             engine_dispatch_1d_serial_cpu(batch_fun_k, 0, KK, 2UL);
 
-            if (is_blas_parallel) {
+            if /* constexpr */ (is_blas_parallel) {
                 mkl_set_num_threads(mkl_threads);
             }
         } else {
@@ -1526,9 +1526,9 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
             }
         };
 
-        if (etl::is_parallel) {
+        if /* constexpr */ (etl::is_parallel) {
             size_t mkl_threads = 0;
-            if(is_blas_parallel){
+            if /* constexpr */ (is_blas_parallel) {
                 mkl_threads = mkl_get_max_threads();
                 mkl_set_num_threads(1);
             }
@@ -1536,7 +1536,7 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
             engine_dispatch_1d_serial(batch_fun_kc, 0, K * C, 2UL);
             engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
 
-            if(is_blas_parallel){
+            if /* constexpr */ (is_blas_parallel) {
                 mkl_set_num_threads(mkl_threads);
             }
         } else {
@@ -1683,9 +1683,9 @@ void conv4_full_flipped(II&& input, KK&& kernel, CC&& conv) {
             }
         };
 
-        if (etl::is_parallel) {
+        if /* constexpr */ (etl::is_parallel) {
             size_t mkl_threads = 0;
-            if(is_blas_parallel){
+            if /* constexpr */ (is_blas_parallel) {
                 mkl_threads = mkl_get_max_threads();
                 mkl_set_num_threads(1);
             }
@@ -1693,7 +1693,7 @@ void conv4_full_flipped(II&& input, KK&& kernel, CC&& conv) {
             engine_dispatch_1d_serial(batch_fun_kc, 0, K * C, 2UL);
             engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
 
-            if(is_blas_parallel){
+            if /* constexpr */ (is_blas_parallel) {
                 mkl_set_num_threads(mkl_threads);
             }
         } else {

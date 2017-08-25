@@ -287,7 +287,7 @@ public:
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const binary_expr& expr) {
-        if (BinaryOp::desc_func) {
+        if /* constexpr */ (BinaryOp::desc_func) {
             return os << BinaryOp::desc() << "(" << expr.lhs << ", " << expr.rhs << ")";
         } else {
             return os << "(" << expr.lhs << ' ' << BinaryOp::desc() << ' ' << expr.rhs << ")";

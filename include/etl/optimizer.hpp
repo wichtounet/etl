@@ -47,7 +47,7 @@ struct optimizable {
 template <typename T, typename Expr, typename UnaryOp>
 struct optimizable<etl::unary_expr<T, Expr, UnaryOp>> {
     /*! \copydoc optimizable::is */
-    static bool is(const etl::unary_expr<T, Expr, UnaryOp>& /*unused*/) {
+    static constexpr bool is(const etl::unary_expr<T, Expr, UnaryOp>& /*unused*/) {
         return std::is_same<UnaryOp, plus_unary_op<T>>::value;
     }
 
@@ -65,7 +65,7 @@ struct optimizable<etl::unary_expr<T, Expr, UnaryOp>> {
 template <typename T, typename BinaryOp>
 struct optimizable<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>> {
     /*! \copydoc optimizable::is */
-    static bool is(const etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>& /*unused*/) {
+    static constexpr bool is(const etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>& /*unused*/) {
         if (std::is_same<BinaryOp, mul_binary_op<T>>::value) {
             return true;
         }
@@ -234,7 +234,7 @@ struct transformer<etl::unary_expr<T, Expr, UnaryOp>> {
      */
     template <typename Builder>
     static void transform(Builder parent_builder, const etl::unary_expr<T, Expr, UnaryOp>& expr) {
-        if (std::is_same<UnaryOp, plus_unary_op<T>>::value) {
+        if /* constexpr */ (std::is_same<UnaryOp, plus_unary_op<T>>::value) {
             parent_builder(expr.value);
         }
     }
@@ -254,7 +254,7 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>
      */
     template <typename Builder>
     static void transform(Builder parent_builder, const etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>& expr) {
-        if (std::is_same<BinaryOp, mul_binary_op<T>>::value) {
+        if /* constexpr */ (std::is_same<BinaryOp, mul_binary_op<T>>::value) {
             parent_builder(etl::scalar<T>(expr.lhs.value * expr.rhs.value));
         } else if (std::is_same<BinaryOp, plus_binary_op<T>>::value) {
             parent_builder(etl::scalar<T>(expr.lhs.value + expr.rhs.value));
