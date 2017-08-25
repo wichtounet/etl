@@ -3,8 +3,10 @@ set -e
 
 function etl_run {
     make clean
-    make $ETL_THREADS debug/bin/etl_test
-    ./debug/bin/etl_test --reporter=junit --out catch_report_${1}.xml
+    time make $ETL_THREADS debug/bin/etl_test
+
+    echo "Run the tests"
+    time ./debug/bin/etl_test --reporter=junit --out catch_report_${1}.xml
 
 if [ "$ETL_LCOV" == "" ]
 then

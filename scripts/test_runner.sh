@@ -3,8 +3,8 @@ set -e
 
 function etl_run {
     make clean
-    make $ETL_THREADS debug/bin/etl_test
-    ./debug/bin/etl_test
+    time make $ETL_THREADS debug/bin/etl_test
+    time ./debug/bin/etl_test
 }
 
 # Disable default options
