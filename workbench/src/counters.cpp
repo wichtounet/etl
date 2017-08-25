@@ -69,7 +69,7 @@ void simple() {
         C = 1e-4 >> etl::sequence_generator<float>(1.0);
 
         for (size_t i = 0; i < 10; ++i) {
-            C = A * B;
+            C = etl::reshape(A, 4096, 4096) * etl::reshape<4096, 4096>(B);
             fake += etl::mean(C);
         }
 
