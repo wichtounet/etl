@@ -88,6 +88,9 @@ template <typename T, order SO, size_t D = 2>
 struct dyn_matrix_impl;
 
 template <typename T, order SO, size_t D = 2>
+struct gpu_dyn_matrix_impl;
+
+template <typename T, order SO, size_t D = 2>
 struct custom_dyn_matrix_impl;
 
 template <typename T, sparse_storage SS, size_t D>
@@ -240,6 +243,12 @@ using dyn_vector = dyn_matrix_impl<T, order::RowMajor, 1>;
  */
 template <typename T>
 using dyn_vector_cm = dyn_matrix_impl<T, order::ColumnMajor, 1>;
+
+/*!
+ * \brief A GPU dynamic matrix, in row-major order, of D dimensions
+ */
+template <typename T, size_t D = 2>
+using gpu_dyn_matrix = gpu_dyn_matrix_impl<T, order::RowMajor, D>;
 
 /*!
  * \brief A dynamic matrix, in row-major order, of D dimensions
