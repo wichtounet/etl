@@ -110,6 +110,13 @@ inline void pmp_h_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& 
  */
 struct pmp_h_impl {
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
@@ -230,6 +237,13 @@ struct pmp_h_impl {
  * \brief Dynamic Implemenetation of Probabilistic Max Pooling for hidden units
  */
 struct dyn_pmp_h_impl {
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = false;
+
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
@@ -459,6 +473,13 @@ inline void pmp_p_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& 
  */
 struct pmp_p_impl {
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
@@ -579,6 +600,13 @@ struct pmp_p_impl {
  * \brief Dynamic 4D Implemenetation of Probabilistic Max Pooling for pooling units
  */
 struct dyn_pmp_p_impl {
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = false;
+
     /*!
      * \brief Apply the functor
      * \param a The input sub expression

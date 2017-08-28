@@ -23,11 +23,17 @@ namespace etl {
 template <typename A, typename B>
 struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> {
     using value_type = value_t<A>;                               ///< The type of value of the expression
-    using this_type  = bias_add_2d_expr<A, B>;                      ///< The type of this expression
+    using this_type  = bias_add_2d_expr<A, B>;                   ///< The type of this expression
     using base_type  = base_temporary_expr_bin<this_type, A, B>; ///< The base type
     using sub_traits = decay_traits<A>;                          ///< The traits of the sub type
 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
+
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    static constexpr bool gpu_computable = cudnn_enabled && all_floating<A, B> && all_homogeneous<A, B>;
 
     /*!
      * \brief Construct a new expression
@@ -102,7 +108,7 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
-        auto impl = select_impl<L>(a.is_gpu_up_to_date());
+        auto impl = select_impl<L>();
 
         if(impl == bias_add_impl::VEC){
             impl::vec::bias_add_2d(make_temporary(a), make_temporary(b), lhs);
@@ -182,11 +188,11 @@ private:
      * \return The implementation to use
      */
     template <typename C>
-    static constexpr etl::bias_add_impl select_default_impl(bool gpu) {
+    static constexpr etl::bias_add_impl select_default_impl() {
         constexpr bool vec_possible = vec_enabled && vectorize_impl && all_vectorizable<vector_mode, A, B, C> && all_homogeneous<A, B, C>;
         constexpr bool cudnn_possible = cudnn_enabled && all_floating<A, B, C> && all_homogeneous<A, B, C>;
 
-        if (cudnn_possible && gpu && !local_context().cpu) {
+        if (cudnn_possible && !local_context().cpu) {
             return etl::bias_add_impl::CUDNN;
         }
 
@@ -203,8 +209,8 @@ private:
      * \return The implementation to use
      */
     template <typename C>
-    static etl::bias_add_impl select_impl(bool gpu) {
-        auto def = select_default_impl<C>(gpu);
+    static etl::bias_add_impl select_impl() {
+        auto def = select_default_impl<C>();
 
         if (local_context().bias_add_selector.forced) {
             auto forced = local_context().bias_add_selector.impl;
@@ -246,25 +252,25 @@ private:
 template <typename A, typename B>
 struct etl_traits<etl::bias_add_2d_expr<A, B>> {
     using expr_t     = etl::bias_add_2d_expr<A, B>; ///< The expression type
-    using sub_expr_t = std::decay_t<A>;          ///< The sub expression type
-    using sub_traits = etl_traits<sub_expr_t>;   ///< The sub traits
-    using value_type = value_t<A>;               ///< The value type of the expression
+    using sub_expr_t = std::decay_t<A>;             ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;      ///< The sub traits
+    using value_type = value_t<A>;                  ///< The value type of the expression
 
-    static constexpr bool is_etl          = true;                      ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer  = false;                     ///< Indicates if the type is a transformer
-    static constexpr bool is_view         = false;                     ///< Indicates if the type is a view
-    static constexpr bool is_magic_view   = false;                     ///< Indicates if the type is a magic view
-    static constexpr bool is_fast         = all_fast<A, B>;     ///< Indicates if the expression is fast
-    static constexpr bool is_linear       = false;                      ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe  = true;                      ///< Indicates if the expression is thread safe
-    static constexpr bool is_value        = false;                     ///< Indicates if the expression is of value type
-    static constexpr bool is_direct       = true;                      ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator    = false;                     ///< Indicates if the expression is a generator
-    static constexpr bool is_padded       = false;                     ///< Indicates if the expression is padded
-    static constexpr bool is_aligned      = true;                      ///< Indicates if the expression is padded
-    static constexpr bool is_temporary = true;                      ///< Indicates if the expression needs a evaluator visitor
-    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
-    static constexpr order storage_order  = sub_traits::storage_order; ///< The expression's storage order
+    static constexpr bool is_etl         = true;                                 ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                                ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = all_fast<A, B>;                       ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = true;                                 ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = true;                                 ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                                ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = true;                                 ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = true;                                 ///< Indicates if the expression needs a evaluator visitor
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled; ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order = sub_traits::storage_order;            ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

@@ -30,6 +30,12 @@ struct dyn_pool_upsample_2d_expr : base_temporary_expr_tern<dyn_pool_upsample_2d
 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
 
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    static constexpr bool gpu_computable = cudnn_enabled && all_floating<A, B> && all_homogeneous<A, B>;
+
 private:
     const size_t c1; ///< The pooling ratio for the first dimension
     const size_t c2; ///< The pooling ratio for the second dimension

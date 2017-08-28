@@ -31,11 +31,10 @@ enum class precision {
  * This does not consider the local context configuration.
  *
  * \param func The default fallback functor
- * \param args The args to be passed to the default functor
  * \return The implementation to use
  */
-template <typename Functor, typename... Args>
-inline fft_impl select_forced_fft_impl(Functor func, Args&&... args) {
+template <typename Functor>
+inline fft_impl select_forced_fft_impl(Functor func) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
@@ -47,7 +46,7 @@ inline fft_impl select_forced_fft_impl(Functor func, Args&&... args) {
         case fft_impl::MKL:
             if (!mkl) {                                                                                                       //COVERAGE_EXCLUDE_LINE
                 std::cerr << "Forced selection to MKL fft implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                return func(args...);                                                                                         //COVERAGE_EXCLUDE_LINE
+                return func();                                                                                         //COVERAGE_EXCLUDE_LINE
             }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
             return forced;
@@ -56,7 +55,7 @@ inline fft_impl select_forced_fft_impl(Functor func, Args&&... args) {
         case fft_impl::CUFFT:
             if (!cufft || local_context().cpu) {                                                                                                       //COVERAGE_EXCLUDE_LINE
                 std::cerr << "Forced selection to CUFFT fft implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                return func(args...);                                                                                           //COVERAGE_EXCLUDE_LINE
+                return func();                                                                                           //COVERAGE_EXCLUDE_LINE
             }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
             return forced;
@@ -75,38 +74,14 @@ inline fft_impl select_forced_fft_impl(Functor func, Args&&... args) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline fft_impl select_default_fft1_impl(const size_t n) {
+inline fft_impl select_default_fft1_impl() {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
 
     if (cufft && !local_context().cpu) {
-        if (math::is_power_of_two(n)) {
-            if (n <= 64) {
-                return fft_impl::STD;
-            } else if (n <= 1024) {
-                if (mkl) {
-                    return fft_impl::MKL;
-                } else {
-                    return fft_impl::STD;
-                }
-            } else if (n <= 65536 && mkl) {
-                return fft_impl::MKL;
-            }
-
-            return fft_impl::CUFFT;
-        }
-
-        if (n <= 250000 && mkl) {
-            return fft_impl::MKL;
-        }
-
         return fft_impl::CUFFT;
     } else if (mkl) {
-        if (math::is_power_of_two(n) && n <= 64) {
-            return fft_impl::STD;
-        }
-
         return fft_impl::MKL;
     } else {
         return fft_impl::STD;
@@ -118,12 +93,12 @@ inline fft_impl select_default_fft1_impl(const size_t n) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline fft_impl select_fft1_impl(const size_t n) {
+inline fft_impl select_fft1_impl() {
     if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([](size_t n) { return select_default_fft1_impl(n); }, n);
+        return select_forced_fft_impl([]() { return select_default_fft1_impl(); });
     }
 
-    return select_default_fft1_impl(n);
+    return select_default_fft1_impl();
 }
 
 /*!
@@ -135,9 +110,7 @@ inline fft_impl select_fft1_impl(const size_t n) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline  fft_impl select_default_fft1_many_impl(const size_t batch, const size_t n) {
-    cpp_unused(batch);
-
+inline fft_impl select_default_fft1_many_impl() {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
@@ -145,10 +118,6 @@ inline  fft_impl select_default_fft1_many_impl(const size_t batch, const size_t 
     //Note: more testing would probably improve this selection
 
     if (cufft && !local_context().cpu) {
-        if (n <= 250000 && mkl) {
-            return fft_impl::MKL;
-        }
-
         return fft_impl::CUFFT;
     } else if (mkl) {
         return fft_impl::MKL;
@@ -163,12 +132,12 @@ inline  fft_impl select_default_fft1_many_impl(const size_t batch, const size_t 
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline fft_impl select_fft1_many_impl(const size_t batch, const size_t n) {
+inline fft_impl select_fft1_many_impl() {
     if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([](size_t batch, size_t n) { return select_default_fft1_many_impl(batch, n); }, batch, n);
+        return select_forced_fft_impl([]() { return select_default_fft1_many_impl(); });
     }
 
-    return select_default_fft1_many_impl(batch, n);
+    return select_default_fft1_many_impl();
 }
 
 /*!
@@ -179,30 +148,12 @@ inline fft_impl select_fft1_many_impl(const size_t batch, const size_t n) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline fft_impl select_default_ifft1_impl(const size_t n) {
+inline fft_impl select_default_ifft1_impl() {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
 
     if (cufft && !local_context().cpu) {
-        if (math::is_power_of_two(n)) {
-            if (n <= 1024) {
-                if (mkl) {
-                    return fft_impl::MKL;
-                } else {
-                    return fft_impl::STD;
-                }
-            } else if (n <= 262144 && mkl) {
-                return fft_impl::MKL;
-            }
-
-            return fft_impl::CUFFT;
-        }
-
-        if (n <= 250000 && mkl) {
-            return fft_impl::MKL;
-        }
-
         return fft_impl::CUFFT;
     } else if (mkl) {
         return fft_impl::MKL;
@@ -216,12 +167,12 @@ inline fft_impl select_default_ifft1_impl(const size_t n) {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline fft_impl select_ifft1_impl(const size_t n) {
+inline fft_impl select_ifft1_impl() {
     if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([](size_t n) { return select_default_ifft1_impl(n); }, n);
+        return select_forced_fft_impl([]() { return select_default_ifft1_impl(); });
     }
 
-    return select_default_ifft1_impl(n);
+    return select_default_ifft1_impl();
 }
 
 /*!
@@ -233,30 +184,12 @@ inline fft_impl select_ifft1_impl(const size_t n) {
  * \param n2 The second dimension of the operation
  * \return The implementation to use
  */
-inline fft_impl select_default_fft2_impl(const size_t n1, size_t n2) {
+inline fft_impl select_default_fft2_impl() {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
 
     if (cufft && !local_context().cpu) {
-        if (math::is_power_of_two(n1) && math::is_power_of_two(n2)) {
-            if (n1 * n2 < 150 * 150) {
-                if (mkl) {
-                    return fft_impl::MKL;
-                } else {
-                    return fft_impl::STD;
-                }
-            } else if (n1 * n2 <= 768 * 768 && mkl) {
-                return fft_impl::MKL;
-            }
-
-            return fft_impl::CUFFT;
-        }
-
-        if (n1 * n2 <= 768 * 768 && mkl) {
-            return fft_impl::MKL;
-        }
-
         return fft_impl::CUFFT;
     } else if (mkl) {
         return fft_impl::MKL;
@@ -271,12 +204,12 @@ inline fft_impl select_default_fft2_impl(const size_t n1, size_t n2) {
  * \param n2 The second dimension of the operation
  * \return The implementation to use
  */
-inline fft_impl select_fft2_impl(const size_t n1, size_t n2) {
+inline fft_impl select_fft2_impl() {
     if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([](size_t n1, size_t n2) { return select_default_fft2_impl(n1, n2); }, n1, n2);
+        return select_forced_fft_impl([]() { return select_default_fft2_impl(); });
     }
 
-    return select_default_fft2_impl(n1, n2);
+    return select_default_fft2_impl();
 }
 
 /*!
@@ -289,9 +222,7 @@ inline fft_impl select_fft2_impl(const size_t n1, size_t n2) {
  * \param n2 The second dimension of the operation
  * \return The implementation to use
  */
-inline fft_impl select_default_fft2_many_impl(const size_t batch, const size_t n1, const size_t n2) {
-    cpp_unused(batch);
-
+inline fft_impl select_default_fft2_many_impl() {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
@@ -299,10 +230,6 @@ inline fft_impl select_default_fft2_many_impl(const size_t batch, const size_t n
     //Note: more testing would probably improve this selection
 
     if (cufft && !local_context().cpu) {
-        if (n1 * n2 <= 768 * 768 && mkl) {
-            return fft_impl::MKL;
-        }
-
         return fft_impl::CUFFT;
     } else if (mkl) {
         return fft_impl::MKL;
@@ -318,14 +245,14 @@ inline fft_impl select_default_fft2_many_impl(const size_t batch, const size_t n
  * \param n2 The second dimension of the operation
  * \return The implementation to use
  */
-inline fft_impl select_fft2_many_impl(const size_t batch, const size_t n1, const size_t n2) {
+inline fft_impl select_fft2_many_impl() {
     if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([](size_t batch, size_t n1, size_t n2) {
-            return select_default_fft2_many_impl(batch, n1, n2);
-        }, batch, n1, n2);
+        return select_forced_fft_impl([]() {
+            return select_default_fft2_many_impl();
+        });
     }
 
-    return select_default_fft2_many_impl(batch, n1, n2);
+    return select_default_fft2_many_impl();
 }
 
 /*!
@@ -333,13 +260,20 @@ inline fft_impl select_fft2_many_impl(const size_t batch, const size_t n1, const
  */
 struct fft1_impl {
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_fft1_impl(etl::size(c));
+        fft_impl impl = select_fft1_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::fft1(a, c);
@@ -356,13 +290,20 @@ struct fft1_impl {
  */
 struct ifft1_impl {
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_ifft1_impl(etl::size(c));
+        fft_impl impl = select_ifft1_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::ifft1(a, c);
@@ -379,13 +320,20 @@ struct ifft1_impl {
  */
 struct ifft1_real_impl {
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_ifft1_impl(etl::size(c));
+        fft_impl impl = select_ifft1_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::ifft1_real(a, c);
@@ -402,13 +350,20 @@ struct ifft1_real_impl {
  */
 struct fft2_impl {
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
+        fft_impl impl = select_fft2_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::fft2(a, c);
@@ -425,13 +380,20 @@ struct fft2_impl {
  */
 struct ifft2_impl {
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
+        fft_impl impl = select_fft2_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::ifft2(a, c);
@@ -448,13 +410,20 @@ struct ifft2_impl {
  */
 struct ifft2_real_impl {
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
+        fft_impl impl = select_fft2_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::ifft2_real(a, c);
@@ -471,15 +440,20 @@ struct ifft2_real_impl {
  */
 struct fft1_many_impl {
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        const size_t transforms = etl::dim<0>(c);
-
-        const auto impl = select_fft1_many_impl(transforms, etl::dim<1>(c));
+        const auto impl = select_fft1_many_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::fft1_many(a, c);
@@ -496,13 +470,20 @@ struct fft1_many_impl {
  */
 struct fft2_many_impl {
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        const auto impl = select_fft2_many_impl(etl::dim<0>(c), etl::dim<1>(c), etl::dim<2>(c));
+        const auto impl = select_fft2_many_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::fft2_many(a, c);
@@ -519,13 +500,20 @@ struct fft2_many_impl {
  */
 struct ifft1_many_impl {
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_fft1_many_impl(etl::dim<0>(c), etl::dim<1>(c));
+        fft_impl impl = select_fft1_many_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::ifft1_many(a, c);
@@ -542,13 +530,20 @@ struct ifft1_many_impl {
  */
 struct ifft2_many_impl {
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
      * \brief Apply the functor
      * \param a The input sub expression
      * \param c The output sub expression
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_fft2_many_impl(etl::dim<0>(c), etl::dim<1>(c), etl::dim<2>(c));
+        fft_impl impl = select_fft2_many_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::ifft2_many(a, c);

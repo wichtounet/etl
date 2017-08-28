@@ -77,6 +77,13 @@ etl::pool_impl select_pool_impl() {
  */
 struct max_pool_2d {
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = cudnn_enabled;
+
+    /*!
      * \brief Pool x into y
      *
      * \param x The expression to pol
@@ -137,6 +144,13 @@ struct max_pool_2d {
  * \brief Functor for 2D Average Pooling
  */
 struct avg_pool_2d {
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = cudnn_enabled;
+
     /*!
      * \brief Pool x into y
      *
@@ -199,6 +213,13 @@ struct avg_pool_2d {
  */
 struct max_pool_3d {
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = cudnn_enabled;
+
+    /*!
      * \brief Pool x into y
      *
      * \param x The expression to pol
@@ -259,6 +280,13 @@ struct max_pool_3d {
  * \brief Functor for 3D Average Pooling
  */
 struct avg_pool_3d {
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template<typename A>
+    static constexpr bool gpu_computable = cudnn_enabled;
+
     /*!
      * \brief Pool x into y
      *

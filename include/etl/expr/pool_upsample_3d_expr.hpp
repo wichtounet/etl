@@ -30,6 +30,12 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
 
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    static constexpr bool gpu_computable = cudnn_enabled && all_floating<A, B> && all_homogeneous<A, B>;
+
     friend struct etl_traits<pool_upsample_3d_expr>;
 
     /*!

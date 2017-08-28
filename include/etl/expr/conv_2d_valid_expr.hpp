@@ -36,6 +36,12 @@ struct conv_2d_valid_expr : base_temporary_expr_bin<conv_2d_valid_expr<A, B, S1,
     static constexpr auto storage_order = left_traits::storage_order; ///< The sub storage order
 
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    static constexpr bool gpu_computable = cudnn_enabled && impl::cudnn::conv_possible_<A, B>;
+
+    /*!
      * \brief Construct a new expression
      * \param a The sub expression
      */

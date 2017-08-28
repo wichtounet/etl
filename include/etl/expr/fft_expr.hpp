@@ -25,6 +25,12 @@ struct fft_expr : base_temporary_expr_un<fft_expr<A, T, Impl>, A> {
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
 
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    static constexpr bool gpu_computable = Impl::template gpu_computable<A>;
+
+    /*!
      * \brief Construct a new expression
      * \param a The sub expression
      */

@@ -30,6 +30,12 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
 
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    static constexpr bool gpu_computable = cudnn_enabled && all_floating<A, B> && all_homogeneous<A, B>;
+
+    /*!
      * \brief Construct a new expression
      * \param a The sub expression
      */
@@ -106,7 +112,7 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
-        auto impl = select_impl<L>(a.is_gpu_up_to_date());
+        auto impl = select_impl<L>();
 
         if(impl == bias_add_impl::VEC){
             impl::vec::bias_add_4d(make_temporary(a), make_temporary(b), lhs);
@@ -186,11 +192,11 @@ private:
      * \return The implementation to use
      */
     template <typename C>
-    static constexpr etl::bias_add_impl select_default_impl(bool gpu) {
+    static constexpr etl::bias_add_impl select_default_impl() {
         constexpr bool vec_possible = vec_enabled && vectorize_impl && all_vectorizable<vector_mode, A, B, C> && all_homogeneous<A, B, C>;
         constexpr bool cudnn_possible = cudnn_enabled && all_floating<A, B, C> && all_homogeneous<A, B, C>;
 
-        if (cudnn_possible && gpu && !local_context().cpu) {
+        if (cudnn_possible && !local_context().cpu) {
             return etl::bias_add_impl::CUDNN;
         }
 
@@ -207,8 +213,8 @@ private:
      * \return The implementation to use
      */
     template <typename C>
-    static etl::bias_add_impl select_impl(bool gpu) {
-        auto def = select_default_impl<C>(gpu);
+    static etl::bias_add_impl select_impl() {
+        auto def = select_default_impl<C>();
 
         if (local_context().bias_add_selector.forced) {
             auto forced = local_context().bias_add_selector.impl;

@@ -40,6 +40,20 @@ constexpr bool conv_possible =
             &&  all_row_major<I, K, C>
             &&  all_dma<I, K, C>;
 
+/*!
+ * \brief Traits indicating if Convolution with CUDNN is
+ * possible for the given configuration.
+ *
+ * \param I The type of the input matrix
+ * \param K The type of the kernel matrix
+ */
+template <typename I, typename K>
+constexpr bool conv_possible_ =
+                cudnn_enabled
+            &&  all_homogeneous<I, K>
+            &&  all_row_major<I, K>
+            &&  all_dma<I, K>;
+
 #ifdef ETL_CUDNN_MODE
 
 /*!

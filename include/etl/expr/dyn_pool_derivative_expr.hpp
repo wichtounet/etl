@@ -27,6 +27,12 @@ struct dyn_pool_derivative_expr : base_temporary_expr_bin<dyn_pool_derivative_ex
 
     static constexpr auto storage_order = left_traits::storage_order; ///< The sub storage order
 
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    static constexpr bool gpu_computable = false;
+
     size_t c1; ///< The pooling ratio for the first dimension
     size_t c2; ///< The pooling ratio for the second dimension
     size_t c3; ///< The pooling ratio for the third dimension

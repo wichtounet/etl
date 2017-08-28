@@ -28,6 +28,12 @@ struct pool_derivative_expr : base_temporary_expr_bin<pool_derivative_expr<A, B,
     static constexpr auto storage_order = left_traits::storage_order; ///< The sub storage order
 
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    static constexpr bool gpu_computable = false;
+
+    /*!
      * \brief Construct a new expression
      * \param a The sub expression
      */

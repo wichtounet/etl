@@ -33,6 +33,12 @@ struct dyn_conv_4d_valid_filter_expr : base_temporary_expr_bin<dyn_conv_4d_valid
     const size_t p2; ///< The padding of the second dimension
 
     /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    static constexpr bool gpu_computable = cudnn_enabled && impl::cudnn::conv_possible_<A, B> && is_2d<A>;
+
+    /*!
      * \brief Construct a new expression
      * \param a The sub expression
      */

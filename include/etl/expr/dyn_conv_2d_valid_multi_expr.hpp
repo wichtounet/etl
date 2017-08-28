@@ -31,6 +31,12 @@ struct dyn_conv_2d_valid_multi_expr : base_temporary_expr_bin<dyn_conv_2d_valid_
 
     static constexpr auto storage_order = left_traits::storage_order; ///< The sub storage order
 
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    static constexpr bool gpu_computable = cudnn_enabled && impl::cudnn::conv_possible_<A, B>;
+
     const size_t s1; ///< The stride of the first dimension
     const size_t s2; ///< The stride of the second dimension
     const size_t p1; ///< The padding of the first dimension

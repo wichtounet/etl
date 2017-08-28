@@ -26,6 +26,12 @@ struct dyn_upsample_3d_expr : base_temporary_expr_un<dyn_upsample_3d_expr<A>, A>
 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
 
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    static constexpr bool gpu_computable = false;
+
     const size_t c1; ///< The pooling ratio for the first dimension
     const size_t c2; ///< The pooling ratio for the second dimension
     const size_t c3; ///< The pooling ratio for the third dimension
