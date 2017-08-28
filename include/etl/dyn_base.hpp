@@ -150,7 +150,10 @@ protected:
      */
     template <typename M = value_type>
     static M* allocate(size_t n) {
+        inc_counter("cpu:allocate");
+
         M* memory = aligned_allocator<alignment>::template allocate<M>(n);
+
         cpp_assert(memory, "Impossible to allocate memory for dyn_matrix");
         cpp_assert(reinterpret_cast<uintptr_t>(memory) % alignment == 0, "Failed to align memory of matrix");
 
