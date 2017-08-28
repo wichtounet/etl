@@ -11,6 +11,8 @@ namespace etl {
 
 namespace impl {
 
+namespace standard {
+
 /*!
  * \brief Functor for 2D Upsampling
  */
@@ -526,6 +528,8 @@ struct upsample_3d {
         }
     }
 };
+
+} //end of namespace standard
 
 } //end of namespace impl
 

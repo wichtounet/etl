@@ -17,10 +17,10 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename Impl>
-struct dyn_upsample_3d_expr : base_temporary_expr_un<dyn_upsample_3d_expr<A, Impl>, A> {
+template <typename A>
+struct dyn_upsample_3d_expr : base_temporary_expr_un<dyn_upsample_3d_expr<A>, A> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
-    using this_type  = dyn_upsample_3d_expr<A, Impl>;        ///< The type of this expression
+    using this_type  = dyn_upsample_3d_expr<A>;              ///< The type of this expression
     using base_type  = base_temporary_expr_un<this_type, A>; ///< The base type
     using sub_traits = decay_traits<A>;                      ///< The traits of the sub type
 
@@ -58,7 +58,7 @@ struct dyn_upsample_3d_expr : base_temporary_expr_un<dyn_upsample_3d_expr<A, Imp
 
         standard_evaluator::pre_assign_rhs(a);
 
-        Impl::template apply<>(
+        impl::standard::upsample_3d::template apply<>(
             make_temporary(a),
             lhs,
             c1, c2, c3);
@@ -124,12 +124,12 @@ struct dyn_upsample_3d_expr : base_temporary_expr_un<dyn_upsample_3d_expr<A, Imp
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, typename Impl>
-struct etl_traits<etl::dyn_upsample_3d_expr<A, Impl>> {
-    using expr_t     = etl::dyn_upsample_3d_expr<A, Impl>; ///< The expression type
-    using sub_expr_t = std::decay_t<A>;                    ///< The sub expression type
-    using sub_traits = etl_traits<sub_expr_t>;             ///< The sub traits
-    using value_type = value_t<A>;                         ///< The value type of the expression
+template <typename A>
+struct etl_traits<etl::dyn_upsample_3d_expr<A>> {
+    using expr_t     = etl::dyn_upsample_3d_expr<A>; ///< The expression type
+    using sub_expr_t = std::decay_t<A>;              ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;       ///< The sub traits
+    using value_type = value_t<A>;                   ///< The value type of the expression
 
     static constexpr size_t D = sub_traits::dimensions(); ///< The number of dimensions of this expressions
 
@@ -206,8 +206,8 @@ struct etl_traits<etl::dyn_upsample_3d_expr<A, Impl>> {
  * \return A expression representing the Upsampling of the given expression
  */
 template <typename E>
-dyn_upsample_3d_expr<detail::build_type<E>, impl::upsample_3d> upsample_3d(E&& value, size_t c1, size_t c2, size_t c3) {
-    return dyn_upsample_3d_expr<detail::build_type<E>, impl::upsample_3d>{value, c1, c2, c3};
+dyn_upsample_3d_expr<detail::build_type<E>> upsample_3d(E&& value, size_t c1, size_t c2, size_t c3) {
+    return dyn_upsample_3d_expr<detail::build_type<E>>{value, c1, c2, c3};
 }
 
 } //end of namespace etl
