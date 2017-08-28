@@ -115,6 +115,7 @@
 #include "etl/sparse.hpp"
 #include "etl/custom_dyn.hpp"
 #include "etl/custom_fast.hpp"
+#include "etl/gpu_dyn.hpp"
 
 // The adapters
 #include "etl/adapters/symmetric.hpp"

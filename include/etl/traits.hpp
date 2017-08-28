@@ -51,6 +51,19 @@ template <typename V1, order V2, size_t V3>
 struct is_dyn_matrix_impl<dyn_matrix_impl<V1, V2, V3>> : std::true_type {};
 
 /*!
+ * \brief Special traits helper to detect if type is a gpu_dyn_matrix
+ * \tparam T The type to test
+ */
+template <typename T>
+struct is_gpu_dyn_matrix_impl : std::false_type {};
+
+/*!
+ * \copydoc is_gpu_dyn_matrix_impl
+ */
+template <typename V1, order V2, size_t V3>
+struct is_gpu_dyn_matrix_impl<gpu_dyn_matrix_impl<V1, V2, V3>> : std::true_type {};
+
+/*!
  * \brief Special traits helper to detect if type is a custom_dyn_matrix
  * \tparam T The type to test
  */
@@ -190,6 +203,13 @@ constexpr bool is_custom_fast_matrix = traits_detail::is_custom_fast_matrix_impl
  */
 template <typename T>
 constexpr bool is_dyn_matrix = traits_detail::is_dyn_matrix_impl<std::decay_t<T>>::value;
+
+/*!
+ * \brief Traits indicating if the given ETL type is a GPU dyn matrix
+ * \tparam T The type to test
+ */
+template <typename T>
+constexpr bool is_gpu_dyn_matrix = traits_detail::is_gpu_dyn_matrix_impl<std::decay_t<T>>::value;
 
 /*!
  * \brief Traits indicating if the given ETL type is a custom dyn matrix
@@ -403,7 +423,13 @@ constexpr bool is_etl_value = decay_traits<T>::is_value;
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_etl_value_class = is_fast_matrix<T> || is_custom_fast_matrix<T> || is_dyn_matrix<T> || is_custom_dyn_matrix<T> || is_sparse_matrix<T>;
+constexpr bool is_etl_value_class =
+            is_fast_matrix<T>
+        ||  is_custom_fast_matrix<T>
+        ||  is_dyn_matrix<T>
+        ||  is_custom_dyn_matrix<T>
+        ||  is_sparse_matrix<T>
+        ||  is_gpu_dyn_matrix<T>;
 
 /*!
  * \brief Traits indicating if the given ETL type can be left hand side type

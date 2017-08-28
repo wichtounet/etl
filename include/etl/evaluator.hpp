@@ -105,7 +105,7 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R>
+    template <typename E, typename R, cpp_enable_if(!is_gpu_dyn_matrix<R>)>
     void fast_assign_impl_full(E& expr, R& result) {
 //TODO(CPP17) if constexpr
 #ifdef ETL_CUDA
@@ -151,6 +151,36 @@ namespace standard_evaluator {
      * \brief Assign the result of the expression to the result.
      *
      * This is done using direct memory copy between the two
+     * expressions, handling possible GPU memory.
+     *
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
+    template <typename E, typename R, cpp_enable_if(is_gpu_dyn_matrix<R>)>
+    void fast_assign_impl_full(E& expr, R& result) {
+//TODO(CPP17) if constexpr
+#ifdef ETL_CUDA
+        cpp_assert(expr.is_gpu_up_to_date(), "expr must be in valid state");
+
+        result.ensure_gpu_allocated();
+        result.gpu_copy_from(expr.gpu_memory());
+
+        // Invalidation must be done after validation to preserve
+        // valid CPU/GPU state
+
+        result.validate_gpu();
+        result.invalidate_cpu();
+
+        cpp_assert(result.is_gpu_up_to_date(), "fast_assign must preserve GPU status");
+#else
+        cpp_unreachable("gpu_dyn_matrix should never be used without GPU support");
+#endif
+    }
+
+    /*!
+     * \brief Assign the result of the expression to the result.
+     *
+     * This is done using direct memory copy between the two
      * expressions.
      *
      * \param expr The right hand side expression
@@ -158,6 +188,8 @@ namespace standard_evaluator {
      */
     template <typename E, typename R>
     void fast_assign_impl(E& expr, R& result) {
+        static_assert(!is_gpu_dyn_matrix<R>, "gpu_dyn_matrix should not be used here");
+
         expr.ensure_cpu_up_to_date();
 
         direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
