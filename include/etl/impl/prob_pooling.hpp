@@ -11,6 +11,8 @@ namespace etl {
 
 namespace impl {
 
+namespace standard {
+
 /*!
  * \brief Kernel for probabilistic max pooling (for hidden units)
  * for a kernel of 2x2
@@ -708,6 +710,8 @@ struct dyn_pmp_p_impl {
         }
     }
 };
+
+} //end of namespace standard
 
 } //end of namespace impl
 

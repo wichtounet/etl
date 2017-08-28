@@ -252,9 +252,9 @@ pool_2d_expr<detail::build_type<E>, C1, C2, S1, S2, P1, P2, impl::avg_pool_2d> a
  * \return A expression representing the Probabilistic Max Pooling of pooling units
  */
 template <size_t C1, size_t C2, typename E>
-pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::pmp_p_impl> p_max_pool_p(E&& value) {
+pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::standard::pmp_p_impl> p_max_pool_p(E&& value) {
     validate_pmax_pooling<C1, C2>(value);
-    return pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::pmp_p_impl>{value};
+    return pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::standard::pmp_p_impl>{value};
 }
 
 } //end of namespace etl
