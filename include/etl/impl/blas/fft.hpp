@@ -1196,7 +1196,7 @@ void ifft2_many(A&& a, C&& c) {
     size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
     auto batch_fun = [&](const size_t first, const size_t last) {
-        mkl_detail::ifft2_many_kernel(safe_cast(a.memory_start() + first * n1 * n1), last - first, n1, n2, safe_cast(c.memory_start() + first * n1 * n1));
+        mkl_detail::ifft2_many_kernel(safe_cast(a.memory_start() + first * n1 * n2), last - first, n1, n2, safe_cast(c.memory_start() + first * n1 * n2));
     };
 
     if /* constexpr */ (is_blas_parallel) {
