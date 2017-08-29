@@ -526,8 +526,8 @@ TEMPLATE_TEST_CASE_2("fast_matrix/log_1", "fast_matrix::log", Z, float, double) 
     d = log(a);
 
     REQUIRE_DIRECT(std::isnan(d[0]));
-    REQUIRE_EQUALS(d[1], std::log(Z(2.0)));
-    REQUIRE_EQUALS(d[2], std::log(Z(5.0)));
+    REQUIRE_EQUALS_APPROX(d[1], std::log(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], std::log(Z(5.0)));
 }
 
 TEMPLATE_TEST_CASE_2("fast_matrix/log_2", "fast_matrix::log", Z, float, double) {
@@ -537,8 +537,8 @@ TEMPLATE_TEST_CASE_2("fast_matrix/log_2", "fast_matrix::log", Z, float, double) 
     d = log(a);
 
     REQUIRE_DIRECT(std::isnan(d[0]));
-    REQUIRE_EQUALS(d[1], std::log(Z(2.0)));
-    REQUIRE_EQUALS(d[2], std::log(Z(5.0)));
+    REQUIRE_EQUALS_APPROX(d[1], std::log(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], std::log(Z(5.0)));
 }
 
 TEMPLATE_TEST_CASE_2("fast_matrix/sqrt_1", "fast_matrix::sqrt", Z, float, double) {

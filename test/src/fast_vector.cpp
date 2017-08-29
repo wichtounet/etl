@@ -385,8 +385,8 @@ TEMPLATE_TEST_CASE_2("fast_vector/log", "fast_vector::abs", Z, float, double) {
     d = log(a);
 
     REQUIRE_DIRECT(std::isnan(d[0]));
-    REQUIRE_EQUALS(d[1], std::log(Z(2.0)));
-    REQUIRE_EQUALS(d[2], std::log(Z(5.0)));
+    REQUIRE_EQUALS_APPROX(d[1], std::log(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], std::log(Z(5.0)));
 }
 
 TEMPLATE_TEST_CASE_2("fast_vector/abs", "fast_vector::abs", Z, float, double) {

@@ -377,8 +377,8 @@ TEMPLATE_TEST_CASE_2("dyn_vector/log", "dyn_vector::abs", Z, double, float) {
     d = log(a);
 
     REQUIRE_DIRECT(std::isnan(d[0]));
-    REQUIRE_EQUALS(d[1], std::log(Z(2.0)));
-    REQUIRE_EQUALS(d[2], std::log(Z(5.0)));
+    REQUIRE_EQUALS_APPROX(d[1], std::log(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], std::log(Z(5.0)));
 }
 
 TEMPLATE_TEST_CASE_2("dyn_vector/abs", "dyn_vector::abs", Z, double, float) {
