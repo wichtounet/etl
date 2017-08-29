@@ -467,8 +467,6 @@ namespace standard_evaluator {
     void gpu_assign_add_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
 
-        pre_assign_rhs(expr);
-
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
@@ -694,8 +692,6 @@ namespace standard_evaluator {
     template <typename E, typename R>
     void gpu_compound_sub_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
-
-        pre_assign_rhs(expr);
 
         result.ensure_gpu_up_to_date();
 
@@ -923,8 +919,6 @@ namespace standard_evaluator {
     void gpu_compound_mul_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
 
-        pre_assign_rhs(expr);
-
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
@@ -1148,8 +1142,6 @@ namespace standard_evaluator {
     template <typename E, typename R>
     void gpu_compound_div_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
-
-        pre_assign_rhs(expr);
 
         result.ensure_gpu_up_to_date();
 
