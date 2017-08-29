@@ -464,7 +464,7 @@ namespace standard_evaluator {
      * \param result The left hand side
      */
     template <typename E, typename R>
-    void gpu_assign_add_impl(E& expr, R& result) {
+    void gpu_compound_add_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
 
         result.ensure_gpu_up_to_date();
@@ -496,7 +496,7 @@ namespace standard_evaluator {
      * \param result The left hand side
      */
     template <typename E, typename R>
-    void gpu_assign_add_scalar_impl(E& expr, R& result) {
+    void gpu_compound_add_scalar_impl(E& expr, R& result) {
         inc_counter("gpu:assign");
 
         result.ensure_gpu_up_to_date();
@@ -578,7 +578,7 @@ namespace standard_evaluator {
         if (local_context().cpu) {
             add_evaluate_no_gpu(expr, result);
         } else {
-            gpu_assign_add_impl(expr, result);
+            gpu_compound_add_impl(expr, result);
         }
     }
 
@@ -594,7 +594,7 @@ namespace standard_evaluator {
         if (local_context().cpu) {
             add_evaluate_no_gpu(expr, result);
         } else {
-            gpu_assign_add_scalar_impl(expr, result);
+            gpu_compound_add_scalar_impl(expr, result);
         }
     }
 
