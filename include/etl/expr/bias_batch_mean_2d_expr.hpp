@@ -83,11 +83,6 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
     void assign_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
 
-        if(this->is_evaluated()){
-            lhs = this->result();
-            return;
-        }
-
         auto& a = this->a();
 
         const auto N = etl::dim<0>(a);

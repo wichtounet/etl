@@ -53,11 +53,6 @@ struct prob_pool_2d_expr : base_temporary_expr_un<prob_pool_2d_expr<A, C1, C2>, 
         static_assert(all_etl_expr<A, C>, "max_pool_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
-        if(this->is_evaluated()){
-            c = this->result();
-            return;
-        }
-
         auto& a = this->a();
 
         impl::standard::pmp_h_impl::template apply<C1, C2, C1, C2, 0, 0>(

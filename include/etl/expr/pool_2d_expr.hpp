@@ -53,11 +53,6 @@ struct pool_2d_expr : base_temporary_expr_un<pool_2d_expr<A, C1, C2, S1, S2, P1,
         static_assert(all_etl_expr<A, C>, "max_pool_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
-        if(this->is_evaluated()){
-            c = this->result();
-            return;
-        }
-
         auto& a = this->a();
 
         Impl::template apply<C1, C2, S1, S2, P1, P2>(

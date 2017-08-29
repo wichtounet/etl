@@ -95,11 +95,6 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
     void assign_to(L&& lhs)  const {
         static_assert(all_etl_expr<A, L>, "bias_add_2d only supported for ETL expressions");
 
-        if(this->is_evaluated()){
-            lhs = this->result();
-            return;
-        }
-
         auto& a = this->a();
         auto& b = this->b();
 

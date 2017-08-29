@@ -149,11 +149,6 @@ struct conv_2d_same_multi_expr : base_temporary_expr_bin<conv_2d_same_multi_expr
     void assign_to(C&& conv)  const {
         static_assert(all_etl_expr<A, B, C>, "conv2_same_multi only supported for ETL expressions");
 
-        if(this->is_evaluated()){
-            conv = this->result();
-            return;
-        }
-
         auto& input = this->a();
         auto& kernel = this->b();
 
