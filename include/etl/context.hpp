@@ -49,6 +49,27 @@ inline context& local_context() {
     return local_context;
 }
 
+/*!
+ * \brief Indicates if some implementation is forced in the context.
+ * \return true if something is forced in the context, false
+ * otherwise
+ */
+inline bool is_something_forced(){
+    auto& c = local_context();
+    return c.scalar_selector.forced
+        || c.sum_selector.forced
+        || c.pool_selector.forced
+        || c.transpose_selector.forced
+        || c.dot_selector.forced
+        || c.conv_selector.forced
+        || c.conv_multi_selector.forced
+        || c.conv4_selector.forced
+        || c.gemm_selector.forced
+        || c.outer_selector.forced
+        || c.bias_add_selector.forced
+        || c.fft_selector.forced;
+}
+
 namespace detail {
 
 /*!

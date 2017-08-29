@@ -353,7 +353,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_iff(detail::gpu_assign<E, R>)>
     void assign_evaluate_impl(E&& expr, R&& result) {
-        if (local_context().cpu) {
+        if (local_context().cpu || is_something_forced()) {
             assign_evaluate_impl_no_gpu(expr, result);
         } else {
             gpu_assign_impl(expr, result);
@@ -575,7 +575,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
     void add_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu) {
+        if (local_context().cpu || is_something_forced()) {
             add_evaluate_no_gpu(expr, result);
         } else {
             gpu_compound_add_impl(expr, result);
@@ -591,7 +591,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
     void add_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu) {
+        if (local_context().cpu || is_something_forced()) {
             add_evaluate_no_gpu(expr, result);
         } else {
             gpu_compound_add_scalar_impl(expr, result);
@@ -801,7 +801,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
     void sub_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu) {
+        if (local_context().cpu || is_something_forced()) {
             sub_evaluate_no_gpu(expr, result);
         } else {
             gpu_compound_sub_impl(expr, result);
@@ -817,7 +817,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
     void sub_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu) {
+        if (local_context().cpu || is_something_forced()) {
             sub_evaluate_no_gpu(expr, result);
         } else {
             gpu_compound_sub_scalar_impl(expr, result);
@@ -1025,7 +1025,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
     void mul_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu) {
+        if (local_context().cpu || is_something_forced()) {
             mul_evaluate_no_gpu(expr, result);
         } else {
             gpu_compound_mul_impl(expr, result);
@@ -1041,7 +1041,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
     void mul_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu) {
+        if (local_context().cpu || is_something_forced()) {
             mul_evaluate_no_gpu(expr, result);
         } else {
             gpu_compound_mul_scalar_impl(expr, result);
@@ -1250,7 +1250,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_iff(detail::gpu_compound_div<E, R> && !is_scalar<E>)>
     void div_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu) {
+        if (local_context().cpu || is_something_forced()) {
             div_evaluate_no_gpu(expr, result);
         } else {
             gpu_compound_div_impl(expr, result);
@@ -1266,7 +1266,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_iff(detail::gpu_compound_div<E, R> && is_scalar<E>)>
     void div_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu) {
+        if (local_context().cpu || is_something_forced()) {
             div_evaluate_no_gpu(expr, result);
         } else {
             gpu_compound_div_scalar_impl(expr, result);
