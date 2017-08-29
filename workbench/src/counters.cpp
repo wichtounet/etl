@@ -228,8 +228,42 @@ void sub() {
             for (size_t k = 0; k < 16; ++k) {
                 C(k) = A(k) * B(k) * B(k);
                 D(k) += C(k);
-                D(k) *= 1.1;
+                D(k) *= 1.1f;
                 fake += etl::mean(D(k));
+            }
+        }
+    }
+
+    etl::dump_counters();
+}
+
+void sub_ro() {
+    std::cout << "Sub Read-Only" << std::endl;
+
+#ifdef ETL_CUDA
+    etl::gpu_memory_allocator::clear();
+#endif
+
+    etl::reset_counters();
+    {
+        etl::dyn_matrix<float, 3> A(8, 1024, 1024);
+        etl::dyn_matrix<float, 3> B(8, 1024, 1024);
+        etl::dyn_matrix<float, 3> C(8, 1024, 1024);
+        etl::dyn_matrix<float, 3> D(8, 1024, 1024);
+        etl::dyn_matrix<float, 2> E(1024, 1024);
+
+        A = etl::normal_generator<float>(1.0, 0.0);
+        B = etl::normal_generator<float>(1.0, 0.0);
+        C = etl::normal_generator<float>(1.0, 0.0);
+        D = etl::normal_generator<float>(1.0, 0.0);
+        E = etl::normal_generator<float>(1.0, 0.0);
+
+        for (size_t i = 0; i < 10; ++i) {
+            for (size_t k = 0; k < 8; ++k) {
+                E -= A(k) * B(k) * B(k);
+                E += C(k);
+                E *= 1.1f;
+                fake += etl::mean(E);
             }
         }
     }
@@ -354,6 +388,7 @@ int main() {
     direct();
     ml();
     sub();
+    sub_ro();
 
     auto end_time = timer_clock::now();
     auto duration = std::chrono::duration_cast<milliseconds>(end_time - start_time);
