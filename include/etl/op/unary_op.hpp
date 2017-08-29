@@ -285,7 +285,7 @@ struct sqrt_unary_op {
      */
     template <typename E>
     static auto gpu_compute(const E& expr) noexcept {
-        decltype(auto) t1 = expr.gpu_compute();
+        decltype(auto) t1 = smart_gpu_compute(expr);
 
         auto t2 = force_temporary_gpu(t1);
 
@@ -595,7 +595,7 @@ struct sigmoid_unary_op {
      */
     template <typename E>
     static auto gpu_compute(const E& expr) noexcept {
-        decltype(auto) t1 = expr.gpu_compute();
+        decltype(auto) t1 = smart_gpu_compute(expr);
 
         auto t2 = force_temporary_gpu(t1);
 
@@ -1295,7 +1295,7 @@ struct relu_unary_op {
      */
     template <typename E>
     static auto gpu_compute(const E& expr) noexcept {
-        decltype(auto) t1 = expr.gpu_compute();
+        decltype(auto) t1 = smart_gpu_compute(expr);
 
         auto t2 = force_temporary_gpu(t1);
 

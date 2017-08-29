@@ -217,7 +217,7 @@ decltype(auto) make_temporary(E&& expr) {
 template <typename E>
 decltype(auto) force_temporary_gpu(E&& expr) {
     cpp_assert(is_dma<E>, "force_temporary_gpu should only be used on DMA expressions");
-    cpp_assert(expr.is_gpu_up_to_date(), "force_temporary_gpu() should only be used on GPU-computed expressions");
+    cpp_assert(is_temporary_expr<E> || expr.is_gpu_up_to_date(), "force_temporary_gpu() should only be used on GPU-computed expressions");
 
     gpu_dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()> mat;
     mat = expr;

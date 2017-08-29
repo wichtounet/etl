@@ -99,7 +99,7 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
     void assign_to(L&& lhs)  const {
         static_assert(all_etl_expr<A, L>, "bias_add only supported for ETL expressions");
 
-        if(this->is_evaluated()){
+        if (this->is_evaluated()) {
             lhs = this->result();
             return;
         }
@@ -109,17 +109,14 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
 
         check(a, b, lhs);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
-
         auto impl = select_impl<L>();
 
         if(impl == bias_add_impl::VEC){
-            impl::vec::bias_add_4d(make_temporary(a), make_temporary(b), lhs);
+            impl::vec::bias_add_4d(smart_forward(a), smart_forward(b), lhs);
         } else if(impl == bias_add_impl::STD){
-            impl::standard::bias_add_4d(a, make_temporary(b), lhs);
+            impl::standard::bias_add_4d(smart_forward(a), smart_forward(b), lhs);
         } else if(impl == bias_add_impl::CUDNN){
-            impl::cudnn::bias_add_4d(make_temporary(a), make_temporary(b), lhs);
+            impl::cudnn::bias_add_4d(smart_forward_gpu(a), smart_forward_gpu(b), lhs);
         } else {
             cpp_unreachable("Invalid bias_add selection");
         }

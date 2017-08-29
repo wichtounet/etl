@@ -183,27 +183,47 @@ struct transpose {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        // Detect inplace (some implementations do not support inplace if not told explicitely)
-        if(a.memory_start() == c.memory_start()){
-            if(is_square(c)){
-                inplace_square_transpose::apply(c);
-            } else {
-                inplace_rectangular_transpose::apply(c);
-            }
-
-            return;
-        }
 
         const auto impl = select_transpose_impl<A, C>(select_default_transpose_impl<A, C>());
 
-        if (impl == transpose_impl::MKL) {
-            etl::impl::blas::transpose(a, c);
-        } else if (impl == transpose_impl::CUBLAS) {
-            etl::impl::cublas::transpose(a, c);
-        } else if(impl == transpose_impl::STD){
-            etl::impl::standard::transpose(a, c);
+        if (impl == transpose_impl::CUBLAS) {
+            c.ensure_gpu_allocated();
+
+            decltype(auto) aa = smart_forward_gpu(a);
+
+            // Detect inplace (some implementations do not support inplace if not told explicitely)
+            if(aa.gpu_memory() && aa.gpu_memory() == c.gpu_memory()){
+                if(is_square(c)){
+                    inplace_square_transpose::apply(c);
+                } else {
+                    inplace_rectangular_transpose::apply(c);
+                }
+
+                return;
+            }
+
+            etl::impl::cublas::transpose(aa, c);
         } else {
-            cpp_unreachable("Invalid transpose_impl selection");
+            decltype(auto) aa = smart_forward(a);
+
+            // Detect inplace (some implementations do not support inplace if not told explicitely)
+            if(aa.memory_start() == c.memory_start()){
+                if(is_square(c)){
+                    inplace_square_transpose::apply(c);
+                } else {
+                    inplace_rectangular_transpose::apply(c);
+                }
+
+                return;
+            }
+
+            if (impl == transpose_impl::MKL) {
+                etl::impl::blas::transpose(aa, c);
+            } else if (impl == transpose_impl::STD) {
+                etl::impl::standard::transpose(aa, c);
+            } else {
+                cpp_unreachable("Invalid transpose_impl selection");
+            }
         }
     }
 };

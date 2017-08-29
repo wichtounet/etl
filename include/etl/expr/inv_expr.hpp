@@ -59,10 +59,8 @@ struct inv_expr : base_temporary_expr_un<inv_expr<A>, A> {
 
         auto& a = this->a();
 
-        standard_evaluator::pre_assign_rhs(a);
-
         detail::inv_impl::apply(
-            make_temporary(a),
+            smart_forward(a),
             c);
     }
 

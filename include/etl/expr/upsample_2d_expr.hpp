@@ -59,10 +59,8 @@ struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2>, A>
 
         auto& a = this->a();
 
-        standard_evaluator::pre_assign_rhs(a);
-
         impl::standard::upsample_2d::template apply<C1, C2>(
-            make_temporary(a),
+            smart_forward(a),
             c);
     }
 

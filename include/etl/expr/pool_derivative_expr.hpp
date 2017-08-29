@@ -59,10 +59,7 @@ struct pool_derivative_expr : base_temporary_expr_bin<pool_derivative_expr<A, B,
         auto& a = this->a();
         auto& b = this->b();
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
-
-        Impl::template apply<C1, C2, C3>(a, b, c);
+        Impl::template apply<C1, C2, C3>(smart_forward(a), smart_forward(b), c);
     }
 
     /*!

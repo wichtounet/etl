@@ -59,10 +59,8 @@ struct dyn_prob_pool_2d_expr  : base_temporary_expr_un<dyn_prob_pool_2d_expr <A>
 
         auto& a = this->a();
 
-        standard_evaluator::pre_assign_rhs(a);
-
         impl::standard::dyn_pmp_h_impl::template apply<>(
-            make_temporary(a),
+            smart_forward(a),
             lhs,
             c1, c2, c1, c2, 0, 0);
     }

@@ -169,27 +169,16 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      */
     template <typename AA, typename BB, typename C, cpp_enable_iff(is_transpose_expr<BB>)>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
-        // The vector is always assigned in the same way
-        standard_evaluator::pre_assign_rhs(a);
-
         auto impl = select_gevm_impl<C>(etl::dim<0>(b), etl::dim<1>(b));
 
         if (impl == gemm_impl::STD) {
-            standard_evaluator::pre_assign_rhs(b);
-
-            etl::impl::standard::vm_mul(make_temporary(a), make_temporary(b), c);
+            etl::impl::standard::vm_mul(smart_forward(a), smart_forward(b), c);
         } else if (impl == gemm_impl::BLAS) {
-            standard_evaluator::pre_assign_rhs(b.a());
-
-            etl::impl::blas::gevm_t(make_temporary(a), make_temporary(b.a()), c);
+            etl::impl::blas::gevm_t(smart_forward(a), smart_forward(b.a()), c);
         } else if (impl == gemm_impl::VEC) {
-            standard_evaluator::pre_assign_rhs(b.a());
-
-            etl::impl::vec::gevm_t(make_temporary(a), make_temporary(b.a()), c);
+            etl::impl::vec::gevm_t(smart_forward(a), smart_forward(b.a()), c);
         } else if (impl == gemm_impl::CUBLAS) {
-            standard_evaluator::pre_assign_rhs(b.a());
-
-            etl::impl::cublas::gevm_t(make_temporary(a), make_temporary(b.a()), c);
+            etl::impl::cublas::gevm_t(smart_forward_gpu(a), smart_forward_gpu(b.a()), c);
         } else {
             cpp_unreachable("Invalid selection for gevm");
         }
@@ -203,19 +192,16 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      */
     template <typename AA, typename BB, typename C, cpp_enable_iff(!is_transpose_expr<BB>)>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
-
         auto impl = select_gevm_impl<C>(etl::dim<0>(b), etl::dim<1>(b));
 
         if (impl == gemm_impl::STD) {
-            etl::impl::standard::vm_mul(make_temporary(a), make_temporary(b), c);
+            etl::impl::standard::vm_mul(smart_forward(a), smart_forward(b), c);
         } else if (impl == gemm_impl::BLAS) {
-            etl::impl::blas::gevm(make_temporary(a), make_temporary(b), c);
+            etl::impl::blas::gevm(smart_forward(a), smart_forward(b), c);
         } else if (impl == gemm_impl::VEC) {
-            etl::impl::vec::gevm(make_temporary(a), make_temporary(b), c);
+            etl::impl::vec::gevm(smart_forward(a), smart_forward(b), c);
         } else if (impl == gemm_impl::CUBLAS) {
-            etl::impl::cublas::gevm(make_temporary(a), make_temporary(b), c);
+            etl::impl::cublas::gevm(smart_forward_gpu(a), smart_forward_gpu(b), c);
         } else {
             cpp_unreachable("Invalid selection for gevm");
         }

@@ -159,24 +159,21 @@ struct conv_2d_same_multi_expr : base_temporary_expr_bin<conv_2d_same_multi_expr
 
         check(input, kernel, conv);
 
-        standard_evaluator::pre_assign_rhs(input);
-        standard_evaluator::pre_assign_rhs(kernel);
-
         auto impl = select_impl<C>();
 
         if /* constexpr */ (Flipped){
             if (impl == etl::conv_multi_impl::VEC) {
-                impl::vec::conv2_same_multi_flipped(make_temporary(input), make_temporary(kernel), conv);
+                impl::vec::conv2_same_multi_flipped(input, kernel, conv);
             } else if (impl == etl::conv_multi_impl::STD) {
-                impl::standard::conv2_same_multi_flipped(make_temporary(input), make_temporary(kernel), conv);
+                impl::standard::conv2_same_multi_flipped(input, kernel, conv);
             } else {
                 cpp_unreachable("Invalid conv implementation selection");
             }
         } else {
             if (impl == etl::conv_multi_impl::VEC){
-                impl::vec::conv2_same_multi(make_temporary(input), make_temporary(kernel), conv);
+                impl::vec::conv2_same_multi(input, kernel, conv);
             } else if (impl == etl::conv_multi_impl::STD){
-                impl::standard::conv2_same_multi(make_temporary(input), make_temporary(kernel), conv);
+                impl::standard::conv2_same_multi(input, kernel, conv);
             } else {
                 cpp_unreachable("Invalid conv implementation selection");
             }

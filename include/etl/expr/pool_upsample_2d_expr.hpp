@@ -169,15 +169,15 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
         if /* constexpr */ (Max) {
             if (impl == pool_impl::STD) {
                 impl::standard::max_pool_upsample_2d::apply<C1, C2>(
-                    make_temporary(a),
-                    make_temporary(b),
-                    make_temporary(c),
+                    smart_forward(a),
+                    smart_forward(b),
+                    smart_forward(c),
                     result);
             } else if (impl == pool_impl::CUDNN) {
                 impl::cudnn::max_pool_upsample_2d::apply(
-                    make_temporary(a),
-                    make_temporary(b),
-                    make_temporary(c),
+                    smart_forward_gpu(a),
+                    smart_forward_gpu(b),
+                    smart_forward_gpu(c),
                     result,
                     C1, C2);
             } else {
@@ -186,15 +186,15 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
         } else {
             if (impl == pool_impl::STD) {
                 impl::standard::avg_pool_upsample_2d::apply<C1, C2>(
-                    make_temporary(a),
-                    make_temporary(b),
-                    make_temporary(c),
+                    smart_forward(a),
+                    smart_forward(b),
+                    smart_forward(c),
                     result);
             } else if (impl == pool_impl::CUDNN) {
                 impl::cudnn::avg_pool_upsample_2d::apply(
-                    make_temporary(a),
-                    make_temporary(b),
-                    make_temporary(c),
+                    smart_forward_gpu(a),
+                    smart_forward_gpu(b),
+                    smart_forward_gpu(c),
                     result,
                     C1, C2);
             } else {

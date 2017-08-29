@@ -173,6 +173,8 @@ namespace standard_evaluator {
 
         cpp_assert(result.is_gpu_up_to_date(), "fast_assign must preserve GPU status");
 #else
+        cpp_unused(expr);
+        cpp_unused(result);
         cpp_unreachable("gpu_dyn_matrix should never be used without GPU support");
 #endif
     }
@@ -213,7 +215,7 @@ namespace standard_evaluator {
         result.ensure_gpu_allocated();
 
         // Compute the GPU representation of the expression
-        decltype(auto) t1 = expr.gpu_compute();
+        decltype(auto) t1 = smart_gpu_compute(expr);
 
         // Copy the GPU memory from the expression to the result
         result.gpu_copy_from(t1.gpu_memory());
@@ -470,7 +472,7 @@ namespace standard_evaluator {
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
-        decltype(auto) t1 = expr.gpu_compute();
+        decltype(auto) t1 = smart_gpu_compute(expr);
 
         decltype(auto) handle = impl::cublas::start_cublas();
 
@@ -698,7 +700,7 @@ namespace standard_evaluator {
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
-        decltype(auto) t1 = expr.gpu_compute();
+        decltype(auto) t1 = smart_gpu_compute(expr);
 
         decltype(auto) handle = impl::cublas::start_cublas();
 
@@ -926,7 +928,7 @@ namespace standard_evaluator {
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
-        decltype(auto) t1 = expr.gpu_compute();
+        decltype(auto) t1 = smart_gpu_compute(expr);
 
         value_t<E> alpha(1);
         impl::egblas::axmy(size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
@@ -1152,7 +1154,7 @@ namespace standard_evaluator {
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
-        decltype(auto) t1 = expr.gpu_compute();
+        decltype(auto) t1 = smart_gpu_compute(expr);
 
         value_t<E> alpha(1);
         impl::egblas::axdy(size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
@@ -1310,8 +1312,10 @@ namespace standard_evaluator {
      */
     template <typename E, typename R>
     void assign_evaluate(E&& expr, R&& result) {
-        //Evaluate sub parts, if any
-        pre_assign_rhs(expr);
+        if (!detail::gpu_assign<E, R>) {
+            //Evaluate sub parts, if any
+            pre_assign_rhs(expr);
+        }
 
         //Perform the real evaluation, selected by TMP
         assign_evaluate_impl(expr, result);

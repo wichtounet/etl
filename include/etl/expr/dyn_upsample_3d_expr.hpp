@@ -62,10 +62,8 @@ struct dyn_upsample_3d_expr : base_temporary_expr_un<dyn_upsample_3d_expr<A>, A>
 
         auto& a = this->a();
 
-        standard_evaluator::pre_assign_rhs(a);
-
         impl::standard::upsample_3d::template apply<>(
-            make_temporary(a),
+            smart_forward(a),
             lhs,
             c1, c2, c3);
     }

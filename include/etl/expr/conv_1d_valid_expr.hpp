@@ -96,13 +96,7 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
 
         check(input_raw, kernel_raw, conv);
 
-        standard_evaluator::pre_assign_rhs(input_raw);
-        standard_evaluator::pre_assign_rhs(kernel_raw);
-
         // Make temporaries if necessary
-
-        decltype(auto) input = make_temporary(input_raw);
-        decltype(auto) kernel = make_temporary(kernel_raw);
 
         // Execute the correct implementation
 
@@ -110,6 +104,9 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
 
 //CPP17: if constexpr
 #ifdef ETL_PARALLEL_SUPPORT
+        decltype(auto) input = make_temporary(input_raw);
+        decltype(auto) kernel = make_temporary(kernel_raw);
+
         bool parallel_dispatch = detail::select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::VEC) {
@@ -125,9 +122,9 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
         }
 #else
         if (impl == etl::conv_impl::VEC) {
-            impl::vec::conv1_valid(input, kernel, conv, 0, size(conv));
+            impl::vec::conv1_valid(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, size(conv));
         } else if (impl == etl::conv_impl::STD) {
-            impl::standard::conv1_valid(input, kernel, conv, 0, size(conv));
+            impl::standard::conv1_valid(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, size(conv));
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }

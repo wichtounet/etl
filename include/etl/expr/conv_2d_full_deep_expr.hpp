@@ -96,13 +96,10 @@ struct conv_2d_full_deep_expr : base_temporary_expr_bin<conv_2d_full_deep_expr<A
 
         check(a, b, c);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
-
         if /* constexpr */ (Flipped){
-            detail::conv2_full_flipped_deep_impl::apply(make_temporary(a), make_temporary(b), c);
+            detail::conv2_full_flipped_deep_impl::apply(smart_forward(a), smart_forward(b), c);
         } else {
-            detail::conv2_full_deep_impl::apply(make_temporary(a), make_temporary(b), c);
+            detail::conv2_full_deep_impl::apply(smart_forward(a), smart_forward(b), c);
         }
     }
 

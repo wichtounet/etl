@@ -1411,4 +1411,92 @@ bool safe_is_gpu_up_to_date(E&& expr){
     return false;
 }
 
+
+
+
+
+
+
+
+template <typename E, cpp_enable_iff(!is_temporary_expr<E>)>
+decltype(auto) smart_forward(E& expr) {
+    //TODO Maybe not necessary
+    //detail::evaluator_visitor eval_visitor;
+    //expr.visit(eval_visitor);
+
+    return make_temporary(expr);
+}
+
+template <typename E, cpp_enable_iff(is_temporary_expr<E>)>
+decltype(auto) smart_forward(E& expr) {
+    //TODO Maybe not necessary
+    //detail::evaluator_visitor eval_visitor;
+    //expr.visit(eval_visitor);
+
+    return force_temporary(expr);
+}
+
+template <typename E, cpp_enable_iff(!is_temporary_expr<E>)>
+decltype(auto) smart_forward_gpu(E& expr) {
+    //detail::evaluator_visitor eval_visitor;
+    //expr.visit(eval_visitor);
+
+    return make_temporary(expr);
+}
+
+template <typename E, cpp_enable_iff(is_temporary_expr<E> && E::gpu_computable)>
+decltype(auto) smart_forward_gpu(E& expr) {
+    return force_temporary_gpu(expr);
+}
+
+template <typename E, cpp_enable_iff(is_temporary_expr<E> && !E::gpu_computable)>
+decltype(auto) smart_forward_gpu(E& expr) {
+    //detail::evaluator_visitor eval_visitor;
+    //expr.visit(eval_visitor);
+
+    // TODO need to check
+    return force_temporary(expr);
+}
+
+template <typename E, cpp_enable_iff(is_temporary_expr<E> && !E::gpu_computable)>
+decltype(auto) smart_gpu_compute(E& expr) {
+    //detail::evaluator_visitor eval_visitor;
+    //expr.visit(eval_visitor);
+
+    //return expr.gpu_compute();
+    auto t = force_temporary(expr);
+    t.ensure_gpu_up_to_date();
+    return t;
+}
+
+template <typename E, cpp_enable_iff(is_temporary_expr<E> && E::gpu_computable)>
+decltype(auto) smart_gpu_compute(E& expr) {
+    return force_temporary_gpu(expr);
+}
+
+template <typename E, cpp_enable_iff(!is_temporary_expr<E>)>
+decltype(auto) smart_gpu_compute(E& expr) {
+    return expr.gpu_compute();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 } //end of namespace etl

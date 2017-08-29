@@ -137,11 +137,9 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
 
         auto& a = this->a();
 
-        standard_evaluator::pre_assign_rhs(a);
-
         check(a, c);
 
-        detail::transpose::apply(make_temporary(a), c);
+        detail::transpose::apply(a, c);
     }
 
     /*!

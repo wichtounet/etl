@@ -90,17 +90,17 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
 
         auto& a = this->a();
 
-        standard_evaluator::pre_assign_rhs(a);
-
         using T = value_t<A>;
 
         check(a, lhs);
 
         if /* constexpr */ (!Mean && cudnn_enabled && all_floating<A, L>) {
-            impl::cudnn::bias_batch_mean_4d(a, lhs);
+            impl::cudnn::bias_batch_mean_4d(smart_forward_gpu(a), lhs);
         } else {
             const auto N     = etl::size(a) / etl::size(lhs);
             const auto K     = etl::size(lhs);
+
+            standard_evaluator::pre_assign_rhs(a);
 
             auto batch_fun_k = [&](const size_t first, const size_t last) {
                 for (size_t k = first; k < last; ++k) {

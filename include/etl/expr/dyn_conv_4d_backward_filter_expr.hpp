@@ -105,50 +105,47 @@ struct dyn_conv_4d_backward_filter_expr : base_temporary_expr_bin<dyn_conv_4d_ba
 
         check(input, kernel, conv);
 
-        standard_evaluator::pre_assign_rhs(input);
-        standard_evaluator::pre_assign_rhs(kernel);
-
         if /* constexpr */ (Flipped) {
             // The GPU implementation needs the real forward parameters, not the
             // converted backward parameters
             if /* constexpr */ (cudnn_enabled && all_floating<A, B, C>) {
-                impl::cudnn::conv4_backward_filter_flipped(make_temporary(input), make_temporary(kernel), conv, s1, s2, p1, p2);
+                impl::cudnn::conv4_backward_filter_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
                 return;
             }
 
             // 1. Handle unit strides
             if (s1 == 1 && s2 == 1) {
                 // Unit strides, zero padding -> Valid convolution with the correct padding
-                detail::dyn_conv4_valid_filter_flipped_impl::apply(make_temporary(input), make_temporary(kernel), conv, 1, 1, p1, p2);
+                detail::dyn_conv4_valid_filter_flipped_impl::apply(smart_forward(input), smart_forward(kernel), conv, 1, 1, p1, p2);
             }
             // 2. Handle non_unit strides
             else {
                 // Fractionally-strided convolution needs inner padding of the kernel
-                auto strided_kernel = impl::common::inner_pad(make_temporary(kernel), s1, s2);
+                auto strided_kernel = impl::common::inner_pad(smart_forward(kernel), s1, s2);
 
                 // Non-unit strides, zero padding -> Fractionally-strided Valid convolution with the correct padding
-                detail::dyn_conv4_valid_filter_flipped_impl::apply(make_temporary(input), strided_kernel, conv, 1, 1, p1, p2);
+                detail::dyn_conv4_valid_filter_flipped_impl::apply(smart_forward(input), strided_kernel, conv, 1, 1, p1, p2);
             }
         } else {
             // The GPU implementation needs the real forward parameters, not the
             // converted backward parameters
             if /* constexpr */ (cudnn_enabled && all_floating<A, B, C>) {
-                impl::cudnn::conv4_backward_filter(make_temporary(input), make_temporary(kernel), conv, s1, s2, p1, p2);
+                impl::cudnn::conv4_backward_filter(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
                 return;
             }
 
             // 1. Handle unit strides
             if (s1 == 1 && s2 == 1) {
                 // Unit strides -> Valid convolution with the correct padding
-                detail::dyn_conv4_valid_filter_impl::apply(make_temporary(input), make_temporary(kernel), conv, 1, 1, p1, p2);
+                detail::dyn_conv4_valid_filter_impl::apply(smart_forward(input), smart_forward(kernel), conv, 1, 1, p1, p2);
             }
             // 2. Handle non_unit strides
             else {
                 // Fractionally-strided convolution needs inner padding of the kernel
-                auto strided_kernel = impl::common::inner_pad(make_temporary(kernel), s1, s2);
+                auto strided_kernel = impl::common::inner_pad(smart_forward(kernel), s1, s2);
 
                 // Non-unit strides, zero padding -> Fractionally-strided Valid convolution with the correct padding
-                detail::dyn_conv4_valid_filter_impl::apply(make_temporary(input), strided_kernel, conv, 1, 1, p1, p2);
+                detail::dyn_conv4_valid_filter_impl::apply(smart_forward(input), strided_kernel, conv, 1, 1, p1, p2);
             }
         }
     }

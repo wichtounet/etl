@@ -103,13 +103,10 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
 
         check(a, b, c);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
-
         if /* constexpr */ (Flipped){
-            detail::conv4_full_flipped_impl::apply(make_temporary(a), make_temporary(b), c);
+            detail::conv4_full_flipped_impl::apply(a, b, c);
         } else {
-            detail::conv4_full_impl::apply(make_temporary(a), make_temporary(b), c);
+            detail::conv4_full_impl::apply(a, b, c);
         }
     }
 

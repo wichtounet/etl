@@ -105,8 +105,8 @@ struct plus_binary_op {
      */
     template <typename L, typename R, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
-        decltype(auto) t1 = lhs.gpu_compute();
-        decltype(auto) t2 = rhs.gpu_compute();
+        decltype(auto) t1 = smart_gpu_compute(lhs);
+        decltype(auto) t2 = smart_gpu_compute(rhs);
 
         auto t3 = force_temporary_gpu(t2);
 
@@ -136,7 +136,7 @@ struct plus_binary_op {
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
         auto s = lhs.value;
 
-        decltype(auto) t2 = rhs.gpu_compute();
+        decltype(auto) t2 = smart_gpu_compute(rhs);
 
         auto t3 = force_temporary_gpu(t2);
 
@@ -160,7 +160,7 @@ struct plus_binary_op {
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
         auto s = rhs.value;
 
-        decltype(auto) t2 = lhs.gpu_compute();
+        decltype(auto) t2 = smart_gpu_compute(lhs);
 
         auto t3 = force_temporary_gpu(t2);
 
@@ -253,8 +253,8 @@ struct minus_binary_op {
      */
     template <typename L, typename R, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
-        decltype(auto) t1 = lhs.gpu_compute();
-        decltype(auto) t2 = rhs.gpu_compute();
+        decltype(auto) t1 = smart_gpu_compute(lhs);
+        decltype(auto) t2 = smart_gpu_compute(rhs);
 
         auto t3 = force_temporary_gpu(t1);
 
@@ -282,7 +282,7 @@ struct minus_binary_op {
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
         auto s = -rhs.value;
 
-        decltype(auto) t2 = lhs.gpu_compute();
+        decltype(auto) t2 = smart_gpu_compute(lhs);
 
         auto t3 = force_temporary_gpu(t2);
 
@@ -306,7 +306,7 @@ struct minus_binary_op {
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
         auto s = lhs.value;
 
-        decltype(auto) t2 = rhs.gpu_compute();
+        decltype(auto) t2 = smart_gpu_compute(rhs);
 
         auto t3 = force_temporary_gpu(t2);
 
@@ -407,8 +407,8 @@ struct mul_binary_op {
      */
     template <typename L, typename R, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
-        decltype(auto) t1 = lhs.gpu_compute();
-        decltype(auto) t2 = rhs.gpu_compute();
+        decltype(auto) t1 = smart_gpu_compute(lhs);
+        decltype(auto) t2 = smart_gpu_compute(rhs);
 
         auto t3 = force_temporary_gpu(t1);
 
@@ -438,7 +438,7 @@ struct mul_binary_op {
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
         auto s = lhs.value;
 
-        decltype(auto) t2 = rhs.gpu_compute();
+        decltype(auto) t2 = smart_gpu_compute(rhs);
 
         auto t3 = force_temporary_gpu(t2);
 
@@ -463,7 +463,7 @@ struct mul_binary_op {
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
         auto s = rhs.value;
 
-        decltype(auto) t2 = lhs.gpu_compute();
+        decltype(auto) t2 = smart_gpu_compute(lhs);
 
         auto t3 = force_temporary_gpu(t2);
 
@@ -573,8 +573,8 @@ struct div_binary_op {
      */
     template <typename L, typename R, cpp_enable_iff(!is_scalar<L> && !is_scalar<R>)>
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
-        decltype(auto) t1 = lhs.gpu_compute();
-        decltype(auto) t2 = rhs.gpu_compute();
+        decltype(auto) t1 = smart_gpu_compute(lhs);
+        decltype(auto) t2 = smart_gpu_compute(rhs);
 
         auto t3 = force_temporary_gpu(t1);
 
@@ -604,7 +604,7 @@ struct div_binary_op {
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
         auto s = T(1) / rhs.value;
 
-        decltype(auto) t2 = lhs.gpu_compute();
+        decltype(auto) t2 = smart_gpu_compute(lhs);
 
         auto t3 = force_temporary_gpu(t2);
 
@@ -631,7 +631,7 @@ struct div_binary_op {
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
         auto s = lhs.value;
 
-        decltype(auto) t2 = rhs.gpu_compute();
+        decltype(auto) t2 = smart_gpu_compute(rhs);
 
         auto t3 = force_temporary_gpu(t2);
 
@@ -1456,8 +1456,8 @@ struct sigmoid_derivative_binary_op {
      */
     template <typename L, typename R, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
-        decltype(auto) t1 = lhs.gpu_compute();
-        decltype(auto) t2 = rhs.gpu_compute();
+        decltype(auto) t1 = smart_gpu_compute(lhs);
+        decltype(auto) t2 = smart_gpu_compute(rhs);
 
         auto t3 = force_temporary_gpu(t2);
 
@@ -1538,8 +1538,8 @@ struct relu_derivative_binary_op {
      */
     template <typename L, typename R>
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
-        decltype(auto) t1 = lhs.gpu_compute();
-        decltype(auto) t2 = rhs.gpu_compute();
+        decltype(auto) t1 = smart_gpu_compute(lhs);
+        decltype(auto) t2 = smart_gpu_compute(rhs);
 
         auto t3 = force_temporary_gpu(t2);
 

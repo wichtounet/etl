@@ -108,15 +108,12 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
         auto& a = this->a();
         auto& b = this->b();
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
-
         auto impl = select_outer_impl<C>();
 
         if (impl == etl::outer_impl::BLAS) {
-            etl::impl::blas::outer(a, b, c);
+            etl::impl::blas::outer(smart_forward(a), smart_forward(b), c);
         } else {
-            etl::impl::standard::outer(a, b, c);
+            etl::impl::standard::outer(smart_forward(a), smart_forward(b), c);
         }
     }
 

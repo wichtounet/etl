@@ -103,9 +103,9 @@ struct max_pool_2d {
         const auto impl = select_pool_impl<X, Y>();
 
         if(impl == pool_impl::STD){
-            etl::impl::standard::max_pool_2d::apply<C1, C2, S1, S2, P1, P2>(x, y);
+            etl::impl::standard::max_pool_2d::apply<C1, C2, S1, S2, P1, P2>(smart_forward(x), y);
         } else if(impl == pool_impl::CUDNN){
-            etl::impl::cudnn::max_pool_2d::apply(x, y, C1, C2, S1, S2, P1, P2);
+            etl::impl::cudnn::max_pool_2d::apply(smart_forward_gpu(x), y, C1, C2, S1, S2, P1, P2);
         } else {
             cpp_unreachable("Invalid selection for pooling");
         }
@@ -131,9 +131,9 @@ struct max_pool_2d {
         const auto impl = select_pool_impl<X, Y>();
 
         if(impl == pool_impl::STD){
-            etl::impl::standard::max_pool_2d::apply(x, y, c1, c2, s1, s2, p1, p2);
+            etl::impl::standard::max_pool_2d::apply(smart_forward(x), y, c1, c2, s1, s2, p1, p2);
         } else if(impl == pool_impl::CUDNN){
-            etl::impl::cudnn::max_pool_2d::apply(x, y, c1, c2, s1, s2, p1, p2);
+            etl::impl::cudnn::max_pool_2d::apply(smart_forward_gpu(x), y, c1, c2, s1, s2, p1, p2);
         } else {
             cpp_unreachable("Invalid selection for pooling");
         }
@@ -171,9 +171,9 @@ struct avg_pool_2d {
         const auto impl = select_pool_impl<X, Y>();
 
         if(impl == pool_impl::STD){
-            etl::impl::standard::avg_pool_2d::apply<C1, C2, S1, S2, P1, P2>(x, y);
+            etl::impl::standard::avg_pool_2d::apply<C1, C2, S1, S2, P1, P2>(smart_forward(x), y);
         } else if(impl == pool_impl::CUDNN){
-            etl::impl::cudnn::avg_pool_2d::apply(x, y, C1, C2, S1, S2, P1, P2);
+            etl::impl::cudnn::avg_pool_2d::apply(smart_forward_gpu(x), y, C1, C2, S1, S2, P1, P2);
         } else {
             cpp_unreachable("Invalid selection for pooling");
         }
@@ -199,9 +199,9 @@ struct avg_pool_2d {
         const auto impl = select_pool_impl<X, Y>();
 
         if(impl == pool_impl::STD){
-            etl::impl::standard::avg_pool_2d::apply(x, y, c1, c2, s1, s2, p1, p2);
+            etl::impl::standard::avg_pool_2d::apply(smart_forward(x), y, c1, c2, s1, s2, p1, p2);
         } else if(impl == pool_impl::CUDNN){
-            etl::impl::cudnn::avg_pool_2d::apply(x, y, c1, c2, s1, s2, p1, p2);
+            etl::impl::cudnn::avg_pool_2d::apply(smart_forward_gpu(x), y, c1, c2, s1, s2, p1, p2);
         } else {
             cpp_unreachable("Invalid selection for pooling");
         }
@@ -239,9 +239,9 @@ struct max_pool_3d {
         const auto impl = select_pool_impl<X, Y>();
 
         if(impl == pool_impl::STD){
-            etl::impl::standard::max_pool_3d::apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(x, y);
+            etl::impl::standard::max_pool_3d::apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(smart_forward(x), y);
         } else if(impl == pool_impl::CUDNN){
-            etl::impl::cudnn::max_pool_3d::apply(x, y, C1, C2, C3, S1, S2, S3, P1, P2, P3);
+            etl::impl::cudnn::max_pool_3d::apply(smart_forward_gpu(x), y, C1, C2, C3, S1, S2, S3, P1, P2, P3);
         } else {
             cpp_unreachable("Invalid selection for pooling");
         }
@@ -267,9 +267,9 @@ struct max_pool_3d {
         const auto impl = select_pool_impl<X, Y>();
 
         if(impl == pool_impl::STD){
-            etl::impl::standard::max_pool_3d::apply(x, y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+            etl::impl::standard::max_pool_3d::apply(smart_forward(x), y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
         } else if(impl == pool_impl::CUDNN){
-            etl::impl::cudnn::max_pool_3d::apply(x, y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+            etl::impl::cudnn::max_pool_3d::apply(smart_forward_gpu(x), y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
         } else {
             cpp_unreachable("Invalid selection for pooling");
         }
@@ -307,9 +307,9 @@ struct avg_pool_3d {
         const auto impl = select_pool_impl<X, Y>();
 
         if(impl == pool_impl::STD){
-            etl::impl::standard::avg_pool_3d::apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(x, y);
+            etl::impl::standard::avg_pool_3d::apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(smart_forward(x), y);
         } else if(impl == pool_impl::CUDNN){
-            etl::impl::cudnn::avg_pool_3d::apply(x, y, C1, C2, C3, S1, S2, S3, P1, P2, P3);
+            etl::impl::cudnn::avg_pool_3d::apply(smart_forward_gpu(x), y, C1, C2, C3, S1, S2, S3, P1, P2, P3);
         } else {
             cpp_unreachable("Invalid selection for pooling");
         }
@@ -335,9 +335,9 @@ struct avg_pool_3d {
         const auto impl = select_pool_impl<X, Y>();
 
         if(impl == pool_impl::STD){
-            etl::impl::standard::avg_pool_3d::apply(x, y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+            etl::impl::standard::avg_pool_3d::apply(smart_forward(x), y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
         } else if(impl == pool_impl::CUDNN){
-            etl::impl::cudnn::avg_pool_3d::apply(x, y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+            etl::impl::cudnn::avg_pool_3d::apply(smart_forward_gpu(x), y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
         } else {
             cpp_unreachable("Invalid selection for pooling");
         }

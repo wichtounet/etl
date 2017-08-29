@@ -139,12 +139,12 @@ inline etl::conv_impl select_default_conv2_impl_new() {
 
     // Full has more options
     if (TT == conv_type::FULL) {
-        if (impl::cufft::conv2_possible<I, K, C> && !local_context().cpu) {
+        if (impl::cudnn::conv_possible<I, K, C> && !local_context().cpu) {
+            return etl::conv_impl::CUDNN;
+        } else if (impl::cufft::conv2_possible<I, K, C> && !local_context().cpu) {
             return etl::conv_impl::FFT_CUFFT;
         } else if (impl::blas::conv2_possible<I, K, C>) {
             return etl::conv_impl::FFT_MKL;
-        } else if (impl::cudnn::conv_possible<I, K, C> && !local_context().cpu) {
-            return etl::conv_impl::CUDNN;
         }
     }
 
@@ -241,10 +241,10 @@ constexpr etl::conv_impl select_default_conv_impl() {
         return etl::conv_impl::STD;
     }
 
-    if (impl::vec::conv2_possible<vector_mode, I, K, C>) {
-        return etl::conv_impl::VEC;
-    } else if(impl::cudnn::conv_possible<I, K, C> && (TT == conv_type::VALID || TT == conv_type::FULL) && is_2d<I> && !local_context().cpu){
+    if(impl::cudnn::conv_possible<I, K, C> && (TT == conv_type::VALID || TT == conv_type::FULL) && is_2d<I> && !local_context().cpu){
         return etl::conv_impl::CUDNN;
+    } else if (impl::vec::conv2_possible<vector_mode, I, K, C>) {
+        return etl::conv_impl::VEC;
     } else {
         return etl::conv_impl::STD;
     }

@@ -63,10 +63,7 @@ struct dyn_pool_derivative_expr : base_temporary_expr_bin<dyn_pool_derivative_ex
         auto& a = this->a();
         auto& b = this->b();
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
-
-        Impl::apply(a, b, c, c1, c2, c3);
+        Impl::apply(smart_forward(a), smart_forward(b), c, c1, c2, c3);
     }
 
     /*!

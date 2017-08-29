@@ -38,6 +38,7 @@
 #include "etl/util/counters.hpp"
 #include "etl/util/variadic.hpp"
 #include "etl/restrict.hpp"
+#include "etl/eval_visitors.hpp"  //Evaluation visitors
 
 //Forward declarations
 #include "etl/value_fwd.hpp"
@@ -50,7 +51,6 @@
 #include "etl/gpu_handler.hpp"
 
 // The operators
-#include "etl/eval_visitors.hpp"  //Evaluation visitors
 #include "etl/op/scalar.hpp"
 #include "etl/op/generators.hpp"
 #include "etl/op/transformers.hpp"
