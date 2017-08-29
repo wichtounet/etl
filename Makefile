@@ -230,6 +230,7 @@ $(eval $(call add_test_executable,etl_test_conv_2d_valid,src/test.cpp src/conv_2
 $(eval $(call add_test_executable,etl_test_conv_2d_backward,src/test.cpp src/conv_2d_backward.cpp))
 $(eval $(call add_test_executable,etl_test_conv_2d_same,src/test.cpp src/conv_2d_same.cpp))
 $(eval $(call add_test_executable,etl_test_conv_4d_valid,src/test.cpp src/conv_4d_valid.cpp))
+$(eval $(call add_test_executable,etl_test_conv_4d_valid_filter,src/test.cpp src/conv_4d_valid_filter.cpp))
 $(eval $(call add_test_executable,etl_test_conv_4d_valid_back,src/test.cpp src/conv_4d_valid_back.cpp))
 $(eval $(call add_test_executable,etl_test_conv_4d_valid_mixed,src/test.cpp src/conv_4d_valid_mixed.cpp))
 $(eval $(call add_test_executable,etl_test_conv_4d_full,src/test.cpp src/conv_4d_full.cpp))
