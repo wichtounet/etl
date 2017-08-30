@@ -18,7 +18,8 @@ namespace etl {
  * \brief Enumeration describing the different implementations of CCE
  */
 enum class cce_impl {
-    STD   ///< Standard implementation
+    STD,   ///< Standard implementation
+    EGBLAS ///< GPU implementation
 };
 
 } //end of namespace etl

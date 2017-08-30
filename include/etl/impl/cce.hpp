@@ -17,6 +17,7 @@
 
 //Include the implementations
 #include "etl/impl/std/cce.hpp"
+#include "etl/impl/egblas/cce.hpp"
 
 namespace etl {
 
@@ -29,9 +30,31 @@ namespace detail {
  * \return The implementation to use
  */
 template <typename O, typename L>
-constexpr etl::cce_impl select_cce_impl() {
+constexpr etl::cce_impl select_cce_loss_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
+
+    if(impl::egblas::has_cce_sloss && impl::egblas::has_cce_dloss){
+        return etl::cce_impl::EGBLAS;
+    }
+
+    return etl::cce_impl::STD;
+}
+
+/*!
+ * \brief Select the CCE implementation for an expression of type E
+ *
+ * \tparam E The type of expression
+ * \return The implementation to use
+ */
+template <typename O, typename L>
+constexpr etl::cce_impl select_cce_error_impl() {
+    //Note: since the constexpr values will be known at compile time, the
+    //conditions will be a lot simplified
+
+    if(impl::egblas::has_cce_serror && impl::egblas::has_cce_derror){
+        return etl::cce_impl::EGBLAS;
+    }
 
     return etl::cce_impl::STD;
 }
@@ -45,13 +68,21 @@ struct cce_loss_impl {
      */
     template <typename O, typename L>
     static value_t<O> apply(const O& output, const L& labels, value_t<O> scale) {
-        constexpr auto impl = select_cce_impl<O, L>();
+        constexpr auto impl = select_cce_loss_impl<O, L>();
 
         if /* constexpr */ (impl == etl::cce_impl::STD) {
             etl::force(output);
             etl::force(labels);
 
             return impl::standard::cce_loss(output, labels, scale);
+        } else if (impl == etl::cce_impl::EGBLAS) {
+            decltype(auto) output_gpu = smart_forward_gpu(output);
+            decltype(auto) labels_gpu = smart_forward_gpu(labels);
+
+            output_gpu.ensure_gpu_up_to_date();
+            labels_gpu.ensure_gpu_up_to_date();
+
+            return impl::egblas::cce_loss(etl::size(output), &scale, output_gpu.gpu_memory(), 1, labels_gpu.gpu_memory(), 1);
         } else {
             cpp_unreachable("Invalid selection for CCE");
         }
@@ -67,13 +98,21 @@ struct cce_error_impl {
      */
     template <typename O, typename L>
     static value_t<O> apply(const O& output, const L& labels, value_t<O> scale) {
-        constexpr auto impl = select_cce_impl<O, L>();
+        constexpr auto impl = select_cce_error_impl<O, L>();
 
         if /* constexpr */ (impl == etl::cce_impl::STD) {
             etl::force(output);
             etl::force(labels);
 
             return impl::standard::cce_error(output, labels, scale);
+        } else if (impl == etl::cce_impl::EGBLAS) {
+            decltype(auto) output_gpu = smart_forward_gpu(output);
+            decltype(auto) labels_gpu = smart_forward_gpu(labels);
+
+            output_gpu.ensure_gpu_up_to_date();
+            labels_gpu.ensure_gpu_up_to_date();
+
+            return impl::egblas::cce_error(etl::dim<0>(output), etl::dim<1>(output), &scale, output_gpu.gpu_memory(), labels_gpu.gpu_memory());
         } else {
             cpp_unreachable("Invalid selection for CCE");
         }
