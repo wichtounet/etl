@@ -38,3 +38,17 @@ TEMPLATE_TEST_CASE_2("ml/relu/backward/1", "[ml]", Z, double, float) {
     REQUIRE_EQUALS_APPROX(dx[2], Z(0.0));
     REQUIRE_EQUALS_APPROX(dx[3], Z(0.5));
 }
+
+TEMPLATE_TEST_CASE_2("ml/cce/loss/1", "[ml]", Z, double, float) {
+    etl::dyn_vector<Z> o(137);
+    etl::dyn_vector<Z> l(137);
+
+    for (size_t i = 0; i < 137; ++i) {
+        o[i] = 0.1 * (i + 1);
+        l[i] = (i + 1);
+    }
+
+    auto loss = etl::ml::cce_loss(o, l, Z(1.1));
+
+    REQUIRE_EQUALS_APPROX(loss, Z(22055.71671));
+}

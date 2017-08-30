@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include "etl/impl/cce.hpp"
+
 namespace etl {
 
 namespace ml {
@@ -414,6 +416,18 @@ template <typename O, typename E>
 auto tanh_backward(O&& output, E&& errors){
     static_assert(is_etl_expr<E>, "etl::tanh_derivative can only be used on ETL expressions");
     return 1.0 - (output >> output) >> errors;
+}
+
+/*!
+ * \brief Returns the sum of all the values contained in the given expression
+ * \param values The expression to reduce
+ * \return The sum of the values of the expression
+ */
+template <typename O, typename L>
+value_t<O> cce_loss(O&& output, L&& labels, value_t<O> scale) {
+    static_assert(all_etl_expr<O, L>, "etl::sum can only be used on ETL expressions");
+
+    return detail::cce_loss_impl::apply(output, labels, scale);
 }
 
 } //end of namespace ml

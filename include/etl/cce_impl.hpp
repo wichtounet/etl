@@ -7,19 +7,18 @@
 
 /*!
  * \file
- * \brief Utility header including all enumerations headers
+ * \brief Enumeration for CCE implementations
  */
 
 #pragma once
 
-#include "scalar_impl.hpp"
-#include "sum_impl.hpp"
-#include "cce_impl.hpp"
-#include "transpose_impl.hpp"
-#include "dot_impl.hpp"
-#include "conv_impl.hpp"
-#include "gemm_impl.hpp"
-#include "outer_impl.hpp"
-#include "bias_add_impl.hpp"
-#include "fft_impl.hpp"
-#include "pool_impl.hpp"
+namespace etl {
+
+/*!
+ * \brief Enumeration describing the different implementations of CCE
+ */
+enum class cce_impl {
+    STD   ///< Standard implementation
+};
+
+} //end of namespace etl
