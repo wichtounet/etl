@@ -52,3 +52,31 @@ TEMPLATE_TEST_CASE_2("ml/cce/loss/1", "[ml]", Z, double, float) {
 
     REQUIRE_EQUALS_APPROX(loss, Z(22055.71671));
 }
+
+TEMPLATE_TEST_CASE_2("ml/cce/error/1", "[ml]", Z, double, float) {
+    etl::dyn_matrix<Z> o(137, 8);
+    etl::dyn_matrix<Z> l(137, 8);
+
+    for (size_t i = 0; i < 137 * 8; ++i) {
+        o[i] = (i + 1);
+        l[i] = ((i + 1) % 9);
+    }
+
+    auto error = etl::ml::cce_error(o, l, Z(1.0 / 137));
+
+    REQUIRE_EQUALS_APPROX(error, Z(0.76642));
+}
+
+TEMPLATE_TEST_CASE_2("ml/cce/error/2", "[ml]", Z, double, float) {
+    etl::dyn_matrix<Z> o(128, 9);
+    etl::dyn_matrix<Z> l(128, 9);
+
+    for (size_t i = 0; i < 128 * 9; ++i) {
+        o[i] = (i + 1);
+        l[i] = ((i + 1) % 11);
+    }
+
+    auto error = etl::ml::cce_error(o, l, Z(1.0 / 128));
+
+    REQUIRE_EQUALS_APPROX(error, Z(0.71875));
+}

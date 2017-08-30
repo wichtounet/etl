@@ -28,6 +28,17 @@ value_t<O> cce_loss(const O& output, const L& labels, value_t<O> scale) {
     return scale * etl::sum(log(output) >> labels);
 }
 
+/*!
+ * \brief Compute the Categorical Cross Entropy error of the input in the given expression
+ * \param input The input expression
+ * \return the sum
+ */
+template <typename O, typename L>
+value_t<O> cce_error(const O& output, const L& labels, value_t<O> scale) {
+    return scale * sum(min(abs(argmax(labels) - argmax(output)), 1.0));
+
+}
+
 } //end of namespace standard
 } //end of namespace impl
 } //end of namespace etl

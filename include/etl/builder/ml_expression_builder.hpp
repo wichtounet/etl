@@ -419,15 +419,27 @@ auto tanh_backward(O&& output, E&& errors){
 }
 
 /*!
- * \brief Returns the sum of all the values contained in the given expression
+ * \brief Returns the Categorical Cross Entropy Loss
  * \param values The expression to reduce
  * \return The sum of the values of the expression
  */
 template <typename O, typename L>
 value_t<O> cce_loss(O&& output, L&& labels, value_t<O> scale) {
-    static_assert(all_etl_expr<O, L>, "etl::sum can only be used on ETL expressions");
+    static_assert(all_etl_expr<O, L>, "etl::cce_loss can only be used on ETL expressions");
 
     return detail::cce_loss_impl::apply(output, labels, scale);
+}
+
+/*!
+ * \brief Returns the Categorical Cross Entropy Error
+ * \param values The expression to reduce
+ * \return The sum of the values of the expression
+ */
+template <typename O, typename L>
+value_t<O> cce_error(O&& output, L&& labels, value_t<O> scale) {
+    static_assert(all_etl_expr<O, L>, "etl::cce_error can only be used on ETL expressions");
+
+    return detail::cce_error_impl::apply(output, labels, scale);
 }
 
 } //end of namespace ml

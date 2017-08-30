@@ -58,6 +58,28 @@ struct cce_loss_impl {
     }
 };
 
+/*!
+ * \brief Sum operation implementation
+ */
+struct cce_error_impl {
+    /*!
+     * \brief Apply the functor to e
+     */
+    template <typename O, typename L>
+    static value_t<O> apply(const O& output, const L& labels, value_t<O> scale) {
+        constexpr auto impl = select_cce_impl<O, L>();
+
+        if /* constexpr */ (impl == etl::cce_impl::STD) {
+            etl::force(output);
+            etl::force(labels);
+
+            return impl::standard::cce_error(output, labels, scale);
+        } else {
+            cpp_unreachable("Invalid selection for CCE");
+        }
+    }
+};
+
 } //end of namespace detail
 
 } //end of namespace etl
