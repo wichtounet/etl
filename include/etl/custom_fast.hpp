@@ -13,6 +13,7 @@
 #pragma once
 
 #include "etl/fast_base.hpp"
+#include "etl/direct_fill.hpp"    //direct_fill with GPU support
 
 namespace etl {
 
@@ -182,10 +183,7 @@ public:
      */
     template <typename VT, cpp_enable_iff(std::is_convertible<VT, value_type>::value || std::is_assignable<T&, VT>::value)>
     custom_fast_matrix_impl& operator=(const VT& value) noexcept {
-        std::fill(_data.begin(), _data.end(), value);
-
-        this->validate_cpu();
-        this->invalidate_gpu();
+        direct_fill(*this, value);
 
         return *this;
     }

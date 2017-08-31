@@ -12,7 +12,8 @@
 
 #pragma once
 
-#include "etl/dyn_base.hpp"    //The base class and utilities
+#include "etl/dyn_base.hpp" //The base class and utilities
+#include "etl/direct_fill.hpp"    //direct_fill with GPU support
 
 namespace etl {
 
@@ -380,10 +381,7 @@ public:
      * \return A reference to the matrix
      */
     dyn_matrix_impl& operator=(const value_type& value) noexcept {
-        std::fill(begin(), end(), value);
-
-        this->validate_cpu();
-        this->invalidate_gpu();
+        direct_fill(*this, value);
 
         check_invariants();
 
