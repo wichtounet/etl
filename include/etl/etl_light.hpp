@@ -83,6 +83,7 @@
 
 // The complex expressions
 #include "etl/expr/transpose_expr.hpp"
+#include "etl/expr/batch_softmax_expr.hpp"
 
 // The expressions building
 #include "etl/builder/expression_builder.hpp"

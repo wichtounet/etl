@@ -160,6 +160,61 @@ void relu_backward(O&& o, E&& e, C&& y) {
     backward_activation(o, e, y, CUDNN_ACTIVATION_RELU);
 }
 
+/*!
+ * \brief Compute a softmax activation of x and store the result in y
+ * \param x The a expression
+ * \param y The c expression
+ * \param mode The softmax algorithm function to use
+ */
+template <typename I, typename C>
+void softmax_activation(I&& x, C&& y, cudnnSoftmaxAlgorithm_t mode) {
+    using type = std::remove_const_t<value_t<I>>;
+
+    type alpha[] = {1.0f};
+    type beta[] = {0.0f};
+
+    decltype(auto) handle = start_cudnn();
+
+    // Prepare the tensors
+    auto x_tensor = create_tensor_front_wrapper(x);
+    auto y_tensor = create_tensor_front_wrapper(y);
+
+    // Allocate GPU memory, if necessary
+
+    x.ensure_gpu_up_to_date();
+    y.ensure_gpu_allocated();
+
+    // y = activation(x)
+
+    cudnn_check(cudnnSoftmaxForward(handle.get(),
+        mode, CUDNN_SOFTMAX_MODE_INSTANCE,
+        alpha, *x_tensor, x.gpu_memory(),
+        beta, *y_tensor, y.gpu_memory()));
+
+    y.validate_gpu();
+    y.invalidate_cpu();
+}
+
+/*!
+ * \brief Compute the softmax of x (batch) and store the result in y
+ * \param x The a expression
+ * \param y The c expression
+ */
+template <typename I, typename C>
+void softmax(I&& x, C&& y) {
+    softmax_activation(x, y, CUDNN_SOFTMAX_FAST);
+}
+
+/*!
+ * \brief Compute the stable softmax of x (batch) and store the result in y
+ * \param x The a expression
+ * \param y The c expression
+ */
+template <typename I, typename C>
+void stable_softmax(I&& x, C&& y) {
+    softmax_activation(x, y, CUDNN_SOFTMAX_ACCURATE);
+}
+
 #else
 
 //COVERAGE_EXCLUDE_BEGIN
@@ -212,6 +267,30 @@ template <typename O, typename E, typename C>
 void relu_backward(O&& o, E&& e, C&& y) {
     cpp_unused(o);
     cpp_unused(e);
+    cpp_unused(y);
+    cpp_unreachable("CUDNN not available/enabled");
+}
+
+/*!
+ * \brief Compute the softmax of x (batch) and store the result in y
+ * \param x The a expression
+ * \param y The c expression
+ */
+template <typename I, typename C>
+void softmax(I&& x, C&& y) {
+    cpp_unused(x);
+    cpp_unused(y);
+    cpp_unreachable("CUDNN not available/enabled");
+}
+
+/*!
+ * \brief Compute the softmax of x (batch) and store the result in y
+ * \param x The a expression
+ * \param y The c expression
+ */
+template <typename I, typename C>
+void stable_softmax(I&& x, C&& y) {
+    cpp_unused(x);
     cpp_unused(y);
     cpp_unreachable("CUDNN not available/enabled");
 }

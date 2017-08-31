@@ -248,10 +248,21 @@ auto hard_sigmoid(E&& x) -> decltype(etl::clip(x * 0.2 + 0.5, 0.0, 1.0)) {
  * \param e The ETL expression
  * \return An ETL expression representing the softmax function of the input.
  */
-template <typename E>
+template <typename E, cpp_enable_iff(etl::is_1d<E>)>
 auto softmax(E&& e) {
     static_assert(is_etl_expr<E>, "etl::softmax can only be used on ETL expressions");
     return exp(e) / sum(exp(e));
+}
+
+/*!
+ * \brief Return the softmax function of the given ETL expression.
+ * \param e The ETL expression
+ * \return An ETL expression representing the softmax function of the input.
+ */
+template <typename E, cpp_enable_iff(etl::is_2d<E>)>
+auto softmax(E&& e) -> batch_softmax_expr<detail::build_type<E>, false> {
+    static_assert(is_etl_expr<E>, "etl::softmax can only be used on ETL expressions");
+    return batch_softmax_expr<detail::build_type<E>, false>{e};
 }
 
 /*!
@@ -260,7 +271,19 @@ auto softmax(E&& e) {
  * \param e The ETL expression
  * \return An ETL expression representing the softmax function of the input.
  */
-template <typename E>
+template <typename E, cpp_enable_iff(etl::is_2d<E>)>
+auto stable_softmax(E&& e) -> batch_softmax_expr<detail::build_type<E>, true> {
+    static_assert(is_etl_expr<E>, "etl::softmax can only be used on ETL expressions");
+    return batch_softmax_expr<detail::build_type<E>, true>{e};
+}
+
+/*!
+ * \brief Returns the softmax function of the given ETL expression.
+ * This version is implemented so that numerical stability is preserved.
+ * \param e The ETL expression
+ * \return An ETL expression representing the softmax function of the input.
+ */
+template <typename E, cpp_enable_iff(etl::is_1d<E>)>
 auto stable_softmax(E&& e) {
     static_assert(is_etl_expr<E>, "etl::stable_softmax can only be used on ETL expressions");
     auto m = max(e);
