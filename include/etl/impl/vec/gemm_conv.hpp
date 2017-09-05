@@ -849,7 +849,7 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
         }
     };
 
-    engine_dispatch_1d_serial(batch_fun_n, 0, N, select_parallel(N, 2) && !is_blas_parallel);
+    engine_dispatch_1d_serial(batch_fun_n, 0, N, engine_select_parallel(N, 2) && !is_blas_parallel);
 
     conv.invalidate_gpu();
 }

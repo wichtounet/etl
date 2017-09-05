@@ -239,7 +239,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if(is_thread_safe<E> && select_parallel(etl::size(result))){
+        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
             par_exec<detail::Assign>(expr, result);
         } else {
             detail::Assign::apply(result, expr);
@@ -265,7 +265,7 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if(is_thread_safe<E> && select_parallel(etl::size(result))){
+        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
             par_exec<detail::VectorizedAssign<V>>(expr, result);
         } else {
             detail::VectorizedAssign<V>::apply(result, expr);
@@ -414,7 +414,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if(is_thread_safe<E> && select_parallel(etl::size(result))){
+        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
             par_exec<detail::AssignAdd>(expr, result);
         } else {
             detail::AssignAdd::apply(result, expr);
@@ -442,7 +442,7 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if(is_thread_safe<E> && select_parallel(etl::size(result))){
+        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
             par_exec<detail::VectorizedAssignAdd<V>>(expr, result);
         } else {
             detail::VectorizedAssignAdd<V>::apply(result, expr);
@@ -641,7 +641,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if(is_thread_safe<E> && select_parallel(etl::size(result))){
+        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
             par_exec<detail::AssignSub>(expr, result);
         } else {
             detail::AssignSub::apply(result, expr);
@@ -669,7 +669,7 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if(is_thread_safe<E> && select_parallel(etl::size(result))){
+        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
             par_exec<detail::VectorizedAssignSub<V>>(expr, result);
         } else {
             detail::VectorizedAssignSub<V>::apply(result, expr);
@@ -867,7 +867,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if(is_thread_safe<E> && select_parallel(etl::size(result))){
+        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
             par_exec<detail::AssignMul>(expr, result);
         } else {
             detail::AssignMul::apply(result, expr);
@@ -895,7 +895,7 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if(is_thread_safe<E> && select_parallel(etl::size(result))){
+        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
             par_exec<detail::VectorizedAssignMul<V>>(expr, result);
         } else {
             detail::VectorizedAssignMul<V>::apply(result, expr);
@@ -1091,7 +1091,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if(is_thread_safe<E> && select_parallel(etl::size(result))){
+        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
             par_exec<detail::AssignDiv>(expr, result);
         } else {
             detail::AssignDiv::apply(result, expr);
@@ -1119,7 +1119,7 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if(is_thread_safe<E> && select_parallel(etl::size(result))){
+        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
             par_exec<detail::VectorizedAssignDiv<V>>(expr, result);
         } else {
             detail::VectorizedAssignDiv<V>::apply(result, expr);

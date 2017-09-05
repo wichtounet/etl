@@ -31,7 +31,6 @@
 #include "etl/duration.hpp"
 #include "etl/threshold.hpp"
 #include "etl/thread_engine.hpp"
-#include "etl/parallel.hpp"
 #include "etl/memory.hpp"
 #include "etl/allocator.hpp"
 #include "etl/iterator.hpp"
@@ -61,9 +60,6 @@
 //Global test functions
 #include "etl/globals.hpp"
 
-// The evaluator
-#include "etl/evaluator.hpp"
-
 // Expressions helpers
 #include "etl/checks.hpp"
 #include "etl/expression_helpers.hpp"
@@ -73,6 +69,9 @@
 
 // The parallel utilies
 #include "etl/parallel_support.hpp"
+
+// The evaluator
+#include "etl/evaluator.hpp"
 
 // CRTP classes
 #include "etl/crtp/assignable.hpp"
