@@ -24,6 +24,7 @@
 #include "etl/impl/cudnn/sigmoid.hpp"
 #include "etl/impl/egblas/sqrt.hpp"
 #include "etl/impl/egblas/log.hpp"
+#include "etl/impl/egblas/exp.hpp"
 #include "etl/impl/egblas/relu_der_out.hpp"
 
 namespace etl {
@@ -482,7 +483,11 @@ struct exp_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable =
+               (is_single_precision_t<T> && impl::egblas::has_sexp)
+            || (is_double_precision_t<T> && impl::egblas::has_dexp)
+            || (is_complex_single_t<T> && impl::egblas::has_cexp)
+            || (is_complex_double_t<T> && impl::egblas::has_zexp);
 
     /*!
      * \brief Apply the unary operator on x
@@ -502,6 +507,25 @@ struct exp_unary_op {
     template <typename V = default_vec>
     static vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::exp(x);
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param expr The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on expr. The result must be a GPU computed expression.
+     */
+    template <typename E>
+    static auto gpu_compute(const E& expr) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(expr);
+
+        auto t2 = force_temporary_gpu(t1);
+
+        T alpha(1.0);
+        impl::egblas::exp(etl::size(expr), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+
+        return t2;
     }
 
     /*!
