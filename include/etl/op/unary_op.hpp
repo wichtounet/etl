@@ -1329,7 +1329,7 @@ struct relu_unary_op {
      * \return a string representing the operator
      */
     static std::string desc() noexcept {
-        return "relu_derivative_op";
+        return "relu";
     }
 };
 
@@ -1387,7 +1387,7 @@ struct relu_derivative_op {
      * \return a string representing the operator
      */
     static std::string desc() noexcept {
-        return "relu_derivative_op";
+        return "relu_derivative";
     }
 };
 
