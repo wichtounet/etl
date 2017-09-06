@@ -278,7 +278,6 @@ public:
         cpp_unused(visitor);
     }
 
-private:
     /*!
      * \brief Inherit the dimensions of an ETL expressions.
      * This must only be called when the matrix has no dimensions

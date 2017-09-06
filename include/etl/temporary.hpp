@@ -227,4 +227,67 @@ decltype(auto) force_temporary_gpu(E&& expr) {
     return mat;
 }
 
+/*!
+ * \brief Force a temporary out of the expression, without copying its content.
+ *
+ * This has the same behaviour as force_temporary(expr), but has
+ * stricter conditions of for use. It can only be used on DMA
+ * expressions and the result is guaranteed to preserve CPU and GPU
+ * status.
+ *
+ * In case of a fast matrix, a fast matrix with vector storage is created  even
+ * if the input has array storage.
+ *
+ * \param expr The expression to make a temporary from
+ * \return a temporary of the expression
+ */
+template <typename E>
+decltype(auto) force_temporary_gpu_dim_only(E&& expr) {
+    gpu_dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()> mat;
+    mat.inherit(expr);
+    return mat;
+}
+
+/*!
+ * \brief Force a temporary out of the binary expression, without copying its
+ * content. This select the most appropritate lhs or rhs for copying dimensions.
+ *
+ * This has the same behaviour as force_temporary(expr), but has
+ * stricter conditions of for use. It can only be used on DMA
+ * expressions and the result is guaranteed to preserve CPU and GPU
+ * status.
+ *
+ * In case of a fast matrix, a fast matrix with vector storage is created  even
+ * if the input has array storage.
+ *
+ * \param expr The expression to make a temporary from
+ * \return a temporary of the expression
+ */
+template <typename L, typename R, cpp_enable_iff(!is_scalar<L>)>
+decltype(auto) force_temporary_gpu_dim_only(L&& lhs, R&& rhs) {
+    cpp_unused(rhs);
+    return force_temporary_gpu_dim_only(lhs);
+}
+
+/*!
+ * \brief Force a temporary out of the binary expression, without copying its
+ * content. This select the most appropritate lhs or rhs for copying dimensions.
+ *
+ * This has the same behaviour as force_temporary(expr), but has
+ * stricter conditions of for use. It can only be used on DMA
+ * expressions and the result is guaranteed to preserve CPU and GPU
+ * status.
+ *
+ * In case of a fast matrix, a fast matrix with vector storage is created  even
+ * if the input has array storage.
+ *
+ * \param expr The expression to make a temporary from
+ * \return a temporary of the expression
+ */
+template <typename L, typename R, cpp_enable_iff(is_scalar<L>)>
+decltype(auto) force_temporary_gpu_dim_only(L&& lhs, R&& rhs) {
+    cpp_unused(lhs);
+    return force_temporary_gpu_dim_only(rhs);
+}
+
 } //end of namespace etl
