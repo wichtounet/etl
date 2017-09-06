@@ -192,7 +192,11 @@ struct log_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = is_floating_t<T> && impl::egblas::has_slog && impl::egblas::has_dlog;
+    static constexpr bool gpu_computable =
+               (is_single_precision_t<T> && impl::egblas::has_slog)
+            || (is_double_precision_t<T> && impl::egblas::has_dlog)
+            || (is_complex_single_t<T> && impl::egblas::has_clog)
+            || (is_complex_double_t<T> && impl::egblas::has_zlog);
 
     /*!
      * The vectorization type for V

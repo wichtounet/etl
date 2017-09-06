@@ -86,6 +86,114 @@ inline void log(size_t n, double* alpha, double* A , size_t lda, double* B , siz
 #endif
 }
 
+#ifdef EGBLAS_HAS_CLOG
+static constexpr bool has_clog = true;
+#else
+static constexpr bool has_clog = false;
+#endif
+
+/*!
+ * \brief Wrappers for complex single-precision egblas log operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void log(size_t n, std::complex<float>* alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+#ifdef EGBLAS_HAS_CLOG
+    egblas_clog(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+
+    cpp_unreachable("Invalid call to egblas::log");
+#endif
+}
+
+/*!
+ * \brief Wrappers for complex single-precision egblas log operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void log(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+#ifdef EGBLAS_HAS_CLOG
+    egblas_clog(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+
+    cpp_unreachable("Invalid call to egblas::log");
+#endif
+}
+
+#ifdef EGBLAS_HAS_ZLOG
+static constexpr bool has_zlog = true;
+#else
+static constexpr bool has_zlog = false;
+#endif
+
+/*!
+ * \brief Wrappers for complex double-precision egblas log operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void log(size_t n, std::complex<double>* alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+#ifdef EGBLAS_HAS_ZLOG
+    egblas_zlog(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+
+    cpp_unreachable("Invalid call to egblas::log");
+#endif
+}
+
+/*!
+ * \brief Wrappers for complex double-precision egblas log operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void log(size_t n, etl::complex<double>* alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+#ifdef EGBLAS_HAS_ZLOG
+    egblas_zlog(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+
+    cpp_unreachable("Invalid call to egblas::log");
+#endif
+}
+
 } //end of namespace egblas
 } //end of namespace impl
 } //end of namespace etl
