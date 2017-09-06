@@ -193,6 +193,15 @@ public:
         return BinaryOp::gpu_compute(lhs, rhs);
     }
 
+    /*!
+     * \brief Return a GPU computed version of this expression
+     * \return a GPU-computed ETL expression for this expression
+     */
+    template<typename Y>
+    decltype(auto) gpu_compute(Y& y) const {
+        return BinaryOp::gpu_compute(lhs, rhs, y);
+    }
+
     // Assignment functions
 
     /*!

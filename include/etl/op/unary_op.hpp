@@ -228,20 +228,44 @@ struct log_unary_op {
     /*!
      * \brief Compute the result of the operation using the GPU
      *
-     * \param expr The expression of the unary operation
+     * \param x The expression of the unary operation
      *
-     * \return The result of applying the unary operator on expr. The result must be a GPU computed expression.
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
-    template <typename E>
-    static auto gpu_compute(const E& expr) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(expr);
+    template <typename X>
+    static auto gpu_compute(const X& x) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
 
-        auto t2 = force_temporary_gpu(t1);
+        auto t2 = force_temporary_gpu_dim_only(t1);
 
         T alpha(1.0);
-        impl::egblas::log(etl::size(expr), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+        impl::egblas::log(etl::size(x), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
 
         return t2;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y>
+    static Y& gpu_compute(const X& x, Y& y) noexcept {
+        // TODO Check this!
+        if /* constexpr */ (is_dma<X>){
+            decltype(auto) t1 = smart_gpu_compute(x);
+
+            T alpha(1.0);
+            impl::egblas::log(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+        } else {
+            smart_gpu_compute(x, y);
+
+            T alpha(1.0);
+            impl::egblas::log(etl::size(x), &alpha, y.gpu_memory(), 1, y.gpu_memory(), 1);
+        }
+
+        return y;
     }
 
     /*!
@@ -305,20 +329,32 @@ struct sqrt_unary_op {
     /*!
      * \brief Compute the result of the operation using the GPU
      *
-     * \param expr The expression of the unary operation
+     * \param x The expression of the unary operation
      *
-     * \return The result of applying the unary operator on expr. The result must be a GPU computed expression.
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
-    template <typename E>
-    static auto gpu_compute(const E& expr) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(expr);
+    template <typename X>
+    static auto gpu_compute(const X& x) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
 
-        auto t2 = force_temporary_gpu(t1);
+        auto t2 = force_temporary_gpu_dim_only(t1);
+        gpu_compute(t1, t2);
+        return t2;
+    }
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y>
+    static Y& gpu_compute(const X& x, Y& y) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
 
         T alpha(1.0);
-        impl::egblas::sqrt(etl::size(expr), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+        impl::egblas::sqrt(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
 
-        return t2;
+        return y;
     }
 
     /*!
@@ -512,20 +548,43 @@ struct exp_unary_op {
     /*!
      * \brief Compute the result of the operation using the GPU
      *
-     * \param expr The expression of the unary operation
+     * \param x The expression of the unary operation
      *
-     * \return The result of applying the unary operator on expr. The result must be a GPU computed expression.
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
-    template <typename E>
-    static auto gpu_compute(const E& expr) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(expr);
+    template <typename X>
+    static auto gpu_compute(const X& x) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
 
-        auto t2 = force_temporary_gpu(t1);
+        auto t2 = force_temporary_gpu_dim_only(t1);
 
         T alpha(1.0);
-        impl::egblas::exp(etl::size(expr), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+        impl::egblas::exp(etl::size(x), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
 
         return t2;
+    }
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y>
+    static Y& gpu_compute(const X& x, Y& y) noexcept {
+        // TODO Check this!
+        if /* constexpr */ (is_dma<X>){
+            decltype(auto) t1 = smart_gpu_compute(x);
+
+            T alpha(1.0);
+            impl::egblas::exp(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+        } else {
+            smart_gpu_compute(x, y);
+
+            T alpha(1.0);
+            impl::egblas::exp(etl::size(x), &alpha, y.gpu_memory(), 1, y.gpu_memory(), 1);
+        }
+
+        return y;
     }
 
     /*!
@@ -638,19 +697,31 @@ struct sigmoid_unary_op {
     /*!
      * \brief Compute the result of the operation using the GPU
      *
-     * \param expr The expression of the unary operation
+     * \param x The expression of the unary operation
      *
-     * \return The result of applying the unary operator on expr. The result must be a GPU computed expression.
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
-    template <typename E>
-    static auto gpu_compute(const E& expr) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(expr);
+    template <typename X>
+    static auto gpu_compute(const X& x) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
 
-        auto t2 = force_temporary_gpu(t1);
-
+        auto t2 = force_temporary_gpu_dim_only(t1);
         impl::cudnn::sigmoid(t1, t2);
-
         return t2;
+    }
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y>
+    static Y& gpu_compute(const X& x, Y& y) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
+
+        impl::cudnn::sigmoid(t1, y);
+
+        return y;
     }
 
     /*!
@@ -1338,19 +1409,31 @@ struct relu_unary_op {
     /*!
      * \brief Compute the result of the operation using the GPU
      *
-     * \param expr The expression of the unary operation
+     * \param x The expression of the unary operation
      *
-     * \return The result of applying the unary operator on expr. The result must be a GPU computed expression.
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
-    template <typename E>
-    static auto gpu_compute(const E& expr) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(expr);
+    template <typename X>
+    static auto gpu_compute(const X& x) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
 
-        auto t2 = force_temporary_gpu(t1);
-
+        auto t2 = force_temporary_gpu_dim_only(t1);
         impl::cudnn::relu(t1, t2);
-
         return t2;
+    }
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y>
+    static Y& gpu_compute(const X& x, Y& y) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
+
+        impl::cudnn::relu(t1, y);
+
+        return y;
     }
 
     /*!
@@ -1414,20 +1497,32 @@ struct relu_derivative_op {
     /*!
      * \brief Compute the result of the operation using the GPU
      *
-     * \param expr The expression of the unary operation
+     * \param x The expression of the unary operation
      *
-     * \return The result of applying the unary operator on expr. The result must be a GPU computed expression.
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
-    template <typename E>
-    static auto gpu_compute(const E& expr) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(expr);
+    template <typename X>
+    static auto gpu_compute(const X& x) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
 
-        auto t2 = force_temporary_gpu(t1);
+        auto t2 = force_temporary_gpu_dim_only(t1);
+        gpu_compute(t1, t2);
+        return t2;
+    }
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y>
+    static Y& gpu_compute(const X& x, Y& y) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
 
         T alpha(1.0);
-        impl::egblas::relu_der_out(etl::size(expr), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+        impl::egblas::relu_der_out(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
 
-        return t2;
+        return y;
     }
 
     /*!

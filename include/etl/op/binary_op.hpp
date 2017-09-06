@@ -93,6 +93,21 @@ struct plus_binary_op {
         return V::add(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R>
+    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+        auto t3 = force_temporary_gpu_dim_only(lhs, rhs);
+        gpu_compute(lhs, rhs, t3);
+        return t3;
+    }
+
 #ifdef ETL_CUBLAS_MODE
 
     /*!
@@ -103,23 +118,22 @@ struct plus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+    template <typename L, typename R, typename Y, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         decltype(auto) t1 = smart_gpu_compute(lhs);
-        decltype(auto) t2 = smart_gpu_compute(rhs);
-
-        auto t3 = force_temporary_gpu(t2);
 
         decltype(auto) handle = impl::cublas::start_cublas();
 
+        smart_gpu_compute(rhs, y);
+
         value_t<L> alpha(1);
 
-        impl::cublas::cublas_axpy(handle.get(), size(lhs), &alpha, t1.gpu_memory(), 1, t3.gpu_memory(), 1);
+        impl::cublas::cublas_axpy(handle.get(), size(lhs), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
 
-        t3.validate_gpu();
-        t3.invalidate_cpu();
+        y.validate_gpu();
+        y.invalidate_cpu();
 
-        return t3;
+        return y;
     }
 
 #endif
@@ -132,20 +146,18 @@ struct plus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+    template <typename L, typename R, typename Y, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = lhs.value;
 
-        decltype(auto) t2 = smart_gpu_compute(rhs);
+        smart_gpu_compute(rhs, y);
 
-        auto t3 = force_temporary_gpu(t2);
+        impl::egblas::scalar_add(y.gpu_memory(), size(rhs), 1, &s);
 
-        impl::egblas::scalar_add(t3.gpu_memory(), size(rhs), 1, &s);
+        y.validate_gpu();
+        y.invalidate_cpu();
 
-        t3.validate_gpu();
-        t3.invalidate_cpu();
-
-        return t3;
+        return y;
     }
 
     /*!
@@ -156,20 +168,18 @@ struct plus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+    template <typename L, typename R, typename Y, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = rhs.value;
 
-        decltype(auto) t2 = smart_gpu_compute(lhs);
+        smart_gpu_compute(lhs, y);
 
-        auto t3 = force_temporary_gpu(t2);
+        impl::egblas::scalar_add(y.gpu_memory(), size(lhs), 1, &s);
 
-        impl::egblas::scalar_add(t3.gpu_memory(), size(lhs), 1, &s);
+        y.validate_gpu();
+        y.invalidate_cpu();
 
-        t3.validate_gpu();
-        t3.invalidate_cpu();
-
-        return t3;
+        return y;
     }
 
     /*!
@@ -241,6 +251,21 @@ struct minus_binary_op {
         return V::sub(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R>
+    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+        auto t3 = force_temporary_gpu_dim_only(lhs, rhs);
+        gpu_compute(lhs, rhs, t3);
+        return t3;
+    }
+
 #ifdef ETL_CUBLAS_MODE
 
     /*!
@@ -251,23 +276,20 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(lhs);
-        decltype(auto) t2 = smart_gpu_compute(rhs);
-
-        auto t3 = force_temporary_gpu(t1);
-
+    template <typename L, typename R, typename Y, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         decltype(auto) handle = impl::cublas::start_cublas();
 
+        smart_gpu_compute(lhs, y);
+        decltype(auto) t2 = smart_gpu_compute(rhs);
+
         value_t<L> alpha(-1);
+        impl::cublas::cublas_axpy(handle.get(), size(lhs), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
 
-        impl::cublas::cublas_axpy(handle.get(), size(lhs), &alpha, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
+        y.validate_gpu();
+        y.invalidate_cpu();
 
-        t3.validate_gpu();
-        t3.invalidate_cpu();
-
-        return t3;
+        return y;
     }
 
     /*!
@@ -278,20 +300,18 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+    template <typename L, typename R, typename Y, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = -rhs.value;
 
-        decltype(auto) t2 = smart_gpu_compute(lhs);
+        smart_gpu_compute(lhs, y);
 
-        auto t3 = force_temporary_gpu(t2);
+        impl::egblas::scalar_add(y.gpu_memory(), size(lhs), 1, &s);
 
-        impl::egblas::scalar_add(t3.gpu_memory(), size(lhs), 1, &s);
+        y.validate_gpu();
+        y.invalidate_cpu();
 
-        t3.validate_gpu();
-        t3.invalidate_cpu();
-
-        return t3;
+        return y;
     }
 
     /*!
@@ -302,25 +322,23 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+    template <typename L, typename R, typename Y, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = lhs.value;
 
-        decltype(auto) t2 = smart_gpu_compute(rhs);
-
-        auto t3 = force_temporary_gpu(t2);
+        smart_gpu_compute(rhs, y);
 
         value_t<L> alpha(-1);
 
         decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), size(rhs), &alpha, t3.gpu_memory(), 1);
+        impl::cublas::cublas_scal(handle.get(), size(rhs), &alpha, y.gpu_memory(), 1);
 
-        impl::egblas::scalar_add(t3.gpu_memory(), size(rhs), 1, &s);
+        impl::egblas::scalar_add(y.gpu_memory(), size(rhs), 1, &s);
 
-        t3.validate_gpu();
-        t3.invalidate_cpu();
+        y.validate_gpu();
+        y.invalidate_cpu();
 
-        return t3;
+        return y;
     }
 
 #endif
@@ -395,6 +413,21 @@ struct mul_binary_op {
         return V::mul(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R>
+    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+        auto t3 = force_temporary_gpu_dim_only(lhs, rhs);
+        gpu_compute(lhs, rhs, t3);
+        return t3;
+    }
+
 #ifdef ETL_EGBLAS_MODE
 
     /*!
@@ -405,21 +438,19 @@ struct mul_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(lhs);
+    template <typename L, typename R, typename Y, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
+        smart_gpu_compute(lhs, y);
         decltype(auto) t2 = smart_gpu_compute(rhs);
-
-        auto t3 = force_temporary_gpu(t1);
 
         value_t<L> alpha(1);
 
-        impl::egblas::axmy(size(lhs), &alpha, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
+        impl::egblas::axmy(size(lhs), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
 
-        t3.validate_gpu();
-        t3.invalidate_cpu();
+        y.validate_gpu();
+        y.invalidate_cpu();
 
-        return t3;
+        return y;
     }
 
 #endif
@@ -434,21 +465,19 @@ struct mul_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+    template <typename L, typename R, typename Y, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = lhs.value;
 
-        decltype(auto) t2 = smart_gpu_compute(rhs);
-
-        auto t3 = force_temporary_gpu(t2);
+        smart_gpu_compute(rhs, y);
 
         decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), size(rhs), &s, t3.gpu_memory(), 1);
+        impl::cublas::cublas_scal(handle.get(), size(rhs), &s, y.gpu_memory(), 1);
 
-        t3.validate_gpu();
-        t3.invalidate_cpu();
+        y.validate_gpu();
+        y.invalidate_cpu();
 
-        return t3;
+        return y;
     }
 
     /*!
@@ -459,21 +488,19 @@ struct mul_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+    template <typename L, typename R, typename Y, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = rhs.value;
 
-        decltype(auto) t2 = smart_gpu_compute(lhs);
-
-        auto t3 = force_temporary_gpu(t2);
+        smart_gpu_compute(lhs, y);
 
         decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), size(lhs), &s, t3.gpu_memory(), 1);
+        impl::cublas::cublas_scal(handle.get(), size(lhs), &s, y.gpu_memory(), 1);
 
-        t3.validate_gpu();
-        t3.invalidate_cpu();
+        y.validate_gpu();
+        y.invalidate_cpu();
 
-        return t3;
+        return y;
     }
 
 #endif
@@ -561,6 +588,21 @@ struct div_binary_op {
         return V::div(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R>
+    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+        auto t3 = force_temporary_gpu_dim_only(lhs, rhs);
+        gpu_compute(lhs, rhs, t3);
+        return t3;
+    }
+
 #ifdef ETL_EGBLAS_MODE
 
     /*!
@@ -571,21 +613,19 @@ struct div_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, cpp_enable_iff(!is_scalar<L> && !is_scalar<R>)>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(lhs);
+    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
+        smart_gpu_compute(lhs, y);
         decltype(auto) t2 = smart_gpu_compute(rhs);
-
-        auto t3 = force_temporary_gpu(t1);
 
         value_t<L> alpha(1);
 
-        impl::egblas::axdy(size(lhs), &alpha, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
+        impl::egblas::axdy(size(lhs), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
 
-        t3.validate_gpu();
-        t3.invalidate_cpu();
+        y.validate_gpu();
+        y.invalidate_cpu();
 
-        return t3;
+        return y;
     }
 
 #endif
@@ -600,21 +640,19 @@ struct div_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+    template <typename L, typename R, typename Y, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = T(1) / rhs.value;
 
-        decltype(auto) t2 = smart_gpu_compute(lhs);
-
-        auto t3 = force_temporary_gpu(t2);
+        smart_gpu_compute(lhs, y);
 
         decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), size(lhs), &s, t3.gpu_memory(), 1);
+        impl::cublas::cublas_scal(handle.get(), size(lhs), &s, y.gpu_memory(), 1);
 
-        t3.validate_gpu();
-        t3.invalidate_cpu();
+        y.validate_gpu();
+        y.invalidate_cpu();
 
-        return t3;
+        return y;
     }
 
 #endif
@@ -627,20 +665,18 @@ struct div_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+    template <typename L, typename R, typename Y, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = lhs.value;
 
-        decltype(auto) t2 = smart_gpu_compute(rhs);
+        smart_gpu_compute(rhs, y);
 
-        auto t3 = force_temporary_gpu(t2);
+        impl::egblas::scalar_div(&s, y.gpu_memory(), size(rhs), 1);
 
-        impl::egblas::scalar_div(&s, t3.gpu_memory(), size(rhs), 1);
+        y.validate_gpu();
+        y.invalidate_cpu();
 
-        t3.validate_gpu();
-        t3.invalidate_cpu();
-
-        return t3;
+        return y;
     }
 
     /*!
@@ -1454,16 +1490,33 @@ struct sigmoid_derivative_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
+    template <typename L, typename R>
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
         decltype(auto) t1 = smart_gpu_compute(lhs);
         decltype(auto) t2 = smart_gpu_compute(rhs);
-
-        auto t3 = force_temporary_gpu(t2);
+        decltype(auto) t3 = force_temporary_gpu_dim_only(t2);
 
         impl::cudnn::sigmoid_backward(t1, t2, t3);
 
         return t3;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R, typename Y>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(lhs);
+        decltype(auto) t2 = smart_gpu_compute(rhs);
+
+        impl::cudnn::sigmoid_backward(t1, t2, y);
+
+        return y;
     }
 
     /*!
@@ -1540,12 +1593,29 @@ struct relu_derivative_binary_op {
     static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
         decltype(auto) t1 = smart_gpu_compute(lhs);
         decltype(auto) t2 = smart_gpu_compute(rhs);
-
-        auto t3 = force_temporary_gpu(t2);
+        decltype(auto) t3 = force_temporary_gpu_dim_only(t2);
 
         impl::cudnn::relu_backward(t1, t2, t3);
 
         return t3;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R, typename Y>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(lhs);
+        decltype(auto) t2 = smart_gpu_compute(rhs);
+
+        impl::cudnn::relu_backward(t1, t2, y);
+
+        return y;
     }
 
     /*!

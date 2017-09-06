@@ -217,6 +217,15 @@ public:
         return UnaryOp::gpu_compute(value);
     }
 
+    /*!
+     * \brief Return a GPU computed version of this expression
+     * \return a GPU-computed ETL expression for this expression
+     */
+    template<typename Y>
+    decltype(auto) gpu_compute(Y& y) const {
+        return UnaryOp::gpu_compute(value, y);
+    }
+
     // Assignment functions
 
     /*!
