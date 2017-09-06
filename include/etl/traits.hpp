@@ -1479,24 +1479,31 @@ decltype(auto) smart_gpu_compute(E& expr) {
     return expr.gpu_compute();
 }
 
+template <typename E, typename Y, cpp_enable_iff(is_temporary_expr<E> && !E::gpu_computable)>
+decltype(auto) smart_gpu_compute(E& expr, Y& y) {
+    // TODO Check this
+    auto t = force_temporary(expr);
+    t.ensure_gpu_up_to_date();
+    y = t;
+    return y;
+}
 
+template <typename E, typename Y, cpp_enable_iff(is_temporary_expr<E> && E::gpu_computable)>
+decltype(auto) smart_gpu_compute(E& expr, Y& y) {
+    return y = expr;
+}
 
+template <typename E, typename Y, cpp_enable_iff(!is_temporary_expr<E> && !is_dma<E>)>
+decltype(auto) smart_gpu_compute(E& expr, Y& y) {
+    return expr.gpu_compute(y);
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+template <typename E, typename Y, cpp_enable_iff(!is_temporary_expr<E> && is_dma<E>)>
+decltype(auto) smart_gpu_compute(E& expr, Y& y) {
+    expr.ensure_gpu_up_to_date();
+    y.ensure_gpu_allocated();
+    y.gpu_copy_from(expr.gpu_memory());
+    return y;
+}
 
 } //end of namespace etl

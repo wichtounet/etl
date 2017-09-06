@@ -214,11 +214,16 @@ namespace standard_evaluator {
 
         result.ensure_gpu_allocated();
 
-        // Compute the GPU representation of the expression
-        decltype(auto) t1 = smart_gpu_compute(expr);
+        if (is_binary_expr<E> && expr.alias(result)){
+            // Compute the GPU representation of the expression
+            decltype(auto) t1 = smart_gpu_compute(expr);
 
-        // Copy the GPU memory from the expression to the result
-        result.gpu_copy_from(t1.gpu_memory());
+            // Copy the GPU memory from the expression to the result
+            result.gpu_copy_from(t1.gpu_memory());
+        } else {
+            // Compute the GPU representation of the expression into the result
+            smart_gpu_compute(expr, result);
+        }
 
         // Validate the GPU and invalidates the CPU
         result.validate_gpu();
