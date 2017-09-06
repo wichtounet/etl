@@ -245,6 +245,7 @@ template <typename E>
 decltype(auto) force_temporary_gpu_dim_only(E&& expr) {
     gpu_dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()> mat;
     mat.inherit(expr);
+    mat.ensure_gpu_allocated();
     return mat;
 }
 
