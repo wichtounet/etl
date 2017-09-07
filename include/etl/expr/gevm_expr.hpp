@@ -89,10 +89,12 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      */
     template <typename C>
     static constexpr gemm_impl select_default_gevm_impl(const size_t n1, const size_t n2) {
-        using T = value_t<A>;
-
         constexpr bool vec_possible = all_vectorizable_t<vector_mode, A, B, C> && vec_enabled;
         constexpr bool homo         = all_homogeneous<A, B, C>;
+
+        if (cublas_enabled && homo && !local_context().cpu) {
+            return gemm_impl::CUBLAS;
+        }
 
         if(cblas_enabled && homo){
             if(vec_possible && n1 * n2 <= 200 * 200){
@@ -104,10 +106,6 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
 
         if(vec_possible && homo){
             return gemm_impl::VEC;
-        }
-
-        if (cublas_enabled && homo && is_complex_single_t<T> && n1 * n2 > 1000 * 1000 && !local_context().cpu) {
-            return gemm_impl::CUBLAS;
         }
 
         return gemm_impl::STD;
@@ -301,8 +299,8 @@ struct etl_traits<etl::gevm_expr<A, B>> {
     static constexpr bool is_generator            = false;                                         ///< Indicates if the expression is a generator
     static constexpr bool is_padded               = false;                                         ///< Indicates if the expression is padded
     static constexpr bool is_aligned              = true;                                          ///< Indicates if the expression is padded
-    static constexpr bool is_temporary = true;                                          ///< Indicates if the expression needs a evaluator visitor
-    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
+    static constexpr bool is_temporary            = true;                                          ///< Indicates if the expression needs a evaluator visitor
+    static constexpr bool gpu_computable          = is_gpu_t<value_type> && cublas_enabled;        ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order          = left_traits::storage_order;                     ///< The expression's storage order
 
     /*!

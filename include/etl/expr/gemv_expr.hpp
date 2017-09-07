@@ -90,10 +90,12 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \return The implementation to use
      */
     template <typename C>
-    static constexpr gemm_impl select_default_gemv_impl(const size_t n1, const size_t n2) {
-        using T = value_t<A>;
-
+    static constexpr gemm_impl select_default_gemv_impl() {
         constexpr bool homo = all_homogeneous<A, B, C>;
+
+        if (cublas_enabled && homo && !local_context().cpu) {
+            return gemm_impl::CUBLAS;
+        }
 
         if(all_vectorizable_t<vector_mode, A, B, C> && vec_enabled && homo){
             return gemm_impl::VEC;
@@ -101,10 +103,6 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
 
         if(cblas_enabled && homo){
             return gemm_impl::BLAS;
-        }
-
-        if (cublas_enabled && is_complex_single_t<T> && n1 * n2 > 1000 * 1000 && homo && !local_context().cpu) {
-            return gemm_impl::CUBLAS;
         }
 
         return gemm_impl::STD;
@@ -117,7 +115,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \return The implementation to use
      */
     template <typename C>
-    static inline gemm_impl select_gemv_impl(const size_t n1, const size_t n2) {
+    static inline gemm_impl select_gemv_impl() {
         if (local_context().gemm_selector.forced) {
             auto forced = local_context().gemm_selector.impl;
 
@@ -126,7 +124,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
                 case gemm_impl::CUBLAS:
                     if (!cublas_enabled || !all_homogeneous<A, B, C> || local_context().cpu) {                                                                                     //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to CUBLAS gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_gemv_impl<C>(n1, n2);                                                                  //COVERAGE_EXCLUDE_LINE
+                        return select_default_gemv_impl<C>();                                                                  //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                     //COVERAGE_EXCLUDE_LINE
 
                     return forced;
@@ -135,7 +133,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
                 case gemm_impl::BLAS:
                     if (!cblas_enabled || !all_homogeneous<A, B, C>) {                                                                                    //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to BLAS gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_gemv_impl<C>(n1, n2);                                                                //COVERAGE_EXCLUDE_LINE
+                        return select_default_gemv_impl<C>();                                                                //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
                     return forced;
@@ -144,7 +142,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
                 case gemm_impl::VEC:
                     if (!vec_enabled || !all_vectorizable<vector_mode, A, B, C> || !all_homogeneous<A, B, C>) {                                               //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to VEC gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_gemv_impl<C>(n1, n2);                                                                //COVERAGE_EXCLUDE_LINE
+                        return select_default_gemv_impl<C>();                                                                //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
                     return forced;
@@ -155,7 +153,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
             }
         }
 
-        return select_default_gemv_impl<C>(n1, n2);
+        return select_default_gemv_impl<C>();
     }
 
     /*!
@@ -166,7 +164,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      */
     template <typename AA, typename BB, typename C, cpp_enable_iff(is_transpose_expr<AA>)>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
-        auto impl = select_gemv_impl<C>(etl::dim<0>(a), etl::dim<1>(a));
+        auto impl = select_gemv_impl<C>();
 
         if (impl == gemm_impl::STD) {
             etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
@@ -189,7 +187,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      */
     template <typename AA, typename BB, typename C, cpp_enable_iff(!is_transpose_expr<AA>)>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
-        auto impl = select_gemv_impl<C>(etl::dim<0>(a), etl::dim<1>(a));
+        auto impl = select_gemv_impl<C>();
 
         if (impl == gemm_impl::STD) {
             etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
@@ -300,7 +298,7 @@ struct etl_traits<etl::gemv_expr<A, B>> {
     static constexpr bool is_aligned     = true;                                          ///< Indicates if the expression is padded
     static constexpr bool is_temporary   = true;                                          ///< Indicates if the expression needs a evaluator visitor
     static constexpr order storage_order = left_traits::storage_order;                    ///< The expression's storage order
-    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cublas_enabled;        ///< Indicates if the expression can be computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

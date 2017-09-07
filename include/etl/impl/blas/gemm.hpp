@@ -495,6 +495,10 @@ void gemm_tt(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, B, C>)>
 void gemv(A&& a, B&& b, C&& c) {
+    cpp_assert(a.memory_start(), "Invalid memory for blas::gemv");
+    cpp_assert(b.memory_start(), "Invalid memory for blas::gemv");
+    cpp_assert(c.memory_start(), "Invalid memory for blas::gemv");
+
     using T = value_t<A>;
 
     static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
