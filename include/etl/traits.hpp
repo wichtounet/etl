@@ -1411,13 +1411,6 @@ bool safe_is_gpu_up_to_date(E&& expr){
     return false;
 }
 
-
-
-
-
-
-
-
 template <typename E, cpp_enable_iff(!is_temporary_expr<E>)>
 decltype(auto) smart_forward(E& expr) {
     //TODO Maybe not necessary
