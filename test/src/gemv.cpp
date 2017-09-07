@@ -180,3 +180,29 @@ GEMV_T_TEST_CASE("gemv_t/2", "[gemv][gemv_t]") {
         REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
     }
 }
+
+TEMPLATE_TEST_CASE_2("gemv/7", "[gemv]", T, float, double) {
+    etl::dyn_matrix<T> a(64, 64);
+    etl::dyn_vector<T> b(64);
+
+    etl::dyn_vector<T> c(64);
+    etl::dyn_vector<T> c_ref(64);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    c = 1.0;
+    c -= a * b;
+
+    c_ref = 0;
+
+    for (size_t i = 0; i < 64; i++) {
+        for (size_t k = 0; k < 64; k++) {
+            c_ref(i) += a(i, k) * b(k);
+        }
+    }
+
+    for(size_t i = 0; i < etl::size(c); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], 1.0 - c_ref[i]);
+    }
+}

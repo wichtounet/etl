@@ -156,3 +156,29 @@ GEVM_T_TEST_CASE("gevm_t/2", "[gevm][gevm_t]") {
         REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
     }
 }
+
+TEMPLATE_TEST_CASE_2("gevm/5", "[gevm]", T, float, double) {
+    etl::dyn_matrix<T> a(64, 64);
+    etl::dyn_vector<T> b(64);
+
+    etl::dyn_vector<T> c(64);
+    etl::dyn_vector<T> c_ref(64);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    c = 1.0;
+    c += b * a;
+
+    c_ref = 0;
+
+    for (size_t k = 0; k < 64; k++) {
+        for (size_t j = 0; j < 64; j++) {
+            c_ref(j) += b(k) * a(k, j);
+        }
+    }
+
+    for(size_t i = 0; i < etl::size(c); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], 1.0 + c_ref[i]);
+    }
+}
