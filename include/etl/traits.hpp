@@ -1048,7 +1048,11 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable = get_intrinsic_traits<V>::template type<value_type>::vectorizable && !is_sparse_matrix<T>;
+    static constexpr bool vectorizable =
+            get_intrinsic_traits<V>::template type<value_type>::vectorizable
+        &&  !is_sparse_matrix<T>
+        &&  !is_gpu_dyn_matrix<T>
+        ;
 
     /*!
      * \brief Return the size of the given epxression
