@@ -272,9 +272,24 @@ void batch_outer_impl(const L& lhs, const R& rhs, C&& result) {
  * \param rhs The b expression
  * \param c The c expression
  */
-template <typename A, typename B, typename C>
+template <typename A, typename B, typename C, cpp_enable_iff(all_vectorizable<vector_mode, A, B, C>)>
 void batch_outer(const A& lhs, const B& rhs, C&& c) {
     batch_outer_impl<default_vec>(lhs, rhs, c);
+}
+
+/*!
+ * \brief Compute the batch outer product of a and b and store the result in c
+ * \param lhs The a expression
+ * \param rhs The b expression
+ * \param c The c expression
+ */
+template <typename A, typename B, typename C, cpp_enable_iff(!all_vectorizable<vector_mode, A, B, C>)>
+void batch_outer(const A& lhs, const B& rhs, C&& c) {
+    cpp_unused(lhs);
+    cpp_unused(rhs);
+    cpp_unused(c);
+
+    cpp_unreachable("Invalid call to vec::outer");
 }
 
 } //end of namespace standard
