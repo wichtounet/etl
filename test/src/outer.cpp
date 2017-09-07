@@ -150,3 +150,29 @@ TEMPLATE_TEST_CASE_2("batch_outer/3", "[outer]", Z, float, double) {
         REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
     }
 }
+
+TEMPLATE_TEST_CASE_2("batch_outer/4", "[outer]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 3> a = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+    etl::fast_matrix<Z, 2, 3> b = {4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
+
+    etl::fast_matrix<Z, 3, 3> c;
+    etl::fast_matrix<Z, 3, 3> c_ref;
+
+    c = 1.0;
+    c -= batch_outer(a, b);
+
+    c_ref = 0;
+
+    for (size_t bb = 0; bb < 2; ++bb) {
+        for (size_t i = 0; i < 3; ++i) {
+            for (size_t j = 0; j < 3; ++j) {
+
+                c_ref(i, j) += a(bb, i) * b(bb, j);
+            }
+        }
+    }
+
+    for(size_t i = 0; i < c_ref.size(); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], 1.0 - c_ref[i]);
+    }
+}
