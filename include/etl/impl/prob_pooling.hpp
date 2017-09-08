@@ -136,15 +136,17 @@ struct pmp_h_impl {
         etl::dyn_matrix<T, 2> exp_sub(M, N);
         etl::dyn_matrix<T, 2> base(M, N);
 
-        exp_sub = exp(a);
+        CPU_SECTION {
+            exp_sub = exp(a);
 
-        if (C1 == 2 && C2 == 2) {
-            pmp_h_kernel_2x2(exp_sub, base);
-        } else {
-            pmp_h_kernel<C1, C2>(exp_sub, base);
+            if (C1 == 2 && C2 == 2) {
+                pmp_h_kernel_2x2(exp_sub, base);
+            } else {
+                pmp_h_kernel<C1, C2>(exp_sub, base);
+            }
+
+            c = exp_sub / (1.0 + base);
         }
-
-        c = exp_sub / (1.0 + base);
     }
 
     /*!
@@ -168,21 +170,23 @@ struct pmp_h_impl {
         etl::dyn_matrix<T, 2> exp_sub(M, N);
         etl::dyn_matrix<T, 2> base(M, N);
 
-        if (C1 == 2 && C2 == 2) {
-            for (size_t l = 0; l < L; ++l) {
-                exp_sub = exp(a(l));
+        CPU_SECTION {
+            if (C1 == 2 && C2 == 2) {
+                for (size_t l = 0; l < L; ++l) {
+                    exp_sub = exp(a(l));
 
-                pmp_h_kernel_2x2(exp_sub, base);
+                    pmp_h_kernel_2x2(exp_sub, base);
 
-                c(l) = exp_sub / (1.0 + base);
-            }
-        } else {
-            for (size_t l = 0; l < L; ++l) {
-                exp_sub = exp(a(l));
+                    c(l) = exp_sub / (1.0 + base);
+                }
+            } else {
+                for (size_t l = 0; l < L; ++l) {
+                    exp_sub = exp(a(l));
 
-                pmp_h_kernel<C1, C2>(exp_sub, base);
+                    pmp_h_kernel<C1, C2>(exp_sub, base);
 
-                c(l) = exp_sub / (1.0 + base);
+                    c(l) = exp_sub / (1.0 + base);
+                }
             }
         }
     }
@@ -209,24 +213,26 @@ struct pmp_h_impl {
         etl::dyn_matrix<T, 2> exp_sub(M, N);
         etl::dyn_matrix<T, 2> base(M, N);
 
-        if (C1 == 2 && C2 == 2) {
-            for (size_t k = 0; k < K; ++k) {
-                for (size_t l = 0; l < L; ++l) {
-                    exp_sub = exp(a(k)(l));
+        CPU_SECTION {
+            if (C1 == 2 && C2 == 2) {
+                for (size_t k = 0; k < K; ++k) {
+                    for (size_t l = 0; l < L; ++l) {
+                        exp_sub = exp(a(k)(l));
 
-                    pmp_h_kernel_2x2(exp_sub, base);
+                        pmp_h_kernel_2x2(exp_sub, base);
 
-                    c(k)(l) = exp_sub / (1.0 + base);
+                        c(k)(l) = exp_sub / (1.0 + base);
+                    }
                 }
-            }
-        } else {
-            for (size_t k = 0; k < K; ++k) {
-                for (size_t l = 0; l < L; ++l) {
-                    exp_sub = exp(a(k)(l));
+            } else {
+                for (size_t k = 0; k < K; ++k) {
+                    for (size_t l = 0; l < L; ++l) {
+                        exp_sub = exp(a(k)(l));
 
-                    pmp_h_kernel<C1, C2>(exp_sub, base);
+                        pmp_h_kernel<C1, C2>(exp_sub, base);
 
-                    c(k)(l) = exp_sub / (1.0 + base);
+                        c(k)(l) = exp_sub / (1.0 + base);
+                    }
                 }
             }
         }
@@ -269,15 +275,17 @@ struct dyn_pmp_h_impl {
         etl::dyn_matrix<T, 2> exp_sub(M, N);
         etl::dyn_matrix<T, 2> base(M, N);
 
-        exp_sub = exp(a);
+        CPU_SECTION {
+            exp_sub = exp(a);
 
-        if(c1 == 2 && c2 == 2){
-            pmp_h_kernel_2x2(exp_sub, base);
-        } else {
-            pmp_h_kernel(exp_sub, base, c1, c2);
+            if (c1 == 2 && c2 == 2) {
+                pmp_h_kernel_2x2(exp_sub, base);
+            } else {
+                pmp_h_kernel(exp_sub, base, c1, c2);
+            }
+
+            c = exp_sub / (1.0 + base);
         }
-
-        c = exp_sub / (1.0 + base);
     }
 
     /*!
@@ -306,21 +314,23 @@ struct dyn_pmp_h_impl {
         etl::dyn_matrix<T, 2> exp_sub(M, N);
         etl::dyn_matrix<T, 2> base(M, N);
 
-        if (c1 == 2 && c2 == 2) {
-            for (size_t l = 0; l < L; ++l) {
-                exp_sub = exp(a(l));
+        CPU_SECTION {
+            if (c1 == 2 && c2 == 2) {
+                for (size_t l = 0; l < L; ++l) {
+                    exp_sub = exp(a(l));
 
-                pmp_h_kernel_2x2(exp_sub, base);
+                    pmp_h_kernel_2x2(exp_sub, base);
 
-                c(l) = exp_sub / (1.0 + base);
-            }
-        } else {
-            for (size_t l = 0; l < L; ++l) {
-                exp_sub = exp(a(l));
+                    c(l) = exp_sub / (1.0 + base);
+                }
+            } else {
+                for (size_t l = 0; l < L; ++l) {
+                    exp_sub = exp(a(l));
 
-                pmp_h_kernel(exp_sub, base, c1, c2);
+                    pmp_h_kernel(exp_sub, base, c1, c2);
 
-                c(l) = exp_sub / (1.0 + base);
+                    c(l) = exp_sub / (1.0 + base);
+                }
             }
         }
     }
@@ -352,24 +362,26 @@ struct dyn_pmp_h_impl {
         etl::dyn_matrix<T, 2> exp_sub(M, N);
         etl::dyn_matrix<T, 2> base(M, N);
 
-        if (c1 == 2 && c2 == 2) {
-            for (size_t k = 0; k < K; ++k) {
-                for (size_t l = 0; l < L; ++l) {
-                    exp_sub = exp(a(k)(l));
+        CPU_SECTION {
+            if (c1 == 2 && c2 == 2) {
+                for (size_t k = 0; k < K; ++k) {
+                    for (size_t l = 0; l < L; ++l) {
+                        exp_sub = exp(a(k)(l));
 
-                    pmp_h_kernel_2x2(exp_sub, base);
+                        pmp_h_kernel_2x2(exp_sub, base);
 
-                    c(k)(l) = exp_sub / (1.0 + base);
+                        c(k)(l) = exp_sub / (1.0 + base);
+                    }
                 }
-            }
-        } else {
-            for (size_t k = 0; k < K; ++k) {
-                for (size_t l = 0; l < L; ++l) {
-                    exp_sub = exp(a(k)(l));
+            } else {
+                for (size_t k = 0; k < K; ++k) {
+                    for (size_t l = 0; l < L; ++l) {
+                        exp_sub = exp(a(k)(l));
 
-                    pmp_h_kernel(exp_sub, base, c1, c2);
+                        pmp_h_kernel(exp_sub, base, c1, c2);
 
-                    c(k)(l) = exp_sub / (1.0 + base);
+                        c(k)(l) = exp_sub / (1.0 + base);
+                    }
                 }
             }
         }
