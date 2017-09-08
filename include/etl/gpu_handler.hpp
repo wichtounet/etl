@@ -269,9 +269,17 @@ public:
             gpu_allocate_impl(gpu_memory_size);
 
             gpu_copy_from(rhs.gpu_memory_, gpu_memory_size);
+
+            // The CPU status can be erased by gpu_copy_from
+            if(rhs.cpu_up_to_date){
+                validate_cpu();
+            }
         } else {
             gpu_memory_ = nullptr;
         }
+
+        cpp_assert(rhs.is_cpu_up_to_date() == this->is_cpu_up_to_date(), "gpu_memory_handler(&) must preserve CPU status");
+        cpp_assert(rhs.is_gpu_up_to_date() == this->is_gpu_up_to_date(), "gpu_memory_handler(&) must preserve GPU status");
     }
 
     /*!
