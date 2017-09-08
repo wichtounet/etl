@@ -723,7 +723,7 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
     static constexpr bool is_padded      = false;                      ///< Indicates if the expression is padded
     static constexpr bool is_aligned     = false;                      ///< Indicates if the expression is padded
     static constexpr bool is_temporary   = sub_traits::is_temporary;   ///< Indicates if the exxpression needs a evaluator visitor
-    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
+    static constexpr bool gpu_computable = false;                      ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order = sub_traits::storage_order;  ///< The expression's storage order
 
     /*!
@@ -732,7 +732,7 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable = sub_traits::template vectorizable<V> && storage_order == order::RowMajor;
+    static constexpr bool vectorizable = sub_traits::template vectorizable<V>;
 
     /*!
      * \brief Returns the size of the given expression
