@@ -265,6 +265,9 @@ struct log_unary_op {
             impl::egblas::log(etl::size(x), &alpha, y.gpu_memory(), 1, y.gpu_memory(), 1);
         }
 
+        y.validate_gpu();
+        y.invalidate_cpu();
+
         return y;
     }
 
@@ -353,6 +356,9 @@ struct sqrt_unary_op {
 
         T alpha(1.0);
         impl::egblas::sqrt(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+
+        y.validate_gpu();
+        y.invalidate_cpu();
 
         return y;
     }
@@ -583,6 +589,9 @@ struct exp_unary_op {
             T alpha(1.0);
             impl::egblas::exp(etl::size(x), &alpha, y.gpu_memory(), 1, y.gpu_memory(), 1);
         }
+
+        y.validate_gpu();
+        y.invalidate_cpu();
 
         return y;
     }
@@ -1521,6 +1530,9 @@ struct relu_derivative_op {
 
         T alpha(1.0);
         impl::egblas::relu_der_out(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+
+        y.validate_gpu();
+        y.invalidate_cpu();
 
         return y;
     }
