@@ -655,6 +655,28 @@ inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor
 #else
 
 /*!
+ * \brief Indicates if an 1D evaluation should run in paralle
+ * \param n The size of the evaluation
+ * \param threshold The parallel threshold
+ * \return true if the evaluation should be done in paralle, false otherwise
+ */
+inline bool engine_select_parallel(size_t n, size_t threshold = parallel_threshold) {
+    cpp_unused(n);
+    cpp_unused(threshold);
+    return false;
+}
+
+/*!
+ * \brief Indicates if an 1D evaluation should run in paralle
+ * \param select The secondary parallel selection
+ * \return true if the evaluation should be done in paralle, false otherwise
+ */
+inline bool engine_select_parallel(bool select) {
+    cpp_unused(select);
+    return false;
+}
+
+/*!
  * \brief Dispatch the elements of a range to a functor in a parallel
  * manner, using the global thread engine.
  *
