@@ -176,6 +176,10 @@ struct upsample_2d {
      */
     template <size_t C1, size_t C2, typename A, typename M, cpp_enable_iff(is_3d<A>)>
     static void apply(A&& in, M&& m) {
+        // GPU/CPU Synchronization must not be done in parallel
+        safe_ensure_cpu_up_to_date(in);
+        safe_ensure_cpu_up_to_date(m);
+
         auto batch_fun = [&](const size_t first, const size_t last) {
             for (size_t q = first; q < last; ++q) {
                 for (size_t j = 0; j < etl::dim<1>(in); ++j) {
@@ -200,6 +204,10 @@ struct upsample_2d {
      */
     template <typename A, typename M, cpp_enable_iff(is_3d<A>)>
     static void apply(A&& in, M&& m, size_t c1, size_t c2) {
+        // GPU/CPU Synchronization must not be done in parallel
+        safe_ensure_cpu_up_to_date(in);
+        safe_ensure_cpu_up_to_date(m);
+
         auto batch_fun = [&](const size_t first, const size_t last) {
             for (size_t q = first; q < last; ++q) {
                 for (size_t j = 0; j < etl::dim<1>(in); ++j) {
@@ -226,6 +234,10 @@ struct upsample_2d {
      */
     template <size_t C1, size_t C2, typename A, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, M&& m) {
+        // GPU/CPU Synchronization must not be done in parallel
+        safe_ensure_cpu_up_to_date(in);
+        safe_ensure_cpu_up_to_date(m);
+
         auto batch_fun = [&](const size_t first, const size_t last) {
             for (size_t p = first; p < last; ++p) {
                 for (size_t q = 0; q < etl::dim<1>(in); ++q) {
@@ -252,6 +264,10 @@ struct upsample_2d {
      */
     template <typename A, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, M&& m, size_t c1, size_t c2) {
+        // GPU/CPU Synchronization must not be done in parallel
+        safe_ensure_cpu_up_to_date(in);
+        safe_ensure_cpu_up_to_date(m);
+
         auto batch_fun = [&](const size_t first, const size_t last) {
             for (size_t p = first; p < last; ++p) {
                 for (size_t q = 0; q < etl::dim<1>(in); ++q) {
@@ -452,6 +468,10 @@ struct upsample_3d {
      */
     template <size_t C1, size_t C2, size_t C3, typename A, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, M&& m) {
+        // GPU/CPU Synchronization must not be done in parallel
+        safe_ensure_cpu_up_to_date(in);
+        safe_ensure_cpu_up_to_date(m);
+
         auto batch_fun = [&](const size_t first, const size_t last) {
             for (size_t q = first; q < last; ++q) {
                 for (size_t i = 0; i < etl::dim<1>(in); ++i) {
@@ -479,6 +499,10 @@ struct upsample_3d {
      */
     template <typename A, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t c3) {
+        // GPU/CPU Synchronization must not be done in parallel
+        safe_ensure_cpu_up_to_date(in);
+        safe_ensure_cpu_up_to_date(m);
+
         auto batch_fun = [&](const size_t first, const size_t last) {
             for (size_t q = first; q < last; ++q) {
                 for (size_t i = 0; i < etl::dim<1>(in); ++i) {
