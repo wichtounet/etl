@@ -831,6 +831,32 @@ auto normal_generator(G& g, T mean = 0.0, T stddev = 1.0) -> generator_expr<norm
 }
 
 /*!
+ * \brief Create an expression generating numbers from a truncated normal distribution
+ * \param mean The mean of the distribution
+ * \param stddev The standard deviation of the distribution
+ * \return An expression generating numbers from the normal distribution
+ */
+template <typename T = double>
+auto truncated_normal_generator(T mean = 0.0, T stddev = 1.0) -> generator_expr<truncated_normal_generator_op<T>> {
+    return generator_expr<truncated_normal_generator_op<T>>{mean, stddev};
+}
+
+/*!
+ * \brief Create an expression generating numbers from a truncated normal distribution
+ * using the given custom random engine.
+ *
+ * \param g The random engine
+ * \param mean The mean of the distribution
+ * \param stddev The standard deviation of the distribution
+ *
+ * \return An expression generating numbers from the normal distribution
+ */
+template <typename T = double, typename G>
+auto truncated_normal_generator(G& g, T mean = 0.0, T stddev = 1.0) -> generator_expr<truncated_normal_generator_g_op<G, T>> {
+    return generator_expr<truncated_normal_generator_g_op<G, T>>{g, mean, stddev};
+}
+
+/*!
  * \brief Create an expression generating numbers from an uniform distribution
  * \param start The beginning of the range
  * \param end The end of the range

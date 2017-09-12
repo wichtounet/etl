@@ -151,6 +151,34 @@ TEMPLATE_TEST_CASE_2("normal/dyn_matrix_1", "generator", Z, float, double) {
     b = etl::normal_generator();
 }
 
+/// truncated_normal_generator
+
+//Simply ensures that it compiles
+
+TEMPLATE_TEST_CASE_2("truncated_normal/fast_vector_1", "generator", Z, float, double) {
+    etl::fast_vector<Z, 3> b;
+
+    b = etl::truncated_normal_generator();
+}
+
+TEMPLATE_TEST_CASE_2("truncated_normal/fast_matrix_1", "generator", Z, float, double) {
+    etl::fast_matrix<Z, 3, 2> b;
+
+    b = etl::truncated_normal_generator();
+}
+
+TEMPLATE_TEST_CASE_2("truncated_normal/dyn_vector_1", "generator", Z, float, double) {
+    etl::dyn_vector<Z> b(3);
+
+    b = etl::truncated_normal_generator();
+}
+
+TEMPLATE_TEST_CASE_2("truncated_normal/dyn_matrix_1", "generator", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    b = etl::truncated_normal_generator();
+}
+
 /// uniform_generator
 
 TEMPLATE_TEST_CASE_2("generators/uniform/1", "uniform", Z, float, double) {
