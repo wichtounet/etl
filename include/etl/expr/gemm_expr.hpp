@@ -108,7 +108,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
         return gemm_impl::STD;
     }
 
-#ifdef ETL_MANUAL
+#ifdef ETL_MANUAL_SELECT
 
     /*!
      * \brief Select an implementation of GEMM
