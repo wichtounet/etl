@@ -67,6 +67,12 @@ static_assert(false, "EGBLAS is only intended to work with CUBLAS, not alone");
 
 // Convert all the defines to booleans
 
+#ifdef ETL_MANUAL_SELECT
+#define ETL_MANUAL_SELECT_BOOL true
+#else
+#define ETL_MANUAL_SELECT_BOOL false
+#endif
+
 #ifdef ETL_VECTORIZE_EXPR
 #define ETL_VECTORIZE_EXPR_BOOL true
 #else

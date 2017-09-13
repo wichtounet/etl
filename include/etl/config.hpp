@@ -12,6 +12,11 @@
 namespace etl {
 
 /*!
+ * \brief Indicates if the selection can be manually set
+ */
+constexpr bool manual_select = ETL_MANUAL_SELECT_BOOL;
+
+/*!
  * \brief Indicates if the expressions can be automatically
  * vectorized by ETL.
  *
