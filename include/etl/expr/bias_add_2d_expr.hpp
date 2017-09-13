@@ -100,13 +100,13 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
 
         check(a, b, lhs);
 
-        auto impl = select_impl<L>();
+        constexpr_select auto impl = select_impl<L>();
 
-        if(impl == bias_add_impl::VEC){
+        if /*constexpr_select*/ (impl == bias_add_impl::VEC) {
             impl::vec::bias_add_2d(smart_forward(a), smart_forward(b), lhs);
-        } else if(impl == bias_add_impl::STD){
+        } else if (impl == bias_add_impl::STD) {
             impl::standard::bias_add_2d(smart_forward(a), smart_forward(b), lhs);
-        } else if(impl == bias_add_impl::CUDNN){
+        } else if (impl == bias_add_impl::CUDNN) {
             impl::cudnn::bias_add_2d(smart_forward_gpu(a), smart_forward_gpu(b), lhs);
         } else {
             cpp_unreachable("Invalid bias_add_2d selection");
@@ -180,11 +180,12 @@ private:
      * \return The implementation to use
      */
     template <typename C>
-    static constexpr etl::bias_add_impl select_default_impl() {
-        constexpr bool vec_possible = vec_enabled && vectorize_impl && all_vectorizable<vector_mode, A, B, C> && all_homogeneous<A, B, C>;
-        constexpr bool cudnn_possible = cudnn_enabled && all_floating<A, B, C> && all_homogeneous<A, B, C>;
+    static constexpr etl::bias_add_impl select_default_impl(bool no_gpu) {
+        constexpr bool homo           = all_homogeneous<A, B, C>;
+        constexpr bool vec_possible   = vec_enabled && vectorize_impl && all_vectorizable<vector_mode, A, B, C> && homo;
+        constexpr bool cudnn_possible = cudnn_enabled && all_floating<A, B, C> && homo;
 
-        if (cudnn_possible && !local_context().cpu) {
+        if (cudnn_possible && !no_gpu) {
             return etl::bias_add_impl::CUDNN;
         }
 
@@ -195,6 +196,8 @@ private:
         return etl::bias_add_impl::STD;
     }
 
+#ifdef ETL_MANUAL_SELECT
+
     /*!
      * \brief Select the implementation for this expression.
      * \tparam C The type of the result expression
@@ -202,7 +205,7 @@ private:
      */
     template <typename C>
     static etl::bias_add_impl select_impl() {
-        auto def = select_default_impl<C>();
+        auto def = select_default_impl<C>(local_context().cpu);
 
         if (local_context().bias_add_selector.forced) {
             auto forced = local_context().bias_add_selector.impl;
@@ -234,6 +237,22 @@ private:
 
         return def;
     }
+
+#else
+
+    /*!
+     * \brief Select the default implementation for this expression.
+     *
+     * \tparam C The type of the result expression
+     *
+     * \return The implementation to use
+     */
+    template <typename C>
+    static constexpr etl::bias_add_impl select_impl() {
+        return select_default_impl<C>(false);
+    }
+
+#endif
 };
 
 /*!
