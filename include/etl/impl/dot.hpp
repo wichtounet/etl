@@ -44,6 +44,8 @@ constexpr etl::dot_impl select_default_dot_impl() {
     return etl::dot_impl::STD;
 }
 
+#ifdef ETL_MANUAL_SELECT
+
 /*!
  * \brief Select the dot implementation for an expression of type A and B
  * \tparam A The type of lhs expression
@@ -92,6 +94,21 @@ etl::dot_impl select_dot_impl() {
     return select_default_dot_impl<A, B>();
 }
 
+#else
+
+/*!
+ * \brief Select the dot implementation for an expression of type E
+ *
+ * \tparam E The type of expression
+ * \return The implementation to use
+ */
+template <typename A, typename B>
+constexpr etl::dot_impl select_dot_impl() {
+    return select_default_dot_impl<A, B>();
+}
+
+#endif
+
 /*!
  * \brief Functor for dot product
  */
@@ -104,9 +121,9 @@ struct dot_impl {
      */
     template <typename A, typename B>
     static value_t<A> apply(const A& a, const B& b) {
-        auto impl = select_dot_impl<A, B>();
+        constexpr_select auto impl = select_dot_impl<A, B>();
 
-        if (impl == etl::dot_impl::BLAS) {
+        if /*constexpr_select*/ (impl == etl::dot_impl::BLAS) {
             return etl::impl::blas::dot(a, b);
         } else if (impl == etl::dot_impl::CUBLAS) {
             return etl::impl::cublas::dot(a, b);

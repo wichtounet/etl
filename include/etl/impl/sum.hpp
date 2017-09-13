@@ -41,11 +41,11 @@ namespace detail {
  * \return The implementation to use
  */
 template <typename E>
-etl::sum_impl select_default_sum_impl(bool gpu_up_to_date) {
+constexpr etl::sum_impl select_default_sum_impl(bool no_gpu) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    if (cublas_enabled && is_dma<E> && is_floating<E> && gpu_up_to_date && !local_context().cpu){
+    if (cublas_enabled && is_dma<E> && is_floating<E> && !no_gpu){
         return etl::sum_impl::CUBLAS;
     }
 
@@ -56,13 +56,15 @@ etl::sum_impl select_default_sum_impl(bool gpu_up_to_date) {
     return etl::sum_impl::STD;
 }
 
+#ifdef ETL_MANUAL_SELECT
+
 /*!
  * \brief Select the sum implementation for an expression of type E
  * \tparam E The type of expression
  * \return The implementation to use
  */
 template <typename E>
-etl::sum_impl select_sum_impl(bool gpu_up_to_date) {
+etl::sum_impl select_sum_impl() {
     if (local_context().sum_selector.forced) {
         auto forced = local_context().sum_selector.impl;
 
@@ -71,7 +73,7 @@ etl::sum_impl select_sum_impl(bool gpu_up_to_date) {
             case sum_impl::VEC:
                 if (!vec_enabled || !decay_traits<E>::template vectorizable<vector_mode>) {                                //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_sum_impl<E>(gpu_up_to_date);                                                                          //COVERAGE_EXCLUDE_LINE
+                    return select_default_sum_impl<E>(local_context().cpu);                                                                          //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -79,7 +81,7 @@ etl::sum_impl select_sum_impl(bool gpu_up_to_date) {
             case sum_impl::CUBLAS:
                 if (!cublas_enabled || !is_dma<E> || !is_floating<E> || local_context().cpu) {                                //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUBLAS sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_sum_impl<E>(gpu_up_to_date);                                                                          //COVERAGE_EXCLUDE_LINE
+                    return select_default_sum_impl<E>(local_context().cpu);                                                                          //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -87,7 +89,7 @@ etl::sum_impl select_sum_impl(bool gpu_up_to_date) {
             case sum_impl::BLAS:
                 if (!cblas_enabled || !is_dma<E> || !is_floating<E>) {                                //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_sum_impl<E>(gpu_up_to_date);                                                                          //COVERAGE_EXCLUDE_LINE
+                    return select_default_sum_impl<E>(local_context().cpu);                                                                          //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -98,8 +100,25 @@ etl::sum_impl select_sum_impl(bool gpu_up_to_date) {
         }
     }
 
-    return select_default_sum_impl<E>(gpu_up_to_date);
+    return select_default_sum_impl<E>(local_context().cpu);
 }
+
+#else
+
+/*!
+ * \brief Select the sum implementation for an expression of type E
+ *
+ * This does not consider the local context
+ *
+ * \tparam E The type of expression
+ * \return The implementation to use
+ */
+template <typename E>
+constexpr etl::sum_impl select_sum_impl() {
+    return select_default_sum_impl<E>(false);
+}
+
+#endif
 
 /*!
  * \brief Sum operation implementation
@@ -114,7 +133,7 @@ struct sum_impl {
     static value_t<E> apply(const E& e) {
         using T = value_t<E>;
 
-        auto impl = select_sum_impl<E>(safe_is_gpu_up_to_date(e));
+        constexpr_select auto impl = select_sum_impl<E>();
 
         T acc(0);
 
@@ -144,7 +163,7 @@ struct sum_impl {
      */
     template <typename E>
     static value_t<E> apply(const E& e) {
-        const auto impl = select_sum_impl<E>(safe_is_gpu_up_to_date(e));
+        constexpr_select const auto impl = select_sum_impl<E>();
 
         if (impl == etl::sum_impl::VEC) {
             return impl::vec::sum(e);
@@ -172,7 +191,7 @@ struct asum_impl {
     static value_t<E> apply(const E& e) {
         using T = value_t<E>;
 
-        auto impl = select_sum_impl<E>(safe_is_gpu_up_to_date(e));
+        constexpr_select auto impl = select_sum_impl<E>();
 
         T acc(0);
 
@@ -202,7 +221,7 @@ struct asum_impl {
      */
     template <typename E>
     static value_t<E> apply(const E& e) {
-        const auto impl = select_sum_impl<E>(safe_is_gpu_up_to_date(e));
+        constexpr_select const auto impl = select_sum_impl<E>();
 
         if (impl == etl::sum_impl::VEC) {
             return impl::vec::asum(e);
