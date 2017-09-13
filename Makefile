@@ -184,8 +184,8 @@ endif
 
 # Compile folders
 $(eval $(call auto_folder_compile,workbench/src))
-$(eval $(call auto_folder_compile,benchmark/src,-Ibenchmark/include -Icpm/include))
-$(eval $(call auto_folder_compile,test/src))
+$(eval $(call auto_folder_compile,benchmark/src,-DETL_MANUAL_SELECT -Ibenchmark/include -Icpm/include))
+$(eval $(call auto_folder_compile,test/src,-DETL_MANUAL_SELECT))
 
 # Collect files for the test executable
 CPP_FILES=$(wildcard test/src/*.cpp)
