@@ -85,15 +85,13 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
 
     /*!
      * \brief Select an implementation of GEMV, not considering local context
-     * \param n1 The left dimension of the  multiplication
-     * \param n2 The right dimension of the  multiplication
      * \return The implementation to use
      */
     template <typename C>
-    static constexpr gemm_impl select_default_gemv_impl() {
+    static constexpr gemm_impl select_default_gemv_impl(bool no_gpu) {
         constexpr bool homo = all_homogeneous<A, B, C>;
 
-        if (cublas_enabled && homo && !local_context().cpu) {
+        if (cublas_enabled && homo && !no_gpu) {
             return gemm_impl::CUBLAS;
         }
 
@@ -108,10 +106,10 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
         return gemm_impl::STD;
     }
 
+#ifdef ETL_MANUAL_SELECT
+
     /*!
      * \brief Select an implementation of GEMV
-     * \param n1 The left dimension of the  multiplication
-     * \param n2 The right dimension of the  multiplication
      * \return The implementation to use
      */
     template <typename C>
@@ -124,7 +122,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
                 case gemm_impl::CUBLAS:
                     if (!cublas_enabled || !all_homogeneous<A, B, C> || local_context().cpu) {                                                                                     //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to CUBLAS gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_gemv_impl<C>();                                                                  //COVERAGE_EXCLUDE_LINE
+                        return select_default_gemv_impl<C>(local_context().cpu);                                                                  //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                     //COVERAGE_EXCLUDE_LINE
 
                     return forced;
@@ -133,7 +131,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
                 case gemm_impl::BLAS:
                     if (!cblas_enabled || !all_homogeneous<A, B, C>) {                                                                                    //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to BLAS gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_gemv_impl<C>();                                                                //COVERAGE_EXCLUDE_LINE
+                        return select_default_gemv_impl<C>(local_context().cpu);                                                                //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
                     return forced;
@@ -142,7 +140,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
                 case gemm_impl::VEC:
                     if (!vec_enabled || !all_vectorizable<vector_mode, A, B, C> || !all_homogeneous<A, B, C>) {                                               //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to VEC gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_gemv_impl<C>();                                                                //COVERAGE_EXCLUDE_LINE
+                        return select_default_gemv_impl<C>(local_context().cpu);                                                                //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
                     return forced;
@@ -153,8 +151,22 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
             }
         }
 
-        return select_default_gemv_impl<C>();
+        return select_default_gemv_impl<C>(local_context().cpu);
     }
+
+#else
+
+    /*!
+     * \brief Select the best implementation of GEMV
+     *
+     * \return The implementation to use
+     */
+    template <typename AA, typename BB, typename C>
+    static constexpr gemm_impl select_gemv_impl() {
+        return select_default_gemv_impl<C>(false);
+    }
+
+#endif
 
     /*!
      * \brief Compute c = trans(A) * b
@@ -164,9 +176,9 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      */
     template <typename AA, typename BB, typename C, cpp_enable_iff(is_transpose_expr<AA>)>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
-        auto impl = select_gemv_impl<C>();
+        constexpr_select auto impl = select_gemv_impl<C>();
 
-        if (impl == gemm_impl::STD) {
+        if /*constexpr_select*/ (impl == gemm_impl::STD) {
             etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
         } else if (impl == gemm_impl::BLAS) {
             etl::impl::blas::gemv_t(smart_forward(a.a()), smart_forward(b), c);
@@ -187,9 +199,9 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      */
     template <typename AA, typename BB, typename C, cpp_enable_iff(!is_transpose_expr<AA>)>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
-        auto impl = select_gemv_impl<C>();
+        constexpr_select auto impl = select_gemv_impl<C>();
 
-        if (impl == gemm_impl::STD) {
+        if /*constexpr_select*/ (impl == gemm_impl::STD) {
             etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
         } else if (impl == gemm_impl::BLAS) {
             etl::impl::blas::gemv(smart_forward(a), smart_forward(b), c);
