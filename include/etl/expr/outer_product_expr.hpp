@@ -63,6 +63,8 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
         }
     }
 
+#ifdef ETL_MANUAL_SELECT
+
     /*!
      * \brief Select the outer product implementation for an expression of type A and B
      * \tparam C The type of c expression
@@ -92,6 +94,21 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
         return select_default_outer_impl<C>();
     }
 
+#else
+
+    /*!
+     * \brief Select the outer product implementation for an expression of type A and B
+     *
+     * \tparam C The type of c expression
+     * \return The implementation to use
+     */
+    template <typename C>
+    static constexpr etl::outer_impl select_outer_impl() {
+        return select_default_outer_impl<C>();
+    }
+
+#endif
+
     /*!
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
@@ -103,9 +120,9 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
         auto& a = this->a();
         auto& b = this->b();
 
-        auto impl = select_outer_impl<C>();
+        constexpr_select auto impl = select_outer_impl<C>();
 
-        if (impl == etl::outer_impl::BLAS) {
+        if /*constexpr_select*/ (impl == etl::outer_impl::BLAS) {
             etl::impl::blas::outer(smart_forward(a), smart_forward(b), c);
         } else {
             etl::impl::standard::outer(smart_forward(a), smart_forward(b), c);

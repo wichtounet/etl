@@ -55,9 +55,8 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
      * \return The implementation to use
      */
     template <typename C>
-    static etl::outer_impl select_default_batch_outer_impl() {
-        // TODO This should only be done with large matrices or if the data is already in memory
-        if (cublas_enabled && !local_context().cpu) {
+    static constexpr etl::outer_impl select_default_batch_outer_impl(bool no_gpu) {
+        if (cublas_enabled && !no_gpu) {
             return etl::outer_impl::CUBLAS;
         }
 
@@ -71,6 +70,8 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
 
         return etl::outer_impl::STD;
     }
+
+#ifdef ETL_MANUAL_SELECT
 
     /*!
      * \brief Select the batch outer product implementation for an expression of type A and B
@@ -87,7 +88,7 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
                 case outer_impl::BLAS:
                     if (!cblas_enabled) {
                         std::cerr << "Forced selection to BLAS outer implementation, but not possible for this expression" << std::endl;
-                        return select_default_batch_outer_impl<C>();
+                        return select_default_batch_outer_impl<C>(local_context().cpu);
                     }
 
                     return forced;
@@ -96,7 +97,7 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
                 case outer_impl::CUBLAS:
                     if (!cublas_enabled || local_context().cpu) {
                         std::cerr << "Forced selection to CUBLAS outer implementation, but not possible for this expression" << std::endl;
-                        return select_default_batch_outer_impl<C>();
+                        return select_default_batch_outer_impl<C>(local_context().cpu);
                     }
 
                     return forced;
@@ -105,7 +106,7 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
                 case outer_impl::VEC:
                     if (!vec_enabled) {
                         std::cerr << "Forced selection to VEC outer implementation, but not possible for this expression" << std::endl;
-                        return select_default_batch_outer_impl<C>();
+                        return select_default_batch_outer_impl<C>(local_context().cpu);
                     }
 
                     return forced;
@@ -116,8 +117,23 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
             }
         }
 
-        return select_default_batch_outer_impl<C>();
+        return select_default_batch_outer_impl<C>(local_context().cpu);
     }
+
+#else
+
+    /*!
+     * \brief Select the batch_outer product implementation for an expression of type A and B
+     *
+     * \tparam C The type of c expression
+     * \return The implementation to use
+     */
+    template <typename C>
+    static constexpr etl::outer_impl select_batch_outer_impl() {
+        return select_default_batch_outer_impl<C>(false);
+    }
+
+#endif
 
     /*!
      * \brief Assign to a matrix of the same storage order
@@ -130,9 +146,9 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
         auto& a = this->a();
         auto& b = this->b();
 
-        auto impl = select_batch_outer_impl<C>();
+        constexpr_select auto impl = select_batch_outer_impl<C>();
 
-        if (impl == etl::outer_impl::STD) {
+        if /*constexpr_select*/ (impl == etl::outer_impl::STD) {
             etl::impl::standard::batch_outer(smart_forward(a), smart_forward(b), c);
         } else if (impl == etl::outer_impl::BLAS) {
             etl::impl::blas::batch_outer(smart_forward(a), smart_forward(b), c);
