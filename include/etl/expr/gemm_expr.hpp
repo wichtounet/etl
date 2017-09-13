@@ -86,17 +86,10 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
 
     /*!
      * \brief Select an implementation of GEMM, not considering local context
-     * \param n1 The left dimension of the multiplication
-     * \param n2 The inner dimension of the multiplication
-     * \param n3 The right dimension of the multiplication
      * \return The implementation to use
      */
     template <typename AA, typename BB, typename C>
-    static constexpr gemm_impl select_default_gemm_impl(const size_t n1, const size_t n2, const size_t n3) {
-        cpp_unused(n1);
-        cpp_unused(n2);
-        cpp_unused(n3);
-
+    static gemm_impl select_default_gemm_impl() {
         //Note since these boolean will be known at compile time, the conditions will be a lot simplified
         constexpr bool blas   = cblas_enabled;
         constexpr bool cublas = cublas_enabled;
@@ -117,14 +110,11 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
 
     /*!
      * \brief Select an implementation of GEMM
-     * \param n1 The left dimension of the  multiplication
-     * \param n2 The inner dimension of the  multiplication
-     * \param n3 The right dimension of the  multiplication
      * \return The implementation to use
      */
     template <typename AA, typename BB, typename C>
-    static inline gemm_impl select_gemm_impl(const size_t n1, const size_t n2, const size_t n3) {
-        auto def = select_default_gemm_impl<AA, BB, C>(n1, n2, n3);
+    static inline gemm_impl select_gemm_impl() {
+        auto def = select_default_gemm_impl<AA, BB, C>();
 
         if (local_context().gemm_selector.forced) {
             auto forced = local_context().gemm_selector.impl;
@@ -174,7 +164,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      */
     template <typename AA, typename BB, typename C, cpp_enable_iff(is_transpose_expr<AA> && is_transpose_expr<BB>)>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
-        auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
+        auto impl = select_gemm_impl<AA, BB, C>();
 
         if (impl == gemm_impl::STD) {
             etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
@@ -197,7 +187,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      */
     template <typename AA, typename BB, typename C, cpp_enable_iff(!is_transpose_expr<AA> && is_transpose_expr<BB>)>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
-        auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
+        auto impl = select_gemm_impl<AA, BB, C>();
 
         if (impl == gemm_impl::STD) {
             etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
@@ -220,7 +210,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      */
     template <typename AA, typename BB, typename C, cpp_enable_iff(is_transpose_expr<AA> && !is_transpose_expr<BB>)>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
-        auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
+        auto impl = select_gemm_impl<AA, BB, C>();
 
         if (impl == gemm_impl::STD) {
             etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
@@ -243,7 +233,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      */
     template <typename AA, typename BB, typename C, cpp_enable_iff(!is_transpose_expr<AA> && !is_transpose_expr<BB>)>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
-        auto impl = select_gemm_impl<AA, BB, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
+        auto impl = select_gemm_impl<AA, BB, C>();
 
         if (impl == gemm_impl::STD) {
             etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
