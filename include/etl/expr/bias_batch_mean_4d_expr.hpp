@@ -97,6 +97,9 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
 
             standard_evaluator::pre_assign_rhs(a);
 
+            a.ensure_cpu_up_to_date();
+            a.ensure_gpu_up_to_date();
+
             auto batch_fun_k = [&](const size_t first, const size_t last) {
                 for (size_t k = first; k < last; ++k) {
                     T mean(0);
@@ -128,6 +131,9 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
+
+        a.ensure_cpu_up_to_date();
+        a.ensure_gpu_up_to_date();
 
         const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);
@@ -167,6 +173,9 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
 
         standard_evaluator::pre_assign_rhs(a);
 
+        a.ensure_cpu_up_to_date();
+        a.ensure_gpu_up_to_date();
+
         const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);
 
@@ -204,6 +213,9 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
+
+        a.ensure_cpu_up_to_date();
+        a.ensure_gpu_up_to_date();
 
         const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);
@@ -243,6 +255,9 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
 
         standard_evaluator::pre_assign_rhs(a);
 
+        a.ensure_cpu_up_to_date();
+        a.ensure_gpu_up_to_date();
+
         const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);
 
@@ -280,6 +295,9 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);
+
+        a.ensure_cpu_up_to_date();
+        a.ensure_gpu_up_to_date();
 
         const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);
