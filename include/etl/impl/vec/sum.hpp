@@ -160,8 +160,26 @@ template <typename L, cpp_enable_iff(vec_enabled && all_vectorizable<vector_mode
 value_t<L> sum(const L& lhs) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
-    // The default vectorization scheme should be sufficient
-    return sum_impl<default_vec>(lhs);
+    using T = value_t<L>;
+
+    T acc(0);
+
+    auto acc_functor = [&acc](T value) {
+        acc += value;
+    };
+
+    auto batch_fun = [](auto& sub){
+        // The default vectorization scheme should be sufficient
+        return sum_impl<default_vec>(sub);
+    };
+
+    if(etl::size(lhs) < sum_parallel_threshold){
+        return sum_impl<default_vec>(lhs);
+    } else {
+        engine_dispatch_1d_acc_slice(lhs, batch_fun, acc_functor, vec_sum_parallel_threshold);
+    }
+
+    return acc;
 }
 
 /*!
@@ -173,8 +191,22 @@ template <typename L, cpp_enable_iff(vec_enabled && all_vectorizable<vector_mode
 value_t<L> asum(const L& lhs) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
-    // The default vectorization scheme should be sufficient
-    return asum_impl<default_vec>(lhs);
+    using T = value_t<L>;
+
+    T acc(0);
+
+    auto acc_functor = [&acc](T value) {
+        acc += value;
+    };
+
+    auto batch_fun = [](auto& sub){
+        // The default vectorization scheme should be sufficient
+        return asum_impl<default_vec>(sub);
+    };
+
+    engine_dispatch_1d_acc_slice(lhs, batch_fun, acc_functor, vec_sum_parallel_threshold);
+
+    return acc;
 }
 
 /*!

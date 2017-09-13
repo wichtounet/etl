@@ -25,11 +25,25 @@ namespace standard {
  */
 template <typename E>
 value_t<E> sum(const E& input) {
-    value_t<E> acc(0);
+    using T = value_t<E>;
 
-    for (size_t i = 0; i < size(input); ++i) {
-        acc += input[i];
-    }
+    T acc(0);
+
+    auto acc_functor = [&acc](T value) {
+        acc += value;
+    };
+
+    auto batch_fun = [](auto& sub){
+        T acc(0);
+
+        for(size_t i = 0; i < etl::size(sub); ++i){
+            acc += sub[i];
+        }
+
+        return acc;
+    };
+
+    engine_dispatch_1d_acc_slice(input, batch_fun, acc_functor, sum_parallel_threshold);
 
     return acc;
 }
@@ -41,12 +55,26 @@ value_t<E> sum(const E& input) {
  */
 template <typename E>
 value_t<E> asum(const E& input) {
-    value_t<E> acc(0);
+    using T = value_t<E>;
 
-    for (size_t i = 0; i < size(input); ++i) {
-        using std::abs;
-        acc += abs(input[i]);
-    }
+    T acc(0);
+
+    auto acc_functor = [&acc](T value) {
+        acc += value;
+    };
+
+    auto batch_fun = [](auto& sub){
+        T acc(0);
+
+        for(size_t i = 0; i < etl::size(sub); ++i){
+            using std::abs;
+            acc += abs(sub[i]);
+        }
+
+        return acc;
+    };
+
+    engine_dispatch_1d_acc_slice(input, batch_fun, acc_functor, sum_parallel_threshold);
 
     return acc;
 }

@@ -124,40 +124,6 @@ constexpr etl::sum_impl select_sum_impl() {
  * \brief Sum operation implementation
  */
 struct sum_impl {
-    //CPP17: if constexpr
-#ifdef ETL_PARALLEL_SUPPORT
-    /*!
-     * \brief Apply the functor to e
-     */
-    template <typename E>
-    static value_t<E> apply(const E& e) {
-        using T = value_t<E>;
-
-        constexpr_select auto impl = select_sum_impl<E>();
-
-        T acc(0);
-
-        auto acc_functor = [&acc](T value) {
-            acc += value;
-        };
-
-        if (impl == etl::sum_impl::VEC) {
-            engine_dispatch_1d_acc_slice(e, [](auto& sub_expr) -> T {
-                return impl::vec::sum(sub_expr);
-            }, acc_functor, sum_parallel_threshold);
-        } else if(impl == etl::sum_impl::BLAS){
-            return impl::blas::sum(e);
-        } else if(impl == etl::sum_impl::CUBLAS){
-            return impl::cublas::sum(e);
-        } else {
-            engine_dispatch_1d_acc_slice(e, [](auto& sub_expr) -> T {
-                return impl::standard::sum(sub_expr);
-            }, acc_functor, sum_parallel_threshold);
-        }
-
-        return acc;
-    }
-#else
     /*!
      * \brief Apply the functor to e
      */
@@ -175,47 +141,12 @@ struct sum_impl {
             return impl::standard::sum(e);
         }
     }
-#endif
 };
 
 /*!
  * \brief Absolute Sum operation implementation
  */
 struct asum_impl {
-    //CPP17: if constexpr
-#ifdef ETL_PARALLEL_SUPPORT
-    /*!
-     * \brief Apply the functor to e
-     */
-    template <typename E>
-    static value_t<E> apply(const E& e) {
-        using T = value_t<E>;
-
-        constexpr_select auto impl = select_sum_impl<E>();
-
-        T acc(0);
-
-        auto acc_functor = [&acc](T value) {
-            acc += value;
-        };
-
-        if (impl == etl::sum_impl::VEC) {
-            engine_dispatch_1d_acc_slice(e, [](auto& sub_expr) -> T {
-                return impl::vec::asum(sub_expr);
-            }, acc_functor, sum_parallel_threshold);
-        } else if(impl == etl::sum_impl::BLAS){
-            return impl::blas::asum(e);
-        } else if(impl == etl::sum_impl::CUBLAS){
-            return impl::cublas::asum(e);
-        } else {
-            engine_dispatch_1d_acc_slice(e, [](auto& sub_expr) -> T {
-                return impl::standard::asum(sub_expr);
-            }, acc_functor, sum_parallel_threshold);
-        }
-
-        return acc;
-    }
-#else
     /*!
      * \brief Apply the functor to e
      */
@@ -233,7 +164,6 @@ struct asum_impl {
             return impl::standard::asum(e);
         }
     }
-#endif
 };
 
 } //end of namespace detail
