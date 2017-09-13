@@ -32,15 +32,17 @@ namespace impl {
  * \return The implementation to use
  */
 template<typename X, typename Y>
-constexpr etl::pool_impl select_default_pool_impl() {
+constexpr etl::pool_impl select_default_pool_impl(bool no_gpu) {
     static_assert(all_dma<X, Y>, "DMA should be ensured at this point");
 
-    if (cudnn_enabled && all_floating<X, Y> && !local_context().cpu){
+    if (cudnn_enabled && all_floating<X, Y> && !no_gpu){
         return etl::pool_impl::CUDNN;
     }
 
     return etl::pool_impl::STD;
 }
+
+#ifdef ETL_MANUAL_SELECT
 
 /*!
  * \brief Select the pool implementation for an expression of type X/Y
@@ -58,7 +60,7 @@ etl::pool_impl select_pool_impl() {
             case pool_impl::CUDNN:
                 if (!cudnn_enabled || !all_floating<X, Y> || local_context().cpu) {                                                                  //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUDNN pool implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_pool_impl<X, Y>();                                                                         //COVERAGE_EXCLUDE_LINE
+                    return select_default_pool_impl<X, Y>(local_context().cpu);                                                                         //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                    //COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -69,8 +71,25 @@ etl::pool_impl select_pool_impl() {
         }
     }
 
-    return select_default_pool_impl<X, Y>();
+    return select_default_pool_impl<X, Y>(local_context().cpu);
 }
+
+#else
+
+/*!
+ * \brief Select the pool implementation for an expression of type X/Y
+ *
+ * \tparam X The type of expression to pool
+ * \tparam Y The type of pooled expression
+ *
+ * \return The implementation to use
+ */
+template<typename X, typename Y>
+constexpr etl::pool_impl select_pool_impl() {
+    return select_default_pool_impl<X, Y>(false);
+}
+
+#endif
 
 /*!
  * \brief Functor for 2D Max Pooling
@@ -100,9 +119,9 @@ struct max_pool_2d {
      */
     template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename X, typename Y>
     static void apply(const X& x, Y&& y) {
-        const auto impl = select_pool_impl<X, Y>();
+        constexpr_select const auto impl = select_pool_impl<X, Y>();
 
-        if(impl == pool_impl::STD){
+        if /*constexpr_select*/ (impl == pool_impl::STD){
             etl::impl::standard::max_pool_2d::apply<C1, C2, S1, S2, P1, P2>(smart_forward(x), y);
         } else if(impl == pool_impl::CUDNN){
             etl::impl::cudnn::max_pool_2d::apply(smart_forward_gpu(x), y, C1, C2, S1, S2, P1, P2);
@@ -128,9 +147,9 @@ struct max_pool_2d {
      */
     template <typename X, typename Y>
     static void apply(const X& x, Y&& y, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
-        const auto impl = select_pool_impl<X, Y>();
+        constexpr_select const auto impl = select_pool_impl<X, Y>();
 
-        if(impl == pool_impl::STD){
+        if /*constexpr_select*/ (impl == pool_impl::STD){
             etl::impl::standard::max_pool_2d::apply(smart_forward(x), y, c1, c2, s1, s2, p1, p2);
         } else if(impl == pool_impl::CUDNN){
             etl::impl::cudnn::max_pool_2d::apply(smart_forward_gpu(x), y, c1, c2, s1, s2, p1, p2);
@@ -168,9 +187,9 @@ struct avg_pool_2d {
      */
     template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename X, typename Y>
     static void apply(const X& x, Y&& y) {
-        const auto impl = select_pool_impl<X, Y>();
+        constexpr_select const auto impl = select_pool_impl<X, Y>();
 
-        if(impl == pool_impl::STD){
+        if /*constexpr_select*/ (impl == pool_impl::STD){
             etl::impl::standard::avg_pool_2d::apply<C1, C2, S1, S2, P1, P2>(smart_forward(x), y);
         } else if(impl == pool_impl::CUDNN){
             etl::impl::cudnn::avg_pool_2d::apply(smart_forward_gpu(x), y, C1, C2, S1, S2, P1, P2);
@@ -196,9 +215,9 @@ struct avg_pool_2d {
      */
     template <typename X, typename Y>
     static void apply(const X& x, Y&& y, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
-        const auto impl = select_pool_impl<X, Y>();
+        constexpr_select const auto impl = select_pool_impl<X, Y>();
 
-        if(impl == pool_impl::STD){
+        if /*constexpr_select*/ (impl == pool_impl::STD){
             etl::impl::standard::avg_pool_2d::apply(smart_forward(x), y, c1, c2, s1, s2, p1, p2);
         } else if(impl == pool_impl::CUDNN){
             etl::impl::cudnn::avg_pool_2d::apply(smart_forward_gpu(x), y, c1, c2, s1, s2, p1, p2);
@@ -236,9 +255,9 @@ struct max_pool_3d {
      */
     template <size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename X, typename Y>
     static void apply(const X& x, Y&& y) {
-        const auto impl = select_pool_impl<X, Y>();
+        constexpr_select const auto impl = select_pool_impl<X, Y>();
 
-        if(impl == pool_impl::STD){
+        if /*constexpr_select*/ (impl == pool_impl::STD){
             etl::impl::standard::max_pool_3d::apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(smart_forward(x), y);
         } else if(impl == pool_impl::CUDNN){
             etl::impl::cudnn::max_pool_3d::apply(smart_forward_gpu(x), y, C1, C2, C3, S1, S2, S3, P1, P2, P3);
@@ -264,9 +283,9 @@ struct max_pool_3d {
      */
     template <typename X, typename Y>
     static void apply(const X& x, Y&& y, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
-        const auto impl = select_pool_impl<X, Y>();
+        constexpr_select const auto impl = select_pool_impl<X, Y>();
 
-        if(impl == pool_impl::STD){
+        if /*constexpr_select*/ (impl == pool_impl::STD){
             etl::impl::standard::max_pool_3d::apply(smart_forward(x), y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
         } else if(impl == pool_impl::CUDNN){
             etl::impl::cudnn::max_pool_3d::apply(smart_forward_gpu(x), y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
@@ -304,11 +323,11 @@ struct avg_pool_3d {
      */
     template <size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename X, typename Y>
     static void apply(const X& x, Y&& y) {
-        const auto impl = select_pool_impl<X, Y>();
+        constexpr_select const auto impl = select_pool_impl<X, Y>();
 
-        if(impl == pool_impl::STD){
+        if /*constexpr_select*/ (impl == pool_impl::STD) {
             etl::impl::standard::avg_pool_3d::apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(smart_forward(x), y);
-        } else if(impl == pool_impl::CUDNN){
+        } else if (impl == pool_impl::CUDNN) {
             etl::impl::cudnn::avg_pool_3d::apply(smart_forward_gpu(x), y, C1, C2, C3, S1, S2, S3, P1, P2, P3);
         } else {
             cpp_unreachable("Invalid selection for pooling");
@@ -334,9 +353,9 @@ struct avg_pool_3d {
     static void apply(const X& x, Y&& y, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         const auto impl = select_pool_impl<X, Y>();
 
-        if(impl == pool_impl::STD){
+        if /*constexpr_select*/ (impl == pool_impl::STD) {
             etl::impl::standard::avg_pool_3d::apply(smart_forward(x), y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
-        } else if(impl == pool_impl::CUDNN){
+        } else if (impl == pool_impl::CUDNN) {
             etl::impl::cudnn::avg_pool_3d::apply(smart_forward_gpu(x), y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
         } else {
             cpp_unreachable("Invalid selection for pooling");

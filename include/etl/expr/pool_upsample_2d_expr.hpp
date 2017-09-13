@@ -107,13 +107,15 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
      * \return The implementation to use
      */
     template <typename R>
-    static constexpr etl::pool_impl select_default_impl() {
-        if (cudnn_enabled && all_floating<A, B, C, R> && !local_context().cpu) {
+    static constexpr etl::pool_impl select_default_impl(bool no_gpu) {
+        if (cudnn_enabled && all_floating<A, B, C, R> && !no_gpu) {
             return etl::pool_impl::CUDNN;
         }
 
         return etl::pool_impl::STD;
     }
+
+#ifdef ETL_MANUAL_SELECT
 
     /*!
      * \brief Select the pool implementation for an expression of type ABC->R
@@ -129,7 +131,7 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
                 case pool_impl::CUDNN:
                     if (!cudnn_enabled || !all_floating<A, B, C, R> || local_context().cpu) {                                                            //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to CUDNN pool implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_impl<R>();                                                                                 //COVERAGE_EXCLUDE_LINE
+                        return select_default_impl<R>(local_context().cpu);                                                                                 //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                    //COVERAGE_EXCLUDE_LINE
 
                     return forced;
@@ -140,8 +142,22 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
             }
         }
 
-        return select_default_impl<R>();
+        return select_default_impl<R>(local_context().cpu);
     }
+
+#else
+
+    /*!
+     * \brief Select the pool implementation for an expression of type ABC->R
+     *
+     * \return The implementation to use
+     */
+    template <typename R>
+    static constexpr etl::pool_impl select_impl() {
+        return select_default_impl<R>(false);
+    }
+
+#endif
 
     // Assignment functions
 
@@ -159,10 +175,10 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
 
         check(a, b, c, result);
 
-        auto impl = select_impl<R>();
+        constexpr_select auto impl = select_impl<R>();
 
         if /* constexpr */ (Max) {
-            if (impl == pool_impl::STD) {
+            if /*constexpr_select*/ (impl == pool_impl::STD) {
                 impl::standard::max_pool_upsample_2d::apply<C1, C2>(
                     smart_forward(a),
                     smart_forward(b),
@@ -179,7 +195,7 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
                 cpp_unreachable("Invalid pool implementation");
             }
         } else {
-            if (impl == pool_impl::STD) {
+            if /*constexpr_select*/ (impl == pool_impl::STD) {
                 impl::standard::avg_pool_upsample_2d::apply<C1, C2>(
                     smart_forward(a),
                     smart_forward(b),
