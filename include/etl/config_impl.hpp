@@ -69,8 +69,10 @@ static_assert(false, "EGBLAS is only intended to work with CUBLAS, not alone");
 
 #ifdef ETL_MANUAL_SELECT
 #define ETL_MANUAL_SELECT_BOOL true
+#define constexpr_select
 #else
 #define ETL_MANUAL_SELECT_BOOL false
+#define constexpr_select constexpr
 #endif
 
 #ifdef ETL_VECTORIZE_EXPR
