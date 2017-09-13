@@ -26,7 +26,6 @@ struct context {
     bool parallel = false; ///< Force parallel execution
     bool cpu      = false; ///< Force CPU evaluation
 
-    forced_impl<scalar_impl> scalar_selector;         ///< Force selector for scalar operations
     forced_impl<sum_impl> sum_selector;               ///< Forced selector for sum
     forced_impl<pool_impl> pool_selector;             ///< Forced selector for pooling
     forced_impl<transpose_impl> transpose_selector;   ///< Forced selector for transpose
@@ -56,8 +55,7 @@ inline context& local_context() {
  */
 inline bool is_something_forced(){
     auto& c = local_context();
-    return c.scalar_selector.forced
-        || c.sum_selector.forced
+    return c.sum_selector.forced
         || c.pool_selector.forced
         || c.transpose_selector.forced
         || c.dot_selector.forced
@@ -79,14 +77,6 @@ namespace detail {
  */
 template <typename T>
 forced_impl<T>& get_forced_impl();
-
-/*!
- * \copydoc get_forced_impl
- */
-template <>
-inline forced_impl<scalar_impl>& get_forced_impl() {
-    return local_context().scalar_selector;
-}
 
 /*!
  * \copydoc get_forced_impl

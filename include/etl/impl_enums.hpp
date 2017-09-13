@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include "scalar_impl.hpp"
 #include "sum_impl.hpp"
 #include "cce_impl.hpp"
 #include "transpose_impl.hpp"
