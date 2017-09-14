@@ -93,7 +93,7 @@ struct conv_1d_same_expr : base_temporary_expr_bin<conv_1d_same_expr<A, B>, A, B
 
         // Execute the correct implementation
 
-        const auto impl = detail::select_conv1_impl_new<conv_type::SAME, A, B, C>();
+        constexpr_select const auto impl = detail::select_conv1_impl_new<conv_type::SAME, A, B, C>();
 
 //CPP17: if constexpr
 #ifdef ETL_PARALLEL_SUPPORT
@@ -102,7 +102,7 @@ struct conv_1d_same_expr : base_temporary_expr_bin<conv_1d_same_expr<A, B>, A, B
 
         bool parallel_dispatch = detail::select_parallel(input, kernel, conv);
 
-        if (impl == etl::conv_impl::VEC) {
+        if /*constexpr_select*/ (impl == etl::conv_impl::VEC) {
             engine_dispatch_1d([&](size_t first, size_t last) {
                 impl::vec::conv1_same(input, kernel, conv, first, last);
             }, 0, size(conv), parallel_dispatch);
@@ -114,7 +114,7 @@ struct conv_1d_same_expr : base_temporary_expr_bin<conv_1d_same_expr<A, B>, A, B
             cpp_unreachable("Invalid conv implementation selection");
         }
 #else
-        if (impl == etl::conv_impl::VEC) {
+        if /*constexpr_select*/ (impl == etl::conv_impl::VEC) {
             impl::vec::conv1_same(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, size(conv));
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv1_same(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, size(conv));
