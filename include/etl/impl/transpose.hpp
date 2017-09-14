@@ -125,6 +125,35 @@ transpose_impl select_transpose_impl(transpose_impl def) {
 }
 
 /*!
+ * \brief Select the transposition implementation to use
+ *
+ * \tparam A The type of input
+ * \tparam C The type of output
+ *
+ * \return The best transpose implementation to use
+ */
+template <typename A, typename C>
+transpose_impl select_normal_transpose_impl() {
+    return select_transpose_impl<A, C>(select_default_transpose_impl<A, C>());
+}
+
+/*!
+ * \brief Select the transposition implementation to use for an inplace
+ * square transposition operation.
+ *
+ * \tparam A The type of input
+ * \tparam C The type of output
+ *
+ * \return The best transpose implementation to use
+ */
+template <typename C>
+transpose_impl select_in_square_transpose_impl() {
+    return select_transpose_impl<C, C>(select_default_in_square_transpose_impl<C, C>());
+}
+
+
+
+/*!
  * \brief Functor for inplace square matrix transposition
  */
 struct inplace_square_transpose {
@@ -134,7 +163,7 @@ struct inplace_square_transpose {
      */
     template <typename C>
     static void apply(C&& c) {
-        const auto impl = select_transpose_impl<C, C>(select_default_in_square_transpose_impl<C, C>());
+        const auto impl = select_in_square_transpose_impl<C>();
 
         if (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_square_transpose(c);
@@ -158,7 +187,7 @@ struct inplace_rectangular_transpose {
      */
     template <typename C>
     static void apply(C&& c) {
-        const auto impl = select_transpose_impl<C, C>(select_default_transpose_impl<C, C>());
+        const auto impl = select_normal_transpose_impl<C, C>();
 
         if (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_rectangular_transpose(c);
@@ -183,8 +212,7 @@ struct transpose {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-
-        const auto impl = select_transpose_impl<A, C>(select_default_transpose_impl<A, C>());
+        const auto impl = select_normal_transpose_impl<A, C>();
 
         if (impl == transpose_impl::CUBLAS) {
             c.ensure_gpu_allocated();
