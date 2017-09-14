@@ -38,8 +38,8 @@ namespace detail {
  * \return The best default transpose implementation to use
  */
 template<typename A, typename C>
-transpose_impl select_default_transpose_impl(){
-    if(cublas_enabled && all_dma<A, C> && all_floating<A, C> && !local_context().cpu){
+constexpr transpose_impl select_default_transpose_impl(bool no_gpu){
+    if(cublas_enabled && all_dma<A, C> && all_floating<A, C> && !no_gpu){
         return transpose_impl::CUBLAS;
     }
 
@@ -70,8 +70,8 @@ transpose_impl select_default_transpose_impl(){
  * \return The best default transpose implementation to use
  */
 template<typename A, typename C>
-transpose_impl select_default_in_square_transpose_impl(){
-    if(cublas_enabled && all_dma<A, C> && all_floating<A, C> && !local_context().cpu){
+constexpr transpose_impl select_default_in_square_transpose_impl(bool no_gpu){
+    if(cublas_enabled && all_dma<A, C> && all_floating<A, C> && !no_gpu){
         return transpose_impl::CUBLAS;
     }
 
@@ -84,6 +84,8 @@ transpose_impl select_default_in_square_transpose_impl(){
         return transpose_impl::STD;
     }
 }
+
+#ifdef ETL_MANUAL_SELECT
 
 /*!
  * \brief Select the transpose implementation for an expression of type A and C
@@ -134,7 +136,7 @@ transpose_impl select_transpose_impl(transpose_impl def) {
  */
 template <typename A, typename C>
 transpose_impl select_normal_transpose_impl() {
-    return select_transpose_impl<A, C>(select_default_transpose_impl<A, C>());
+    return select_transpose_impl<A, C>(select_default_transpose_impl<A, C>(local_context().cpu));
 }
 
 /*!
@@ -148,10 +150,39 @@ transpose_impl select_normal_transpose_impl() {
  */
 template <typename C>
 transpose_impl select_in_square_transpose_impl() {
-    return select_transpose_impl<C, C>(select_default_in_square_transpose_impl<C, C>());
+    return select_transpose_impl<C, C>(select_default_in_square_transpose_impl<C, C>(local_context().cpu));
 }
 
+#else
 
+/*!
+ * \brief Select the transposition implementation to use
+ *
+ * \tparam A The type of input
+ * \tparam C The type of output
+ *
+ * \return The best transpose implementation to use
+ */
+template <typename A, typename C>
+constexpr transpose_impl select_normal_transpose_impl() {
+    return select_default_transpose_impl<A, C>(false);
+}
+
+/*!
+ * \brief Select the transposition implementation to use for an inplace
+ * square transposition operation.
+ *
+ * \tparam A The type of input
+ * \tparam C The type of output
+ *
+ * \return The best transpose implementation to use
+ */
+template <typename C>
+constexpr transpose_impl select_in_square_transpose_impl() {
+    return select_default_in_square_transpose_impl<C, C>(false);
+}
+
+#endif
 
 /*!
  * \brief Functor for inplace square matrix transposition
@@ -163,9 +194,9 @@ struct inplace_square_transpose {
      */
     template <typename C>
     static void apply(C&& c) {
-        const auto impl = select_in_square_transpose_impl<C>();
+        constexpr_select const auto impl = select_in_square_transpose_impl<C>();
 
-        if (impl == transpose_impl::MKL) {
+        if /*constexpr_select*/ (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_square_transpose(c);
         } else if (impl == transpose_impl::CUBLAS) {
             etl::impl::cublas::inplace_square_transpose(c);
@@ -187,9 +218,9 @@ struct inplace_rectangular_transpose {
      */
     template <typename C>
     static void apply(C&& c) {
-        const auto impl = select_normal_transpose_impl<C, C>();
+        constexpr_select const auto impl = select_normal_transpose_impl<C, C>();
 
-        if (impl == transpose_impl::MKL) {
+        if /*constexpr_select*/ (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_rectangular_transpose(c);
         } else if (impl == transpose_impl::CUBLAS) {
             etl::impl::cublas::inplace_rectangular_transpose(c);
@@ -212,9 +243,9 @@ struct transpose {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        const auto impl = select_normal_transpose_impl<A, C>();
+        constexpr_select const auto impl = select_normal_transpose_impl<A, C>();
 
-        if (impl == transpose_impl::CUBLAS) {
+        if /*constexpr_select*/ (impl == transpose_impl::CUBLAS) {
             c.ensure_gpu_allocated();
 
             decltype(auto) aa = smart_forward_gpu(a);
