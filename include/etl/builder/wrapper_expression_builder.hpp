@@ -80,6 +80,8 @@ auto parallel(Expr&& expr) -> parallel_expr<detail::build_type<Expr>> {
     return parallel_expr<detail::build_type<Expr>>{expr};
 }
 
+#ifdef ETL_MANUAL_SELECT
+
 /*!
  * \brief Create selectedd expression wrapping the given expression.
  * \param expr The expression to be wrapped
@@ -91,5 +93,7 @@ auto selected(Expr&& expr) -> selected_expr<Selector, V, detail::build_type<Expr
 }
 
 #define selected_helper(v, expr) etl::selected<decltype(v), v>(expr)
+
+#endif
 
 } //end of namespace etl

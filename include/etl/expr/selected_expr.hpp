@@ -12,6 +12,8 @@
 
 #pragma once
 
+#ifdef ETL_MANUAL_SELECT
+
 #include "etl/wrapper_traits.hpp"
 
 namespace etl {
@@ -194,3 +196,5 @@ template <typename Selector, Selector V, typename Expr>
 struct etl_traits<etl::selected_expr<Selector, V, Expr>> : wrapper_traits<etl::selected_expr<Selector, V, Expr>> {};
 
 } //end of namespace etl
+
+#endif

@@ -9,6 +9,7 @@
 
 namespace etl {
 
+#ifdef ETL_MANUAL_SELECT
 /*!
  * \brief Wrapper used in the context to force an implementation to be used
  */
@@ -17,6 +18,7 @@ struct forced_impl {
     T impl;              ///< The impl to be used (if forced == true)
     bool forced = false; ///< Indicate if forced or default
 };
+#endif
 
 /*!
  * \brief The contextual configuration of ETL
@@ -26,6 +28,7 @@ struct context {
     bool parallel = false; ///< Force parallel execution
     bool cpu      = false; ///< Force CPU evaluation
 
+#ifdef ETL_MANUAL_SELECT
     forced_impl<sum_impl> sum_selector;               ///< Forced selector for sum
     forced_impl<pool_impl> pool_selector;             ///< Forced selector for pooling
     forced_impl<transpose_impl> transpose_selector;   ///< Forced selector for transpose
@@ -37,6 +40,7 @@ struct context {
     forced_impl<outer_impl> outer_selector;           ///< Forced selector for outer product
     forced_impl<bias_add_impl> bias_add_selector;           ///< Forced selector for bias_add product
     forced_impl<fft_impl> fft_selector;               ///< Forced selector for fft
+#endif
 };
 
 /*!
@@ -54,6 +58,7 @@ inline context& local_context() {
  * otherwise
  */
 inline bool is_something_forced(){
+#ifdef ETL_MANUAL_SELECT
     auto& c = local_context();
     return c.sum_selector.forced
         || c.pool_selector.forced
@@ -66,9 +71,14 @@ inline bool is_something_forced(){
         || c.outer_selector.forced
         || c.bias_add_selector.forced
         || c.fft_selector.forced;
+#else
+    return false;
+#endif
 }
 
 namespace detail {
+
+#ifdef ETL_MANUAL_SELECT
 
 /*!
  * \brief Return the forced_impl of the local context for the given enumeration type
@@ -165,6 +175,8 @@ template <>
 inline forced_impl<fft_impl>& get_forced_impl() {
     return local_context().fft_selector;
 }
+
+#endif
 
 /*!
  * \brief RAII helper for setting the context to serial
@@ -265,6 +277,8 @@ struct cpu_context {
     }
 };
 
+#ifdef ETL_MANUAL_SELECT
+
 /*!
  * \brief RAII helper for setting the context to a selected
  * implementation
@@ -305,6 +319,8 @@ struct selected_context {
     }
 };
 
+#endif
+
 } //end of namespace detail
 
 /*!
@@ -322,9 +338,13 @@ struct selected_context {
  */
 #define CPU_SECTION if (auto etl_cpu_context__ = etl::detail::cpu_context())
 
+#ifdef ETL_MANUAL_SELECT
+
 /*!
  * \brief Define the start of an ETL selected section
  */
 #define SELECTED_SECTION(v) if (auto etl_selected_context__ = etl::detail::selected_context<decltype(v), v>())
+
+#endif
 
 } //end of namespace etl
