@@ -30,47 +30,6 @@ enum class precision {
  *
  * This does not consider the local context configuration.
  *
- * \param func The default fallback functor
- * \return The implementation to use
- */
-template <typename Functor>
-inline fft_impl select_forced_fft_impl(Functor func) {
-    //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr bool mkl   = mkl_enabled;
-    constexpr bool cufft = cufft_enabled;
-
-    auto forced = local_context().fft_selector.impl;
-
-    switch (forced) {
-        //MKL cannot always be used
-        case fft_impl::MKL:
-            if (!mkl) {                                                                                                       //COVERAGE_EXCLUDE_LINE
-                std::cerr << "Forced selection to MKL fft implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                return func();                                                                                         //COVERAGE_EXCLUDE_LINE
-            }                                                                                                                 //COVERAGE_EXCLUDE_LINE
-
-            return forced;
-
-        //CUFFT cannot always be used
-        case fft_impl::CUFFT:
-            if (!cufft || local_context().cpu) {                                                                                                       //COVERAGE_EXCLUDE_LINE
-                std::cerr << "Forced selection to CUFFT fft implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                return func();                                                                                           //COVERAGE_EXCLUDE_LINE
-            }                                                                                                                   //COVERAGE_EXCLUDE_LINE
-
-            return forced;
-
-        //In other cases, simply use the forced impl
-        default:
-            return forced;
-    }
-}
-
-/*!
- * \brief Select a 1D FFT implementation based on the operation size
- *
- * This does not consider the local context configuration.
- *
  * \param n The size of the operation
  * \return The implementation to use
  */
@@ -86,19 +45,6 @@ inline fft_impl select_default_fft1_impl() {
     } else {
         return fft_impl::STD;
     }
-}
-
-/*!
- * \brief Select a 1D FFT implementation based on the operation size
- * \param n The size of the operation
- * \return The implementation to use
- */
-inline fft_impl select_fft1_impl() {
-    if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([]() { return select_default_fft1_impl(); });
-    }
-
-    return select_default_fft1_impl();
 }
 
 /*!
@@ -127,20 +73,6 @@ inline fft_impl select_default_fft1_many_impl() {
 }
 
 /*!
- * \brief Select a Many-1D FFT implementation based on the operation size
- * \param batch The number of operations
- * \param n The size of the operation
- * \return The implementation to use
- */
-inline fft_impl select_fft1_many_impl() {
-    if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([]() { return select_default_fft1_many_impl(); });
-    }
-
-    return select_default_fft1_many_impl();
-}
-
-/*!
  * \brief Select a 1D IFFT implementation based on the operation size
  *
  * This does not consider the local context configuration.
@@ -160,19 +92,6 @@ inline fft_impl select_default_ifft1_impl() {
     } else {
         return fft_impl::STD;
     }
-}
-
-/*!
- * \brief Select a 1D IFFT implementation based on the operation size
- * \param n The size of the operation
- * \return The implementation to use
- */
-inline fft_impl select_ifft1_impl() {
-    if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([]() { return select_default_ifft1_impl(); });
-    }
-
-    return select_default_ifft1_impl();
 }
 
 /*!
@@ -196,20 +115,6 @@ inline fft_impl select_default_fft2_impl() {
     } else {
         return fft_impl::STD;
     }
-}
-
-/*!
- * \brief Select a 2D FFT implementation based on the operation size
- * \param n1 The first dimension of the operation
- * \param n2 The second dimension of the operation
- * \return The implementation to use
- */
-inline fft_impl select_fft2_impl() {
-    if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([]() { return select_default_fft2_impl(); });
-    }
-
-    return select_default_fft2_impl();
 }
 
 /*!
@@ -239,6 +144,88 @@ inline fft_impl select_default_fft2_many_impl() {
 }
 
 /*!
+ * \brief Select a 1D FFT implementation based on the operation size
+ *
+ * This does not consider the local context configuration.
+ *
+ * \param func The default fallback functor
+ * \return The implementation to use
+ */
+inline fft_impl select_forced_fft_impl(fft_impl def) {
+    //Note since these boolean will be known at compile time, the conditions will be a lot simplified
+    constexpr bool mkl   = mkl_enabled;
+    constexpr bool cufft = cufft_enabled;
+
+    if (local_context().fft_selector.forced) {
+        auto forced = local_context().fft_selector.impl;
+
+        switch (forced) {
+            //MKL cannot always be used
+            case fft_impl::MKL:
+                if (!mkl) {                                                                                                       //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to MKL fft implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return def;                                                                                                   //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 //COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            //CUFFT cannot always be used
+            case fft_impl::CUFFT:
+                if (!cufft || local_context().cpu) {                                                                                //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to CUFFT fft implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return def;                                                                                                     //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                   //COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            //In other cases, simply use the forced impl
+            default:
+                return forced;
+        }
+    }
+
+    return def;
+}
+
+/*!
+ * \brief Select a 1D FFT implementation based on the operation size
+ * \param n The size of the operation
+ * \return The implementation to use
+ */
+inline fft_impl select_fft1_impl() {
+    return select_forced_fft_impl(select_default_fft1_impl());
+}
+
+/*!
+ * \brief Select a Many-1D FFT implementation based on the operation size
+ * \param batch The number of operations
+ * \param n The size of the operation
+ * \return The implementation to use
+ */
+inline fft_impl select_fft1_many_impl() {
+    return select_forced_fft_impl(select_default_fft1_many_impl());
+}
+
+/*!
+ * \brief Select a 1D IFFT implementation based on the operation size
+ * \param n The size of the operation
+ * \return The implementation to use
+ */
+inline fft_impl select_ifft1_impl() {
+    return select_forced_fft_impl(select_default_ifft1_impl());
+}
+
+/*!
+ * \brief Select a 2D FFT implementation based on the operation size
+ * \param n1 The first dimension of the operation
+ * \param n2 The second dimension of the operation
+ * \return The implementation to use
+ */
+inline fft_impl select_fft2_impl() {
+    return select_forced_fft_impl(select_default_fft2_impl());
+}
+
+/*!
  * \brief Select a Many-2D FFT implementation based on the operation size
  * \param batch The number of operations
  * \param n1 The first dimension of the operation
@@ -246,13 +233,7 @@ inline fft_impl select_default_fft2_many_impl() {
  * \return The implementation to use
  */
 inline fft_impl select_fft2_many_impl() {
-    if (local_context().fft_selector.forced) {
-        return select_forced_fft_impl([]() {
-            return select_default_fft2_many_impl();
-        });
-    }
-
-    return select_default_fft2_many_impl();
+    return select_forced_fft_impl(select_default_fft2_many_impl());
 }
 
 /*!
