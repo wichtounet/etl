@@ -707,7 +707,7 @@ inline etl::conv4_impl select_conv4_full_impl(size_t k1, size_t k2) {
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-constexpr etl::conv_multi_impl select_default_conv_valid_multi() {
+constexpr etl::conv_multi_impl select_default_conv_valid_multi(bool no_gpu) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
@@ -720,7 +720,7 @@ constexpr etl::conv_multi_impl select_default_conv_valid_multi() {
         return etl::conv_multi_impl::STD;
     }
 
-    if(impl::cudnn::conv_possible<I, K, C> && is_2d<I> && !local_context().cpu){
+    if(impl::cudnn::conv_possible<I, K, C> && is_2d<I> && !no_gpu){
         //TODO Should only be used with (very?) large sizes
         return etl::conv_multi_impl::CUDNN;
     }
@@ -777,6 +777,8 @@ constexpr etl::conv_multi_impl select_default_conv_valid_multi_multi_impl() {
     return etl::conv_multi_impl::STD;
 }
 
+#ifdef ETL_MANUAL_SELECT
+
 /*!
  * \brief Select the implementation of the conv of I and K in C
  * \tparam I The input type
@@ -785,7 +787,7 @@ constexpr etl::conv_multi_impl select_default_conv_valid_multi_multi_impl() {
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv_multi_impl select_conv_valid_multi_impl() {
+etl::conv_multi_impl select_conv_valid_multi_impl() {
     if (local_context().conv_multi_selector.forced) {
         auto forced = local_context().conv_multi_selector.impl;
 
@@ -794,7 +796,7 @@ inline etl::conv_multi_impl select_conv_valid_multi_impl() {
             case conv_multi_impl::CUDNN:
                 if (!impl::cudnn::conv_possible<I, K, C>) {                                                                                               // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv_valid_multi<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_valid_multi<I, K, C>(local_context().cpu);                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -803,7 +805,7 @@ inline etl::conv_multi_impl select_conv_valid_multi_impl() {
             case conv_multi_impl::VALID_FFT_MKL:
                 if (!mkl_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to MKL conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv_valid_multi<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_valid_multi<I, K, C>(local_context().cpu);                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -812,7 +814,7 @@ inline etl::conv_multi_impl select_conv_valid_multi_impl() {
             case conv_multi_impl::BLAS_MKL:
                 if (!impl::blas::blas_conv2_possible<I, K, C>) {                                                                                               // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv_valid_multi<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_valid_multi<I, K, C>(local_context().cpu);                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -821,7 +823,7 @@ inline etl::conv_multi_impl select_conv_valid_multi_impl() {
             case conv_multi_impl::VEC:
                 if (!vec_enabled || !vectorize_impl) {
                     std::cerr << "Forced selection to VEC conv_valid_multi implementation, but not possible for this expression" << std::endl;
-                    return select_default_conv_valid_multi<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_valid_multi<I, K, C>(local_context().cpu);                                                                   // COVERAGE_EXCLUDE_LINE
                 }
 
                 return forced;
@@ -829,7 +831,7 @@ inline etl::conv_multi_impl select_conv_valid_multi_impl() {
             case conv_multi_impl::BLAS_VEC:
                 if (!impl::vec::conv2_possible<vector_mode, I, K, C>) {
                     std::cerr << "Forced selection to BLAS_VEC conv_valid_multi implementation, but not possible for this expression" << std::endl;
-                    return select_default_conv_valid_multi<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_valid_multi<I, K, C>(local_context().cpu);                                                                   // COVERAGE_EXCLUDE_LINE
                 }
 
                 return forced;
@@ -841,7 +843,7 @@ inline etl::conv_multi_impl select_conv_valid_multi_impl() {
         }
     }
 
-    return select_default_conv_valid_multi<I, K, C>();
+    return select_default_conv_valid_multi<I, K, C>(local_context().cpu);
 }
 
 /*!
@@ -852,7 +854,7 @@ inline etl::conv_multi_impl select_conv_valid_multi_impl() {
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv_multi_impl select_conv_valid_multi_multi_impl() {
+etl::conv_multi_impl select_conv_valid_multi_multi_impl() {
     if (local_context().conv_multi_selector.forced) {
         auto forced = local_context().conv_multi_selector.impl;
 
@@ -861,7 +863,7 @@ inline etl::conv_multi_impl select_conv_valid_multi_multi_impl() {
             case conv_multi_impl::BLAS_MKL:
                 if (!impl::blas::blas_conv2_possible<I, K, C>) {                                                                                               // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv_valid_multi<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_valid_multi_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -885,6 +887,34 @@ inline etl::conv_multi_impl select_conv_valid_multi_multi_impl() {
 
     return select_default_conv_valid_multi_multi_impl<I, K, C>();
 }
+
+#else
+
+/*!
+ * \brief Select the implementation of the conv of I and K in C
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
+constexpr etl::conv_multi_impl select_conv_valid_multi_impl() {
+    return select_default_conv_valid_multi<I, K, C>(false);
+}
+
+/*!
+ * \brief Select the implementation of the conv of I and K in C
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
+constexpr etl::conv_multi_impl select_conv_valid_multi_multi_impl() {
+    return select_default_conv_valid_multi_multi_impl<I, K, C>();
+}
+
+#endif
 
 /*!
  * \brief Test if ETL should run in parallel for the conv of I and K in C

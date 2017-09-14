@@ -88,13 +88,10 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
      * \return the implementation to be used
      */
     template <typename C>
-    static etl::conv_multi_impl select_default_impl() {
-        //Note: since the constexpr values will be known at compile time, the
-        //conditions will be a lot simplified
-
-        static constexpr order input_order  = decay_traits<A>::storage_order;
-        static constexpr order kernel_order = decay_traits<B>::storage_order;
-        static constexpr order output_order = decay_traits<C>::storage_order;
+    static constexpr etl::conv_multi_impl select_default_impl() {
+        constexpr order input_order  = decay_traits<A>::storage_order;
+        constexpr order kernel_order = decay_traits<B>::storage_order;
+        constexpr order output_order = decay_traits<C>::storage_order;
 
         //Only the standard implementation is able to handle column major
         if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
@@ -107,6 +104,8 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
 
         return etl::conv_multi_impl::STD;
     }
+
+#ifdef ETL_MANUAL_SELECT
 
     /*!
      * \brief Select the implementation of the conv of I and K in C
@@ -147,6 +146,20 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
         return select_default_impl<C>();
     }
 
+#else
+
+    /*!
+     * \brief Select the implementation of the conv of I and K in C
+     * \tparam C The conv type
+     * \return the implementation to be used
+     */
+    template <typename C>
+    static constexpr etl::conv_multi_impl select_impl() {
+        return select_default_impl<C>();
+    }
+
+#endif
+
     /*!
      * \brief Assign to a matrix of the full storage order
      * \param conv The expression to which assign
@@ -160,10 +173,10 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
 
         check(input, kernel, conv);
 
-        auto impl = select_impl<C>();
+        constexpr_select auto impl = select_impl<C>();
 
         if /* constexpr */ (Flipped){
-            if (impl == etl::conv_multi_impl::VEC){
+            if /*constexpr_select*/ (impl == etl::conv_multi_impl::VEC){
                 impl::vec::conv2_full_multi_flipped(smart_forward(input), smart_forward(kernel), conv);
             } else if (impl == etl::conv_multi_impl::STD){
                 impl::standard::conv2_full_multi_flipped(smart_forward(input), smart_forward(kernel), conv);
@@ -177,7 +190,7 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
                 cpp_unreachable("Invalid conv implementation selection");
             }
         } else {
-            if (impl == etl::conv_multi_impl::VEC) {
+            if /*constexpr_select*/ (impl == etl::conv_multi_impl::VEC) {
                 impl::vec::conv2_full_multi(smart_forward(input), smart_forward(kernel), conv);
             } else if (impl == etl::conv_multi_impl::STD) {
                 impl::standard::conv2_full_multi(smart_forward(input), smart_forward(kernel), conv);

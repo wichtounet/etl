@@ -29,9 +29,9 @@ struct conv2_valid_multi_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(I&& input, K&& kernel, C&& conv) {
-        auto impl = select_conv_valid_multi_impl<I, K, C>();
+        constexpr_select auto impl = select_conv_valid_multi_impl<I, K, C>();
 
-        if (impl == etl::conv_multi_impl::BLAS_VEC) {
+        if /*constexpr_select*/ (impl == etl::conv_multi_impl::BLAS_VEC) {
             impl::vec::blas_conv2_valid_multi(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::BLAS_MKL) {
             impl::blas::blas_conv2_valid_multi(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
@@ -62,9 +62,9 @@ struct conv2_valid_multi_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(I&& input, K&& kernel, C&& conv) {
-        auto impl = select_conv_valid_multi_impl<I, K, C>();
+        constexpr_select auto impl = select_conv_valid_multi_impl<I, K, C>();
 
-        if (impl == etl::conv_multi_impl::BLAS_VEC) {
+        if /*constexpr_select*/ (impl == etl::conv_multi_impl::BLAS_VEC) {
             impl::vec::blas_conv2_valid_multi_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::BLAS_MKL) {
             impl::blas::blas_conv2_valid_multi_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
@@ -95,9 +95,9 @@ struct conv2_valid_multi_multi_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(I&& input, K&& kernel, C&& conv) {
-        auto impl = select_conv_valid_multi_multi_impl<I, K, C>();
+        constexpr_select auto impl = select_conv_valid_multi_multi_impl<I, K, C>();
 
-        if (impl == etl::conv_multi_impl::BLAS_VEC) {
+        if /*constexpr_select*/ (impl == etl::conv_multi_impl::BLAS_VEC) {
             impl::vec::blas_conv2_valid_multi_multi(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::BLAS_MKL) {
             impl::blas::blas_conv2_valid_multi_multi(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
@@ -126,9 +126,9 @@ struct conv2_valid_multi_multi_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(I&& input, K&& kernel, C&& conv) {
-        auto impl = select_conv_valid_multi_multi_impl<I, K, C>();
+        constexpr_select auto impl = select_conv_valid_multi_multi_impl<I, K, C>();
 
-        if (impl == etl::conv_multi_impl::BLAS_VEC) {
+        if /*constexpr_select*/ (impl == etl::conv_multi_impl::BLAS_VEC) {
             impl::vec::blas_conv2_valid_multi_multi_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::BLAS_MKL) {
             impl::blas::blas_conv2_valid_multi_multi_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
@@ -156,9 +156,9 @@ struct dyn_conv2_valid_multi_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-        auto impl = select_conv_valid_multi_impl<I, K, C>();
+        constexpr_select auto impl = select_conv_valid_multi_impl<I, K, C>();
 
-        if (impl == etl::conv_multi_impl::BLAS_VEC) {
+        if /*constexpr_select*/ (impl == etl::conv_multi_impl::BLAS_VEC) {
             impl::vec::blas_conv2_valid_multi(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
         } else if (impl == etl::conv_multi_impl::BLAS_MKL) {
             impl::blas::blas_conv2_valid_multi(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
@@ -188,9 +188,9 @@ struct dyn_conv2_valid_multi_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-        auto impl = select_conv_valid_multi_impl<I, K, C>();
+        constexpr_select auto impl = select_conv_valid_multi_impl<I, K, C>();
 
-        if (impl == etl::conv_multi_impl::BLAS_VEC) {
+        if /*constexpr_select*/ (impl == etl::conv_multi_impl::BLAS_VEC) {
             impl::vec::blas_conv2_valid_multi_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
         } else if (impl == etl::conv_multi_impl::BLAS_MKL) {
             impl::blas::blas_conv2_valid_multi_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
@@ -220,9 +220,9 @@ struct dyn_conv2_valid_multi_multi_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-        auto impl = select_conv_valid_multi_multi_impl<I, K, C>();
+        constexpr_select auto impl = select_conv_valid_multi_multi_impl<I, K, C>();
 
-        if (impl == etl::conv_multi_impl::BLAS_VEC) {
+        if /*constexpr_select*/ (impl == etl::conv_multi_impl::BLAS_VEC) {
             impl::vec::blas_conv2_valid_multi_multi(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
         } else if (impl == etl::conv_multi_impl::BLAS_MKL) {
             impl::blas::blas_conv2_valid_multi_multi(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
@@ -250,9 +250,9 @@ struct dyn_conv2_valid_multi_multi_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-        auto impl = select_conv_valid_multi_multi_impl<I, K, C>();
+        constexpr_select auto impl = select_conv_valid_multi_multi_impl<I, K, C>();
 
-        if (impl == etl::conv_multi_impl::BLAS_VEC) {
+        if /*constexpr_select*/ (impl == etl::conv_multi_impl::BLAS_VEC) {
             impl::vec::blas_conv2_valid_multi_multi_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
         } else if (impl == etl::conv_multi_impl::BLAS_MKL) {
             impl::blas::blas_conv2_valid_multi_multi_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
