@@ -105,7 +105,7 @@ public:
      */
     template <typename R>
     static etl::pool_impl select_impl() {
-        if (local_context().sum_selector.forced) {
+        if (local_context().pool_selector.forced) {
             auto forced = local_context().pool_selector.impl;
 
             switch (forced) {

@@ -52,7 +52,7 @@ constexpr etl::pool_impl select_default_pool_impl(bool no_gpu) {
  */
 template <typename X, typename Y>
 etl::pool_impl select_pool_impl() {
-    if (local_context().sum_selector.forced) {
+    if (local_context().pool_selector.forced) {
         auto forced = local_context().pool_selector.impl;
 
         switch (forced) {
