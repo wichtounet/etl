@@ -33,12 +33,12 @@ enum class precision {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline fft_impl select_default_fft1_impl() {
+constexpr fft_impl select_default_fft1_impl(bool no_gpu) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
 
-    if (cufft && !local_context().cpu) {
+    if (cufft && !no_gpu) {
         return fft_impl::CUFFT;
     } else if (mkl) {
         return fft_impl::MKL;
@@ -56,14 +56,14 @@ inline fft_impl select_default_fft1_impl() {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline fft_impl select_default_fft1_many_impl() {
+constexpr fft_impl select_default_fft1_many_impl(bool no_gpu) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
 
     //Note: more testing would probably improve this selection
 
-    if (cufft && !local_context().cpu) {
+    if (cufft && !no_gpu) {
         return fft_impl::CUFFT;
     } else if (mkl) {
         return fft_impl::MKL;
@@ -80,12 +80,12 @@ inline fft_impl select_default_fft1_many_impl() {
  * \param n The size of the operation
  * \return The implementation to use
  */
-inline fft_impl select_default_ifft1_impl() {
+constexpr fft_impl select_default_ifft1_impl(bool no_gpu) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
 
-    if (cufft && !local_context().cpu) {
+    if (cufft && !no_gpu) {
         return fft_impl::CUFFT;
     } else if (mkl) {
         return fft_impl::MKL;
@@ -103,12 +103,12 @@ inline fft_impl select_default_ifft1_impl() {
  * \param n2 The second dimension of the operation
  * \return The implementation to use
  */
-inline fft_impl select_default_fft2_impl() {
+constexpr fft_impl select_default_fft2_impl(bool no_gpu) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
 
-    if (cufft && !local_context().cpu) {
+    if (cufft && !no_gpu) {
         return fft_impl::CUFFT;
     } else if (mkl) {
         return fft_impl::MKL;
@@ -127,14 +127,14 @@ inline fft_impl select_default_fft2_impl() {
  * \param n2 The second dimension of the operation
  * \return The implementation to use
  */
-inline fft_impl select_default_fft2_many_impl() {
+constexpr fft_impl select_default_fft2_many_impl(bool no_gpu) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool mkl   = mkl_enabled;
     constexpr bool cufft = cufft_enabled;
 
     //Note: more testing would probably improve this selection
 
-    if (cufft && !local_context().cpu) {
+    if (cufft && !no_gpu) {
         return fft_impl::CUFFT;
     } else if (mkl) {
         return fft_impl::MKL;
@@ -142,6 +142,8 @@ inline fft_impl select_default_fft2_many_impl() {
         return fft_impl::STD;
     }
 }
+
+#ifdef ETL_MANUAL_SELECT
 
 /*!
  * \brief Select a 1D FFT implementation based on the operation size
@@ -193,7 +195,7 @@ inline fft_impl select_forced_fft_impl(fft_impl def) {
  * \return The implementation to use
  */
 inline fft_impl select_fft1_impl() {
-    return select_forced_fft_impl(select_default_fft1_impl());
+    return select_forced_fft_impl(select_default_fft1_impl(local_context().cpu));
 }
 
 /*!
@@ -203,7 +205,7 @@ inline fft_impl select_fft1_impl() {
  * \return The implementation to use
  */
 inline fft_impl select_fft1_many_impl() {
-    return select_forced_fft_impl(select_default_fft1_many_impl());
+    return select_forced_fft_impl(select_default_fft1_many_impl(local_context().cpu));
 }
 
 /*!
@@ -212,7 +214,7 @@ inline fft_impl select_fft1_many_impl() {
  * \return The implementation to use
  */
 inline fft_impl select_ifft1_impl() {
-    return select_forced_fft_impl(select_default_ifft1_impl());
+    return select_forced_fft_impl(select_default_ifft1_impl(local_context().cpu));
 }
 
 /*!
@@ -222,7 +224,7 @@ inline fft_impl select_ifft1_impl() {
  * \return The implementation to use
  */
 inline fft_impl select_fft2_impl() {
-    return select_forced_fft_impl(select_default_fft2_impl());
+    return select_forced_fft_impl(select_default_fft2_impl(local_context().cpu));
 }
 
 /*!
@@ -233,8 +235,61 @@ inline fft_impl select_fft2_impl() {
  * \return The implementation to use
  */
 inline fft_impl select_fft2_many_impl() {
-    return select_forced_fft_impl(select_default_fft2_many_impl());
+    return select_forced_fft_impl(select_default_fft2_many_impl(local_context().cpu));
 }
+
+#else
+
+/*!
+ * \brief Select a 1D FFT implementation based on the operation size
+ * \param n The size of the operation
+ * \return The implementation to use
+ */
+constexpr fft_impl select_fft1_impl() {
+    return (select_default_fft1_impl(false));
+}
+
+/*!
+ * \brief Select a Many-1D FFT implementation based on the operation size
+ * \param batch The number of operations
+ * \param n The size of the operation
+ * \return The implementation to use
+ */
+constexpr fft_impl select_fft1_many_impl() {
+    return (select_default_fft1_many_impl(false));
+}
+
+/*!
+ * \brief Select a 1D IFFT implementation based on the operation size
+ * \param n The size of the operation
+ * \return The implementation to use
+ */
+constexpr fft_impl select_ifft1_impl() {
+    return (select_default_ifft1_impl(false));
+}
+
+/*!
+ * \brief Select a 2D FFT implementation based on the operation size
+ * \param n1 The first dimension of the operation
+ * \param n2 The second dimension of the operation
+ * \return The implementation to use
+ */
+constexpr fft_impl select_fft2_impl() {
+    return (select_default_fft2_impl(false));
+}
+
+/*!
+ * \brief Select a Many-2D FFT implementation based on the operation size
+ * \param batch The number of operations
+ * \param n1 The first dimension of the operation
+ * \param n2 The second dimension of the operation
+ * \return The implementation to use
+ */
+constexpr fft_impl select_fft2_many_impl() {
+    return (select_default_fft2_many_impl(false));
+}
+
+#endif
 
 /*!
  * \brief Functor for 1D FFT
@@ -254,7 +309,7 @@ struct fft1_impl {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_fft1_impl();
+        constexpr_select auto impl = select_fft1_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::fft1(smart_forward(a), c);
@@ -284,7 +339,7 @@ struct ifft1_impl {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_ifft1_impl();
+        constexpr_select auto impl = select_ifft1_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::ifft1(smart_forward(a), c);
@@ -314,7 +369,7 @@ struct ifft1_real_impl {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_ifft1_impl();
+        constexpr_select auto impl = select_ifft1_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::ifft1_real(smart_forward(a), c);
@@ -344,7 +399,7 @@ struct fft2_impl {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_fft2_impl();
+        constexpr_select auto impl = select_fft2_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::fft2(smart_forward(a), c);
@@ -374,7 +429,7 @@ struct ifft2_impl {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_fft2_impl();
+        constexpr_select auto impl = select_fft2_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::ifft2(smart_forward(a), c);
@@ -404,7 +459,7 @@ struct ifft2_real_impl {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_fft2_impl();
+        constexpr_select auto impl = select_fft2_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::ifft2_real(smart_forward(a), c);
@@ -494,7 +549,7 @@ struct ifft1_many_impl {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_fft1_many_impl();
+        constexpr_select auto impl = select_fft1_many_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::ifft1_many(smart_forward(a), c);
@@ -524,7 +579,7 @@ struct ifft2_many_impl {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        fft_impl impl = select_fft2_many_impl();
+        constexpr_select auto impl = select_fft2_many_impl();
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::ifft2_many(smart_forward(a), c);
