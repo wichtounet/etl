@@ -36,7 +36,7 @@ float fake = 0;
  * No pool
  * Simple:   3 /   3 /   0 /   2 (Optimal!)
  * Basic:   15 /  15 /   0 /   3 (Optimal!)
- * Expr:   125 / 125 /   0 /   4 (Optimal!)
+ * Expr:   125 / 125 /   0 /   4 (Optimal!) (TODO:Update)
  * Direct:  43 /  43 /   0 /   3 (Optimal!)
  * ML:     270 / 270 /   0 /  10 (Optimal!)
  * Sub:    163 / 163 / 160 / 480
@@ -44,7 +44,7 @@ float fake = 0;
  * GPU pool
  * Simple:  3 /  0 /   0 /   2 (Optimal!)
  * Basic:   6 /  0 /   0 /   3 (Optimal!)
- * Expr:    8 /  0 /   0 /   4 (Optimal!)
+ * Expr:    8 /  0 /   0 /   4 (Optimal!) (TODO:Update)
  * Direct:  4 /  0 /   0 /   3 (Optimal!)
  * ML:     48 / 16 /   0 /  10 (Optimal!)
  * Sub:     4 /  0 / 160 / 480
@@ -153,7 +153,8 @@ void expr() {
             E = 1.2f / A - D * C + 2.0f;
             D = 1.1f + E;
             B = (1.4f - D) - 2.3f;
-            D = etl::sqrt(B);
+            D = (A + B) + (C + E);
+            B = etl::sqrt(D);
         }
     }
 
