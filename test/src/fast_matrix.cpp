@@ -740,7 +740,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/unary_binary_2", "fast_matrix::abs", Z, float,
     REQUIRE_EQUALS(d[2], 0.0);
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/sigmoid", "fast_matrix::sigmoid", Z, float, double) {
+TEMPLATE_TEST_CASE_2("sigmoid/forward/0", "[fast][ml]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2> d;
@@ -750,6 +750,18 @@ TEMPLATE_TEST_CASE_2("fast_matrix/sigmoid", "fast_matrix::sigmoid", Z, float, do
     REQUIRE_EQUALS_APPROX(d[1], etl::math::logistic_sigmoid(Z(2.0)));
     REQUIRE_EQUALS_APPROX(d[2], etl::math::logistic_sigmoid(Z(0.0)));
     REQUIRE_EQUALS_APPROX(d[3], etl::math::logistic_sigmoid(Z(1.0)));
+}
+
+TEMPLATE_TEST_CASE_2("sigmoid/forward/1", "[fast][ml]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
+
+    // Inplace should work!
+    a = sigmoid(a);
+
+    REQUIRE_EQUALS_APPROX(a[0], etl::math::logistic_sigmoid(Z(-1.0)));
+    REQUIRE_EQUALS_APPROX(a[1], etl::math::logistic_sigmoid(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(a[2], etl::math::logistic_sigmoid(Z(0.0)));
+    REQUIRE_EQUALS_APPROX(a[3], etl::math::logistic_sigmoid(Z(1.0)));
 }
 
 TEMPLATE_TEST_CASE_2("fast_matrix/softplus", "fast_matrix::softplus", Z, float, double) {
