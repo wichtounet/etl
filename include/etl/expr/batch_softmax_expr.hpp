@@ -72,6 +72,42 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
     // Assignment functions
 
     /*!
+     * \brief Select the best possible implementation for the batch softmax operation
+     *
+     * This routine does not consider the local context
+     */
+    template<typename C>
+    constexpr static batch_softmax_impl select_default_impl(bool no_gpu){
+        if (cudnn_enabled && all_homogeneous<A, C> && all_floating<A, C> && !no_gpu) {
+            return batch_softmax_impl::CUDNN;
+        }
+
+        return batch_softmax_impl::STD;
+    }
+
+#ifdef ETL_MANUAL_SELECT
+
+    /*!
+     * \brief Select the best possible implementation for the batch softmax operation
+     */
+    template<typename C>
+    static batch_softmax_impl select_impl(){
+        return select_default_impl<C>(local_context().cpu);
+    }
+
+#else
+
+    /*!
+     * \brief Select the best possible implementation for the batch softmax operation
+     */
+    template<typename C>
+    constexpr static batch_softmax_impl select_impl(){
+        return select_default_impl<C>(false);
+    }
+
+#endif
+
+    /*!
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
@@ -85,7 +121,9 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
 
         check(a, c);
 
-        if (cudnn_enabled && all_homogeneous<A, C> && all_floating<A, C> && !local_context().cpu) {
+        constexpr_select auto impl = select_impl<C>();
+
+        if /*constexpr_select*/ (impl == batch_softmax_impl::CUDNN) {
             decltype(auto) a_gpu = smart_forward_gpu(a);
 
             if /*constexpr*/ (Stable) {
@@ -93,7 +131,7 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
             } else {
                 impl::cudnn::softmax(a_gpu, c);
             }
-        } else {
+        } else if (impl == batch_softmax_impl::STD) {
             if /*constexpr*/ (Stable) {
                 for (size_t i = 0; i < etl::dim<0>(c); ++i) {
                     c(i) = exp(a(i)) / sum(exp(a(i)));
@@ -104,6 +142,8 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
                     c(i)   = exp(a(i) - m) / sum(exp(a(i) - m));
                 }
             }
+        } else {
+            cpp_unreachable("Invalid selection for batch_softmax");
         }
     }
 

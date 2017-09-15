@@ -7,19 +7,19 @@
 
 /*!
  * \file
- * \brief Utility header including all enumerations headers
+ * \brief Enumeration for batch_softmax implementations
  */
 
 #pragma once
 
-#include "sum_impl.hpp"
-#include "cce_impl.hpp"
-#include "transpose_impl.hpp"
-#include "dot_impl.hpp"
-#include "conv_impl.hpp"
-#include "gemm_impl.hpp"
-#include "outer_impl.hpp"
-#include "bias_add_impl.hpp"
-#include "fft_impl.hpp"
-#include "pool_impl.hpp"
-#include "batch_softmax_impl.hpp"
+namespace etl {
+
+/*!
+ * \brief Enumeration describing the different implementations of CCE
+ */
+enum class batch_softmax_impl {
+    STD,  ///< Standard implementation
+    CUDNN ///< GPU implementation
+};
+
+} //end of namespace etl
