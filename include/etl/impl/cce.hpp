@@ -75,7 +75,7 @@ struct cce_loss_impl {
             etl::force(labels);
 
             return impl::standard::cce_loss(output, labels, scale);
-        } else if (impl == etl::cce_impl::EGBLAS) {
+        } else if /*constexpr*/ (impl == etl::cce_impl::EGBLAS) {
             decltype(auto) output_gpu = smart_forward_gpu(output);
             decltype(auto) labels_gpu = smart_forward_gpu(labels);
 
@@ -105,7 +105,7 @@ struct cce_error_impl {
             etl::force(labels);
 
             return impl::standard::cce_error(output, labels, scale);
-        } else if (impl == etl::cce_impl::EGBLAS) {
+        } else if /*constexpr*/ (impl == etl::cce_impl::EGBLAS) {
             decltype(auto) output_gpu = smart_forward_gpu(output);
             decltype(auto) labels_gpu = smart_forward_gpu(labels);
 

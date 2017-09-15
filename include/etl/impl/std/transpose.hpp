@@ -140,7 +140,6 @@ void transpose(A&& a, C&& c) {
         // previous scheme (M instead of N)
 
         if /*constexpr*/ (decay_traits<A>::storage_order == order::RowMajor) {
-
             for (size_t i = 0; i < m; ++i) {
                 size_t j = 0;
 

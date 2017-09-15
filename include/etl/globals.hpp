@@ -120,15 +120,15 @@ bool is_lower_triangular(E&& expr) {
         return true;
     }
     // strictly_lower_matrix<E> is already enforced to be lower triangular
-    else if (is_strictly_lower_matrix<E>) {
+    else if /*constexpr*/ (is_strictly_lower_matrix<E>) {
         return true;
     }
     // uni_lower_matrix<E> is already enforced to be lower triangular
-    else if (is_uni_lower_matrix<E>) {
+    else if /*constexpr*/ (is_uni_lower_matrix<E>) {
         return true;
     }
     // diagonal_matrix<E> is already enforced to be lower triangular
-    else if (is_diagonal_matrix<E>) {
+    else if /*constexpr*/ (is_diagonal_matrix<E>) {
         return true;
     } else {
         if (is_square(expr)) {
@@ -217,15 +217,15 @@ bool is_upper_triangular(E&& expr) {
         return true;
     }
     // strictly_upper_matrix<E> is already enforced to be upper triangular
-    else if (is_strictly_upper_matrix<E>) {
+    else if /*constexpr*/ (is_strictly_upper_matrix<E>) {
         return true;
     }
     // uni_upper_matrix<E> is already enforced to be upper triangular
-    else if (is_uni_upper_matrix<E>) {
+    else if /*constexpr*/ (is_uni_upper_matrix<E>) {
         return true;
     }
     // diagonal_matrix<E> is already enforced to be upper triangular
-    else if (is_diagonal_matrix<E>) {
+    else if /*constexpr*/ (is_diagonal_matrix<E>) {
         return true;
     } else {
         if (is_square(expr)) {

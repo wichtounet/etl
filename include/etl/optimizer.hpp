@@ -256,11 +256,11 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>
     static void transform(Builder parent_builder, const etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>& expr) {
         if /*constexpr*/ (std::is_same<BinaryOp, mul_binary_op<T>>::value) {
             parent_builder(etl::scalar<T>(expr.lhs.value * expr.rhs.value));
-        } else if (std::is_same<BinaryOp, plus_binary_op<T>>::value) {
+        } else if /*constexpr*/ (std::is_same<BinaryOp, plus_binary_op<T>>::value) {
             parent_builder(etl::scalar<T>(expr.lhs.value + expr.rhs.value));
-        } else if (std::is_same<BinaryOp, minus_binary_op<T>>::value) {
+        } else if /*constexpr*/ (std::is_same<BinaryOp, minus_binary_op<T>>::value) {
             parent_builder(etl::scalar<T>(expr.lhs.value - expr.rhs.value));
-        } else if (std::is_same<BinaryOp, div_binary_op<T>>::value) {
+        } else if /*constexpr*/ (std::is_same<BinaryOp, div_binary_op<T>>::value) {
             parent_builder(etl::scalar<T>(expr.lhs.value / expr.rhs.value));
         }
     }
@@ -318,15 +318,15 @@ struct transformer<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
             } else if (expr.rhs.value == 0.0) {
                 parent_builder(expr.rhs);
             }
-        } else if (std::is_same<BinaryOp, plus_binary_op<T>>::value) {
+        } else if /*constexpr*/ (std::is_same<BinaryOp, plus_binary_op<T>>::value) {
             if (expr.rhs.value == 0.0) {
                 parent_builder(expr.lhs);
             }
-        } else if (std::is_same<BinaryOp, minus_binary_op<T>>::value) {
+        } else if /*constexpr*/ (std::is_same<BinaryOp, minus_binary_op<T>>::value) {
             if (expr.rhs.value == 0.0) {
                 parent_builder(expr.lhs);
             }
-        } else if (std::is_same<BinaryOp, div_binary_op<T>>::value) {
+        } else if /*constexpr*/ (std::is_same<BinaryOp, div_binary_op<T>>::value) {
             if (expr.rhs.value == 1.0) {
                 parent_builder(expr.lhs);
             }
