@@ -1533,4 +1533,34 @@ decltype(auto) smart_gpu_compute(E& expr, Y& y) {
     return y;
 }
 
+// Select version
+
+template<typename E, typename Enable = void>
+struct is_nongpu_temporary_impl {
+    static constexpr bool value = false;
+};
+
+template<typename E>
+struct is_nongpu_temporary_impl <E, std::enable_if_t<is_temporary_expr<E> && !E::gpu_computable>> {
+    static constexpr bool value = true;
+};
+
+template<typename E>
+constexpr bool is_nongpu_temporary = is_nongpu_temporary_impl<E>::value;
+
+
+template<typename E>
+constexpr bool should_gpu_compute_direct = is_etl_value<E> || is_nongpu_temporary<E>;
+
+template <typename X, typename Y, cpp_enable_iff(should_gpu_compute_direct<X>)>
+decltype(auto) select_smart_gpu_compute(X& expr, Y& y) {
+    cpp_unused(y);
+    return smart_gpu_compute(expr);
+}
+
+template <typename X, typename Y, cpp_disable_iff(should_gpu_compute_direct<X>)>
+decltype(auto) select_smart_gpu_compute(X& expr, Y& y) {
+    return smart_gpu_compute(expr, y);
+}
+
 } //end of namespace etl
