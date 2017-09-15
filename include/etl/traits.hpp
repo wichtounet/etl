@@ -1016,6 +1016,27 @@ template <typename Matrix>
 constexpr bool is_square_matrix = traits_detail::is_square_matrix_impl<Matrix>::value;
 
 /*!
+ * \brief Traits to test if an expression is a temporary expression with non-GPU
+ * capabilities
+ */
+template<typename E>
+constexpr bool is_nongpu_temporary = traits_detail::is_nongpu_temporary_impl<E>::value;
+
+/*!
+ * \brief Traits to test if an expression is a temporary expression with GPU
+ * capabilities
+ */
+template<typename E>
+constexpr bool is_gpu_temporary = traits_detail::is_gpu_temporary_impl<E>::value;
+
+/*!
+ * \brief Traits indicating if it's more efficient to use smart_gpu_compute(x)
+ * instead of smart_gpu_compute(x, y) for an expression of type E.
+ */
+template<typename E>
+constexpr bool should_gpu_compute_direct = is_etl_value<E> || is_nongpu_temporary<E> || (is_dma<E> && !is_gpu_temporary<E>);
+
+/*!
  * Builder to construct the type returned by a view.
  */
 template <typename T, typename S>
@@ -1526,53 +1547,116 @@ decltype(auto) smart_gpu_compute(E& expr) {
 
 // Binary smart_gpu_compute
 
-template <typename E, typename Y, cpp_enable_iff(is_temporary_expr<E> && !E::gpu_computable)>
-decltype(auto) smart_gpu_compute(E& expr, Y& y) {
+/*!
+ * \brief Compute the expression into a representation that is GPU up to date
+ * and store this representation in y.
+ *
+ * This function tries to minimize the number of copies and evaluations that is
+ * performed. Ideally, the result will be directly computed inside y.
+ *
+ * \param x The expression that must be evaluated
+ * \param y The expression into which store the GPU result of x
+ *
+ * \return y
+ */
+template <typename X, typename Y, cpp_enable_iff(is_temporary_expr<X> && !X::gpu_computable)>
+decltype(auto) smart_gpu_compute(X& x, Y& y) {
     // TODO Check this
-    auto t = force_temporary(expr);
+    auto t = force_temporary(x);
     t.ensure_gpu_up_to_date();
     y = t;
     return y;
 }
 
-template <typename E, typename Y, cpp_enable_iff(is_temporary_expr<E> && E::gpu_computable)>
-decltype(auto) smart_gpu_compute(E& expr, Y& y) {
-    return y = expr;
+/*!
+ * \brief Compute the expression into a representation that is GPU up to date
+ * and store this representation in y.
+ *
+ * This function tries to minimize the number of copies and evaluations that is
+ * performed. Ideally, the result will be directly computed inside y.
+ *
+ * \param x The expression that must be evaluated
+ * \param y The expression into which store the GPU result of x
+ *
+ * \return y
+ */
+template <typename X, typename Y, cpp_enable_iff(is_temporary_expr<X> && X::gpu_computable)>
+decltype(auto) smart_gpu_compute(X& x, Y& y) {
+    return y = x;
 }
 
-template <typename E, typename Y, cpp_enable_iff(!is_temporary_expr<E> && !is_dma<E>)>
-decltype(auto) smart_gpu_compute(E& expr, Y& y) {
-    return expr.gpu_compute(y);
+/*!
+ * \brief Compute the expression into a representation that is GPU up to date
+ * and store this representation in y.
+ *
+ * This function tries to minimize the number of copies and evaluations that is
+ * performed. Ideally, the result will be directly computed inside y.
+ *
+ * \param x The expression that must be evaluated
+ * \param y The expression into which store the GPU result of x
+ *
+ * \return y
+ */
+template <typename X, typename Y, cpp_enable_iff(!is_temporary_expr<X> && !is_dma<X>)>
+decltype(auto) smart_gpu_compute(X& x, Y& y) {
+    return x.gpu_compute(y);
 }
 
-template <typename E, typename Y, cpp_enable_iff(!is_temporary_expr<E> && is_dma<E>)>
-decltype(auto) smart_gpu_compute(E& expr, Y& y) {
-    expr.ensure_gpu_up_to_date();
+/*!
+ * \brief Compute the expression into a representation that is GPU up to date
+ * and store this representation in y.
+ *
+ * This function tries to minimize the number of copies and evaluations that is
+ * performed. Ideally, the result will be directly computed inside y.
+ *
+ * \param x The expression that must be evaluated
+ * \param y The expression into which store the GPU result of x
+ *
+ * \return y
+ */
+template <typename X, typename Y, cpp_enable_iff(!is_temporary_expr<X> && is_dma<X>)>
+decltype(auto) smart_gpu_compute(X& x, Y& y) {
+    x.ensure_gpu_up_to_date();
     y.ensure_gpu_allocated();
-    y.gpu_copy_from(expr.gpu_memory());
+    y.gpu_copy_from(x.gpu_memory());
     return y;
 }
 
 // Select version
 
-template<typename E>
-constexpr bool is_nongpu_temporary = traits_detail::is_nongpu_temporary_impl<E>::value;
-
-template<typename E>
-constexpr bool is_gpu_temporary = traits_detail::is_gpu_temporary_impl<E>::value;
-
-template<typename E>
-constexpr bool should_gpu_compute_direct = is_etl_value<E> || is_nongpu_temporary<E> || (is_dma<E> && !is_gpu_temporary<E>);
-
+/*!
+ * \brief Compute the expression into a representation that is GPU up to date
+ * and possibly store this representation in y.
+ *
+ * This function tries to minimize the number of copies and evaluations that is
+ * performed. Ideally, the result will be directly computed inside y.
+ *
+ * \param x The expression that must be evaluated
+ * \param y The expression into which store the GPU result of x
+ *
+ * \return either a temporary of the result of x (possibly x) or y
+ */
 template <typename X, typename Y, cpp_enable_iff(should_gpu_compute_direct<X>)>
-decltype(auto) select_smart_gpu_compute(X& expr, Y& y) {
+decltype(auto) select_smart_gpu_compute(X& x, Y& y) {
     cpp_unused(y);
-    return smart_gpu_compute(expr);
+    return smart_gpu_compute(x);
 }
 
+/*!
+ * \brief Compute the expression into a representation that is GPU up to date
+ * and possibly store this representation in y.
+ *
+ * This function tries to minimize the number of copies and evaluations that is
+ * performed. Ideally, the result will be directly computed inside y.
+ *
+ * \param x The expression that must be evaluated
+ * \param y The expression into which store the GPU result of x
+ *
+ * \return either a temporary of the result of x (possibly x) or y
+ */
 template <typename X, typename Y, cpp_disable_iff(should_gpu_compute_direct<X>)>
-decltype(auto) select_smart_gpu_compute(X& expr, Y& y) {
-    return smart_gpu_compute(expr, y);
+decltype(auto) select_smart_gpu_compute(X& x, Y& y) {
+    return smart_gpu_compute(x, y);
 }
 
 } //end of namespace etl
