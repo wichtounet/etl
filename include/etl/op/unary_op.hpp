@@ -252,18 +252,10 @@ struct log_unary_op {
      */
     template <typename X, typename Y>
     static Y& gpu_compute(const X& x, Y& y) noexcept {
-        // TODO Check this!
-        if /* constexpr */ (is_dma<X>){
-            decltype(auto) t1 = smart_gpu_compute(x);
+        decltype(auto) t1 = select_smart_gpu_compute(x, y);
 
-            T alpha(1.0);
-            impl::egblas::log(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
-        } else {
-            smart_gpu_compute(x, y);
-
-            T alpha(1.0);
-            impl::egblas::log(etl::size(x), &alpha, y.gpu_memory(), 1, y.gpu_memory(), 1);
-        }
+        T alpha(1.0);
+        impl::egblas::log(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -341,7 +333,10 @@ struct sqrt_unary_op {
         decltype(auto) t1 = smart_gpu_compute(x);
 
         auto t2 = force_temporary_gpu_dim_only(t1);
-        gpu_compute(t1, t2);
+
+        T alpha(1.0);
+        impl::egblas::sqrt(etl::size(x), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+
         return t2;
     }
     /*!
@@ -352,7 +347,7 @@ struct sqrt_unary_op {
      */
     template <typename X, typename Y>
     static Y& gpu_compute(const X& x, Y& y) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(x);
+        decltype(auto) t1 = select_smart_gpu_compute(x, y);
 
         T alpha(1.0);
         impl::egblas::sqrt(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
@@ -577,18 +572,10 @@ struct exp_unary_op {
      */
     template <typename X, typename Y>
     static Y& gpu_compute(const X& x, Y& y) noexcept {
-        // TODO Check this!
-        if /* constexpr */ (is_dma<X>){
-            decltype(auto) t1 = smart_gpu_compute(x);
+        decltype(auto) t1 = select_smart_gpu_compute(x, y);
 
-            T alpha(1.0);
-            impl::egblas::exp(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
-        } else {
-            smart_gpu_compute(x, y);
-
-            T alpha(1.0);
-            impl::egblas::exp(etl::size(x), &alpha, y.gpu_memory(), 1, y.gpu_memory(), 1);
-        }
+        T alpha(1.0);
+        impl::egblas::exp(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -726,7 +713,7 @@ struct sigmoid_unary_op {
      */
     template <typename X, typename Y>
     static Y& gpu_compute(const X& x, Y& y) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(x);
+        decltype(auto) t1 = select_smart_gpu_compute(x, y);
 
         impl::cudnn::sigmoid(t1, y);
 
@@ -1438,7 +1425,7 @@ struct relu_unary_op {
      */
     template <typename X, typename Y>
     static Y& gpu_compute(const X& x, Y& y) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(x);
+        decltype(auto) t1 = select_smart_gpu_compute(x, y);
 
         impl::cudnn::relu(t1, y);
 
@@ -1515,7 +1502,10 @@ struct relu_derivative_op {
         decltype(auto) t1 = smart_gpu_compute(x);
 
         auto t2 = force_temporary_gpu_dim_only(t1);
-        gpu_compute(t1, t2);
+
+        T alpha(1.0);
+        impl::egblas::relu_der_out(etl::size(x), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+
         return t2;
     }
     /*!
@@ -1526,7 +1516,7 @@ struct relu_derivative_op {
      */
     template <typename X, typename Y>
     static Y& gpu_compute(const X& x, Y& y) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(x);
+        decltype(auto) t1 = select_smart_gpu_compute(x, y);
 
         T alpha(1.0);
         impl::egblas::relu_der_out(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
