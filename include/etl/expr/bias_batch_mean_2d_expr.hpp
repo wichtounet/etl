@@ -85,9 +85,6 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
 
         auto& a = this->a();
 
-        const auto N = etl::dim<0>(a);
-        const auto K = etl::dim<1>(a);
-
         using T = value_t<A>;
 
         check(a, lhs);
@@ -95,6 +92,9 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
         if /* constexpr */ (!Mean && cudnn_enabled && all_floating<A, L>) {
             impl::cudnn::bias_batch_mean_2d(smart_forward_gpu(a), lhs);
         } else {
+            const auto N = etl::dim<0>(a);
+            const auto K = etl::dim<1>(a);
+
             standard_evaluator::pre_assign_rhs(a);
 
             for (size_t k = 0; k < K; ++k) {
