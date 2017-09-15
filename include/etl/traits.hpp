@@ -146,6 +146,26 @@ std::false_type is_base_of_template_tb_impl(...);
 template <typename T, template <typename, bool> class C>
 constexpr bool is_base_of_template_tb = decltype(is_base_of_template_tb_impl<C>(std::declval<T*>()))::value;
 
+template<typename E, typename Enable = void>
+struct is_nongpu_temporary_impl {
+    static constexpr bool value = false;
+};
+
+template<typename E>
+struct is_nongpu_temporary_impl <E, std::enable_if_t<is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr> && !std::decay_t<E>::gpu_computable>> {
+    static constexpr bool value = true;
+};
+
+template<typename E, typename Enable = void>
+struct is_gpu_temporary_impl {
+    static constexpr bool value = false;
+};
+
+template<typename E>
+struct is_gpu_temporary_impl <E, std::enable_if_t<is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr> && std::decay_t<E>::gpu_computable>> {
+    static constexpr bool value = true;
+};
+
 } // end of namespace traits_detail
 
 // CPP17: Remove and_v and use variadic &&
@@ -1535,22 +1555,14 @@ decltype(auto) smart_gpu_compute(E& expr, Y& y) {
 
 // Select version
 
-template<typename E, typename Enable = void>
-struct is_nongpu_temporary_impl {
-    static constexpr bool value = false;
-};
+template<typename E>
+constexpr bool is_nongpu_temporary = traits_detail::is_nongpu_temporary_impl<E>::value;
 
 template<typename E>
-struct is_nongpu_temporary_impl <E, std::enable_if_t<is_temporary_expr<E> && !E::gpu_computable>> {
-    static constexpr bool value = true;
-};
+constexpr bool is_gpu_temporary = traits_detail::is_gpu_temporary_impl<E>::value;
 
 template<typename E>
-constexpr bool is_nongpu_temporary = is_nongpu_temporary_impl<E>::value;
-
-
-template<typename E>
-constexpr bool should_gpu_compute_direct = is_etl_value<E> || is_nongpu_temporary<E>;
+constexpr bool should_gpu_compute_direct = is_etl_value<E> || is_nongpu_temporary<E> || (is_dma<E> && !is_gpu_temporary<E>);
 
 template <typename X, typename Y, cpp_enable_iff(should_gpu_compute_direct<X>)>
 decltype(auto) select_smart_gpu_compute(X& expr, Y& y) {
