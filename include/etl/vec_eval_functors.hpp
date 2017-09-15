@@ -64,6 +64,8 @@ struct VectorizedAssign : vectorized_base<V> {
 
         size_t i = 0;
 
+        // TODO: Should use if constexpr here
+
         if(streaming && N > stream_threshold / (sizeof(value_t<L_Expr>) * 3) && !rhs.alias(lhs)){
             for (; i < last; i += IT::size) {
                 lhs.template stream<vect_impl>(load(rhs, i), i);

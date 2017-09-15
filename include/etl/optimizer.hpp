@@ -280,14 +280,20 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>> {
      */
     template <typename Builder>
     static void transform(Builder parent_builder, const etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>& expr) {
-        if (expr.lhs.value == 1.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
-            parent_builder(expr.rhs);
-        } else if (expr.lhs.value == 0.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
-            parent_builder(expr.lhs);
-        } else if (expr.lhs.value == 0.0 && std::is_same<BinaryOp, plus_binary_op<T>>::value) {
-            parent_builder(expr.rhs);
-        } else if (expr.lhs.value == 0.0 && std::is_same<BinaryOp, div_binary_op<T>>::value) {
-            parent_builder(expr.lhs);
+        if /* constexpr */ (std::is_same<BinaryOp, mul_binary_op<T>>::value) {
+            if (expr.lhs.value == 1.0) {
+                parent_builder(expr.rhs);
+            } else if (expr.lhs.value == 0.0) {
+                parent_builder(expr.lhs);
+            }
+        } else if /* constexpr */ (std::is_same<BinaryOp, plus_binary_op<T>>::value) {
+            if (expr.lhs.value == 0.0) {
+                parent_builder(expr.rhs);
+            }
+        } else if /* constexpr */ (std::is_same<BinaryOp, div_binary_op<T>>::value) {
+            if (expr.lhs.value == 0.0) {
+                parent_builder(expr.lhs);
+            }
         }
     }
 };
@@ -306,16 +312,24 @@ struct transformer<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
      */
     template <typename Builder>
     static void transform(Builder parent_builder, const etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>& expr) {
-        if (expr.rhs.value == 1.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
-            parent_builder(expr.lhs);
-        } else if (expr.rhs.value == 0.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
-            parent_builder(expr.rhs);
-        } else if (expr.rhs.value == 0.0 && std::is_same<BinaryOp, plus_binary_op<T>>::value) {
-            parent_builder(expr.lhs);
-        } else if (expr.rhs.value == 0.0 && std::is_same<BinaryOp, minus_binary_op<T>>::value) {
-            parent_builder(expr.lhs);
-        } else if (expr.rhs.value == 1.0 && std::is_same<BinaryOp, div_binary_op<T>>::value) {
-            parent_builder(expr.lhs);
+        if /* constexpr */ (std::is_same<BinaryOp, mul_binary_op<T>>::value) {
+            if (expr.rhs.value == 1.0) {
+                parent_builder(expr.lhs);
+            } else if (expr.rhs.value == 0.0) {
+                parent_builder(expr.rhs);
+            }
+        } else if (std::is_same<BinaryOp, plus_binary_op<T>>::value) {
+            if (expr.rhs.value == 0.0) {
+                parent_builder(expr.lhs);
+            }
+        } else if (std::is_same<BinaryOp, minus_binary_op<T>>::value) {
+            if (expr.rhs.value == 0.0) {
+                parent_builder(expr.lhs);
+            }
+        } else if (std::is_same<BinaryOp, div_binary_op<T>>::value) {
+            if (expr.rhs.value == 1.0) {
+                parent_builder(expr.lhs);
+            }
         }
     }
 };

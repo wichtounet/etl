@@ -532,28 +532,28 @@ inline bool approx_equals_float(T a, T b, TE epsilon) {
 template <typename L, typename E>
 bool approx_equals(L&& lhs, E&& rhs, value_t<L> eps){
     // Both expressions must have the same number of dimensions
-    if (etl::dimensions(lhs) != etl::dimensions(rhs)) {
+    if /* constexpr */ (etl::dimensions(lhs) != etl::dimensions(rhs)) {
         return false;
-    }
-
-    // The dimensions must be the same
-    for(size_t i = 0; i < etl::dimensions(rhs); ++i){
-        if(etl::dim(lhs, i) != etl::dim(rhs, i)){
-            return false;
+    } else {
+        // The dimensions must be the same
+        for (size_t i = 0; i < etl::dimensions(rhs); ++i) {
+            if (etl::dim(lhs, i) != etl::dim(rhs, i)) {
+                return false;
+            }
         }
-    }
 
-    // At this point, the values are necessary for the comparison
-    force(lhs);
-    force(rhs);
+        // At this point, the values are necessary for the comparison
+        force(lhs);
+        force(rhs);
 
-    for(size_t i = 0; i < etl::size(lhs); ++i){
-        if(!approx_equals_float(lhs[i], rhs[i], eps)){
-            return false;
+        for (size_t i = 0; i < etl::size(lhs); ++i) {
+            if (!approx_equals_float(lhs[i], rhs[i], eps)) {
+                return false;
+            }
         }
-    }
 
-    return true;
+        return true;
+    }
 }
 
 /*!

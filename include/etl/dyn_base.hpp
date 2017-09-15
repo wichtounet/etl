@@ -162,7 +162,7 @@ protected:
             new (memory) M[n]();
         }
 
-        if(padding){
+        if /* constexpr */ (padding){
             std::fill_n(memory, n, M());
         }
 

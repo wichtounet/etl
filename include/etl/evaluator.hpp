@@ -214,12 +214,17 @@ namespace standard_evaluator {
 
         result.ensure_gpu_allocated();
 
-        if (is_binary_expr<E> && expr.alias(result)){
-            // Compute the GPU representation of the expression
-            decltype(auto) t1 = smart_gpu_compute(expr);
+        if /* constexpr */ (is_binary_expr<E>) {
+            if (expr.alias(result)) {
+                // Compute the GPU representation of the expression
+                decltype(auto) t1 = smart_gpu_compute(expr);
 
-            // Copy the GPU memory from the expression to the result
-            result.gpu_copy_from(t1.gpu_memory());
+                // Copy the GPU memory from the expression to the result
+                result.gpu_copy_from(t1.gpu_memory());
+            } else {
+                // Compute the GPU representation of the expression into the result
+                smart_gpu_compute(expr, result);
+            }
         } else {
             // Compute the GPU representation of the expression into the result
             smart_gpu_compute(expr, result);
@@ -244,8 +249,12 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
-            par_exec<detail::Assign>(expr, result);
+        if /* constexpr */ (is_thread_safe<E>) {
+            if (engine_select_parallel(etl::size(result))) {
+                par_exec<detail::Assign>(expr, result);
+            } else {
+                detail::Assign::apply(result, expr);
+            }
         } else {
             detail::Assign::apply(result, expr);
         }
@@ -270,8 +279,12 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
-            par_exec<detail::VectorizedAssign<V>>(expr, result);
+        if /* constexpr */ (is_thread_safe<E>) {
+            if (engine_select_parallel(etl::size(result))) {
+                par_exec<detail::VectorizedAssign<V>>(expr, result);
+            } else {
+                detail::VectorizedAssign<V>::apply(result, expr);
+            }
         } else {
             detail::VectorizedAssign<V>::apply(result, expr);
         }
@@ -419,8 +432,12 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
-            par_exec<detail::AssignAdd>(expr, result);
+        if /* constexpr */ (is_thread_safe<E>) {
+            if (engine_select_parallel(etl::size(result))) {
+                par_exec<detail::AssignAdd>(expr, result);
+            } else {
+                detail::AssignAdd::apply(result, expr);
+            }
         } else {
             detail::AssignAdd::apply(result, expr);
         }
@@ -447,8 +464,12 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
-            par_exec<detail::VectorizedAssignAdd<V>>(expr, result);
+        if /* constexpr */ (is_thread_safe<E>) {
+            if (engine_select_parallel(etl::size(result))) {
+                par_exec<detail::VectorizedAssignAdd<V>>(expr, result);
+            } else {
+                detail::VectorizedAssignAdd<V>::apply(result, expr);
+            }
         } else {
             detail::VectorizedAssignAdd<V>::apply(result, expr);
         }
@@ -646,8 +667,12 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
-            par_exec<detail::AssignSub>(expr, result);
+        if /* constexpr */ (is_thread_safe<E>) {
+            if (engine_select_parallel(etl::size(result))) {
+                par_exec<detail::AssignSub>(expr, result);
+            } else {
+                detail::AssignSub::apply(result, expr);
+            }
         } else {
             detail::AssignSub::apply(result, expr);
         }
@@ -674,8 +699,12 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
-            par_exec<detail::VectorizedAssignSub<V>>(expr, result);
+        if /* constexpr */ (is_thread_safe<E>) {
+            if (engine_select_parallel(etl::size(result))) {
+                par_exec<detail::VectorizedAssignSub<V>>(expr, result);
+            } else {
+                detail::VectorizedAssignSub<V>::apply(result, expr);
+            }
         } else {
             detail::VectorizedAssignSub<V>::apply(result, expr);
         }
@@ -872,8 +901,12 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
-            par_exec<detail::AssignMul>(expr, result);
+        if /* constexpr */ (is_thread_safe<E>) {
+            if (engine_select_parallel(etl::size(result))) {
+                par_exec<detail::AssignMul>(expr, result);
+            } else {
+                detail::AssignMul::apply(result, expr);
+            }
         } else {
             detail::AssignMul::apply(result, expr);
         }
@@ -900,8 +933,12 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
-            par_exec<detail::VectorizedAssignMul<V>>(expr, result);
+        if /* constexpr */ (is_thread_safe<E>) {
+            if (engine_select_parallel(etl::size(result))) {
+                par_exec<detail::VectorizedAssignMul<V>>(expr, result);
+            } else {
+                detail::VectorizedAssignMul<V>::apply(result, expr);
+            }
         } else {
             detail::VectorizedAssignMul<V>::apply(result, expr);
         }
@@ -1096,8 +1133,12 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
-            par_exec<detail::AssignDiv>(expr, result);
+        if /* constexpr */ (is_thread_safe<E>) {
+            if (engine_select_parallel(etl::size(result))) {
+                par_exec<detail::AssignDiv>(expr, result);
+            } else {
+                detail::AssignDiv::apply(result, expr);
+            }
         } else {
             detail::AssignDiv::apply(result, expr);
         }
@@ -1124,8 +1165,12 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if(is_thread_safe<E> && engine_select_parallel(etl::size(result))){
-            par_exec<detail::VectorizedAssignDiv<V>>(expr, result);
+        if /* constexpr */ (is_thread_safe<E>) {
+            if (engine_select_parallel(etl::size(result))) {
+                par_exec<detail::VectorizedAssignDiv<V>>(expr, result);
+            } else {
+                detail::VectorizedAssignDiv<V>::apply(result, expr);
+            }
         } else {
             detail::VectorizedAssignDiv<V>::apply(result, expr);
         }
