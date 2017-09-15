@@ -106,7 +106,7 @@ struct conv_1d_same_expr : base_temporary_expr_bin<conv_1d_same_expr<A, B>, A, B
             engine_dispatch_1d([&](size_t first, size_t last) {
                 impl::vec::conv1_same(input, kernel, conv, first, last);
             }, 0, size(conv), parallel_dispatch);
-        } else if (impl == etl::conv_impl::STD) {
+        } else if /*constexpr_select*/ (impl == etl::conv_impl::STD) {
             engine_dispatch_1d([&](size_t first, size_t last) {
                 impl::standard::conv1_same(input, kernel, conv, first, last);
             }, 0, size(conv), parallel_dispatch);
@@ -116,7 +116,7 @@ struct conv_1d_same_expr : base_temporary_expr_bin<conv_1d_same_expr<A, B>, A, B
 #else
         if /*constexpr_select*/ (impl == etl::conv_impl::VEC) {
             impl::vec::conv1_same(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, size(conv));
-        } else if (impl == etl::conv_impl::STD) {
+        } else if /*constexpr_select*/ (impl == etl::conv_impl::STD) {
             impl::standard::conv1_same(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, size(conv));
         } else {
             cpp_unreachable("Invalid conv implementation selection");

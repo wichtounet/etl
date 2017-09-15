@@ -125,9 +125,9 @@ struct dot_impl {
 
         if /*constexpr_select*/ (impl == etl::dot_impl::BLAS) {
             return etl::impl::blas::dot(a, b);
-        } else if (impl == etl::dot_impl::CUBLAS) {
+        } else if  /*constexpr_select*/ (impl == etl::dot_impl::CUBLAS) {
             return etl::impl::cublas::dot(a, b);
-        } else if (impl == etl::dot_impl::VEC) {
+        } else if  /*constexpr_select*/ (impl == etl::dot_impl::VEC) {
             return etl::impl::vec::dot(a, b);
         } else {
             return etl::impl::standard::dot(a, b);

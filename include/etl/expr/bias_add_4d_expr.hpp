@@ -113,9 +113,9 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
 
         if /*constexpr_select*/ (impl == bias_add_impl::VEC) {
             impl::vec::bias_add_4d(smart_forward(a), smart_forward(b), lhs);
-        } else if (impl == bias_add_impl::STD) {
+        } else if /*constexpr_select*/ (impl == bias_add_impl::STD) {
             impl::standard::bias_add_4d(smart_forward(a), smart_forward(b), lhs);
-        } else if (impl == bias_add_impl::CUDNN) {
+        } else if /*constexpr_select*/ (impl == bias_add_impl::CUDNN) {
             impl::cudnn::bias_add_4d(smart_forward_gpu(a), smart_forward_gpu(b), lhs);
         } else {
             cpp_unreachable("Invalid bias_add selection");

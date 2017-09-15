@@ -198,9 +198,9 @@ struct inplace_square_transpose {
 
         if /*constexpr_select*/ (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_square_transpose(c);
-        } else if (impl == transpose_impl::CUBLAS) {
+        } else if /*constexpr_select*/ (impl == transpose_impl::CUBLAS) {
             etl::impl::cublas::inplace_square_transpose(c);
-        } else if(impl == transpose_impl::STD){
+        } else if /*constexpr_select*/ (impl == transpose_impl::STD) {
             etl::impl::standard::inplace_square_transpose(c);
         } else {
             cpp_unreachable("Invalid transpose_impl selection");
@@ -222,9 +222,9 @@ struct inplace_rectangular_transpose {
 
         if /*constexpr_select*/ (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_rectangular_transpose(c);
-        } else if (impl == transpose_impl::CUBLAS) {
+        } else if /*constexpr_select*/ (impl == transpose_impl::CUBLAS) {
             etl::impl::cublas::inplace_rectangular_transpose(c);
-        } else if(impl == transpose_impl::STD){
+        } else if /*constexpr_select*/ (impl == transpose_impl::STD) {
             etl::impl::standard::inplace_rectangular_transpose(c);
         } else {
             cpp_unreachable("Invalid transpose_impl selection");
