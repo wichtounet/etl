@@ -89,7 +89,7 @@ bool is_sub_rectangular(E&& expr) {
 template <typename E>
 bool is_symmetric(E&& expr) {
     // symmetric_matrix<E> is already enforced to be symmetric
-    if /* constexpr */ (is_symmetric_matrix<E>) {
+    if /*constexpr*/ (is_symmetric_matrix<E>) {
         return true;
     } else {
         if (is_square(expr)) {
@@ -116,7 +116,7 @@ bool is_symmetric(E&& expr) {
 template <typename E>
 bool is_lower_triangular(E&& expr) {
     // lower_matrix<E> is already enforced to be lower triangular
-    if /* constexpr */ (is_lower_matrix<E>) {
+    if /*constexpr*/ (is_lower_matrix<E>) {
         return true;
     }
     // strictly_lower_matrix<E> is already enforced to be lower triangular
@@ -155,7 +155,7 @@ bool is_lower_triangular(E&& expr) {
 template <typename E>
 bool is_uni_lower_triangular(E&& expr) {
     // uni_lower_matrix<E> is already enforced to be uni lower triangular
-    if /* constexpr */ (is_uni_lower_matrix<E>) {
+    if /*constexpr*/ (is_uni_lower_matrix<E>) {
         return true;
     } else {
         if (is_square(expr)) {
@@ -186,7 +186,7 @@ bool is_uni_lower_triangular(E&& expr) {
 template <typename E>
 bool is_strictly_lower_triangular(E&& expr) {
     // strictly_lower_matrix<E> is already enforced to be strictly lower triangular
-    if /* constexpr */ (is_strictly_lower_matrix<E>) {
+    if /*constexpr*/ (is_strictly_lower_matrix<E>) {
         return true;
     } else {
         if (is_square(expr)) {
@@ -213,7 +213,7 @@ bool is_strictly_lower_triangular(E&& expr) {
 template <typename E>
 bool is_upper_triangular(E&& expr) {
     // upper_matrix<E> is already enforced to be upper triangular
-    if /* constexpr */ (is_upper_matrix<E>) {
+    if /*constexpr*/ (is_upper_matrix<E>) {
         return true;
     }
     // strictly_upper_matrix<E> is already enforced to be upper triangular
@@ -252,7 +252,7 @@ bool is_upper_triangular(E&& expr) {
 template <typename E>
 bool is_uni_upper_triangular(E&& expr) {
     // uni_upper_matrix<E> is already enforced to be uni upper triangular
-    if /* constexpr */ (is_uni_upper_matrix<E>) {
+    if /*constexpr*/ (is_uni_upper_matrix<E>) {
         return true;
     } else {
         if (is_square(expr)) {
@@ -283,7 +283,7 @@ bool is_uni_upper_triangular(E&& expr) {
 template <typename E>
 bool is_strictly_upper_triangular(E&& expr) {
     // strictly_upper_matrix<E> is already enforced to be strictly upper triangular
-    if /* constexpr */ (is_strictly_upper_matrix<E>) {
+    if /*constexpr*/ (is_strictly_upper_matrix<E>) {
         return true;
     } else {
         if (is_square(expr)) {
@@ -320,7 +320,7 @@ bool is_triangular(E&& expr) {
 template <typename E>
 bool is_diagonal(E&& expr) {
     // diagonal_matrix<E> is already enforced to be diagonal
-    if /* constexpr */ (is_diagonal_matrix<E>) {
+    if /*constexpr*/ (is_diagonal_matrix<E>) {
         return true;
     } else {
         if (is_square(expr)) {
@@ -414,7 +414,7 @@ bool is_permutation_matrix(E&& expr){
 template <typename E, cpp_enable_iff(is_complex<E>)>
 bool is_hermitian(E&& expr){
     // hermitian_matrix<E> is already enforced to be hermitian
-    if /* constexpr */ (is_hermitian_matrix<E>) {
+    if /*constexpr*/ (is_hermitian_matrix<E>) {
         return true;
     } else {
         if (!is_square(expr)) {
@@ -532,7 +532,7 @@ inline bool approx_equals_float(T a, T b, TE epsilon) {
 template <typename L, typename E>
 bool approx_equals(L&& lhs, E&& rhs, value_t<L> eps){
     // Both expressions must have the same number of dimensions
-    if /* constexpr */ (etl::dimensions(lhs) != etl::dimensions(rhs)) {
+    if /*constexpr*/ (etl::dimensions(lhs) != etl::dimensions(rhs)) {
         return false;
     } else {
         // The dimensions must be the same

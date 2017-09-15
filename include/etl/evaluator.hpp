@@ -214,7 +214,7 @@ namespace standard_evaluator {
 
         result.ensure_gpu_allocated();
 
-        if /* constexpr */ (is_binary_expr<E>) {
+        if /*constexpr*/ (is_binary_expr<E>) {
             if (expr.alias(result)) {
                 // Compute the GPU representation of the expression
                 decltype(auto) t1 = smart_gpu_compute(expr);
@@ -249,7 +249,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if /* constexpr */ (is_thread_safe<E>) {
+        if /*constexpr*/ (is_thread_safe<E>) {
             if (engine_select_parallel(etl::size(result))) {
                 par_exec<detail::Assign>(expr, result);
             } else {
@@ -279,7 +279,7 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if /* constexpr */ (is_thread_safe<E>) {
+        if /*constexpr*/ (is_thread_safe<E>) {
             if (engine_select_parallel(etl::size(result))) {
                 par_exec<detail::VectorizedAssign<V>>(expr, result);
             } else {
@@ -432,7 +432,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if /* constexpr */ (is_thread_safe<E>) {
+        if /*constexpr*/ (is_thread_safe<E>) {
             if (engine_select_parallel(etl::size(result))) {
                 par_exec<detail::AssignAdd>(expr, result);
             } else {
@@ -464,7 +464,7 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if /* constexpr */ (is_thread_safe<E>) {
+        if /*constexpr*/ (is_thread_safe<E>) {
             if (engine_select_parallel(etl::size(result))) {
                 par_exec<detail::VectorizedAssignAdd<V>>(expr, result);
             } else {
@@ -667,7 +667,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if /* constexpr */ (is_thread_safe<E>) {
+        if /*constexpr*/ (is_thread_safe<E>) {
             if (engine_select_parallel(etl::size(result))) {
                 par_exec<detail::AssignSub>(expr, result);
             } else {
@@ -699,7 +699,7 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if /* constexpr */ (is_thread_safe<E>) {
+        if /*constexpr*/ (is_thread_safe<E>) {
             if (engine_select_parallel(etl::size(result))) {
                 par_exec<detail::VectorizedAssignSub<V>>(expr, result);
             } else {
@@ -901,7 +901,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if /* constexpr */ (is_thread_safe<E>) {
+        if /*constexpr*/ (is_thread_safe<E>) {
             if (engine_select_parallel(etl::size(result))) {
                 par_exec<detail::AssignMul>(expr, result);
             } else {
@@ -933,7 +933,7 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if /* constexpr */ (is_thread_safe<E>) {
+        if /*constexpr*/ (is_thread_safe<E>) {
             if (engine_select_parallel(etl::size(result))) {
                 par_exec<detail::VectorizedAssignMul<V>>(expr, result);
             } else {
@@ -1133,7 +1133,7 @@ namespace standard_evaluator {
         safe_ensure_cpu_up_to_date(expr);
         safe_ensure_cpu_up_to_date(result);
 
-        if /* constexpr */ (is_thread_safe<E>) {
+        if /*constexpr*/ (is_thread_safe<E>) {
             if (engine_select_parallel(etl::size(result))) {
                 par_exec<detail::AssignDiv>(expr, result);
             } else {
@@ -1165,7 +1165,7 @@ namespace standard_evaluator {
 
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        if /* constexpr */ (is_thread_safe<E>) {
+        if /*constexpr*/ (is_thread_safe<E>) {
             if (engine_select_parallel(etl::size(result))) {
                 par_exec<detail::VectorizedAssignDiv<V>>(expr, result);
             } else {
