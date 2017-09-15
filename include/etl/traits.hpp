@@ -1455,26 +1455,56 @@ decltype(auto) smart_forward_gpu(E& expr) {
     return force_temporary(expr);
 }
 
+// Unary smart_gpu_compute
+
+/*!
+ * \brief Compute the expression into a representation that is GPU up to date.
+ *
+ * This function tries to minimize the number of copies and evaluations that is
+ * performed.
+ *
+ * \param expr The expression that must be evaluated
+ *
+ * \return A gpu-computed expression reprensenting the results of the input expr
+ */
 template <typename E, cpp_enable_iff(is_temporary_expr<E> && !E::gpu_computable)>
 decltype(auto) smart_gpu_compute(E& expr) {
-    //detail::evaluator_visitor eval_visitor;
-    //expr.visit(eval_visitor);
-
-    //return expr.gpu_compute();
     auto t = force_temporary(expr);
     t.ensure_gpu_up_to_date();
     return t;
 }
 
+/*!
+ * \brief Compute the expression into a representation that is GPU up to date.
+ *
+ * This function tries to minimize the number of copies and evaluations that is
+ * performed.
+ *
+ * \param expr The expression that must be evaluated
+ *
+ * \return A gpu-computed expression reprensenting the results of the input expr
+ */
 template <typename E, cpp_enable_iff(is_temporary_expr<E> && E::gpu_computable)>
 decltype(auto) smart_gpu_compute(E& expr) {
     return force_temporary_gpu(expr);
 }
 
+/*!
+ * \brief Compute the expression into a representation that is GPU up to date.
+ *
+ * This function tries to minimize the number of copies and evaluations that is
+ * performed.
+ *
+ * \param expr The expression that must be evaluated
+ *
+ * \return A gpu-computed expression reprensenting the results of the input expr
+ */
 template <typename E, cpp_enable_iff(!is_temporary_expr<E>)>
 decltype(auto) smart_gpu_compute(E& expr) {
     return expr.gpu_compute();
 }
+
+// Binary smart_gpu_compute
 
 template <typename E, typename Y, cpp_enable_iff(is_temporary_expr<E> && !E::gpu_computable)>
 decltype(auto) smart_gpu_compute(E& expr, Y& y) {
