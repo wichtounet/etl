@@ -298,7 +298,7 @@ template <typename A, typename B, typename C, cpp_enable_iff((all_row_major<A, B
 void gemm(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+    constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     using VT = value_t<A>;
     using T = cublas_type<VT>;
@@ -414,7 +414,7 @@ template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, 
 void gemm_nt(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+    constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
@@ -466,7 +466,7 @@ template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, 
 void gemm_tn(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+    constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
@@ -518,7 +518,7 @@ template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, 
 void gemm_tt(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+    constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
@@ -570,7 +570,7 @@ template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, 
 void gemv(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
-    const bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+    constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     a.ensure_gpu_up_to_date();
     b.ensure_gpu_up_to_date();
@@ -622,7 +622,7 @@ template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, 
 void gemv_t(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
-    const bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+    constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     a.ensure_gpu_up_to_date();
     b.ensure_gpu_up_to_date();
@@ -674,7 +674,7 @@ template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, 
 void gevm(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
-    bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+    constexpr bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
     a.ensure_gpu_up_to_date();
     b.ensure_gpu_up_to_date();
@@ -726,7 +726,7 @@ template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, 
 void gevm_t(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
-    bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+    constexpr bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
     a.ensure_gpu_up_to_date();
     b.ensure_gpu_up_to_date();
