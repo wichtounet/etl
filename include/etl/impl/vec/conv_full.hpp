@@ -653,14 +653,14 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
 
         // 1. Try optimized algorithms for small kernels
 
-        if(conv4_full_flipped_small(input, kernel, conv)){
+        if (conv4_full_flipped_small(input, kernel, conv)) {
             conv.invalidate_gpu();
             return;
         }
 
         // 2. Try padding implementation
 
-        if(conv4_full_flipped_padding(input, kernel, conv)){
+        if (conv4_full_flipped_padding(input, kernel, conv)) {
             conv.invalidate_gpu();
             return;
         }
