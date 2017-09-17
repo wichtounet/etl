@@ -26,6 +26,9 @@ namespace impl {
 
 namespace egblas {
 
+/*!
+ * \brief Indicates if EGBLAS has single-precision CCE loss
+ */
 #ifdef EGBLAS_HAS_CCE_SLOSS
 static constexpr bool has_cce_sloss = true;
 #else
@@ -58,6 +61,9 @@ inline float cce_loss(size_t n, float* alpha, float* A , size_t lda, float* B , 
 #endif
 }
 
+/*!
+ * \brief Indicates if EGBLAS has double-precision CCE loss
+ */
 #ifdef EGBLAS_HAS_CCE_DLOSS
 static constexpr bool has_cce_dloss = true;
 #else
@@ -90,6 +96,9 @@ inline double cce_loss(size_t n, double* alpha, double* A , size_t lda, double* 
 #endif
 }
 
+/*!
+ * \brief Indicates if EGBLAS has single-precision CCE error
+ */
 #ifdef EGBLAS_HAS_CCE_SERROR
 static constexpr bool has_cce_serror = true;
 #else
@@ -121,6 +130,9 @@ inline float cce_error(size_t n, size_t m, float* alpha, float* A , float* B){
 #endif
 }
 
+/*!
+ * \brief Indicates if EGBLAS has double-precision CCE error
+ */
 #ifdef EGBLAS_HAS_CCE_DERROR
 static constexpr bool has_cce_derror = true;
 #else
