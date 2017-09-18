@@ -26,6 +26,9 @@ namespace impl {
 
 namespace egblas {
 
+/*!
+ * \brief Indicates if EGBLAS has single-precision exponentiation.
+ */
 #ifdef EGBLAS_HAS_SEXP
 static constexpr bool has_sexp = true;
 #else
@@ -56,6 +59,9 @@ inline void exp(size_t n, float* alpha, float* A , size_t lda, float* B , size_t
 #endif
 }
 
+/*!
+ * \brief Indicates if EGBLAS has double-precision exponentiation.
+ */
 #ifdef EGBLAS_HAS_DEXP
 static constexpr bool has_dexp = true;
 #else
@@ -86,6 +92,9 @@ inline void exp(size_t n, double* alpha, double* A , size_t lda, double* B , siz
 #endif
 }
 
+/*!
+ * \brief Indicates if EGBLAS has complex single-precision exponentiation.
+ */
 #ifdef EGBLAS_HAS_CEXP
 static constexpr bool has_cexp = true;
 #else
@@ -140,6 +149,9 @@ inline void exp(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , s
 #endif
 }
 
+/*!
+ * \brief Indicates if EGBLAS has complex double-precision exponentiation.
+ */
 #ifdef EGBLAS_HAS_ZEXP
 static constexpr bool has_zexp = true;
 #else

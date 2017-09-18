@@ -26,6 +26,9 @@ namespace impl {
 
 namespace egblas {
 
+/*!
+ * \brief Indicates if EGBLAS has single-precision relu_der_out.
+ */
 #ifdef EGBLAS_HAS_SRELU_DER_OUT
 static constexpr bool has_srelu_der_out = true;
 #else
@@ -56,6 +59,9 @@ inline void relu_der_out(size_t n, float* alpha, float* A , size_t lda, float* B
 #endif
 }
 
+/*!
+ * \brief Indicates if EGBLAS has double-precision relu_der_out.
+ */
 #ifdef EGBLAS_HAS_DRELU_DER_OUT
 static constexpr bool has_drelu_der_out = true;
 #else

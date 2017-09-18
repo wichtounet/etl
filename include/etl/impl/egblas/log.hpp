@@ -26,6 +26,9 @@ namespace impl {
 
 namespace egblas {
 
+/*!
+ * \brief Indicates if EGBLAS has single-precision logarithm.
+ */
 #ifdef EGBLAS_HAS_SLOG
 static constexpr bool has_slog = true;
 #else
@@ -56,6 +59,9 @@ inline void log(size_t n, float* alpha, float* A , size_t lda, float* B , size_t
 #endif
 }
 
+/*!
+ * \brief Indicates if EGBLAS has double-precision logarithm.
+ */
 #ifdef EGBLAS_HAS_DLOG
 static constexpr bool has_dlog = true;
 #else
@@ -86,6 +92,9 @@ inline void log(size_t n, double* alpha, double* A , size_t lda, double* B , siz
 #endif
 }
 
+/*!
+ * \brief Indicates if EGBLAS has complex single-precision logarithm.
+ */
 #ifdef EGBLAS_HAS_CLOG
 static constexpr bool has_clog = true;
 #else
@@ -140,6 +149,9 @@ inline void log(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , s
 #endif
 }
 
+/*!
+ * \brief Indicates if EGBLAS has complex double-precision logarithm.
+ */
 #ifdef EGBLAS_HAS_ZLOG
 static constexpr bool has_zlog = true;
 #else
