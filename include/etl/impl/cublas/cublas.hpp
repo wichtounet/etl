@@ -20,6 +20,14 @@ namespace impl {
 
 namespace cublas {
 
+/*!
+ * \brief Returns the string representation of the given
+ * CUBLAS status code.
+ *
+ * \param code The  CUBLAS status code
+ *
+ * \return the string representation of the given status code
+ */
 inline const char* cublas_str(cublasStatus_t code) {
     switch (code) {
         case CUBLAS_STATUS_NOT_INITIALIZED:

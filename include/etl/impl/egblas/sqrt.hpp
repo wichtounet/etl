@@ -26,6 +26,9 @@ namespace impl {
 
 namespace egblas {
 
+/*!
+ * \brief Indicates if EGBLAS has single-precision square root.
+ */
 #ifdef EGBLAS_HAS_SSQRT
 static constexpr bool has_ssqrt = true;
 #else
@@ -56,6 +59,9 @@ inline void sqrt(size_t n, float* alpha, float* A , size_t lda, float* B , size_
 #endif
 }
 
+/*!
+ * \brief Indicates if EGBLAS has double-precision square root.
+ */
 #ifdef EGBLAS_HAS_DSQRT
 static constexpr bool has_dsqrt = true;
 #else
