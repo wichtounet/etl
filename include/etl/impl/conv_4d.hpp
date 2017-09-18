@@ -27,21 +27,29 @@ struct conv4_valid_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
-
-        if (impl == etl::conv4_impl::CUDNN) {
+#ifndef ETL_MANUAL_SELECT
+        if /*constexpr*/ (impl::cudnn::conv_possible<I, K, C>) {
             impl::cudnn::conv4_forward(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::BLAS_VEC) {
-            impl::vec::blas_conv4_valid(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::BLAS_MKL) {
-            impl::blas::blas_conv4_valid(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::VEC) {
-            impl::vec::conv4_valid(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::STD) {
-            impl::standard::conv4_valid(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
         } else {
-            cpp_unreachable("Invalid conv implementation selection");
+#endif
+            auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
+
+            if (impl == etl::conv4_impl::CUDNN) {
+                impl::cudnn::conv4_forward(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
+            } else if (impl == etl::conv4_impl::BLAS_VEC) {
+                impl::vec::blas_conv4_valid(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
+            } else if (impl == etl::conv4_impl::BLAS_MKL) {
+                impl::blas::blas_conv4_valid(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
+            } else if (impl == etl::conv4_impl::VEC) {
+                impl::vec::conv4_valid(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
+            } else if (impl == etl::conv4_impl::STD) {
+                impl::standard::conv4_valid(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
+            } else {
+                cpp_unreachable("Invalid conv implementation selection");
+            }
+#ifndef ETL_MANUAL_SELECT
         }
+#endif
     }
 };
 
@@ -58,21 +66,29 @@ struct conv4_valid_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
-
-        if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_forward_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::BLAS_VEC) {
-            impl::vec::blas_conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::BLAS_MKL) {
-            impl::blas::blas_conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::VEC) {
-            impl::vec::conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::STD) {
-            impl::standard::conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
+#ifndef ETL_MANUAL_SELECT
+        if /*constexpr*/ (impl::cudnn::conv_possible<I, K, C>) {
+            impl::cudnn::conv4_forward(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
         } else {
-            cpp_unreachable("Invalid conv implementation selection");
+#endif
+            auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
+
+            if (impl == etl::conv4_impl::CUDNN) {
+                impl::cudnn::conv4_forward_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
+            } else if (impl == etl::conv4_impl::BLAS_VEC) {
+                impl::vec::blas_conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
+            } else if (impl == etl::conv4_impl::BLAS_MKL) {
+                impl::blas::blas_conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
+            } else if (impl == etl::conv4_impl::VEC) {
+                impl::vec::conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
+            } else if (impl == etl::conv4_impl::STD) {
+                impl::standard::conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
+            } else {
+                cpp_unreachable("Invalid conv implementation selection");
+            }
+#ifndef ETL_MANUAL_SELECT
         }
+#endif
     }
 };
 
@@ -88,21 +104,29 @@ struct dyn_conv4_valid_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
-
-        if (impl == etl::conv4_impl::CUDNN) {
+#ifndef ETL_MANUAL_SELECT
+        if /*constexpr*/ (impl::cudnn::conv_possible<I, K, C>) {
             impl::cudnn::conv4_forward(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
-        } else if (impl == etl::conv4_impl::BLAS_VEC) {
-            impl::vec::blas_conv4_valid(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
-        } else if (impl == etl::conv4_impl::BLAS_MKL) {
-            impl::blas::blas_conv4_valid(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
-        } else if (impl == etl::conv4_impl::VEC) {
-            impl::vec::conv4_valid(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
-        } else if (impl == etl::conv4_impl::STD) {
-            impl::standard::conv4_valid(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
         } else {
-            cpp_unreachable("Invalid conv implementation selection");
+#endif
+            auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
+
+            if (impl == etl::conv4_impl::CUDNN) {
+                impl::cudnn::conv4_forward(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
+            } else if (impl == etl::conv4_impl::BLAS_VEC) {
+                impl::vec::blas_conv4_valid(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
+            } else if (impl == etl::conv4_impl::BLAS_MKL) {
+                impl::blas::blas_conv4_valid(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
+            } else if (impl == etl::conv4_impl::VEC) {
+                impl::vec::conv4_valid(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
+            } else if (impl == etl::conv4_impl::STD) {
+                impl::standard::conv4_valid(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
+            } else {
+                cpp_unreachable("Invalid conv implementation selection");
+            }
+#ifndef ETL_MANUAL_SELECT
         }
+#endif
     }
 };
 
@@ -118,21 +142,29 @@ struct dyn_conv4_valid_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-        auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
-
-        if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_forward_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
-        } else if (impl == etl::conv4_impl::BLAS_VEC) {
-            impl::vec::blas_conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
-        } else if (impl == etl::conv4_impl::BLAS_MKL) {
-            impl::blas::blas_conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
-        } else if (impl == etl::conv4_impl::VEC) {
-            impl::vec::conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
-        } else if (impl == etl::conv4_impl::STD) {
-            impl::standard::conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
+#ifndef ETL_MANUAL_SELECT
+        if /*constexpr*/ (impl::cudnn::conv_possible<I, K, C>) {
+            impl::cudnn::conv4_forward(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
         } else {
-            cpp_unreachable("Invalid conv implementation selection");
+#endif
+            auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
+
+            if (impl == etl::conv4_impl::CUDNN) {
+                impl::cudnn::conv4_forward_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
+            } else if (impl == etl::conv4_impl::BLAS_VEC) {
+                impl::vec::blas_conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
+            } else if (impl == etl::conv4_impl::BLAS_MKL) {
+                impl::blas::blas_conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
+            } else if (impl == etl::conv4_impl::VEC) {
+                impl::vec::conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
+            } else if (impl == etl::conv4_impl::STD) {
+                impl::standard::conv4_valid_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
+            } else {
+                cpp_unreachable("Invalid conv implementation selection");
+            }
+#ifndef ETL_MANUAL_SELECT
         }
+#endif
     }
 };
 
@@ -376,23 +408,31 @@ struct conv4_full_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_full_impl<I, K, C>(etl::dim<2>(kernel), etl::dim<3>(kernel));
-
-        if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_backward_data_full(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
-        } else if (impl == etl::conv4_impl::VEC) {
-            impl::vec::conv4_full(smart_forward(input), smart_forward(kernel), conv);
-        } else if (impl == etl::conv4_impl::FFT_STD) {
-            impl::standard::conv4_full_fft(smart_forward(input), smart_forward(kernel), conv);
-        } else if (impl == etl::conv4_impl::FFT_MKL) {
-            impl::blas::conv4_full(smart_forward(input), smart_forward(kernel), conv);
-        } else if (impl == etl::conv4_impl::FFT_CUFFT) {
-            impl::cufft::conv4_full(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
-        } else if (impl == etl::conv4_impl::STD) {
-            impl::standard::conv4_full(smart_forward(input), smart_forward(kernel), conv);
+#ifndef ETL_MANUAL_SELECT
+        if /*constexpr*/ (impl::cudnn::conv_possible<I, K, C>) {
+            impl::cudnn::conv4_backward_data_full_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
         } else {
-            cpp_unreachable("Invalid conv implementation selection");
+#endif
+            auto impl = select_conv4_full_impl<I, K, C>(etl::dim<2>(kernel), etl::dim<3>(kernel));
+
+            if (impl == etl::conv4_impl::CUDNN) {
+                impl::cudnn::conv4_backward_data_full(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
+            } else if (impl == etl::conv4_impl::VEC) {
+                impl::vec::conv4_full(smart_forward(input), smart_forward(kernel), conv);
+            } else if (impl == etl::conv4_impl::FFT_STD) {
+                impl::standard::conv4_full_fft(smart_forward(input), smart_forward(kernel), conv);
+            } else if (impl == etl::conv4_impl::FFT_MKL) {
+                impl::blas::conv4_full(smart_forward(input), smart_forward(kernel), conv);
+            } else if (impl == etl::conv4_impl::FFT_CUFFT) {
+                impl::cufft::conv4_full(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
+            } else if (impl == etl::conv4_impl::STD) {
+                impl::standard::conv4_full(smart_forward(input), smart_forward(kernel), conv);
+            } else {
+                cpp_unreachable("Invalid conv implementation selection");
+            }
+#ifndef ETL_MANUAL_SELECT
         }
+#endif
     }
 };
 
@@ -408,23 +448,31 @@ struct conv4_full_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_full_impl<I, K, C>(etl::dim<2>(kernel), etl::dim<3>(kernel));
-
-        if (impl == etl::conv4_impl::CUDNN) {
+#ifndef ETL_MANUAL_SELECT
+        if /*constexpr*/ (impl::cudnn::conv_possible<I, K, C>) {
             impl::cudnn::conv4_backward_data_full_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
-        } else if (impl == etl::conv4_impl::VEC) {
-            impl::vec::conv4_full_flipped(smart_forward(input), smart_forward(kernel), conv);
-        } else if (impl == etl::conv4_impl::FFT_STD) {
-            impl::standard::conv4_full_fft_flipped(smart_forward(input), smart_forward(kernel), conv);
-        } else if (impl == etl::conv4_impl::FFT_MKL) {
-            impl::blas::conv4_full_flipped(smart_forward(input), smart_forward(kernel), conv);
-        } else if (impl == etl::conv4_impl::FFT_CUFFT) {
-            impl::cufft::conv4_full_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
-        } else if (impl == etl::conv4_impl::STD) {
-            impl::standard::conv4_full_flipped(smart_forward(input), smart_forward(kernel), conv);
         } else {
-            cpp_unreachable("Invalid conv implementation selection");
+#endif
+            auto impl = select_conv4_full_impl<I, K, C>(etl::dim<2>(kernel), etl::dim<3>(kernel));
+
+            if (impl == etl::conv4_impl::CUDNN) {
+                impl::cudnn::conv4_backward_data_full_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
+            } else if (impl == etl::conv4_impl::VEC) {
+                impl::vec::conv4_full_flipped(smart_forward(input), smart_forward(kernel), conv);
+            } else if (impl == etl::conv4_impl::FFT_STD) {
+                impl::standard::conv4_full_fft_flipped(smart_forward(input), smart_forward(kernel), conv);
+            } else if (impl == etl::conv4_impl::FFT_MKL) {
+                impl::blas::conv4_full_flipped(smart_forward(input), smart_forward(kernel), conv);
+            } else if (impl == etl::conv4_impl::FFT_CUFFT) {
+                impl::cufft::conv4_full_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
+            } else if (impl == etl::conv4_impl::STD) {
+                impl::standard::conv4_full_flipped(smart_forward(input), smart_forward(kernel), conv);
+            } else {
+                cpp_unreachable("Invalid conv implementation selection");
+            }
+#ifndef ETL_MANUAL_SELECT
         }
+#endif
     }
 };
 
