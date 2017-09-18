@@ -435,7 +435,7 @@ inline void engine_dispatch_1d_slice(E&& expr, Functor&& functor, size_t thresho
 
     static constexpr size_t S = default_intrinsic_traits<TT>::size;
 
-    const size_t n = size(expr);
+    const size_t n = etl::size(expr);
 
     if(n){
         if (engine_select_parallel(n, threshold)) {
@@ -505,7 +505,7 @@ inline void engine_dispatch_1d_slice_binary(E1&& expr1, E2&& expr2, Functor&& fu
 
     static constexpr size_t S = default_intrinsic_traits<TT>::size;
 
-    const size_t n = size(expr1);
+    const size_t n = etl::size(expr1);
 
     if(n){
         if (engine_select_parallel(n, threshold)) {
@@ -587,7 +587,7 @@ inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor
 
     static constexpr size_t S = default_intrinsic_traits<TT>::size;
 
-    const size_t n = size(expr);
+    const size_t n = etl::size(expr);
 
     if(n){
         if (engine_select_parallel(n, threshold)) {

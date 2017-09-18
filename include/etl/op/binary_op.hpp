@@ -128,7 +128,7 @@ struct plus_binary_op {
 
         value_t<L> alpha(1);
 
-        impl::cublas::cublas_axpy(handle.get(), size(lhs), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::cublas::cublas_axpy(handle.get(), etl::size(lhs), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -152,7 +152,7 @@ struct plus_binary_op {
 
         smart_gpu_compute(rhs, y);
 
-        impl::egblas::scalar_add(y.gpu_memory(), size(rhs), 1, &s);
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(rhs), 1, &s);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -174,7 +174,7 @@ struct plus_binary_op {
 
         smart_gpu_compute(lhs, y);
 
-        impl::egblas::scalar_add(y.gpu_memory(), size(lhs), 1, &s);
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(lhs), 1, &s);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -284,7 +284,7 @@ struct minus_binary_op {
         decltype(auto) t2 = smart_gpu_compute(rhs);
 
         value_t<L> alpha(-1);
-        impl::cublas::cublas_axpy(handle.get(), size(lhs), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::cublas::cublas_axpy(handle.get(), etl::size(lhs), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -306,7 +306,7 @@ struct minus_binary_op {
 
         smart_gpu_compute(lhs, y);
 
-        impl::egblas::scalar_add(y.gpu_memory(), size(lhs), 1, &s);
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(lhs), 1, &s);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -331,9 +331,9 @@ struct minus_binary_op {
         value_t<L> alpha(-1);
 
         decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), size(rhs), &alpha, y.gpu_memory(), 1);
+        impl::cublas::cublas_scal(handle.get(), etl::size(rhs), &alpha, y.gpu_memory(), 1);
 
-        impl::egblas::scalar_add(y.gpu_memory(), size(rhs), 1, &s);
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(rhs), 1, &s);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -445,7 +445,7 @@ struct mul_binary_op {
 
         value_t<L> alpha(1);
 
-        impl::egblas::axmy(size(lhs), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::egblas::axmy(etl::size(lhs), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -472,7 +472,7 @@ struct mul_binary_op {
         smart_gpu_compute(rhs, y);
 
         decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), size(rhs), &s, y.gpu_memory(), 1);
+        impl::cublas::cublas_scal(handle.get(), etl::size(rhs), &s, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -495,7 +495,7 @@ struct mul_binary_op {
         smart_gpu_compute(lhs, y);
 
         decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), size(lhs), &s, y.gpu_memory(), 1);
+        impl::cublas::cublas_scal(handle.get(), etl::size(lhs), &s, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -620,7 +620,7 @@ struct div_binary_op {
 
         value_t<L> alpha(1);
 
-        impl::egblas::axdy(size(lhs), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::egblas::axdy(etl::size(lhs), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -647,7 +647,7 @@ struct div_binary_op {
         smart_gpu_compute(lhs, y);
 
         decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), size(lhs), &s, y.gpu_memory(), 1);
+        impl::cublas::cublas_scal(handle.get(), etl::size(lhs), &s, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -671,7 +671,7 @@ struct div_binary_op {
 
         smart_gpu_compute(rhs, y);
 
-        impl::egblas::scalar_div(&s, y.gpu_memory(), size(rhs), 1);
+        impl::egblas::scalar_div(&s, y.gpu_memory(), etl::size(rhs), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
