@@ -185,6 +185,8 @@ public:
     gpu_dyn_matrix_impl& operator=(value_type v) noexcept {
         cpp_unreachable("Invalid call to operator=(value_type) for GPU dyn matrix");
         cpp_unused(v);
+
+        return *this;
     }
 
     /*!
