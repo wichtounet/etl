@@ -146,25 +146,29 @@ std::false_type is_base_of_template_tb_impl(...);
 template <typename T, template <typename, bool> class C>
 constexpr bool is_base_of_template_tb = decltype(is_base_of_template_tb_impl<C>(std::declval<T*>()))::value;
 
+/*!
+ * \brief Helper traits to test if E is a non-GPU temporary expression.
+ */
 template<typename E, typename Enable = void>
-struct is_nongpu_temporary_impl {
-    static constexpr bool value = false;
-};
+struct is_nongpu_temporary_impl : std::false_type {};
 
+/*!
+ * \brief Helper traits to test if E is a non-GPU temporary expression.
+ */
 template<typename E>
-struct is_nongpu_temporary_impl <E, std::enable_if_t<is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr> && !std::decay_t<E>::gpu_computable>> {
-    static constexpr bool value = true;
-};
+struct is_nongpu_temporary_impl <E, std::enable_if_t<is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr> && !std::decay_t<E>::gpu_computable>> : std::true_type {};
 
+/*!
+ * \brief Helper traits to test if E is a GPU temporary expression.
+ */
 template<typename E, typename Enable = void>
-struct is_gpu_temporary_impl {
-    static constexpr bool value = false;
-};
+struct is_gpu_temporary_impl : std::false_type {};
 
+/*!
+ * \brief Helper traits to test if E is a GPU temporary expression.
+ */
 template<typename E>
-struct is_gpu_temporary_impl <E, std::enable_if_t<is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr> && std::decay_t<E>::gpu_computable>> {
-    static constexpr bool value = true;
-};
+struct is_gpu_temporary_impl <E, std::enable_if_t<is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr> && std::decay_t<E>::gpu_computable>> : std::true_type {};
 
 } // end of namespace traits_detail
 
