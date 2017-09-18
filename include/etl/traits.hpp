@@ -1456,29 +1456,81 @@ bool safe_is_gpu_up_to_date(E&& expr){
     return false;
 }
 
+/*!
+ * \brief Smart forwarding for a temporary expression.
+ *
+ * This is guaranteed to produce a DMA expression in the most
+ * efficient way possible.
+ *
+ * \param expr the Expresison from which to create a temporary.
+ *
+ * \return a direct expression
+ */
 template <typename E, cpp_enable_iff(!is_temporary_expr<E>)>
 decltype(auto) smart_forward(E& expr) {
     return make_temporary(expr);
 }
 
+/*!
+ * \brief Smart forwarding for a temporary expression.
+ *
+ * This is guaranteed to produce a DMA expression in the most
+ * efficient way possible.
+ *
+ * \param expr the Expresison from which to create a temporary.
+ *
+ * \return a direct expression
+ */
 template <typename E, cpp_enable_iff(is_temporary_expr<E>)>
 decltype(auto) smart_forward(E& expr) {
     return force_temporary(expr);
 }
 
+/*!
+ * \brief Smart forwarding for a temporary expression that will be
+ * computed in GPU.
+ *
+ * This is guaranteed to produce a DMA expression in the most
+ * efficient way possible.
+ *
+ * \param expr the Expresison from which to create a temporary.
+ *
+ * \return a direct GPU-able expression
+ */
 template <typename E, cpp_enable_iff(!is_temporary_expr<E>)>
 decltype(auto) smart_forward_gpu(E& expr) {
     return make_temporary(expr);
 }
 
+/*!
+ * \brief Smart forwarding for a temporary expression that will be
+ * computed in GPU.
+ *
+ * This is guaranteed to produce a DMA expression in the most
+ * efficient way possible.
+ *
+ * \param expr the Expresison from which to create a temporary.
+ *
+ * \return a direct GPU-able expression
+ */
 template <typename E, cpp_enable_iff(is_temporary_expr<E> && E::gpu_computable)>
 decltype(auto) smart_forward_gpu(E& expr) {
     return force_temporary_gpu(expr);
 }
 
+/*!
+ * \brief Smart forwarding for a temporary expression that will be
+ * computed in GPU.
+ *
+ * This is guaranteed to produce a DMA expression in the most
+ * efficient way possible.
+ *
+ * \param expr the Expresison from which to create a temporary.
+ *
+ * \return a direct GPU-able expression
+ */
 template <typename E, cpp_enable_iff(is_temporary_expr<E> && !E::gpu_computable)>
 decltype(auto) smart_forward_gpu(E& expr) {
-    // TODO need to check
     return force_temporary(expr);
 }
 
@@ -1547,7 +1599,6 @@ decltype(auto) smart_gpu_compute(E& expr) {
  */
 template <typename X, typename Y, cpp_enable_iff(is_temporary_expr<X> && !X::gpu_computable)>
 decltype(auto) smart_gpu_compute(X& x, Y& y) {
-    // TODO Check this
     auto t = force_temporary(x);
     t.ensure_gpu_up_to_date();
     y = t;

@@ -264,6 +264,10 @@ private:
 public:
     gpu_memory_handler() = default;
 
+    /*!
+     * \brief Copy construct a gpu_memory_handler
+     * \param the gpu_memory_handler to copy from
+     */
     gpu_memory_handler(const gpu_memory_handler& rhs) : gpu_memory_size(rhs.gpu_memory_size), cpu_up_to_date(rhs.cpu_up_to_date), gpu_up_to_date(rhs.gpu_up_to_date) {
         if(rhs.gpu_up_to_date){
             gpu_allocate_impl(gpu_memory_size);
@@ -291,6 +295,11 @@ public:
         rhs.gpu_memory_size = 0;
     }
 
+    /*!
+     * \brief Copy assign a gpu_memory_handler
+     * \param the gpu_memory_handler to copy from
+     * \return a reference to this object
+     */
     gpu_memory_handler& operator=(const gpu_memory_handler& rhs){
         if (this != &rhs) {
             // Release the previous memory, if any
