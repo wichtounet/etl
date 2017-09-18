@@ -105,7 +105,7 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_if(!is_gpu_dyn_matrix<R>)>
+    template <typename E, typename R, cpp_enable_iff(!is_gpu_dyn_matrix<R>)>
     void fast_assign_impl_full(E& expr, R& result) {
 //TODO(CPP17) if constexpr
 #ifdef ETL_CUDA
@@ -156,7 +156,7 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_if(is_gpu_dyn_matrix<R>)>
+    template <typename E, typename R, cpp_enable_iff(is_gpu_dyn_matrix<R>)>
     void fast_assign_impl_full(E& expr, R& result) {
 //TODO(CPP17) if constexpr
 #ifdef ETL_CUDA

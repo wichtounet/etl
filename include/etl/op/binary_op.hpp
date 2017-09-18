@@ -118,7 +118,7 @@ struct plus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         decltype(auto) t1 = smart_gpu_compute(lhs);
 
@@ -146,7 +146,7 @@ struct plus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_scalar<L> && !is_scalar<R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = lhs.value;
 
@@ -168,7 +168,7 @@ struct plus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && is_scalar<R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = rhs.value;
 
@@ -276,7 +276,7 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         decltype(auto) handle = impl::cublas::start_cublas();
 
@@ -300,7 +300,7 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && is_scalar<R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = -rhs.value;
 
@@ -322,7 +322,7 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_scalar<L> && !is_scalar<R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = lhs.value;
 
@@ -438,7 +438,7 @@ struct mul_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_if(!is_scalar<L> && !is_scalar<R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         smart_gpu_compute(lhs, y);
         decltype(auto) t2 = smart_gpu_compute(rhs);
@@ -465,7 +465,7 @@ struct mul_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_scalar<L> && !is_scalar<R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = lhs.value;
 
@@ -488,7 +488,7 @@ struct mul_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && is_scalar<R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = rhs.value;
 
@@ -640,7 +640,7 @@ struct div_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_if(!is_scalar<L> && is_scalar<R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && is_scalar<R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = T(1) / rhs.value;
 
@@ -665,7 +665,7 @@ struct div_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_if(is_scalar<L> && !is_scalar<R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_scalar<L> && !is_scalar<R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = lhs.value;
 
