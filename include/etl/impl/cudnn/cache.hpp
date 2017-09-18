@@ -93,7 +93,7 @@ struct mat_cache_key_impl <M, false, 1> {
      * \brief Construct a mat_cache_key_impl for the given matrix
      * \param mat The matrix to use as key
      */
-    mat_cache_key_impl(M& mat) : a(etl::dim<0>(mat)) {
+    explicit mat_cache_key_impl(M& mat) : a(etl::dim<0>(mat)) {
         // Nothing else to init
     }
 
@@ -126,7 +126,7 @@ struct mat_cache_key_impl <M, false, 2> {
      * \brief Construct a mat_cache_key_impl for the given matrix
      * \param mat The matrix to use as key
      */
-    mat_cache_key_impl(M& mat) : a(etl::dim<0>(mat)), b(etl::dim<1>(mat)) {
+    explicit mat_cache_key_impl(M& mat) : a(etl::dim<0>(mat)), b(etl::dim<1>(mat)) {
         // Nothing else to init
     }
 
@@ -160,7 +160,7 @@ struct mat_cache_key_impl <M, false, 3> {
      * \brief Construct a mat_cache_key_impl for the given matrix
      * \param mat The matrix to use as key
      */
-    mat_cache_key_impl(M& mat) : a(etl::dim<0>(mat)), b(etl::dim<1>(mat)), c(etl::dim<2>(mat)) {
+    explicit mat_cache_key_impl(M& mat) : a(etl::dim<0>(mat)), b(etl::dim<1>(mat)), c(etl::dim<2>(mat)) {
         // Nothing else to init
     }
 
@@ -195,7 +195,7 @@ struct mat_cache_key_impl <M, false, 4> {
      * \brief Construct a mat_cache_key_impl for the given matrix
      * \param mat The matrix to use as key
      */
-    mat_cache_key_impl(M& mat) : a(etl::dim<0>(mat)), b(etl::dim<1>(mat)), c(etl::dim<2>(mat)), d(etl::dim<3>(mat)) {
+    explicit mat_cache_key_impl(M& mat) : a(etl::dim<0>(mat)), b(etl::dim<1>(mat)), c(etl::dim<2>(mat)), d(etl::dim<3>(mat)) {
         // Nothing else to init
     }
 
