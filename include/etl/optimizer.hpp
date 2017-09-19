@@ -236,6 +236,9 @@ struct transformer<etl::unary_expr<T, Expr, UnaryOp>> {
     static void transform(Builder parent_builder, const etl::unary_expr<T, Expr, UnaryOp>& expr) {
         if /*constexpr*/ (std::is_same<UnaryOp, plus_unary_op<T>>::value) {
             parent_builder(expr.value);
+        } else {
+            cpp_unused(parent_builder);
+            cpp_unused(expr);
         }
     }
 };
@@ -262,6 +265,9 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>
             parent_builder(etl::scalar<T>(expr.lhs.value - expr.rhs.value));
         } else if /*constexpr*/ (std::is_same<BinaryOp, div_binary_op<T>>::value) {
             parent_builder(etl::scalar<T>(expr.lhs.value / expr.rhs.value));
+        } else {
+            cpp_unused(parent_builder);
+            cpp_unused(expr);
         }
     }
 };
@@ -294,6 +300,9 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>> {
             if (expr.lhs.value == 0.0) {
                 parent_builder(expr.lhs);
             }
+        } else {
+            cpp_unused(parent_builder);
+            cpp_unused(expr);
         }
     }
 };
@@ -330,6 +339,9 @@ struct transformer<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
             if (expr.rhs.value == 1.0) {
                 parent_builder(expr.lhs);
             }
+        } else {
+            cpp_unused(parent_builder);
+            cpp_unused(expr);
         }
     }
 };
