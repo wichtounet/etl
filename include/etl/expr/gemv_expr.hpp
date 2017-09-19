@@ -161,7 +161,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      *
      * \return The implementation to use
      */
-    template <typename AA, typename BB, typename C>
+    template <typename C>
     static constexpr gemm_impl select_gemv_impl() {
         return select_default_gemv_impl<C>(false);
     }

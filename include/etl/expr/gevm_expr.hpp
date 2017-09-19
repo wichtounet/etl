@@ -160,7 +160,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      *
      * \return The implementation to use
      */
-    template <typename AA, typename BB, typename C>
+    template <typename C>
     static constexpr gemm_impl select_gevm_impl() {
         return select_default_gevm_impl<C>(false);
     }
