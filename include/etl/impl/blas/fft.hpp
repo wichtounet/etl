@@ -1356,17 +1356,16 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
             }
         };
 
-        if /*constexpr*/ (etl::is_parallel) {
-            size_t mkl_threads = 0;
+        if /*constexpr*/ (is_parallel) {
             if /*constexpr*/ (is_blas_parallel) {
-                mkl_threads = mkl_get_max_threads();
+                auto mkl_threads = mkl_get_max_threads();
                 mkl_set_num_threads(1);
-            }
 
-            engine_dispatch_1d_serial_cpu(batch_fun_k, 0, KK, 2UL);
+                engine_dispatch_1d_serial_cpu(batch_fun_k, 0, KK, 2UL);
 
-            if /*constexpr*/ (is_blas_parallel) {
                 mkl_set_num_threads(mkl_threads);
+            } else {
+                engine_dispatch_1d_serial_cpu(batch_fun_k, 0, KK, 2UL);
             }
         } else {
             batch_fun_k(0, KK);
@@ -1527,17 +1526,17 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
         };
 
         if /*constexpr*/ (etl::is_parallel) {
-            size_t mkl_threads = 0;
             if /*constexpr*/ (is_blas_parallel) {
-                mkl_threads = mkl_get_max_threads();
+                auto mkl_threads = mkl_get_max_threads();
                 mkl_set_num_threads(1);
-            }
 
-            engine_dispatch_1d_serial(batch_fun_kc, 0, K * C, 2UL);
-            engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
+                engine_dispatch_1d_serial(batch_fun_kc, 0, K * C, 2UL);
+                engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
 
-            if /*constexpr*/ (is_blas_parallel) {
                 mkl_set_num_threads(mkl_threads);
+            } else {
+                engine_dispatch_1d_serial(batch_fun_kc, 0, K * C, 2UL);
+                engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
             }
         } else {
             batch_fun_kc(0, K * C);
@@ -1684,17 +1683,17 @@ void conv4_full_flipped(II&& input, KK&& kernel, CC&& conv) {
         };
 
         if /*constexpr*/ (etl::is_parallel) {
-            size_t mkl_threads = 0;
             if /*constexpr*/ (is_blas_parallel) {
-                mkl_threads = mkl_get_max_threads();
+                auto mkl_threads = mkl_get_max_threads();
                 mkl_set_num_threads(1);
-            }
 
-            engine_dispatch_1d_serial(batch_fun_kc, 0, K * C, 2UL);
-            engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
+                engine_dispatch_1d_serial(batch_fun_kc, 0, K * C, 2UL);
+                engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
 
-            if /*constexpr*/ (is_blas_parallel) {
                 mkl_set_num_threads(mkl_threads);
+            } else {
+                engine_dispatch_1d_serial(batch_fun_kc, 0, K * C, 2UL);
+                engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
             }
         } else {
             batch_fun_kc(0, K * C);

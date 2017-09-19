@@ -1261,17 +1261,17 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
         }
     };
 
-    if(etl::is_parallel){
-        size_t mkl_threads = 0;
-        if (is_blas_parallel) {
-            mkl_threads = mkl_get_max_threads();
+    if /*constexpr*/ (is_parallel){
+        if  /*constexpr*/ (is_blas_parallel) {
+            auto mkl_threads = mkl_get_max_threads();
+
             mkl_set_num_threads(1);
-        }
 
-        engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
+            engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
 
-        if (is_blas_parallel) {
             mkl_set_num_threads(mkl_threads);
+        } else {
+            engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
         }
     } else {
         batch_fun_n(0, N);
