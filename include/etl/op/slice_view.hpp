@@ -68,10 +68,10 @@ public:
      */
     const_return_type operator[](size_t j) const {
         if /*constexpr*/ (decay_traits<sub_type>::storage_order == order::RowMajor) {
-            return sub[first * (size(sub) / dim<0>(sub)) + j];
+            return sub[first * (etl::size(sub) / dim<0>(sub)) + j];
         } else {
             const auto sa = dim<0>(sub);
-            const auto ss = (size(sub) / sa);
+            const auto ss = (etl::size(sub) / sa);
             return sub[(j % ss) * sa + j / ss + first];
         }
     }
@@ -83,10 +83,10 @@ public:
      */
     return_type operator[](size_t j) {
         if /*constexpr*/ (decay_traits<sub_type>::storage_order == order::RowMajor) {
-            return sub[first * (size(sub) / dim<0>(sub)) + j];
+            return sub[first * (etl::size(sub) / dim<0>(sub)) + j];
         } else {
             const auto sa = dim<0>(sub);
-            const auto ss = (size(sub) / sa);
+            const auto ss = (etl::size(sub) / sa);
             return sub[(j % ss) * sa + j / ss + first];
         }
     }
@@ -99,10 +99,10 @@ public:
      */
     value_type read_flat(size_t j) const noexcept {
         if /*constexpr*/ (decay_traits<sub_type>::storage_order == order::RowMajor) {
-            return sub.read_flat(first * (size(sub) / dim<0>(sub)) + j);
+            return sub.read_flat(first * (etl::size(sub) / dim<0>(sub)) + j);
         } else {
             const auto sa = dim<0>(sub);
-            const auto ss = (size(sub) / sa);
+            const auto ss = (etl::size(sub) / sa);
             return sub.read_flat((j % ss) * sa + j / ss + first);
         }
     }
@@ -304,13 +304,13 @@ public:
      * \param last The last index
      */
     slice_view(sub_type sub, size_t first, size_t last)
-            : sub(sub), first(first), last(last), sub_size((size(sub) / etl::dim<0>(sub)) * (last - first)) {
+            : sub(sub), first(first), last(last), sub_size((etl::size(sub) / etl::dim<0>(sub)) * (last - first)) {
         // Accessing the memory through fast sub views means evaluation
         if /*constexpr*/ (decay_traits<sub_type>::is_temporary){
             standard_evaluator::pre_assign_rhs(*this);
         }
 
-        this->memory = this->sub.memory_start() + first * (size(this->sub) / etl::dim<0>(this->sub));
+        this->memory = this->sub.memory_start() + first * (etl::size(this->sub) / etl::dim<0>(this->sub));
 
         // A sub view inherits the CPU/GPU from parent
         this->cpu_up_to_date = this->sub.is_cpu_up_to_date();
@@ -609,7 +609,7 @@ public:
      * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
      */
     value_type* gpu_memory() const noexcept {
-        return sub.gpu_memory() + first * (size(sub) / etl::dim<0>(sub));
+        return sub.gpu_memory() + first * (etl::size(sub) / etl::dim<0>(sub));
     }
 
     /*!

@@ -438,7 +438,7 @@ public:
         value_type m = 0.0;
 
         for (size_t i = 0; i < dim<0>(sub); ++i) {
-            m += sub[j + i * (size(sub) / dim<0>(sub))];
+            m += sub[j + i * (etl::size(sub) / dim<0>(sub))];
         }
 
         return m;
@@ -454,7 +454,7 @@ public:
         value_type m = 0.0;
 
         for (size_t i = 0; i < dim<0>(sub); ++i) {
-            m += sub.read_flat(j + i * (size(sub) / dim<0>(sub)));
+            m += sub.read_flat(j + i * (etl::size(sub) / dim<0>(sub)));
         }
 
         return m;
@@ -558,7 +558,7 @@ public:
         value_type m = 0.0;
 
         for (size_t i = 0; i < dim<0>(sub); ++i) {
-            m += sub[j + i * (size(sub) / dim<0>(sub))];
+            m += sub[j + i * (etl::size(sub) / dim<0>(sub))];
         }
 
         return m / dim<0>(sub);
@@ -574,7 +574,7 @@ public:
         value_type m = 0.0;
 
         for (size_t i = 0; i < dim<0>(sub); ++i) {
-            m += sub.read_flat(j + i * (size(sub) / dim<0>(sub)));
+            m += sub.read_flat(j + i * (etl::size(sub) / dim<0>(sub)));
         }
 
         return m / dim<0>(sub);

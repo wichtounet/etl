@@ -31,7 +31,7 @@ value_t<L> sum_impl(const L& lhs) {
     using vec_type = V;
     using T        = value_t<L>;
 
-    const size_t n = size(lhs);
+    const size_t n = etl::size(lhs);
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
@@ -89,7 +89,7 @@ value_t<L> asum_impl(const L& lhs) {
     using T        = value_t<L>;
     using std::abs;
 
-    const size_t n = size(lhs);
+    const size_t n = etl::size(lhs);
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
