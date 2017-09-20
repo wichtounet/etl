@@ -675,7 +675,7 @@ template <typename E>
 value_t<E> mean(E&& values) {
     static_assert(is_etl_expr<E>, "etl::mean can only be used on ETL expressions");
 
-    return sum(values) / size(values);
+    return sum(values) / etl::size(values);
 }
 
 /*!
@@ -687,7 +687,7 @@ template <typename E>
 value_t<E> amean(E&& values) {
     static_assert(is_etl_expr<E>, "etl::amean can only be used on ETL expressions");
 
-    return asum(values) / size(values);
+    return asum(values) / etl::size(values);
 }
 
 /*!
@@ -742,7 +742,7 @@ size_t max_index(E&& values) {
 
     size_t m = 0;
 
-    for (size_t i = 1; i < size(values); ++i) {
+    for (size_t i = 1; i < etl::size(values); ++i) {
         if (values[i] > values[m]) {
             m = i;
         }
@@ -779,7 +779,7 @@ size_t min_index(E&& values) {
 
     size_t m = 0;
 
-    for (size_t i = 1; i < size(values); ++i) {
+    for (size_t i = 1; i < etl::size(values); ++i) {
         if (values[i] < values[m]) {
             m = i;
         }
