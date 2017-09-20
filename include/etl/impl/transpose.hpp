@@ -276,9 +276,9 @@ struct transpose {
                 return;
             }
 
-            if (impl == transpose_impl::MKL) {
+            if /*constexpr_select*/ (impl == transpose_impl::MKL) {
                 etl::impl::blas::transpose(aa, c);
-            } else if (impl == transpose_impl::STD) {
+            } else if /*constexpr_select*/ (impl == transpose_impl::STD) {
                 etl::impl::standard::transpose(aa, c);
             } else {
                 cpp_unreachable("Invalid transpose_impl selection");
