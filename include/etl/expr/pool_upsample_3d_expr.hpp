@@ -23,10 +23,10 @@ namespace etl {
  */
 template <typename A, typename B, typename C, size_t C1, size_t C2, size_t C3, bool Max>
 struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A, B, C, C1, C2, C3, Max>, A, B, C> {
-    using value_type = value_t<A>;                                   ///< The type of value of the expression
-    using sub_traits = etl::decay_traits<A>;                         ///< The traits of the first sub type
-    using this_type  = pool_upsample_3d_expr<A, B, C, C1, C2, C3, Max>;   ///< The type of this expression
-    using base_type  = base_temporary_expr_tern<this_type, A, B, C>; ///< The base type
+    using value_type = value_t<A>;                                      ///< The type of value of the expression
+    using sub_traits = etl::decay_traits<A>;                            ///< The traits of the first sub type
+    using this_type  = pool_upsample_3d_expr<A, B, C, C1, C2, C3, Max>; ///< The type of this expression
+    using base_type  = base_temporary_expr_tern<this_type, A, B, C>;    ///< The base type
 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
 
@@ -280,25 +280,25 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
 template <typename A, typename B, typename C, size_t C1, size_t C2, size_t C3, bool Max>
 struct etl_traits<etl::pool_upsample_3d_expr<A, B, C, C1, C2, C3, Max>> {
     using expr_t     = etl::pool_upsample_3d_expr<A, B, C, C1, C2, C3, Max>; ///< The expression type
-    using sub_expr_t = std::decay_t<A>;                                 ///< The sub expression type
-    using sub_traits = etl_traits<sub_expr_t>;                          ///< The sub traits
-    using value_type = value_t<A>;                                      ///< The value type of the expression
+    using sub_expr_t = std::decay_t<A>;                                      ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;                               ///< The sub traits
+    using value_type = value_t<A>;                                           ///< The value type of the expression
 
-    static constexpr bool is_etl         = true;                      ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer = false;                     ///< Indicates if the type is a transformer
-    static constexpr bool is_view        = false;                     ///< Indicates if the type is a view
-    static constexpr bool is_magic_view  = false;                     ///< Indicates if the type is a magic view
-    static constexpr bool is_fast        = sub_traits::is_fast;       ///< Indicates if the expression is fast
-    static constexpr bool is_linear      = false;                      ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe = true;                      ///< Indicates if the expression is thread safe
-    static constexpr bool is_value       = false;                     ///< Indicates if the expression is of value type
-    static constexpr bool is_direct      = true;                      ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator   = false;                     ///< Indicates if the expression is a generator
-    static constexpr bool is_padded      = false;                     ///< Indicates if the expression is padded
-    static constexpr bool is_aligned     = true;                      ///< Indicates if the expression is padded
-    static constexpr bool is_temporary   = true;                      ///< Indicates if the expression needs a evaluator visitor
-    static constexpr order storage_order = sub_traits::storage_order; ///< The expression's storage order
-    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
+    static constexpr bool is_etl         = true;                                 ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                                ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = sub_traits::is_fast;                  ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = true;                                 ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = true;                                 ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                                ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = true;                                 ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = true;                                 ///< Indicates if the expression needs a evaluator visitor
+    static constexpr order storage_order = sub_traits::storage_order;            ///< The expression's storage order
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled; ///< Indicates if the expression can be computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

@@ -63,11 +63,11 @@ using expr_result_t = typename expr_result<E, Fast && is_fast<E>>::type;
  */
 template <typename D, bool Fast>
 struct base_temporary_expr : value_testable<D>, dim_testable<D>, iterable<const D, true> {
-    using derived_t         = D;                                    ///< The derived type
-    using value_type        = typename decay_traits<D>::value_type; ///< The value type
-    using result_type       = temporary_detail::expr_result_t<Fast, D>;   ///< The result type
-    using memory_type       = value_type*;                          ///< The memory type
-    using const_memory_type = const value_type*;                    ///< The const memory type
+    using derived_t         = D;                                        ///< The derived type
+    using value_type        = typename decay_traits<D>::value_type;     ///< The value type
+    using result_type       = temporary_detail::expr_result_t<Fast, D>; ///< The result type
+    using memory_type       = value_type*;                              ///< The memory type
+    using const_memory_type = const value_type*;                        ///< The const memory type
 
 protected:
     mutable std::shared_ptr<bool> evaluated; ///< Indicates if the expression has been evaluated
@@ -645,7 +645,7 @@ struct base_temporary_expr_tern : base_temporary_expr<D, Fast> {
     static_assert(is_etl_expr<C>, "The argument must be an ETL expr");
 
     using this_type = base_temporary_expr_tern<D, A, B, C>; ///< This type
-    using base_type = base_temporary_expr<D, Fast>;               ///< The base type
+    using base_type = base_temporary_expr<D, Fast>;         ///< The base type
 
 private:
 
