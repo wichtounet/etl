@@ -154,6 +154,18 @@ auto pow(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>,
 }
 
 /*!
+ * \brief Apply pow(x, v) on each element x of the ETL expression
+ * \param value The ETL expression
+ * \param v The power
+ * \return an expression representing the pow(x, v) of each value x of the given expression
+ */
+template <typename E>
+auto pow_int(E&& value, size_t v) -> detail::left_binary_helper_op<E, scalar<size_t>, integer_pow_binary_op<value_t<E>, size_t>> {
+    static_assert(is_etl_expr<E>, "etl::pow can only be used on ETL expressions");
+    return {value, scalar<size_t>(v)};
+}
+
+/*!
  * \brief Creates an expression with values of 1 where the ETL expression has a value of v
  * \param value The ETL expression
  * \param v The value to test
