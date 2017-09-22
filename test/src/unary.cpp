@@ -9,7 +9,7 @@
 
 #include <cmath>
 
-TEMPLATE_TEST_CASE_2("fast_matrix/log_1", "fast_matrix::log", Z, float, double) {
+TEMPLATE_TEST_CASE_2("log/0", "[log]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2> d;
@@ -20,7 +20,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/log_1", "fast_matrix::log", Z, float, double) 
     REQUIRE_EQUALS_APPROX(d[2], std::log(Z(5.0)));
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/log_2", "fast_matrix::log", Z, float, double) {
+TEMPLATE_TEST_CASE_2("log/1", "[log]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2, 1> d;
@@ -29,6 +29,23 @@ TEMPLATE_TEST_CASE_2("fast_matrix/log_2", "fast_matrix::log", Z, float, double) 
     REQUIRE_DIRECT(std::isnan(d[0]));
     REQUIRE_EQUALS_APPROX(d[1], std::log(Z(2.0)));
     REQUIRE_EQUALS_APPROX(d[2], std::log(Z(5.0)));
+}
+
+TEMPLATE_TEST_CASE_2("log/2", "[log]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2, 2> a = {3.0, 2.0, 5.0, 1.0, 1.2, 2.2, 3.2, 4.2};
+
+    etl::fast_matrix<Z, 2, 2, 2> d;
+
+    d = log(a);
+
+    REQUIRE_EQUALS_APPROX(d[0], std::log(Z(3.0)));
+    REQUIRE_EQUALS_APPROX(d[1], std::log(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], std::log(Z(5.0)));
+    REQUIRE_EQUALS_APPROX(d[3], std::log(Z(1.0)));
+    REQUIRE_EQUALS_APPROX(d[4], std::log(Z(1.2)));
+    REQUIRE_EQUALS_APPROX(d[5], std::log(Z(2.2)));
+    REQUIRE_EQUALS_APPROX(d[6], std::log(Z(3.2)));
+    REQUIRE_EQUALS_APPROX(d[7], std::log(Z(4.2)));
 }
 
 TEMPLATE_TEST_CASE_2("fast_matrix/sqrt_1", "fast_matrix::sqrt", Z, float, double) {
@@ -266,7 +283,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/softplus", "fast_matrix::softplus", Z, float, 
     REQUIRE_EQUALS_APPROX(d[3], etl::math::softplus(Z(1.0)));
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/exp", "fast_matrix::exp", Z, float, double) {
+TEMPLATE_TEST_CASE_2("exp/0", "[exp]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2> d;
@@ -276,6 +293,22 @@ TEMPLATE_TEST_CASE_2("fast_matrix/exp", "fast_matrix::exp", Z, float, double) {
     REQUIRE_EQUALS_APPROX(d[1], std::exp(Z(2.0)));
     REQUIRE_EQUALS_APPROX(d[2], std::exp(Z(0.0)));
     REQUIRE_EQUALS_APPROX(d[3], std::exp(Z(1.0)));
+}
+
+TEMPLATE_TEST_CASE_2("exp/1", "[exp]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2, 2> a = {-1.0, 2.0, 0.0, 1.0, 3.0, 4.0, 5.1, 6.1};
+
+    etl::fast_matrix<Z, 2, 2, 2> d;
+    d = exp(a);
+
+    REQUIRE_EQUALS_APPROX(d[0], std::exp(Z(-1.0)));
+    REQUIRE_EQUALS_APPROX(d[1], std::exp(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], std::exp(Z(0.0)));
+    REQUIRE_EQUALS_APPROX(d[3], std::exp(Z(1.0)));
+    REQUIRE_EQUALS_APPROX(d[4], std::exp(Z(3.0)));
+    REQUIRE_EQUALS_APPROX(d[5], std::exp(Z(4.0)));
+    REQUIRE_EQUALS_APPROX(d[6], std::exp(Z(5.1)));
+    REQUIRE_EQUALS_APPROX(d[7], std::exp(Z(6.1)));
 }
 
 constexpr bool binary(double a) {
