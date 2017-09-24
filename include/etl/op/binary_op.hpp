@@ -1395,15 +1395,14 @@ struct pow_binary_op {
 
         auto t2 = force_temporary_gpu(t1);
 
+#ifdef ETL_CUDA
         T power_cpu(y.value);
         auto power_gpu = impl::cuda::cuda_allocate_only<T>(1);
-
-#ifdef ETL_CUDA
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
-#endif
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
+#endif
 
         return t2;
     }
@@ -1418,15 +1417,14 @@ struct pow_binary_op {
     static YY& gpu_compute(const X& x, const Y& y, YY& yy) noexcept {
         smart_gpu_compute(x, yy);
 
+#ifdef ETL_CUDA
         T power_cpu(y.value);
         auto power_gpu = impl::cuda::cuda_allocate_only<T>(1);
-
-#ifdef ETL_CUDA
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
-#endif
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
+#endif
 
         yy.validate_gpu();
         yy.invalidate_cpu();
@@ -1499,15 +1497,14 @@ struct integer_pow_binary_op {
 
         auto t2 = force_temporary_gpu(t1);
 
+#ifdef ETL_CUDA
         T power_cpu(y.value);
         auto power_gpu = impl::cuda::cuda_allocate_only<T>(1);
-
-#ifdef ETL_CUDA
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
-#endif
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
+#endif
 
         return t2;
     }
@@ -1522,15 +1519,14 @@ struct integer_pow_binary_op {
     static YY& gpu_compute(const X& x, const Y& y, YY& yy) noexcept {
         smart_gpu_compute(x, yy);
 
+#ifdef ETL_CUDA
         T power_cpu(y.value);
         auto power_gpu = impl::cuda::cuda_allocate_only<T>(1);
-
-#ifdef ETL_CUDA
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
-#endif
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
+#endif
 
         yy.validate_gpu();
         yy.invalidate_cpu();
