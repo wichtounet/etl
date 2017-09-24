@@ -39,14 +39,14 @@ TEMPLATE_TEST_CASE_2("pow/0", "[fast][pow]", Z, float, double) {
 
     d = pow(a, 2);
 
-    REQUIRE_EQUALS(d[0], 1.0);
-    REQUIRE_EQUALS(d[1], 4.0);
-    REQUIRE_EQUALS(d[2], 0.0);
-    REQUIRE_EQUALS(d[3], 1.0);
-    REQUIRE_EQUALS(d[4], 4.0);
-    REQUIRE_EQUALS(d[5], 16.0);
-    REQUIRE_EQUALS(d[6], 25.0);
-    REQUIRE_EQUALS(d[7], 36.0);
+    REQUIRE_EQUALS_APPROX(d[0], Z(1.0));
+    REQUIRE_EQUALS_APPROX(d[1], Z(4.0));
+    REQUIRE_EQUALS_APPROX(d[2], Z(0.0));
+    REQUIRE_EQUALS_APPROX(d[3], Z(1.0));
+    REQUIRE_EQUALS_APPROX(d[4], Z(4.0));
+    REQUIRE_EQUALS_APPROX(d[5], Z(16.0));
+    REQUIRE_EQUALS_APPROX(d[6], Z(25.0));
+    REQUIRE_EQUALS_APPROX(d[7], Z(36.0));
 }
 
 TEMPLATE_TEST_CASE_2("pow/1", "[fast][pow]", Z, float, double) {
@@ -54,10 +54,10 @@ TEMPLATE_TEST_CASE_2("pow/1", "[fast][pow]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> d;
     d = pow((a >> a) + 1.0, 2);
 
-    REQUIRE_EQUALS(d[0], 4.0);
-    REQUIRE_EQUALS(d[1], 25.0);
-    REQUIRE_EQUALS(d[2], 1.0);
-    REQUIRE_EQUALS(d[3], 4.0);
+    REQUIRE_EQUALS_APPROX(d[0], Z(4.0));
+    REQUIRE_EQUALS_APPROX(d[1], Z(25.0));
+    REQUIRE_EQUALS_APPROX(d[2], Z(1.0));
+    REQUIRE_EQUALS_APPROX(d[3], Z(4.0));
 }
 
 TEMPLATE_TEST_CASE_2("pow/2", "[fast][pow]", Z, float, double) {
@@ -65,10 +65,10 @@ TEMPLATE_TEST_CASE_2("pow/2", "[fast][pow]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> d;
     d = pow(a, 2.0);
 
-    REQUIRE_EQUALS(d[0], 1.0);
-    REQUIRE_EQUALS(d[1], 4.0);
-    REQUIRE_EQUALS(d[2], 0.0);
-    REQUIRE_EQUALS(d[3], 1.0);
+    REQUIRE_EQUALS_APPROX(d[0], Z(1.0));
+    REQUIRE_EQUALS_APPROX(d[1], Z(4.0));
+    REQUIRE_EQUALS_APPROX(d[2], Z(0.0));
+    REQUIRE_EQUALS_APPROX(d[3], Z(1.0));
 }
 
 TEMPLATE_TEST_CASE_2("pow/3", "[fast][pow]", Z, float, double) {
@@ -77,14 +77,14 @@ TEMPLATE_TEST_CASE_2("pow/3", "[fast][pow]", Z, float, double) {
 
     d = pow(a, -2.0);
 
-    REQUIRE_EQUALS(d[0], Z(1.0));
-    REQUIRE_EQUALS(d[1], Z(1.0) / Z(4.0));
-    REQUIRE_EQUALS(d[2], Z(1.0) / Z(81.0));
-    REQUIRE_EQUALS(d[3], Z(1.0));
-    REQUIRE_EQUALS(d[4], Z(1.0) / Z(4.0));
-    REQUIRE_EQUALS(d[5], Z(1.0) / Z(16.0));
-    REQUIRE_EQUALS(d[6], Z(1.0) / Z(25.0));
-    REQUIRE_EQUALS(d[7], Z(1.0) / Z(36.0));
+    REQUIRE_EQUALS_APPROX(d[0], Z(1.0));
+    REQUIRE_EQUALS_APPROX(d[1], Z(1.0) / Z(4.0));
+    REQUIRE_EQUALS_APPROX(d[2], Z(1.0) / Z(81.0));
+    REQUIRE_EQUALS_APPROX(d[3], Z(1.0));
+    REQUIRE_EQUALS_APPROX(d[4], Z(1.0) / Z(4.0));
+    REQUIRE_EQUALS_APPROX(d[5], Z(1.0) / Z(16.0));
+    REQUIRE_EQUALS_APPROX(d[6], Z(1.0) / Z(25.0));
+    REQUIRE_EQUALS_APPROX(d[7], Z(1.0) / Z(36.0));
 }
 
 TEMPLATE_TEST_CASE_2("pow_int/0", "[fast][pow_int]", Z, float, double) {
