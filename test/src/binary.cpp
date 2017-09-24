@@ -71,6 +71,22 @@ TEMPLATE_TEST_CASE_2("pow/2", "[fast][pow]", Z, float, double) {
     REQUIRE_EQUALS(d[3], 1.0);
 }
 
+TEMPLATE_TEST_CASE_2("pow/3", "[fast][pow]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 4> a = {-1.0, 2.0, 9.0, 1.0, 2.0, 4.0, 5.0, 6.0};
+    etl::fast_matrix<Z, 2, 4> d;
+
+    d = pow(a, -2.0);
+
+    REQUIRE_EQUALS(d[0], Z(1.0));
+    REQUIRE_EQUALS(d[1], Z(1.0) / Z(4.0));
+    REQUIRE_EQUALS(d[2], Z(1.0) / Z(81.0));
+    REQUIRE_EQUALS(d[3], Z(1.0));
+    REQUIRE_EQUALS(d[4], Z(1.0) / Z(4.0));
+    REQUIRE_EQUALS(d[5], Z(1.0) / Z(16.0));
+    REQUIRE_EQUALS(d[6], Z(1.0) / Z(25.0));
+    REQUIRE_EQUALS(d[7], Z(1.0) / Z(36.0));
+}
+
 TEMPLATE_TEST_CASE_2("pow_int/0", "[fast][pow_int]", Z, float, double) {
     etl::fast_matrix<Z, 2, 4> a = {-1.0, 2.0, 0.0, 1.0, 2.0, 4.0, 5.0, 6.0};
     etl::fast_matrix<Z, 2, 4> d;
