@@ -48,6 +48,84 @@ TEMPLATE_TEST_CASE_2("log/2", "[log]", Z, float, double) {
     REQUIRE_DIRECT(std::isnan(d[7]));
 }
 
+TEMPLATE_TEST_CASE_2("log2/0", "[log2]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<Z, 2, 2> d;
+    d = log2(a);
+
+    REQUIRE_DIRECT(std::isnan(d[0]));
+    REQUIRE_EQUALS_APPROX(d[1], std::log2(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], std::log2(Z(5.0)));
+}
+
+TEMPLATE_TEST_CASE_2("log2/1", "[log2]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<Z, 2, 2, 1> d;
+    d = log2(a);
+
+    REQUIRE_DIRECT(std::isnan(d[0]));
+    REQUIRE_EQUALS_APPROX(d[1], std::log2(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], std::log2(Z(5.0)));
+}
+
+TEMPLATE_TEST_CASE_2("log2/2", "[log2]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2, 2> a = {3.0, 2.0, 5.0, 1.0, 1.2, 2.2, 3.2, -4.2};
+
+    etl::fast_matrix<Z, 2, 2, 2> d;
+
+    d = log2(a);
+
+    REQUIRE_EQUALS_APPROX(d[0], std::log2(Z(3.0)));
+    REQUIRE_EQUALS_APPROX(d[1], std::log2(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], std::log2(Z(5.0)));
+    REQUIRE_EQUALS_APPROX(d[3], std::log2(Z(1.0)));
+    REQUIRE_EQUALS_APPROX(d[4], std::log2(Z(1.2)));
+    REQUIRE_EQUALS_APPROX(d[5], std::log2(Z(2.2)));
+    REQUIRE_EQUALS_APPROX(d[6], std::log2(Z(3.2)));
+    REQUIRE_DIRECT(std::isnan(d[7]));
+}
+
+TEMPLATE_TEST_CASE_2("log10/0", "[log10]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<Z, 2, 2> d;
+    d = log10(a);
+
+    REQUIRE_DIRECT(std::isnan(d[0]));
+    REQUIRE_EQUALS_APPROX(d[1], std::log10(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], std::log10(Z(5.0)));
+}
+
+TEMPLATE_TEST_CASE_2("log10/1", "[log10]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<Z, 2, 2, 1> d;
+    d = log10(a);
+
+    REQUIRE_DIRECT(std::isnan(d[0]));
+    REQUIRE_EQUALS_APPROX(d[1], std::log10(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], std::log10(Z(5.0)));
+}
+
+TEMPLATE_TEST_CASE_2("log10/2", "[log10]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2, 2> a = {3.0, 2.0, 5.0, 1.0, 1.2, 2.2, 3.2, -4.2};
+
+    etl::fast_matrix<Z, 2, 2, 2> d;
+
+    d = log10(a);
+
+    REQUIRE_EQUALS_APPROX(d[0], std::log10(Z(3.0)));
+    REQUIRE_EQUALS_APPROX(d[1], std::log10(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], std::log10(Z(5.0)));
+    REQUIRE_EQUALS_APPROX(d[3], std::log10(Z(1.0)));
+    REQUIRE_EQUALS_APPROX(d[4], std::log10(Z(1.2)));
+    REQUIRE_EQUALS_APPROX(d[5], std::log10(Z(2.2)));
+    REQUIRE_EQUALS_APPROX(d[6], std::log10(Z(3.2)));
+    REQUIRE_DIRECT(std::isnan(d[7]));
+}
+
 TEMPLATE_TEST_CASE_2("fast_matrix/sqrt_1", "fast_matrix::sqrt", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 

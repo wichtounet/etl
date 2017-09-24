@@ -60,14 +60,36 @@ auto invcbrt(E&& value) -> detail::unary_helper<E, invcbrt_unary_op> {
 }
 
 /*!
- * \brief Apply logarithm on each value of the given expression
+ * \brief Apply logarithm (base e) on each value of the given expression
  * \param value The ETL expression
- * \return an expression representing the logarithm of each value of the given expression
+ * \return an expression representing the logarithm (base e) of each value of the given expression
  */
 template <typename E>
 auto log(E&& value) -> detail::unary_helper<E, log_unary_op> {
     static_assert(is_etl_expr<E>, "etl::log can only be used on ETL expressions");
     return detail::unary_helper<E, log_unary_op>{value};
+}
+
+/*!
+ * \brief Apply logarithm (base 2) on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the logarithm (base 2) of each value of the given expression
+ */
+template <typename E>
+auto log2(E&& value) -> detail::unary_helper<E, log2_unary_op> {
+    static_assert(is_etl_expr<E>, "etl::log2 can only be used on ETL expressions");
+    return detail::unary_helper<E, log2_unary_op>{value};
+}
+
+/*!
+ * \brief Apply logarithm (base 10) on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the logarithm (base 10) of each value of the given expression
+ */
+template <typename E>
+auto log10(E&& value) -> detail::unary_helper<E, log10_unary_op> {
+    static_assert(is_etl_expr<E>, "etl::log10 can only be used on ETL expressions");
+    return detail::unary_helper<E, log10_unary_op>{value};
 }
 
 /*!
