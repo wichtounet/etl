@@ -1397,7 +1397,10 @@ struct pow_binary_op {
 
         T power_cpu(y.value);
         auto power_gpu = impl::cuda::cuda_allocate_only<T>(1);
+
+#ifdef ETL_CUDA
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
+#endif
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
@@ -1417,7 +1420,10 @@ struct pow_binary_op {
 
         T power_cpu(y.value);
         auto power_gpu = impl::cuda::cuda_allocate_only<T>(1);
+
+#ifdef ETL_CUDA
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
+#endif
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
@@ -1495,7 +1501,10 @@ struct integer_pow_binary_op {
 
         T power_cpu(y.value);
         auto power_gpu = impl::cuda::cuda_allocate_only<T>(1);
+
+#ifdef ETL_CUDA
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
+#endif
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
@@ -1515,7 +1524,10 @@ struct integer_pow_binary_op {
 
         T power_cpu(y.value);
         auto power_gpu = impl::cuda::cuda_allocate_only<T>(1);
+
+#ifdef ETL_CUDA
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
+#endif
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
