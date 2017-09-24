@@ -34,14 +34,14 @@ TEMPLATE_TEST_CASE_2("fast_matrix/min", "fast_matrix::min", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("pow/0", "[fast][pow]", Z, float, double) {
-    etl::fast_matrix<Z, 2, 4> a = {-1.0, 2.0, 0.0, 1.0, 2.0, 4.0, 5.0, 6.0};
+    etl::fast_matrix<Z, 2, 4> a = {0.1, 2.0, 1.0, 1.0, 2.0, 4.0, 5.0, 6.0};
     etl::fast_matrix<Z, 2, 4> d;
 
-    d = pow(a, 2);
+    d = pow(a, Z(2));
 
-    REQUIRE_EQUALS_APPROX(d[0], Z(1.0));
+    REQUIRE_EQUALS_APPROX(d[0], Z(0.01));
     REQUIRE_EQUALS_APPROX(d[1], Z(4.0));
-    REQUIRE_EQUALS_APPROX(d[2], Z(0.0));
+    REQUIRE_EQUALS_APPROX(d[2], Z(1.0));
     REQUIRE_EQUALS_APPROX(d[3], Z(1.0));
     REQUIRE_EQUALS_APPROX(d[4], Z(4.0));
     REQUIRE_EQUALS_APPROX(d[5], Z(16.0));
@@ -52,7 +52,8 @@ TEMPLATE_TEST_CASE_2("pow/0", "[fast][pow]", Z, float, double) {
 TEMPLATE_TEST_CASE_2("pow/1", "[fast][pow]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
     etl::fast_matrix<Z, 2, 2> d;
-    d = pow((a >> a) + 1.0, 2);
+
+    d = pow((a >> a) + 1.0, Z(2));
 
     REQUIRE_EQUALS_APPROX(d[0], Z(4.0));
     REQUIRE_EQUALS_APPROX(d[1], Z(25.0));
@@ -61,23 +62,24 @@ TEMPLATE_TEST_CASE_2("pow/1", "[fast][pow]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("pow/2", "[fast][pow]", Z, float, double) {
-    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> a = {0.1, 2.0, 0.5, 1.0};
     etl::fast_matrix<Z, 2, 2> d;
-    d = pow(a, 2.0);
 
-    REQUIRE_EQUALS_APPROX(d[0], Z(1.0));
+    d = pow(a, Z(2));
+
+    REQUIRE_EQUALS_APPROX(d[0], Z(0.01));
     REQUIRE_EQUALS_APPROX(d[1], Z(4.0));
-    REQUIRE_EQUALS_APPROX(d[2], Z(0.0));
+    REQUIRE_EQUALS_APPROX(d[2], Z(0.25));
     REQUIRE_EQUALS_APPROX(d[3], Z(1.0));
 }
 
 TEMPLATE_TEST_CASE_2("pow/3", "[fast][pow]", Z, float, double) {
-    etl::fast_matrix<Z, 2, 4> a = {-1.0, 2.0, 9.0, 1.0, 2.0, 4.0, 5.0, 6.0};
+    etl::fast_matrix<Z, 2, 4> a = {0.01, 2.0, 9.0, 1.0, 2.0, 4.0, 5.0, 6.0};
     etl::fast_matrix<Z, 2, 4> d;
 
     d = pow(a, -2.0);
 
-    REQUIRE_EQUALS_APPROX(d[0], Z(1.0));
+    REQUIRE_EQUALS_APPROX(d[0], Z(10000.0));
     REQUIRE_EQUALS_APPROX(d[1], Z(1.0) / Z(4.0));
     REQUIRE_EQUALS_APPROX(d[2], Z(1.0) / Z(81.0));
     REQUIRE_EQUALS_APPROX(d[3], Z(1.0));
