@@ -32,7 +32,7 @@ TEMPLATE_TEST_CASE_2("log/1", "[log]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("log/2", "[log]", Z, float, double) {
-    etl::fast_matrix<Z, 2, 2, 2> a = {3.0, 2.0, 5.0, 1.0, 1.2, 2.2, 3.2, 4.2};
+    etl::fast_matrix<Z, 2, 2, 2> a = {3.0, 2.0, 5.0, 1.0, 1.2, 2.2, 3.2, -4.2};
 
     etl::fast_matrix<Z, 2, 2, 2> d;
 
@@ -45,7 +45,7 @@ TEMPLATE_TEST_CASE_2("log/2", "[log]", Z, float, double) {
     REQUIRE_EQUALS_APPROX(d[4], std::log(Z(1.2)));
     REQUIRE_EQUALS_APPROX(d[5], std::log(Z(2.2)));
     REQUIRE_EQUALS_APPROX(d[6], std::log(Z(3.2)));
-    REQUIRE_EQUALS_APPROX(d[7], std::log(Z(4.2)));
+    REQUIRE_DIRECT(std::isnan(d[7]));
 }
 
 TEMPLATE_TEST_CASE_2("fast_matrix/sqrt_1", "fast_matrix::sqrt", Z, float, double) {
