@@ -340,7 +340,7 @@ private:
     Expr value;                ///< The sub expression
     gpu_memory_handler<T> _gpu; ///< The GPU memory handler
 
-    static constexpr bool dma = has_direct_access<Expr>;
+    static constexpr bool dma = has_direct_access<Expr>; ///< Indicates if the unary expression has direct memory access
 
     /*!
      * \brief Indicates if the non-const functions returns a reference

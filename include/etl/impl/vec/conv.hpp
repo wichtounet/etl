@@ -66,6 +66,13 @@ constexpr bool prefer_sse(const size_t n) {
                                                  : (n % 2 < n % 4)));
 }
 
+/*!
+ * \brief Pad the given input into the given output matrix
+ * \param in The input matrix
+ * \param out The output matrix
+ * \param p1 The padding of the first dimension
+ * \param p2 The padding of the second dimension
+ */
 template <typename I, typename C>
 void pad_2d_input(const I& in, C& out, size_t p1, size_t p2) {
     in.ensure_cpu_up_to_date();

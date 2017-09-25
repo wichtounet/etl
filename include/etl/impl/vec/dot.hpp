@@ -18,6 +18,12 @@ namespace impl {
 
 namespace vec {
 
+/*!
+ * \brief Compute the dot product of a and b using vectorized code
+ * \param lhs The lhs expression
+ * \param rhs The rhs expression
+ * \return the dot product
+ */
 template <typename V, typename L, typename R>
 value_t<L> dot_impl(const L& lhs, const R& rhs) {
     using vec_type = V;

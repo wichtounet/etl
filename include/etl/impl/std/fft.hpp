@@ -594,6 +594,12 @@ void safe_fft_n_many_inplace(In& input, const size_t batch, const size_t n) {
     input.invalidate_gpu();
 }
 
+/*!
+ * \brief Compute the inplace 1D FFT transform of the given input
+ * , using radix-2 algorithm
+ * \param x The input to be transformed inplace
+ * \param N The size of the transform
+ */
 template <typename T>
 void inplace_radix2_fft1(etl::complex<T>* x, size_t N) {
     using complex_t = etl::complex<T>;

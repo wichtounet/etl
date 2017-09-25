@@ -282,6 +282,21 @@ void inplace_ifft2_many_kernel(T&& a, size_t batch, size_t d1, size_t d2) {
     a.invalidate_cpu();
 }
 
+/*!
+ * \brief Compute the 2D full convolution of a with the kernel from
+ * b and store the result in c.
+ *
+ * c = beta * c + conv_full(a, b)
+ *
+ * \param a The input
+ * \param m1 The first dimension of the input
+ * \param m2 The second dimension of the input
+ * \param b The kernel
+ * \param n1 The first dimension of the kernel
+ * \param n2 The second dimension of the kernel
+ * \param c The output
+ * \param beta Scaling factor for the output
+ */
 template <typename T>
 void conv2_full_kernel(const T* a, size_t m1, size_t m2, const T* b, size_t n1, size_t n2, T* c, T beta) {
     const size_t s1 = m1 + n1 - 1;

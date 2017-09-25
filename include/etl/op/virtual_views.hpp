@@ -11,6 +11,13 @@ namespace etl {
 
 namespace detail {
 
+/*!
+ * \brief Compute the (i,j) element of a magic matrix of size n
+ * \param n The size of the magix matrix
+ * \param i The first index
+ * \param j The second index
+ * \return The (i,j) element of the magix matrix
+ */
 template <typename V>
 V compute(size_t n, size_t i, size_t j) {
     if (n == 1) {

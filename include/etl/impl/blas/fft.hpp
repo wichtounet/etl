@@ -719,6 +719,13 @@ inline void inplace_ifft2_kernel(std::complex<double>* in, size_t d1, size_t d2)
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
 }
 
+/*!
+ * \brief Pad the input with the given configurations and transform to complex
+ * \param input The input to pad
+ * \param s1 The first dimension of the output
+ * \param s2 The second dimension of the output
+ * \return The padded input
+ */
 template<typename I>
 etl::dyn_vector<etl::complex<etl::value_t<I>>> pad_one(const I& input, size_t s1, size_t s2){
     using T = value_t<I>;
@@ -740,6 +747,13 @@ etl::dyn_vector<etl::complex<etl::value_t<I>>> pad_one(const I& input, size_t s1
     return input_padded;
 }
 
+/*!
+ * \brief Pad the input with the given configurations and compute its 2D-FFT.
+ * \param input The input to pad
+ * \param s1 The first dimension of the output
+ * \param s2 The second dimension of the output
+ * \return The padded input
+ */
 template<typename I>
 etl::dyn_vector<etl::complex<etl::value_t<I>>> pad_one_fft2(const I& input, size_t s1, size_t s2){
     auto input_padded = pad_one(input, s1, s2);
