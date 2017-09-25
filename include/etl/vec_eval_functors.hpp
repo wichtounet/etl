@@ -64,31 +64,37 @@ struct VectorizedAssign : vectorized_base<V> {
 
         size_t i = 0;
 
-        // TODO: Should use if constexpr here
+        // 0. If possible and interesting, use streaming stores
 
-        if(streaming && N > stream_threshold / (sizeof(value_t<L_Expr>) * 3) && !rhs.alias(lhs)){
-            for (; i < last; i += IT::size) {
-                lhs.template stream<vect_impl>(load(rhs, i), i);
-            }
+        if /*constexpr*/ (streaming){
+            if (N > stream_threshold / (sizeof(value_t<L_Expr>) * 3) && !rhs.alias(lhs)) {
+                for (; i < last; i += IT::size) {
+                    lhs.template stream<vect_impl>(load(rhs, i), i);
+                }
 
-            for (; remainder && i < N; ++i) {
-                lhs_mem[i] = rhs[i];
-            }
-        } else {
-            for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
-                lhs.template store<vect_impl>(load(rhs, i + 0 * IT::size), i + 0 * IT::size);
-                lhs.template store<vect_impl>(load(rhs, i + 1 * IT::size), i + 1 * IT::size);
-                lhs.template store<vect_impl>(load(rhs, i + 2 * IT::size), i + 2 * IT::size);
-                lhs.template store<vect_impl>(load(rhs, i + 3 * IT::size), i + 3 * IT::size);
-            }
+                for (; remainder && i < N; ++i) {
+                    lhs_mem[i] = rhs[i];
+                }
 
-            for (; i < last; i += IT::size) {
-                lhs.template store<vect_impl>(load(rhs, i), i);
+                return;
             }
+        }
 
-            for (; remainder && i < N; ++i) {
-                lhs_mem[i] = rhs[i];
-            }
+        // 1. In the default case, simple unrolled vectorization
+
+        for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
+            lhs.template store<vect_impl>(load(rhs, i + 0 * IT::size), i + 0 * IT::size);
+            lhs.template store<vect_impl>(load(rhs, i + 1 * IT::size), i + 1 * IT::size);
+            lhs.template store<vect_impl>(load(rhs, i + 2 * IT::size), i + 2 * IT::size);
+            lhs.template store<vect_impl>(load(rhs, i + 3 * IT::size), i + 3 * IT::size);
+        }
+
+        for (; i < last; i += IT::size) {
+            lhs.template store<vect_impl>(load(rhs, i), i);
+        }
+
+        for (; remainder && i < N; ++i) {
+            lhs_mem[i] = rhs[i];
         }
     }
 };
