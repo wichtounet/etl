@@ -33,7 +33,6 @@ constexpr etl::conv_impl select_default_conv1_impl_new(bool no_gpu) {
 
     if(TT == conv_type::FULL){
         if(impl::cufft::conv1_possible<I, K, C> && !no_gpu){
-            //TODO This should only be done for some sizes
             return etl::conv_impl::FFT_CUFFT;
         } else if(impl::blas::conv1_possible<I, K, C>){
             //TODO This should only be done for some sizes
