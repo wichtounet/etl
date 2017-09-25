@@ -141,9 +141,15 @@ auto clip(E&& value, T min, T max) {
 }
 
 /*!
- * \brief Apply pow(x, v) on each element x of the ETL expression
+ * \brief Apply pow(x, v) on each element x of the ETL expression.
+ *
+ * This function is not guaranteed to return the same results in
+ * different operation modes (CPU, GPU, VEC). It should only be used
+ * with positives x.
+ *
  * \param value The ETL expression
  * \param v The power
+ *
  * \return an expression representing the pow(x, v) of each value x of the given expression
  */
 template <typename E, typename T>
@@ -163,6 +169,25 @@ template <typename E>
 auto pow_int(E&& value, size_t v) -> detail::left_binary_helper_op<E, scalar<size_t>, integer_pow_binary_op<value_t<E>, size_t>> {
     static_assert(is_etl_expr<E>, "etl::pow can only be used on ETL expressions");
     return {value, scalar<size_t>(v)};
+}
+
+/*!
+ * \brief Apply pow(x, v) on each element x of the ETL expression.
+ *
+ * This function does not have different precision in different
+ * operation mode (GPU, VEC, ...). This is guaranteeed to work with
+ * the same precision as std::pow.
+ *
+ * \param value The ETL expression
+ * \param v The power
+ *
+ * \return an expression representing the pow(x, v) of each value x of the given expression
+ */
+template <typename E, typename T>
+auto pow_precise(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, precise_pow_binary_op<value_t<E>, value_t<E>>> {
+    static_assert(is_etl_expr<E>, "etl::pow_precise can only be used on ETL expressions");
+    static_assert(std::is_arithmetic<T>::value, "etl::pow_precise can only be used with arithmetic values");
+    return {value, scalar<value_t<E>>(v)};
 }
 
 /*!

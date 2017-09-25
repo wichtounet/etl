@@ -1442,6 +1442,48 @@ struct pow_binary_op {
 };
 
 /*!
+ * \brief Binary operator for scalar power with stable precision.
+ */
+template <typename T, typename E>
+struct precise_pow_binary_op {
+    static constexpr bool linear         = true;  ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe    = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func      = true;  ///< Indicates if the description must be printed as function
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename L, typename R>
+    static constexpr bool gpu_computable = false;
+
+    /*!
+     * \brief Apply the unary operator on lhs and rhs
+     * \param x The left hand side value on which to apply the operator
+     * \param value The right hand side value on which to apply the operator
+     * \return The result of applying the binary operator on lhs and rhs
+     */
+    static constexpr T apply(const T& x, E value) noexcept {
+        return std::pow(x, value);
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
+    static std::string desc() noexcept {
+        return "pow_precise";
+    }
+};
+
+/*!
  * \brief Binary operator for scalar power with an integer as the exponent.
  */
 template <typename T, typename E>
