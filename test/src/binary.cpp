@@ -33,6 +33,22 @@ TEMPLATE_TEST_CASE_2("fast_matrix/min", "fast_matrix::min", Z, float, double) {
     REQUIRE_EQUALS(d[3], 1.0);
 }
 
+TEMPLATE_TEST_CASE_2("pow_precise/0", "[fast][pow]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 4> a = {-1.0, 2.0, 1.0, 1.0, 2.0, 4.0, 5.0, -6.0};
+    etl::fast_matrix<Z, 2, 4> d;
+
+    d = pow_precise(a, Z(2));
+
+    REQUIRE_EQUALS_APPROX(d[0], Z(1.0));
+    REQUIRE_EQUALS_APPROX(d[1], Z(4.0));
+    REQUIRE_EQUALS_APPROX(d[2], Z(1.0));
+    REQUIRE_EQUALS_APPROX(d[3], Z(1.0));
+    REQUIRE_EQUALS_APPROX(d[4], Z(4.0));
+    REQUIRE_EQUALS_APPROX(d[5], Z(16.0));
+    REQUIRE_EQUALS_APPROX(d[6], Z(25.0));
+    REQUIRE_EQUALS_APPROX(d[7], Z(36.0));
+}
+
 TEMPLATE_TEST_CASE_2("pow/0", "[fast][pow]", Z, float, double) {
     etl::fast_matrix<Z, 2, 4> a = {0.1, 2.0, 1.0, 1.0, 2.0, 4.0, 5.0, 6.0};
     etl::fast_matrix<Z, 2, 4> d;
