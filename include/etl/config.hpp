@@ -165,6 +165,10 @@ enum class vector_mode_t {
     AVX512 ///< AVX-512F is the max vectorization available
 };
 
+/*!
+ * \brief The default vector mode for vectorization by the
+ * evaluator engine.
+ */
 constexpr vector_mode_t vector_mode = ETL_VECTOR_MODE;
 
 /*!
