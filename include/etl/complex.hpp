@@ -284,6 +284,52 @@ inline complex<T> operator/(const complex<T>& lhs, const complex<T>& rhs) {
 }
 
 /*!
+ * \brief Computes the magnitude of the given complex number
+ * \param z The input complex number
+ * \return The magnitude of z
+ */
+template<typename T>
+T abs(complex<T> z){
+    auto x = z.real;
+    auto y = z.imag;
+    auto s = std::max(std::abs(x), std::abs(y));
+
+    if (s == T()) {
+        return s;
+    }
+
+    x = x / s;
+    y = y / s;
+
+    return s * std::sqrt(x * x + y * y);
+}
+
+/*!
+ * \brief Computes the complex square root of the input
+ * \param z The input complex number
+ * \return The square root of z
+ */
+template<typename T>
+complex<T> sqrt(complex<T> z){
+    auto x = z.real;
+    auto y = z.imag;
+
+    if (x == T()) {
+        auto t = std::sqrt(std::abs(y) / 2);
+        return {t, y < T() ? -t : t};
+    } else {
+        auto t = std::sqrt(2 * (abs(z) + std::abs(x)));
+        auto u = t / 2;
+
+        if (x > T()) {
+            return {u, y / t};
+        } else {
+            return {std::abs(y) / t, y < T() ? -u : u};
+        }
+    }
+}
+
+/*!
  * \brief Returns the inverse of the complex number
  * \param x The complex number
  * \return The inverse of the complex number
