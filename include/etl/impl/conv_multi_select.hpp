@@ -41,7 +41,6 @@ constexpr etl::conv_multi_impl select_default_conv_valid_multi(bool no_gpu) {
     }
 
     if(impl::cudnn::conv_possible<I, K, C> && is_2d<I> && !no_gpu){
-        //TODO Should only be used with (very?) large sizes
         return etl::conv_multi_impl::CUDNN;
     }
 
