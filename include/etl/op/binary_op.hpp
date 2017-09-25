@@ -1360,7 +1360,10 @@ struct pow_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable = false;
+    static constexpr bool vectorizable =
+                (V == vector_mode_t::SSE3 && is_single_precision_t<T>)
+            ||  (V == vector_mode_t::AVX && is_single_precision_t<T>)
+            ||  (intel_compiler && !is_complex_t<T>);
 
     /*!
      * \brief Indicates if the operator can be computed on GPU
@@ -1373,6 +1376,12 @@ struct pow_binary_op {
             || (is_complex_double_t<T> && impl::egblas::has_zpow_yx);
 
     /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
+
+    /*!
      * \brief Apply the unary operator on lhs and rhs
      * \param x The left hand side value on which to apply the operator
      * \param value The right hand side value on which to apply the operator
@@ -1380,6 +1389,21 @@ struct pow_binary_op {
      */
     static constexpr T apply(const T& x, E value) noexcept {
         return std::pow(x, value);
+    }
+
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The left hand side vector
+     * \param y The right hand side vector
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
+    template <typename V = default_vec>
+    static ETL_STRONG_INLINE(vec_type<V>) load(const vec_type<V>& x, const vec_type<V>& y) noexcept {
+        // Use pow(x, y) = exp(y * log(x))
+        auto t1 = V::log(x);
+        auto t2 = V::mul(y, t1);
+        return V::exp(t2);
     }
 
     /*!
