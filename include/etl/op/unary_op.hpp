@@ -1243,6 +1243,48 @@ struct tan_unary_op {
 };
 
 /*!
+ * \copydoc tan_unary_op
+ */
+template <typename TT>
+struct tan_unary_op <etl::complex<TT>> {
+    using T = etl::complex<TT>; ///< The real type
+
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
+    static constexpr T apply(const T& x) noexcept {
+        return etl::tan(x);
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
+    static std::string desc() noexcept {
+        return "tan";
+    }
+};
+
+/*!
  * \brief Unary operation computing the cosinus
  * \tparam T The type of value
  */
@@ -1278,6 +1320,65 @@ struct cos_unary_op {
      */
     static constexpr T apply(const T& x) noexcept {
         return std::cos(x);
+    }
+
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
+    template <typename V = default_vec>
+    static vec_type<V> load(const vec_type<V>& x) noexcept {
+        return V::cos(x);
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
+    static std::string desc() noexcept {
+        return "cos";
+    }
+};
+
+/*!
+ * \copydoc cos_unary_op
+ */
+template <typename TT>
+struct cos_unary_op<etl::complex<TT>> {
+    using T = etl::complex<TT>; ///< The real type
+
+    /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
+
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    static constexpr bool vectorizable = (V == vector_mode_t::SSE3 || V == vector_mode_t::AVX) && is_single_precision_t<T>;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
+    static constexpr T apply(const T& x) noexcept {
+        return etl::cos(x);
     }
 
     /*!
@@ -1359,6 +1460,65 @@ struct sin_unary_op {
 };
 
 /*!
+ * \copydoc sin_unary_op
+ */
+template <typename TT>
+struct sin_unary_op <etl::complex<TT>> {
+    using T = etl::complex<TT>; ///< The real type
+
+    /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
+
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    static constexpr bool vectorizable = (V == vector_mode_t::SSE3 || V == vector_mode_t::AVX) && is_single_precision_t<T>;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
+    static constexpr T apply(const T& x) noexcept {
+        return etl::sin(x);
+    }
+
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
+    template <typename V = default_vec>
+    static vec_type<V> load(const vec_type<V>& x) noexcept {
+        return V::sin(x);
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
+    static std::string desc() noexcept {
+        return "sin";
+    }
+};
+
+/*!
  * \brief Unary operation computing the hyperbolic tangent
  * \tparam T The type of value
  */
@@ -1388,6 +1548,49 @@ struct tanh_unary_op {
      */
     static constexpr T apply(const T& x) noexcept {
         return std::tanh(x);
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
+    static std::string desc() noexcept {
+        return "tanh";
+    }
+};
+
+/*!
+ * \brief Unary operation computing the hyperbolic tangent
+ * \tparam T The type of value
+ */
+template <typename TT>
+struct tanh_unary_op <etl::complex<TT>> {
+    using T = etl::complex<TT>; ///< The real type
+
+    static constexpr bool linear      = true;             ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true;             ///< Indicates if the operator is thread safe or not
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
+    static constexpr T apply(const T& x) noexcept {
+        return etl::tanh(x);
     }
 
     /*!
@@ -1441,6 +1644,49 @@ struct cosh_unary_op {
 };
 
 /*!
+ * \brief Unary operation computing the hyperbolic cosinus
+ * \tparam T The type of value
+ */
+template <typename TT>
+struct cosh_unary_op <etl::complex<TT>> {
+    using T = etl::complex<TT>; ///< The real type
+
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
+    static constexpr T apply(const T& x) noexcept {
+        return etl::cosh(x);
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
+    static std::string desc() noexcept {
+        return "cosh";
+    }
+};
+
+/*!
  * \brief Unary operation computing the hyperbolic sinus
  * \tparam T The type of value
  */
@@ -1470,6 +1716,49 @@ struct sinh_unary_op {
      */
     static constexpr T apply(const T& x) noexcept {
         return std::sinh(x);
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
+    static std::string desc() noexcept {
+        return "sinh";
+    }
+};
+
+/*!
+ * \brief Unary operation computing the hyperbolic sinus
+ * \tparam T The type of value
+ */
+template <typename TT>
+struct sinh_unary_op <etl::complex<TT>> {
+    using T = etl::complex<TT>; ///< The real type
+
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = false;
+
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
+    static constexpr T apply(const T& x) noexcept {
+        return etl::sinh(x);
     }
 
     /*!

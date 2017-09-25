@@ -330,6 +330,66 @@ complex<T> sqrt(complex<T> z){
 }
 
 /*!
+ * \brief Computes the sinus of the complex input
+ * \param z The input complex number
+ * \return The sinus of z
+ */
+template<typename T>
+complex<T> sin(complex<T> z){
+    return {std::sin(z.real) * std::cosh(z.imag), std::cos(z.real) * std::sinh(z.imag)};
+}
+
+/*!
+ * \brief Computes the cosine of the complex input
+ * \param z The input complex number
+ * \return The cosine of z
+ */
+template<typename T>
+complex<T> cos(complex<T> z){
+    return {std::cos(z.real) * std::cosh(z.imag), -std::sin(z.real) * std::sinh(z.imag)};
+}
+
+/*!
+ * \brief Computes the tangent of the complex input
+ * \param z The input complex number
+ * \return The tangent of z
+ */
+template<typename T>
+complex<T> tan(complex<T> z){
+    return sin(z) / cos(z);
+}
+
+/*!
+ * \brief Computes the hyperbolic cosine of the complex input
+ * \param z The input complex number
+ * \return The hyperbolic cosine of z
+ */
+template<typename T>
+complex<T> cosh(complex<T> z){
+    return {std::cosh(z.real) * std::cos(z.imag), std::sinh(z.real) * std::sin(z.imag)};
+}
+
+/*!
+ * \brief Computes the hyperbolic sinus of the complex input
+ * \param z The input complex number
+ * \return The hyperbolic sinus of z
+ */
+template<typename T>
+complex<T> sinh(complex<T> z){
+    return {std::sinh(z.real) * std::cos(z.imag), std::cosh(z.real) * std::sin(z.imag)};
+}
+
+/*!
+ * \brief Computes the hyperbolic tangent of the complex input
+ * \param z The input complex number
+ * \return The hyperbolic tangent of z
+ */
+template<typename T>
+complex<T> tanh(complex<T> z){
+    return sinh(z) / cosh(z);
+}
+
+/*!
  * \brief Returns the inverse of the complex number
  * \param x The complex number
  * \return The inverse of the complex number
