@@ -16,9 +16,6 @@ namespace etl {
 
 namespace detail {
 
-//TODO Ideally, conv4 selection should be fully constexpr, at least
-//in the case of GPU
-
 /*!
  * \brief Select the implementation of the 4D conv of I and K in C
  *
