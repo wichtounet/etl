@@ -16,6 +16,8 @@ ETL_TEST_CASE("etl_complex/1", "[complex]") {
     REQUIRE_EQUALS(sizeof(etl::complex<float>), sizeof(std::complex<float>));
     REQUIRE_EQUALS(sizeof(etl::complex<double>), sizeof(std::complex<double>));
 
+    // This is done to ensure binary compatibility with std::complex
+
     etl::complex<float> a(3.3, 5.5);
 
     REQUIRE_EQUALS(reinterpret_cast<float(&)[2]>(a)[0], float(3.3));
@@ -25,6 +27,22 @@ ETL_TEST_CASE("etl_complex/1", "[complex]") {
 
     REQUIRE_EQUALS(reinterpret_cast<double(&)[2]>(b)[0], double(-2.3));
     REQUIRE_EQUALS(reinterpret_cast<double(&)[2]>(b)[1], double(4.1));
+}
+
+ETL_TEST_CASE("etl_complex/2", "[complex]") {
+    etl::complex<float> e_a(3.3, 5.5);
+    std::complex<float> s_a(3.3, 5.5);
+
+    etl::complex<double> e_b(-2.3, 4.1);
+    std::complex<double> s_b(-2.3, 4.1);
+
+    REQUIRE_EQUALS_APPROX(std::abs(s_a), etl::abs(e_a));
+    REQUIRE_EQUALS_APPROX(std::abs(s_b), etl::abs(e_b));
+
+    REQUIRE_EQUALS_APPROX(std::sqrt(s_a).imag(), etl::sqrt(e_a).imag);
+    REQUIRE_EQUALS_APPROX(std::sqrt(s_a).real(), etl::sqrt(e_a).real);
+    REQUIRE_EQUALS_APPROX(std::sqrt(s_b).imag(), etl::sqrt(e_b).imag);
+    REQUIRE_EQUALS_APPROX(std::sqrt(s_b).real(), etl::sqrt(e_b).real);
 }
 
 TEMPLATE_TEST_CASE_2("complex/std/1", "[complex]", Z, float, double) {
