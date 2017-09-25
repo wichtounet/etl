@@ -12,8 +12,9 @@
 // Trigonometric tests
 
 TEMPLATE_TEST_CASE_2("trigo/tan/1", "[trigo][tan]", Z, double, float) {
-    etl::dyn_matrix<Z> a(3, 2, etl::values(1.0, 2.0, -1.0, -0.5, 0.6, 0.1));
+    etl::dyn_matrix<Z> a(3, 3, etl::values(1.0, 2.0, -1.0, -0.5, 0.6, 0.1, 1.0, -0.5, 0.5));
     etl::dyn_matrix<Z> b;
+
     b = etl::tan(a);
 
     for (size_t i = 0; i < b.size(); ++i) {

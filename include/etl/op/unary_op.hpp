@@ -1207,8 +1207,8 @@ struct fast_sigmoid_unary_op {
  */
 template <typename T>
 struct tan_unary_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -1216,7 +1216,7 @@ struct tan_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable = false;
+    static constexpr bool vectorizable = (V == vector_mode_t::SSE3 || V == vector_mode_t::AVX) && is_single_precision_t<T>;
 
     /*!
      * \brief Indicates if the operator can be computed on GPU
@@ -1225,12 +1225,29 @@ struct tan_unary_op {
     static constexpr bool gpu_computable = false;
 
     /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
      */
     static constexpr T apply(const T& x) noexcept {
         return std::tan(x);
+    }
+
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
+    template <typename V = default_vec>
+    static vec_type<V> load(const vec_type<V>& x) noexcept {
+        return V::div(V::sin(x), V::cos(x));
     }
 
     /*!
@@ -1290,12 +1307,6 @@ struct tan_unary_op <etl::complex<TT>> {
  */
 template <typename T>
 struct cos_unary_op {
-    /*!
-     * The vectorization type for V
-     */
-    template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
-
     static constexpr bool linear = true; ///< Indicates if the operator is linear
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
@@ -1312,6 +1323,12 @@ struct cos_unary_op {
      */
     template <typename E>
     static constexpr bool gpu_computable = false;
+
+    /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -1349,12 +1366,6 @@ template <typename TT>
 struct cos_unary_op<etl::complex<TT>> {
     using T = etl::complex<TT>; ///< The real type
 
-    /*!
-     * The vectorization type for V
-     */
-    template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
-
     static constexpr bool linear      = true; ///< Indicates if the operator is linear
     static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
@@ -1364,7 +1375,7 @@ struct cos_unary_op<etl::complex<TT>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable = (V == vector_mode_t::SSE3 || V == vector_mode_t::AVX) && is_single_precision_t<T>;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Indicates if the operator can be computed on GPU
@@ -1379,17 +1390,6 @@ struct cos_unary_op<etl::complex<TT>> {
      */
     static constexpr T apply(const T& x) noexcept {
         return etl::cos(x);
-    }
-
-    /*!
-     * \brief Compute several applications of the operator at a time
-     * \param x The vector on which to operate
-     * \tparam V The vectorization mode
-     * \return a vector containing several results of the operator
-     */
-    template <typename V = default_vec>
-    static vec_type<V> load(const vec_type<V>& x) noexcept {
-        return V::cos(x);
     }
 
     /*!
@@ -1466,12 +1466,6 @@ template <typename TT>
 struct sin_unary_op <etl::complex<TT>> {
     using T = etl::complex<TT>; ///< The real type
 
-    /*!
-     * The vectorization type for V
-     */
-    template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
-
     static constexpr bool linear      = true; ///< Indicates if the operator is linear
     static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
@@ -1481,7 +1475,7 @@ struct sin_unary_op <etl::complex<TT>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable = (V == vector_mode_t::SSE3 || V == vector_mode_t::AVX) && is_single_precision_t<T>;
+    static constexpr bool vectorizable = false;
 
     /*!
      * \brief Indicates if the operator can be computed on GPU
@@ -1496,17 +1490,6 @@ struct sin_unary_op <etl::complex<TT>> {
      */
     static constexpr T apply(const T& x) noexcept {
         return etl::sin(x);
-    }
-
-    /*!
-     * \brief Compute several applications of the operator at a time
-     * \param x The vector on which to operate
-     * \tparam V The vectorization mode
-     * \return a vector containing several results of the operator
-     */
-    template <typename V = default_vec>
-    static vec_type<V> load(const vec_type<V>& x) noexcept {
-        return V::sin(x);
     }
 
     /*!
