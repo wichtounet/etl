@@ -9,6 +9,9 @@
 
 #include <cmath>
 
+#define CZ(a, b) std::complex<Z>(a, b)
+#define ECZ(a, b) etl::complex<Z>(a, b)
+
 TEMPLATE_TEST_CASE_2("log/0", "[log]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
@@ -126,7 +129,7 @@ TEMPLATE_TEST_CASE_2("log10/2", "[log10]", Z, float, double) {
     REQUIRE_DIRECT(std::isnan(d[7]));
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/sqrt_1", "fast_matrix::sqrt", Z, float, double) {
+TEMPLATE_TEST_CASE_2("sqrt/1", "fast_matrix::sqrt", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2> d;
@@ -138,7 +141,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/sqrt_1", "fast_matrix::sqrt", Z, float, double
     REQUIRE_EQUALS_APPROX(d[3], std::sqrt(Z(1.0)));
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/sqrt_2", "fast_matrix::sqrt", Z, float, double) {
+TEMPLATE_TEST_CASE_2("sqrt/2", "fast_matrix::sqrt", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2, 1> d;
@@ -150,7 +153,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/sqrt_2", "fast_matrix::sqrt", Z, float, double
     REQUIRE_EQUALS_APPROX(d[3], std::sqrt(Z(1.0)));
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/sqrt_3", "fast_matrix::sqrt", Z, float, double) {
+TEMPLATE_TEST_CASE_2("sqrt/3", "fast_matrix::sqrt", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2, 1> d;
@@ -162,7 +165,39 @@ TEMPLATE_TEST_CASE_2("fast_matrix/sqrt_3", "fast_matrix::sqrt", Z, float, double
     REQUIRE_EQUALS_APPROX(d[3], std::sqrt(Z(1.0)));
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/invsqrt_1", "fast_matrix::invsqrt", Z, float, double) {
+TEMPLATE_TEST_CASE_2("sqrt/4", "fast_matrix::sqrt", Z, std::complex<float>, std::complex<double>) {
+    etl::fast_matrix<Z, 2, 2, 1> a = {Z(-1.0, 1.0), Z(2.0, 3.0), Z(5.0, 2.0), Z(1.0, 1.1)};
+
+    etl::fast_matrix<Z, 2, 2, 1> d;
+    d = sqrt(a);
+
+    REQUIRE_EQUALS_APPROX(d[0].real(), std::sqrt(a[0]).real());
+    REQUIRE_EQUALS_APPROX(d[0].imag(), std::sqrt(a[0]).imag());
+    REQUIRE_EQUALS_APPROX(d[1].real(), std::sqrt(a[1]).real());
+    REQUIRE_EQUALS_APPROX(d[1].imag(), std::sqrt(a[1]).imag());
+    REQUIRE_EQUALS_APPROX(d[2].real(), std::sqrt(a[2]).real());
+    REQUIRE_EQUALS_APPROX(d[2].imag(), std::sqrt(a[2]).imag());
+    REQUIRE_EQUALS_APPROX(d[3].real(), std::sqrt(a[3]).real());
+    REQUIRE_EQUALS_APPROX(d[3].imag(), std::sqrt(a[3]).imag());
+}
+
+TEMPLATE_TEST_CASE_2("sqrt/5", "fast_matrix::sqrt", Z, etl::complex<float>, etl::complex<double>) {
+    etl::fast_matrix<Z, 2, 2, 1> a = {Z(-1.0, 1.0), Z(2.0, 3.0), Z(5.0, 2.0), Z(1.0, 1.1)};
+
+    etl::fast_matrix<Z, 2, 2, 1> d;
+    d = sqrt(a);
+
+    REQUIRE_EQUALS_APPROX(d[0].real, etl::sqrt(a[0]).real);
+    REQUIRE_EQUALS_APPROX(d[0].imag, etl::sqrt(a[0]).imag);
+    REQUIRE_EQUALS_APPROX(d[1].real, etl::sqrt(a[1]).real);
+    REQUIRE_EQUALS_APPROX(d[1].imag, etl::sqrt(a[1]).imag);
+    REQUIRE_EQUALS_APPROX(d[2].real, etl::sqrt(a[2]).real);
+    REQUIRE_EQUALS_APPROX(d[2].imag, etl::sqrt(a[2]).imag);
+    REQUIRE_EQUALS_APPROX(d[3].real, etl::sqrt(a[3]).real);
+    REQUIRE_EQUALS_APPROX(d[3].imag, etl::sqrt(a[3]).imag);
+}
+
+TEMPLATE_TEST_CASE_2("invsqrt/1", "fast_matrix::invsqrt", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2> d;
@@ -174,7 +209,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/invsqrt_1", "fast_matrix::invsqrt", Z, float, 
     REQUIRE_EQUALS_APPROX(d[3], Z(1) / std::sqrt(Z(1.0)));
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/invsqrt_2", "fast_matrix::invsqrt", Z, float, double) {
+TEMPLATE_TEST_CASE_2("invsqrt/2", "fast_matrix::invsqrt", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2, 1> d;
@@ -186,7 +221,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/invsqrt_2", "fast_matrix::invsqrt", Z, float, 
     REQUIRE_EQUALS_APPROX(d[3], Z(1) / std::sqrt(Z(1.0)));
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/invsqrt_3", "fast_matrix::invsqrt", Z, float, double) {
+TEMPLATE_TEST_CASE_2("invsqrt/3", "fast_matrix::invsqrt", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2, 1> d;
@@ -198,7 +233,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/invsqrt_3", "fast_matrix::invsqrt", Z, float, 
     REQUIRE_EQUALS_APPROX(d[3], Z(1) / std::sqrt(Z(1.0)));
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/cbrt_1", "fast_matrix::cbrt", Z, float, double) {
+TEMPLATE_TEST_CASE_2("cbrt/1", "fast_matrix::cbrt", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2> d;
@@ -210,7 +245,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/cbrt_1", "fast_matrix::cbrt", Z, float, double
     REQUIRE_EQUALS_APPROX(d[3], std::cbrt(Z(1.0)));
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/cbrt_2", "fast_matrix::cbrt", Z, float, double) {
+TEMPLATE_TEST_CASE_2("cbrt/2", "fast_matrix::cbrt", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2, 1> d;
@@ -222,7 +257,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/cbrt_2", "fast_matrix::cbrt", Z, float, double
     REQUIRE_EQUALS_APPROX(d[3], std::cbrt(Z(1.0)));
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/cbrt_3", "fast_matrix::cbrt", Z, float, double) {
+TEMPLATE_TEST_CASE_2("cbrt/3", "fast_matrix::cbrt", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2, 1> d;
@@ -234,7 +269,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/cbrt_3", "fast_matrix::cbrt", Z, float, double
     REQUIRE_EQUALS_APPROX(d[3], std::cbrt(Z(1.0)));
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/invcbrt_1", "fast_matrix::invcbrt", Z, float, double) {
+TEMPLATE_TEST_CASE_2("invcbrt/1", "fast_matrix::invcbrt", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2> d;
@@ -246,7 +281,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/invcbrt_1", "fast_matrix::invcbrt", Z, float, 
     REQUIRE_EQUALS_APPROX(d[3], Z(1) / std::cbrt(Z(1.0)));
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/invcbrt_2", "fast_matrix::invcbrt", Z, float, double) {
+TEMPLATE_TEST_CASE_2("invcbrt/2", "fast_matrix::invcbrt", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2, 1> d;
@@ -258,7 +293,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/invcbrt_2", "fast_matrix::invcbrt", Z, float, 
     REQUIRE_EQUALS_APPROX(d[3], Z(1) / std::cbrt(Z(1.0)));
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/invcbrt_3", "fast_matrix::invcbrt", Z, float, double) {
+TEMPLATE_TEST_CASE_2("invcbrt/3", "fast_matrix::invcbrt", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2, 1> d;
