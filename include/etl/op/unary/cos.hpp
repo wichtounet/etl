@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "etl/impl/egblas/cos.hpp"
+
 namespace etl {
 
 /*!

@@ -24,7 +24,6 @@
 #include "etl/impl/cudnn/sigmoid.hpp"
 #include "etl/impl/egblas/sqrt.hpp"
 #include "etl/impl/egblas/exp.hpp"
-#include "etl/impl/egblas/cos.hpp"
 #include "etl/impl/egblas/relu_der_out.hpp"
 
 #include "etl/op/unary/abs.hpp"
