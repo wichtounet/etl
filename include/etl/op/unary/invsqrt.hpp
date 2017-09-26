@@ -98,7 +98,7 @@ struct invsqrt_unary_op {
  */
 template <typename TT>
 struct invsqrt_unary_op<etl::complex<TT>> {
-    using T = etl::complex<TT>; // The real type
+    using T = etl::complex<TT>; ///< The real type
 
     static constexpr bool linear      = true; ///< Indicates if the operator is linear
     static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
