@@ -27,7 +27,7 @@ namespace impl {
 namespace egblas {
 
 /*!
- * \brief Indicates if EGBLAS has sinhgle-precision hyperbolic sinus.
+ * \brief Indicates if EGBLAS has single-precision hyperbolic sinus.
  */
 #ifdef EGBLAS_HAS_SSINH
 static constexpr bool has_ssinh = true;
@@ -36,7 +36,7 @@ static constexpr bool has_ssinh = false;
 #endif
 
 /*!
- * \brief Wrappers for sinhgle-precision egblas sinh operation
+ * \brief Wrappers for single-precision egblas sinh operation
  * \param n The size of the vector
  * \param alpha The scaling factor alpha
  * \param A The memory of the vector a
@@ -93,7 +93,7 @@ inline void sinh(size_t n, double* alpha, double* A , size_t lda, double* B , si
 }
 
 /*!
- * \brief Indicates if EGBLAS has complex sinhgle-precision hyperbolic sinus.
+ * \brief Indicates if EGBLAS has complex single-precision hyperbolic sinus.
  */
 #ifdef EGBLAS_HAS_CSINH
 static constexpr bool has_csinh = true;
@@ -102,7 +102,7 @@ static constexpr bool has_csinh = false;
 #endif
 
 /*!
- * \brief Wrappers for complex sinhgle-precision egblas sinh operation
+ * \brief Wrappers for complex single-precision egblas sinh operation
  * \param n The size of the vector
  * \param alpha The scaling factor alpha
  * \param A The memory of the vector a
@@ -126,7 +126,7 @@ inline void sinh(size_t n, std::complex<float>* alpha, std::complex<float>* A , 
 }
 
 /*!
- * \brief Wrappers for complex sinhgle-precision egblas sinh operation
+ * \brief Wrappers for complex single-precision egblas sinh operation
  * \param n The size of the vector
  * \param alpha The scaling factor alpha
  * \param A The memory of the vector a
