@@ -343,6 +343,42 @@ complex<T> sqrt(complex<T> z){
 }
 
 /*!
+ * \brief Computes the inverse complex square root of the input
+ * \param z The input complex number
+ * \return The inverse square root of z
+ */
+template<typename T>
+complex<T> invsqrt(complex<T> z){
+    return complex<T>(T(1)) / sqrt(z);
+}
+
+/*!
+ * \brief Computes the complex cubic root of the input
+ * \param z The input complex number
+ * \return The cubic root of z
+ */
+template<typename T>
+complex<T> cbrt(complex<T> z){
+    auto z_abs = etl::abs(z);
+    auto z_arg = etl::arg(z);
+
+    auto new_abs = std::cbrt(z_abs);
+    auto new_arg = z_arg / 3.0f;
+
+    return {new_abs * std::cos(new_arg), new_abs * std::sin(new_arg)};
+}
+
+/*!
+ * \brief Computes the inverse complex cubic root of the input
+ * \param z The input complex number
+ * \return The inverse cubic root of z
+ */
+template<typename T>
+complex<T> invcbrt(complex<T> z){
+    return complex<T>(T(1)) / cbrt(z);
+}
+
+/*!
  * \brief Computes the complex logarithm, in base e, of the input
  * \param z The input complex number
  * \return The complex logarithm, in base e, of z
