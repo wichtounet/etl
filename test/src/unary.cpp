@@ -51,6 +51,38 @@ TEMPLATE_TEST_CASE_2("log/2", "[log]", Z, float, double) {
     REQUIRE_DIRECT(std::isnan(d[7]));
 }
 
+TEMPLATE_TEST_CASE_2("log/3", "[log]", Z, std::complex<float>, std::complex<double>) {
+    etl::fast_matrix<Z, 2, 2, 1> a = {Z(-1.0, 1.0), Z(2.0, 3.0), Z(5.0, 2.0), Z(1.0, 1.1)};
+
+    etl::fast_matrix<Z, 2, 2, 1> d;
+    d = log(a);
+
+    REQUIRE_EQUALS_APPROX(d[0].real(), std::log(a[0]).real());
+    REQUIRE_EQUALS_APPROX(d[0].imag(), std::log(a[0]).imag());
+    REQUIRE_EQUALS_APPROX(d[1].real(), std::log(a[1]).real());
+    REQUIRE_EQUALS_APPROX(d[1].imag(), std::log(a[1]).imag());
+    REQUIRE_EQUALS_APPROX(d[2].real(), std::log(a[2]).real());
+    REQUIRE_EQUALS_APPROX(d[2].imag(), std::log(a[2]).imag());
+    REQUIRE_EQUALS_APPROX(d[3].real(), std::log(a[3]).real());
+    REQUIRE_EQUALS_APPROX(d[3].imag(), std::log(a[3]).imag());
+}
+
+TEMPLATE_TEST_CASE_2("log/4", "[log]", Z, etl::complex<float>, etl::complex<double>) {
+    etl::fast_matrix<Z, 2, 2, 1> a = {Z(-1.0, 1.0), Z(2.0, 3.0), Z(5.0, 2.0), Z(1.0, 1.1)};
+
+    etl::fast_matrix<Z, 2, 2, 1> d;
+    d = log(a);
+
+    REQUIRE_EQUALS_APPROX(d[0].real, etl::log(a[0]).real);
+    REQUIRE_EQUALS_APPROX(d[0].imag, etl::log(a[0]).imag);
+    REQUIRE_EQUALS_APPROX(d[1].real, etl::log(a[1]).real);
+    REQUIRE_EQUALS_APPROX(d[1].imag, etl::log(a[1]).imag);
+    REQUIRE_EQUALS_APPROX(d[2].real, etl::log(a[2]).real);
+    REQUIRE_EQUALS_APPROX(d[2].imag, etl::log(a[2]).imag);
+    REQUIRE_EQUALS_APPROX(d[3].real, etl::log(a[3]).real);
+    REQUIRE_EQUALS_APPROX(d[3].imag, etl::log(a[3]).imag);
+}
+
 TEMPLATE_TEST_CASE_2("log2/0", "[log2]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
@@ -90,6 +122,47 @@ TEMPLATE_TEST_CASE_2("log2/2", "[log2]", Z, float, double) {
     REQUIRE_DIRECT(std::isnan(d[7]));
 }
 
+namespace {
+
+template<typename T>
+std::complex<T> my_log2(std::complex<T> z){
+    return std::log(z) / std::log(std::complex<T>{T(2)});
+}
+
+} // end of anonymous namespace
+
+TEMPLATE_TEST_CASE_2("log2/3", "[log2]", Z, std::complex<float>, std::complex<double>) {
+    etl::fast_matrix<Z, 2, 2, 1> a = {Z(-1.0, 1.0), Z(2.0, 3.0), Z(5.0, 2.0), Z(1.0, 1.1)};
+
+    etl::fast_matrix<Z, 2, 2, 1> d;
+    d = log2(a);
+
+    REQUIRE_EQUALS_APPROX(d[0].real(), my_log2(a[0]).real());
+    REQUIRE_EQUALS_APPROX(d[0].imag(), my_log2(a[0]).imag());
+    REQUIRE_EQUALS_APPROX(d[1].real(), my_log2(a[1]).real());
+    REQUIRE_EQUALS_APPROX(d[1].imag(), my_log2(a[1]).imag());
+    REQUIRE_EQUALS_APPROX(d[2].real(), my_log2(a[2]).real());
+    REQUIRE_EQUALS_APPROX(d[2].imag(), my_log2(a[2]).imag());
+    REQUIRE_EQUALS_APPROX(d[3].real(), my_log2(a[3]).real());
+    REQUIRE_EQUALS_APPROX(d[3].imag(), my_log2(a[3]).imag());
+}
+
+TEMPLATE_TEST_CASE_2("log2/4", "[log2]", Z, etl::complex<float>, etl::complex<double>) {
+    etl::fast_matrix<Z, 2, 2, 1> a = {Z(-1.0, 1.0), Z(2.0, 3.0), Z(5.0, 2.0), Z(1.0, 1.1)};
+
+    etl::fast_matrix<Z, 2, 2, 1> d;
+    d = log2(a);
+
+    REQUIRE_EQUALS_APPROX(d[0].real, etl::log2(a[0]).real);
+    REQUIRE_EQUALS_APPROX(d[0].imag, etl::log2(a[0]).imag);
+    REQUIRE_EQUALS_APPROX(d[1].real, etl::log2(a[1]).real);
+    REQUIRE_EQUALS_APPROX(d[1].imag, etl::log2(a[1]).imag);
+    REQUIRE_EQUALS_APPROX(d[2].real, etl::log2(a[2]).real);
+    REQUIRE_EQUALS_APPROX(d[2].imag, etl::log2(a[2]).imag);
+    REQUIRE_EQUALS_APPROX(d[3].real, etl::log2(a[3]).real);
+    REQUIRE_EQUALS_APPROX(d[3].imag, etl::log2(a[3]).imag);
+}
+
 TEMPLATE_TEST_CASE_2("log10/0", "[log10]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
@@ -127,6 +200,38 @@ TEMPLATE_TEST_CASE_2("log10/2", "[log10]", Z, float, double) {
     REQUIRE_EQUALS_APPROX(d[5], std::log10(Z(2.2)));
     REQUIRE_EQUALS_APPROX(d[6], std::log10(Z(3.2)));
     REQUIRE_DIRECT(std::isnan(d[7]));
+}
+
+TEMPLATE_TEST_CASE_2("log10/3", "[log10]", Z, std::complex<float>, std::complex<double>) {
+    etl::fast_matrix<Z, 2, 2, 1> a = {Z(-1.0, 1.0), Z(2.0, 3.0), Z(5.0, 2.0), Z(1.0, 1.1)};
+
+    etl::fast_matrix<Z, 2, 2, 1> d;
+    d = log10(a);
+
+    REQUIRE_EQUALS_APPROX(d[0].real(), std::log10(a[0]).real());
+    REQUIRE_EQUALS_APPROX(d[0].imag(), std::log10(a[0]).imag());
+    REQUIRE_EQUALS_APPROX(d[1].real(), std::log10(a[1]).real());
+    REQUIRE_EQUALS_APPROX(d[1].imag(), std::log10(a[1]).imag());
+    REQUIRE_EQUALS_APPROX(d[2].real(), std::log10(a[2]).real());
+    REQUIRE_EQUALS_APPROX(d[2].imag(), std::log10(a[2]).imag());
+    REQUIRE_EQUALS_APPROX(d[3].real(), std::log10(a[3]).real());
+    REQUIRE_EQUALS_APPROX(d[3].imag(), std::log10(a[3]).imag());
+}
+
+TEMPLATE_TEST_CASE_2("log10/4", "[log10]", Z, etl::complex<float>, etl::complex<double>) {
+    etl::fast_matrix<Z, 2, 2, 1> a = {Z(-1.0, 1.0), Z(2.0, 3.0), Z(5.0, 2.0), Z(1.0, 1.1)};
+
+    etl::fast_matrix<Z, 2, 2, 1> d;
+    d = log10(a);
+
+    REQUIRE_EQUALS_APPROX(d[0].real, etl::log10(a[0]).real);
+    REQUIRE_EQUALS_APPROX(d[0].imag, etl::log10(a[0]).imag);
+    REQUIRE_EQUALS_APPROX(d[1].real, etl::log10(a[1]).real);
+    REQUIRE_EQUALS_APPROX(d[1].imag, etl::log10(a[1]).imag);
+    REQUIRE_EQUALS_APPROX(d[2].real, etl::log10(a[2]).real);
+    REQUIRE_EQUALS_APPROX(d[2].imag, etl::log10(a[2]).imag);
+    REQUIRE_EQUALS_APPROX(d[3].real, etl::log10(a[3]).real);
+    REQUIRE_EQUALS_APPROX(d[3].imag, etl::log10(a[3]).imag);
 }
 
 TEMPLATE_TEST_CASE_2("sqrt/1", "fast_matrix::sqrt", Z, float, double) {

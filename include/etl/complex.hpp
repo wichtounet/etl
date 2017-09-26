@@ -305,6 +305,19 @@ T abs(complex<T> z){
 }
 
 /*!
+ * \brief Computes the phase angle of the given complex number
+ * \param z The input complex number
+ * \return The phase angle of z
+ */
+template<typename T>
+T arg(complex<T> z){
+    auto x = z.real;
+    auto y = z.imag;
+
+    return atan2(y, x);
+}
+
+/*!
  * \brief Computes the complex square root of the input
  * \param z The input complex number
  * \return The square root of z
@@ -327,6 +340,36 @@ complex<T> sqrt(complex<T> z){
             return {std::abs(y) / t, y < T() ? -u : u};
         }
     }
+}
+
+/*!
+ * \brief Computes the complex logarithm, in base e, of the input
+ * \param z The input complex number
+ * \return The complex logarithm, in base e, of z
+ */
+template<typename T>
+complex<T> log(complex<T> z){
+    return {std::log(etl::abs(z)), etl::arg(z)};
+}
+
+/*!
+ * \brief Computes the complex logarithm, in base 2, of the input
+ * \param z The input complex number
+ * \return The complex logarithm, in base 2, of z
+ */
+template<typename T>
+complex<T> log2(complex<T> z){
+    return etl::log(z) / etl::log(etl::complex<T>{T(2)});
+}
+
+/*!
+ * \brief Computes the complex logarithm, in base 10, of the input
+ * \param z The input complex number
+ * \return The complex logarithm, in base 10, of z
+ */
+template<typename T>
+complex<T> log10(complex<T> z){
+    return etl::log(z) / etl::log(etl::complex<T>{T(10)});
 }
 
 /*!
