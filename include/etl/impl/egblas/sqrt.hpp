@@ -96,7 +96,7 @@ inline void sqrt(size_t n, double* alpha, double* A , size_t lda, double* B , si
  * \brief Indicates if EGBLAS has complex single-precision square
  * root.
  */
-#ifdef EGBLAS_HAS_Csqrt
+#ifdef EGBLAS_HAS_CSQRT
 static constexpr bool has_csqrt = true;
 #else
 static constexpr bool has_csqrt = false;
@@ -112,7 +112,7 @@ static constexpr bool has_csqrt = false;
  * \param ldb The leading dimension of b
  */
 inline void sqrt(size_t n, std::complex<float>* alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
-#ifdef EGBLAS_HAS_Csqrt
+#ifdef EGBLAS_HAS_CSQRT
     egblas_csqrt(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -136,7 +136,7 @@ inline void sqrt(size_t n, std::complex<float>* alpha, std::complex<float>* A , 
  * \param ldb The leading dimension of b
  */
 inline void sqrt(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
-#ifdef EGBLAS_HAS_Csqrt
+#ifdef EGBLAS_HAS_CSQRT
     egblas_csqrt(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -154,7 +154,7 @@ inline void sqrt(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , 
  * \brief Indicates if EGBLAS has complex double-precision square
  * root.
  */
-#ifdef EGBLAS_HAS_Zsqrt
+#ifdef EGBLAS_HAS_ZSQRT
 static constexpr bool has_zsqrt = true;
 #else
 static constexpr bool has_zsqrt = false;
@@ -170,7 +170,7 @@ static constexpr bool has_zsqrt = false;
  * \param ldb The leading dimension of b
  */
 inline void sqrt(size_t n, std::complex<double>* alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
-#ifdef EGBLAS_HAS_Zsqrt
+#ifdef EGBLAS_HAS_ZSQRT
     egblas_zsqrt(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -194,7 +194,7 @@ inline void sqrt(size_t n, std::complex<double>* alpha, std::complex<double>* A 
  * \param ldb The leading dimension of b
  */
 inline void sqrt(size_t n, etl::complex<double>* alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
-#ifdef EGBLAS_HAS_Zsqrt
+#ifdef EGBLAS_HAS_ZSQRT
     egblas_zsqrt(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);

@@ -132,7 +132,11 @@ struct sqrt_unary_op <etl::complex<TT>> {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable =
+               (is_single_precision_t<T> && impl::egblas::has_ssqrt)
+            || (is_double_precision_t<T> && impl::egblas::has_dsqrt)
+            || (is_complex_single_t<T> && impl::egblas::has_csqrt)
+            || (is_complex_double_t<T> && impl::egblas::has_zsqrt);
 
     /*!
      * \brief Apply the unary operator on x
@@ -141,6 +145,43 @@ struct sqrt_unary_op <etl::complex<TT>> {
      */
     static constexpr T apply(const T& x) {
         return etl::sqrt(x);
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
+     */
+    template <typename X>
+    static auto gpu_compute(const X& x) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
+
+        auto t2 = force_temporary_gpu_dim_only(t1);
+
+        T alpha(1.0);
+        impl::egblas::sqrt(etl::size(x), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+
+        return t2;
+    }
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y>
+    static Y& gpu_compute(const X& x, Y& y) noexcept {
+        decltype(auto) t1 = select_smart_gpu_compute(x, y);
+
+        T alpha(1.0);
+        impl::egblas::sqrt(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+
+        y.validate_gpu();
+        y.invalidate_cpu();
+
+        return y;
     }
 
     /*!
