@@ -26,6 +26,8 @@
 #include "etl/impl/egblas/exp.hpp"
 #include "etl/impl/egblas/relu_der_out.hpp"
 
+#include "etl/op/unary/minus.hpp"
+#include "etl/op/unary/plus.hpp"
 #include "etl/op/unary/abs.hpp"
 #include "etl/op/unary/floor.hpp"
 #include "etl/op/unary/ceil.hpp"
@@ -322,122 +324,6 @@ struct softplus_unary_op {
      */
     static std::string desc() noexcept {
         return "softplus";
-    }
-};
-
-/*!
- * \brief Unary operation computing the minus operation
- * \tparam T The type of value
- */
-template <typename T>
-struct minus_unary_op {
-    /*!
-     * The vectorization type for V
-     */
-    template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
-
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
-
-    /*!
-     * \brief Indicates if the expression is vectorizable using the
-     * given vector mode
-     * \tparam V The vector mode
-     */
-    template <vector_mode_t V>
-    static constexpr bool vectorizable = !is_complex_t<T>;
-
-    /*!
-     * \brief Indicates if the operator can be computed on GPU
-     */
-    template <typename E>
-    static constexpr bool gpu_computable = false;
-
-    /*!
-     * \brief Apply the unary operator on x
-     * \param x The value on which to apply the operator
-     * \return The result of applying the unary operator on x
-     */
-    static constexpr T apply(const T& x) noexcept {
-        return -x;
-    }
-
-    /*!
-     * \brief Compute several applications of the operator at a time
-     * \param x The vector on which to operate
-     * \tparam V The vectorization mode
-     * \return a vector containing several results of the operator
-     */
-    template <typename V = default_vec>
-    static vec_type<V> load(const vec_type<V>& x) noexcept {
-        return V::minus(x);
-    }
-
-    /*!
-     * \brief Returns a textual representation of the operator
-     * \return a string representing the operator
-     */
-    static std::string desc() noexcept {
-        return "-";
-    }
-};
-
-/*!
- * \brief Unary operation computing the plus operation
- * \tparam T The type of value
- */
-template <typename T>
-struct plus_unary_op {
-    /*!
-     * The vectorization type for V
-     */
-    template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
-
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
-
-    /*!
-     * \brief Indicates if the expression is vectorizable using the
-     * given vector mode
-     * \tparam V The vector mode
-     */
-    template <vector_mode_t V>
-    static constexpr bool vectorizable = true;
-
-    /*!
-     * \brief Indicates if the operator can be computed on GPU
-     */
-    template <typename E>
-    static constexpr bool gpu_computable = false;
-
-    /*!
-     * \brief Apply the unary operator on x
-     * \param x The value on which to apply the operator
-     * \return The result of applying the unary operator on x
-     */
-    static constexpr T apply(const T& x) noexcept {
-        return +x;
-    }
-
-    /*!
-     * \brief Compute several applications of the operator at a time
-     * \param x The vector on which to operate
-     * \tparam V The vectorization mode
-     * \return a vector containing several results of the operator
-     */
-    template <typename V = default_vec>
-    static vec_type<V> load(const vec_type<V>& x) noexcept {
-        return x;
-    }
-
-    /*!
-     * \brief Returns a textual representation of the operator
-     * \return a string representing the operator
-     */
-    static std::string desc() noexcept {
-        return "+";
     }
 };
 
