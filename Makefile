@@ -253,6 +253,7 @@ $(eval $(call add_test_executable,etl_test_unaligned,src/test.cpp src/unaligned.
 $(eval $(call add_test_executable,etl_test_outer,src/test.cpp src/outer.cpp))
 $(eval $(call add_test_executable,etl_test_parallel,src/test.cpp src/parallel.cpp))
 $(eval $(call add_test_executable,etl_test_generators,src/test.cpp src/generators.cpp))
+$(eval $(call add_test_executable,etl_test_rep,src/test.cpp src/rep.cpp))
 
 # Create the benchmark executables
 BENCH_FILES=$(wildcard benchmark/src/benchmark*cpp)
