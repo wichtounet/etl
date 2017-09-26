@@ -1426,6 +1426,8 @@ struct pow_binary_op {
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
+#else
+        cpp_unused(y);
 #endif
 
         return t2;
@@ -1448,6 +1450,8 @@ struct pow_binary_op {
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
+#else
+        cpp_unused(y);
 #endif
 
         yy.validate_gpu();
@@ -1570,6 +1574,8 @@ struct integer_pow_binary_op {
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
+#else
+        cpp_unused(y);
 #endif
 
         return t2;
@@ -1592,6 +1598,8 @@ struct integer_pow_binary_op {
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
+#else
+        cpp_unused(y);
 #endif
 
         yy.validate_gpu();
