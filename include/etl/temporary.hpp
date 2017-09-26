@@ -13,11 +13,26 @@ namespace etl {
 
 namespace detail {
 
+/*!
+ * \brief Build a fast_dyn_matrix type from some expression.
+ *
+ * The resulting type will have the same type as the expression and
+ * the same storage order.
+ *
+ * \tparam E The type of the expression.
+ * \tparam Sequence the indices of the dimensions to copy
+ */
 template <typename E, typename Sequence>
 struct build_fast_dyn_matrix_type;
 
+/*!
+ * \copydoc build_fast_dyn_matrix_type
+ */
 template <typename E, size_t... I>
 struct build_fast_dyn_matrix_type<E, std::index_sequence<I...>> {
+    /*!
+     * \brief The resulting fast_dyn_matrix type
+     */
     using type = fast_matrix_impl<
         value_t<E>,
         cpp::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
@@ -25,11 +40,27 @@ struct build_fast_dyn_matrix_type<E, std::index_sequence<I...>> {
         decay_traits<E>::template dim<I>()...>;
 };
 
+/*!
+ * \brief Build a fast_dyn_matrix type from some expression, of the
+ * opposed storage type.
+ *
+ * The resulting type will have the same type as the expression and
+ * the opposite storage order.
+ *
+ * \tparam E The type of the expression.
+ * \tparam Sequence the indices of the dimensions to copy
+ */
 template <typename E, typename Sequence>
 struct build_fast_dyn_matrix_type_opp;
 
+/*!
+ * \copydoc build_fast_dyn_matrix_type_opp
+ */
 template <typename E, size_t... I>
 struct build_fast_dyn_matrix_type_opp<E, std::index_sequence<I...>> {
+    /*!
+     * \brief The resulting fast_dyn_matrix type
+     */
     using type = fast_matrix_impl<
         value_t<E>,
         cpp::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,

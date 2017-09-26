@@ -206,11 +206,23 @@ template <size_t I11, size_t I21, size_t... I1, size_t... I2>
 struct sequence_equal<std::index_sequence<I11, I1...>, std::index_sequence<I21, I2...>,
                       cpp::disable_if_t<I11 == I21>> : std::false_type {};
 
-template <typename Int, typename, Int Begin>
+/*!
+ * \brief Implementation for TMP utility to hold a range of integers
+ * \tparam Int The type of the integers
+ * \tparam The integer sequence from 0 to End - Begin
+ * \tparam Begin The first integer in the sequence
+ */
+template <typename Int, typename T, Int Begin>
 struct integer_range_impl;
 
+/*!
+ * \copydoc integer_range_impl
+ */
 template <typename Int, Int... N, Int Begin>
 struct integer_range_impl<Int, std::integer_sequence<Int, N...>, Begin> {
+    /*!
+     * \brief The resulting integer range from Begin to End
+     */
     using type = std::integer_sequence<Int, N + Begin...>;
 };
 
