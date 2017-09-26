@@ -32,7 +32,11 @@ struct sqrt_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = is_floating_t<T> && egblas_enabled;
+    static constexpr bool gpu_computable =
+               (is_single_precision_t<T> && impl::egblas::has_ssqrt)
+            || (is_double_precision_t<T> && impl::egblas::has_dsqrt)
+            || (is_complex_single_t<T> && impl::egblas::has_csqrt)
+            || (is_complex_double_t<T> && impl::egblas::has_zsqrt);
 
     /*!
      * The vectorization type for V
