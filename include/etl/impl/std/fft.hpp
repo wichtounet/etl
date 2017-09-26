@@ -624,7 +624,7 @@ void inplace_radix2_fft1(etl::complex<T>* x, size_t N) {
     for (size_t s = 1; s <= std::log2(N); ++s) {
         auto m = size_t(1) << s;
         complex_t w(1.0, 0.0);
-        complex_t wm(cos(2 * -pi / m), sin(2 * -pi / m));
+        complex_t wm(std::cos(2 * -pi / m), std::sin(2 * -pi / m));
         for (size_t j = 0; j < m / 2; ++j) {
             for (size_t k = j; k < NN; k += m) {
                 auto t = w * x[k + m / 2];
