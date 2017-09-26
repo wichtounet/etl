@@ -21,6 +21,36 @@
 
 #ifdef ETL_CUDA
 
+#ifdef ETL_EGBLAS_MODE
+
+TEMPLATE_TEST_CASE_2("gpu/status/0", "[gpu]", T, float, double) {
+    etl::fast_matrix<T, 75, 75> a;
+    etl::fast_matrix<T, 75, 75> b;
+    etl::fast_matrix<T, 75, 75> c;
+
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+
+    c = -(a + b);
+
+    REQUIRE(c.is_gpu_up_to_date());
+}
+
+TEMPLATE_TEST_CASE_2("gpu/status/1", "[gpu]", T, float, double) {
+    etl::fast_matrix<T, 75, 75> a;
+    etl::fast_matrix<T, 75, 75> b;
+    etl::fast_matrix<T, 75, 75> c;
+
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+
+    c = exp(a + b) >> log(a - b);
+
+    REQUIRE(c.is_gpu_up_to_date());
+}
+
+#endif
+
 TEMPLATE_TEST_CASE_2("gpu/1", "[gpu]", T, float, double) {
     etl::fast_matrix<T, 200, 200> a;
     etl::fast_matrix<T, 200, 200> b;
