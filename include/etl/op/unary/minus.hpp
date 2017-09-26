@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "etl/impl/egblas/minus.hpp"
+
 namespace etl {
 
 /*!
@@ -36,7 +38,11 @@ struct minus_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable =
+               (is_single_precision_t<T> && impl::egblas::has_sminus)
+            || (is_double_precision_t<T> && impl::egblas::has_dminus)
+            || (is_complex_single_t<T> && impl::egblas::has_cminus)
+            || (is_complex_double_t<T> && impl::egblas::has_zminus);
 
     /*!
      * \brief Apply the unary operator on x
@@ -56,6 +62,43 @@ struct minus_unary_op {
     template <typename V = default_vec>
     static vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::minus(x);
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
+     */
+    template <typename X>
+    static auto gpu_compute(const X& x) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
+
+        auto t2 = force_temporary_gpu_dim_only(t1);
+
+        T alpha(1.0);
+        impl::egblas::minus(etl::size(x), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+
+        return t2;
+    }
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y>
+    static Y& gpu_compute(const X& x, Y& y) noexcept {
+        decltype(auto) t1 = select_smart_gpu_compute(x, y);
+
+        T alpha(1.0);
+        impl::egblas::minus(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+
+        y.validate_gpu();
+        y.invalidate_cpu();
+
+        return y;
     }
 
     /*!
