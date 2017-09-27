@@ -10,20 +10,20 @@
 namespace etl {
 
 /*!
- * \brief Unary operation that clips all values between two scalars
+ * \brief Unary operation applying the max between the value and a scalar
  * \tparam T the type of value
  * \tparam S the type of scalar
  */
 template <typename T, typename S>
-struct clip_scalar_op {
+struct max_scalar_op {
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
-    static constexpr bool linear = true; ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -31,7 +31,7 @@ struct clip_scalar_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable = intel_compiler && !is_complex_t<T>;
+    static constexpr bool vectorizable = !is_complex_t<T>;
 
     /*!
      * \brief Indicates if the operator can be computed on GPU
@@ -39,16 +39,14 @@ struct clip_scalar_op {
     template <typename E>
     static constexpr bool gpu_computable = false;
 
-    S min; ///< The minimum for clipping
-    S max; ///< The maximum for clipping
+    S s; ///< The scalar value
 
     /*!
-     * \brief Builds a new operator
-     * \param min The minimum for clipping
-     * \param max The maximum for clipping
+     * \brief Construct a new max_scalar_op with the given value
+     * \param s The scalar value
      */
-    clip_scalar_op(S min, S max)
-            : min(min), max(max) {}
+    explicit max_scalar_op(S s)
+            : s(s) {}
 
     /*!
      * \brief Apply the unary operator on x
@@ -56,28 +54,26 @@ struct clip_scalar_op {
      * \return The result of applying the unary operator on x
      */
     constexpr T apply(const T& x) const noexcept {
-        return std::min(std::max(x, min), max);
+        return std::max(x, s);
     }
 
-#ifdef __INTEL_COMPILER
     /*!
      * \brief Compute several applications of the operator at a time
-     * \param x The vector on which to operate
+     * \param lhs The vector on which to operate
      * \tparam V The vectorization mode
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
     vec_type<V> load(const vec_type<V>& lhs) const noexcept {
-        return V::min(V::max(lhs, V::set(min)), V::set(max));
+        return V::max(lhs, V::set(s));
     }
-#endif
 
     /*!
      * \brief Returns a textual representation of the operator
      * \return a string representing the operator
      */
     static std::string desc() noexcept {
-        return "clip";
+        return "max";
     }
 };
 
