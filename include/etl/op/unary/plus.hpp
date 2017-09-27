@@ -36,7 +36,7 @@ struct plus_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = cuda_enabled;
+    static constexpr bool gpu_computable = cuda_enabled && !is_scalar<E>;
 
     /*!
      * \brief Apply the unary operator on x
