@@ -517,15 +517,20 @@ TEMPLATE_TEST_CASE_2("invcbrt/5", "[cbrt]", Z, etl::complex<float>, etl::complex
     REQUIRE_EQUALS_APPROX(d[3].imag, etl::cbrt(Z(1.0, 0.1)).imag);
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/abs", "fast_matrix::abs", Z, float, double) {
-    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
+TEMPLATE_TEST_CASE_2("abs/0", "fast_matrix::abs", Z, float, double) {
+    etl::fast_matrix<Z, 2, 4> a = {-1.0, 2.0, 0.0, 1.0, 1.5, -3.2, 1.1, -2.3};
 
-    etl::fast_matrix<Z, 2, 2> d;
+    etl::fast_matrix<Z, 2, 4> d;
     d = abs(a);
 
-    REQUIRE_EQUALS(d[0], 1.0);
-    REQUIRE_EQUALS(d[1], 2.0);
-    REQUIRE_EQUALS(d[2], 0.0);
+    REQUIRE_EQUALS(d[0], Z(1.0));
+    REQUIRE_EQUALS(d[1], Z(2.0));
+    REQUIRE_EQUALS(d[2], Z(0.0));
+    REQUIRE_EQUALS(d[3], Z(1.0));
+    REQUIRE_EQUALS(d[4], Z(1.5));
+    REQUIRE_EQUALS(d[5], Z(3.2));
+    REQUIRE_EQUALS(d[6], Z(1.1));
+    REQUIRE_EQUALS(d[7], Z(2.3));
 }
 
 TEMPLATE_TEST_CASE_2("fast_matrix/sign", "fast_matrix::sign", Z, float, double) {
