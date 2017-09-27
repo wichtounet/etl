@@ -10,11 +10,11 @@
 namespace etl {
 
 /*!
- * \brief Unary operation computing the logistic sigmoid
+ * \brief Unary operation computing the derivate of the RELU operation
  * \tparam T The type of value
  */
 template <typename T>
-struct sigmoid_unary_op {
+struct relu_derivative_op {
     static constexpr bool linear = true; ///< Indicates if the operator is linear
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
@@ -24,16 +24,13 @@ struct sigmoid_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable =
-            (V == vector_mode_t::SSE3 && !is_complex_t<T>)
-        ||  (V == vector_mode_t::AVX && !is_complex_t<T>)
-        ||  (intel_compiler && !is_complex_t<T>);
+    static constexpr bool vectorizable = !is_complex_t<T>;
 
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = is_floating<E> && cudnn_enabled;
+    static constexpr bool gpu_computable = is_floating_t<T> && impl::egblas::has_srelu_der_out && impl::egblas::has_drelu_der_out;
 
     /*!
      * The vectorization type for V
@@ -46,8 +43,8 @@ struct sigmoid_unary_op {
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
      */
-    static constexpr T apply(const T& x) {
-        return math::logistic_sigmoid(x);
+    static T apply(const T& x) {
+        return x > 0.0 ? 1.0 : 0.0;
     }
 
     /*!
@@ -58,12 +55,7 @@ struct sigmoid_unary_op {
      */
     template <typename V = default_vec>
     static vec_type<V> load(const vec_type<V>& x) noexcept {
-        auto one = V::set(T(1));
-
-        auto t1 = V::minus(x);
-        auto t2 = V::exp(t1);
-        auto t3 = V::add(one, t2);
-        return V::div(one, t3);
+        return V::round_up(V::min(V::set(T(1.0)), x));
     }
 
     /*!
@@ -78,7 +70,10 @@ struct sigmoid_unary_op {
         decltype(auto) t1 = smart_gpu_compute(x);
 
         auto t2 = force_temporary_gpu_dim_only(t1);
-        impl::cudnn::sigmoid(t1, t2);
+
+        T alpha(1.0);
+        impl::egblas::relu_der_out(etl::size(x), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+
         return t2;
     }
     /*!
@@ -91,7 +86,11 @@ struct sigmoid_unary_op {
     static Y& gpu_compute(const X& x, Y& y) noexcept {
         decltype(auto) t1 = select_smart_gpu_compute(x, y);
 
-        impl::cudnn::sigmoid(t1, y);
+        T alpha(1.0);
+        impl::egblas::relu_der_out(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+
+        y.validate_gpu();
+        y.invalidate_cpu();
 
         return y;
     }
@@ -101,71 +100,7 @@ struct sigmoid_unary_op {
      * \return a string representing the operator
      */
     static std::string desc() noexcept {
-        return "sigmoid";
-    }
-};
-
-/*!
- * \brief Unary operation computing a fast sigmoid approximation
- * \tparam T The type of value
- */
-template <typename T>
-struct fast_sigmoid_unary_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
-
-    /*!
-     * \brief Indicates if the expression is vectorizable using the
-     * given vector mode
-     * \tparam V The vector mode
-     */
-    template <vector_mode_t V>
-    static constexpr bool vectorizable = false;
-
-    /*!
-     * \brief Indicates if the operator can be computed on GPU
-     */
-    template <typename E>
-    static constexpr bool gpu_computable = false;
-
-    /*!
-     * \brief Apply the unary operator on x
-     * \param v The value on which to apply the operator
-     * \return The result of applying the unary operator on x
-     */
-    static T apply(const T& v) {
-        auto x = 0.5 * v;
-
-        T z;
-        if (x >= 0) {
-            if (x < 1.7) {
-                z = (1.5 * x / (1 + x));
-            } else if (x < 3) {
-                z = (0.935409070603099 + 0.0458812946797165 * (x - 1.7));
-            } else {
-                z = 0.99505475368673;
-            }
-        } else {
-            auto xx = -x;
-            if (xx < 1.7) {
-                z = (1.5 * xx / (1 + xx));
-            } else if (xx < 3) {
-                z = (0.935409070603099 + 0.0458812946797165 * (xx - 1.7));
-            } else {
-                z = 0.99505475368673;
-            }
-            z = -z;
-        }
-
-        return 0.5 * (z + 1.0);
-    }
-
-    /*!
-     * \brief Returns a textual representation of the operator
-     * \return a string representing the operator
-     */
-    static std::string desc() noexcept {
-        return "fast_sigmoid";
+        return "relu_derivative";
     }
 };
 
