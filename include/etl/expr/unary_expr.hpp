@@ -88,7 +88,7 @@ struct stateful_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable = Sub::template gpu_computable<E>;
 };
 
 /*!
@@ -1132,6 +1132,23 @@ public:
     template <typename V = default_vec>
     vec_type<V> loadu(size_t i) const {
         return op.template load<V>(value.template loadu<V>(i));
+    }
+
+    /*!
+     * \brief Return a GPU computed version of this expression
+     * \return a GPU-computed ETL expression for this expression
+     */
+    decltype(auto) gpu_compute() const {
+        return op.gpu_compute(value);
+    }
+
+    /*!
+     * \brief Return a GPU computed version of this expression
+     * \return a GPU-computed ETL expression for this expression
+     */
+    template<typename Y>
+    decltype(auto) gpu_compute(Y& y) const {
+        return op.gpu_compute(value, y);
     }
 
     /*!
