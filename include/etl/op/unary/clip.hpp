@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "etl/impl/egblas/clip.hpp"
+
 namespace etl {
 
 /*!
@@ -22,8 +24,8 @@ struct clip_scalar_op {
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
-    static constexpr bool linear = true; ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -37,7 +39,11 @@ struct clip_scalar_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable =
+               (is_single_precision_t<T> && impl::egblas::has_sclip)
+            || (is_double_precision_t<T> && impl::egblas::has_dclip)
+            || (is_complex_single_t<T> && impl::egblas::has_cclip)
+            || (is_complex_double_t<T> && impl::egblas::has_zclip);
 
     S min; ///< The minimum for clipping
     S max; ///< The maximum for clipping
@@ -71,6 +77,62 @@ struct clip_scalar_op {
         return V::min(V::max(lhs, V::set(min)), V::set(max));
     }
 #endif
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
+     */
+    template <typename X>
+    auto gpu_compute(const X& x) const noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
+
+        auto t2 = force_temporary_gpu(t1);
+
+#ifdef ETL_CUDA
+        auto min_gpu = impl::cuda::cuda_allocate_only<T>(1);
+        cuda_check(cudaMemcpy(min_gpu.get(), &min, 1 * sizeof(T), cudaMemcpyHostToDevice));
+
+        auto max_gpu = impl::cuda::cuda_allocate_only<T>(1);
+        cuda_check(cudaMemcpy(max_gpu.get(), &max, 1 * sizeof(T), cudaMemcpyHostToDevice));
+
+        T alpha(1.0);
+        impl::egblas::clip(etl::size(x), &alpha, min_gpu.get(), 0, max_gpu.get(), 0, t2.gpu_memory(), 1);
+#endif
+
+        return t2;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y>
+    Y& gpu_compute(const X& x, Y& y) const noexcept {
+        smart_gpu_compute(x, y);
+
+#ifdef ETL_CUDA
+        auto min_gpu = impl::cuda::cuda_allocate_only<T>(1);
+        cuda_check(cudaMemcpy(min_gpu.get(), &min, 1 * sizeof(T), cudaMemcpyHostToDevice));
+
+        auto max_gpu = impl::cuda::cuda_allocate_only<T>(1);
+        cuda_check(cudaMemcpy(max_gpu.get(), &max, 1 * sizeof(T), cudaMemcpyHostToDevice));
+
+        T alpha(1.0);
+        impl::egblas::clip(etl::size(x), &alpha, min_gpu.get(), 0, max_gpu.get(), 0, y.gpu_memory(), 1);
+#else
+        cpp_unused(y);
+#endif
+
+        y.validate_gpu();
+        y.invalidate_cpu();
+
+        return y;
+    }
 
     /*!
      * \brief Returns a textual representation of the operator

@@ -4,7 +4,10 @@
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
+
 #pragma once
+
+#include "etl/impl/egblas/min.hpp"
 
 namespace etl {
 
@@ -36,7 +39,11 @@ struct min_scalar_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable =
+               (is_single_precision_t<T> && impl::egblas::has_smin)
+            || (is_double_precision_t<T> && impl::egblas::has_dmin)
+            || (is_complex_single_t<T> && impl::egblas::has_cmin)
+            || (is_complex_double_t<T> && impl::egblas::has_zmin);
 
     S s; ///< The scalar value
 
@@ -65,6 +72,56 @@ struct min_scalar_op {
     template <typename V = default_vec>
     vec_type<V> load(const vec_type<V>& lhs) const noexcept {
         return V::min(lhs, V::set(s));
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
+     */
+    template <typename X>
+    auto gpu_compute(const X& x) const noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
+
+        auto t2 = force_temporary_gpu(t1);
+
+#ifdef ETL_CUDA
+        auto s_gpu = impl::cuda::cuda_allocate_only<T>(1);
+        cuda_check(cudaMemcpy(s_gpu.get(), &s, 1 * sizeof(T), cudaMemcpyHostToDevice));
+
+        T alpha(1.0);
+        impl::egblas::min(etl::size(x), &alpha, s_gpu.get(), 0, t2.gpu_memory(), 1);
+#endif
+
+        return t2;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y>
+    Y& gpu_compute(const X& x, Y& y) const noexcept {
+        smart_gpu_compute(x, y);
+
+#ifdef ETL_CUDA
+        auto s_gpu = impl::cuda::cuda_allocate_only<T>(1);
+        cuda_check(cudaMemcpy(s_gpu.get(), &s, 1 * sizeof(T), cudaMemcpyHostToDevice));
+
+        T alpha(1.0);
+        impl::egblas::min(etl::size(x), &alpha, s_gpu.get(), 0, y.gpu_memory(), 1);
+#else
+        cpp_unused(y);
+#endif
+
+        y.validate_gpu();
+        y.invalidate_cpu();
+
+        return y;
     }
 
     /*!
