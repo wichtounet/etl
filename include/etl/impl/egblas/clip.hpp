@@ -56,6 +56,8 @@ inline void clip(size_t n, const float* alpha, const float* A, size_t lda, const
     cpp_unused(lda);
     cpp_unused(B);
     cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
 
     cpp_unreachable("Invalid call to egblas::clip");
 #endif
@@ -91,6 +93,8 @@ inline void clip(size_t n, double* alpha, const double* A, size_t lda, const dou
     cpp_unused(lda);
     cpp_unused(B);
     cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
 
     cpp_unreachable("Invalid call to egblas::clip");
 #endif
@@ -126,6 +130,8 @@ inline void clip(size_t n, const std::complex<float>* alpha, const std::complex<
     cpp_unused(lda);
     cpp_unused(B);
     cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
 
     cpp_unreachable("Invalid call to egblas::clip");
 #endif
@@ -152,6 +158,8 @@ inline void clip(size_t n, const etl::complex<float>* alpha, const etl::complex<
     cpp_unused(lda);
     cpp_unused(B);
     cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
 
     cpp_unreachable("Invalid call to egblas::clip");
 #endif
@@ -187,6 +195,8 @@ inline void clip(size_t n, const std::complex<double>* alpha, const std::complex
     cpp_unused(lda);
     cpp_unused(B);
     cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
 
     cpp_unreachable("Invalid call to egblas::clip");
 #endif
@@ -213,6 +223,8 @@ inline void clip(size_t n, const etl::complex<double>* alpha, const etl::complex
     cpp_unused(lda);
     cpp_unused(B);
     cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
 
     cpp_unreachable("Invalid call to egblas::clip");
 #endif
