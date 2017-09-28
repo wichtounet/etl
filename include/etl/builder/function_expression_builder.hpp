@@ -329,9 +329,9 @@ auto softmax_derivative(E&& e) {
  * \return An ETL expression representing the softplus of the input.
  */
 template <typename E>
-auto softplus(E&& value) -> decltype(log(1.0 + exp(value))) {
+auto softplus(E&& value) -> detail::unary_helper<E, softplus_unary_op> {
     static_assert(is_etl_expr<E>, "etl::softplus can only be used on ETL expressions");
-    return log(1.0 + exp(value));
+    return detail::unary_helper<E, softplus_unary_op>{value};
 }
 
 /*!
