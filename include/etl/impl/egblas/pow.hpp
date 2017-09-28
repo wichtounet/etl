@@ -27,7 +27,7 @@ namespace impl {
 namespace egblas {
 
 /*!
- * \brief Indicates if EGBLAS has single-precision powarithm.
+ * \brief Indicates if EGBLAS has single-precision pow.
  */
 #ifdef EGBLAS_HAS_SPOW
 static constexpr bool has_spow = true;
@@ -60,7 +60,7 @@ inline void pow(size_t n, float* alpha, float* A , size_t lda, float* B , size_t
 }
 
 /*!
- * \brief Indicates if EGBLAS has double-precision powarithm.
+ * \brief Indicates if EGBLAS has double-precision pow.
  */
 #ifdef EGBLAS_HAS_DPOW
 static constexpr bool has_dpow = true;
@@ -93,7 +93,7 @@ inline void pow(size_t n, double* alpha, double* A , size_t lda, double* B , siz
 }
 
 /*!
- * \brief Indicates if EGBLAS has complex single-precision powarithm.
+ * \brief Indicates if EGBLAS has complex single-precision pow.
  */
 #ifdef EGBLAS_HAS_CPOW
 static constexpr bool has_cpow = true;
@@ -150,7 +150,7 @@ inline void pow(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , s
 }
 
 /*!
- * \brief Indicates if EGBLAS has complex double-precision powarithm.
+ * \brief Indicates if EGBLAS has complex double-precision pow.
  */
 #ifdef EGBLAS_HAS_ZPOW
 static constexpr bool has_zpow = true;
