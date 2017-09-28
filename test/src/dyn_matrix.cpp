@@ -453,17 +453,6 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/sign", "dyn_matrix::abs", Z, double, float) {
     REQUIRE_EQUALS(d[2], 0.0);
 }
 
-TEMPLATE_TEST_CASE_2("dyn_matrix/unary_unary", "dyn_matrix::abs", Z, double, float) {
-    etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 0.0, 3.0}));
-
-    etl::dyn_matrix<Z> d;
-    d = abs(sign(a));
-
-    REQUIRE_EQUALS(d[0], 1.0);
-    REQUIRE_EQUALS(d[1], 1.0);
-    REQUIRE_EQUALS(d[2], 0.0);
-}
-
 TEMPLATE_TEST_CASE_2("dyn_matrix/unary_binary_1", "dyn_matrix::abs", Z, double, float) {
     etl::dyn_matrix<Z> a(2, 2, std::initializer_list<Z>({-1.0, 2.0, 0.0, 1.0}));
 
