@@ -15,6 +15,7 @@
 #include <functional>
 
 #include "etl/math.hpp"
+#include "etl/temporary.hpp"
 
 #ifdef ETL_CUBLAS_MODE
 #include "etl/impl/cublas/cuda.hpp"

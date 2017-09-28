@@ -605,6 +605,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/softplus", "fast_matrix::softplus", Z, float, 
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2> d;
+
     d = softplus(a);
 
     REQUIRE_EQUALS_APPROX(d[0], etl::math::softplus(Z(-1.0)));

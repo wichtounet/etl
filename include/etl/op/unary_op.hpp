@@ -21,6 +21,8 @@
 #include <ctime>
 
 #include "etl/math.hpp"
+#include "etl/temporary.hpp"
+
 #include "etl/impl/cudnn/sigmoid.hpp"
 #include "etl/impl/egblas/sqrt.hpp"
 #include "etl/impl/egblas/relu_der_out.hpp"
