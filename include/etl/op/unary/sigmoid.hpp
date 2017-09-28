@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "etl/impl/cudnn/sigmoid.hpp"
+
 namespace etl {
 
 /*!

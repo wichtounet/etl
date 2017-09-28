@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "etl/impl/egblas/relu_der_out.hpp"
+
 namespace etl {
 
 /*!
