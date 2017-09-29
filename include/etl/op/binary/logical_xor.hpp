@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "etl/impl/egblas/xor.hpp"
+
 namespace etl {
 
 /*!
@@ -30,7 +32,7 @@ struct logical_xor_binary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template<typename L, typename R>
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable = impl::egblas::has_bxor;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -40,6 +42,44 @@ struct logical_xor_binary_op {
      */
     static constexpr bool apply(const T& lhs, const T& rhs) noexcept {
         return lhs != rhs;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
+     */
+    template <typename X, typename Y>
+    static auto gpu_compute(const X& x, const Y& y) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
+        decltype(auto) t2 = smart_gpu_compute(y);
+
+        auto t3 = force_temporary_gpu_dim_only_t<bool>(t1);
+
+        impl::egblas::logical_xor(etl::size(x), t1.gpu_memory(), 1, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
+
+        return t3;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y, typename YY>
+    static YY& gpu_compute(const X& x, const Y& y, YY& yy) noexcept {
+        decltype(auto) t1 = smart_gpu_compute(x);
+        decltype(auto) t2 = smart_gpu_compute(y);
+
+        impl::egblas::logical_xor(etl::size(x), t1.gpu_memory(), 1, t2.gpu_memory(), 1, yy.gpu_memory(), 1);
+
+        yy.validate_gpu();
+        yy.invalidate_cpu();
+
+        return yy;
     }
 
     /*!
