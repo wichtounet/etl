@@ -259,6 +259,8 @@ $(eval $(call add_test_executable,etl_test_rep,src/test.cpp src/rep.cpp))
 $(eval $(call add_test_executable,etl_test_gpu,src/test.cpp src/gpu.cpp))
 $(eval $(call add_test_executable,etl_test_optimize_1,src/test.cpp src/optimize_1.cpp))
 $(eval $(call add_test_executable,etl_test_optimize_2,src/test.cpp src/optimize_2.cpp))
+$(eval $(call add_test_executable,etl_test_elt_logical,src/test.cpp src/elt_logical.cpp))
+$(eval $(call add_test_executable,etl_test_elt_compare,src/test.cpp src/elt_compare.cpp))
 
 # Create the benchmark executables
 BENCH_FILES=$(wildcard benchmark/src/benchmark*cpp)
