@@ -513,6 +513,13 @@ template <typename T>
 constexpr bool is_double_precision_t = std::is_same<T, double>::value;
 
 /*!
+ * \brief Traits to test if the type is boolean.
+ * \tparam T The type.
+ */
+template <typename T>
+constexpr bool is_bool_t = std::is_same<T, bool>::value;
+
+/*!
  * \brief Traits to test if the given ETL expresion contains double precision numbers.
  * \tparam T The ETL expression type.
  */
@@ -651,7 +658,7 @@ constexpr bool is_deep_double_precision = is_complex_double_precision<T> || is_d
  * \tparam T The type.
  */
 template <typename T>
-constexpr bool is_gpu_t = is_floating_t<T> || is_complex_t<T>;
+constexpr bool is_gpu_t = is_floating_t<T> || is_complex_t<T> || is_bool_t<T>;
 
 /*!
  * \brief Traits to test if the given ETL expresion type has direct memory access (DMA).
