@@ -44,6 +44,66 @@ using build_identity_type = std::conditional_t<
     std::decay_t<T>>;
 
 /*!
+ * \brief Wraps a type either into a scalar or keep the ETL expression.
+ */
+template <typename T>
+using wrap_scalar_t = std::conditional_t<etl::is_etl_expr<T>, T, etl::scalar<std::decay_t<T>>>;
+
+/*!
+ * \brief Extract the value type of the given type taking scalar into account
+ */
+template <typename T, typename Enable = void>
+struct wrap_scalar_value_t_impl;
+
+/*!
+ * \brief Extract the value type of the given type taking scalar into account
+ */
+template <typename T>
+struct wrap_scalar_value_t_impl <T, std::enable_if_t<etl::is_etl_expr<T>>> {
+    /*!
+     * \brief The resulting type of the traits.
+     */
+    using type = etl::value_t<T>;
+};
+
+/*!
+ * \brief Extract the value type of the given type taking scalar into account
+ */
+template <typename T>
+struct wrap_scalar_value_t_impl <T, std::enable_if_t<!etl::is_etl_expr<T>>> {
+    /*!
+     * \brief The resulting type of the traits.
+     */
+    using type = std::decay_t<T>;
+};
+
+/*!
+ * \brief Extract the value type of the given type taking scalar into account
+ */
+template <typename T>
+using wrap_scalar_value_t = typename wrap_scalar_value_t_impl<T>::type;
+
+/*!
+ * \brief Transform a scalar value into an etl::scalar
+ * \param value The value to wraps
+ * \return an etl::scalar or a forwarded expression
+ */
+template<typename T, cpp_enable_iff(is_etl_expr<T>)>
+decltype(auto) wrap_scalar(T&& value){
+    return std::forward<T>(value);
+}
+
+/*!
+ * \brief Transform a scalar value into an etl::scalar
+ * \param value The value to wraps
+ * \return an etl::scalar or a forwarded expression
+ */
+template<typename T, cpp_enable_iff(!is_etl_expr<T>)>
+etl::scalar<std::decay_t<T>> wrap_scalar(T&& value){
+    return etl::scalar<std::decay_t<T>>{value};
+}
+
+/*!
  * \brief Helper to create a binary expr with left typing
  */
 template <typename LE, typename RE, template <typename> class OP>
@@ -80,6 +140,12 @@ using bool_left_binary_helper = binary_expr<bool, build_type<LE>, OP<value_t<LE>
  */
 template <typename LE, typename RE, template <typename> class OP>
 using bool_right_binary_helper = binary_expr<bool, build_type<LE>, OP<value_t<RE>>, build_type<RE>>;
+
+/*!
+ * \brief Helper to create a binary expr with left typing
+ */
+template <typename LE, typename RE, template <typename> class OP>
+using bool_left_binary_helper_scalar = binary_expr<bool, build_type<wrap_scalar_t<LE>>, OP<wrap_scalar_value_t<LE>>, build_type<wrap_scalar_t<RE>>>;
 
 /*!
  * \brief Helper to create an unary expression
