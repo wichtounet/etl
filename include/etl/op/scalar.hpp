@@ -166,6 +166,23 @@ struct scalar {
     }
 
     /*!
+     * \brief Return a GPU computed version of this expression
+     * \return a GPU-computed ETL expression for this expression
+     */
+    decltype(auto) gpu_compute() const {
+        gpu_dyn_matrix_impl<T, order::RowMajor, 1> mat;
+
+        mat.resize_scalar();
+        mat.ensure_gpu_allocated();
+
+#ifdef ETL_CUDA
+        cuda_check(cudaMemcpy(mat.gpu_memory(), &value, 1 * sizeof(T), cudaMemcpyHostToDevice));
+#endif
+
+        return mat;
+    }
+
+    /*!
      * \brief Ensures that the GPU memory is allocated and that the GPU memory
      * is up to date (to undefined value).
      */
