@@ -309,6 +309,16 @@ public:
     }
 
     /*!
+     * \brief Resize the matrix as a scalar value.
+     *
+     * This must only be called when the matrix has no dimensions
+     */
+    void resize_scalar() {
+        _size = 1;
+        _dimensions[0] = 1;
+    }
+
+    /*!
      * \brief Print the description of the matrix to the given stream
      * \param os The output stream
      * \param mat The matrix to output the description to the stream
