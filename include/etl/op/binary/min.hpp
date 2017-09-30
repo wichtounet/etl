@@ -14,7 +14,7 @@ namespace etl {
 /*!
  * \brief Binary operator for scalar minimum
  */
-template <typename T, typename E>
+template <typename LT, typename RT>
 struct min_binary_op {
     static constexpr bool linear    = true; ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
@@ -26,7 +26,7 @@ struct min_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable = !is_complex_t<T>;
+    static constexpr bool vectorizable = !is_complex_t<LT>;
 
     /*!
      * \brief Indicates if the operator can be computed on GPU
@@ -42,7 +42,7 @@ struct min_binary_op {
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type       = typename V::template vec_type<LT>;
 
 
     /*!
@@ -51,7 +51,7 @@ struct min_binary_op {
      * \param value The right hand side value on which to apply the operator
      * \return The result of applying the binary operator on lhs and rhs
      */
-    static constexpr T apply(const T& x, E value) noexcept {
+    static constexpr LT apply(const LT& x, const RT& value) noexcept {
         return std::min(x, value);
     }
 
@@ -81,7 +81,7 @@ struct min_binary_op {
 
         auto t3 = force_temporary_gpu(t1);
 
-        T alpha(1);
+        LT alpha(1);
         impl::egblas::min(etl::size(x), &alpha, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
 
         return t3;
@@ -98,7 +98,7 @@ struct min_binary_op {
         decltype(auto) t1 = smart_gpu_compute(x);
         smart_gpu_compute(y, yy);
 
-        T alpha(1);
+        LT alpha(1);
         impl::egblas::min(etl::size(x), &alpha, t1.gpu_memory(), 1, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
