@@ -206,6 +206,198 @@ inline void min(size_t n, etl::complex<double>* alpha, etl::complex<double>* A, 
 #endif
 }
 
+/*!
+ * \brief Indicates if EGBLAS has single-precision min.
+ */
+#ifdef EGBLAS_HAS_SMIN3
+static constexpr bool has_smin3 = true;
+#else
+static constexpr bool has_smin3 = false;
+#endif
+
+/*!
+ * \brief Wrappers for single-precision egblas min operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void min(size_t n, float* alpha, float* A, size_t lda, float* B, size_t ldb, float* C, size_t ldc) {
+#ifdef EGBLAS_HAS_SMIN3
+    egblas_smin(n, *alpha, A, lda, B, ldb, C, ldc);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
+
+    cpp_unreachable("Invalid call to egblas::min");
+#endif
+}
+
+/*!
+ * \brief Indicates if EGBLAS has double-precision min.
+ */
+#ifdef EGBLAS_HAS_DMIN3
+static constexpr bool has_dmin3 = true;
+#else
+static constexpr bool has_dmin3 = false;
+#endif
+
+/*!
+ * \brief Wrappers for double-precision egblas min operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void min(size_t n, double* alpha, double* A, size_t lda, double* B, size_t ldb, double* C, size_t ldc) {
+#ifdef EGBLAS_HAS_DMIN3
+    egblas_dmin(n, *alpha, A, lda, B, ldb, C, ldc);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
+
+    cpp_unreachable("Invalid call to egblas::min");
+#endif
+}
+
+/*!
+ * \brief Indicates if EGBLAS has complex single-precision min.
+ */
+#ifdef EGBLAS_HAS_CMIN3
+static constexpr bool has_cmin3 = true;
+#else
+static constexpr bool has_cmin3 = false;
+#endif
+
+/*!
+ * \brief Wrappers for complex single-precision egblas min operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void min(size_t n, std::complex<float>* alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb, std::complex<float>* C, size_t ldc) {
+#ifdef EGBLAS_HAS_CMIN3
+    egblas_cmin(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
+
+    cpp_unreachable("Invalid call to egblas::min");
+#endif
+}
+
+/*!
+ * \brief Wrappers for complex single-precision egblas min operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void min(size_t n, etl::complex<float>* alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb, etl::complex<float>* C, size_t ldc) {
+#ifdef EGBLAS_HAS_CMIN3
+    egblas_cmin(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
+
+    cpp_unreachable("Invalid call to egblas::min");
+#endif
+}
+
+/*!
+ * \brief Indicates if EGBLAS has complex double-precision min.
+ */
+#ifdef EGBLAS_HAS_ZMIN3
+static constexpr bool has_zmin3 = true;
+#else
+static constexpr bool has_zmin3 = false;
+#endif
+
+/*!
+ * \brief Wrappers for complex double-precision egblas min operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void min(size_t n, std::complex<double>* alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb, std::complex<double>* C, size_t ldc) {
+#ifdef EGBLAS_HAS_ZMIN3
+    egblas_zmin(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb, reinterpret_cast<cuDoubleComplex*>(C), ldc);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
+
+    cpp_unreachable("Invalid call to egblas::min");
+#endif
+}
+
+/*!
+ * \brief Wrappers for complex double-precision egblas min operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void min(size_t n, etl::complex<double>* alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb, etl::complex<double>* C, size_t ldc) {
+#ifdef EGBLAS_HAS_ZMIN3
+    egblas_zmin(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb, reinterpret_cast<cuDoubleComplex*>(C), ldc);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
+
+    cpp_unreachable("Invalid call to egblas::min");
+#endif
+}
+
 } //end of namespace egblas
 } //end of namespace impl
 } //end of namespace etl

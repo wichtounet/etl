@@ -206,6 +206,198 @@ inline void max(size_t n, etl::complex<double>* alpha, etl::complex<double>* A, 
 #endif
 }
 
+/*!
+ * \brief Indicates if EGBLAS has single-precision max.
+ */
+#ifdef EGBLAS_HAS_SMAX3
+static constexpr bool has_smax3 = true;
+#else
+static constexpr bool has_smax3 = false;
+#endif
+
+/*!
+ * \brief Wrappers for single-precision egblas max operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void max(size_t n, float* alpha, float* A, size_t lda, float* B, size_t ldb, float* C, size_t ldc) {
+#ifdef EGBLAS_HAS_SMAX3
+    egblas_smax(n, *alpha, A, lda, B, ldb, C, ldc);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
+
+    cpp_unreachable("Invalid call to egblas::max");
+#endif
+}
+
+/*!
+ * \brief Indicates if EGBLAS has double-precision max.
+ */
+#ifdef EGBLAS_HAS_DMAX3
+static constexpr bool has_dmax3 = true;
+#else
+static constexpr bool has_dmax3 = false;
+#endif
+
+/*!
+ * \brief Wrappers for double-precision egblas max operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void max(size_t n, double* alpha, double* A, size_t lda, double* B, size_t ldb, double* C, size_t ldc) {
+#ifdef EGBLAS_HAS_DMAX3
+    egblas_dmax(n, *alpha, A, lda, B, ldb, C, ldc);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
+
+    cpp_unreachable("Invalid call to egblas::max");
+#endif
+}
+
+/*!
+ * \brief Indicates if EGBLAS has complex single-precision max.
+ */
+#ifdef EGBLAS_HAS_CMAX3
+static constexpr bool has_cmax3 = true;
+#else
+static constexpr bool has_cmax3 = false;
+#endif
+
+/*!
+ * \brief Wrappers for complex single-precision egblas max operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void max(size_t n, std::complex<float>* alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb, std::complex<float>* C, size_t ldc) {
+#ifdef EGBLAS_HAS_CMAX3
+    egblas_cmax(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
+
+    cpp_unreachable("Invalid call to egblas::max");
+#endif
+}
+
+/*!
+ * \brief Wrappers for complex single-precision egblas max operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void max(size_t n, etl::complex<float>* alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb, etl::complex<float>* C, size_t ldc) {
+#ifdef EGBLAS_HAS_CMAX3
+    egblas_cmax(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
+
+    cpp_unreachable("Invalid call to egblas::max");
+#endif
+}
+
+/*!
+ * \brief Indicates if EGBLAS has complex double-precision max.
+ */
+#ifdef EGBLAS_HAS_ZMAX3
+static constexpr bool has_zmax3 = true;
+#else
+static constexpr bool has_zmax3 = false;
+#endif
+
+/*!
+ * \brief Wrappers for complex double-precision egblas max operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void max(size_t n, std::complex<double>* alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb, std::complex<double>* C, size_t ldc) {
+#ifdef EGBLAS_HAS_ZMAX3
+    egblas_zmax(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb, reinterpret_cast<cuDoubleComplex*>(C), ldc);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
+
+    cpp_unreachable("Invalid call to egblas::max");
+#endif
+}
+
+/*!
+ * \brief Wrappers for complex double-precision egblas max operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void max(size_t n, etl::complex<double>* alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb, etl::complex<double>* C, size_t ldc) {
+#ifdef EGBLAS_HAS_ZMAX3
+    egblas_zmax(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb, reinterpret_cast<cuDoubleComplex*>(C), ldc);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+    cpp_unused(C);
+    cpp_unused(ldc);
+
+    cpp_unreachable("Invalid call to egblas::max");
+#endif
+}
+
 } //end of namespace egblas
 } //end of namespace impl
 } //end of namespace etl
