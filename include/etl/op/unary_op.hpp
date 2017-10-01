@@ -52,6 +52,4 @@
 #include "etl/op/unary/relu_derivative.hpp"
 #include "etl/op/unary/bernoulli.hpp"
 #include "etl/op/unary/noise.hpp"
-#include "etl/op/unary/min.hpp"
-#include "etl/op/unary/max.hpp"
 #include "etl/op/unary/clip.hpp"

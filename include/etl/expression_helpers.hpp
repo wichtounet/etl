@@ -117,6 +117,13 @@ template <typename LE, typename RE, typename OP>
 using left_binary_helper_op = binary_expr<value_t<LE>, build_type<LE>, OP, build_type<RE>>;
 
 /*!
+ * \brief Helper to create a binary expr with left typing and a
+ * direct operation
+ */
+template <typename LE, typename RE, typename OP>
+using left_binary_helper_op_scalar = binary_expr<wrap_scalar_value_t<LE>, build_type<wrap_scalar_t<LE>>, OP, build_type<wrap_scalar_t<RE>>>;
+
+/*!
  * \brief Helper to create a binary expr with right typing
  */
 template <typename LE, typename RE, template <typename> class OP>

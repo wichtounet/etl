@@ -33,10 +33,10 @@ struct min_binary_op {
      */
     template<typename L, typename R>
     static constexpr bool gpu_computable =
-               (all_single_precision<L,R> && impl::egblas::has_smin)
-            || (all_double_precision<L,R> && impl::egblas::has_dmin)
-            || (all_complex_single_precision<L,R> && impl::egblas::has_cmin)
-            || (all_complex_double_precision<L,R> && impl::egblas::has_zmin);
+               (all_single_precision<L,R> && impl::egblas::has_smin3)
+            || (all_double_precision<L,R> && impl::egblas::has_dmin3)
+            || (all_complex_single_precision<L,R> && impl::egblas::has_cmin3)
+            || (all_complex_double_precision<L,R> && impl::egblas::has_zmin3);
 
     /*!
      * The vectorization type for V
@@ -52,7 +52,11 @@ struct min_binary_op {
      * \return The result of applying the binary operator on lhs and rhs
      */
     static constexpr LT apply(const LT& x, const RT& value) noexcept {
-        return std::min(x, value);
+        if(x < value){
+            return x;
+        } else {
+            return value;
+        }
     }
 
     /*!
@@ -79,10 +83,13 @@ struct min_binary_op {
         decltype(auto) t1 = smart_gpu_compute(x);
         decltype(auto) t2 = smart_gpu_compute(y);
 
-        auto t3 = force_temporary_gpu(t1);
+        constexpr size_t inca = gpu_inc<decltype(x)>;
+        constexpr size_t incb = gpu_inc<decltype(y)>;
+
+        auto t3 = force_temporary_gpu_dim_only(t1);
 
         LT alpha(1);
-        impl::egblas::min(etl::size(x), &alpha, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
+        impl::egblas::min(etl::smart_size(x, y), &alpha, t1.gpu_memory(), inca, t2.gpu_memory(), incb, t3.gpu_memory(), 1);
 
         return t3;
     }
@@ -96,10 +103,13 @@ struct min_binary_op {
     template <typename X, typename Y, typename YY>
     static YY& gpu_compute(const X& x, const Y& y, YY& yy) noexcept {
         decltype(auto) t1 = smart_gpu_compute(x);
-        smart_gpu_compute(y, yy);
+        decltype(auto) t2 = smart_gpu_compute(y);
+
+        constexpr size_t inca = gpu_inc<decltype(x)>;
+        constexpr size_t incb = gpu_inc<decltype(y)>;
 
         LT alpha(1);
-        impl::egblas::min(etl::size(x), &alpha, t1.gpu_memory(), 1, yy.gpu_memory(), 1);
+        impl::egblas::min(etl::smart_size(x, y), &alpha, t1.gpu_memory(), inca, t2.gpu_memory(), incb, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();

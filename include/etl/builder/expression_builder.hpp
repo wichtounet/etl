@@ -57,39 +57,15 @@ auto abs(E&& value) -> detail::unary_helper<E, abs_unary_op> {
 }
 
 /*!
- * \brief Apply max(x, v) on each element x of the ETL expression
- * \param value The ETL expression
- * \param v The maximum
- * \return an expression representing the max(x, v) of each value x of the given expression
- */
-template <typename E, typename T, cpp_enable_iff(std::is_arithmetic<T>::value)>
-auto max(E&& value, T v) {
-    static_assert(is_etl_expr<E>, "etl::max can only be used on ETL expressions");
-    return detail::make_stateful_unary_expr<E, max_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(v));
-}
-
-/*!
  * \brief Create an expression with the max value of lhs or rhs
  * \param lhs The left hand side ETL expression
  * \param rhs The right hand side ETL expression
  * \return an expression representing the max values from lhs and rhs
  */
-template <typename L, typename R, cpp_disable_iff(std::is_arithmetic<R>::value)>
-auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, max_binary_op<value_t<L>, value_t<R>>> {
+template <typename L, typename R>
+auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op_scalar<L, R, max_binary_op<detail::wrap_scalar_value_t<L>, detail::wrap_scalar_value_t<R>>> {
     static_assert(is_etl_expr<L>, "etl::max can only be used on ETL expressions");
-    return {lhs, rhs};
-}
-
-/*!
- * \brief Apply min(x, v) on each element x of the ETL expression
- * \param value The ETL expression
- * \param v The minimum
- * \return an expression representing the min(x, v) of each value x of the given expression
- */
-template <typename E, typename T, cpp_enable_iff(std::is_arithmetic<T>::value)>
-auto min(E&& value, T v) {
-    static_assert(is_etl_expr<E>, "etl::min can only be used on ETL expressions");
-    return detail::make_stateful_unary_expr<E, min_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(v));
+    return {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
 }
 
 /*!
@@ -98,10 +74,10 @@ auto min(E&& value, T v) {
  * \param rhs The right hand side ETL expression
  * \return an expression representing the min values from lhs and rhs
  */
-template <typename L, typename R, cpp_disable_iff(std::is_arithmetic<R>::value)>
-auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, min_binary_op<value_t<L>, value_t<R>>> {
+template <typename L, typename R>
+auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op_scalar<L, R, min_binary_op<detail::wrap_scalar_value_t<L>, detail::wrap_scalar_value_t<R>>> {
     static_assert(is_etl_expr<L>, "etl::max can only be used on ETL expressions");
-    return {lhs, rhs};
+    return {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
 }
 
 /*!
