@@ -1,13 +1,20 @@
-ETL 1.2 - Next version
-**********************
+ETL 1.2 - 01.10.2017
+********************
 
 * *Feature* GPU support for basic expressions (such as c = 1.0 * b + d + e - 1.0)
+* *Feature* GPU Support for unary and binary operators
 * *Feature* Support for convolutions for matrices of different data types
 * *Feature* Support for log2 / log10
+* *Feature* Default selection of algorithms by default
+* *Feature* Support for categorical cross entropy loss and error
+* *Feature* Improve support for complex numbers and etl::complex
 * *Performance* Improved performance of using parallel BLAS
 * *Misc* Full cleanup of the traits
 * *Misc* Use of variable templates (C++14) for the traits
 * *Misc* Improved support for clang
+* *Misc* Reduced compilation time for non-tests / non-benchmark code
+* *Misc* Reduce durations of the tests
+* *Misc* Preliminary C++17 if constexpr support
 * *Bug* Fix bug in the GEMM kernel for CM = CM * CM
 * *Bug* Vectorization bug for binary operations with different data types
 * *Bug* GPU memory was not correctly handled when std::move is used
