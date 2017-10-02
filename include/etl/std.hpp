@@ -60,7 +60,7 @@ constexpr size_t version_major = 1;
 /*!
  * \brief The current minor version number of the library
  */
-constexpr size_t version_minor = 2;
+constexpr size_t version_minor = 3;
 
 /*!
  * \brief The current revision version number of the library
@@ -72,7 +72,7 @@ constexpr size_t version_revision = 0;
 /*!
  * \brief String representation of the current version of the library.
  */
-#define ETL_VERSION_STR "1.2"
+#define ETL_VERSION_STR "1.3"
 
 /*!
  * \brief The current major version number of the library
@@ -82,7 +82,7 @@ constexpr size_t version_revision = 0;
 /*!
  * \brief The current minor version number of the library
  */
-#define ETL_VERSION_MINOR 2
+#define ETL_VERSION_MINOR 3
 
 /*!
  * \brief The current revision version number of the library
