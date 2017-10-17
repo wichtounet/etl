@@ -18,7 +18,7 @@ namespace etl {
 template <typename A, typename B, typename C>
 struct batch_embedding_gradients_expr : base_temporary_expr_tern<batch_embedding_gradients_expr<A, B, C>, A, B, C> {
     using value_type = value_t<A>;                                   ///< The type of value of the expression
-    using this_type  = batch_embedding_gradients_expr<A, B, C>;            ///< The type of this expression
+    using this_type  = batch_embedding_gradients_expr<A, B, C>;      ///< The type of this expression
     using base_type  = base_temporary_expr_tern<this_type, A, B, C>; ///< The base type
     using sub_traits = decay_traits<A>;                              ///< The traits of the sub type
 
@@ -73,7 +73,7 @@ struct batch_embedding_gradients_expr : base_temporary_expr_tern<batch_embedding
 
         static_assert(etl::dimensions<A>() == 2, "The input of batch_embedding_gradients is a 1d matrix");
         static_assert(etl::dimensions<B>() == 3, "The vocabulary input of batch_embedding_gradients is a 2d matrix");
-        static_assert(etl::dimensions<lhs>() == 2, "The output of batch_embedding_gradients is 2d matrix");
+        static_assert(etl::dimensions<L>() == 2, "The output of batch_embedding_gradients is 2d matrix");
 
         cpp_assert(etl::dim<0>(a) == etl::dim<0>(b), "Invalid dimensions for batch_embedding_gradients");
         cpp_assert(etl::dim<1>(a) == etl::dim<1>(b), "Invalid dimensions for batch_embedding_gradients");
@@ -174,9 +174,9 @@ struct batch_embedding_gradients_expr : base_temporary_expr_tern<batch_embedding
 template <typename A, typename B, typename C>
 struct etl_traits<etl::batch_embedding_gradients_expr<A, B, C>> {
     using expr_t     = etl::batch_embedding_gradients_expr<A, B, C>; ///< The expression type
-    using sub_expr_t = std::decay_t<A>;                        ///< The sub expression type
-    using sub_traits = etl_traits<sub_expr_t>;                 ///< The sub traits
-    using value_type = value_t<A>;                             ///< The value type of the expression
+    using sub_expr_t = std::decay_t<A>;                              ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;                       ///< The sub traits
+    using value_type = value_t<A>;                                   ///< The value type of the expression
 
     static constexpr bool is_etl         = true;                      ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer = false;                     ///< Indicates if the type is a transformer
