@@ -9,8 +9,6 @@
 
 #include "etl/expr/base_temporary_expr.hpp"
 
-#include "etl/impl/cudnn/bias_batch_mean.hpp"
-
 namespace etl {
 
 /*!
