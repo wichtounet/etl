@@ -143,6 +143,7 @@
 #include "etl/expr/embedding_lookup_expr.hpp"
 #include "etl/expr/batch_embedding_lookup_expr.hpp"
 #include "etl/expr/embedding_gradients_expr.hpp"
+#include "etl/expr/batch_embedding_gradients_expr.hpp"
 
 // The expressions building
 #include "etl/builder/expression_builder.hpp"
