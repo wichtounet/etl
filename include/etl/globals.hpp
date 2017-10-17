@@ -927,4 +927,44 @@ void parallel_shuffle(T1& m1, T2& m2, G&& g){
     parallel_shuffle_first(m1, m2, g);
 }
 
+/*!
+ * \brief Merge sub inside merged at the given position
+ *
+ * \param merged The merged result
+ * \param sub The data to merge inside merged
+ * \param index The position at which to merge
+ *
+ * \return merged
+ */
+template<typename M, typename N>
+M& merge(M& merged, const N& sub, size_t index){
+    const size_t s = etl::size(sub);
+    const size_t n = index * s;
+
+    memory_slice(merged, n, n + s) = sub;
+
+    return merged;
+}
+
+/*!
+ * \brief Merge sub inside merged at the given position, for each batch.
+ *
+ * \param merged The merged result
+ * \param sub The data to merge inside merged
+ * \param index The position at which to merge
+ *
+ * \return merged
+ */
+template<typename M, typename N>
+M& batch_merge(M& merged, const N& sub, size_t index){
+    const size_t s = etl::size(sub(0));
+    const size_t n = index * s;
+
+    for(size_t b = 0; b < etl::dim<0>(merged); ++b){
+        memory_slice(merged(b), n, n + s) = sub(b);
+    }
+
+    return merged;
+}
+
 } //end of namespace etl
