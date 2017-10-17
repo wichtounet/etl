@@ -967,4 +967,44 @@ M& batch_merge(M& merged, const N& sub, size_t index){
     return merged;
 }
 
+/*!
+ * \brief Dispatch a part of merged to dispatched from the given position
+ *
+ * \param dispatched The dispatched result
+ * \param merged The data to dispatch inside dispatched
+ * \param index The position from which to dispatch
+ *
+ * \return dispatched
+ */
+template<typename M, typename N>
+M& dispatch(M& dispatched, const N& merged, size_t index){
+    const size_t s = etl::size(dispatched);
+    const size_t n = index * s;
+
+    dispatched = memory_slice(merged, n, n + s);
+
+    return dispatched;
+}
+
+/*!
+ * \brief Dispatch a part of merged to dispatched from the given position, for each batch
+ *
+ * \param dispatched The dispatched result
+ * \param merged The data to dispatch inside dispatched
+ * \param index The position from which to dispatch
+ *
+ * \return dispatched
+ */
+template<typename M, typename N>
+M& batch_dispatch(M& dispatched, const N& merged, size_t index){
+    const size_t s = etl::size(dispatched(0));
+    const size_t n = index * s;
+
+    for(size_t b = 0; b < etl::dim<0>(merged); ++b){
+        dispatched(b) = memory_slice(merged(b), n, n + s);
+    }
+
+    return dispatched;
+}
+
 } //end of namespace etl
