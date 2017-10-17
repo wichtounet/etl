@@ -647,8 +647,6 @@ struct base_temporary_expr_tern : base_temporary_expr<D, Fast> {
     using this_type = base_temporary_expr_tern<D, A, B, C>; ///< This type
     using base_type = base_temporary_expr<D, Fast>;         ///< The base type
 
-private:
-
     A _a;                       ///< The first sub expression reference
     B _b;                       ///< The second sub expression reference
     C _c;                       ///< The third sub expression reference
