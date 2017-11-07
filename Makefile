@@ -276,6 +276,7 @@ $(eval $(call add_executable,benchmark_fft,benchmark/src/benchmark.cpp benchmark
 $(eval $(call add_executable,benchmark_gemm,benchmark/src/benchmark.cpp benchmark/src/benchmark_gemm.cpp))
 $(eval $(call add_executable,benchmark_pool,benchmark/src/benchmark.cpp benchmark/src/benchmark_pool.cpp))
 $(eval $(call add_executable,benchmark_thesis,benchmark/src/benchmark.cpp benchmark/src/benchmark_thesis.cpp))
+$(eval $(call add_executable,benchmark_trigo,benchmark/src/benchmark.cpp benchmark/src/benchmark_trigo.cpp))
 
 # Create various executables
 $(eval $(call add_executable,test_asm_1,workbench/src/test.cpp))
