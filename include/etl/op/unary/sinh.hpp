@@ -26,7 +26,10 @@ struct sinh_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable = false;
+    static constexpr bool vectorizable =
+            (V == vector_mode_t::SSE3 && !is_complex_t<T>)
+        ||  (V == vector_mode_t::AVX && !is_complex_t<T>)
+        ||  (intel_compiler && !is_complex_t<T>);
 
     /*!
      * \brief Indicates if the operator can be computed on GPU
@@ -39,12 +42,29 @@ struct sinh_unary_op {
             || (is_complex_double_t<T> && impl::egblas::has_zsinh);
 
     /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
      */
     static constexpr T apply(const T& x) noexcept {
         return std::sinh(x);
+    }
+
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
+    template <typename V = default_vec>
+    static vec_type<V> load(const vec_type<V>& x) noexcept {
+        return V::div((V::sub(V::exp(x), V::exp(V::minus(x)))), V::set(T(2)));
     }
 
     /*!
