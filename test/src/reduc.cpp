@@ -236,6 +236,32 @@ TEMPLATE_TEST_CASE_2("bias_batch_mean_2d/0", "[mean]", Z, float, double) {
     REQUIRE_EQUALS(b(2), Z(7.5));
 }
 
+// Tests for bias_batch_var_2d
+
+TEMPLATE_TEST_CASE_2("bias_batch_var_2d/0", "[mean]", Z, float, double) {
+    etl::fast_matrix<Z, 4, 3> a({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12});
+    etl::fast_matrix<Z, 3> b({0.0, 0.0, 0.0});
+    etl::fast_matrix<Z, 3> c;
+
+    c = etl::bias_batch_var_2d(a, b);
+
+    REQUIRE_EQUALS_APPROX(c(0), Z(41.5));
+    REQUIRE_EQUALS_APPROX(c(1), Z(53.5));
+    REQUIRE_EQUALS_APPROX(c(2), Z(67.5));
+}
+
+TEMPLATE_TEST_CASE_2("bias_batch_var_2d/1", "[mean]", Z, float, double) {
+    etl::fast_matrix<Z, 4, 3> a({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12});
+    etl::fast_matrix<Z, 3> b({0.1, -1.0, 2.0});
+    etl::fast_matrix<Z, 3> c;
+
+    c = etl::bias_batch_var_2d(a, b);
+
+    REQUIRE_EQUALS_APPROX(c(0), Z(40.41));
+    REQUIRE_EQUALS_APPROX(c(1), Z(67.5));
+    REQUIRE_EQUALS_APPROX(c(2), Z(41.5));
+}
+
 // Tests for bias_batch_sum_2d
 
 TEMPLATE_TEST_CASE_2("bias_batch_sum_2d/0", "[mean]", Z, float, double) {
