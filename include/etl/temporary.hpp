@@ -35,7 +35,7 @@ struct build_fast_dyn_matrix_type<E, std::index_sequence<I...>> {
      */
     using type = fast_matrix_impl<
         value_t<E>,
-        cpp::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
+        etl::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
         decay_traits<E>::storage_order,
         decay_traits<E>::template dim<I>()...>;
 };
@@ -63,7 +63,7 @@ struct build_fast_dyn_matrix_type_opp<E, std::index_sequence<I...>> {
      */
     using type = fast_matrix_impl<
         value_t<E>,
-        cpp::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
+        etl::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
         reverse(decay_traits<E>::storage_order),
         decay_traits<E>::template dim<I>()...>;
 };
