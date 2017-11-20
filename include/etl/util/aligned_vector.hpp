@@ -32,7 +32,7 @@ struct simple_vector {
         resize_impl(rhs.size, false);
 
         for (size_t i = 0; i < size; ++i) {
-            _data[i] = _data[i];
+            _data[i] = rhs._data[i];
         }
     }
 
@@ -48,7 +48,7 @@ struct simple_vector {
             size = rhs.size;
 
             for (size_t i = 0; i < size; ++i) {
-                _data[i] = _data[i];
+                _data[i] = rhs._data[i];
             }
         }
 
@@ -102,7 +102,16 @@ private:
 
     void resize_impl(size_t n, bool copy = true){
         auto* new_data = allocator.allocate(n);
-        allocator.construct(new_data, T());
+
+        // Call all the constructors if necessary
+        if /*constexpr*/ (!std::is_trivial<T>::value) {
+            new (new_data) T[n]();
+        }
+
+        // Initialize to the default values
+        if /*constexpr*/ (std::is_trivial<T>::value) {
+            std::fill_n(new_data, n, T());
+        }
 
         if (copy && _data) {
             for (size_t i = 0; i < size && i < n; ++i) {
