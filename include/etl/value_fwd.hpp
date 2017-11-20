@@ -14,9 +14,11 @@
 #pragma once
 
 #include <cstddef>
+
 #include "cpp_utils/array_wrapper.hpp"
-#include "cpp_utils/aligned_vector.hpp"
 #include "cpp_utils/aligned_array.hpp"
+
+#include "etl/util/aligned_vector.hpp"
 
 namespace etl {
 
@@ -200,19 +202,19 @@ using fast_vector_cm = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size_vec<
  * \brief A hybrid vector with fixed dimensions, in row-major order
  */
 template <typename T, size_t Rows>
-using fast_dyn_vector = fast_matrix_impl<T, cpp::aligned_vector<T, default_intrinsic_traits<T>::alignment>, order::RowMajor, Rows>;
+using fast_dyn_vector = fast_matrix_impl<T, etl::aligned_vector<T, default_intrinsic_traits<T>::alignment>, order::RowMajor, Rows>;
 
 /*!
  * \brief A hybrid matrix with fixed dimensions, in row-major order
  */
 template <typename T, size_t... Dims>
-using fast_dyn_matrix = fast_matrix_impl<T, cpp::aligned_vector<T, default_intrinsic_traits<T>::alignment>, order::RowMajor, Dims...>;
+using fast_dyn_matrix = fast_matrix_impl<T, etl::aligned_vector<T, default_intrinsic_traits<T>::alignment>, order::RowMajor, Dims...>;
 
 /*!
  * \brief A hybrid matrix with fixed dimensions, in specified  order
  */
 template <typename T, order SO, size_t... Dims>
-using fast_dyn_matrix_o = fast_matrix_impl<T, cpp::aligned_vector<T, default_intrinsic_traits<T>::alignment>, SO, Dims...>;
+using fast_dyn_matrix_o = fast_matrix_impl<T, etl::aligned_vector<T, default_intrinsic_traits<T>::alignment>, SO, Dims...>;
 
 /*!
  * \brief A dynamic matrix, in row-major order, of D dimensions

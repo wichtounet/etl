@@ -31,6 +31,12 @@ template <typename... Args>
 struct is_vector_impl<std::vector<Args...>> : std::true_type {};
 
 /*!
+ * \copydoc is_vector
+ */
+template <typename... Args>
+struct is_vector_impl<etl::simple_vector<Args...>> : std::true_type {};
+
+/*!
  * \brief Traits to test if a type is a std::vector
  */
 template <typename N>
