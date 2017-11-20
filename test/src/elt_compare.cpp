@@ -10,9 +10,9 @@
 #include <cmath>
 
 TEMPLATE_TEST_CASE_2("elt_compare/equal/1", "[compare]", Z, float, double) {
-    etl::fast_matrix<Z, 3, 2, 2> a{1.0, -1.0, 2.0, 3.3,  1.0, 2.0, 3.0, 4.0,  -1.0, 2.25, 3.4, 0.002};
-    etl::fast_matrix<Z, 3, 2, 2> b{0.0, -1.1, 2.0, 3.3,  1.0, 2.1, 3.1, 4.0,  -1.0, 2.25, 3.4, 0.001};
-    etl::fast_matrix<bool, 3, 2, 2> c;
+    etl::fast_dyn_matrix<Z, 3, 2, 2> a{1.0, -1.0, 2.0, 3.3,  1.0, 2.0, 3.0, 4.0,  -1.0, 2.25, 3.4, 0.002};
+    etl::fast_dyn_matrix<Z, 3, 2, 2> b{0.0, -1.1, 2.0, 3.3,  1.0, 2.1, 3.1, 4.0,  -1.0, 2.25, 3.4, 0.001};
+    etl::fast_dyn_matrix<bool, 3, 2, 2> c;
 
     c = equal(a, b);
 
@@ -391,8 +391,8 @@ TEMPLATE_TEST_CASE_2("elt_compare/greater_equal/2", "[compare]", Z, float, doubl
 }
 
 TEMPLATE_TEST_CASE_2("elt_compare/greater_equal/3", "[compare]", Z, float, double) {
-    etl::fast_matrix<Z, 3, 2, 2> a{1.0, -1.0, 2.0, 3.3,  1.0, 2.0, 3.0, 4.0,  -1.0, 2.25, 3.4, -0.002};
-    etl::fast_matrix<bool, 3, 2, 2> c;
+    etl::fast_dyn_matrix<Z, 3, 2, 2> a{1.0, -1.0, 2.0, 3.3,  1.0, 2.0, 3.0, 4.0,  -1.0, 2.25, 3.4, -0.002};
+    etl::fast_dyn_matrix<bool, 3, 2, 2> c;
 
     c = greater_equal(2.0, a);
 
