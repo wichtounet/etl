@@ -261,6 +261,24 @@ public:
     // Internals
 
     /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // The sub value must be ensured
+        sub_expr.ensure_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // The sub value must be ensured
+        sub_expr.ensure_gpu_up_to_date();
+    }
+
+    /*!
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
