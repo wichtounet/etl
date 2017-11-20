@@ -218,10 +218,10 @@ public:
         if /*constexpr*/ (!decay_traits<E>::is_linear) {
             if (e.alias(*this)) {
                 // Create a temporary to hold the result
-                this_type tmp;
+                auto tmp = force_temporary_dim_only(*this);
 
                 // Assign the expression to the temporary
-                tmp = e;
+                e.assign_to(tmp);
 
                 // Assign the temporary to this matrix
                 *this = tmp;
