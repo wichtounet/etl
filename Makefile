@@ -87,10 +87,12 @@ CXX_FLAGS += -DETL_GPU
 CXX_FLAGS += $(shell pkg-config --cflags cublas)
 CXX_FLAGS += $(shell pkg-config --cflags cufft)
 CXX_FLAGS += $(shell pkg-config --cflags cudnn)
+CXX_FLAGS += $(shell pkg-config --cflags curand)
 
 LD_FLAGS += $(shell pkg-config --libs cublas)
 LD_FLAGS += $(shell pkg-config --libs cufft)
 LD_FLAGS += $(shell pkg-config --libs cudnn)
+LD_FLAGS += $(shell pkg-config --libs curand)
 
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-documentation
@@ -111,6 +113,16 @@ endif
 ifneq (,$(ETL_CUFFT))
 CXX_FLAGS += -DETL_CUFFT_MODE $(shell pkg-config --cflags cufft)
 LD_FLAGS += $(shell pkg-config --libs cufft)
+
+ifneq (,$(findstring clang,$(CXX)))
+CXX_FLAGS += -Wno-documentation
+endif
+endif
+
+# On demand activation of curand support
+ifneq (,$(ETL_CURAND))
+CXX_FLAGS += -DETL_CURAND_MODE $(shell pkg-config --cflags curand)
+LD_FLAGS += $(shell pkg-config --libs curand)
 
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-documentation
