@@ -29,6 +29,22 @@ namespace curand {
         }                                                                             \
     }
 
+void generate_normal(curandGenerator_t generator, float* gpu_memory, size_t n, float mean, float stddev){
+    curand_call(curandGenerateNormal(generator, gpu_memory, n, mean, stddev));
+}
+
+void generate_normal(curandGenerator_t generator, double* gpu_memory, size_t n, double mean, double stddev){
+    curand_call(curandGenerateNormalDouble(generator, gpu_memory, n, mean, stddev));
+}
+
+void generate_uniform(curandGenerator_t generator, float* gpu_memory, size_t n){
+    curand_call(curandGenerateUniform(generator, gpu_memory, n));
+}
+
+void generate_uniform(curandGenerator_t generator, double* gpu_memory, size_t n){
+    curand_call(curandGenerateUniformDouble(generator, gpu_memory, n));
+}
+
 } //end of namespace curand
 
 } //end of namespace impl
