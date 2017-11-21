@@ -28,6 +28,8 @@ template <typename T = double>
 struct normal_generator_op {
     using value_type = T; ///< The value type
 
+    T mean;                                            ///< The mean
+    T stddev;                                          ///< The standard deviation
     random_engine rand_engine;                         ///< The random engine
     std::normal_distribution<value_type> distribution; ///< The used distribution
 
@@ -44,7 +46,7 @@ struct normal_generator_op {
      * \param stddev The standard deviation
      */
     normal_generator_op(T mean, T stddev)
-            : rand_engine(std::time(nullptr)), distribution(mean, stddev) {}
+            : mean(mean), stddev(stddev), rand_engine(std::time(nullptr)), distribution(mean, stddev) {}
 
     /*!
      * \brief Generate a new value
@@ -54,6 +56,8 @@ struct normal_generator_op {
         return distribution(rand_engine);
     }
 
+#ifdef ETL_CURAND_MODE
+
     /*!
      * \brief Compute the result of the operation using the GPU
      *
@@ -61,10 +65,20 @@ struct normal_generator_op {
      * \param y The expression into which to store the reuslt
      */
     template <typename Y>
-    static Y& gpu_compute_hint(Y& y) noexcept {
-        auto t1 = force_temporary_gpu_dim_only_t<T>(y);
+    auto gpu_compute_hint(Y& y) noexcept {
+        auto t1 = etl::force_temporary_gpu_dim_only_t<T>(y);
 
-        //TODO
+        curandGenerator_t gen;
+
+        // Create the generator
+        curand_call(curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT));
+
+        // Seed it with the internal random engine
+        std::uniform_int_distribution<long> seed_dist;
+        curand_call(curandSetPseudoRandomGeneratorSeed(gen, seed_dist(rand_engine)));
+
+        // Generate the random numbers
+        impl::curand::generate_normal(gen, t1.gpu_memory(), etl::size(y), mean, stddev);
 
         return t1;
     }
@@ -76,16 +90,28 @@ struct normal_generator_op {
      * \param y The expression into which to store the reuslt
      */
     template <typename Y>
-    static Y& gpu_compute(Y& y) noexcept {
+    Y& gpu_compute(Y& y) noexcept {
         y.ensure_gpu_allocated();
 
-        //TODO
+        curandGenerator_t gen;
+
+        // Create the generator
+        curand_call(curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT));
+
+        // Seed it with the internal random engine
+        std::uniform_int_distribution<long> seed_dist;
+        curand_call(curandSetPseudoRandomGeneratorSeed(gen, seed_dist(rand_engine)));
+
+        // Generate the random numbers
+        impl::curand::generate_normal(gen, y.gpu_memory(), etl::size(y), mean, stddev);
 
         y.validate_gpu();
         y.invalidate_cpu();
 
         return y;
     }
+
+#endif
 
     /*!
      * \brief Outputs the given generator to the given stream
@@ -106,10 +132,17 @@ template <typename G, typename T = double>
 struct normal_generator_g_op {
     using value_type = T; ///< The value type
 
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator is computable on GPU
-
+    T mean;                                            ///< The mean
+    T stddev;                                          ///< The standard deviation
     G& rand_engine;                                    ///< The random engine
     std::normal_distribution<value_type> distribution; ///< The used distribution
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    static constexpr bool gpu_computable =
+               (is_single_precision_t<T> && curand_enabled)
+            || (is_double_precision_t<T> && curand_enabled);
 
     /*!
      * \brief Construct a new generator with the given mean and standard deviation
@@ -117,7 +150,7 @@ struct normal_generator_g_op {
      * \param stddev The standard deviation
      */
     normal_generator_g_op(G& g, T mean, T stddev)
-            : rand_engine(g), distribution(mean, stddev) {}
+            : mean(mean), stddev(stddev), rand_engine(g), distribution(mean, stddev) {}
 
     /*!
      * \brief Generate a new value
@@ -126,6 +159,63 @@ struct normal_generator_g_op {
     value_type operator()() {
         return distribution(rand_engine);
     }
+
+#ifdef ETL_CURAND_MODE
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename Y>
+    auto gpu_compute_hint(Y& y) noexcept {
+        auto t1 = etl::force_temporary_gpu_dim_only_t<T>(y);
+
+        curandGenerator_t gen;
+
+        // Create the generator
+        curand_call(curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT));
+
+        // Seed it with the internal random engine
+        std::uniform_int_distribution<long> seed_dist;
+        curand_call(curandSetPseudoRandomGeneratorSeed(gen, seed_dist(rand_engine)));
+
+        // Generate the random numbers
+        impl::curand::generate_normal(gen, t1.gpu_memory(), etl::size(y), mean, stddev);
+
+        return t1;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename Y>
+    Y& gpu_compute(Y& y) noexcept {
+        y.ensure_gpu_allocated();
+
+        curandGenerator_t gen;
+
+        // Create the generator
+        curand_call(curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT));
+
+        // Seed it with the internal random engine
+        std::uniform_int_distribution<long> seed_dist;
+        curand_call(curandSetPseudoRandomGeneratorSeed(gen, seed_dist(rand_engine)));
+
+        // Generate the random numbers
+        impl::curand::generate_normal(gen, y.gpu_memory(), etl::size(y), mean, stddev);
+
+        y.validate_gpu();
+        y.invalidate_cpu();
+
+        return y;
+    }
+
+#endif
 
     /*!
      * \brief Outputs the given generator to the given stream
