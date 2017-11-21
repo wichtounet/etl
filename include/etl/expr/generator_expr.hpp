@@ -83,7 +83,7 @@ public:
      */
     template<typename Y>
     decltype(auto) gpu_compute_hint(Y& y) const {
-        return Generator::gpu_compute_hint(y);
+        return generator.gpu_compute_hint(y);
     }
 
     /*!
@@ -92,7 +92,7 @@ public:
      */
     template<typename Y>
     decltype(auto) gpu_compute(Y& y) const {
-        return Generator::gpu_compute(y);
+        return generator.gpu_compute(y);
     }
 
     /*!
