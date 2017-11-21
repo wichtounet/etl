@@ -1,6 +1,15 @@
 ETL 1.3 - dev
 *************
 
+* *Feature* Support for embeddings and embedding gradients
+* *Feature* Support for merging matrices together
+* *Feature* Support for bias_batch_var_2d
+* *Performance* Vectorize hyperbolic fucntions
+* *Bug* Fix fast_dyn_matrix with bool
+* *Bug* Fix possible stack overflow with fast matrix and aliasing
+* *Bug* Correctly handle aliasing in assignable (sub_view for instance)
+* *Bug* Fix small compilation bug with sub_matrix
+
 ETL 1.2 - 01.10.2017
 ********************
 
