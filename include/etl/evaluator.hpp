@@ -216,11 +216,14 @@ namespace standard_evaluator {
 
         if /*constexpr*/ (is_binary_expr<E>) {
             if (expr.alias(result)) {
+                // Create a temporary to hold the result
+                auto t1 = force_temporary_gpu_dim_only(result);
+
                 // Compute the GPU representation of the expression
-                decltype(auto) t1 = smart_gpu_compute(expr);
+                decltype(auto) t2 = smart_gpu_compute(expr, t1);
 
                 // Copy the GPU memory from the expression to the result
-                result.gpu_copy_from(t1.gpu_memory());
+                result.gpu_copy_from(t2.gpu_memory());
             } else {
                 // Compute the GPU representation of the expression into the result
                 smart_gpu_compute(expr, result);
