@@ -13,11 +13,11 @@
 #pragma once
 
 #ifdef ETL_CURAND_MODE
-#include "etl/impl/cublas/cuda.hpp"
 #include "etl/impl/curand/curand.hpp"
 #endif
 
 #include "etl/impl/egblas/scalar_add.hpp"
+#include "etl/impl/egblas/scalar_mul.hpp"
 
 #include <chrono> //for std::time
 
@@ -349,9 +349,9 @@ struct uniform_generator_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     static constexpr bool gpu_computable =
-                curand_enabled && cublas_enabled &&
-               ((is_single_precision_t<T> && impl::egblas::has_scalar_sadd)
-            ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dadd));
+                curand_enabled &&
+               ((is_single_precision_t<T> && impl::egblas::has_scalar_sadd && impl::egblas::has_scalar_smul)
+            ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dadd && impl::egblas::has_scalar_dmul));
 
     /*!
      * \brief Construct a new generator with the given start and end of the range
@@ -370,7 +370,6 @@ struct uniform_generator_op {
     }
 
 #ifdef ETL_CURAND_MODE
-#ifdef ETL_CUBLAS_MODE
 
     /*!
      * \brief Compute the result of the operation using the GPU
@@ -396,11 +395,10 @@ struct uniform_generator_op {
 
         // mul by b-a => [0,b-a]
         auto s = end - start;
-        decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), etl::size(y), &s, y.gpu_memory(), 1);
+        impl::egblas::scalar_mul(t1.gpu_memory(), etl::size(y), 1, &s);
 
         // Add a => [a,b]
-        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &start);
+        impl::egblas::scalar_add(t1.gpu_memory(), etl::size(y), 1, &start);
 
         return t1;
     }
@@ -429,8 +427,7 @@ struct uniform_generator_op {
 
         // mul by b-a => [0,b-a]
         auto s = end - start;
-        decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), etl::size(y), &s, y.gpu_memory(), 1);
+        impl::egblas::scalar_mul(y.gpu_memory(), etl::size(y), 1, &s);
 
         // Add a => [a,b]
         impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &start);
@@ -441,7 +438,6 @@ struct uniform_generator_op {
         return y;
     }
 
-#endif
 #endif
 
     /*!
@@ -472,9 +468,9 @@ struct uniform_generator_g_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     static constexpr bool gpu_computable =
-                curand_enabled && cublas_enabled &&
-               ((is_single_precision_t<T> && impl::egblas::has_scalar_sadd)
-            ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dadd));
+                curand_enabled &&
+               ((is_single_precision_t<T> && impl::egblas::has_scalar_sadd && impl::egblas::has_scalar_smul)
+            ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dadd && impl::egblas::has_scalar_dmul));
 
     /*!
      * \brief Construct a new generator with the given start and end of the range
@@ -493,7 +489,6 @@ struct uniform_generator_g_op {
     }
 
 #ifdef ETL_CURAND_MODE
-#ifdef ETL_CUBLAS_MODE
 
     /*!
      * \brief Compute the result of the operation using the GPU
@@ -519,11 +514,10 @@ struct uniform_generator_g_op {
 
         // mul by b-a => [0,b-a]
         auto s = end - start;
-        decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), etl::size(y), &s, y.gpu_memory(), 1);
+        impl::egblas::scalar_mul(t1.gpu_memory(), etl::size(y), 1, &s);
 
         // Add a => [a,b]
-        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &start);
+        impl::egblas::scalar_add(t1.gpu_memory(), etl::size(y), 1, &start);
 
         return t1;
     }
@@ -552,8 +546,7 @@ struct uniform_generator_g_op {
 
         // mul by b-a => [0,b-a]
         auto s = end - start;
-        decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), etl::size(y), &s, y.gpu_memory(), 1);
+        impl::egblas::scalar_mul(y.gpu_memory(), etl::size(y), 1, &s);
 
         // Add a => [a,b]
         impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &start);
@@ -564,7 +557,6 @@ struct uniform_generator_g_op {
         return y;
     }
 
-#endif
 #endif
 
     /*!
