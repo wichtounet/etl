@@ -12,6 +12,11 @@
 
 #pragma once
 
+#ifdef ETL_CURAND_MODE
+#include "etl/impl/cublas/cuda.hpp"
+#include "etl/impl/curand/curand.hpp"
+#endif
+
 #include <chrono> //for std::time
 
 namespace etl {
@@ -27,6 +32,13 @@ struct normal_generator_op {
     std::normal_distribution<value_type> distribution; ///< The used distribution
 
     /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    static constexpr bool gpu_computable =
+               (is_single_precision_t<T> && curand_enabled)
+            || (is_double_precision_t<T> && curand_enabled);
+
+    /*!
      * \brief Construct a new generator with the given mean and standard deviation
      * \param mean The mean
      * \param stddev The standard deviation
@@ -40,6 +52,39 @@ struct normal_generator_op {
      */
     value_type operator()() {
         return distribution(rand_engine);
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename Y>
+    static Y& gpu_compute_hint(Y& y) noexcept {
+        auto t1 = force_temporary_gpu_dim_only_t<T>(y);
+
+        //TODO
+
+        return t1;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename Y>
+    static Y& gpu_compute(Y& y) noexcept {
+        y.ensure_gpu_allocated();
+
+        //TODO
+
+        y.validate_gpu();
+        y.invalidate_cpu();
+
+        return y;
     }
 
     /*!
@@ -60,6 +105,8 @@ struct normal_generator_op {
 template <typename G, typename T = double>
 struct normal_generator_g_op {
     using value_type = T; ///< The value type
+
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator is computable on GPU
 
     G& rand_engine;                                    ///< The random engine
     std::normal_distribution<value_type> distribution; ///< The used distribution
@@ -101,6 +148,8 @@ struct truncated_normal_generator_op {
 
     random_engine rand_engine;                         ///< The random engine
     std::normal_distribution<value_type> distribution; ///< The used distribution
+
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator is computable on GPU
 
     /*!
      * \brief Construct a new generator with the given mean and standard deviation
@@ -145,6 +194,8 @@ struct truncated_normal_generator_g_op {
 
     G& rand_engine;                                    ///< The random engine
     std::normal_distribution<value_type> distribution; ///< The used distribution
+
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator is computable on GPU
 
     /*!
      * \brief Construct a new generator with the given mean and standard deviation
@@ -200,6 +251,8 @@ struct uniform_generator_op {
     random_engine rand_engine;                     ///< The random engine
     uniform_distribution<value_type> distribution; ///< The used distribution
 
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator is computable on GPU
+
     /*!
      * \brief Construct a new generator with the given start and end of the range
      * \param start The beginning of the range
@@ -238,6 +291,8 @@ struct uniform_generator_g_op {
     G& rand_engine;                                ///< The random engine
     uniform_distribution<value_type> distribution; ///< The used distribution
 
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator is computable on GPU
+
     /*!
      * \brief Construct a new generator with the given start and end of the range
      * \param start The beginning of the range
@@ -275,6 +330,8 @@ struct sequence_generator_op {
 
     const value_type start; ///< The beginning of the sequence
     value_type current;     ///< The current sequence element
+
+    static constexpr bool gpu_computable = false; ///< Indicates if the operator is computable on GPU
 
     /*!
      * \brief Construct a new generator with the given sequence start
