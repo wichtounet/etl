@@ -389,11 +389,13 @@ void random_test() {
     etl::reset_counters();
 
     {
-        etl::dyn_matrix<float, 4> I(32, 3, 28, 28);
-        etl::dyn_matrix<float, 2> L(32, 10);
+        using T = float;
 
-        I = etl::normal_generator<float>();
-        L = etl::uniform_generator<float>(10, 20);
+        etl::dyn_matrix<T, 4> I(32, 3, 28, 28);
+        etl::dyn_matrix<T, 2> L(32, 10);
+
+        I = etl::normal_generator<T>();
+        L = etl::uniform_generator<T>(10, 20);
     }
 
     etl::dump_counters();
@@ -403,8 +405,6 @@ void random_test() {
 
 int main() {
     auto start_time = timer_clock::now();
-
-    random_test();
 
     simple();
     basic();
