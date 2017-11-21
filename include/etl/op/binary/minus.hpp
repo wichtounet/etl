@@ -77,8 +77,10 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+    template <typename L, typename R, typename Y>
+    static auto gpu_compute_hint(const L& lhs, const R& rhs, Y& y) noexcept {
+        cpp_unused(y);
+
         auto t3 = force_temporary_gpu_dim_only(lhs, rhs);
         gpu_compute(lhs, rhs, t3);
         return t3;
@@ -99,7 +101,7 @@ struct minus_binary_op {
         decltype(auto) handle = impl::cublas::start_cublas();
 
         smart_gpu_compute(lhs, y);
-        decltype(auto) t2 = smart_gpu_compute(rhs);
+        decltype(auto) t2 = smart_gpu_compute_hint(rhs, y);
 
         value_t<L> alpha(-1);
         impl::cublas::cublas_axpy(handle.get(), etl::size(lhs), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);

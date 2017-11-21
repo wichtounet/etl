@@ -499,7 +499,7 @@ namespace standard_evaluator {
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
-        decltype(auto) t1 = smart_gpu_compute(expr);
+        decltype(auto) t1 = smart_gpu_compute_hint(expr, result);
 
         decltype(auto) handle = impl::cublas::start_cublas();
 
@@ -733,7 +733,7 @@ namespace standard_evaluator {
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
-        decltype(auto) t1 = smart_gpu_compute(expr);
+        decltype(auto) t1 = smart_gpu_compute_hint(expr, result);
 
         decltype(auto) handle = impl::cublas::start_cublas();
 
@@ -967,7 +967,7 @@ namespace standard_evaluator {
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
-        decltype(auto) t1 = smart_gpu_compute(expr);
+        decltype(auto) t1 = smart_gpu_compute_hint(expr, result);
 
         value_t<E> alpha(1);
         impl::egblas::axmy(etl::size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
@@ -1199,7 +1199,7 @@ namespace standard_evaluator {
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
-        decltype(auto) t1 = smart_gpu_compute(expr);
+        decltype(auto) t1 = smart_gpu_compute_hint(expr, result);
 
         value_t<E> alpha(1);
         impl::egblas::axdy(etl::size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);

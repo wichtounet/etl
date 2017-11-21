@@ -200,7 +200,9 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    auto& gpu_compute(){
+    template <typename Y>
+    auto& gpu_compute_hint(Y& y){
+        cpu_unused(y);
         this->ensure_gpu_up_to_date();
         return *this;
     }
@@ -209,7 +211,9 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    const auto& gpu_compute() const {
+    template <typename Y>
+    const auto& gpu_compute_hint(Y& y) const {
+        cpu_unused(y);
         this->ensure_gpu_up_to_date();
         return *this;
     }

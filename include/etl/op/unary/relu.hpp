@@ -64,9 +64,9 @@ struct relu_unary_op {
      *
      * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
-    template <typename X>
-    static auto gpu_compute(const X& x) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(x);
+    template <typename X, typename Y>
+    static auto gpu_compute_hint(const X& x, Y& y) noexcept {
+        decltype(auto) t1 = smart_gpu_compute_hint(x, y);
 
         auto t2 = force_temporary_gpu_dim_only(t1);
         impl::cudnn::relu(t1, t2);

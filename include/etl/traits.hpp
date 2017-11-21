@@ -1616,8 +1616,9 @@ decltype(auto) smart_forward_gpu(E& expr) {
  *
  * \return A gpu-computed expression reprensenting the results of the input expr
  */
-template <typename E, cpp_enable_iff(is_temporary_expr<E> && !E::gpu_computable)>
-decltype(auto) smart_gpu_compute(E& expr) {
+template <typename E, typename Y, cpp_enable_iff(is_temporary_expr<E> && !E::gpu_computable)>
+decltype(auto) smart_gpu_compute_hint(E& expr, Y& y) {
+    cpp_unused(y);
     auto t = force_temporary(expr);
     t.ensure_gpu_up_to_date();
     return t;
@@ -1633,8 +1634,9 @@ decltype(auto) smart_gpu_compute(E& expr) {
  *
  * \return A gpu-computed expression reprensenting the results of the input expr
  */
-template <typename E, cpp_enable_iff(is_temporary_expr<E> && E::gpu_computable)>
-decltype(auto) smart_gpu_compute(E& expr) {
+template <typename E, typename Y, cpp_enable_iff(is_temporary_expr<E> && E::gpu_computable)>
+decltype(auto) smart_gpu_compute_hint(E& expr, Y& y) {
+    cpp_unused(y);
     return force_temporary_gpu(expr);
 }
 
@@ -1648,9 +1650,9 @@ decltype(auto) smart_gpu_compute(E& expr) {
  *
  * \return A gpu-computed expression reprensenting the results of the input expr
  */
-template <typename E, cpp_enable_iff(!is_temporary_expr<E>)>
-decltype(auto) smart_gpu_compute(E& expr) {
-    return expr.gpu_compute();
+template <typename E, typename Y, cpp_enable_iff(!is_temporary_expr<E>)>
+decltype(auto) smart_gpu_compute_hint(E& expr, Y& y) {
+    return expr.gpu_compute_hint(y);
 }
 
 // Binary smart_gpu_compute
@@ -1745,8 +1747,7 @@ decltype(auto) smart_gpu_compute(X& x, Y& y) {
  */
 template <typename X, typename Y, cpp_enable_iff(should_gpu_compute_direct<X>)>
 decltype(auto) select_smart_gpu_compute(X& x, Y& y) {
-    cpp_unused(y);
-    return smart_gpu_compute(x);
+    return smart_gpu_compute_hint(x, y);
 }
 
 /*!

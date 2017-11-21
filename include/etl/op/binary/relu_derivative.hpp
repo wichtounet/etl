@@ -70,10 +70,10 @@ struct relu_derivative_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(lhs);
-        decltype(auto) t2 = smart_gpu_compute(rhs);
+    template <typename L, typename R, typename Y>
+    static auto gpu_compute_hint(const L& lhs, const R& rhs, Y& y) noexcept {
+        decltype(auto) t1 = smart_gpu_compute_hint(lhs, y);
+        decltype(auto) t2 = smart_gpu_compute_hint(rhs, y);
         decltype(auto) t3 = force_temporary_gpu_dim_only(t2);
 
         impl::cudnn::relu_backward(t1, t2, t3);
@@ -91,8 +91,8 @@ struct relu_derivative_binary_op {
      */
     template <typename L, typename R, typename Y>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(lhs);
-        decltype(auto) t2 = smart_gpu_compute(rhs);
+        decltype(auto) t1 = smart_gpu_compute_hint(lhs, y);
+        decltype(auto) t2 = smart_gpu_compute_hint(rhs, y);
 
         impl::cudnn::relu_backward(t1, t2, y);
 

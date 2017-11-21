@@ -169,17 +169,36 @@ struct scalar {
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    decltype(auto) gpu_compute() const {
-        gpu_dyn_matrix_impl<T, order::RowMajor, 1> mat;
+    template<typename Y>
+    decltype(auto) gpu_compute_hint(Y& y) const {
+        // TODO Maybe make a full vector with the hint
+        cpp_unused(y);
 
-        mat.resize_scalar();
-        mat.ensure_gpu_allocated();
+        gpu_dyn_matrix_impl<T, order::RowMajor, 1> t1;
+
+        t1.resize_scalar();
+        t1.ensure_gpu_allocated();
 
 #ifdef ETL_CUDA
-        cuda_check(cudaMemcpy(mat.gpu_memory(), &value, 1 * sizeof(T), cudaMemcpyHostToDevice));
+        cuda_check(cudaMemcpy(t1.gpu_memory(), &value, 1 * sizeof(T), cudaMemcpyHostToDevice));
 #endif
 
-        return mat;
+        return t1;
+    }
+
+    /*!
+     * \brief Return a GPU computed version of this expression
+     * \return a GPU-computed ETL expression for this expression
+     */
+    template<typename Y>
+    decltype(auto) gpu_compute(Y& y) const {
+        y.ensure_gpu_allocated();
+
+#ifdef ETL_CUDA
+        cuda_check(cudaMemcpy(y.gpu_memory(), &value, etl::size(y) * sizeof(T), cudaMemcpyHostToDevice));
+#endif
+
+        return y;
     }
 
     /*!

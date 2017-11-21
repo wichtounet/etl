@@ -55,10 +55,10 @@ struct greater_binary_op {
      *
      * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
-    template <typename X, typename Y>
-    static auto gpu_compute(const X& x, const Y& y) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(x);
-        decltype(auto) t2 = smart_gpu_compute(y);
+    template <typename X, typename Y, typename YY>
+    static auto gpu_compute_hint(const X& x, const Y& y, YY& yy) noexcept {
+        decltype(auto) t1 = smart_gpu_compute_hint(x, yy);
+        decltype(auto) t2 = smart_gpu_compute_hint(y, yy);
 
         constexpr size_t inca = gpu_inc<decltype(x)>;
         constexpr size_t incb = gpu_inc<decltype(y)>;
@@ -78,8 +78,8 @@ struct greater_binary_op {
      */
     template <typename X, typename Y, typename YY>
     static YY& gpu_compute(const X& x, const Y& y, YY& yy) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(x);
-        decltype(auto) t2 = smart_gpu_compute(y);
+        decltype(auto) t1 = smart_gpu_compute_hint(x, yy);
+        decltype(auto) t2 = smart_gpu_compute_hint(y, yy);
 
         constexpr size_t inca = gpu_inc<decltype(x)>;
         constexpr size_t incb = gpu_inc<decltype(y)>;

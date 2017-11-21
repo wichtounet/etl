@@ -78,8 +78,10 @@ struct mul_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R>
-    static auto gpu_compute(const L& lhs, const R& rhs) noexcept {
+    template <typename L, typename R, typename Y>
+    static auto gpu_compute_hint(const L& lhs, const R& rhs, Y& y) noexcept {
+        cpp_unused(y);
+
         auto t3 = force_temporary_gpu_dim_only(lhs, rhs);
         gpu_compute(lhs, rhs, t3);
         return t3;
@@ -98,7 +100,7 @@ struct mul_binary_op {
     template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         smart_gpu_compute(lhs, y);
-        decltype(auto) t2 = smart_gpu_compute(rhs);
+        decltype(auto) t2 = smart_gpu_compute_hint(rhs, y);
 
         value_t<L> alpha(1);
 

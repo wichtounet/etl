@@ -189,8 +189,9 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    decltype(auto) gpu_compute() const {
-        return BinaryOp::gpu_compute(lhs, rhs);
+    template<typename Y>
+    decltype(auto) gpu_compute_hint(Y& y) const {
+        return BinaryOp::gpu_compute_hint(lhs, rhs, y);
     }
 
     /*!

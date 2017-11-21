@@ -213,8 +213,9 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    decltype(auto) gpu_compute() const {
-        return UnaryOp::gpu_compute(value);
+    template<typename Y>
+    decltype(auto) gpu_compute_hint(Y& y) const {
+        return UnaryOp::gpu_compute_hint(value, y);
     }
 
     /*!
@@ -1138,8 +1139,9 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    decltype(auto) gpu_compute() const {
-        return op.gpu_compute(value);
+    template<typename Y>
+    decltype(auto) gpu_compute_hint(Y& y) const {
+        return op.gpu_compute_hint(value, y);
     }
 
     /*!
