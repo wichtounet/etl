@@ -273,7 +273,7 @@ void sub_ro() {
     etl::dump_counters();
 }
 
-// Simulate forward propagation in a neural network (with some ops as DLL)
+// Simulate forward propagation in a neural network (with same ops as DLL)
 void ml() {
     std::cout << "ML" << std::endl;
 
@@ -379,10 +379,32 @@ void ml() {
     etl::dump_counters();
 }
 
+void random_test() {
+    std::cout << "Random" << std::endl;
+
+#ifdef ETL_CUDA
+    etl::gpu_memory_allocator::clear();
+#endif
+
+    etl::reset_counters();
+
+    {
+        etl::dyn_matrix<float, 4> I(32, 3, 28, 28);
+        etl::dyn_matrix<float, 2> L(32, 10);
+
+        I = etl::normal_generator<float>();
+        L = etl::uniform_generator<float>(10, 20);
+    }
+
+    etl::dump_counters();
+}
+
 } // end of anonymous namespace
 
 int main() {
     auto start_time = timer_clock::now();
+
+    random_test();
 
     simple();
     basic();
@@ -391,6 +413,7 @@ int main() {
     ml();
     sub();
     sub_ro();
+    random_test();
 
     auto end_time = timer_clock::now();
     auto duration = std::chrono::duration_cast<milliseconds>(end_time - start_time);
