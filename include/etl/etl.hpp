@@ -51,11 +51,11 @@
 
 // The operators
 #include "etl/op/scalar.hpp"
-#include "etl/op/generators.hpp"
 #include "etl/op/transformers.hpp"
 #include "etl/op/virtual_views.hpp"
 #include "etl/op/unary_op.hpp"
 #include "etl/op/binary_op.hpp"
+#include "etl/op/generators.hpp"
 
 //Global test functions
 #include "etl/globals.hpp"
