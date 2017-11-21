@@ -17,6 +17,8 @@
 #include "etl/impl/curand/curand.hpp"
 #endif
 
+#include "etl/impl/egblas/scalar_add.hpp"
+
 #include <chrono> //for std::time
 
 namespace etl {
@@ -338,10 +340,18 @@ template <typename T = double>
 struct uniform_generator_op {
     using value_type = T; ///< The value type
 
+    T start;                                       ///< The start of the distribution
+    T end;                                         ///< The end of the distribution
     random_engine rand_engine;                     ///< The random engine
     uniform_distribution<value_type> distribution; ///< The used distribution
 
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator is computable on GPU
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    static constexpr bool gpu_computable =
+                curand_enabled && cublas_enabled &&
+               ((is_single_precision_t<T> && impl::egblas::has_scalar_sadd)
+            ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dadd));
 
     /*!
      * \brief Construct a new generator with the given start and end of the range
@@ -349,7 +359,7 @@ struct uniform_generator_op {
      * \param end The end of the range
      */
     uniform_generator_op(T start, T end)
-            : rand_engine(std::time(nullptr)), distribution(start, end) {}
+            : start(start), end(end), rand_engine(std::time(nullptr)), distribution(start, end) {}
 
     /*!
      * \brief Generate a new value
@@ -358,6 +368,81 @@ struct uniform_generator_op {
     value_type operator()() {
         return distribution(rand_engine);
     }
+
+#ifdef ETL_CURAND_MODE
+#ifdef ETL_CUBLAS_MODE
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename Y>
+    auto gpu_compute_hint(Y& y) noexcept {
+        auto t1 = etl::force_temporary_gpu_dim_only_t<T>(y);
+
+        curandGenerator_t gen;
+
+        // Create the generator
+        curand_call(curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT));
+
+        // Seed it with the internal random engine
+        std::uniform_int_distribution<long> seed_dist;
+        curand_call(curandSetPseudoRandomGeneratorSeed(gen, seed_dist(rand_engine)));
+
+        // Generate the random numbers in [0,1]
+        impl::curand::generate_uniform(gen, t1.gpu_memory(), etl::size(y));
+
+        // mul by b-a => [0,b-a]
+        auto s = end - start;
+        decltype(auto) handle = impl::cublas::start_cublas();
+        impl::cublas::cublas_scal(handle.get(), etl::size(y), &s, y.gpu_memory(), 1);
+
+        // Add a => [a,b]
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &start);
+
+        return t1;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename Y>
+    Y& gpu_compute(Y& y) noexcept {
+        y.ensure_gpu_allocated();
+
+        curandGenerator_t gen;
+
+        // Create the generator
+        curand_call(curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT));
+
+        // Seed it with the internal random engine
+        std::uniform_int_distribution<long> seed_dist;
+        curand_call(curandSetPseudoRandomGeneratorSeed(gen, seed_dist(rand_engine)));
+
+        // Generate the random numbers in [0,1]
+        impl::curand::generate_uniform(gen, y.gpu_memory(), etl::size(y));
+
+        // mul by b-a => [0,b-a]
+        auto s = end - start;
+        decltype(auto) handle = impl::cublas::start_cublas();
+        impl::cublas::cublas_scal(handle.get(), etl::size(y), &s, y.gpu_memory(), 1);
+
+        // Add a => [a,b]
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &start);
+
+        y.validate_gpu();
+        y.invalidate_cpu();
+
+        return y;
+    }
+
+#endif
+#endif
 
     /*!
      * \brief Outputs the given generator to the given stream
@@ -378,10 +463,18 @@ template <typename G, typename T = double>
 struct uniform_generator_g_op {
     using value_type = T; ///< The value type
 
+    T start;                                       ///< The start of the distribution
+    T end;                                         ///< The end of the distribution
     G& rand_engine;                                ///< The random engine
     uniform_distribution<value_type> distribution; ///< The used distribution
 
-    static constexpr bool gpu_computable = false; ///< Indicates if the operator is computable on GPU
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    static constexpr bool gpu_computable =
+                curand_enabled && cublas_enabled &&
+               ((is_single_precision_t<T> && impl::egblas::has_scalar_sadd)
+            ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dadd));
 
     /*!
      * \brief Construct a new generator with the given start and end of the range
@@ -389,7 +482,7 @@ struct uniform_generator_g_op {
      * \param end The end of the range
      */
     uniform_generator_g_op(G& g, T start, T end)
-            : rand_engine(g), distribution(start, end) {}
+            : start(start), end(end), rand_engine(g), distribution(start, end) {}
 
     /*!
      * \brief Generate a new value
@@ -398,6 +491,81 @@ struct uniform_generator_g_op {
     value_type operator()() {
         return distribution(rand_engine);
     }
+
+#ifdef ETL_CURAND_MODE
+#ifdef ETL_CUBLAS_MODE
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename Y>
+    auto gpu_compute_hint(Y& y) noexcept {
+        auto t1 = etl::force_temporary_gpu_dim_only_t<T>(y);
+
+        curandGenerator_t gen;
+
+        // Create the generator
+        curand_call(curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT));
+
+        // Seed it with the internal random engine
+        std::uniform_int_distribution<long> seed_dist;
+        curand_call(curandSetPseudoRandomGeneratorSeed(gen, seed_dist(rand_engine)));
+
+        // Generate the random numbers in [0,1]
+        impl::curand::generate_uniform(gen, t1.gpu_memory(), etl::size(y));
+
+        // mul by b-a => [0,b-a]
+        auto s = end - start;
+        decltype(auto) handle = impl::cublas::start_cublas();
+        impl::cublas::cublas_scal(handle.get(), etl::size(y), &s, y.gpu_memory(), 1);
+
+        // Add a => [a,b]
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &start);
+
+        return t1;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename Y>
+    Y& gpu_compute(Y& y) noexcept {
+        y.ensure_gpu_allocated();
+
+        curandGenerator_t gen;
+
+        // Create the generator
+        curand_call(curandCreateGenerator(&gen, CURAND_RNG_PSEUDO_DEFAULT));
+
+        // Seed it with the internal random engine
+        std::uniform_int_distribution<long> seed_dist;
+        curand_call(curandSetPseudoRandomGeneratorSeed(gen, seed_dist(rand_engine)));
+
+        // Generate the random numbers in [0,1]
+        impl::curand::generate_uniform(gen, y.gpu_memory(), etl::size(y));
+
+        // mul by b-a => [0,b-a]
+        auto s = end - start;
+        decltype(auto) handle = impl::cublas::start_cublas();
+        impl::cublas::cublas_scal(handle.get(), etl::size(y), &s, y.gpu_memory(), 1);
+
+        // Add a => [a,b]
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &start);
+
+        y.validate_gpu();
+        y.invalidate_cpu();
+
+        return y;
+    }
+
+#endif
+#endif
 
     /*!
      * \brief Outputs the given generator to the given stream
