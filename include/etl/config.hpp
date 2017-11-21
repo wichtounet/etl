@@ -96,6 +96,11 @@ constexpr bool cublas_enabled = ETL_CUBLAS_MODE_BOOL;
 constexpr bool cufft_enabled = ETL_CUFFT_MODE_BOOL;
 
 /*!
+ * \brief Indicates if the NVIDIA CURAND library is available for ETL.
+ */
+constexpr bool curand_enabled = ETL_CURAND_MODE_BOOL;
+
+/*!
  * \brief Indicates if the NVIDIA CUDNN library is available for ETL.
  */
 constexpr bool cudnn_enabled = ETL_CUDNN_MODE_BOOL;

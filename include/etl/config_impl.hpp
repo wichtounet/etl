@@ -45,6 +45,10 @@ static_assert(false, "ETL_CUDA should never be set directly");
 #define ETL_CUFFT_MODE
 #endif
 
+#ifndef ETL_CURAND_MODE
+#define ETL_CURAND_MODE
+#endif
+
 #ifndef ETL_CUDNN_MODE
 #define ETL_CUDNN_MODE
 #endif
@@ -128,6 +132,13 @@ static_assert(false, "EGBLAS is only intended to work with CUBLAS, not alone");
 #define ETL_CUBLAS_MODE_BOOL true
 #else
 #define ETL_CUBLAS_MODE_BOOL false
+#endif
+
+#ifdef ETL_CURAND_MODE
+#define ETL_CUDA
+#define ETL_CURAND_MODE_BOOL true
+#else
+#define ETL_CURAND_MODE_BOOL false
 #endif
 
 #ifdef ETL_CUFFT_MODE
