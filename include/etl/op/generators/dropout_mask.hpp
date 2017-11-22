@@ -14,6 +14,8 @@
 
 #include <chrono> //for std::time
 
+#include "etl/impl/egblas/dropout.hpp"
+
 namespace etl {
 
 /*!
@@ -40,7 +42,9 @@ struct dropout_mask_generator_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable =
+               (is_single_precision_t<T> && impl::egblas::has_sdropout_seed)
+            || (is_double_precision_t<T> && impl::egblas::has_ddropout_seed);
 
     /*!
      * \brief Construct a new generator with the given start and end of the range
@@ -58,6 +62,43 @@ struct dropout_mask_generator_op {
         } else {
             return T(1);
         }
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
+     */
+    template <typename Y>
+    auto gpu_compute_hint(Y& y) noexcept {
+        std::uniform_int_distribution<long> seed_dist;
+
+        decltype(auto) t1 = force_temporary_gpu_dim_only(y);
+
+        T alpha(1.0);
+        impl::egblas::dropout_seed(etl::size(y), probability, &alpha, t1.gpu_memory(), 1, seed_dist(rand_engine));
+
+        return t1;
+    }
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename Y>
+    Y& gpu_compute(Y& y) noexcept {
+        std::uniform_int_distribution<long> seed_dist;
+
+        T alpha(1.0);
+        impl::egblas::dropout_seed(etl::size(y), probability, &alpha, y.gpu_memory(), 1, seed_dist(rand_engine));
+
+        y.validate_gpu();
+        y.invalidate_cpu();
+
+        return y;
     }
 
     /*!
@@ -85,7 +126,9 @@ struct dropout_mask_generator_g_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable =
+               (is_single_precision_t<T> && impl::egblas::has_sdropout_seed)
+            || (is_double_precision_t<T> && impl::egblas::has_ddropout_seed);
 
     /*!
      * \brief Construct a new generator with the given start and end of the range
@@ -105,6 +148,43 @@ struct dropout_mask_generator_g_op {
         } else {
             return T(1);
         }
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
+     */
+    template <typename Y>
+    auto gpu_compute_hint(Y& y) noexcept {
+        std::uniform_int_distribution<long> seed_dist;
+
+        decltype(auto) t1 = force_temporary_gpu_dim_only(y);
+
+        T alpha(1.0);
+        impl::egblas::dropout_seed(etl::size(y), probability, &alpha, t1.gpu_memory(), 1, seed_dist(rand_engine));
+
+        return t1;
+    }
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename Y>
+    Y& gpu_compute(Y& y) noexcept {
+        std::uniform_int_distribution<long> seed_dist;
+
+        T alpha(1.0);
+        impl::egblas::dropout_seed(etl::size(y), probability, &alpha, y.gpu_memory(), 1, seed_dist(rand_engine));
+
+        y.validate_gpu();
+        y.invalidate_cpu();
+
+        return y;
     }
 
     /*!
