@@ -30,11 +30,31 @@ namespace curand {
     }
 
 void generate_normal(curandGenerator_t generator, float* gpu_memory, size_t n, float mean, float stddev){
-    curand_call(curandGenerateNormal(generator, gpu_memory, n, mean, stddev));
+    // Note: CURAND is dumb, cannot generate odd sequences...
+
+    if(n % 2 == 0){
+        curand_call(curandGenerateNormal(generator, gpu_memory, n, mean, stddev));
+    } else {
+        // Generate the first n - 1 numbers
+        curand_call(curandGenerateNormal(generator, gpu_memory, n - 1, mean, stddev));
+
+        // Generate the last two numbers
+        curand_call(curandGenerateNormal(generator, gpu_memory + (n - 3), 2, mean, stddev));
+    }
 }
 
 void generate_normal(curandGenerator_t generator, double* gpu_memory, size_t n, double mean, double stddev){
-    curand_call(curandGenerateNormalDouble(generator, gpu_memory, n, mean, stddev));
+    // Note: CURAND is dumb, cannot generate odd sequences...
+
+    if(n % 2 == 0){
+        curand_call(curandGenerateNormalDouble(generator, gpu_memory, n, mean, stddev));
+    } else {
+        // Generate the first n - 1 numbers
+        curand_call(curandGenerateNormalDouble(generator, gpu_memory, n - 1, mean, stddev));
+
+        // Generate the last two numbers
+        curand_call(curandGenerateNormalDouble(generator, gpu_memory + (n - 3), 2, mean, stddev));
+    }
 }
 
 void generate_uniform(curandGenerator_t generator, float* gpu_memory, size_t n){
