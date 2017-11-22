@@ -1265,39 +1265,6 @@ constexpr size_t size(const E& expr) noexcept {
 }
 
 /*!
- * \brief Return the size of one of the expression, not considering scalar.
- *
- * One of the two expression must not be a scalar
- *
- * \param expr1 The first expression
- * \param expr2 The first expression
- *
- * \return the size of one of the expression not being a scalar
- */
-template<typename E1, typename E2, cpp_enable_iff(is_scalar<E1>)>
-size_t smart_size(const E1& expr1, const E2& expr2){
-    cpp_unused(expr1);
-    return etl::size(expr2);
-}
-
-
-/*!
- * \brief Return the size of one of the expression, not considering scalar.
- *
- * One of the two expression must not be a scalar
- *
- * \param expr1 The first expression
- * \param expr2 The first expression
- *
- * \return the size of one of the expression not being a scalar
- */
-template<typename E1, typename E2, cpp_enable_iff(!is_scalar<E1>)>
-size_t smart_size(const E1& expr1, const E2& expr2){
-    cpp_unused(expr2);
-    return etl::size(expr1);
-}
-
-/*!
  * \brief Returns the sub-size of the given ETL expression, i.e. the size not considering the first dimension.
  * \param expr The expression to get the sub-size from.
  * \return The sub-size of the given expression.

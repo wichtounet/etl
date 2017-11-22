@@ -89,7 +89,7 @@ struct min_binary_op {
         auto t3 = force_temporary_gpu_dim_only(t1);
 
         LT alpha(1);
-        impl::egblas::min(etl::smart_size(x, y), &alpha, t1.gpu_memory(), inca, t2.gpu_memory(), incb, t3.gpu_memory(), 1);
+        impl::egblas::min(etl::size(yy), &alpha, t1.gpu_memory(), inca, t2.gpu_memory(), incb, t3.gpu_memory(), 1);
 
         return t3;
     }
@@ -109,7 +109,7 @@ struct min_binary_op {
         constexpr size_t incb = gpu_inc<decltype(y)>;
 
         LT alpha(1);
-        impl::egblas::min(etl::smart_size(x, y), &alpha, t1.gpu_memory(), inca, t2.gpu_memory(), incb, yy.gpu_memory(), 1);
+        impl::egblas::min(etl::size(yy), &alpha, t1.gpu_memory(), inca, t2.gpu_memory(), incb, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();
