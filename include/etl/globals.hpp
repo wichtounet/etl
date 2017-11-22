@@ -643,7 +643,9 @@ bool qr(AT& A, QT& Q, RT& R) {
 
 /*!
  * \brief Shuffle all the elements of an ETL vector or matrix (considered as
- * array)
+ * array).
+ *
+ * Note: This function has no GPU support.
  *
  * \param vector The vector to shuffle
  * \param g The generator to use for random number generation
