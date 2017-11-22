@@ -16,3 +16,4 @@
 #include "etl/op/generators/truncated_normal.hpp"
 #include "etl/op/generators/uniform.hpp"
 #include "etl/op/generators/sequence.hpp"
+#include "etl/op/generators/dropout_mask.hpp"
