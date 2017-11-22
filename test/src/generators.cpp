@@ -202,3 +202,47 @@ TEMPLATE_TEST_CASE_2("generators/uniform/2", "uniform", Z, float, double) {
         REQUIRE_DIRECT(value <= 8.0);
     }
 }
+
+/// dropout_mask
+
+TEMPLATE_TEST_CASE_2("generators/dropout_mask/1", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    b = etl::dropout_mask<Z>(0.2);
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value == Z(0.0) || value == Z(1.0));
+    }
+}
+
+TEMPLATE_TEST_CASE_2("generators/dropout_mask/2", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    b = etl::dropout_mask<Z>(0.5);
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value == Z(0.0) || value == Z(1.0));
+    }
+}
+
+/// inverted_dropout_mask
+
+TEMPLATE_TEST_CASE_2("generators/inverted_dropout_mask/1", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    b = etl::inverted_dropout_mask<Z>(0.2);
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value == Z(0.0) || value == Z(1.0 / 0.8));
+    }
+}
+
+TEMPLATE_TEST_CASE_2("generators/inverted_dropout_mask/2", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    b = etl::inverted_dropout_mask<Z>(0.5);
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value == Z(0.0) || value == Z(1.0 / 0.5));
+    }
+}
