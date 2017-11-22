@@ -912,7 +912,7 @@ auto sequence_generator(T current = 0) -> generator_expr<sequence_generator_op<T
  *
  * \return An expression generating numbers for a dropout mask
  */
-template <typename T = double>
+template <typename T = float>
 auto dropout_mask(T probability) -> generator_expr<dropout_mask_generator_op<T>> {
     return generator_expr<dropout_mask_generator_op<T>>{probability};
 }
@@ -926,7 +926,7 @@ auto dropout_mask(T probability) -> generator_expr<dropout_mask_generator_op<T>>
  *
  * \return An expression generating numbers for a dropout mask
  */
-template <typename T = double, typename G>
+template <typename T = float, typename G>
 auto dropout_mask(G& g, T probability) -> generator_expr<dropout_mask_generator_g_op<G, T>> {
     return generator_expr<dropout_mask_generator_g_op<G, T>>{g, probability};
 }
@@ -938,7 +938,7 @@ auto dropout_mask(G& g, T probability) -> generator_expr<dropout_mask_generator_
  *
  * \return An expression generating numbers for an inverted dropout mask
  */
-template <typename T = double>
+template <typename T = float>
 auto inverted_dropout_mask(T probability) -> generator_expr<inverted_dropout_mask_generator_op<T>> {
     return generator_expr<inverted_dropout_mask_generator_op<T>>{probability};
 }
@@ -952,7 +952,7 @@ auto inverted_dropout_mask(T probability) -> generator_expr<inverted_dropout_mas
  *
  * \return An expression generating numbers for an inverted dropout mask
  */
-template <typename T = double, typename G>
+template <typename T = float, typename G>
 auto inverted_dropout_mask(G& g, T probability) -> generator_expr<inverted_dropout_mask_generator_g_op<G, T>> {
     return generator_expr<inverted_dropout_mask_generator_g_op<G, T>>{g, probability};
 }
