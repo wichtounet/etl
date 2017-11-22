@@ -92,7 +92,7 @@ struct pow_binary_op {
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
 
         T alpha(1.0);
-        impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
+        impl::egblas::pow_yx(etl::size(yy), &alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
 #else
         cpp_unused(y);
 #endif
@@ -116,7 +116,7 @@ struct pow_binary_op {
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
 
         T alpha(1.0);
-        impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
+        impl::egblas::pow_yx(etl::size(yy), &alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
 #else
         cpp_unused(y);
 #endif
@@ -240,7 +240,7 @@ struct integer_pow_binary_op {
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
 
         T alpha(1.0);
-        impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
+        impl::egblas::pow_yx(etl::size(yy), &alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
 #else
         cpp_unused(y);
 #endif
@@ -264,7 +264,7 @@ struct integer_pow_binary_op {
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
 
         T alpha(1.0);
-        impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
+        impl::egblas::pow_yx(etl::size(yy), &alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
 #else
         cpp_unused(y);
 #endif

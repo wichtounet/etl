@@ -74,14 +74,14 @@ struct cosh_unary_op {
      *
      * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
-    template <typename X>
-    static auto gpu_compute(const X& x) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(x);
+    template <typename X, typename Y>
+    static auto gpu_compute_hint(const X& x, Y& y) noexcept {
+        decltype(auto) t1 = smart_gpu_compute_hint(x, y);
 
-        auto t2 = force_temporary_gpu_dim_only(t1);
+        auto t2 = force_temporary_gpu_dim_only(y);
 
         T alpha(1.0);
-        impl::egblas::cosh(etl::size(x), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+        impl::egblas::cosh(etl::size(y), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
 
         return t2;
     }
@@ -97,7 +97,7 @@ struct cosh_unary_op {
         decltype(auto) t1 = select_smart_gpu_compute(x, y);
 
         T alpha(1.0);
-        impl::egblas::cosh(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::egblas::cosh(etl::size(y), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -166,7 +166,7 @@ struct cosh_unary_op <etl::complex<TT>> {
         auto t2 = force_temporary_gpu_dim_only(t1);
 
         T alpha(1.0);
-        impl::egblas::cosh(etl::size(x), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+        impl::egblas::cosh(etl::size(y), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
 
         return t2;
     }
@@ -182,7 +182,7 @@ struct cosh_unary_op <etl::complex<TT>> {
         decltype(auto) t1 = select_smart_gpu_compute(x, y);
 
         T alpha(1.0);
-        impl::egblas::cosh(etl::size(x), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::egblas::cosh(etl::size(y), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();

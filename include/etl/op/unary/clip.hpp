@@ -99,7 +99,7 @@ struct clip_scalar_op {
         cuda_check(cudaMemcpy(max_gpu.get(), &max, 1 * sizeof(T), cudaMemcpyHostToDevice));
 
         T alpha(1.0);
-        impl::egblas::clip(etl::size(x), &alpha, min_gpu.get(), 0, max_gpu.get(), 0, t2.gpu_memory(), 1);
+        impl::egblas::clip(etl::size(y), &alpha, min_gpu.get(), 0, max_gpu.get(), 0, t2.gpu_memory(), 1);
 #endif
 
         return t2;
@@ -123,7 +123,7 @@ struct clip_scalar_op {
         cuda_check(cudaMemcpy(max_gpu.get(), &max, 1 * sizeof(T), cudaMemcpyHostToDevice));
 
         T alpha(1.0);
-        impl::egblas::clip(etl::size(x), &alpha, min_gpu.get(), 0, max_gpu.get(), 0, y.gpu_memory(), 1);
+        impl::egblas::clip(etl::size(y), &alpha, min_gpu.get(), 0, max_gpu.get(), 0, y.gpu_memory(), 1);
 #else
         cpp_unused(y);
 #endif

@@ -104,7 +104,7 @@ struct minus_binary_op {
         decltype(auto) t2 = smart_gpu_compute_hint(rhs, y);
 
         value_t<L> alpha(-1);
-        impl::cublas::cublas_axpy(handle.get(), etl::size(lhs), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::cublas::cublas_axpy(handle.get(), etl::size(y), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -126,7 +126,7 @@ struct minus_binary_op {
 
         smart_gpu_compute(lhs, y);
 
-        impl::egblas::scalar_add(y.gpu_memory(), etl::size(lhs), 1, &s);
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &s);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -151,9 +151,9 @@ struct minus_binary_op {
         value_t<L> alpha(-1);
 
         decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), etl::size(rhs), &alpha, y.gpu_memory(), 1);
+        impl::cublas::cublas_scal(handle.get(), etl::size(y), &alpha, y.gpu_memory(), 1);
 
-        impl::egblas::scalar_add(y.gpu_memory(), etl::size(rhs), 1, &s);
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &s);
 
         y.validate_gpu();
         y.invalidate_cpu();

@@ -108,7 +108,7 @@ struct plus_binary_op {
 
         value_t<L> alpha(1);
 
-        impl::cublas::cublas_axpy(handle.get(), etl::size(lhs), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::cublas::cublas_axpy(handle.get(), etl::size(y), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -132,7 +132,7 @@ struct plus_binary_op {
 
         smart_gpu_compute(rhs, y);
 
-        impl::egblas::scalar_add(y.gpu_memory(), etl::size(rhs), 1, &s);
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &s);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -154,7 +154,7 @@ struct plus_binary_op {
 
         smart_gpu_compute(lhs, y);
 
-        impl::egblas::scalar_add(y.gpu_memory(), etl::size(lhs), 1, &s);
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &s);
 
         y.validate_gpu();
         y.invalidate_cpu();

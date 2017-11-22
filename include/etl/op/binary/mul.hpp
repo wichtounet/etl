@@ -104,7 +104,7 @@ struct mul_binary_op {
 
         value_t<L> alpha(1);
 
-        impl::egblas::axmy(etl::size(lhs), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::egblas::axmy(etl::size(y), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -131,7 +131,7 @@ struct mul_binary_op {
         smart_gpu_compute(rhs, y);
 
         decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), etl::size(rhs), &s, y.gpu_memory(), 1);
+        impl::cublas::cublas_scal(handle.get(), etl::size(y), &s, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -154,7 +154,7 @@ struct mul_binary_op {
         smart_gpu_compute(lhs, y);
 
         decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), etl::size(lhs), &s, y.gpu_memory(), 1);
+        impl::cublas::cublas_scal(handle.get(), etl::size(y), &s, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();

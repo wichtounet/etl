@@ -58,7 +58,7 @@ struct logical_xor_binary_op {
 
         auto t3 = force_temporary_gpu_dim_only_t<bool>(t1);
 
-        impl::egblas::logical_xor(etl::size(x), t1.gpu_memory(), 1, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
+        impl::egblas::logical_xor(etl::size(yy), t1.gpu_memory(), 1, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
 
         return t3;
     }
@@ -74,7 +74,7 @@ struct logical_xor_binary_op {
         decltype(auto) t1 = smart_gpu_compute_hint(x, yy);
         decltype(auto) t2 = smart_gpu_compute_hint(y, yy);
 
-        impl::egblas::logical_xor(etl::size(x), t1.gpu_memory(), 1, t2.gpu_memory(), 1, yy.gpu_memory(), 1);
+        impl::egblas::logical_xor(etl::size(yy), t1.gpu_memory(), 1, t2.gpu_memory(), 1, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();
