@@ -40,8 +40,8 @@ template <typename T = double>
 struct uniform_generator_op {
     using value_type = T; ///< The value type
 
-    T start;                                       ///< The start of the distribution
-    T end;                                         ///< The end of the distribution
+    const T start;                                 ///< The start of the distribution
+    const T end;                                   ///< The end of the distribution
     random_engine rand_engine;                     ///< The random engine
     uniform_distribution<value_type> distribution; ///< The used distribution
 
@@ -161,8 +161,8 @@ template <typename G, typename T = double>
 struct uniform_generator_g_op {
     using value_type = T; ///< The value type
 
-    T start;                                       ///< The start of the distribution
-    T end;                                         ///< The end of the distribution
+    const T start;                                 ///< The start of the distribution
+    const T end;                                   ///< The end of the distribution
     G& rand_engine;                                ///< The random engine
     uniform_distribution<value_type> distribution; ///< The used distribution
 

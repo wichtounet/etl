@@ -27,8 +27,8 @@ template <typename T = double>
 struct normal_generator_op {
     using value_type = T; ///< The value type
 
-    T mean;                                            ///< The mean
-    T stddev;                                          ///< The standard deviation
+    const T mean;                                      ///< The mean
+    const T stddev;                                    ///< The standard deviation
     random_engine rand_engine;                         ///< The random engine
     std::normal_distribution<value_type> distribution; ///< The used distribution
 
@@ -137,8 +137,8 @@ template <typename G, typename T = double>
 struct normal_generator_g_op {
     using value_type = T; ///< The value type
 
-    T mean;                                            ///< The mean
-    T stddev;                                          ///< The standard deviation
+    const T mean;                                      ///< The mean
+    const T stddev;                                    ///< The standard deviation
     G& rand_engine;                                    ///< The random engine
     std::normal_distribution<value_type> distribution; ///< The used distribution
 

@@ -23,7 +23,7 @@ template <typename T = double>
 struct inverted_dropout_mask_generator_op {
     using value_type = T; ///< The value type
 
-    T probability;                                 ///< The dropout probability
+    const T probability;                           ///< The dropout probability
     random_engine rand_engine;                     ///< The random engine
     dropout_distribution<value_type> distribution; ///< The used distribution
 
@@ -108,7 +108,7 @@ template <typename G, typename T = double>
 struct inverted_dropout_mask_generator_g_op {
     using value_type = T; ///< The value type
 
-    T probability;                                 ///< The dropout probability
+    const T probability;                           ///< The dropout probability
     G& rand_engine;                                ///< The random engine
     dropout_distribution<value_type> distribution; ///< The used distribution
 
