@@ -79,6 +79,9 @@ struct normal_generator_op {
         // Generate the random numbers
         impl::curand::generate_normal(gen, t1.gpu_memory(), etl::size(y), mean, stddev);
 
+        // Destroy the generator
+        curand_call(curandDestroyGenerator(gen));
+
         return t1;
     }
 
@@ -103,6 +106,9 @@ struct normal_generator_op {
 
         // Generate the random numbers
         impl::curand::generate_normal(gen, y.gpu_memory(), etl::size(y), mean, stddev);
+
+        // Destroy the generator
+        curand_call(curandDestroyGenerator(gen));
 
         y.validate_gpu();
         y.invalidate_cpu();
