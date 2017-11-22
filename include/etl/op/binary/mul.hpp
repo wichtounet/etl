@@ -82,7 +82,7 @@ struct mul_binary_op {
     static auto gpu_compute_hint(const L& lhs, const R& rhs, Y& y) noexcept {
         cpp_unused(y);
 
-        auto t3 = force_temporary_gpu_dim_only(lhs, rhs);
+        auto t3 = force_temporary_gpu_dim_only(y);
         gpu_compute(lhs, rhs, t3);
         return t3;
     }
