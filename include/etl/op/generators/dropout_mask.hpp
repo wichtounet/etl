@@ -12,10 +12,6 @@
 
 #pragma once
 
-#ifdef ETL_CURAND_MODE
-#include "etl/impl/curand/curand.hpp"
-#endif
-
 #include <chrono> //for std::time
 
 namespace etl {
