@@ -113,14 +113,14 @@ TEMPLATE_TEST_CASE_2("sequence/dyn_vector_2", "generator", Z, float, double) {
 TEMPLATE_TEST_CASE_2("sequence/dyn_matrix_1", "generator", Z, float, double) {
     etl::dyn_matrix<Z> b(3, 2);
 
-    b = etl::sequence_generator<Z>();
+    b = etl::sequence_generator<Z>() >> 2.0;
 
     REQUIRE_EQUALS(b(0, 0), 0.0);
-    REQUIRE_EQUALS(b(0, 1), 1.0);
-    REQUIRE_EQUALS(b(1, 0), 2.0);
-    REQUIRE_EQUALS(b(1, 1), 3.0);
-    REQUIRE_EQUALS(b(2, 0), 4.0);
-    REQUIRE_EQUALS(b(2, 1), 5.0);
+    REQUIRE_EQUALS(b(0, 1), 2.0);
+    REQUIRE_EQUALS(b(1, 0), 4.0);
+    REQUIRE_EQUALS(b(1, 1), 6.0);
+    REQUIRE_EQUALS(b(2, 0), 8.0);
+    REQUIRE_EQUALS(b(2, 1), 10.0);
 }
 
 /// normal_generator
@@ -142,7 +142,7 @@ TEMPLATE_TEST_CASE_2("normal/fast_matrix_1", "generator", Z, float, double) {
 TEMPLATE_TEST_CASE_2("normal/dyn_vector_1", "generator", Z, float, double) {
     etl::dyn_vector<Z> b(3);
 
-    b = etl::normal_generator<Z>();
+    b = etl::normal_generator<Z>() >> etl::normal_generator<Z>();
 }
 
 TEMPLATE_TEST_CASE_2("normal/dyn_matrix_1", "generator", Z, float, double) {
@@ -203,6 +203,17 @@ TEMPLATE_TEST_CASE_2("generators/uniform/2", "uniform", Z, float, double) {
     }
 }
 
+TEMPLATE_TEST_CASE_2("generators/uniform/3", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    b = etl::uniform_generator<Z>(1.0, 2.0) >> 4.0;
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value >= 4.0);
+        REQUIRE_DIRECT(value <= 8.0);
+    }
+}
+
 /// dropout_mask
 
 TEMPLATE_TEST_CASE_2("generators/dropout_mask/1", "uniform", Z, float, double) {
@@ -244,5 +255,15 @@ TEMPLATE_TEST_CASE_2("generators/inverted_dropout_mask/2", "uniform", Z, float, 
 
     for (auto value : b) {
         REQUIRE_DIRECT(value == Z(0.0) || value == Z(1.0 / 0.5));
+    }
+}
+
+TEMPLATE_TEST_CASE_2("generators/inverted_dropout_mask/3", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    b = etl::inverted_dropout_mask<Z>(0.5) >> 2.0;
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value == Z(0.0) || value == Z(2.0 / 0.5));
     }
 }
