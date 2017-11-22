@@ -332,6 +332,7 @@ void ml() {
             P2_O = etl::max_pool_2d<2, 2>(C2_O);
 
             FC1_O = sigmoid(bias_add_2d(etl::reshape<32, 16 * 7 * 7>(P2_O) * FC1_W, FC1_B));
+            FC1_O = etl::inverted_dropout_mask(0.5f) >> FC1_O; // Dropout
             FC2_O = sigmoid(bias_add_2d(FC1_O * FC2_W, FC2_B));
 
             // Backward propagation of the errors
