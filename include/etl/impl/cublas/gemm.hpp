@@ -9,8 +9,8 @@
 
 #ifdef ETL_CUBLAS_MODE
 
-#include "etl/util/safe_cast.hpp"
 #include "etl/impl/cublas/cuda.hpp"
+#include "etl/util/safe_cast.hpp"
 #include "etl/impl/cublas/cublas.hpp"
 
 #endif

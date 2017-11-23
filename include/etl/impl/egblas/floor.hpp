@@ -15,7 +15,6 @@
 #ifdef ETL_EGBLAS_MODE
 
 #include "etl/impl/cublas/cuda.hpp"
-#include "etl/util/safe_cast.hpp"
 
 #include <egblas.hpp>
 
