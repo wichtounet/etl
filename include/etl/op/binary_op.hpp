@@ -24,8 +24,14 @@
 #include "etl/impl/cublas/scal.hpp"
 #endif
 
+#include "etl/impl/egblas/axpy.hpp"
 #include "etl/impl/egblas/axmy.hpp"
 #include "etl/impl/egblas/axdy.hpp"
+#include "etl/impl/egblas/axpby.hpp"
+#include "etl/impl/egblas/axpy_3.hpp"
+#include "etl/impl/egblas/axdy_3.hpp"
+#include "etl/impl/egblas/axmy_3.hpp"
+#include "etl/impl/egblas/axpby_3.hpp"
 #include "etl/impl/egblas/scalar_add.hpp"
 #include "etl/impl/egblas/scalar_div.hpp"
 
