@@ -145,7 +145,7 @@ struct div_binary_op {
         smart_gpu_compute(lhs, y);
 
         decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), etl::size(y), s, y.gpu_memory(), 1);
+        impl::cublas::cublas_scal(handle.get(), etl::size(y), &s, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
