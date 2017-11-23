@@ -41,7 +41,7 @@ static constexpr bool has_saxpby = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axpby(size_t n, float alpha, float* A , size_t lda, float beta, float* B , size_t ldb){
+inline void axpby(size_t n, float alpha, float* A, size_t lda, float beta, float* B, size_t ldb) {
 #ifdef EGBLAS_HAS_SAXPBY
     egblas_saxpby(n, alpha, A, lda, beta, B, ldb);
 #else
@@ -49,6 +49,7 @@ inline void axpby(size_t n, float alpha, float* A , size_t lda, float beta, floa
     cpp_unused(alpha);
     cpp_unused(A);
     cpp_unused(lda);
+    cpp_unused(beta);
     cpp_unused(B);
     cpp_unused(ldb);
 
@@ -79,6 +80,7 @@ inline void axpby(size_t n, double alpha, double* A , size_t lda, double beta, d
     cpp_unused(alpha);
     cpp_unused(A);
     cpp_unused(lda);
+    cpp_unused(beta);
     cpp_unused(B);
     cpp_unused(ldb);
 
@@ -109,6 +111,7 @@ inline void axpby(size_t n, std::complex<float> alpha, std::complex<float>* A , 
     cpp_unused(alpha);
     cpp_unused(A);
     cpp_unused(lda);
+    cpp_unused(beta);
     cpp_unused(B);
     cpp_unused(ldb);
 
@@ -133,6 +136,7 @@ inline void axpby(size_t n, etl::complex<float> alpha, etl::complex<float>* A , 
     cpp_unused(alpha);
     cpp_unused(A);
     cpp_unused(lda);
+    cpp_unused(beta);
     cpp_unused(B);
     cpp_unused(ldb);
 
@@ -164,6 +168,7 @@ inline void axpby(size_t n, std::complex<double> alpha, std::complex<double>* A 
     cpp_unused(alpha);
     cpp_unused(A);
     cpp_unused(lda);
+    cpp_unused(beta);
     cpp_unused(B);
     cpp_unused(ldb);
 
@@ -188,6 +193,7 @@ inline void axpby(size_t n, etl::complex<double> alpha, etl::complex<double>* A 
     cpp_unused(alpha);
     cpp_unused(A);
     cpp_unused(lda);
+    cpp_unused(beta);
     cpp_unused(B);
     cpp_unused(ldb);
 
