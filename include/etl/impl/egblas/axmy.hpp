@@ -27,11 +27,13 @@ namespace impl {
 namespace egblas {
 
 #ifdef EGBLAS_HAS_SAXMY
-
 static constexpr bool has_saxmy = true;
+#else
+static constexpr bool has_saxmy = false;
+#endif
 
 /*!
- * \brief Wrappers for single-precision egblas axpy operation
+ * \brief Wrappers for single-precision egblas axmy operation
  * \param n The size of the vector
  * \param alpha The scaling factor alpha
  * \param A The memory of the vector a
@@ -40,21 +42,28 @@ static constexpr bool has_saxmy = true;
  * \param ldb The leading dimension of b
  */
 inline void axmy(size_t n, float* alpha, float* A , size_t lda, float* B , size_t ldb){
+#ifdef EGBLAS_HAS_SAXMY
     egblas_saxmy(n, *alpha, A, lda, B, ldb);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+
+    cpp_unreachable("Invalid call to egblas::axmy");
+#endif
 }
 
+#ifdef EGBLAS_HAS_DAXMY
+static constexpr bool has_daxmy = true;
 #else
-
-static constexpr bool has_saxmy = false;
-
+static constexpr bool has_daxmy = false;
 #endif
 
-#ifdef EGBLAS_HAS_DAXMY
-
-static constexpr bool has_daxmy = true;
-
 /*!
- * \brief Wrappers for double-precision egblas axpy operation
+ * \brief Wrappers for double-precision egblas axmy operation
  * \param n The size of the vector
  * \param alpha The scaling factor alpha
  * \param A The memory of the vector a
@@ -63,18 +72,25 @@ static constexpr bool has_daxmy = true;
  * \param ldb The leading dimension of b
  */
 inline void axmy(size_t n, double* alpha, double* A , size_t lda, double* B , size_t ldb){
+#ifdef EGBLAS_HAS_DAXMY
     egblas_daxmy(n, *alpha, A, lda, B, ldb);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+
+    cpp_unreachable("Invalid call to egblas::axmy");
+#endif
 }
 
-#else
-
-static constexpr bool has_daxmy = false;
-
-#endif
-
 #ifdef EGBLAS_HAS_CAXMY
-
 static constexpr bool has_caxmy = true;
+#else
+static constexpr bool has_caxmy = false;
+#endif
 
 /*!
  * \brief Wrappers for complex single-precision egblas axmy operation
@@ -86,7 +102,18 @@ static constexpr bool has_caxmy = true;
  * \param ldb The leading dimension of b
  */
 inline void axmy(size_t n, std::complex<float>* alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+#ifdef EGBLAS_HAS_CAXMY
     egblas_caxmy(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+
+    cpp_unreachable("Invalid call to egblas::axmy");
+#endif
 }
 
 /*!
@@ -99,18 +126,26 @@ inline void axmy(size_t n, std::complex<float>* alpha, std::complex<float>* A , 
  * \param ldb The leading dimension of b
  */
 inline void axmy(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+#ifdef EGBLAS_HAS_CAXMY
     egblas_caxmy(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+
+    cpp_unreachable("Invalid call to egblas::axmy");
+#endif
 }
 
-#else
-
-static constexpr bool has_caxmy = false;
-
-#endif
 
 #ifdef EGBLAS_HAS_ZAXMY
-
 static constexpr bool has_zaxmy = true;
+#else
+static constexpr bool has_zaxmy = false;
+#endif
 
 /*!
  * \brief Wrappers for complex double-precision egblas axmy operation
@@ -122,7 +157,18 @@ static constexpr bool has_zaxmy = true;
  * \param ldb The leading dimension of b
  */
 inline void axmy(size_t n, std::complex<double>* alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+#ifdef EGBLAS_HAS_ZAXMY
     egblas_zaxmy(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+
+    cpp_unreachable("Invalid call to egblas::axmy");
+#endif
 }
 
 /*!
@@ -135,14 +181,19 @@ inline void axmy(size_t n, std::complex<double>* alpha, std::complex<double>* A 
  * \param ldb The leading dimension of b
  */
 inline void axmy(size_t n, etl::complex<double>* alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+#ifdef EGBLAS_HAS_ZAXMY
     egblas_zaxmy(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
-}
-
 #else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
 
-static constexpr bool has_zaxmy = false;
-
+    cpp_unreachable("Invalid call to egblas::axmy");
 #endif
+}
 
 } //end of namespace egblas
 } //end of namespace impl

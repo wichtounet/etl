@@ -27,8 +27,10 @@ namespace impl {
 namespace egblas {
 
 #ifdef EGBLAS_HAS_SAXDY
-
 static constexpr bool has_saxdy = true;
+#else
+static constexpr bool has_saxdy = false;
+#endif
 
 /*!
  * \brief Wrappers for single-precision egblas axdy operation
@@ -40,18 +42,25 @@ static constexpr bool has_saxdy = true;
  * \param ldb The leading dimension of b
  */
 inline void axdy(size_t n, float* alpha, float* A , size_t lda, float* B , size_t ldb){
+#ifdef EGBLAS_HAS_SAXDY
     egblas_saxdy(n, *alpha, A, lda, B, ldb);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+
+    cpp_unreachable("Invalid call to egblas::axdy");
+#endif
 }
 
-#else
-
-static constexpr bool has_saxdy = false;
-
-#endif
-
 #ifdef EGBLAS_HAS_DAXDY
-
 static constexpr bool has_daxdy = true;
+#else
+static constexpr bool has_daxdy = false;
+#endif
 
 /*!
  * \brief Wrappers for double-precision egblas axdy operation
@@ -63,18 +72,25 @@ static constexpr bool has_daxdy = true;
  * \param ldb The leading dimension of b
  */
 inline void axdy(size_t n, double* alpha, double* A , size_t lda, double* B , size_t ldb){
+#ifdef EGBLAS_HAS_DAXDY
     egblas_daxdy(n, *alpha, A, lda, B, ldb);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+
+    cpp_unreachable("Invalid call to egblas::axdy");
+#endif
 }
 
-#else
-
-static constexpr bool has_daxdy = false;
-
-#endif
-
 #ifdef EGBLAS_HAS_CAXDY
-
 static constexpr bool has_caxdy = true;
+#else
+static constexpr bool has_caxdy = false;
+#endif
 
 /*!
  * \brief Wrappers for complex single-precision egblas axdy operation
@@ -86,7 +102,18 @@ static constexpr bool has_caxdy = true;
  * \param ldb The leading dimension of b
  */
 inline void axdy(size_t n, std::complex<float>* alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+#ifdef EGBLAS_HAS_CAXDY
     egblas_caxdy(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+
+    cpp_unreachable("Invalid call to egblas::axdy");
+#endif
 }
 
 /*!
@@ -99,18 +126,26 @@ inline void axdy(size_t n, std::complex<float>* alpha, std::complex<float>* A , 
  * \param ldb The leading dimension of b
  */
 inline void axdy(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+#ifdef EGBLAS_HAS_CAXDY
     egblas_caxdy(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+
+    cpp_unreachable("Invalid call to egblas::axdy");
+#endif
 }
 
-#else
-
-static constexpr bool has_caxdy = false;
-
-#endif
 
 #ifdef EGBLAS_HAS_ZAXDY
-
 static constexpr bool has_zaxdy = true;
+#else
+static constexpr bool has_zaxdy = false;
+#endif
 
 /*!
  * \brief Wrappers for complex double-precision egblas axdy operation
@@ -122,7 +157,18 @@ static constexpr bool has_zaxdy = true;
  * \param ldb The leading dimension of b
  */
 inline void axdy(size_t n, std::complex<double>* alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+#ifdef EGBLAS_HAS_ZAXDY
     egblas_zaxdy(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+#else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
+
+    cpp_unreachable("Invalid call to egblas::axdy");
+#endif
 }
 
 /*!
@@ -135,14 +181,19 @@ inline void axdy(size_t n, std::complex<double>* alpha, std::complex<double>* A 
  * \param ldb The leading dimension of b
  */
 inline void axdy(size_t n, etl::complex<double>* alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+#ifdef EGBLAS_HAS_ZAXDY
     egblas_zaxdy(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
-}
-
 #else
+    cpp_unused(n);
+    cpp_unused(alpha);
+    cpp_unused(A);
+    cpp_unused(lda);
+    cpp_unused(B);
+    cpp_unused(ldb);
 
-static constexpr bool has_zaxdy = false;
-
+    cpp_unreachable("Invalid call to egblas::axdy");
 #endif
+}
 
 } //end of namespace egblas
 } //end of namespace impl
