@@ -104,7 +104,7 @@ struct mul_binary_op {
 
         value_t<L> alpha(1);
 
-        impl::egblas::axmy(etl::size(y), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::egblas::axmy(etl::size(y), alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();

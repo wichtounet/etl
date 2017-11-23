@@ -44,9 +44,9 @@ static constexpr bool has_sinvsqrt = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void invsqrt(size_t n, float* alpha, float* A , size_t lda, float* B , size_t ldb){
+inline void invsqrt(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_SINVSQRT
-    egblas_sinvsqrt(n, *alpha, A, lda, B, ldb);
+    egblas_sinvsqrt(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -77,9 +77,9 @@ static constexpr bool has_dinvsqrt = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void invsqrt(size_t n, double* alpha, double* A , size_t lda, double* B , size_t ldb){
+inline void invsqrt(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_DINVSQRT
-    egblas_dinvsqrt(n, *alpha, A, lda, B, ldb);
+    egblas_dinvsqrt(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -110,9 +110,9 @@ static constexpr bool has_cinvsqrt = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void invsqrt(size_t n, std::complex<float>* alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+inline void invsqrt(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CINVSQRT
-    egblas_cinvsqrt(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+    egblas_cinvsqrt(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -134,9 +134,9 @@ inline void invsqrt(size_t n, std::complex<float>* alpha, std::complex<float>* A
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void invsqrt(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+inline void invsqrt(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CINVSQRT
-    egblas_cinvsqrt(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+    egblas_cinvsqrt(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -167,9 +167,9 @@ static constexpr bool has_zinvsqrt = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void invsqrt(size_t n, std::complex<double>* alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+inline void invsqrt(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZINVSQRT
-    egblas_zinvsqrt(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+    egblas_zinvsqrt(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -191,9 +191,9 @@ inline void invsqrt(size_t n, std::complex<double>* alpha, std::complex<double>*
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void invsqrt(size_t n, etl::complex<double>* alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+inline void invsqrt(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZINVSQRT
-    egblas_zinvsqrt(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+    egblas_zinvsqrt(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);

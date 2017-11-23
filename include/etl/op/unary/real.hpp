@@ -59,7 +59,7 @@ struct real_unary_op {
         auto t2 = etl::force_temporary_gpu_dim_only_t<typename T::value_type>(t1);
 
         typename T::value_type alpha(1.0);
-        impl::egblas::real(etl::size(y), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+        impl::egblas::real(etl::size(y), alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
 
         return t2;
     }
@@ -76,7 +76,7 @@ struct real_unary_op {
         decltype(auto) t1 = smart_gpu_compute_hint(x, y);
 
         typename T::value_type alpha(1.0);
-        impl::egblas::real(etl::size(y), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::egblas::real(etl::size(y), alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();

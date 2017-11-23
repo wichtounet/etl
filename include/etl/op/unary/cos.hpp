@@ -78,7 +78,7 @@ struct cos_unary_op {
         auto t2 = force_temporary_gpu_dim_only(t1);
 
         T alpha(1.0);
-        impl::egblas::cos(etl::size(y), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+        impl::egblas::cos(etl::size(y), alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
 
         return t2;
     }
@@ -94,7 +94,7 @@ struct cos_unary_op {
         decltype(auto) t1 = select_smart_gpu_compute(x, y);
 
         T alpha(1.0);
-        impl::egblas::cos(etl::size(y), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::egblas::cos(etl::size(y), alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -162,7 +162,7 @@ struct cos_unary_op<etl::complex<TT>> {
         auto t2 = force_temporary_gpu_dim_only(t1);
 
         T alpha(1.0);
-        impl::egblas::cos(etl::size(y), &alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+        impl::egblas::cos(etl::size(y), alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
 
         return t2;
     }
@@ -178,7 +178,7 @@ struct cos_unary_op<etl::complex<TT>> {
         decltype(auto) t1 = select_smart_gpu_compute(x, y);
 
         T alpha(1.0);
-        impl::egblas::cos(etl::size(y), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::egblas::cos(etl::size(y), alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();

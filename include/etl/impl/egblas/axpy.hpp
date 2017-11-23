@@ -41,9 +41,9 @@ static constexpr bool has_saxpy = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axpy(size_t n, float* alpha, float* A , size_t lda, float* B , size_t ldb){
+inline void axpy(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_SAXPY
-    egblas_saxpy(n, *alpha, A, lda, B, ldb);
+    egblas_saxpy(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -71,9 +71,9 @@ static constexpr bool has_daxpy = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axpy(size_t n, double* alpha, double* A , size_t lda, double* B , size_t ldb){
+inline void axpy(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_DAXPY
-    egblas_daxpy(n, *alpha, A, lda, B, ldb);
+    egblas_daxpy(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -101,9 +101,9 @@ static constexpr bool has_caxpy = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axpy(size_t n, std::complex<float>* alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+inline void axpy(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CAXPY
-    egblas_caxpy(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+    egblas_caxpy(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -125,9 +125,9 @@ inline void axpy(size_t n, std::complex<float>* alpha, std::complex<float>* A , 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axpy(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+inline void axpy(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CAXPY
-    egblas_caxpy(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+    egblas_caxpy(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -156,9 +156,9 @@ static constexpr bool has_zaxpy = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axpy(size_t n, std::complex<double>* alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+inline void axpy(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZAXPY
-    egblas_zaxpy(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+    egblas_zaxpy(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -180,9 +180,9 @@ inline void axpy(size_t n, std::complex<double>* alpha, std::complex<double>* A 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axpy(size_t n, etl::complex<double>* alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+inline void axpy(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZAXPY
-    egblas_zaxpy(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+    egblas_zaxpy(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);

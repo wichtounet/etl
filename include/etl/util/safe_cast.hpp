@@ -130,4 +130,20 @@ inline const std::complex<double>* safe_cast(const etl::complex<double>* in){
 
 } //end of namespace impl
 
+cuComplex complex_cast(const std::complex<float>& alpha){
+    return *reinterpret_cast<const cuComplex*>(&alpha);
+}
+
+cuComplex complex_cast(const etl::complex<float>& alpha){
+    return *reinterpret_cast<const cuComplex*>(&alpha);
+}
+
+cuDoubleComplex complex_cast(const std::complex<double>& alpha){
+    return *reinterpret_cast<const cuDoubleComplex*>(&alpha);
+}
+
+cuDoubleComplex complex_cast(const etl::complex<double>& alpha){
+    return *reinterpret_cast<const cuDoubleComplex*>(&alpha);
+}
+
 } //end of namespace etl

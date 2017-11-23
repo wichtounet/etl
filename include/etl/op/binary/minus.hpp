@@ -126,7 +126,7 @@ struct minus_binary_op {
 
         smart_gpu_compute(lhs, y);
 
-        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &s);
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, s);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -153,7 +153,7 @@ struct minus_binary_op {
         decltype(auto) handle = impl::cublas::start_cublas();
         impl::cublas::cublas_scal(handle.get(), etl::size(y), &alpha, y.gpu_memory(), 1);
 
-        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &s);
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, s);
 
         y.validate_gpu();
         y.invalidate_cpu();

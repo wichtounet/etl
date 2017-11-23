@@ -82,7 +82,7 @@ struct cce_loss_impl {
             output_gpu.ensure_gpu_up_to_date();
             labels_gpu.ensure_gpu_up_to_date();
 
-            return impl::egblas::cce_loss(etl::size(output), &scale, output_gpu.gpu_memory(), 1, labels_gpu.gpu_memory(), 1);
+            return impl::egblas::cce_loss(etl::size(output), scale, output_gpu.gpu_memory(), 1, labels_gpu.gpu_memory(), 1);
         } else {
             cpp_unreachable("Invalid selection for CCE");
         }
@@ -112,7 +112,7 @@ struct cce_error_impl {
             output_gpu.ensure_gpu_up_to_date();
             labels_gpu.ensure_gpu_up_to_date();
 
-            return impl::egblas::cce_error(etl::dim<0>(output), etl::dim<1>(output), &scale, output_gpu.gpu_memory(), labels_gpu.gpu_memory());
+            return impl::egblas::cce_error(etl::dim<0>(output), etl::dim<1>(output), scale, output_gpu.gpu_memory(), labels_gpu.gpu_memory());
         } else {
             cpp_unreachable("Invalid selection for CCE");
         }

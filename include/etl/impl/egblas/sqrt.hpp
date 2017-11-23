@@ -44,9 +44,9 @@ static constexpr bool has_ssqrt = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void sqrt(size_t n, float* alpha, float* A , size_t lda, float* B , size_t ldb){
+inline void sqrt(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_SSQRT
-    egblas_ssqrt(n, *alpha, A, lda, B, ldb);
+    egblas_ssqrt(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -77,9 +77,9 @@ static constexpr bool has_dsqrt = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void sqrt(size_t n, double* alpha, double* A , size_t lda, double* B , size_t ldb){
+inline void sqrt(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_DSQRT
-    egblas_dsqrt(n, *alpha, A, lda, B, ldb);
+    egblas_dsqrt(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -111,9 +111,9 @@ static constexpr bool has_csqrt = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void sqrt(size_t n, std::complex<float>* alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+inline void sqrt(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CSQRT
-    egblas_csqrt(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+    egblas_csqrt(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -135,9 +135,9 @@ inline void sqrt(size_t n, std::complex<float>* alpha, std::complex<float>* A , 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void sqrt(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+inline void sqrt(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CSQRT
-    egblas_csqrt(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+    egblas_csqrt(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -169,9 +169,9 @@ static constexpr bool has_zsqrt = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void sqrt(size_t n, std::complex<double>* alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+inline void sqrt(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZSQRT
-    egblas_zsqrt(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+    egblas_zsqrt(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -193,9 +193,9 @@ inline void sqrt(size_t n, std::complex<double>* alpha, std::complex<double>* A 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void sqrt(size_t n, etl::complex<double>* alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+inline void sqrt(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZSQRT
-    egblas_zsqrt(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+    egblas_zsqrt(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);

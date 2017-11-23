@@ -26,7 +26,7 @@ void direct_fill(E&& mat, V value){
     value_t<E> value_conv = value;
 
     if(mat.gpu_memory()){
-        impl::egblas::scalar_set(mat.gpu_memory(), etl::size(mat), 1, &value_conv);
+        impl::egblas::scalar_set(mat.gpu_memory(), etl::size(mat), 1, value_conv);
 
         mat.validate_gpu();
     }
@@ -46,7 +46,7 @@ void direct_fill(E&& mat, V value){
     value_t<E> value_conv = value;
 
     if(mat.gpu_memory()){
-        impl::egblas::scalar_set(mat.gpu_memory(), etl::size(mat), 1, &value_conv);
+        impl::egblas::scalar_set(mat.gpu_memory(), etl::size(mat), 1, value_conv);
 
         mat.validate_gpu();
     }

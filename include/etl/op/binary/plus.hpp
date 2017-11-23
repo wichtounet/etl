@@ -132,7 +132,7 @@ struct plus_binary_op {
 
         smart_gpu_compute(rhs, y);
 
-        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &s);
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, s);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -154,7 +154,7 @@ struct plus_binary_op {
 
         smart_gpu_compute(lhs, y);
 
-        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &s);
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, s);
 
         y.validate_gpu();
         y.invalidate_cpu();

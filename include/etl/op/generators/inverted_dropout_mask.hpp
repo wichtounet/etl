@@ -66,7 +66,7 @@ struct inverted_dropout_mask_generator_op {
         decltype(auto) t1 = force_temporary_gpu_dim_only(y);
 
         T alpha(1.0);
-        impl::egblas::inv_dropout_seed(etl::size(y), probability, &alpha, t1.gpu_memory(), 1, seed_dist(rand_engine));
+        impl::egblas::inv_dropout_seed(etl::size(y), probability, alpha, t1.gpu_memory(), 1, seed_dist(rand_engine));
 
         return t1;
     }
@@ -82,7 +82,7 @@ struct inverted_dropout_mask_generator_op {
         std::uniform_int_distribution<long> seed_dist;
 
         T alpha(1.0);
-        impl::egblas::inv_dropout_seed(etl::size(y), probability, &alpha, y.gpu_memory(), 1, seed_dist(rand_engine));
+        impl::egblas::inv_dropout_seed(etl::size(y), probability, alpha, y.gpu_memory(), 1, seed_dist(rand_engine));
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -153,7 +153,7 @@ struct inverted_dropout_mask_generator_g_op {
         decltype(auto) t1 = force_temporary_gpu_dim_only(y);
 
         T alpha(1.0);
-        impl::egblas::inv_dropout_seed(etl::size(y), probability, &alpha, t1.gpu_memory(), 1, seed_dist(rand_engine));
+        impl::egblas::inv_dropout_seed(etl::size(y), probability, alpha, t1.gpu_memory(), 1, seed_dist(rand_engine));
 
         return t1;
     }
@@ -168,7 +168,7 @@ struct inverted_dropout_mask_generator_g_op {
         std::uniform_int_distribution<long> seed_dist;
 
         T alpha(1.0);
-        impl::egblas::inv_dropout_seed(etl::size(y), probability, &alpha, y.gpu_memory(), 1, seed_dist(rand_engine));
+        impl::egblas::inv_dropout_seed(etl::size(y), probability, alpha, y.gpu_memory(), 1, seed_dist(rand_engine));
 
         y.validate_gpu();
         y.invalidate_cpu();

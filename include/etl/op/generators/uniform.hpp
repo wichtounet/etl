@@ -95,11 +95,11 @@ struct uniform_generator_op {
 
         // mul by b-a => [0,b-a]
         auto s1 = T(end) - T(start);
-        impl::egblas::scalar_mul(t1.gpu_memory(), etl::size(y), 1, &s1);
+        impl::egblas::scalar_mul(t1.gpu_memory(), etl::size(y), 1, s1);
 
         // Add a => [a,b]
         auto s2 = T(start);
-        impl::egblas::scalar_add(t1.gpu_memory(), etl::size(y), 1, &s2);
+        impl::egblas::scalar_add(t1.gpu_memory(), etl::size(y), 1, s2);
 
         return t1;
     }
@@ -128,11 +128,11 @@ struct uniform_generator_op {
 
         // mul by b-a => [0,b-a]
         auto s1 = T(end) - T(start);
-        impl::egblas::scalar_mul(y.gpu_memory(), etl::size(y), 1, &s1);
+        impl::egblas::scalar_mul(y.gpu_memory(), etl::size(y), 1, s1);
 
         // Add a => [a,b]
         auto s2 = T(start);
-        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &s2);
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, s2);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -216,11 +216,11 @@ struct uniform_generator_g_op {
 
         // mul by b-a => [0,b-a]
         auto s1 = T(end) - T(start);
-        impl::egblas::scalar_mul(t1.gpu_memory(), etl::size(y), 1, &s1);
+        impl::egblas::scalar_mul(t1.gpu_memory(), etl::size(y), 1, s1);
 
         // Add a => [a,b]
         auto s2 = T(start);
-        impl::egblas::scalar_add(t1.gpu_memory(), etl::size(y), 1, &s2);
+        impl::egblas::scalar_add(t1.gpu_memory(), etl::size(y), 1, s2);
 
         return t1;
     }
@@ -249,11 +249,11 @@ struct uniform_generator_g_op {
 
         // mul by b-a => [0,b-a]
         auto s1 = T(end) - T(start);
-        impl::egblas::scalar_mul(y.gpu_memory(), etl::size(y), 1, &s1);
+        impl::egblas::scalar_mul(y.gpu_memory(), etl::size(y), 1, s1);
 
         // Add a => [a,b]
         auto s2 = T(start);
-        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, &s2);
+        impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, s2);
 
         y.validate_gpu();
         y.invalidate_cpu();

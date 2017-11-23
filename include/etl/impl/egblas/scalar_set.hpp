@@ -37,8 +37,8 @@ static constexpr bool has_scalar_sset = true;
  * \param s The stride of the vector
  * \param beta The scalar to set
  */
-inline void scalar_set(float* x, size_t n, size_t s, const float* beta){
-    egblas_scalar_sset(x, n, s, *beta);
+inline void scalar_set(float* x, size_t n, size_t s, const float beta){
+    egblas_scalar_sset(x, n, s, beta);
 }
 
 #else
@@ -58,8 +58,8 @@ static constexpr bool has_scalar_dset = true;
  * \param s The stride of the vector
  * \param beta The scalar to set
  */
-inline void scalar_set(double* x, size_t n, size_t s, const double* beta){
-    egblas_scalar_dset(x, n, s, *beta);
+inline void scalar_set(double* x, size_t n, size_t s, const double beta){
+    egblas_scalar_dset(x, n, s, beta);
 }
 
 #else
@@ -78,7 +78,7 @@ static constexpr bool has_scalar_dset = false;
  * \param beta The scalar to set
  */
 template<typename T>
-inline void scalar_set(T* x, size_t n, size_t s, const T* beta){
+inline void scalar_set(T* x, size_t n, size_t s, const T beta){
     cpp_unused(x);
     cpp_unused(n);
     cpp_unused(s);

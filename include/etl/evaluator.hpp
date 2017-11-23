@@ -531,7 +531,7 @@ namespace standard_evaluator {
         result.ensure_gpu_up_to_date();
 
         // Compute the GPU representation of the expression
-        impl::egblas::scalar_add(result.gpu_memory(), etl::size(result), 1, &expr.value);
+        impl::egblas::scalar_add(result.gpu_memory(), etl::size(result), 1, expr.value);
 
         // Validate the GPU and invalidates the CPU
         result.validate_gpu();
@@ -765,7 +765,7 @@ namespace standard_evaluator {
 
         // Compute the GPU representation of the expression
         auto value = -expr.value;
-        impl::egblas::scalar_add(result.gpu_memory(), etl::size(result), 1, &value);
+        impl::egblas::scalar_add(result.gpu_memory(), etl::size(result), 1, value);
 
         // Validate the GPU and invalidates the CPU
         result.validate_gpu();
@@ -970,7 +970,7 @@ namespace standard_evaluator {
         decltype(auto) t1 = smart_gpu_compute_hint(expr, result);
 
         value_t<E> alpha(1);
-        impl::egblas::axmy(etl::size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
+        impl::egblas::axmy(etl::size(result), alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
 
         // Validate the GPU and invalidates the CPU
         result.validate_gpu();
@@ -1202,7 +1202,7 @@ namespace standard_evaluator {
         decltype(auto) t1 = smart_gpu_compute_hint(expr, result);
 
         value_t<E> alpha(1);
-        impl::egblas::axdy(etl::size(result), &alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
+        impl::egblas::axdy(etl::size(result), alpha, t1.gpu_memory(), 1, result.gpu_memory(), 1);
 
         // Validate the GPU and invalidates the CPU
         result.validate_gpu();

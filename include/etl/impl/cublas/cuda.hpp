@@ -12,6 +12,9 @@
 #include "cuda.h"
 #include "cuda_runtime.h"
 #include "cuda_runtime_api.h"
+#include "cuComplex.h"
+
+#include "etl/util/safe_cast.hpp"
 
 #define cuda_check(call)                                                                                \
     {                                                                                                   \

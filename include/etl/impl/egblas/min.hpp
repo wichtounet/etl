@@ -44,9 +44,9 @@ static constexpr bool has_smin = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, float* alpha, float* A, size_t lda, float* B, size_t ldb) {
+inline void min(size_t n, float alpha, float* A, size_t lda, float* B, size_t ldb) {
 #ifdef EGBLAS_HAS_SMIN
-    egblas_smin(n, *alpha, A, lda, B, ldb);
+    egblas_smin(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -77,9 +77,9 @@ static constexpr bool has_dmin = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, double* alpha, double* A, size_t lda, double* B, size_t ldb) {
+inline void min(size_t n, double alpha, double* A, size_t lda, double* B, size_t ldb) {
 #ifdef EGBLAS_HAS_DMIN
-    egblas_dmin(n, *alpha, A, lda, B, ldb);
+    egblas_dmin(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -110,9 +110,9 @@ static constexpr bool has_cmin = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, std::complex<float>* alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb) {
+inline void min(size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CMIN
-    egblas_cmin(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+    egblas_cmin(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -134,9 +134,9 @@ inline void min(size_t n, std::complex<float>* alpha, std::complex<float>* A, si
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, etl::complex<float>* alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb) {
+inline void min(size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CMIN
-    egblas_cmin(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+    egblas_cmin(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -167,9 +167,9 @@ static constexpr bool has_zmin = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, std::complex<double>* alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb) {
+inline void min(size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZMIN
-    egblas_zmin(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+    egblas_zmin(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -191,9 +191,9 @@ inline void min(size_t n, std::complex<double>* alpha, std::complex<double>* A, 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, etl::complex<double>* alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb) {
+inline void min(size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZMIN
-    egblas_zmin(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+    egblas_zmin(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -224,9 +224,9 @@ static constexpr bool has_smin3 = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, float* alpha, float* A, size_t lda, float* B, size_t ldb, float* C, size_t ldc) {
+inline void min(size_t n, float alpha, float* A, size_t lda, float* B, size_t ldb, float* C, size_t ldc) {
 #ifdef EGBLAS_HAS_SMIN3
-    egblas_smin(n, *alpha, A, lda, B, ldb, C, ldc);
+    egblas_smin(n, alpha, A, lda, B, ldb, C, ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -259,9 +259,9 @@ static constexpr bool has_dmin3 = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, double* alpha, double* A, size_t lda, double* B, size_t ldb, double* C, size_t ldc) {
+inline void min(size_t n, double alpha, double* A, size_t lda, double* B, size_t ldb, double* C, size_t ldc) {
 #ifdef EGBLAS_HAS_DMIN3
-    egblas_dmin(n, *alpha, A, lda, B, ldb, C, ldc);
+    egblas_dmin(n, alpha, A, lda, B, ldb, C, ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -294,9 +294,9 @@ static constexpr bool has_cmin3 = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, std::complex<float>* alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb, std::complex<float>* C, size_t ldc) {
+inline void min(size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb, std::complex<float>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_CMIN3
-    egblas_cmin(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
+    egblas_cmin(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -320,9 +320,9 @@ inline void min(size_t n, std::complex<float>* alpha, std::complex<float>* A, si
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, etl::complex<float>* alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb, etl::complex<float>* C, size_t ldc) {
+inline void min(size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb, etl::complex<float>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_CMIN3
-    egblas_cmin(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
+    egblas_cmin(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -355,9 +355,9 @@ static constexpr bool has_zmin3 = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, std::complex<double>* alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb, std::complex<double>* C, size_t ldc) {
+inline void min(size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb, std::complex<double>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_ZMIN3
-    egblas_zmin(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb, reinterpret_cast<cuDoubleComplex*>(C), ldc);
+    egblas_zmin(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb, reinterpret_cast<cuDoubleComplex*>(C), ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -381,9 +381,9 @@ inline void min(size_t n, std::complex<double>* alpha, std::complex<double>* A, 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, etl::complex<double>* alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb, etl::complex<double>* C, size_t ldc) {
+inline void min(size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb, etl::complex<double>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_ZMIN3
-    egblas_zmin(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb, reinterpret_cast<cuDoubleComplex*>(C), ldc);
+    egblas_zmin(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb, reinterpret_cast<cuDoubleComplex*>(C), ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);

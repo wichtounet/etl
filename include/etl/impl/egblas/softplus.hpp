@@ -44,9 +44,9 @@ static constexpr bool has_ssoftplus = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void softplus(size_t n, float* alpha, float* A , size_t lda, float* B , size_t ldb){
+inline void softplus(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_SSOFTPLUS
-    egblas_ssoftplus(n, *alpha, A, lda, B, ldb);
+    egblas_ssoftplus(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -77,9 +77,9 @@ static constexpr bool has_dsoftplus = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void softplus(size_t n, double* alpha, double* A , size_t lda, double* B , size_t ldb){
+inline void softplus(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_DSOFTPLUS
-    egblas_dsoftplus(n, *alpha, A, lda, B, ldb);
+    egblas_dsoftplus(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -110,9 +110,9 @@ static constexpr bool has_csoftplus = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void softplus(size_t n, std::complex<float>* alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+inline void softplus(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CSOFTPLUS
-    egblas_csoftplus(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+    egblas_csoftplus(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -134,9 +134,9 @@ inline void softplus(size_t n, std::complex<float>* alpha, std::complex<float>* 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void softplus(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+inline void softplus(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CSOFTPLUS
-    egblas_csoftplus(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+    egblas_csoftplus(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -167,9 +167,9 @@ static constexpr bool has_zsoftplus = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void softplus(size_t n, std::complex<double>* alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+inline void softplus(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZSOFTPLUS
-    egblas_zsoftplus(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+    egblas_zsoftplus(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -191,9 +191,9 @@ inline void softplus(size_t n, std::complex<double>* alpha, std::complex<double>
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void softplus(size_t n, etl::complex<double>* alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+inline void softplus(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZSOFTPLUS
-    egblas_zsoftplus(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+    egblas_zsoftplus(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);

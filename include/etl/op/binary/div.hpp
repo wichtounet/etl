@@ -118,7 +118,7 @@ struct div_binary_op {
 
         value_t<L> alpha(1);
 
-        impl::egblas::axdy(etl::size(y), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::egblas::axdy(etl::size(y), alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -145,7 +145,7 @@ struct div_binary_op {
         smart_gpu_compute(lhs, y);
 
         decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), etl::size(y), &s, y.gpu_memory(), 1);
+        impl::cublas::cublas_scal(handle.get(), etl::size(y), s, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -169,7 +169,7 @@ struct div_binary_op {
 
         smart_gpu_compute(rhs, y);
 
-        impl::egblas::scalar_div(&s, y.gpu_memory(), etl::size(y), 1);
+        impl::egblas::scalar_div(s, y.gpu_memory(), etl::size(y), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
