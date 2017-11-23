@@ -380,6 +380,71 @@ void ml() {
     etl::dump_counters();
 }
 
+// Make sure some expression are fully optimized
+void opt() {
+    std::cout << "Opt" << std::endl;
+
+#ifdef ETL_CUDA
+    etl::gpu_memory_allocator::clear();
+#endif
+
+    etl::reset_counters();
+
+    {
+        etl::dyn_matrix<float, 4> X(128, 3, 28, 28);
+        etl::dyn_matrix<float, 4> Y(128, 3, 28, 28);
+        etl::dyn_matrix<float, 4> YY(128, 3, 28, 28);
+
+        for (size_t i = 0; i < 10; ++i) {
+            // This should generate a single saxpy
+            Y = 1.02f * X + Y;
+
+            // This should generate a single saxpy_3
+            YY = 1.02f * X + Y;
+
+            // This should generate a single saxpby
+            Y = X + 1.04f * Y;
+
+            // This should generate a single saxpby_3
+            YY = X + 1.04f * Y;
+
+            // This should generate a single saxpby
+            Y = 1.02f * X + 1.04f * Y;
+
+            // This should generate a single saxpby_3
+            YY = 1.02f * X + 1.04f * Y;
+
+            // This should generate a single saxmy
+            Y = 1.02f * (X >> Y);
+
+            // This should generate a single saxmy_3
+            YY = 1.02f * (X >> Y);
+
+            // This should generate a single saxmy
+            Y = (1.02f * X) >> Y;
+
+            // This should generate a single saxmy_3
+            YY = (1.02f * X) >> Y;
+
+            // This should generate a single saxdy
+            Y = X / (1.02f * Y);
+
+            // This should generate a single saxdy_3
+            YY = X / (1.02f * YY);
+
+            // This should generate a single saxdy
+            Y = 1.02f * X / Y;
+
+            // This should generate a single saxdy_3
+            YY = 1.02f * X / Y;
+
+            // TODO Sub expression as well
+        }
+    }
+
+    etl::dump_counters();
+}
+
 void random_test() {
     std::cout << "Random" << std::endl;
 
@@ -412,6 +477,7 @@ int main() {
     expr();
     direct();
     ml();
+    opt();
     sub();
     sub_ro();
     random_test();
