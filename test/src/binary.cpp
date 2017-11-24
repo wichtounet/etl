@@ -9,6 +9,19 @@
 
 #include <cmath>
 
+TEMPLATE_TEST_CASE_2("saxpy/0", "[saxpy][fast]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> x = {-1.0, 2.0, 0.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> y = {1.0, 3.0, 0.5, 1.2};
+    etl::fast_matrix<Z, 2, 2> yy;
+
+    yy = Z(2.0) * x + y;
+
+    REQUIRE_EQUALS(yy[0], Z(-1.0));
+    REQUIRE_EQUALS(yy[1], Z(7.0));
+    REQUIRE_EQUALS(yy[2], Z(0.5));
+    REQUIRE_EQUALS(yy[3], Z(3.2));
+}
+
 TEMPLATE_TEST_CASE_2("fast_matrix/max", "fast_matrix::max", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
 
