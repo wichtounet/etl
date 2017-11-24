@@ -46,6 +46,7 @@ static constexpr bool has_sfloor = false;
  */
 inline void floor(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_SFLOOR
+    inc_counter("egblas");
     egblas_sfloor(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -79,6 +80,7 @@ static constexpr bool has_dfloor = false;
  */
 inline void floor(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_DFLOOR
+    inc_counter("egblas");
     egblas_dfloor(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -112,6 +114,7 @@ static constexpr bool has_cfloor = false;
  */
 inline void floor(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CFLOOR
+    inc_counter("egblas");
     egblas_cfloor(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -136,6 +139,7 @@ inline void floor(size_t n, std::complex<float> alpha, std::complex<float>* A , 
  */
 inline void floor(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CFLOOR
+    inc_counter("egblas");
     egblas_cfloor(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -169,6 +173,7 @@ static constexpr bool has_zfloor = false;
  */
 inline void floor(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZFLOOR
+    inc_counter("egblas");
     egblas_zfloor(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -193,6 +198,7 @@ inline void floor(size_t n, std::complex<double> alpha, std::complex<double>* A 
  */
 inline void floor(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZFLOOR
+    inc_counter("egblas");
     egblas_zfloor(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);

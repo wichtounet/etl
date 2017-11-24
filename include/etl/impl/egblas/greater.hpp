@@ -47,6 +47,7 @@ static constexpr bool has_sgreater = false;
  */
 inline void greater(size_t n, const float* A, size_t lda, const float* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_SGREATER
+    inc_counter("egblas");
     egblas_sgreater(n, A, lda, B, ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -82,6 +83,7 @@ static constexpr bool has_dgreater = false;
  */
 inline void greater(size_t n, const double* A, size_t lda, const double* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_DGREATER
+    inc_counter("egblas");
     egblas_dgreater(n, A, lda, B, ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -117,6 +119,7 @@ static constexpr bool has_cgreater = false;
  */
 inline void greater(size_t n, const std::complex<float>* A, size_t lda, const std::complex<float>* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_CGREATER
+    inc_counter("egblas");
     egblas_cgreater(n, reinterpret_cast<const cuComplex*>(A), lda, reinterpret_cast<const cuComplex*>(B), ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -143,6 +146,7 @@ inline void greater(size_t n, const std::complex<float>* A, size_t lda, const st
  */
 inline void greater(size_t n, const etl::complex<float>* A, size_t lda, const etl::complex<float>* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_CGREATER
+    inc_counter("egblas");
     egblas_cgreater(n, reinterpret_cast<const cuComplex*>(A), lda, reinterpret_cast<const cuComplex*>(B), ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -178,6 +182,7 @@ static constexpr bool has_zgreater = false;
  */
 inline void greater(size_t n, const std::complex<double>* A, size_t lda, const std::complex<double>* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_ZGREATER
+    inc_counter("egblas");
     egblas_zgreater(n, reinterpret_cast<const cuDoubleComplex*>(A), lda, reinterpret_cast<const cuDoubleComplex*>(B), ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -204,6 +209,7 @@ inline void greater(size_t n, const std::complex<double>* A, size_t lda, const s
  */
 inline void greater(size_t n, const etl::complex<double>* A, size_t lda, const etl::complex<double>* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_ZGREATER
+    inc_counter("egblas");
     egblas_zgreater(n, reinterpret_cast<const cuDoubleComplex*>(A), lda, reinterpret_cast<const cuDoubleComplex*>(B), ldb, C, ldc);
 #else
     cpp_unused(n);

@@ -46,6 +46,7 @@ static constexpr bool has_ssqrt = false;
  */
 inline void sqrt(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_SSQRT
+    inc_counter("egblas");
     egblas_ssqrt(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -79,6 +80,7 @@ static constexpr bool has_dsqrt = false;
  */
 inline void sqrt(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_DSQRT
+    inc_counter("egblas");
     egblas_dsqrt(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -113,6 +115,7 @@ static constexpr bool has_csqrt = false;
  */
 inline void sqrt(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CSQRT
+    inc_counter("egblas");
     egblas_csqrt(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -137,6 +140,7 @@ inline void sqrt(size_t n, std::complex<float> alpha, std::complex<float>* A , s
  */
 inline void sqrt(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CSQRT
+    inc_counter("egblas");
     egblas_csqrt(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -171,6 +175,7 @@ static constexpr bool has_zsqrt = false;
  */
 inline void sqrt(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZSQRT
+    inc_counter("egblas");
     egblas_zsqrt(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -195,6 +200,7 @@ inline void sqrt(size_t n, std::complex<double> alpha, std::complex<double>* A ,
  */
 inline void sqrt(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZSQRT
+    inc_counter("egblas");
     egblas_zsqrt(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);

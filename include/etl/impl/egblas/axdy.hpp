@@ -43,6 +43,7 @@ static constexpr bool has_saxdy = false;
  */
 inline void axdy(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_SAXDY
+    inc_counter("egblas");
     egblas_saxdy(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -73,6 +74,7 @@ static constexpr bool has_daxdy = false;
  */
 inline void axdy(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_DAXDY
+    inc_counter("egblas");
     egblas_daxdy(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -103,6 +105,7 @@ static constexpr bool has_caxdy = false;
  */
 inline void axdy(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CAXDY
+    inc_counter("egblas");
     egblas_caxdy(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -127,6 +130,7 @@ inline void axdy(size_t n, std::complex<float> alpha, std::complex<float>* A , s
  */
 inline void axdy(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CAXDY
+    inc_counter("egblas");
     egblas_caxdy(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -158,6 +162,7 @@ static constexpr bool has_zaxdy = false;
  */
 inline void axdy(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZAXDY
+    inc_counter("egblas");
     egblas_zaxdy(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -182,6 +187,7 @@ inline void axdy(size_t n, std::complex<double> alpha, std::complex<double>* A ,
  */
 inline void axdy(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZAXDY
+    inc_counter("egblas");
     egblas_zaxdy(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);

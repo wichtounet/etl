@@ -47,6 +47,7 @@ static constexpr bool has_sdropout = false;
  */
 inline void dropout(size_t n, float p, float alpha, float* A, size_t lda) {
 #ifdef EGBLAS_HAS_SDROPOUT
+    inc_counter("egblas");
     egblas_sdropout(n, p, alpha, A, lda);
 #else
     cpp_unused(n);
@@ -78,6 +79,7 @@ static constexpr bool has_ddropout = false;
  */
 inline void dropout(size_t n, double p, double alpha, double* A, size_t lda) {
 #ifdef EGBLAS_HAS_DDROPOUT
+    inc_counter("egblas");
     egblas_ddropout(n, p, alpha, A, lda);
 #else
     cpp_unused(n);
@@ -111,6 +113,7 @@ static constexpr bool has_sdropout_seed = false;
  */
 inline void dropout_seed(size_t n, float p, float alpha, float* A, size_t lda, size_t seed) {
 #ifdef EGBLAS_HAS_SDROPOUT_SEED
+    inc_counter("egblas");
     egblas_sdropout_seed(n, p, alpha, A, lda, seed);
 #else
     cpp_unused(n);
@@ -143,6 +146,7 @@ static constexpr bool has_ddropout_seed = false;
  */
 inline void dropout_seed(size_t n, double p, double alpha, double* A, size_t lda, size_t seed) {
 #ifdef EGBLAS_HAS_DDROPOUT_SEED
+    inc_counter("egblas");
     egblas_ddropout_seed(n, p, alpha, A, lda, seed);
 #else
     cpp_unused(n);
@@ -177,6 +181,7 @@ static constexpr bool has_sinv_dropout = false;
  */
 inline void inv_dropout(size_t n, float p, float alpha, float* A, size_t lda) {
 #ifdef EGBLAS_HAS_SINV_DROPOUT
+    inc_counter("egblas");
     egblas_sinv_dropout(n, p, alpha, A, lda);
 #else
     cpp_unused(n);
@@ -208,6 +213,7 @@ static constexpr bool has_dinv_dropout = false;
  */
 inline void inv_dropout(size_t n, double p, double alpha, double* A, size_t lda) {
 #ifdef EGBLAS_HAS_DINV_DROPOUT
+    inc_counter("egblas");
     egblas_dinv_dropout(n, p, alpha, A, lda);
 #else
     cpp_unused(n);
@@ -241,6 +247,7 @@ static constexpr bool has_sinv_dropout_seed = false;
  */
 inline void inv_dropout_seed(size_t n, float p, float alpha, float* A, size_t lda, size_t seed) {
 #ifdef EGBLAS_HAS_SINV_DROPOUT_SEED
+    inc_counter("egblas");
     egblas_sinv_dropout_seed(n, p, alpha, A, lda, seed);
 #else
     cpp_unused(n);
@@ -273,6 +280,7 @@ static constexpr bool has_dinv_dropout_seed = false;
  */
 inline void inv_dropout_seed(size_t n, double p, double alpha, double* A, size_t lda, size_t seed) {
 #ifdef EGBLAS_HAS_DINV_DROPOUT_SEED
+    inc_counter("egblas");
     egblas_dinv_dropout_seed(n, p, alpha, A, lda, seed);
 #else
     cpp_unused(n);

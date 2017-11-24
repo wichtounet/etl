@@ -38,6 +38,7 @@ static constexpr bool has_scalar_sset = true;
  * \param beta The scalar to set
  */
 inline void scalar_set(float* x, size_t n, size_t s, const float beta){
+    inc_counter("egblas");
     egblas_scalar_sset(x, n, s, beta);
 }
 
@@ -59,6 +60,7 @@ static constexpr bool has_scalar_dset = true;
  * \param beta The scalar to set
  */
 inline void scalar_set(double* x, size_t n, size_t s, const double beta){
+    inc_counter("egblas");
     egblas_scalar_dset(x, n, s, beta);
 }
 

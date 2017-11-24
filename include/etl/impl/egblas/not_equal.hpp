@@ -47,6 +47,7 @@ static constexpr bool has_snot_equal = false;
  */
 inline void not_equal(size_t n, const float* A, size_t lda, const float* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_SNOT_EQUAL
+    inc_counter("egblas");
     egblas_snot_equal(n, A, lda, B, ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -82,6 +83,7 @@ static constexpr bool has_dnot_equal = false;
  */
 inline void not_equal(size_t n, const double* A, size_t lda, const double* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_DNOT_EQUAL
+    inc_counter("egblas");
     egblas_dnot_equal(n, A, lda, B, ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -117,6 +119,7 @@ static constexpr bool has_cnot_equal = false;
  */
 inline void not_equal(size_t n, const std::complex<float>* A, size_t lda, const std::complex<float>* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_CNOT_EQUAL
+    inc_counter("egblas");
     egblas_cnot_equal(n, reinterpret_cast<const cuComplex*>(A), lda, reinterpret_cast<const cuComplex*>(B), ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -143,6 +146,7 @@ inline void not_equal(size_t n, const std::complex<float>* A, size_t lda, const 
  */
 inline void not_equal(size_t n, const etl::complex<float>* A, size_t lda, const etl::complex<float>* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_CNOT_EQUAL
+    inc_counter("egblas");
     egblas_cnot_equal(n, reinterpret_cast<const cuComplex*>(A), lda, reinterpret_cast<const cuComplex*>(B), ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -178,6 +182,7 @@ static constexpr bool has_znot_equal = false;
  */
 inline void not_equal(size_t n, const std::complex<double>* A, size_t lda, const std::complex<double>* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_ZNOT_EQUAL
+    inc_counter("egblas");
     egblas_znot_equal(n, reinterpret_cast<const cuDoubleComplex*>(A), lda, reinterpret_cast<const cuDoubleComplex*>(B), ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -204,6 +209,7 @@ inline void not_equal(size_t n, const std::complex<double>* A, size_t lda, const
  */
 inline void not_equal(size_t n, const etl::complex<double>* A, size_t lda, const etl::complex<double>* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_ZNOT_EQUAL
+    inc_counter("egblas");
     egblas_znot_equal(n, reinterpret_cast<const cuDoubleComplex*>(A), lda, reinterpret_cast<const cuDoubleComplex*>(B), ldb, C, ldc);
 #else
     cpp_unused(n);

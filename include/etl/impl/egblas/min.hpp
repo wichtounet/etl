@@ -46,6 +46,7 @@ static constexpr bool has_smin = false;
  */
 inline void min(size_t n, float alpha, float* A, size_t lda, float* B, size_t ldb) {
 #ifdef EGBLAS_HAS_SMIN
+    inc_counter("egblas");
     egblas_smin(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -79,6 +80,7 @@ static constexpr bool has_dmin = false;
  */
 inline void min(size_t n, double alpha, double* A, size_t lda, double* B, size_t ldb) {
 #ifdef EGBLAS_HAS_DMIN
+    inc_counter("egblas");
     egblas_dmin(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -112,6 +114,7 @@ static constexpr bool has_cmin = false;
  */
 inline void min(size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CMIN
+    inc_counter("egblas");
     egblas_cmin(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -136,6 +139,7 @@ inline void min(size_t n, std::complex<float> alpha, std::complex<float>* A, siz
  */
 inline void min(size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CMIN
+    inc_counter("egblas");
     egblas_cmin(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -169,6 +173,7 @@ static constexpr bool has_zmin = false;
  */
 inline void min(size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZMIN
+    inc_counter("egblas");
     egblas_zmin(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -193,6 +198,7 @@ inline void min(size_t n, std::complex<double> alpha, std::complex<double>* A, s
  */
 inline void min(size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZMIN
+    inc_counter("egblas");
     egblas_zmin(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -226,6 +232,7 @@ static constexpr bool has_smin3 = false;
  */
 inline void min(size_t n, float alpha, float* A, size_t lda, float* B, size_t ldb, float* C, size_t ldc) {
 #ifdef EGBLAS_HAS_SMIN3
+    inc_counter("egblas");
     egblas_smin(n, alpha, A, lda, B, ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -261,6 +268,7 @@ static constexpr bool has_dmin3 = false;
  */
 inline void min(size_t n, double alpha, double* A, size_t lda, double* B, size_t ldb, double* C, size_t ldc) {
 #ifdef EGBLAS_HAS_DMIN3
+    inc_counter("egblas");
     egblas_dmin(n, alpha, A, lda, B, ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -296,6 +304,7 @@ static constexpr bool has_cmin3 = false;
  */
 inline void min(size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb, std::complex<float>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_CMIN3
+    inc_counter("egblas");
     egblas_cmin(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
 #else
     cpp_unused(n);
@@ -322,6 +331,7 @@ inline void min(size_t n, std::complex<float> alpha, std::complex<float>* A, siz
  */
 inline void min(size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb, etl::complex<float>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_CMIN3
+    inc_counter("egblas");
     egblas_cmin(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
 #else
     cpp_unused(n);
@@ -357,6 +367,7 @@ static constexpr bool has_zmin3 = false;
  */
 inline void min(size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb, std::complex<double>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_ZMIN3
+    inc_counter("egblas");
     egblas_zmin(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb, reinterpret_cast<cuDoubleComplex*>(C), ldc);
 #else
     cpp_unused(n);
@@ -383,6 +394,7 @@ inline void min(size_t n, std::complex<double> alpha, std::complex<double>* A, s
  */
 inline void min(size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb, etl::complex<double>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_ZMIN3
+    inc_counter("egblas");
     egblas_zmin(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb, reinterpret_cast<cuDoubleComplex*>(C), ldc);
 #else
     cpp_unused(n);

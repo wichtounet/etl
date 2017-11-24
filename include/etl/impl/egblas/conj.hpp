@@ -46,6 +46,7 @@ static constexpr bool has_cconj = false;
  */
 inline void conj(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CCONJ
+    inc_counter("egblas");
     egblas_cconj(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -70,6 +71,7 @@ inline void conj(size_t n, std::complex<float> alpha, std::complex<float>* A , s
  */
 inline void conj(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CCONJ
+    inc_counter("egblas");
     egblas_cconj(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -103,6 +105,7 @@ static constexpr bool has_zconj = false;
  */
 inline void conj(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_Zconj
+    inc_counter("egblas");
     egblas_zconj(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -127,6 +130,7 @@ inline void conj(size_t n, std::complex<double> alpha, std::complex<double>* A ,
  */
 inline void conj(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_Zconj
+    inc_counter("egblas");
     egblas_zconj(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);

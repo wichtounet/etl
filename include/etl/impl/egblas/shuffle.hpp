@@ -43,6 +43,7 @@ static constexpr bool has_shuffle = false;
  */
 inline void shuffle(size_t n, void* x, size_t incx){
 #ifdef EGBLAS_HAS_SHUFFLE
+    inc_counter("egblas");
     egblas_shuffle(n, x, incx);
 #else
     cpp_unused(n);
@@ -71,6 +72,7 @@ static constexpr bool has_shuffle_seed = false;
  */
 inline void shuffle_seed(size_t n, void* x, size_t incx, size_t seed){
 #ifdef EGBLAS_HAS_SHUFFLE_SEED
+    inc_counter("egblas");
     egblas_shuffle_seed(n, x, incx, seed);
 #else
     cpp_unused(n);
@@ -101,6 +103,7 @@ static constexpr bool has_par_shuffle = false;
  */
 inline void par_shuffle(size_t n, void* x, size_t incx, void* y, size_t incy){
 #ifdef EGBLAS_HAS_PAR_SHUFFLE
+    inc_counter("egblas");
     egblas_par_shuffle(n, x, incx, y, incy);
 #else
     cpp_unused(n);
@@ -133,6 +136,7 @@ static constexpr bool has_par_shuffle_seed = false;
  */
 inline void par_shuffle_seed(size_t n, void* x, size_t incx, void* y, size_t incy, size_t seed){
 #ifdef EGBLAS_HAS_PAR_SHUFFLE_SEED
+    inc_counter("egblas");
     egblas_par_shuffle_seed(n, x, incx, y, incy, seed);
 #else
     cpp_unused(n);

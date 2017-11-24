@@ -38,6 +38,7 @@ static constexpr bool has_scalar_sadd = true;
  * \param beta The scalar to add
  */
 inline void scalar_add(float* x, size_t n, size_t s, const float beta){
+    inc_counter("egblas");
     egblas_scalar_sadd(x, n, s, beta);
 }
 
@@ -59,6 +60,7 @@ static constexpr bool has_scalar_dadd = true;
  * \param beta The scalar to add
  */
 inline void scalar_add(double* x, size_t n, size_t s, const double beta){
+    inc_counter("egblas");
     egblas_scalar_dadd(x, n, s, beta);
 }
 
@@ -80,6 +82,7 @@ static constexpr bool has_scalar_cadd = true;
  * \param beta The scalar to add
  */
 inline void scalar_add(etl::complex<float>* x, size_t n, size_t s, const etl::complex<float> beta){
+    inc_counter("egblas");
     egblas_scalar_cadd(reinterpret_cast<cuComplex*>(x), n, s, complex_cast(beta));
 }
 
@@ -91,6 +94,7 @@ inline void scalar_add(etl::complex<float>* x, size_t n, size_t s, const etl::co
  * \param beta The scalar to add
  */
 inline void scalar_add(std::complex<float>* x, size_t n, size_t s, const std::complex<float> beta){
+    inc_counter("egblas");
     egblas_scalar_cadd(reinterpret_cast<cuComplex*>(x), n, s, complex_cast(beta));
 }
 
@@ -112,6 +116,7 @@ static constexpr bool has_scalar_zadd = true;
  * \param beta The scalar to add
  */
 inline void scalar_add(etl::complex<double>* x, size_t n, size_t s, const etl::complex<double> beta){
+    inc_counter("egblas");
     egblas_scalar_zadd(reinterpret_cast<cuDoubleComplex*>(x), n, s, complex_cast(beta));
 }
 
@@ -123,6 +128,7 @@ inline void scalar_add(etl::complex<double>* x, size_t n, size_t s, const etl::c
  * \param beta The scalar to add
  */
 inline void scalar_add(std::complex<double>* x, size_t n, size_t s, const std::complex<double> beta){
+    inc_counter("egblas");
     egblas_scalar_zadd(reinterpret_cast<cuDoubleComplex*>(x), n, s, complex_cast(beta));
 }
 

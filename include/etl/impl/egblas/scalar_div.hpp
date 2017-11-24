@@ -38,6 +38,7 @@ static constexpr bool has_scalar_sdiv = true;
  * \param s The stride of the vector
  */
 inline void scalar_div(float beta, float* x, size_t n, size_t s){
+    inc_counter("egblas");
     egblas_scalar_sdiv(beta, x, n, s);
 }
 
@@ -59,6 +60,7 @@ static constexpr bool has_scalar_ddiv = true;
  * \param s The stride of the vector
  */
 inline void scalar_div(double beta, double* x, size_t n, size_t s){
+    inc_counter("egblas");
     egblas_scalar_ddiv(beta, x, n, s);
 }
 
@@ -80,6 +82,7 @@ static constexpr bool has_scalar_cdiv = true;
  * \param s The stride of the vector
  */
 inline void scalar_div(std::complex<float> beta, std::complex<float>* x, size_t n, size_t s){
+    inc_counter("egblas");
     egblas_scalar_cdiv(complex_cast(beta), reinterpret_cast<cuComplex*>(x), n, s);
 }
 
@@ -91,6 +94,7 @@ inline void scalar_div(std::complex<float> beta, std::complex<float>* x, size_t 
  * \param s The stride of the vector
  */
 inline void scalar_div(etl::complex<float> beta, etl::complex<float>* x, size_t n, size_t s){
+    inc_counter("egblas");
     egblas_scalar_cdiv(complex_cast(beta), reinterpret_cast<cuComplex*>(x), n, s);
 }
 
@@ -112,6 +116,7 @@ static constexpr bool has_scalar_zdiv = true;
  * \param s The stride of the vector
  */
 inline void scalar_div(std::complex<double> beta, std::complex<double>* x, size_t n, size_t s){
+    inc_counter("egblas");
     egblas_scalar_zdiv(complex_cast(beta), reinterpret_cast<cuDoubleComplex*>(x), n, s);
 }
 
@@ -123,6 +128,7 @@ inline void scalar_div(std::complex<double> beta, std::complex<double>* x, size_
  * \param s The stride of the vector
  */
 inline void scalar_div(etl::complex<double> beta, etl::complex<double>* x, size_t n, size_t s){
+    inc_counter("egblas");
     egblas_scalar_zdiv(complex_cast(beta), reinterpret_cast<cuDoubleComplex*>(x), n, s);
 }
 

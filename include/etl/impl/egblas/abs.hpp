@@ -46,6 +46,7 @@ static constexpr bool has_sabs = false;
  */
 inline void abs(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_SABS
+    inc_counter("egblas");
     egblas_sabs(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -79,6 +80,7 @@ static constexpr bool has_dabs = false;
  */
 inline void abs(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_DABS
+    inc_counter("egblas");
     egblas_dabs(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -112,6 +114,7 @@ static constexpr bool has_cabs = false;
  */
 inline void abs(size_t n, float alpha, std::complex<float>* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_CABS
+    inc_counter("egblas");
     egblas_cabs(n, alpha, reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
 #else
     cpp_unused(n);
@@ -136,6 +139,7 @@ inline void abs(size_t n, float alpha, std::complex<float>* A , size_t lda, floa
  */
 inline void abs(size_t n, float alpha, etl::complex<float>* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_CABS
+    inc_counter("egblas");
     egblas_cabs(n, alpha, reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
 #else
     cpp_unused(n);
@@ -169,6 +173,7 @@ static constexpr bool has_zabs = false;
  */
 inline void abs(size_t n, double alpha, std::complex<double>* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZABS
+    inc_counter("egblas");
     egblas_zabs(n, alpha, reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);
 #else
     cpp_unused(n);
@@ -193,6 +198,7 @@ inline void abs(size_t n, double alpha, std::complex<double>* A , size_t lda, do
  */
 inline void abs(size_t n, double alpha, etl::complex<double>* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZABS
+    inc_counter("egblas");
     egblas_zabs(n, alpha, reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);
 #else
     cpp_unused(n);

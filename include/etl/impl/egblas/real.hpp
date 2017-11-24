@@ -46,6 +46,7 @@ static constexpr bool has_creal = false;
  */
 inline void real(size_t n, float alpha, std::complex<float>* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_CREAL
+    inc_counter("egblas");
     egblas_creal(n, alpha, reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
 #else
     cpp_unused(n);
@@ -70,6 +71,7 @@ inline void real(size_t n, float alpha, std::complex<float>* A , size_t lda, flo
  */
 inline void real(size_t n, float alpha, etl::complex<float>* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_CREAL
+    inc_counter("egblas");
     egblas_creal(n, alpha, reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
 #else
     cpp_unused(n);
@@ -103,6 +105,7 @@ static constexpr bool has_zreal = false;
  */
 inline void real(size_t n, double alpha, std::complex<double>* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZREAL
+    inc_counter("egblas");
     egblas_zreal(n, alpha, reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);
 #else
     cpp_unused(n);
@@ -127,6 +130,7 @@ inline void real(size_t n, double alpha, std::complex<double>* A , size_t lda, d
  */
 inline void real(size_t n, double alpha, etl::complex<double>* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZREAL
+    inc_counter("egblas");
     egblas_zreal(n, alpha, reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);
 #else
     cpp_unused(n);

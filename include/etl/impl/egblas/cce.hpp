@@ -46,6 +46,7 @@ static constexpr bool has_cce_sloss = false;
  */
 inline float cce_loss(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_CCE_SLOSS
+    inc_counter("egblas");
     return egblas_cce_sloss(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -81,6 +82,7 @@ static constexpr bool has_cce_dloss = false;
  */
 inline double cce_loss(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_CCE_DLOSS
+    inc_counter("egblas");
     return egblas_cce_dloss(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -116,6 +118,7 @@ static constexpr bool has_cce_serror = false;
  */
 inline float cce_error(size_t n, size_t m, float alpha, float* A , float* B){
 #ifdef EGBLAS_HAS_CCE_SERROR
+    inc_counter("egblas");
     return egblas_cce_serror(n, m, alpha, A, B);
 #else
     cpp_unused(n);
@@ -150,6 +153,7 @@ static constexpr bool has_cce_derror = false;
  */
 inline double cce_error(size_t n, size_t m, double alpha, double* A , double* B){
 #ifdef EGBLAS_HAS_CCE_DERROR
+    inc_counter("egblas");
     return egblas_cce_derror(n, m, alpha, A, B);
 #else
     cpp_unused(n);

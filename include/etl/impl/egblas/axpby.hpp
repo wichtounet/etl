@@ -43,6 +43,7 @@ static constexpr bool has_saxpby = false;
  */
 inline void axpby(size_t n, float alpha, float* A, size_t lda, float beta, float* B, size_t ldb) {
 #ifdef EGBLAS_HAS_SAXPBY
+    inc_counter("egblas");
     egblas_saxpby(n, alpha, A, lda, beta, B, ldb);
 #else
     cpp_unused(n);
@@ -74,6 +75,7 @@ static constexpr bool has_daxpby = false;
  */
 inline void axpby(size_t n, double alpha, double* A , size_t lda, double beta, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_DAXPBY
+    inc_counter("egblas");
     egblas_daxpby(n, alpha, A, lda, beta, B, ldb);
 #else
     cpp_unused(n);
@@ -105,6 +107,7 @@ static constexpr bool has_caxpby = false;
  */
 inline void axpby(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float> beta, std::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CAXPBY
+    inc_counter("egblas");
     egblas_caxpby(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -130,6 +133,7 @@ inline void axpby(size_t n, std::complex<float> alpha, std::complex<float>* A , 
  */
 inline void axpby(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, std::complex<float> beta, etl::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CAXPBY
+    inc_counter("egblas");
     egblas_caxpby(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -162,6 +166,7 @@ static constexpr bool has_zaxpby = false;
  */
 inline void axpby(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double> beta, std::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZAXPBY
+    inc_counter("egblas");
     egblas_zaxpby(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -187,6 +192,7 @@ inline void axpby(size_t n, std::complex<double> alpha, std::complex<double>* A 
  */
 inline void axpby(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, std::complex<double> beta, etl::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZAXPBY
+    inc_counter("egblas");
     egblas_zaxpby(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);

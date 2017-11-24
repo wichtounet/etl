@@ -46,6 +46,7 @@ static constexpr bool has_ssign = false;
  */
 inline void sign(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_SSIGN
+    inc_counter("egblas");
     egblas_ssign(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -79,6 +80,7 @@ static constexpr bool has_dsign = false;
  */
 inline void sign(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_DSIGN
+    inc_counter("egblas");
     egblas_dsign(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -112,6 +114,7 @@ static constexpr bool has_csign = false;
  */
 inline void sign(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CSIGN
+    inc_counter("egblas");
     egblas_csign(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -136,6 +139,7 @@ inline void sign(size_t n, std::complex<float> alpha, std::complex<float>* A , s
  */
 inline void sign(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CSIGN
+    inc_counter("egblas");
     egblas_csign(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -169,6 +173,7 @@ static constexpr bool has_zsign = false;
  */
 inline void sign(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZSIGN
+    inc_counter("egblas");
     egblas_zsign(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
@@ -193,6 +198,7 @@ inline void sign(size_t n, std::complex<double> alpha, std::complex<double>* A ,
  */
 inline void sign(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZSIGN
+    inc_counter("egblas");
     egblas_zsign(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);

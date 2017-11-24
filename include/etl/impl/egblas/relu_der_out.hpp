@@ -46,6 +46,7 @@ static constexpr bool has_srelu_der_out = false;
  */
 inline void relu_der_out(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_SRELU_DER_OUT
+    inc_counter("egblas");
     egblas_srelu_der_out(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
@@ -79,6 +80,7 @@ static constexpr bool has_drelu_der_out = false;
  */
 inline void relu_der_out(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_DRELU_DER_OUT
+    inc_counter("egblas");
     egblas_drelu_der_out(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);

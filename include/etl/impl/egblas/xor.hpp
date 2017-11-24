@@ -47,6 +47,7 @@ static constexpr bool has_bxor = false;
  */
 inline void logical_xor(size_t n, const bool* A, size_t lda, const bool* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_BXOR
+    inc_counter("egblas");
     egblas_bxor(n, A, lda, B, ldb, C, ldc);
 #else
     cpp_unused(n);
