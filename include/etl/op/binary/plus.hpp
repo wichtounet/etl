@@ -9,6 +9,25 @@
 
 namespace etl {
 
+template <typename T>
+struct mul_binary_op;
+
+template <typename L, typename R>
+struct is_axpy_left_impl {
+    static constexpr bool value = false;
+};
+
+template <typename T0, typename T1, typename T2, typename RightExpr, typename R>
+struct is_axpy_left_impl <binary_expr<T0, etl::scalar<T1>, etl::mul_binary_op<T2>, RightExpr>, R> {
+    static constexpr bool value = true;
+};
+
+template <typename L, typename R>
+static constexpr bool is_axpy_left = is_axpy_left_impl<L,R>::value;
+
+template <typename L, typename R>
+static constexpr bool is_special = is_axpy_left<L,R>;
+
 /*!
  * \brief Binary operator for scalar addition
  */
@@ -104,7 +123,31 @@ struct plus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R> && is_axpy_left<L, R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
+        auto& lhs_lhs = lhs.get_lhs();
+        auto& lhs_rhs = lhs.get_rhs();
+
+        decltype(auto) x = smart_gpu_compute_hint(lhs_rhs, yy);
+        decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
+
+        impl::egblas::axpy_3(etl::size(yy), lhs_lhs.value, x.gpu_memory(), 1, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+
+        yy.validate_gpu();
+        yy.invalidate_cpu();
+
+        return yy;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R> && !is_special<L, R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         decltype(auto) t1 = smart_gpu_compute_hint(lhs, y);
 
