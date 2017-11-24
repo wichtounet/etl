@@ -31,7 +31,15 @@ struct plus_binary_op {
      */
     template<typename L, typename R>
     static constexpr bool gpu_computable =
-            ((!is_scalar<L> && !is_scalar<R>) && cublas_enabled)
+            (
+                    (!is_scalar<L> && !is_scalar<R>)
+                &&  (
+                            (is_single_precision_t<T> && impl::egblas::has_saxpy)
+                        ||  (is_double_precision_t<T> && impl::egblas::has_daxpy)
+                        ||  (is_complex_single_t<T> && impl::egblas::has_caxpy)
+                        ||  (is_complex_double_t<T> && impl::egblas::has_zaxpy)
+                    )
+            )
         ||  (
                     (is_scalar<L> != is_scalar<R>)
                 &&  (
@@ -88,8 +96,6 @@ struct plus_binary_op {
         return t3;
     }
 
-#ifdef ETL_CUBLAS_MODE
-
     /*!
      * \brief Compute the result of the operation using the GPU
      *
@@ -102,21 +108,16 @@ struct plus_binary_op {
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         decltype(auto) t1 = smart_gpu_compute_hint(lhs, y);
 
-        decltype(auto) handle = impl::cublas::start_cublas();
-
         smart_gpu_compute(rhs, y);
 
         value_t<L> alpha(1);
-
-        impl::cublas::cublas_axpy(handle.get(), etl::size(y), &alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::egblas::axpy(etl::size(y), alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();
 
         return y;
     }
-
-#endif
 
     /*!
      * \brief Compute the result of the operation using the GPU
