@@ -291,6 +291,22 @@ public:
     }
 
     /*!
+     * \brief Returns a reference to the left hand side of the expression
+     * \return a reference to the left hand side of the expression
+     */
+    const LeftExpr& get_lhs() const {
+        return lhs;
+    }
+
+    /*!
+     * \brief Returns a reference to the right hand side of the expression
+     * \return a reference to the right hand side of the expression
+     */
+    const RightExpr& get_rhs() const {
+        return rhs;
+    }
+
+    /*!
      * \brief Prints the type of the binary expression to the stream
      * \param os The output stream
      * \param expr The expression to print
