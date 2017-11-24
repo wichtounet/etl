@@ -402,41 +402,53 @@ void opt() {
             // This should generate a single saxpy_3
             YY = 1.02f * X + Y;
 
-            // This should generate a single saxpby
+            // This should generate a single saxpy
             Y = X + 1.04f * Y;
 
-            // This should generate a single saxpby_3
+            //// This should generate a single saxpy_3
             YY = X + 1.04f * Y;
 
-            // This should generate a single saxpby
-            Y = 1.02f * X + 1.04f * Y;
+            // This should generate a single saxpy
+            Y = X * 1.02f + Y;
 
-            // This should generate a single saxpby_3
-            YY = 1.02f * X + 1.04f * Y;
+            // This should generate a single saxpy_3
+            YY = X * 1.02f + Y;
 
-            // This should generate a single saxmy
-            Y = 1.02f * (X >> Y);
+            // This should generate a single saxpy
+            Y = X + Y * 1.04f;
 
-            // This should generate a single saxmy_3
-            YY = 1.02f * (X >> Y);
+            //// This should generate a single saxpy_3
+            YY = X + Y * 1.04f;
 
-            // This should generate a single saxmy
-            Y = (1.02f * X) >> Y;
+            //// This should generate a single saxpby
+            //Y = 1.02f * X + 1.04f * Y;
 
-            // This should generate a single saxmy_3
-            YY = (1.02f * X) >> Y;
+            //// This should generate a single saxpby_3
+            //YY = 1.02f * X + 1.04f * Y;
 
-            // This should generate a single saxdy
-            Y = X / (1.02f * Y);
+            //// This should generate a single saxmy
+            //Y = 1.02f * (X >> Y);
 
-            // This should generate a single saxdy_3
-            YY = X / (1.02f * YY);
+            //// This should generate a single saxmy_3
+            //YY = 1.02f * (X >> Y);
 
-            // This should generate a single saxdy
-            Y = 1.02f * X / Y;
+            //// This should generate a single saxmy
+            //Y = (1.02f * X) >> Y;
 
-            // This should generate a single saxdy_3
-            YY = 1.02f * X / Y;
+            //// This should generate a single saxmy_3
+            //YY = (1.02f * X) >> Y;
+
+            //// This should generate a single saxdy
+            //Y = X / (1.02f * Y);
+
+            //// This should generate a single saxdy_3
+            //YY = X / (1.02f * YY);
+
+            //// This should generate a single saxdy
+            //Y = 1.02f * X / Y;
+
+            //// This should generate a single saxdy_3
+            //YY = 1.02f * X / Y;
 
             // TODO Sub expression as well
         }
@@ -471,6 +483,8 @@ void random_test() {
 
 int main() {
     auto start_time = timer_clock::now();
+
+    opt();
 
     simple();
     basic();
