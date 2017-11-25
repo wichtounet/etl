@@ -445,16 +445,40 @@ void opt() {
             YY = X * 1.0f + Y * 1.04f;
 
             // This should generate a single saxmy
-            //Y = 1.02f * (X >> Y);
+            Y = 1.02f * (X >> Y);
 
             // This should generate a single saxmy_3
-            //YY = 1.02f * (X >> Y);
+            YY = 1.02f * (X >> Y);
 
             // This should generate a single saxmy
-            //Y = (1.02f * X) >> Y;
+            Y = (X >> Y) * 1.02f;
 
             // This should generate a single saxmy_3
-            //YY = (1.02f * X) >> Y;
+            YY = (X >> Y) * 1.02f;
+
+            // This should generate a single saxmy
+            Y = (1.02f * X) >> Y;
+
+            // This should generate a single saxmy_3
+            YY = (1.02f * X) >> Y;
+
+            // This should generate a single saxmy
+            Y = (X * 1.02f) >> Y;
+
+            // This should generate a single saxmy_3
+            YY = (X * 1.02f) >> Y;
+
+            // This should generate a single saxmy
+            Y = X >> (1.02f >> Y);
+
+            // This should generate a single saxmy_3
+            YY = X >> (1.02f >> Y);
+
+            // This should generate a single saxmy
+            Y = X >> (Y >> 1.02f);
+
+            // This should generate a single saxmy_3
+            YY = X >> (Y >> 1.02f);
 
             // This should generate a single saxdy
             //Y = X / (1.02f * Y);
