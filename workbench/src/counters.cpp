@@ -396,58 +396,76 @@ void opt() {
         etl::dyn_matrix<float, 4> YY(128, 3, 28, 28);
 
         for (size_t i = 0; i < 10; ++i) {
-            // This should generate a single saxpy
+            // This should generate a single saxpy_3
             Y = 1.02f * X + Y;
 
             // This should generate a single saxpy_3
             YY = 1.02f * X + Y;
 
-            // This should generate a single saxpy
+            // This should generate a single saxpy_3
             Y = X + 1.04f * Y;
 
-            //// This should generate a single saxpy_3
+            // This should generate a single saxpy_3
             YY = X + 1.04f * Y;
 
-            // This should generate a single saxpy
+            // This should generate a single saxpy_3
             Y = X * 1.02f + Y;
 
             // This should generate a single saxpy_3
             YY = X * 1.02f + Y;
 
-            // This should generate a single saxpy
+            // This should generate a single saxpy_3
             Y = X + Y * 1.04f;
 
-            //// This should generate a single saxpy_3
+            // This should generate a single saxpy_3
             YY = X + Y * 1.04f;
 
-            //// This should generate a single saxpby
-            //Y = 1.02f * X + 1.04f * Y;
+            // This should generate a single saxpby_3
+            Y = 1.02f * X + 1.04f * Y;
 
-            //// This should generate a single saxpby_3
-            //YY = 1.02f * X + 1.04f * Y;
+            // This should generate a single saxpby_3
+            YY = 1.02f * X + 1.04f * Y;
 
-            //// This should generate a single saxmy
+            // This should generate a single saxpby_3
+            Y = X * 1.0f + 1.04f * Y;
+
+            // This should generate a single saxpby_3
+            YY = X * 1.0f + 1.04f * Y;
+
+            // This should generate a single saxpby_3
+            Y = 1.02f * X + Y * 1.04f;
+
+            // This should generate a single saxpby_3
+            YY = 1.02f * X + Y * 1.04f;
+
+            // This should generate a single saxpby_3
+            Y = X * 1.0f + Y * 1.04f;
+
+            // This should generate a single saxpby_3
+            YY = X * 1.0f + Y * 1.04f;
+
+            // This should generate a single saxmy
             //Y = 1.02f * (X >> Y);
 
-            //// This should generate a single saxmy_3
+            // This should generate a single saxmy_3
             //YY = 1.02f * (X >> Y);
 
-            //// This should generate a single saxmy
+            // This should generate a single saxmy
             //Y = (1.02f * X) >> Y;
 
-            //// This should generate a single saxmy_3
+            // This should generate a single saxmy_3
             //YY = (1.02f * X) >> Y;
 
-            //// This should generate a single saxdy
+            // This should generate a single saxdy
             //Y = X / (1.02f * Y);
 
-            //// This should generate a single saxdy_3
+            // This should generate a single saxdy_3
             //YY = X / (1.02f * YY);
 
-            //// This should generate a single saxdy
+            // This should generate a single saxdy
             //Y = 1.02f * X / Y;
 
-            //// This should generate a single saxdy_3
+            // This should generate a single saxdy_3
             //YY = 1.02f * X / Y;
 
             // TODO Sub expression as well
