@@ -34,6 +34,7 @@
 #include "etl/impl/egblas/axpby_3.hpp"
 #include "etl/impl/egblas/scalar_add.hpp"
 #include "etl/impl/egblas/scalar_div.hpp"
+#include "etl/impl/egblas/scalar_mul.hpp"
 
 #include "etl/op/binary/plus.hpp"
 #include "etl/op/binary/minus.hpp"
