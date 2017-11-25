@@ -60,20 +60,88 @@ struct is_axpy_right_right_impl <L, binary_expr<T0, LeftExpr, etl::mul_binary_op
     static constexpr bool value = true;
 };
 
-template <typename L, typename R>
-static constexpr bool is_axpy_left_left = is_axpy_left_left_impl<L,R>::value;
+// detect 1.0 * x + 1.0 * y
 
 template <typename L, typename R>
-static constexpr bool is_axpy_left_right = is_axpy_left_right_impl<L,R>::value;
+struct is_axpby_left_left_impl {
+    static constexpr bool value = false;
+};
+
+template <typename LT1, typename LT2, typename LT3, typename LRightExpr, typename RT1, typename RT2, typename RT3, typename RRightExpr>
+struct is_axpby_left_left_impl <binary_expr<LT1, etl::scalar<LT2>, etl::mul_binary_op<LT3>, LRightExpr>, binary_expr<RT1, etl::scalar<RT2>, etl::mul_binary_op<RT3>, RRightExpr>> {
+    static constexpr bool value = true;
+};
+
+// detect 1.0 * x + y * 1.0
 
 template <typename L, typename R>
-static constexpr bool is_axpy_right_left = is_axpy_right_left_impl<L,R>::value;
+struct is_axpby_left_right_impl {
+    static constexpr bool value = false;
+};
+
+template <typename LT1, typename LT2, typename LT3, typename LRightExpr, typename RT1, typename RT2, typename RT3, typename RLeftExpr>
+struct is_axpby_left_right_impl <binary_expr<LT1, etl::scalar<LT2>, etl::mul_binary_op<LT3>, LRightExpr>, binary_expr<RT1, RLeftExpr, etl::mul_binary_op<RT3>, etl::scalar<RT2>>> {
+    static constexpr bool value = true;
+};
+
+// detect x * 1.0 + 1.0 * y
 
 template <typename L, typename R>
-static constexpr bool is_axpy_right_right = is_axpy_right_right_impl<L,R>::value;
+struct is_axpby_right_left_impl {
+    static constexpr bool value = false;
+};
+
+template <typename LT1, typename LT2, typename LT3, typename LLeftExpr, typename RT1, typename RT2, typename RT3, typename RRightExpr>
+struct is_axpby_right_left_impl <binary_expr<LT1, LLeftExpr, etl::mul_binary_op<LT3>, etl::scalar<LT2>>, binary_expr<RT1, etl::scalar<RT2>, etl::mul_binary_op<RT3>, RRightExpr>> {
+    static constexpr bool value = true;
+};
+
+// detect x * 1.0 + y * 1.0
 
 template <typename L, typename R>
-static constexpr bool is_special = is_axpy_left_left<L,R> || is_axpy_left_right<L,R> || is_axpy_right_left<L, R> || is_axpy_right_right<L, R>;
+struct is_axpby_right_right_impl {
+    static constexpr bool value = false;
+};
+
+template <typename LT1, typename LT2, typename LT3, typename LLeftExpr, typename RT1, typename RT2, typename RT3, typename RLeftExpr>
+struct is_axpby_right_right_impl <binary_expr<LT1, LLeftExpr, etl::mul_binary_op<LT3>, etl::scalar<LT2>>, binary_expr<RT1, RLeftExpr, etl::mul_binary_op<RT3>, etl::scalar<RT2>>> {
+    static constexpr bool value = true;
+};
+
+// Variable templates helper
+
+template <typename L, typename R>
+static constexpr bool is_axpby_left_left = is_axpby_left_left_impl<L, R>::value;
+
+template <typename L, typename R>
+static constexpr bool is_axpby_left_right = is_axpby_left_right_impl<L, R>::value;
+
+template <typename L, typename R>
+static constexpr bool is_axpby_right_left = is_axpby_right_left_impl<L, R>::value;
+
+template <typename L, typename R>
+static constexpr bool is_axpby_right_right = is_axpby_right_right_impl<L, R>::value;
+
+template <typename L, typename R>
+static constexpr bool is_axpby = is_axpby_left_left<L, R> || is_axpby_right_right<L, R> || is_axpby_left_right<L, R> || is_axpby_right_left<L, R>;
+
+template <typename L, typename R>
+static constexpr bool is_axpy_left_left = is_axpy_left_left_impl<L, R>::value && !is_axpby<L, R>;
+
+template <typename L, typename R>
+static constexpr bool is_axpy_left_right = is_axpy_left_right_impl<L, R>::value && !is_axpby<L, R>;
+
+template <typename L, typename R>
+static constexpr bool is_axpy_right_left = is_axpy_right_left_impl<L, R>::value && !is_axpby<L, R>;
+
+template <typename L, typename R>
+static constexpr bool is_axpy_right_right = is_axpy_right_right_impl<L, R>::value && !is_axpby<L, R>;
+
+template <typename L, typename R>
+static constexpr bool is_axpy = is_axpy_left_left<L, R> || is_axpy_left_right<L, R> || is_axpy_right_left<L, R> || is_axpy_right_right<L, R>;
+
+template <typename L, typename R>
+static constexpr bool is_special = is_axpy<L, R> || is_axpby<L, R>;
 
 /*!
  * \brief Binary operator for scalar addition
@@ -251,6 +319,114 @@ struct plus_binary_op {
         decltype(auto) y = smart_gpu_compute_hint(lhs, yy);
 
         impl::egblas::axpy_3(etl::size(yy), rhs_rhs.value, x.gpu_memory(), 1, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+
+        yy.validate_gpu();
+        yy.invalidate_cpu();
+
+        return yy;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpby_left_left<L, R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
+        auto& lhs_lhs = lhs.get_lhs();
+        auto& lhs_rhs = lhs.get_rhs();
+
+        auto& rhs_lhs = rhs.get_lhs();
+        auto& rhs_rhs = rhs.get_rhs();
+
+        decltype(auto) x = smart_gpu_compute_hint(lhs_rhs, yy);
+        decltype(auto) y = smart_gpu_compute_hint(rhs_rhs, yy);
+
+        impl::egblas::axpby_3(etl::size(yy), lhs_lhs.value, x.gpu_memory(), 1, rhs_lhs.value, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+
+        yy.validate_gpu();
+        yy.invalidate_cpu();
+
+        return yy;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpby_left_right<L, R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
+        auto& lhs_lhs = lhs.get_lhs();
+        auto& lhs_rhs = lhs.get_rhs();
+
+        auto& rhs_lhs = rhs.get_lhs();
+        auto& rhs_rhs = rhs.get_rhs();
+
+        decltype(auto) x = smart_gpu_compute_hint(lhs_rhs, yy);
+        decltype(auto) y = smart_gpu_compute_hint(rhs_lhs, yy);
+
+        impl::egblas::axpby_3(etl::size(yy), lhs_lhs.value, x.gpu_memory(), 1, rhs_rhs.value, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+
+        yy.validate_gpu();
+        yy.invalidate_cpu();
+
+        return yy;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpby_right_left<L, R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
+        auto& lhs_lhs = lhs.get_lhs();
+        auto& lhs_rhs = lhs.get_rhs();
+
+        auto& rhs_lhs = rhs.get_lhs();
+        auto& rhs_rhs = rhs.get_rhs();
+
+        decltype(auto) x = smart_gpu_compute_hint(lhs_lhs, yy);
+        decltype(auto) y = smart_gpu_compute_hint(rhs_rhs, yy);
+
+        impl::egblas::axpby_3(etl::size(yy), lhs_rhs.value, x.gpu_memory(), 1, rhs_lhs.value, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+
+        yy.validate_gpu();
+        yy.invalidate_cpu();
+
+        return yy;
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param lhs The left hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
+     *
+     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
+     */
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpby_right_right<L, R>)>
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
+        auto& lhs_lhs = lhs.get_lhs();
+        auto& lhs_rhs = lhs.get_rhs();
+
+        auto& rhs_lhs = rhs.get_lhs();
+        auto& rhs_rhs = rhs.get_rhs();
+
+        decltype(auto) x = smart_gpu_compute_hint(lhs_lhs, yy);
+        decltype(auto) y = smart_gpu_compute_hint(rhs_lhs, yy);
+
+        impl::egblas::axpby_3(etl::size(yy), lhs_rhs.value, x.gpu_memory(), 1, rhs_rhs.value, y.gpu_memory(), 1, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();
