@@ -584,8 +584,6 @@ void random_test() {
 int main() {
     auto start_time = timer_clock::now();
 
-    opt();
-
     simple();
     basic();
     expr();
