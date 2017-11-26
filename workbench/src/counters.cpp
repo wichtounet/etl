@@ -503,6 +503,54 @@ void opt() {
 
             // This should generate a single saxdy_3
             YY = (X * 1.02f) / Y;
+
+            // This should generate a single saxpy_3
+            Y = X - 1.04f * Y;
+
+            // This should generate a single saxpy_3
+            YY = X - 1.04f * Y;
+
+            // This should generate a single saxpy_3
+            Y = X - Y * 1.04f;
+
+            // This should generate a single saxpy_3
+            YY = X - Y * 1.04f;
+
+            // This should generate a single saxpy_3
+            Y = 1.02f * X - Y;
+
+            // This should generate a single saxpy_3
+            YY = 1.02f * X - Y;
+
+            // This should generate a single saxpy_3
+            Y = X * 1.02f - Y;
+
+            // This should generate a single saxpy_3
+            YY = X * 1.02f - Y;
+
+            // This should generate a single saxpy_3
+            Y = 1.02f * X - 1.04f * Y;
+
+            // This should generate a single saxpy_3
+            YY = 1.02f * X - 1.04f * Y;
+
+            // This should generate a single saxpy_3
+            Y = 1.02f * X - Y * 1.04f;
+
+            // This should generate a single saxpy_3
+            YY = 1.02f * X - Y * 1.04f;
+
+            // This should generate a single saxpy_3
+            Y = X * 1.02f - 1.04f * Y;
+
+            // This should generate a single saxpy_3
+            YY = X * 1.02f - 1.04f * Y;
+
+            // This should generate a single saxpy_3
+            Y = X * 1.02f - Y * 1.04f;
+
+            // This should generate a single saxpy_3
+            YY = X * 1.02f - Y * 1.04f;
         }
     }
 
