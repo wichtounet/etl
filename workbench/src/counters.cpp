@@ -481,18 +481,28 @@ void opt() {
             YY = X >> (Y >> 1.02f);
 
             // This should generate a single saxdy
-            //Y = X / (1.02f * Y);
+            Y = X / (1.02f * Y);
 
             // This should generate a single saxdy_3
-            //YY = X / (1.02f * YY);
+            YY = X / (1.02f * Y);
 
             // This should generate a single saxdy
-            //Y = 1.02f * X / Y;
+            Y = X / (Y * 1.02f);
 
             // This should generate a single saxdy_3
-            //YY = 1.02f * X / Y;
+            YY = X / (Y * 1.02f);
 
-            // TODO Sub expression as well
+            // This should generate a single saxdy
+            Y = (1.02f * X) / Y;
+
+            // This should generate a single saxdy_3
+            YY = (1.02f * X) / Y;
+
+            // This should generate a single saxdy
+            Y = (X * 1.02f) / Y;
+
+            // This should generate a single saxdy_3
+            YY = (X * 1.02f) / Y;
         }
     }
 
