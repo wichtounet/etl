@@ -243,6 +243,110 @@ TEMPLATE_TEST_CASE_2("saxdy/3", "[saxdy][fast]", Z, float, double) {
     REQUIRE_EQUALS(yy[3], Z(4.0 / 2.4));
 }
 
+TEMPLATE_TEST_CASE_2("saxpy_minus/0", "[saxpy][fast]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> x = {-1.0, 2.0, 0.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> y = {1.0, 3.0, 0.5, 1.2};
+    etl::fast_matrix<Z, 2, 2> yy;
+
+    yy = x - Z(2) * y;
+
+    REQUIRE_EQUALS_APPROX(yy[0], Z(-3.0));
+    REQUIRE_EQUALS_APPROX(yy[1], Z(-4.0));
+    REQUIRE_EQUALS_APPROX(yy[2], Z(-1.0));
+    REQUIRE_EQUALS_APPROX(yy[3], Z(-1.4));
+}
+
+TEMPLATE_TEST_CASE_2("saxpy_minus/1", "[saxpy][fast]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> x = {-1.0, 2.0, 0.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> y = {1.0, 3.0, 0.5, 1.2};
+    etl::fast_matrix<Z, 2, 2> yy;
+
+    yy = x - y * Z(2);
+
+    REQUIRE_EQUALS_APPROX(yy[0], Z(-3.0));
+    REQUIRE_EQUALS_APPROX(yy[1], Z(-4.0));
+    REQUIRE_EQUALS_APPROX(yy[2], Z(-1.0));
+    REQUIRE_EQUALS_APPROX(yy[3], Z(-1.4));
+}
+
+TEMPLATE_TEST_CASE_2("saxpy_minus/2", "[saxpy][fast]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> x = {-1.0, 2.0, 0.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> y = {1.0, 3.0, 0.5, 1.2};
+    etl::fast_matrix<Z, 2, 2> yy;
+
+    yy = Z(2) * x - y;
+
+    REQUIRE_EQUALS_APPROX(yy[0], Z(-3.0));
+    REQUIRE_EQUALS_APPROX(yy[1], Z(1.0));
+    REQUIRE_EQUALS_APPROX(yy[2], Z(-0.5));
+    REQUIRE_EQUALS_APPROX(yy[3], Z(0.8));
+}
+
+TEMPLATE_TEST_CASE_2("saxpy_minus/3", "[saxpy][fast]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> x = {-1.0, 2.0, 0.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> y = {1.0, 3.0, 0.5, 1.2};
+    etl::fast_matrix<Z, 2, 2> yy;
+
+    yy = x * Z(2) - y;
+
+    REQUIRE_EQUALS_APPROX(yy[0], Z(-3.0));
+    REQUIRE_EQUALS_APPROX(yy[1], Z(1.0));
+    REQUIRE_EQUALS_APPROX(yy[2], Z(-0.5));
+    REQUIRE_EQUALS_APPROX(yy[3], Z(0.8));
+}
+
+TEMPLATE_TEST_CASE_2("saxpy_minus/4", "[saxpy][fast]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> x = {-1.0, 2.0, 0.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> y = {1.0, 3.0, 0.5, 1.2};
+    etl::fast_matrix<Z, 2, 2> yy;
+
+    yy = Z(2) * x - Z(2) * y;
+
+    REQUIRE_EQUALS_APPROX(yy[0], Z(-4.0));
+    REQUIRE_EQUALS_APPROX(yy[1], Z(-2.0));
+    REQUIRE_EQUALS_APPROX(yy[2], Z(-1.0));
+    REQUIRE_EQUALS_APPROX(yy[3], Z(-0.4));
+}
+
+TEMPLATE_TEST_CASE_2("saxpy_minus/5", "[saxpy][fast]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> x = {-1.0, 2.0, 0.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> y = {1.0, 3.0, 0.5, 1.2};
+    etl::fast_matrix<Z, 2, 2> yy;
+
+    yy = Z(2) * x - y * Z(2);
+
+    REQUIRE_EQUALS_APPROX(yy[0], Z(-4.0));
+    REQUIRE_EQUALS_APPROX(yy[1], Z(-2.0));
+    REQUIRE_EQUALS_APPROX(yy[2], Z(-1.0));
+    REQUIRE_EQUALS_APPROX(yy[3], Z(-0.4));
+}
+
+TEMPLATE_TEST_CASE_2("saxpy_minus/6", "[saxpy][fast]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> x = {-1.0, 2.0, 0.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> y = {1.0, 3.0, 0.5, 1.2};
+    etl::fast_matrix<Z, 2, 2> yy;
+
+    yy = x * Z(2) - Z(2) * y;
+
+    REQUIRE_EQUALS_APPROX(yy[0], Z(-4.0));
+    REQUIRE_EQUALS_APPROX(yy[1], Z(-2.0));
+    REQUIRE_EQUALS_APPROX(yy[2], Z(-1.0));
+    REQUIRE_EQUALS_APPROX(yy[3], Z(-0.4));
+}
+
+TEMPLATE_TEST_CASE_2("saxpy_minus/7", "[saxpy][fast]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> x = {-1.0, 2.0, 0.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> y = {1.0, 3.0, 0.5, 1.2};
+    etl::fast_matrix<Z, 2, 2> yy;
+
+    yy = x * Z(2) - y * Z(2);
+
+    REQUIRE_EQUALS_APPROX(yy[0], Z(-4.0));
+    REQUIRE_EQUALS_APPROX(yy[1], Z(-2.0));
+    REQUIRE_EQUALS_APPROX(yy[2], Z(-1.0));
+    REQUIRE_EQUALS_APPROX(yy[3], Z(-0.4));
+}
+
 TEMPLATE_TEST_CASE_2("fast_matrix/max", "fast_matrix::max", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
 
