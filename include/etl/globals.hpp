@@ -1129,4 +1129,46 @@ void binarize(M& matrix, T b){
     }
 }
 
+/*!
+ * \brief Normalize the given ETL contrainer to zero-mean and unit-variance.
+ * \param matrix The container to normalize
+ */
+template<typename M>
+void normalize_flat(M& matrix){
+    using VT = value_t<M>;
+
+    auto m = mean(matrix);
+
+    matrix = matrix - m;
+
+    auto s = stddev(matrix, 0.0);
+
+    if (s != VT(0)) {
+        matrix = matrix / s;
+    }
+}
+
+/*!
+ * \brief Normalize each sub container of the given ETL contrainer
+ * to zero-mean and unit-variance.
+ *
+ * \param matrix The container to normalize
+ */
+template<typename M>
+void normalize_sub(M& matrix){
+    using VT = value_t<M>;
+
+    for (size_t i = 0; i < etl::dim<0>(matrix); ++i) {
+        auto m = mean(matrix(i));
+
+        matrix(i) = matrix(i) - m;
+
+        auto s = stddev(matrix(i), 0.0);
+
+        if (s != VT(0)) {
+            matrix(i) = matrix(i) / s;
+        }
+    }
+}
+
 } //end of namespace etl

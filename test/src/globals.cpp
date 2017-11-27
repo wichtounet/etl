@@ -778,3 +778,51 @@ TEMPLATE_TEST_CASE_2("globals/binarize/2", "[globals]", Z, double, float) {
     REQUIRE(x[2] == 0.0);
     REQUIRE(x[3] == 0.0);
 }
+
+TEMPLATE_TEST_CASE_2("globals/normalize/0", "[globals]", Z, double, float) {
+    etl::dyn_vector<Z> x  = {1.0, 2.0, 3.0, 4.0, 5.0};
+
+    normalize_flat(x);
+
+    REQUIRE_EQUALS_APPROX(x[0], -1.4142);
+    REQUIRE_EQUALS_APPROX(x[1], -0.7071);
+    REQUIRE_EQUALS_APPROX(x[2], 0.0);
+    REQUIRE_EQUALS_APPROX(x[3], 0.7071);
+    REQUIRE_EQUALS_APPROX(x[4], 1.4142);
+}
+
+TEMPLATE_TEST_CASE_2("globals/normalize/1", "[globals]", Z, double, float) {
+    etl::fast_dyn_matrix<Z, 2, 5> x = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
+
+    normalize_sub(x);
+
+    REQUIRE_EQUALS_APPROX(x[0], -1.4142);
+    REQUIRE_EQUALS_APPROX(x[1], -0.7071);
+    REQUIRE_EQUALS_APPROX(x[2], 0.0);
+    REQUIRE_EQUALS_APPROX(x[3], 0.7071);
+    REQUIRE_EQUALS_APPROX(x[4], 1.4142);
+
+    REQUIRE_EQUALS_APPROX(x[5], -1.4142);
+    REQUIRE_EQUALS_APPROX(x[6], -0.7071);
+    REQUIRE_EQUALS_APPROX(x[7], 0.0);
+    REQUIRE_EQUALS_APPROX(x[8], 0.7071);
+    REQUIRE_EQUALS_APPROX(x[9], 1.4142);
+}
+
+TEMPLATE_TEST_CASE_2("globals/normalize/2", "[globals]", Z, double, float) {
+    etl::fast_dyn_matrix<Z, 2, 5> x = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
+
+    normalize_flat(x);
+
+    REQUIRE_EQUALS_APPROX(x[0], -1.5667);
+    REQUIRE_EQUALS_APPROX(x[1], -1.218543);
+    REQUIRE_EQUALS_APPROX(x[2], -0.87039);
+    REQUIRE_EQUALS_APPROX(x[3], -0.52223);
+    REQUIRE_EQUALS_APPROX(x[4], -0.17407);
+
+    REQUIRE_EQUALS_APPROX(x[5], 0.174077);
+    REQUIRE_EQUALS_APPROX(x[6], 0.52222);
+    REQUIRE_EQUALS_APPROX(x[7], 0.87039);
+    REQUIRE_EQUALS_APPROX(x[8], 1.218543);
+    REQUIRE_EQUALS_APPROX(x[9], 1.5667);
+}
