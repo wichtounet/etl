@@ -1115,4 +1115,18 @@ M& batch_dispatch(M& dispatched, const N& merged, size_t index){
     return dispatched;
 }
 
+/*!
+ * \brief Binarize the given ETL contrainer.
+ * \param matrix The container binarize
+ * \param b The binarization threshold.
+ */
+template<typename M, typename T>
+void binarize(M& matrix, T b){
+    using VT = value_t<M>;
+
+    for(auto& value : matrix){
+        value = value > b ? VT(1) : VT(0);
+    }
+}
+
 } //end of namespace etl

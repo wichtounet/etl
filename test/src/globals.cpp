@@ -745,3 +745,36 @@ ETL_TEST_CASE("globals/parallel_shuffle/3", "[globals]") {
     REQUIRE_DIRECT(a == c);
     REQUIRE_DIRECT(b == c);
 }
+
+TEMPLATE_TEST_CASE_2("globals/binarize/0", "[globals]", Z, double, float) {
+    etl::dyn_vector<Z> x  = {1.0, 200.0, 30.0, 50.0};
+
+    binarize(x, Z(25));
+
+    REQUIRE(x[0] == 0.0);
+    REQUIRE(x[1] == 1.0);
+    REQUIRE(x[2] == 1.0);
+    REQUIRE(x[3] == 1.0);
+}
+
+TEMPLATE_TEST_CASE_2("globals/binarize/1", "[globals]", Z, double, float) {
+    etl::dyn_vector<Z> x  = {1.0, 200.0, 30.0, 50.0};
+
+    binarize(x, Z(180));
+
+    REQUIRE(x[0] == 0.0);
+    REQUIRE(x[1] == 1.0);
+    REQUIRE(x[2] == 0.0);
+    REQUIRE(x[3] == 0.0);
+}
+
+TEMPLATE_TEST_CASE_2("globals/binarize/2", "[globals]", Z, double, float) {
+    etl::dyn_vector<Z> x  = {1.0, 200.0, 30.0, 50.0};
+
+    binarize(x, Z(225));
+
+    REQUIRE(x[0] == 0.0);
+    REQUIRE(x[1] == 0.0);
+    REQUIRE(x[2] == 0.0);
+    REQUIRE(x[3] == 0.0);
+}
