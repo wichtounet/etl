@@ -722,6 +722,26 @@ value_t<E> stddev(E&& values) {
     return std::sqrt(std / etl::size(values));
 }
 
+/*!
+ * \brief Returns the standard deviation of all the values contained in the given expression
+ *
+ * \param values The expression to reduce
+ * \param mean The mean of the exprssion
+ *
+ * \return The standard deviation of the values of the expression
+ */
+template <typename E>
+value_t<E> stddev(E&& values, value_t<E> mean) {
+    static_assert(is_etl_expr<E>, "etl::stddev can only be used on ETL expressions");
+
+    double std = 0.0;
+    for (auto value : values) {
+        std += (value - mean) * (value - mean);
+    }
+
+    return std::sqrt(std / etl::size(values));
+}
+
 namespace detail {
 
 /*!
