@@ -86,7 +86,7 @@ struct clip_scalar_op {
      * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
     template <typename X, typename Y>
-    auto gpu_compute_hint(const X& x, Y& y) noexcept {
+    auto gpu_compute_hint(const X& x, Y& y) const noexcept {
         decltype(auto) t1 = smart_gpu_compute_hint(x, y);
 
         auto t2 = force_temporary_gpu(t1);
