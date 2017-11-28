@@ -19,9 +19,10 @@ namespace etl {
  * bias_add
  */
 enum class bias_add_impl {
-    STD,  ///< Standard implementation
-    VEC,  ///< VEC implementation
-    CUDNN ///< CUDNN (GPU) implementation
+    STD,    ///< Standard implementation
+    VEC,    ///< VEC implementation
+    EGBLAS, ///< ETL-GPU-BLAS (GPU) implementation
+    CUDNN   ///< CUDNN (GPU) implementation
 };
 
 } //end of namespace etl
