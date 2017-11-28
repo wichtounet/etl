@@ -276,6 +276,7 @@ $(eval $(call add_test_executable,etl_test_elt_compare,src/test.cpp src/elt_comp
 $(eval $(call add_test_executable,etl_test_embedding_lookup,src/test.cpp src/embedding_lookup.cpp))
 $(eval $(call add_test_executable,etl_test_merge,src/test.cpp src/merge.cpp))
 $(eval $(call add_test_executable,etl_test_reduc,src/test.cpp src/reduc.cpp))
+$(eval $(call add_test_executable,etl_test_bias_add,src/test.cpp src/bias_add.cpp))
 
 # Create the benchmark executables
 BENCH_FILES=$(wildcard benchmark/src/benchmark*cpp)
