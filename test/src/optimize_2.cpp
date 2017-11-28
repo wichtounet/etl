@@ -7,6 +7,8 @@
 
 #include "test_light.hpp"
 
+#ifndef ETL_CUDA
+
 ETL_TEST_CASE("optimize/6", "[fast][optimizer]") {
     etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<double, 3> b;
@@ -42,3 +44,5 @@ ETL_TEST_CASE("optimize/10", "[fast][optimizer]") {
 
     REQUIRE_EQUALS(b[0], -1.0);
 }
+
+#endif
