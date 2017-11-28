@@ -57,7 +57,7 @@ struct is_axmy_left_right_impl {
 
 template <typename T0, typename T1, typename T2, typename LeftExpr, typename R>
 struct is_axmy_left_right_impl <binary_expr<T1, LeftExpr, etl::mul_binary_op<T2>, etl::scalar<T0>>, R> {
-    static constexpr bool value = true;
+    static constexpr bool value = !is_scalar<R>;
 };
 
 // detect x * (1.0 * y)
@@ -69,7 +69,7 @@ struct is_axmy_right_left_impl {
 
 template <typename L, typename T0, typename T1, typename T2, typename RightExpr>
 struct is_axmy_right_left_impl <L, binary_expr<T0, etl::scalar<T1>, etl::mul_binary_op<T2>, RightExpr>> {
-    static constexpr bool value = true;
+    static constexpr bool value = !is_scalar<L>;
 };
 
 // detect x * (1.0 * y)

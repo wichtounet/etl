@@ -21,7 +21,7 @@ struct is_axpy_left_left_impl {
 
 template <typename T0, typename T1, typename T2, typename RightExpr, typename R>
 struct is_axpy_left_left_impl <binary_expr<T0, etl::scalar<T1>, etl::mul_binary_op<T2>, RightExpr>, R> {
-    static constexpr bool value = true;
+    static constexpr bool value = !is_scalar<R>;
 };
 
 // detect x * 1.0 + y
@@ -33,7 +33,7 @@ struct is_axpy_left_right_impl {
 
 template <typename T0, typename T1, typename T2, typename LeftExpr, typename R>
 struct is_axpy_left_right_impl <binary_expr<T0, LeftExpr, etl::mul_binary_op<T2>, etl::scalar<T1>>, R> {
-    static constexpr bool value = true;
+    static constexpr bool value = !is_scalar<R>;
 };
 
 // detect x + 1.0 * y
@@ -45,7 +45,7 @@ struct is_axpy_right_left_impl {
 
 template <typename T0, typename T1, typename T2, typename RightExpr, typename L>
 struct is_axpy_right_left_impl <L, binary_expr<T0, etl::scalar<T1>, etl::mul_binary_op<T2>, RightExpr>> {
-    static constexpr bool value = true;
+    static constexpr bool value = !is_scalar<L> && !is_scalar<RightExpr>;
 };
 
 // detect x + y * 1.0
@@ -57,7 +57,7 @@ struct is_axpy_right_right_impl {
 
 template <typename T0, typename T1, typename T2, typename LeftExpr, typename L>
 struct is_axpy_right_right_impl <L, binary_expr<T0, LeftExpr, etl::mul_binary_op<T2>, etl::scalar<T1>>> {
-    static constexpr bool value = true;
+    static constexpr bool value = !is_scalar<LeftExpr>;
 };
 
 // detect 1.0 * x + 1.0 * y
@@ -286,7 +286,7 @@ struct plus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R> && is_axpy_right_left<L, R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpy_right_left<L, R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
         auto& rhs_lhs = rhs.get_lhs();
         auto& rhs_rhs = rhs.get_rhs();
@@ -310,7 +310,7 @@ struct plus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R> && is_axpy_right_right<L, R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpy_right_right<L, R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
         auto& rhs_lhs = rhs.get_lhs();
         auto& rhs_rhs = rhs.get_rhs();

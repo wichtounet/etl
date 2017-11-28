@@ -78,7 +78,7 @@ struct max_binary_op {
      * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
     template <typename X, typename Y, typename YY>
-    static auto gpu_compute_hint(const X& x, const Y& y, Y&& yy) noexcept {
+    static auto gpu_compute_hint(const X& x, const Y& y, YY&& yy) noexcept {
         decltype(auto) t1 = smart_gpu_compute_hint(x, yy);
         decltype(auto) t2 = smart_gpu_compute_hint(y, yy);
 

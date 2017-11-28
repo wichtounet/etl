@@ -291,8 +291,6 @@ struct minus_binary_op {
         return yy;
     }
 
-#ifdef ETL_CUBLAS_MODE
-
     /*!
      * \brief Compute the result of the operation using the GPU
      *
@@ -302,19 +300,16 @@ struct minus_binary_op {
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
     template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R> && !is_special<L,R>)>
-    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
-        decltype(auto) handle = impl::cublas::start_cublas();
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
+        decltype(auto) x = smart_gpu_compute_hint(lhs, yy);
+        decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
 
-        smart_gpu_compute(lhs, y);
-        decltype(auto) t2 = smart_gpu_compute_hint(rhs, y);
+        impl::egblas::axpy_3(etl::size(y), value_t<L>(-1), x.gpu_memory(), 1, y.gpu_memory(), 1, yy.gpu_memory(), 1);
 
-        value_t<L> alpha(-1);
-        impl::cublas::cublas_axpy(handle.get(), etl::size(y), &alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
+        yy.validate_gpu();
+        yy.invalidate_cpu();
 
-        y.validate_gpu();
-        y.invalidate_cpu();
-
-        return y;
+        return yy;
     }
 
     /*!
@@ -353,11 +348,7 @@ struct minus_binary_op {
 
         smart_gpu_compute(rhs, y);
 
-        value_t<L> alpha(-1);
-
-        decltype(auto) handle = impl::cublas::start_cublas();
-        impl::cublas::cublas_scal(handle.get(), etl::size(y), &alpha, y.gpu_memory(), 1);
-
+        impl::egblas::scalar_mul(y.gpu_memory(), etl::size(y), 1, value_t<L>(-1));
         impl::egblas::scalar_add(y.gpu_memory(), etl::size(y), 1, s);
 
         y.validate_gpu();
@@ -365,8 +356,6 @@ struct minus_binary_op {
 
         return y;
     }
-
-#endif
 
     /*!
      * \brief Returns a textual representation of the operator
