@@ -52,12 +52,14 @@ void bias_add_2d(size_t m, size_t n, const float* x, size_t incx, const float* b
     inc_counter("egblas");
     egblas_sbias_add_2d(m, n, x, incx, b, incb, y, incy);
 #else
+    cpp_unused(m);
     cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
+    cpp_unused(x);
+    cpp_unused(incx);
+    cpp_unused(b);
+    cpp_unused(incb);
+    cpp_unused(y);
+    cpp_unused(incy);
 
     cpp_unreachable("Invalid call to egblas::bias_add_2d");
 #endif
@@ -88,12 +90,14 @@ void bias_add_2d(size_t m, size_t n, const double* x, size_t incx, const double*
     inc_counter("egblas");
     egblas_dbias_add_2d(m, n, x, incx, b, incb, y, incy);
 #else
+    cpp_unused(m);
     cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
+    cpp_unused(x);
+    cpp_unused(incx);
+    cpp_unused(b);
+    cpp_unused(incb);
+    cpp_unused(y);
+    cpp_unused(incy);
 
     cpp_unreachable("Invalid call to egblas::bias_add_2d");
 #endif
