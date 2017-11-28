@@ -47,7 +47,7 @@ static constexpr bool has_sbias_add_2d = false;
  * \param y The vector y (GPU memory)
  * \param incy The stride of y
  */
-void bias_add_2d(size_t m, size_t n, const float* x, size_t incx, const float* b, size_t incb, float* y, size_t incy){
+inline void bias_add_2d(size_t m, size_t n, const float* x, size_t incx, const float* b, size_t incb, float* y, size_t incy){
 #ifdef EGBLAS_HAS_SBIAS_ADD_2D
     inc_counter("egblas");
     egblas_sbias_add_2d(m, n, x, incx, b, incb, y, incy);
@@ -85,7 +85,7 @@ static constexpr bool has_dbias_add_2d = false;
  * \param y The vector y (GPU memory)
  * \param incy The stride of y
  */
-void bias_add_2d(size_t m, size_t n, const double* x, size_t incx, const double* b, size_t incb, double* y, size_t incy){
+inline void bias_add_2d(size_t m, size_t n, const double* x, size_t incx, const double* b, size_t incb, double* y, size_t incy){
 #ifdef EGBLAS_HAS_DBIAS_ADD_2D
     inc_counter("egblas");
     egblas_dbias_add_2d(m, n, x, incx, b, incb, y, incy);
