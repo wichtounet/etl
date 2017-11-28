@@ -1158,6 +1158,38 @@ template<typename M>
 void normalize_sub(M& matrix){
     using VT = value_t<M>;
 
+#ifdef ETL_CUDA
+    // The case of CUDA must be handled differently to avoid going
+    // back and forth between both memories
+    // While this could simply use egblas_normalize_sub, this would
+    // be much slower
+
+    auto mm          = matrix.memory_start();
+    const auto n     = etl::dim<0>(matrix);
+    const auto sub_n = etl::size(matrix) / n;
+
+    for (size_t i = 0; i < n; ++i) {
+        VT m(0);
+
+        for(size_t j = 0; j < sub_n; ++j){
+            m += mm[i * sub_n + j];
+        }
+
+        m /= VT(sub_n);
+
+        VT s(0);
+
+        for(size_t j = 0; j < sub_n; ++j){
+            s += (mm[i * sub_n + j] - m) * (mm[i * sub_n + j] - m);
+        }
+
+        s = std::sqrt(s / VT(sub_n));
+
+        for(size_t j = 0; j < sub_n; ++j){
+            mm[i * sub_n + j] = (mm[i * sub_n + j] - m) / s;
+        }
+    }
+#else
     for (size_t i = 0; i < etl::dim<0>(matrix); ++i) {
         auto m = mean(matrix(i));
 
@@ -1169,6 +1201,7 @@ void normalize_sub(M& matrix){
             matrix(i) = matrix(i) / s;
         }
     }
+#endif
 }
 
 } //end of namespace etl
