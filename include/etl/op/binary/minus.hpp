@@ -304,7 +304,7 @@ struct minus_binary_op {
         decltype(auto) x = smart_gpu_compute_hint(lhs, yy);
         decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
 
-        impl::egblas::axpy_3(etl::size(y), value_t<L>(-1), x.gpu_memory(), 1, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+        impl::egblas::axpy_3(etl::size(y), value_t<L>(-1), y.gpu_memory(), 1, x.gpu_memory(), 1, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();
