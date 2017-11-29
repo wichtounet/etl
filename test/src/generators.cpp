@@ -236,6 +236,46 @@ TEMPLATE_TEST_CASE_2("generators/dropout_mask/2", "uniform", Z, float, double) {
     }
 }
 
+/// state_dropout_mask
+
+TEMPLATE_TEST_CASE_2("generators/state_dropout_mask/1", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    b = etl::state_dropout_mask<Z>(0.2);
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value == Z(0.0) || value == Z(1.0));
+    }
+}
+
+TEMPLATE_TEST_CASE_2("generators/state_dropout_mask/2", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    b = etl::state_dropout_mask<Z>(0.5);
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value == Z(0.0) || value == Z(1.0));
+    }
+}
+
+TEMPLATE_TEST_CASE_2("generators/state_dropout_mask/3", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    auto dropout = etl::state_dropout_mask<Z>(0.5);
+
+    b = dropout;
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value == Z(0.0) || value == Z(1.0));
+    }
+
+    b = dropout;
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value == Z(0.0) || value == Z(1.0));
+    }
+}
+
 /// inverted_dropout_mask
 
 TEMPLATE_TEST_CASE_2("generators/inverted_dropout_mask/1", "uniform", Z, float, double) {
@@ -265,5 +305,45 @@ TEMPLATE_TEST_CASE_2("generators/inverted_dropout_mask/3", "uniform", Z, float, 
 
     for (auto value : b) {
         REQUIRE_DIRECT(value == Z(0.0) || value == Z(2.0 / 0.5));
+    }
+}
+
+/// state_inverted_dropout_mask
+
+TEMPLATE_TEST_CASE_2("generators/state_inverted_dropout_mask/1", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    b = etl::state_inverted_dropout_mask<Z>(0.2);
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value == Z(0.0) || value == Z(1.25));
+    }
+}
+
+TEMPLATE_TEST_CASE_2("generators/state_inverted_dropout_mask/2", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    b = etl::state_inverted_dropout_mask<Z>(0.5);
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value == Z(0.0) || value == Z(2.0));
+    }
+}
+
+TEMPLATE_TEST_CASE_2("generators/state_inverted_dropout_mask/3", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    auto dropout = etl::state_inverted_dropout_mask<Z>(0.5);
+
+    b = dropout;
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value == Z(0.0) || value == Z(2.0));
+    }
+
+    b = dropout;
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value == Z(0.0) || value == Z(2.0));
     }
 }
