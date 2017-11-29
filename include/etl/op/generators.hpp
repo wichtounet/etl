@@ -18,3 +18,5 @@
 #include "etl/op/generators/sequence.hpp"
 #include "etl/op/generators/dropout_mask.hpp"
 #include "etl/op/generators/inverted_dropout_mask.hpp"
+#include "etl/op/generators/state_dropout_mask.hpp"
+#include "etl/op/generators/state_inverted_dropout_mask.hpp"
