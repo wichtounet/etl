@@ -430,7 +430,7 @@ TEMPLATE_TEST_CASE_2("sapxdby/4", "[saxdby][fast]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> y = {1.0, 3.0, 0.5, 1.2};
     etl::fast_matrix<Z, 2, 2> yy;
 
-    yy = (x + Z(-2.0)) / y;
+    yy = (Z(-2.0) + x) / y;
 
     REQUIRE_EQUALS(yy[0], Z(-3.0 / 1.0));
     REQUIRE_EQUALS(yy[1], Z(0.0));
