@@ -952,6 +952,32 @@ auto dropout_mask(G& g, T probability) -> generator_expr<dropout_mask_generator_
 }
 
 /*!
+ * \brief Create an expression generating numbers for a dropout mask
+ *
+ * \param probability The probability of dropout
+ *
+ * \return An expression generating numbers for a dropout mask
+ */
+template <typename T = float>
+auto state_dropout_mask(T probability) -> generator_expr<state_dropout_mask_generator_op<T>> {
+    return generator_expr<state_dropout_mask_generator_op<T>>{probability};
+}
+
+/*!
+ * \brief Create an expression generating numbers for a dropout mask
+ * using the given custom random engine.
+ *
+ * \param g The random engine
+ * \param probability The probability of dropout
+ *
+ * \return An expression generating numbers for a dropout mask
+ */
+template <typename T = float, typename G>
+auto state_dropout_mask(G& g, T probability) -> generator_expr<state_dropout_mask_generator_g_op<G, T>> {
+    return generator_expr<state_dropout_mask_generator_g_op<G, T>>{g, probability};
+}
+
+/*!
  * \brief Create an expression generating numbers for an inverted dropout mask
  *
  * \param probability The probability of dropout
@@ -961,6 +987,32 @@ auto dropout_mask(G& g, T probability) -> generator_expr<dropout_mask_generator_
 template <typename T = float>
 auto inverted_dropout_mask(T probability) -> generator_expr<inverted_dropout_mask_generator_op<T>> {
     return generator_expr<inverted_dropout_mask_generator_op<T>>{probability};
+}
+
+/*!
+ * \brief Create an expression generating numbers for an inverted dropout mask
+ * using the given custom random engine.
+ *
+ * \param g The random engine
+ * \param probability The probability of dropout
+ *
+ * \return An expression generating numbers for an inverted dropout mask
+ */
+template <typename T = float, typename G>
+auto state_inverted_dropout_mask(G& g, T probability) -> generator_expr<state_inverted_dropout_mask_generator_g_op<G, T>> {
+    return generator_expr<state_inverted_dropout_mask_generator_g_op<G, T>>{g, probability};
+}
+
+/*!
+ * \brief Create an expression generating numbers for an inverted dropout mask
+ *
+ * \param probability The probability of dropout
+ *
+ * \return An expression generating numbers for an inverted dropout mask
+ */
+template <typename T = float>
+auto state_inverted_dropout_mask(T probability) -> generator_expr<state_inverted_dropout_mask_generator_op<T>> {
+    return generator_expr<state_inverted_dropout_mask_generator_op<T>>{probability};
 }
 
 /*!
