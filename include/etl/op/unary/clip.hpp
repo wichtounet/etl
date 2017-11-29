@@ -66,6 +66,7 @@ struct clip_scalar_op {
     }
 
 #ifdef __INTEL_COMPILER
+
     /*!
      * \brief Compute several applications of the operator at a time
      * \param x The vector on which to operate
@@ -76,6 +77,7 @@ struct clip_scalar_op {
     vec_type<V> load(const vec_type<V>& lhs) const noexcept {
         return V::min(V::max(lhs, V::set(min)), V::set(max));
     }
+
 #endif
 
     /*!
