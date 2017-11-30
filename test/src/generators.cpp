@@ -276,6 +276,18 @@ TEMPLATE_TEST_CASE_2("generators/state_dropout_mask/3", "uniform", Z, float, dou
     }
 }
 
+TEMPLATE_TEST_CASE_2("generators/state_dropout_mask/4", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    auto dropout = etl::state_dropout_mask<Z>(0.5);
+
+    b = (dropout * 0.5f) + 1.0f;
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value == Z(1.0) || value == Z(1.5));
+    }
+}
+
 /// inverted_dropout_mask
 
 TEMPLATE_TEST_CASE_2("generators/inverted_dropout_mask/1", "uniform", Z, float, double) {
