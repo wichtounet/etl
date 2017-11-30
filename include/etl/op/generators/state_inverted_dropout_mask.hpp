@@ -56,7 +56,7 @@ struct state_inverted_dropout_mask_generator_op {
         if(distribution(rand_engine) < probability){
             return T(0);
         } else {
-            return T(1);
+            return T(1) / (T(1) - probability);
         }
     }
 
@@ -143,7 +143,7 @@ struct state_inverted_dropout_mask_generator_g_op {
         if(distribution(rand_engine) < probability){
             return T(0);
         } else {
-            return T(1);
+            return T(1) / (T(1) - probability);
         }
     }
 
