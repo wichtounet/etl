@@ -443,18 +443,17 @@ struct plus_binary_op {
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
     template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R> && !is_special_plus<L, R>)>
-    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
-        decltype(auto) t1 = smart_gpu_compute_hint(lhs, y);
-
-        smart_gpu_compute(rhs, y);
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
+        decltype(auto) x = smart_gpu_compute_hint(lhs, yy);
+        decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
 
         value_t<L> alpha(1);
-        impl::egblas::axpy(etl::size(y), alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+        impl::egblas::axpy_3(etl::size(y), alpha, x.gpu_memory(), 1, y.gpu_memory(), 1, yy.gpu_memory(), 1);
 
-        y.validate_gpu();
-        y.invalidate_cpu();
+        yy.validate_gpu();
+        yy.invalidate_cpu();
 
-        return y;
+        return yy;
     }
 
     /*!
