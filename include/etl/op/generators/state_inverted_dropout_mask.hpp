@@ -26,7 +26,7 @@ struct state_inverted_dropout_mask_generator_op {
     using value_type = T; ///< The value type
 
     const T probability;                           ///< The dropout probability
-    void* states = nullptr;
+    std::shared_ptr<void*> states;
     random_engine rand_engine;                     ///< The random engine
     dropout_distribution<value_type> distribution; ///< The used distribution
 
@@ -42,16 +42,9 @@ struct state_inverted_dropout_mask_generator_op {
      * \brief Construct a new generator with the given start and end of the range
      */
     state_inverted_dropout_mask_generator_op(T probability) : probability(probability), rand_engine(std::time(nullptr)), distribution(T(0), T(1)) {
-        if (impl::egblas::has_dropout_prepare) {
-            states = impl::egblas::dropout_prepare();
-        }
-    }
-
-    ~state_inverted_dropout_mask_generator_op(){
-        if (impl::egblas::has_dropout_release) {
-            if (states) {
-                impl::egblas::dropout_release(states);
-            }
+        if /*constexpr*/ (impl::egblas::has_dropout_prepare) {
+            states = std::make_shared<void*>();
+            *states = impl::egblas::dropout_prepare();
         }
     }
 
@@ -78,7 +71,7 @@ struct state_inverted_dropout_mask_generator_op {
     auto gpu_compute_hint(Y& y) noexcept {
         decltype(auto) t1 = force_temporary_gpu_dim_only(y);
 
-        impl::egblas::inv_dropout_states(etl::size(y), probability, T(1), t1.gpu_memory(), 1, states);
+        impl::egblas::inv_dropout_states(etl::size(y), probability, T(1), t1.gpu_memory(), 1, *states);
 
         return t1;
     }
@@ -90,7 +83,7 @@ struct state_inverted_dropout_mask_generator_op {
      */
     template <typename Y>
     Y& gpu_compute(Y& y) noexcept {
-        impl::egblas::inv_dropout_states(etl::size(y), probability, T(1), y.gpu_memory(), 1, states);
+        impl::egblas::inv_dropout_states(etl::size(y), probability, T(1), y.gpu_memory(), 1, *states);
 
         y.validate_gpu();
         y.invalidate_cpu();
@@ -118,7 +111,7 @@ struct state_inverted_dropout_mask_generator_g_op {
 
     const T probability;                           ///< The dropout probability
     G& rand_engine;                                ///< The random engine
-    void* states = nullptr;
+    std::shared_ptr<void*> states;
     dropout_distribution<value_type> distribution; ///< The used distribution
 
     /*!
@@ -136,16 +129,9 @@ struct state_inverted_dropout_mask_generator_g_op {
      */
     state_inverted_dropout_mask_generator_g_op(G& g, T probability) : probability(probability), rand_engine(g), distribution(T(0), T(1)) {
         if (impl::egblas::has_dropout_prepare) {
+            states = std::make_shared<void*>();
             std::uniform_int_distribution<long> seed_dist;
-            states = impl::egblas::dropout_prepare_seed(seed_dist(rand_engine));
-        }
-    }
-
-    ~state_inverted_dropout_mask_generator_g_op(){
-        if (impl::egblas::has_dropout_release) {
-            if (states) {
-                impl::egblas::dropout_release(states);
-            }
+            *states = impl::egblas::dropout_prepare_seed(seed_dist(rand_engine));
         }
     }
 
@@ -172,7 +158,7 @@ struct state_inverted_dropout_mask_generator_g_op {
     auto gpu_compute_hint(Y& y) noexcept {
         decltype(auto) t1 = force_temporary_gpu_dim_only(y);
 
-        impl::egblas::inv_dropout_states(etl::size(y), probability, T(1), t1.gpu_memory(), 1, states);
+        impl::egblas::inv_dropout_states(etl::size(y), probability, T(1), t1.gpu_memory(), 1, *states);
 
         return t1;
     }
@@ -184,7 +170,7 @@ struct state_inverted_dropout_mask_generator_g_op {
      */
     template <typename Y>
     Y& gpu_compute(Y& y) noexcept {
-        impl::egblas::inv_dropout_states(etl::size(y), probability, T(1), y.gpu_memory(), 1, states);
+        impl::egblas::inv_dropout_states(etl::size(y), probability, T(1), y.gpu_memory(), 1, *states);
 
         y.validate_gpu();
         y.invalidate_cpu();
