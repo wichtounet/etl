@@ -299,7 +299,7 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R> && !is_special<L,R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R> && !is_special_plus<L,R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
         decltype(auto) x = smart_gpu_compute_hint(lhs, yy);
         decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
