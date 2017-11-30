@@ -41,7 +41,7 @@ static constexpr bool has_dropout_prepare = false;
  * \brief Prepare random states for dropout
  * \return random states for dropout
  */
-void* dropout_prepare() {
+inline void* dropout_prepare() {
 #ifdef EGBLAS_HAS_DROPOUT_PREPARE
     inc_counter("egblas");
     return egblas_dropout_prepare();
@@ -65,7 +65,7 @@ static constexpr bool has_dropout_prepare_seed = false;
  * \param seed The seed
  * \return random states for dropout
  */
-void* dropout_prepare_seed(size_t seed) {
+inline void* dropout_prepare_seed(size_t seed) {
 #ifdef EGBLAS_HAS_DROPOUT_PREPARE_SEED
     inc_counter("egblas");
     return egblas_dropout_prepare_seed(seed);
@@ -91,7 +91,7 @@ static constexpr bool has_dropout_release = false;
  * \param seed The seed
  * \return random states for dropout
  */
-void dropout_release(void* state) {
+inline void dropout_release(void* state) {
 #ifdef EGBLAS_HAS_DROPOUT_RELEASE
     inc_counter("egblas");
     egblas_dropout_release(state);
