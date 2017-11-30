@@ -963,7 +963,7 @@ struct div_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && is_scalar<R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && is_scalar<R> && !is_special_div<L, R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = T(1) / rhs.value;
 
@@ -985,7 +985,7 @@ struct div_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(is_scalar<L> && !is_scalar<R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_scalar<L> && !is_scalar<R> && !is_special_div<L, R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
         auto s = lhs.value;
 
