@@ -29,6 +29,16 @@ namespace curand {
         }                                                                             \
     }
 
+/*!
+ * \brief Generate a normal distribution with the given mean and
+ * standard deviation with CURAND, in single-precision.
+ *
+ * \param generator The configured CURAND generator
+ * \param gpu_memory Pointer to the GPU memory to fill
+ * \param n The number of elements to set
+ * \param mean The mean of the distribution to generate.
+ * \param stddev The standard deviation of the distribution to generate.
+ */
 inline void generate_normal(curandGenerator_t generator, float* gpu_memory, size_t n, float mean, float stddev){
     // Note: CURAND is dumb, cannot generate odd sequences...
 
@@ -43,6 +53,16 @@ inline void generate_normal(curandGenerator_t generator, float* gpu_memory, size
     }
 }
 
+/*!
+ * \brief Generate a normal distribution with the given mean and
+ * standard deviation with CURAND, in double-precision.
+ *
+ * \param generator The configured CURAND generator
+ * \param gpu_memory Pointer to the GPU memory to fill
+ * \param n The number of elements to set
+ * \param mean The mean of the distribution to generate.
+ * \param stddev The standard deviation of the distribution to generate.
+ */
 inline void generate_normal(curandGenerator_t generator, double* gpu_memory, size_t n, double mean, double stddev){
     // Note: CURAND is dumb, cannot generate odd sequences...
 
@@ -57,10 +77,26 @@ inline void generate_normal(curandGenerator_t generator, double* gpu_memory, siz
     }
 }
 
+/*!
+ * \brief Generate a uniform distribution between 0 and 1, in single
+ * precision.
+ *
+ * \param generator The configured CURAND generator
+ * \param gpu_memory Pointer to the GPU memory to fill
+ * \param n The number of elements to set
+ */
 inline void generate_uniform(curandGenerator_t generator, float* gpu_memory, size_t n){
     curand_call(curandGenerateUniform(generator, gpu_memory, n));
 }
 
+/*!
+ * \brief Generate a uniform distribution between 0 and 1, in single
+ * precision.
+ *
+ * \param generator The configured CURAND generator
+ * \param gpu_memory Pointer to the GPU memory to fill
+ * \param n The number of elements to set
+ */
 inline void generate_uniform(curandGenerator_t generator, double* gpu_memory, size_t n){
     curand_call(curandGenerateUniformDouble(generator, gpu_memory, n));
 }
