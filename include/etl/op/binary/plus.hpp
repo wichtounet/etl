@@ -168,10 +168,10 @@ struct plus_binary_op {
             (
                     (!is_scalar<L> && !is_scalar<R>)
                 &&  (
-                            (is_single_precision_t<T> && impl::egblas::has_saxpy)
-                        ||  (is_double_precision_t<T> && impl::egblas::has_daxpy)
-                        ||  (is_complex_single_t<T> && impl::egblas::has_caxpy)
-                        ||  (is_complex_double_t<T> && impl::egblas::has_zaxpy)
+                            (is_single_precision_t<T> && impl::egblas::has_saxpy_3 && impl::egblas::has_saxpby_3)
+                        ||  (is_double_precision_t<T> && impl::egblas::has_daxpy_3 && impl::egblas::has_daxpby_3)
+                        ||  (is_complex_single_t<T> && impl::egblas::has_caxpy_3 && impl::egblas::has_caxpby_3)
+                        ||  (is_complex_double_t<T> && impl::egblas::has_zaxpy_3 && impl::egblas::has_zaxpby_3)
                     )
             )
         ||  (
@@ -448,7 +448,7 @@ struct plus_binary_op {
         decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
 
         value_t<L> alpha(1);
-        impl::egblas::axpy_3(etl::size(y), alpha, x.gpu_memory(), 1, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+        impl::egblas::axpy_3(etl::size(yy), alpha, x.gpu_memory(), 1, y.gpu_memory(), 1, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();

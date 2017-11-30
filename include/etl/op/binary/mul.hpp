@@ -129,11 +129,26 @@ struct mul_binary_op {
      */
     template<typename L, typename R>
     static constexpr bool gpu_computable =
-                (is_single_precision_t<T> && impl::egblas::has_saxmy)
-            ||  (is_double_precision_t<T> && impl::egblas::has_daxmy)
-            ||  (is_complex_single_t<T> && impl::egblas::has_caxmy)
-            ||  (is_complex_double_t<T> && impl::egblas::has_zaxmy)
+            (
+                    (!is_scalar<L> && !is_scalar<R>)
+                &&  (
+                            (is_single_precision_t<T> && impl::egblas::has_saxmy_3)
+                        ||  (is_double_precision_t<T> && impl::egblas::has_daxmy_3)
+                        ||  (is_complex_single_t<T> && impl::egblas::has_caxmy_3)
+                        ||  (is_complex_double_t<T> && impl::egblas::has_zaxmy_3)
+                    )
+            )
+        ||  (
+                    (is_scalar<L> != is_scalar<R>)
+                &&  (
+                            (is_single_precision_t<T> && impl::egblas::has_scalar_smul)
+                        ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dmul)
+                        ||  (is_complex_single_t<T> && impl::egblas::has_scalar_cmul)
+                        ||  (is_complex_double_t<T> && impl::egblas::has_scalar_zmul)
+                    )
+            )
         ;
+
     /*!
      * The vectorization type for V
      */

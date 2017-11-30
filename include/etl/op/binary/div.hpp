@@ -354,24 +354,21 @@ struct div_binary_op {
     static constexpr bool gpu_computable =
             (
                     (!is_scalar<L> && !is_scalar<R>)
-                &&  egblas_enabled
                 &&  (
-                        (is_single_precision_t<T> && impl::egblas::has_saxdy)
-                    ||  (is_double_precision_t<T> && impl::egblas::has_daxdy)
-                    ||  (is_complex_single_t<T> && impl::egblas::has_caxdy)
-                    ||  (is_complex_double_t<T> && impl::egblas::has_zaxdy))
+                            (is_single_precision_t<T> && impl::egblas::has_saxdy_3 && impl::egblas::has_saxdbpy_3 && impl::egblas::has_sapxdbpy_3 && impl::egblas::has_sapxdby_3)
+                        ||  (is_double_precision_t<T> && impl::egblas::has_daxdy_3 && impl::egblas::has_daxdbpy_3 && impl::egblas::has_dapxdbpy_3 && impl::egblas::has_dapxdby_3)
+                        ||  (is_complex_single_t<T> && impl::egblas::has_caxdy_3 && impl::egblas::has_caxdbpy_3 && impl::egblas::has_capxdbpy_3 && impl::egblas::has_capxdby_3)
+                        ||  (is_complex_double_t<T> && impl::egblas::has_zaxdy_3 && impl::egblas::has_zaxdbpy_3 && impl::egblas::has_zapxdbpy_3 && impl::egblas::has_zapxdby_3)
+                    )
             )
         ||  (
-                    (!is_scalar<L> && is_scalar<R>)
-                &&  cublas_enabled
-            )
-        ||  (
-                    (is_scalar<L> && !is_scalar<R>)
-                && (
-                        (is_single_precision_t<T> && impl::egblas::has_scalar_sdiv)
-                    ||  (is_double_precision_t<T> && impl::egblas::has_scalar_ddiv)
-                    ||  (is_complex_single_t<T> && impl::egblas::has_scalar_cdiv)
-                    ||  (is_complex_double_t<T> && impl::egblas::has_scalar_zdiv))
+                    (is_scalar<L> != is_scalar<R>)
+                &&  (
+                            (is_single_precision_t<T> && impl::egblas::has_scalar_smul && impl::egblas::has_scalar_sdiv)
+                        ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dmul && impl::egblas::has_scalar_ddiv)
+                        ||  (is_complex_single_t<T> && impl::egblas::has_scalar_cmul && impl::egblas::has_scalar_cdiv)
+                        ||  (is_complex_double_t<T> && impl::egblas::has_scalar_zmul && impl::egblas::has_scalar_zdiv)
+                    )
             )
             ;
 
@@ -945,19 +942,17 @@ struct div_binary_op {
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
     template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R> && !is_special_div<L, R>)>
-    static Y& gpu_compute(const L& lhs, const R& rhs, Y& y) noexcept {
-        smart_gpu_compute(lhs, y);
-
-        decltype(auto) t2 = smart_gpu_compute_hint(rhs, y);
+    static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
+        decltype(auto) x = smart_gpu_compute_hint(lhs, yy);
+        decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
 
         value_t<L> alpha(1);
+        impl::egblas::axdy_3(etl::size(yy), alpha, x.gpu_memory(), 1, y.gpu_memory(), 1, yy.gpu_memory(), 1);
 
-        impl::egblas::axdy(etl::size(y), alpha, t2.gpu_memory(), 1, y.gpu_memory(), 1);
+        yy.validate_gpu();
+        yy.invalidate_cpu();
 
-        y.validate_gpu();
-        y.invalidate_cpu();
-
-        return y;
+        return yy;
     }
 
     /*!
