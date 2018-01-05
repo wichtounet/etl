@@ -1,4 +1,4 @@
-ETL 1.3 - dev
+ETL 1.2.1 - dev
 *************
 
 * *Feature* Support for embeddings and embedding gradients
