@@ -195,7 +195,7 @@ $(eval $(call precompile_finalize))
 endif
 
 # Compile folders
-$(eval $(call auto_folder_compile,workbench/src))
+$(eval $(call auto_folder_compile,workbench/src,-Icpm/include))
 $(eval $(call auto_folder_compile,benchmark/src,-DETL_MANUAL_SELECT -Ibenchmark/include -Icpm/include))
 $(eval $(call auto_folder_compile,test/src,-DETL_MANUAL_SELECT))
 
@@ -301,6 +301,7 @@ $(eval $(call add_executable,multi,workbench/src/multi.cpp))
 $(eval $(call add_executable,locality,workbench/src/locality.cpp))
 $(eval $(call add_executable,counters,workbench/src/counters.cpp))
 $(eval $(call add_executable,verify_cpm,workbench/src/verify_cpm.cpp))
+$(eval $(call add_executable,benchmark_paper,workbench/src/benchmark_paper.cpp))
 
 test_asm: release/bin/test_asm_1 release/bin/test_asm_2
 
