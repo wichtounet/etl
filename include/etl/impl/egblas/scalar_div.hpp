@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -37,8 +37,9 @@ static constexpr bool has_scalar_sdiv = true;
  * \param n The size of the vector
  * \param s The stride of the vector
  */
-inline void scalar_div(float* beta, float* x, size_t n, size_t s){
-    egblas_scalar_sdiv(*beta, x, n, s);
+inline void scalar_div(float beta, float* x, size_t n, size_t s){
+    inc_counter("egblas");
+    egblas_scalar_sdiv(beta, x, n, s);
 }
 
 #else
@@ -58,8 +59,9 @@ static constexpr bool has_scalar_ddiv = true;
  * \param n The size of the vector
  * \param s The stride of the vector
  */
-inline void scalar_div(double* beta, double* x, size_t n, size_t s){
-    egblas_scalar_ddiv(*beta, x, n, s);
+inline void scalar_div(double beta, double* x, size_t n, size_t s){
+    inc_counter("egblas");
+    egblas_scalar_ddiv(beta, x, n, s);
 }
 
 #else
@@ -79,8 +81,9 @@ static constexpr bool has_scalar_cdiv = true;
  * \param n The size of the vector
  * \param s The stride of the vector
  */
-inline void scalar_div(std::complex<float>* beta, std::complex<float>* x, size_t n, size_t s){
-    egblas_scalar_cdiv(*reinterpret_cast<cuComplex*>(beta), reinterpret_cast<cuComplex*>(x), n, s);
+inline void scalar_div(std::complex<float> beta, std::complex<float>* x, size_t n, size_t s){
+    inc_counter("egblas");
+    egblas_scalar_cdiv(complex_cast(beta), reinterpret_cast<cuComplex*>(x), n, s);
 }
 
 /*!
@@ -90,8 +93,9 @@ inline void scalar_div(std::complex<float>* beta, std::complex<float>* x, size_t
  * \param n The size of the vector
  * \param s The stride of the vector
  */
-inline void scalar_div(etl::complex<float>* beta, etl::complex<float>* x, size_t n, size_t s){
-    egblas_scalar_cdiv(*reinterpret_cast<cuComplex*>(beta), reinterpret_cast<cuComplex*>(x), n, s);
+inline void scalar_div(etl::complex<float> beta, etl::complex<float>* x, size_t n, size_t s){
+    inc_counter("egblas");
+    egblas_scalar_cdiv(complex_cast(beta), reinterpret_cast<cuComplex*>(x), n, s);
 }
 
 #else
@@ -111,8 +115,9 @@ static constexpr bool has_scalar_zdiv = true;
  * \param n The size of the vector
  * \param s The stride of the vector
  */
-inline void scalar_div(std::complex<double>* beta, std::complex<double>* x, size_t n, size_t s){
-    egblas_scalar_zdiv(*reinterpret_cast<cuDoubleComplex*>(beta), reinterpret_cast<cuDoubleComplex*>(x), n, s);
+inline void scalar_div(std::complex<double> beta, std::complex<double>* x, size_t n, size_t s){
+    inc_counter("egblas");
+    egblas_scalar_zdiv(complex_cast(beta), reinterpret_cast<cuDoubleComplex*>(x), n, s);
 }
 
 /*!
@@ -122,8 +127,9 @@ inline void scalar_div(std::complex<double>* beta, std::complex<double>* x, size
  * \param n The size of the vector
  * \param s The stride of the vector
  */
-inline void scalar_div(etl::complex<double>* beta, etl::complex<double>* x, size_t n, size_t s){
-    egblas_scalar_zdiv(*reinterpret_cast<cuDoubleComplex*>(beta), reinterpret_cast<cuDoubleComplex*>(x), n, s);
+inline void scalar_div(etl::complex<double> beta, etl::complex<double>* x, size_t n, size_t s){
+    inc_counter("egblas");
+    egblas_scalar_zdiv(complex_cast(beta), reinterpret_cast<cuDoubleComplex*>(x), n, s);
 }
 
 #else
@@ -142,7 +148,7 @@ static constexpr bool has_scalar_zdiv = false;
  * \param s The stride of the vector
  */
 template<typename T>
-inline void scalar_div(T* beta, T* x, size_t n, size_t s){
+inline void scalar_div(T beta, T* x, size_t n, size_t s){
     cpp_unused(x);
     cpp_unused(n);
     cpp_unused(s);

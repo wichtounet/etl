@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -47,6 +47,7 @@ static constexpr bool has_bor = false;
  */
 inline void logical_or(size_t n, const bool* A, size_t lda, const bool* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_BOR
+    inc_counter("egblas");
     egblas_bor(n, A, lda, B, ldb, C, ldc);
 #else
     cpp_unused(n);

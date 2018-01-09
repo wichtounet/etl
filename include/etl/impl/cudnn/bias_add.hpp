@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -120,6 +120,8 @@ void bias_add_2d(I&& x, K&& b, C&& y) {
 
     // This is highly retarded stuff :(
     // Unfortunately cudnnAddTensor does not support 2D tensors :(
+    // This is solved when EGBLAS is available, since this will be
+    // computed with EGBLAS first
 
     {
         decltype(auto) handle = etl::impl::cublas::start_cublas();
@@ -128,8 +130,6 @@ void bias_add_2d(I&& x, K&& b, C&& y) {
             impl::cublas::cublas_axpy(handle.get(), etl::dim<1>(y), alpha, b.gpu_memory(), 1, y.gpu_memory() + i * etl::dim<1>(y), 1);
         }
     }
-
-    //TODO Ideally, a simple cudnnAddTensor should be used
 
     y.validate_gpu();
     y.invalidate_cpu();

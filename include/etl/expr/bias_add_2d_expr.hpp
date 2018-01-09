@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -13,6 +13,7 @@
 #include "etl/impl/std/bias_add.hpp"
 #include "etl/impl/vec/bias_add.hpp"
 #include "etl/impl/cudnn/bias_add.hpp"
+#include "etl/impl/egblas/bias_add.hpp"
 
 namespace etl {
 
@@ -106,6 +107,19 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
             impl::vec::bias_add_2d(smart_forward(a), smart_forward(b), lhs);
         } else if /*constexpr_select*/ (impl == bias_add_impl::STD) {
             impl::standard::bias_add_2d(smart_forward(a), smart_forward(b), lhs);
+        } else if /*constexpr_select*/ (impl == bias_add_impl::EGBLAS) {
+            decltype(auto) e_x = smart_forward_gpu(a);
+            decltype(auto) e_b = smart_forward_gpu(b);
+            auto& e_y = lhs;
+
+            e_x.ensure_gpu_up_to_date();
+            e_b.ensure_gpu_up_to_date();
+            e_y.ensure_gpu_allocated();
+
+            impl::egblas::bias_add_2d(etl::dim<0>(a), etl::dim<1>(a), e_x.gpu_memory(), 1, e_b.gpu_memory(), 1, e_y.gpu_memory(), 1);
+
+            e_y.validate_gpu();
+            e_y.invalidate_cpu();
         } else if /*constexpr_select*/ (impl == bias_add_impl::CUDNN) {
             impl::cudnn::bias_add_2d(smart_forward_gpu(a), smart_forward_gpu(b), lhs);
         } else {
@@ -185,6 +199,14 @@ private:
         constexpr bool vec_possible   = vec_enabled && vectorize_impl && all_vectorizable<vector_mode, A, B, C> && homo;
         constexpr bool cudnn_possible = cudnn_enabled && all_floating<A, B, C> && homo;
 
+        if (homo && is_single_precision<A> && impl::egblas::has_sbias_add_2d) {
+            return etl::bias_add_impl::EGBLAS;
+        }
+
+        if (homo && is_double_precision<A> && impl::egblas::has_dbias_add_2d) {
+            return etl::bias_add_impl::EGBLAS;
+        }
+
         if (cudnn_possible && !no_gpu) {
             return etl::bias_add_impl::CUDNN;
         }
@@ -211,6 +233,15 @@ private:
             auto forced = local_context().bias_add_selector.impl;
 
             switch (forced) {
+                // EGBLAS cannot always be used
+                case bias_add_impl::EGBLAS:
+                    if (!all_homogeneous<A, B, C> || !((is_single_precision<A> && impl::egblas::has_sbias_add_2d) || (is_double_precision<A> && impl::egblas::has_sbias_add_2d)) || local_context().cpu) {
+                        std::cerr << "Forced selection to EGBLAS bias_add implementation, but not possible for this expression" << std::endl;
+                        return def;
+                    }
+
+                    return forced;
+
                 //CUDNN cannot always be used
                 case bias_add_impl::CUDNN:
                     if (!cudnn_enabled || !all_floating<A, B, C> || !all_homogeneous<A, B, C> || local_context().cpu) {

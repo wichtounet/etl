@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -94,6 +94,11 @@ constexpr bool cublas_enabled = ETL_CUBLAS_MODE_BOOL;
  * \brief Indicates if the NVIDIA CUFFT library is available for ETL.
  */
 constexpr bool cufft_enabled = ETL_CUFFT_MODE_BOOL;
+
+/*!
+ * \brief Indicates if the NVIDIA CURAND library is available for ETL.
+ */
+constexpr bool curand_enabled = ETL_CURAND_MODE_BOOL;
 
 /*!
  * \brief Indicates if the NVIDIA CUDNN library is available for ETL.

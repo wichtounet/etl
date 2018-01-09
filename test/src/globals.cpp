@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -744,4 +744,132 @@ ETL_TEST_CASE("globals/parallel_shuffle/3", "[globals]") {
 
     REQUIRE_DIRECT(a == c);
     REQUIRE_DIRECT(b == c);
+}
+
+ETL_TEST_CASE("globals/parallel_shuffle/4", "[globals]") {
+    etl::fast_matrix<double, 5, 2> a{0, 5, 1, 6, 2, 7, 3, 8, 4, 9};
+    etl::fast_matrix<double, 5> b{0,1,2,3,4};
+
+    parallel_shuffle(a, b);
+
+    REQUIRE_EQUALS(a(0)(0), b[0]);
+    REQUIRE_EQUALS(a(1)(0), b[1]);
+    REQUIRE_EQUALS(a(2)(0), b[2]);
+    REQUIRE_EQUALS(a(3)(0), b[3]);
+    REQUIRE_EQUALS(a(4)(0), b[4]);
+
+    REQUIRE_DIRECT(a[0] >= 0 && a[0] <= 9);
+    REQUIRE_DIRECT(a[1] >= 0 && a[1] <= 9);
+    REQUIRE_DIRECT(a[2] >= 0 && a[2] <= 9);
+    REQUIRE_DIRECT(a[3] >= 0 && a[3] <= 9);
+    REQUIRE_DIRECT(a[4] >= 0 && a[4] <= 9);
+    REQUIRE_DIRECT(a[5] >= 0 && a[5] <= 9);
+    REQUIRE_DIRECT(a[6] >= 0 && a[6] <= 9);
+    REQUIRE_DIRECT(a[7] >= 0 && a[7] <= 9);
+    REQUIRE_DIRECT(a[8] >= 0 && a[8] <= 9);
+    REQUIRE_DIRECT(a[9] >= 0 && a[9] <= 9);
+
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 0), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 1), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 2), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 3), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 4), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 5), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 6), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 7), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 8), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 9), 1);
+
+    REQUIRE_DIRECT(b[0] >= 0 && b[0] <= 9);
+    REQUIRE_DIRECT(b[1] >= 0 && b[1] <= 9);
+    REQUIRE_DIRECT(b[2] >= 0 && b[2] <= 9);
+    REQUIRE_DIRECT(b[3] >= 0 && b[3] <= 9);
+    REQUIRE_DIRECT(b[4] >= 0 && b[4] <= 9);
+
+    REQUIRE_EQUALS(std::count(b.begin(), b.end(), 0), 1);
+    REQUIRE_EQUALS(std::count(b.begin(), b.end(), 1), 1);
+    REQUIRE_EQUALS(std::count(b.begin(), b.end(), 2), 1);
+    REQUIRE_EQUALS(std::count(b.begin(), b.end(), 3), 1);
+    REQUIRE_EQUALS(std::count(b.begin(), b.end(), 4), 1);
+}
+
+TEMPLATE_TEST_CASE_2("globals/binarize/0", "[globals]", Z, double, float) {
+    etl::dyn_vector<Z> x  = {1.0, 200.0, 30.0, 50.0};
+
+    binarize(x, Z(25));
+
+    REQUIRE(x[0] == 0.0);
+    REQUIRE(x[1] == 1.0);
+    REQUIRE(x[2] == 1.0);
+    REQUIRE(x[3] == 1.0);
+}
+
+TEMPLATE_TEST_CASE_2("globals/binarize/1", "[globals]", Z, double, float) {
+    etl::dyn_vector<Z> x  = {1.0, 200.0, 30.0, 50.0};
+
+    binarize(x, Z(180));
+
+    REQUIRE(x[0] == 0.0);
+    REQUIRE(x[1] == 1.0);
+    REQUIRE(x[2] == 0.0);
+    REQUIRE(x[3] == 0.0);
+}
+
+TEMPLATE_TEST_CASE_2("globals/binarize/2", "[globals]", Z, double, float) {
+    etl::dyn_vector<Z> x  = {1.0, 200.0, 30.0, 50.0};
+
+    binarize(x, Z(225));
+
+    REQUIRE(x[0] == 0.0);
+    REQUIRE(x[1] == 0.0);
+    REQUIRE(x[2] == 0.0);
+    REQUIRE(x[3] == 0.0);
+}
+
+TEMPLATE_TEST_CASE_2("globals/normalize/0", "[globals]", Z, double, float) {
+    etl::dyn_vector<Z> x  = {1.0, 2.0, 3.0, 4.0, 5.0};
+
+    normalize_flat(x);
+
+    REQUIRE_EQUALS_APPROX(x[0], -1.4142);
+    REQUIRE_EQUALS_APPROX(x[1], -0.7071);
+    REQUIRE_EQUALS_APPROX(x[2], 0.0);
+    REQUIRE_EQUALS_APPROX(x[3], 0.7071);
+    REQUIRE_EQUALS_APPROX(x[4], 1.4142);
+}
+
+TEMPLATE_TEST_CASE_2("globals/normalize/1", "[globals]", Z, double, float) {
+    etl::fast_dyn_matrix<Z, 2, 5> x = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
+
+    normalize_sub(x);
+
+    REQUIRE_EQUALS_APPROX(x[0], -1.4142);
+    REQUIRE_EQUALS_APPROX(x[1], -0.7071);
+    REQUIRE_EQUALS_APPROX(x[2], 0.0);
+    REQUIRE_EQUALS_APPROX(x[3], 0.7071);
+    REQUIRE_EQUALS_APPROX(x[4], 1.4142);
+
+    REQUIRE_EQUALS_APPROX(x[5], -1.4142);
+    REQUIRE_EQUALS_APPROX(x[6], -0.7071);
+    REQUIRE_EQUALS_APPROX(x[7], 0.0);
+    REQUIRE_EQUALS_APPROX(x[8], 0.7071);
+    REQUIRE_EQUALS_APPROX(x[9], 1.4142);
+}
+
+TEMPLATE_TEST_CASE_2("globals/normalize/2", "[globals]", Z, double, float) {
+    etl::fast_dyn_matrix<Z, 2, 5> x = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
+
+    normalize_flat(x);
+
+    REQUIRE_EQUALS_APPROX(x[0], -1.5667);
+    REQUIRE_EQUALS_APPROX(x[1], -1.218543);
+    REQUIRE_EQUALS_APPROX(x[2], -0.87039);
+    REQUIRE_EQUALS_APPROX(x[3], -0.52223);
+    REQUIRE_EQUALS_APPROX(x[4], -0.17407);
+
+    REQUIRE_EQUALS_APPROX(x[5], 0.174077);
+    REQUIRE_EQUALS_APPROX(x[6], 0.52222);
+    REQUIRE_EQUALS_APPROX(x[7], 0.87039);
+    REQUIRE_EQUALS_APPROX(x[8], 1.218543);
+    REQUIRE_EQUALS_APPROX(x[9], 1.5667);
 }

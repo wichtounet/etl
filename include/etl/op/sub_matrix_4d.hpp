@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -301,6 +301,24 @@ public:
     }
 
     // Internals
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // The sub value must be ensured
+        sub_expr.ensure_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // The sub value must be ensured
+        sub_expr.ensure_gpu_up_to_date();
+    }
 
     /*!
      * \brief Apply the given visitor to this expression and its descendants.

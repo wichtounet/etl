@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -24,10 +24,24 @@
 #include "etl/impl/cublas/scal.hpp"
 #endif
 
-#include "etl/impl/egblas/axmy.hpp"
+#include "etl/impl/egblas/apxdbpy.hpp"
+#include "etl/impl/egblas/apxdbpy_3.hpp"
+#include "etl/impl/egblas/apxdby.hpp"
+#include "etl/impl/egblas/apxdby_3.hpp"
+#include "etl/impl/egblas/axdbpy.hpp"
+#include "etl/impl/egblas/axdbpy_3.hpp"
 #include "etl/impl/egblas/axdy.hpp"
+#include "etl/impl/egblas/axdy_3.hpp"
+#include "etl/impl/egblas/axmy.hpp"
+#include "etl/impl/egblas/axmy_3.hpp"
+#include "etl/impl/egblas/axpby.hpp"
+#include "etl/impl/egblas/axpby_3.hpp"
+#include "etl/impl/egblas/axpy.hpp"
+#include "etl/impl/egblas/axpy_3.hpp"
+
 #include "etl/impl/egblas/scalar_add.hpp"
 #include "etl/impl/egblas/scalar_div.hpp"
+#include "etl/impl/egblas/scalar_mul.hpp"
 
 #include "etl/op/binary/plus.hpp"
 #include "etl/op/binary/minus.hpp"

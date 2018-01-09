@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -51,11 +51,11 @@
 
 // The operators
 #include "etl/op/scalar.hpp"
-#include "etl/op/generators.hpp"
 #include "etl/op/transformers.hpp"
 #include "etl/op/virtual_views.hpp"
 #include "etl/op/unary_op.hpp"
 #include "etl/op/binary_op.hpp"
+#include "etl/op/generators.hpp"
 
 //Global test functions
 #include "etl/globals.hpp"
@@ -84,6 +84,7 @@
 #include "etl/expr/transpose_expr.hpp"
 #include "etl/expr/bias_batch_mean_2d_expr.hpp"
 #include "etl/expr/bias_batch_mean_4d_expr.hpp"
+#include "etl/expr/bias_batch_var_2d_expr.hpp"
 #include "etl/expr/bias_add_2d_expr.hpp"
 #include "etl/expr/bias_add_4d_expr.hpp"
 #include "etl/expr/pool_upsample_2d_expr.hpp"
@@ -140,6 +141,10 @@
 #include "etl/expr/conv_4d_backward_filter_expr.hpp"
 #include "etl/expr/dyn_conv_4d_backward_filter_expr.hpp"
 #include "etl/expr/batch_softmax_expr.hpp"
+#include "etl/expr/embedding_lookup_expr.hpp"
+#include "etl/expr/batch_embedding_lookup_expr.hpp"
+#include "etl/expr/embedding_gradients_expr.hpp"
+#include "etl/expr/batch_embedding_gradients_expr.hpp"
 
 // The expressions building
 #include "etl/builder/expression_builder.hpp"

@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -51,14 +51,14 @@ struct logical_or_binary_op {
      *
      * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
-    template <typename X, typename Y>
-    static auto gpu_compute(const X& x, const Y& y) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(x);
-        decltype(auto) t2 = smart_gpu_compute(y);
+    template <typename X, typename Y, typename YY>
+    static auto gpu_compute_hint(const X& x, const Y& y, YY& yy) noexcept {
+        decltype(auto) t1 = smart_gpu_compute_hint(x, yy);
+        decltype(auto) t2 = smart_gpu_compute_hint(y, yy);
 
         auto t3 = force_temporary_gpu_dim_only_t<bool>(t1);
 
-        impl::egblas::logical_or(etl::size(x), t1.gpu_memory(), 1, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
+        impl::egblas::logical_or(etl::size(yy), t1.gpu_memory(), 1, t2.gpu_memory(), 1, t3.gpu_memory(), 1);
 
         return t3;
     }
@@ -71,10 +71,10 @@ struct logical_or_binary_op {
      */
     template <typename X, typename Y, typename YY>
     static YY& gpu_compute(const X& x, const Y& y, YY& yy) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(x);
-        decltype(auto) t2 = smart_gpu_compute(y);
+        decltype(auto) t1 = smart_gpu_compute_hint(x, yy);
+        decltype(auto) t2 = smart_gpu_compute_hint(y, yy);
 
-        impl::egblas::logical_or(etl::size(x), t1.gpu_memory(), 1, t2.gpu_memory(), 1, yy.gpu_memory(), 1);
+        impl::egblas::logical_or(etl::size(yy), t1.gpu_memory(), 1, t2.gpu_memory(), 1, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();

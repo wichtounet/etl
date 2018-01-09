@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -38,6 +38,7 @@ namespace cublas {
  * \param ldb The leading dimension of b
  */
 inline void cublas_axpy(cublasHandle_t handle, size_t n, const float* alpha, const float* A , size_t lda, float* B , size_t ldb){
+    inc_counter("cublas");
     cublas_check(cublasSaxpy(handle, n, alpha, A, lda, B, ldb));
 }
 
@@ -52,6 +53,7 @@ inline void cublas_axpy(cublasHandle_t handle, size_t n, const float* alpha, con
  * \param ldb The leading dimension of b
  */
 inline void cublas_axpy(cublasHandle_t handle, size_t n, const double* alpha, const double* A , size_t lda, double* B , size_t ldb){
+    inc_counter("cublas");
     cublas_check(cublasDaxpy(handle, n, alpha, A, lda, B, ldb));
 }
 
@@ -66,6 +68,7 @@ inline void cublas_axpy(cublasHandle_t handle, size_t n, const double* alpha, co
  * \param ldb The leading dimension of b
  */
 inline void cublas_axpy(cublasHandle_t handle, size_t n, const std::complex<float>* alpha, const std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+    inc_counter("cublas");
     cublas_check(cublasCaxpy(handle, n, reinterpret_cast<const cuComplex*>(alpha), reinterpret_cast<const cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb));
 }
 
@@ -80,6 +83,7 @@ inline void cublas_axpy(cublasHandle_t handle, size_t n, const std::complex<floa
  * \param ldb The leading dimension of b
  */
 inline void cublas_axpy(cublasHandle_t handle, size_t n, const std::complex<double>* alpha, const std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+    inc_counter("cublas");
     cublas_check(cublasZaxpy(handle, n, reinterpret_cast<const cuDoubleComplex*>(alpha), reinterpret_cast<const cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb));
 }
 
@@ -94,6 +98,7 @@ inline void cublas_axpy(cublasHandle_t handle, size_t n, const std::complex<doub
  * \param ldb The leading dimension of b
  */
 inline void cublas_axpy(cublasHandle_t handle, size_t n, const etl::complex<float>* alpha, const etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+    inc_counter("cublas");
     cublas_check(cublasCaxpy(handle, n, reinterpret_cast<const cuComplex*>(alpha), reinterpret_cast<const cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb));
 }
 
@@ -108,6 +113,7 @@ inline void cublas_axpy(cublasHandle_t handle, size_t n, const etl::complex<floa
  * \param ldb The leading dimension of b
  */
 inline void cublas_axpy(cublasHandle_t handle, size_t n, const etl::complex<double>* alpha, const etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+    inc_counter("cublas");
     cublas_check(cublasZaxpy(handle, n, reinterpret_cast<const cuDoubleComplex*>(alpha), reinterpret_cast<const cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb));
 }
 

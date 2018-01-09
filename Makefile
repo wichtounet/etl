@@ -87,10 +87,12 @@ CXX_FLAGS += -DETL_GPU
 CXX_FLAGS += $(shell pkg-config --cflags cublas)
 CXX_FLAGS += $(shell pkg-config --cflags cufft)
 CXX_FLAGS += $(shell pkg-config --cflags cudnn)
+CXX_FLAGS += $(shell pkg-config --cflags curand)
 
 LD_FLAGS += $(shell pkg-config --libs cublas)
 LD_FLAGS += $(shell pkg-config --libs cufft)
 LD_FLAGS += $(shell pkg-config --libs cudnn)
+LD_FLAGS += $(shell pkg-config --libs curand)
 
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-documentation
@@ -111,6 +113,16 @@ endif
 ifneq (,$(ETL_CUFFT))
 CXX_FLAGS += -DETL_CUFFT_MODE $(shell pkg-config --cflags cufft)
 LD_FLAGS += $(shell pkg-config --libs cufft)
+
+ifneq (,$(findstring clang,$(CXX)))
+CXX_FLAGS += -Wno-documentation
+endif
+endif
+
+# On demand activation of curand support
+ifneq (,$(ETL_CURAND))
+CXX_FLAGS += -DETL_CURAND_MODE $(shell pkg-config --cflags curand)
+LD_FLAGS += $(shell pkg-config --libs curand)
 
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-documentation
@@ -183,7 +195,7 @@ $(eval $(call precompile_finalize))
 endif
 
 # Compile folders
-$(eval $(call auto_folder_compile,workbench/src))
+$(eval $(call auto_folder_compile,workbench/src,-Icpm/include))
 $(eval $(call auto_folder_compile,benchmark/src,-DETL_MANUAL_SELECT -Ibenchmark/include -Icpm/include))
 $(eval $(call auto_folder_compile,test/src,-DETL_MANUAL_SELECT))
 
@@ -261,6 +273,10 @@ $(eval $(call add_test_executable,etl_test_optimize_1,src/test.cpp src/optimize_
 $(eval $(call add_test_executable,etl_test_optimize_2,src/test.cpp src/optimize_2.cpp))
 $(eval $(call add_test_executable,etl_test_elt_logical,src/test.cpp src/elt_logical.cpp))
 $(eval $(call add_test_executable,etl_test_elt_compare,src/test.cpp src/elt_compare.cpp))
+$(eval $(call add_test_executable,etl_test_embedding_lookup,src/test.cpp src/embedding_lookup.cpp))
+$(eval $(call add_test_executable,etl_test_merge,src/test.cpp src/merge.cpp))
+$(eval $(call add_test_executable,etl_test_reduc,src/test.cpp src/reduc.cpp))
+$(eval $(call add_test_executable,etl_test_bias_add,src/test.cpp src/bias_add.cpp))
 
 # Create the benchmark executables
 BENCH_FILES=$(wildcard benchmark/src/benchmark*cpp)
@@ -274,6 +290,7 @@ $(eval $(call add_executable,benchmark_fft,benchmark/src/benchmark.cpp benchmark
 $(eval $(call add_executable,benchmark_gemm,benchmark/src/benchmark.cpp benchmark/src/benchmark_gemm.cpp))
 $(eval $(call add_executable,benchmark_pool,benchmark/src/benchmark.cpp benchmark/src/benchmark_pool.cpp))
 $(eval $(call add_executable,benchmark_thesis,benchmark/src/benchmark.cpp benchmark/src/benchmark_thesis.cpp))
+$(eval $(call add_executable,benchmark_trigo,benchmark/src/benchmark.cpp benchmark/src/benchmark_trigo.cpp))
 
 # Create various executables
 $(eval $(call add_executable,test_asm_1,workbench/src/test.cpp))
@@ -284,6 +301,7 @@ $(eval $(call add_executable,multi,workbench/src/multi.cpp))
 $(eval $(call add_executable,locality,workbench/src/locality.cpp))
 $(eval $(call add_executable,counters,workbench/src/counters.cpp))
 $(eval $(call add_executable,verify_cpm,workbench/src/verify_cpm.cpp))
+$(eval $(call add_executable,benchmark_paper,workbench/src/benchmark_paper.cpp))
 
 test_asm: release/bin/test_asm_1 release/bin/test_asm_2
 

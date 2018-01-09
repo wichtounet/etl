@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -116,7 +116,7 @@ TEMPLATE_TEST_CASE_2("trigo/cos/3", "[trigo][cos]", Z, etl::complex<float>, etl:
 }
 
 TEMPLATE_TEST_CASE_2("trigo/tanh/1", "dyn_matrix::dyn_matrix(T)", Z, double, float) {
-    etl::dyn_matrix<Z> a(3, 2, etl::values(1.0, 2.0, -1.0, -0.5, 0.6, 0.1));
+    etl::dyn_matrix<Z> a(3, 3, etl::values(1.0, 2.0, -1.0, -0.5, 0.6, 0.1, 0.2, 0.3, -0.2));
     etl::dyn_matrix<Z> b;
     b = etl::tanh(a);
 
@@ -150,7 +150,7 @@ TEMPLATE_TEST_CASE_2("trigo/tanh/3", "[trigo][tanh]", Z, etl::complex<float>, et
 }
 
 TEMPLATE_TEST_CASE_2("trigo/sinh/1", "dyn_matrix::dyn_matrix(T)", Z, double, float) {
-    etl::dyn_matrix<Z> a(3, 2, etl::values(1.0, 2.0, -1.0, -0.5, 0.6, 0.1));
+    etl::dyn_matrix<Z> a(3, 3, etl::values(1.0, 2.0, -1.0, -0.5, 0.6, 0.1, 0.2, 0.3, -0.2));
     etl::dyn_matrix<Z> b;
     b = etl::sinh(a);
 
@@ -184,7 +184,7 @@ TEMPLATE_TEST_CASE_2("trigo/sinh/3", "[trigo][sinh]", Z, etl::complex<float>, et
 }
 
 TEMPLATE_TEST_CASE_2("trigo/cosh/1", "dyn_matrix::dyn_matrix(T)", Z, double, float) {
-    etl::dyn_matrix<Z> a(3, 2, etl::values(1.0, 2.0, -1.0, -0.5, 0.6, 0.1));
+    etl::dyn_matrix<Z> a(3, 3, etl::values(1.0, 2.0, -1.0, -0.5, 0.6, 0.1, 0.2, 0.3, -0.1));
     etl::dyn_matrix<Z> b;
     b = etl::cosh(a);
 

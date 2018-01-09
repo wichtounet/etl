@@ -27,8 +27,8 @@ pipeline {
 
         stage ('build'){
             environment {
-               CXX = "g++-6.3.0"
-               LD = "g++-6.3.0"
+               CXX = "g++-6.4.0"
+               LD = "g++-6.4.0"
                ETL_MKL = 'true'
                ETL_COVERAGE = 'true'
             }
@@ -42,7 +42,7 @@ pipeline {
         stage ('test'){
             environment {
                 ETL_THREADS = "-j6"
-                ETL_GPP = "g++-6.3.0"
+                ETL_GPP = "g++-6.4.0"
             }
 
             steps {

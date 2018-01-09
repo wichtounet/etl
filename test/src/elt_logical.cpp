@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -36,9 +36,9 @@ TEST_CASE("elt_logical/or/1", "[compare]") {
 }
 
 TEST_CASE("elt_logical/xor/1", "[compare]") {
-    etl::fast_matrix<bool, 2, 2> a{false, false, true, true};
-    etl::fast_matrix<bool, 2, 2> b{false, true, true, false};
-    etl::fast_matrix<bool, 2, 2> c;
+    etl::fast_dyn_matrix<bool, 2, 2> a{false, false, true, true};
+    etl::fast_dyn_matrix<bool, 2, 2> b{false, true, true, false};
+    etl::fast_dyn_matrix<bool, 2, 2> c;
 
     c = logical_xor(a, b);
 

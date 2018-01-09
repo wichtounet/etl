@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -68,7 +68,7 @@ struct conv4_valid_flipped_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
 #ifndef ETL_MANUAL_SELECT
         if /*constexpr*/ (impl::cudnn::conv_possible<I, K, C>) {
-            impl::cudnn::conv4_forward(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
+            impl::cudnn::conv4_forward_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
         } else {
 #endif
             auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
@@ -144,7 +144,7 @@ struct dyn_conv4_valid_flipped_impl {
     static void apply(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
 #ifndef ETL_MANUAL_SELECT
         if /*constexpr*/ (impl::cudnn::conv_possible<I, K, C>) {
-            impl::cudnn::conv4_forward(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
+            impl::cudnn::conv4_forward_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
         } else {
 #endif
             auto impl = select_conv4_valid_impl<I, K, C>(etl::dim<2>(input), etl::dim<3>(input), etl::dim<2>(kernel), etl::dim<3>(kernel));
@@ -410,7 +410,7 @@ struct conv4_full_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
 #ifndef ETL_MANUAL_SELECT
         if /*constexpr*/ (impl::cudnn::conv_possible<I, K, C>) {
-            impl::cudnn::conv4_backward_data_full_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
+            impl::cudnn::conv4_backward_data_full(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
         } else {
 #endif
             auto impl = select_conv4_full_impl<I, K, C>(etl::dim<2>(kernel), etl::dim<3>(kernel));

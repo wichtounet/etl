@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -45,6 +45,7 @@ struct iterable {
      */
     template<bool B = DMA, cpp_enable_iff(B)>
     auto begin() noexcept {
+        as_derived().ensure_cpu_up_to_date();
         return as_derived().memory_start();
     }
 
@@ -54,6 +55,7 @@ struct iterable {
      */
     template<bool B = DMA, cpp_enable_iff(B)>
     auto end() noexcept {
+        as_derived().ensure_cpu_up_to_date();
         return as_derived().memory_end();
     }
 
@@ -63,6 +65,7 @@ struct iterable {
      */
     template<bool B = DMA, cpp_enable_iff(B)>
     auto cbegin() const noexcept {
+        as_derived().ensure_cpu_up_to_date();
         return as_derived().memory_start();
     }
 
@@ -72,6 +75,7 @@ struct iterable {
      */
     template<bool B = DMA, cpp_enable_iff(B)>
     auto cend() const noexcept {
+        as_derived().ensure_cpu_up_to_date();
         return as_derived().memory_end();
     }
 
@@ -81,6 +85,7 @@ struct iterable {
      */
     template<bool B = DMA, cpp_enable_iff(B)>
     auto begin() const noexcept {
+        as_derived().ensure_cpu_up_to_date();
         return as_derived().memory_start();
     }
 
@@ -90,6 +95,7 @@ struct iterable {
      */
     template<bool B = DMA, cpp_enable_iff(B)>
     auto end() const noexcept {
+        as_derived().ensure_cpu_up_to_date();
         return as_derived().memory_end();
     }
 

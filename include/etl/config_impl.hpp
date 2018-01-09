@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -43,6 +43,10 @@ static_assert(false, "ETL_CUDA should never be set directly");
 
 #ifndef ETL_CUFFT_MODE
 #define ETL_CUFFT_MODE
+#endif
+
+#ifndef ETL_CURAND_MODE
+#define ETL_CURAND_MODE
 #endif
 
 #ifndef ETL_CUDNN_MODE
@@ -128,6 +132,13 @@ static_assert(false, "EGBLAS is only intended to work with CUBLAS, not alone");
 #define ETL_CUBLAS_MODE_BOOL true
 #else
 #define ETL_CUBLAS_MODE_BOOL false
+#endif
+
+#ifdef ETL_CURAND_MODE
+#define ETL_CUDA
+#define ETL_CURAND_MODE_BOOL true
+#else
+#define ETL_CURAND_MODE_BOOL false
 #endif
 
 #ifdef ETL_CUFFT_MODE

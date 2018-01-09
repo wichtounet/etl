@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -523,7 +523,7 @@ decltype(auto) softmax_backward(O&& output, E&& errors) {
 template <typename O, typename E>
 auto tanh_backward(O&& output, E&& errors){
     static_assert(is_etl_expr<E>, "etl::tanh_derivative can only be used on ETL expressions");
-    return 1.0 - (output >> output) >> errors;
+    return (1.0 - (output >> output)) >> errors;
 }
 
 /*!

@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -273,7 +273,7 @@ void sub_ro() {
     etl::dump_counters();
 }
 
-// Simulate forward propagation in a neural network (with some ops as DLL)
+// Simulate forward propagation in a neural network (with same ops as DLL)
 void ml() {
     std::cout << "ML" << std::endl;
 
@@ -332,6 +332,7 @@ void ml() {
             P2_O = etl::max_pool_2d<2, 2>(C2_O);
 
             FC1_O = sigmoid(bias_add_2d(etl::reshape<32, 16 * 7 * 7>(P2_O) * FC1_W, FC1_B));
+            FC1_O = etl::inverted_dropout_mask(0.5f) >> FC1_O; // Dropout
             FC2_O = sigmoid(bias_add_2d(FC1_O * FC2_W, FC2_B));
 
             // Backward propagation of the errors
@@ -379,6 +380,205 @@ void ml() {
     etl::dump_counters();
 }
 
+// Make sure some expression are fully optimized
+void opt() {
+    std::cout << "Opt" << std::endl;
+
+#ifdef ETL_CUDA
+    etl::gpu_memory_allocator::clear();
+#endif
+
+    etl::reset_counters();
+
+    {
+        etl::dyn_matrix<float, 4> X(128, 3, 28, 28);
+        etl::dyn_matrix<float, 4> Y(128, 3, 28, 28);
+        etl::dyn_matrix<float, 4> YY(128, 3, 28, 28);
+
+        for (size_t i = 0; i < 10; ++i) {
+            // This should generate a single saxpy_3
+            Y = 1.02f * X + Y;
+
+            // This should generate a single saxpy_3
+            YY = 1.02f * X + Y;
+
+            // This should generate a single saxpy_3
+            Y = X + 1.04f * Y;
+
+            // This should generate a single saxpy_3
+            YY = X + 1.04f * Y;
+
+            // This should generate a single saxpy_3
+            Y = X * 1.02f + Y;
+
+            // This should generate a single saxpy_3
+            YY = X * 1.02f + Y;
+
+            // This should generate a single saxpy_3
+            Y = X + Y * 1.04f;
+
+            // This should generate a single saxpy_3
+            YY = X + Y * 1.04f;
+
+            // This should generate a single saxpby_3
+            Y = 1.02f * X + 1.04f * Y;
+
+            // This should generate a single saxpby_3
+            YY = 1.02f * X + 1.04f * Y;
+
+            // This should generate a single saxpby_3
+            Y = X * 1.0f + 1.04f * Y;
+
+            // This should generate a single saxpby_3
+            YY = X * 1.0f + 1.04f * Y;
+
+            // This should generate a single saxpby_3
+            Y = 1.02f * X + Y * 1.04f;
+
+            // This should generate a single saxpby_3
+            YY = 1.02f * X + Y * 1.04f;
+
+            // This should generate a single saxpby_3
+            Y = X * 1.0f + Y * 1.04f;
+
+            // This should generate a single saxpby_3
+            YY = X * 1.0f + Y * 1.04f;
+
+            // This should generate a single saxmy
+            Y = 1.02f * (X >> Y);
+
+            // This should generate a single saxmy_3
+            YY = 1.02f * (X >> Y);
+
+            // This should generate a single saxmy
+            Y = (X >> Y) * 1.02f;
+
+            // This should generate a single saxmy_3
+            YY = (X >> Y) * 1.02f;
+
+            // This should generate a single saxmy
+            Y = (1.02f * X) >> Y;
+
+            // This should generate a single saxmy_3
+            YY = (1.02f * X) >> Y;
+
+            // This should generate a single saxmy
+            Y = (X * 1.02f) >> Y;
+
+            // This should generate a single saxmy_3
+            YY = (X * 1.02f) >> Y;
+
+            // This should generate a single saxmy
+            Y = X >> (1.02f >> Y);
+
+            // This should generate a single saxmy_3
+            YY = X >> (1.02f >> Y);
+
+            // This should generate a single saxmy
+            Y = X >> (Y >> 1.02f);
+
+            // This should generate a single saxmy_3
+            YY = X >> (Y >> 1.02f);
+
+            // This should generate a single saxdy
+            Y = X / (1.02f * Y);
+
+            // This should generate a single saxdy_3
+            YY = X / (1.02f * Y);
+
+            // This should generate a single saxdy
+            Y = X / (Y * 1.02f);
+
+            // This should generate a single saxdy_3
+            YY = X / (Y * 1.02f);
+
+            // This should generate a single saxdy
+            Y = (1.02f * X) / Y;
+
+            // This should generate a single saxdy_3
+            YY = (1.02f * X) / Y;
+
+            // This should generate a single saxdy
+            Y = (X * 1.02f) / Y;
+
+            // This should generate a single saxdy_3
+            YY = (X * 1.02f) / Y;
+
+            // This should generate a single saxpy_3
+            Y = X - 1.04f * Y;
+
+            // This should generate a single saxpy_3
+            YY = X - 1.04f * Y;
+
+            // This should generate a single saxpy_3
+            Y = X - Y * 1.04f;
+
+            // This should generate a single saxpy_3
+            YY = X - Y * 1.04f;
+
+            // This should generate a single saxpy_3
+            Y = 1.02f * X - Y;
+
+            // This should generate a single saxpy_3
+            YY = 1.02f * X - Y;
+
+            // This should generate a single saxpy_3
+            Y = X * 1.02f - Y;
+
+            // This should generate a single saxpy_3
+            YY = X * 1.02f - Y;
+
+            // This should generate a single saxpy_3
+            Y = 1.02f * X - 1.04f * Y;
+
+            // This should generate a single saxpy_3
+            YY = 1.02f * X - 1.04f * Y;
+
+            // This should generate a single saxpy_3
+            Y = 1.02f * X - Y * 1.04f;
+
+            // This should generate a single saxpy_3
+            YY = 1.02f * X - Y * 1.04f;
+
+            // This should generate a single saxpy_3
+            Y = X * 1.02f - 1.04f * Y;
+
+            // This should generate a single saxpy_3
+            YY = X * 1.02f - 1.04f * Y;
+
+            // This should generate a single saxpy_3
+            Y = X * 1.02f - Y * 1.04f;
+
+            // This should generate a single saxpy_3
+            YY = X * 1.02f - Y * 1.04f;
+        }
+    }
+
+    etl::dump_counters();
+}
+
+void random_test() {
+    std::cout << "Random" << std::endl;
+
+#ifdef ETL_CUDA
+    etl::gpu_memory_allocator::clear();
+#endif
+
+    etl::reset_counters();
+
+    {
+        using T = float;
+
+        etl::dyn_matrix<T, 4> I(32, 3, 28, 28);
+        etl::dyn_matrix<T, 2> L(32, 10);
+
+        I = etl::normal_generator<T>();
+        L = etl::uniform_generator<T>(10, 20);
+    }
+
+    etl::dump_counters();
+}
+
 } // end of anonymous namespace
 
 int main() {
@@ -389,8 +589,10 @@ int main() {
     expr();
     direct();
     ml();
+    opt();
     sub();
     sub_ro();
+    random_test();
 
     auto end_time = timer_clock::now();
     auto duration = std::chrono::duration_cast<milliseconds>(end_time - start_time);

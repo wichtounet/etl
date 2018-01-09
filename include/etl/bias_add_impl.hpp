@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -19,9 +19,10 @@ namespace etl {
  * bias_add
  */
 enum class bias_add_impl {
-    STD,  ///< Standard implementation
-    VEC,  ///< VEC implementation
-    CUDNN ///< CUDNN (GPU) implementation
+    STD,    ///< Standard implementation
+    VEC,    ///< VEC implementation
+    EGBLAS, ///< ETL-GPU-BLAS (GPU) implementation
+    CUDNN   ///< CUDNN (GPU) implementation
 };
 
 } //end of namespace etl

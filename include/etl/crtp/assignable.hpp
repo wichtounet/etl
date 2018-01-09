@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -33,7 +33,21 @@ struct assignable {
     template <typename E, cpp_enable_iff(is_etl_expr<E>)>
     derived_t& operator=(E&& e) {
         validate_assign(as_derived(), e);
-        e.assign_to(as_derived());
+
+        if /*constexpr*/ (!decay_traits<E>::is_linear) {
+            if (e.alias(as_derived())) {
+                auto tmp = etl::force_temporary_dim_only(as_derived());
+
+                e.assign_to(tmp);
+
+                as_derived() = tmp;
+            } else {
+                e.assign_to(as_derived());
+            }
+        } else {
+            e.assign_to(as_derived());
+        }
+
         return as_derived();
     }
 

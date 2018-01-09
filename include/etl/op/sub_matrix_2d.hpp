@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -261,6 +261,24 @@ public:
     // Internals
 
     /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_cpu_up_to_date() const {
+        // The sub value must be ensured
+        sub_expr.ensure_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_gpu_up_to_date() const {
+        // The sub value must be ensured
+        sub_expr.ensure_gpu_up_to_date();
+    }
+
+    /*!
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
@@ -303,8 +321,8 @@ struct etl_traits<etl::sub_matrix_2d<T, Aligned>> {
     static constexpr bool is_generator    = false;                       ///< Indicates if the expression is a generator
     static constexpr bool is_padded       = false;                       ///< Indicates if the expression is padded
     static constexpr bool is_aligned      = false;                       ///< Indicates if the expression is padded
-    static constexpr bool is_temporary = sub_traits::is_temporary; ///< Indicates if the exxpression needs a evaluator visitor
-    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
+    static constexpr bool is_temporary    = sub_traits::is_temporary;    ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr bool gpu_computable  = false;                       ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order  = sub_traits::storage_order;   ///< The expression's storage order
 
     /*!

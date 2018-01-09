@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -35,7 +35,7 @@ struct build_fast_dyn_matrix_type<E, std::index_sequence<I...>> {
      */
     using type = fast_matrix_impl<
         value_t<E>,
-        cpp::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
+        etl::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
         decay_traits<E>::storage_order,
         decay_traits<E>::template dim<I>()...>;
 };
@@ -63,7 +63,7 @@ struct build_fast_dyn_matrix_type_opp<E, std::index_sequence<I...>> {
      */
     using type = fast_matrix_impl<
         value_t<E>,
-        cpp::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
+        etl::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
         reverse(decay_traits<E>::storage_order),
         decay_traits<E>::template dim<I>()...>;
 };
@@ -300,48 +300,6 @@ decltype(auto) force_temporary_gpu_dim_only_t(E&& expr) {
     mat.inherit(expr);
     mat.ensure_gpu_allocated();
     return mat;
-}
-
-/*!
- * \brief Force a temporary out of the binary expression, without copying its
- * content. This select the most appropritate lhs or rhs for copying dimensions.
- *
- * This has the same behaviour as force_temporary(expr), but has
- * stricter conditions of for use. It can only be used on DMA
- * expressions and the result is guaranteed to preserve CPU and GPU
- * status.
- *
- * In case of a fast matrix, a fast matrix with vector storage is created  even
- * if the input has array storage.
- *
- * \param expr The expression to make a temporary from
- * \return a temporary of the expression
- */
-template <typename L, typename R, cpp_enable_iff(!is_scalar<L>)>
-decltype(auto) force_temporary_gpu_dim_only(L&& lhs, R&& rhs) {
-    cpp_unused(rhs);
-    return force_temporary_gpu_dim_only(lhs);
-}
-
-/*!
- * \brief Force a temporary out of the binary expression, without copying its
- * content. This select the most appropritate lhs or rhs for copying dimensions.
- *
- * This has the same behaviour as force_temporary(expr), but has
- * stricter conditions of for use. It can only be used on DMA
- * expressions and the result is guaranteed to preserve CPU and GPU
- * status.
- *
- * In case of a fast matrix, a fast matrix with vector storage is created  even
- * if the input has array storage.
- *
- * \param expr The expression to make a temporary from
- * \return a temporary of the expression
- */
-template <typename L, typename R, cpp_enable_iff(is_scalar<L>)>
-decltype(auto) force_temporary_gpu_dim_only(L&& lhs, R&& rhs) {
-    cpp_unused(lhs);
-    return force_temporary_gpu_dim_only(rhs);
 }
 
 } //end of namespace etl

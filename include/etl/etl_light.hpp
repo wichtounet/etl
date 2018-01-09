@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -51,11 +51,11 @@
 
 // The operators
 #include "etl/op/scalar.hpp"
-#include "etl/op/generators.hpp"
 #include "etl/op/transformers.hpp"
 #include "etl/op/virtual_views.hpp"
 #include "etl/op/unary_op.hpp"
 #include "etl/op/binary_op.hpp"
+#include "etl/op/generators.hpp"
 
 //Global test functions
 #include "etl/globals.hpp"

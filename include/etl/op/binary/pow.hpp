@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -80,9 +80,9 @@ struct pow_binary_op {
      *
      * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
-    template <typename X, typename Y>
-    static auto gpu_compute(const X& x, const Y& y) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(x);
+    template <typename X, typename Y, typename YY>
+    static auto gpu_compute_hint(const X& x, const Y& y, YY& yy) noexcept {
+        decltype(auto) t1 = smart_gpu_compute_hint(x, yy);
 
         auto t2 = force_temporary_gpu(t1);
 
@@ -92,7 +92,7 @@ struct pow_binary_op {
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
 
         T alpha(1.0);
-        impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
+        impl::egblas::pow_yx(etl::size(yy), alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
 #else
         cpp_unused(y);
 #endif
@@ -116,7 +116,7 @@ struct pow_binary_op {
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
 
         T alpha(1.0);
-        impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
+        impl::egblas::pow_yx(etl::size(yy), alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
 #else
         cpp_unused(y);
 #endif
@@ -228,9 +228,9 @@ struct integer_pow_binary_op {
      *
      * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
-    template <typename X, typename Y>
-    static auto gpu_compute(const X& x, const Y& y) noexcept {
-        decltype(auto) t1 = smart_gpu_compute(x);
+    template <typename X, typename Y, typename YY>
+    static auto gpu_compute_hint(const X& x, const Y& y, YY& yy) noexcept {
+        decltype(auto) t1 = smart_gpu_compute_hint(x, yy);
 
         auto t2 = force_temporary_gpu(t1);
 
@@ -240,7 +240,7 @@ struct integer_pow_binary_op {
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
 
         T alpha(1.0);
-        impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
+        impl::egblas::pow_yx(etl::size(yy), alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
 #else
         cpp_unused(y);
 #endif
@@ -264,7 +264,7 @@ struct integer_pow_binary_op {
         cuda_check(cudaMemcpy(power_gpu.get(), &power_cpu, 1 * sizeof(T), cudaMemcpyHostToDevice));
 
         T alpha(1.0);
-        impl::egblas::pow_yx(etl::size(x), &alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
+        impl::egblas::pow_yx(etl::size(yy), alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
 #else
         cpp_unused(y);
 #endif

@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -44,9 +44,10 @@ static constexpr bool has_cconj = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void conj(size_t n, std::complex<float>* alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+inline void conj(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CCONJ
-    egblas_cconj(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+    inc_counter("egblas");
+    egblas_cconj(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -68,9 +69,10 @@ inline void conj(size_t n, std::complex<float>* alpha, std::complex<float>* A , 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void conj(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+inline void conj(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CCONJ
-    egblas_cconj(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+    inc_counter("egblas");
+    egblas_cconj(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -101,9 +103,10 @@ static constexpr bool has_zconj = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void conj(size_t n, std::complex<double>* alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+inline void conj(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_Zconj
-    egblas_zconj(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+    inc_counter("egblas");
+    egblas_zconj(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -125,9 +128,10 @@ inline void conj(size_t n, std::complex<double>* alpha, std::complex<double>* A 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void conj(size_t n, etl::complex<double>* alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+inline void conj(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_Zconj
-    egblas_zconj(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+    inc_counter("egblas");
+    egblas_zconj(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);

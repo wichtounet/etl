@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -29,6 +29,12 @@ struct is_vector_impl : std::false_type {};
  */
 template <typename... Args>
 struct is_vector_impl<std::vector<Args...>> : std::true_type {};
+
+/*!
+ * \copydoc is_vector
+ */
+template <typename... Args>
+struct is_vector_impl<etl::simple_vector<Args...>> : std::true_type {};
 
 /*!
  * \brief Traits to test if a type is a std::vector

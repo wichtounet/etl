@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -1265,39 +1265,6 @@ constexpr size_t size(const E& expr) noexcept {
 }
 
 /*!
- * \brief Return the size of one of the expression, not considering scalar.
- *
- * One of the two expression must not be a scalar
- *
- * \param expr1 The first expression
- * \param expr2 The first expression
- *
- * \return the size of one of the expression not being a scalar
- */
-template<typename E1, typename E2, cpp_enable_iff(is_scalar<E1>)>
-size_t smart_size(const E1& expr1, const E2& expr2){
-    cpp_unused(expr1);
-    return etl::size(expr2);
-}
-
-
-/*!
- * \brief Return the size of one of the expression, not considering scalar.
- *
- * One of the two expression must not be a scalar
- *
- * \param expr1 The first expression
- * \param expr2 The first expression
- *
- * \return the size of one of the expression not being a scalar
- */
-template<typename E1, typename E2, cpp_enable_iff(!is_scalar<E1>)>
-size_t smart_size(const E1& expr1, const E2& expr2){
-    cpp_unused(expr2);
-    return etl::size(expr1);
-}
-
-/*!
  * \brief Returns the sub-size of the given ETL expression, i.e. the size not considering the first dimension.
  * \param expr The expression to get the sub-size from.
  * \return The sub-size of the given expression.
@@ -1616,8 +1583,9 @@ decltype(auto) smart_forward_gpu(E& expr) {
  *
  * \return A gpu-computed expression reprensenting the results of the input expr
  */
-template <typename E, cpp_enable_iff(is_temporary_expr<E> && !E::gpu_computable)>
-decltype(auto) smart_gpu_compute(E& expr) {
+template <typename E, typename Y, cpp_enable_iff(is_temporary_expr<E> && !E::gpu_computable)>
+decltype(auto) smart_gpu_compute_hint(E& expr, Y& y) {
+    cpp_unused(y);
     auto t = force_temporary(expr);
     t.ensure_gpu_up_to_date();
     return t;
@@ -1633,8 +1601,9 @@ decltype(auto) smart_gpu_compute(E& expr) {
  *
  * \return A gpu-computed expression reprensenting the results of the input expr
  */
-template <typename E, cpp_enable_iff(is_temporary_expr<E> && E::gpu_computable)>
-decltype(auto) smart_gpu_compute(E& expr) {
+template <typename E, typename Y, cpp_enable_iff(is_temporary_expr<E> && E::gpu_computable)>
+decltype(auto) smart_gpu_compute_hint(E& expr, Y& y) {
+    cpp_unused(y);
     return force_temporary_gpu(expr);
 }
 
@@ -1648,9 +1617,9 @@ decltype(auto) smart_gpu_compute(E& expr) {
  *
  * \return A gpu-computed expression reprensenting the results of the input expr
  */
-template <typename E, cpp_enable_iff(!is_temporary_expr<E>)>
-decltype(auto) smart_gpu_compute(E& expr) {
-    return expr.gpu_compute();
+template <typename E, typename Y, cpp_enable_iff(!is_temporary_expr<E>)>
+decltype(auto) smart_gpu_compute_hint(E& expr, Y& y) {
+    return expr.gpu_compute_hint(y);
 }
 
 // Binary smart_gpu_compute
@@ -1745,8 +1714,7 @@ decltype(auto) smart_gpu_compute(X& x, Y& y) {
  */
 template <typename X, typename Y, cpp_enable_iff(should_gpu_compute_direct<X>)>
 decltype(auto) select_smart_gpu_compute(X& x, Y& y) {
-    cpp_unused(y);
-    return smart_gpu_compute(x);
+    return smart_gpu_compute_hint(x, y);
 }
 
 /*!

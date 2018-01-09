@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -47,6 +47,7 @@ static constexpr bool has_sgreater_equal = false;
  */
 inline void greater_equal(size_t n, const float* A, size_t lda, const float* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_SGREATER_EQUAL
+    inc_counter("egblas");
     egblas_sgreater_equal(n, A, lda, B, ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -82,6 +83,7 @@ static constexpr bool has_dgreater_equal = false;
  */
 inline void greater_equal(size_t n, const double* A, size_t lda, const double* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_DGREATER_EQUAL
+    inc_counter("egblas");
     egblas_dgreater_equal(n, A, lda, B, ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -117,6 +119,7 @@ static constexpr bool has_cgreater_equal = false;
  */
 inline void greater_equal(size_t n, const std::complex<float>* A, size_t lda, const std::complex<float>* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_CGREATER_EQUAL
+    inc_counter("egblas");
     egblas_cgreater_equal(n, reinterpret_cast<const cuComplex*>(A), lda, reinterpret_cast<const cuComplex*>(B), ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -143,6 +146,7 @@ inline void greater_equal(size_t n, const std::complex<float>* A, size_t lda, co
  */
 inline void greater_equal(size_t n, const etl::complex<float>* A, size_t lda, const etl::complex<float>* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_CGREATER_EQUAL
+    inc_counter("egblas");
     egblas_cgreater_equal(n, reinterpret_cast<const cuComplex*>(A), lda, reinterpret_cast<const cuComplex*>(B), ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -178,6 +182,7 @@ static constexpr bool has_zgreater_equal = false;
  */
 inline void greater_equal(size_t n, const std::complex<double>* A, size_t lda, const std::complex<double>* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_ZGREATER_EQUAL
+    inc_counter("egblas");
     egblas_zgreater_equal(n, reinterpret_cast<const cuDoubleComplex*>(A), lda, reinterpret_cast<const cuDoubleComplex*>(B), ldb, C, ldc);
 #else
     cpp_unused(n);
@@ -204,6 +209,7 @@ inline void greater_equal(size_t n, const std::complex<double>* A, size_t lda, c
  */
 inline void greater_equal(size_t n, const etl::complex<double>* A, size_t lda, const etl::complex<double>* B, size_t ldb, bool* C, size_t ldc) {
 #ifdef EGBLAS_HAS_ZGREATER_EQUAL
+    inc_counter("egblas");
     egblas_zgreater_equal(n, reinterpret_cast<const cuDoubleComplex*>(A), lda, reinterpret_cast<const cuDoubleComplex*>(B), ldb, C, ldc);
 #else
     cpp_unused(n);

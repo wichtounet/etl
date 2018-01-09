@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -26,7 +26,7 @@ void direct_fill(E&& mat, V value){
     value_t<E> value_conv = value;
 
     if(mat.gpu_memory()){
-        impl::egblas::scalar_set(mat.gpu_memory(), etl::size(mat), 1, &value_conv);
+        impl::egblas::scalar_set(mat.gpu_memory(), etl::size(mat), 1, value_conv);
 
         mat.validate_gpu();
     }
@@ -46,7 +46,7 @@ void direct_fill(E&& mat, V value){
     value_t<E> value_conv = value;
 
     if(mat.gpu_memory()){
-        impl::egblas::scalar_set(mat.gpu_memory(), etl::size(mat), 1, &value_conv);
+        impl::egblas::scalar_set(mat.gpu_memory(), etl::size(mat), 1, value_conv);
 
         mat.validate_gpu();
     }

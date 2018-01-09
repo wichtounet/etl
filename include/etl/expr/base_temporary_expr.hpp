@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -277,7 +277,9 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    auto& gpu_compute(){
+    template <typename Y>
+    auto& gpu_compute_hint(Y& y){
+        cpu_unused(y);
         this->ensure_gpu_up_to_date();
         return as_derived();
     }
@@ -286,7 +288,9 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    const auto& gpu_compute() const {
+    template <typename Y>
+    const auto& gpu_compute_hint(Y& y) const {
+        cpu_unused(y);
         this->ensure_gpu_up_to_date();
         return as_derived();
     }
@@ -646,8 +650,6 @@ struct base_temporary_expr_tern : base_temporary_expr<D, Fast> {
 
     using this_type = base_temporary_expr_tern<D, A, B, C>; ///< This type
     using base_type = base_temporary_expr<D, Fast>;         ///< The base type
-
-private:
 
     A _a;                       ///< The first sub expression reference
     B _b;                       ///< The second sub expression reference

@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -16,6 +16,8 @@
 
 #include "etl/impl/decomposition.hpp"
 #include "etl/impl/det.hpp"
+
+#include "etl/impl/egblas/shuffle.hpp"
 
 namespace etl {
 
@@ -643,7 +645,10 @@ bool qr(AT& A, QT& Q, RT& R) {
 
 /*!
  * \brief Shuffle all the elements of an ETL vector or matrix (considered as
- * array)
+ * array).
+ *
+ * Note: This function will be executed on GPU if EGBLAS is
+ * configured and the shuffle operation is available.
  *
  * \param vector The vector to shuffle
  * \param g The generator to use for random number generation
@@ -656,22 +661,35 @@ void shuffle_flat(T& vector, G&& g){
         return;
     }
 
-    using distribution_t = typename std::uniform_int_distribution<size_t>;
-    using param_t        = typename distribution_t::param_type;
+    if /*constexpr*/ (impl::egblas::has_shuffle_seed) {
+        std::uniform_int_distribution<size_t> seed_dist;
 
-    distribution_t dist;
+        vector.ensure_gpu_up_to_date();
 
-    for (auto i = n - 1; i > 0; --i) {
-        auto new_i = dist(g, param_t(0, i));
+        impl::egblas::shuffle_seed(n, vector.gpu_memory(), sizeof(etl::value_t<T>), seed_dist(g));
 
-        using std::swap;
-        swap(vector[i], vector[new_i]);
+        vector.invalidate_cpu();
+    } else {
+        using distribution_t = typename std::uniform_int_distribution<size_t>;
+        using param_t        = typename distribution_t::param_type;
+
+        distribution_t dist;
+
+        for (auto i = n - 1; i > 0; --i) {
+            auto new_i = dist(g, param_t(0, i));
+
+            using std::swap;
+            swap(vector[i], vector[new_i]);
+        }
     }
 }
 
 /*!
  * \brief Shuffle all the elements of an ETL vector or matrix (considered as
  * array)
+ *
+ * Note: This function will be executed on GPU if EGBLAS is
+ * configured and the shuffle operation is available.
  *
  * \param vector The vector to shuffle
  */
@@ -689,6 +707,9 @@ void shuffle_flat(T& vector){
  * The elements will be shuffled according to the first dimension of
  * the matrix.
  *
+ * Note: This function will be executed on GPU if EGBLAS is
+ * configured and the shuffle operation is available.
+ *
  * \param matrix The matrix to shuffle
  * \param g The generator to use for random number generation
  */
@@ -700,19 +721,29 @@ void shuffle_first(T& matrix, G&& g){
         return;
     }
 
-    using distribution_t = typename std::uniform_int_distribution<size_t>;
-    using param_t        = typename distribution_t::param_type;
+    if /*constexpr*/ (impl::egblas::has_shuffle_seed) {
+        std::uniform_int_distribution<size_t> seed_dist;
 
-    distribution_t dist;
+        matrix.ensure_gpu_up_to_date();
 
-    auto temp = etl::force_temporary(matrix(0));
+        impl::egblas::shuffle_seed(n, matrix.gpu_memory(), sizeof(etl::value_t<T>) * (etl::size(matrix) / n), seed_dist(g));
 
-    for (auto i = n - 1; i > 0; --i) {
-        auto new_i = dist(g, param_t(0, i));
+        matrix.invalidate_cpu();
+    } else {
+        using distribution_t = typename std::uniform_int_distribution<size_t>;
+        using param_t        = typename distribution_t::param_type;
 
-        temp = matrix(i);
-        matrix(i) = matrix(new_i);
-        matrix(new_i) = temp;
+        distribution_t dist;
+
+        auto temp = etl::force_temporary(matrix(0));
+
+        for (auto i = n - 1; i > 0; --i) {
+            auto new_i = dist(g, param_t(0, i));
+
+            temp          = matrix(i);
+            matrix(i)     = matrix(new_i);
+            matrix(new_i) = temp;
+        }
     }
 }
 
@@ -721,6 +752,9 @@ void shuffle_first(T& matrix, G&& g){
  *
  * The elements will be shuffled according to the first dimension of
  * the matrix.
+ *
+ * Note: This function will be executed on GPU if EGBLAS is
+ * configured and the shuffle operation is available.
  *
  * \param matrix The matrix to shuffle
  */
@@ -734,6 +768,10 @@ void shuffle_first(T& matrix){
 
 /*!
  * \brief Shuffle all the elements of an ETL vector
+ *
+ * Note: This function will be executed on GPU if EGBLAS is
+ * configured and the shuffle operation is available.
+ *
  * \param vector The vector to shuffle
  */
 template<typename T, cpp_enable_iff(is_1d<T>)>
@@ -743,6 +781,10 @@ void shuffle(T& vector){
 
 /*!
  * \brief Shuffle all the elements of an ETL vector
+ *
+ * Note: This function will be executed on GPU if EGBLAS is
+ * configured and the shuffle operation is available.
+ *
  * \param vector The vector to shuffle
  * \param g The generator to use for random number generation
  */
@@ -757,6 +799,10 @@ void shuffle(T& vector, G&& g){
  * The elements will be shuffled according to the first dimension of
  * the matrix.
  *
+ * Note: This function will be executed on GPU if EGBLAS is
+ * configured and the shuffle operation is available.
+ *
+ *
  * \param matrix The matrix to shuffle
  */
 template<typename T, cpp_enable_iff(decay_traits<T>::dimensions() > 1)>
@@ -770,6 +816,10 @@ void shuffle(T& matrix){
  * The elements will be shuffled according to the first dimension of
  * the matrix.
  *
+ * Note: This function will be executed on GPU if EGBLAS is
+ * configured and the shuffle operation is available.
+ *
+ *
  * \param matrix The matrix to shuffle
  * \param g The generator to use for random number generation
  */
@@ -780,6 +830,10 @@ void shuffle(T& matrix, G&& g){
 
 /*!
  * \brief Shuffle all the elements of two vectors, using the same permutation
+ *
+ * Note: This function will be executed on GPU if EGBLAS is
+ * configured and the par_shuffle operation is available.
+ *
  * \param v1 The first vector to shuffle
  * \param v2 The second vector to shuffle
  */
@@ -795,22 +849,41 @@ void parallel_shuffle_flat(T1& v1, T2& v2, G&& g){
         return;
     }
 
-    using distribution_t = typename std::uniform_int_distribution<size_t>;
-    using param_t        = typename distribution_t::param_type;
+    if /*constexpr*/ (impl::egblas::has_par_shuffle_seed) {
+        std::uniform_int_distribution<size_t> seed_dist;
 
-    distribution_t dist;
+        v1.ensure_gpu_up_to_date();
+        v2.ensure_gpu_up_to_date();
 
-    for (auto i = n - 1; i > 0; --i) {
-        auto new_i = dist(g, param_t(0, i));
+        impl::egblas::par_shuffle_seed(n,
+            v1.gpu_memory(), sizeof(etl::value_t<T1>),
+            v2.gpu_memory(), sizeof(etl::value_t<T2>),
+            seed_dist(g));
 
-        using std::swap;
-        swap(v1[i], v1[new_i]);
-        swap(v2[i], v2[new_i]);
+        v1.invalidate_cpu();
+        v2.invalidate_cpu();
+    } else {
+        using distribution_t = typename std::uniform_int_distribution<size_t>;
+        using param_t        = typename distribution_t::param_type;
+
+        distribution_t dist;
+
+        for (auto i = n - 1; i > 0; --i) {
+            auto new_i = dist(g, param_t(0, i));
+
+            using std::swap;
+            swap(v1[i], v1[new_i]);
+            swap(v2[i], v2[new_i]);
+        }
     }
 }
 
 /*!
  * \brief Shuffle all the elements of two vectors, using the same permutation
+ *
+ * Note: This function will be executed on GPU if EGBLAS is
+ * configured and the par_shuffle operation is available.
+ *
  * \param v1 The first vector to shuffle
  * \param v2 The second vector to shuffle
  */
@@ -828,6 +901,9 @@ void parallel_shuffle_flat(T1& v1, T2& v2){
  * The elements will be shuffled according to the first dimension of
  * the matrix.
  *
+ * Note: This function will be executed on GPU if EGBLAS is
+ * configured and the par_shuffle operation is available.
+ *
  * \param m1 The first matrix to shuffle
  * \param m2 The first matrix to shuffle
  */
@@ -841,24 +917,39 @@ void parallel_shuffle_first(T1& m1, T2& m2, G&& g){
         return;
     }
 
-    using distribution_t = typename std::uniform_int_distribution<size_t>;
-    using param_t        = typename distribution_t::param_type;
+    if /*constexpr*/ (impl::egblas::has_par_shuffle_seed) {
+        std::uniform_int_distribution<size_t> seed_dist;
 
-    distribution_t dist;
+        m1.ensure_gpu_up_to_date();
+        m2.ensure_gpu_up_to_date();
 
-    auto t1 = etl::force_temporary(m1(0));
-    auto t2 = etl::force_temporary(m2(0));
+        impl::egblas::par_shuffle_seed(n,
+            m1.gpu_memory(), sizeof(etl::value_t<T1>) * (etl::size(m1) / n),
+            m2.gpu_memory(), sizeof(etl::value_t<T2>) * (etl::size(m2) / n),
+            seed_dist(g));
 
-    for (auto i = n - 1; i > 0; --i) {
-        auto new_i = dist(g, param_t(0, i));
+        m1.invalidate_cpu();
+        m2.invalidate_cpu();
+    } else {
+        using distribution_t = typename std::uniform_int_distribution<size_t>;
+        using param_t        = typename distribution_t::param_type;
 
-        t1 = m1(i);
-        m1(i) = m1(new_i);
-        m1(new_i) = t1;
+        distribution_t dist;
 
-        t2 = m2(i);
-        m2(i) = m2(new_i);
-        m2(new_i) = t2;
+        auto t1 = etl::force_temporary(m1(0));
+        auto t2 = etl::force_temporary(m2(0));
+
+        for (auto i = n - 1; i > 0; --i) {
+            auto new_i = dist(g, param_t(0, i));
+
+            t1        = m1(i);
+            m1(i)     = m1(new_i);
+            m1(new_i) = t1;
+
+            t2        = m2(i);
+            m2(i)     = m2(new_i);
+            m2(new_i) = t2;
+        }
     }
 }
 
@@ -867,6 +958,9 @@ void parallel_shuffle_first(T1& m1, T2& m2, G&& g){
  *
  * The elements will be shuffled according to the first dimension of
  * the matrix.
+ *
+ * Note: This function will be executed on GPU if EGBLAS is
+ * configured and the par_shuffle operation is available.
  *
  * \param m1 The first matrix to shuffle
  * \param m2 The first matrix to shuffle
@@ -880,51 +974,250 @@ void parallel_shuffle_first(T1& m1, T2& m2){
 }
 
 /*!
- * \brief Shuffle all the elements of two vectors, using the same permutation
- * \param v1 The first vector to shuffle
- * \param v2 The second vector to shuffle
+ * \brief Shuffle all the elements of two vectors or matrices, using the same permutation
+ *
+ * Note: This function will be executed on GPU if EGBLAS is
+ * configured and the par_shuffle_seed operation is available.
+ *
+ * \param v1 The first vector or matrix to shuffle
+ * \param v2 The second vector or matrix to shuffle
  */
-template<typename T1, typename T2, cpp_enable_iff(is_1d<T1>)>
+template<typename T1, typename T2>
 void parallel_shuffle(T1& v1, T2& v2){
-    parallel_shuffle_flat(v1, v2);
+    static std::random_device rd;
+    static etl::random_engine g(rd());
+
+    parallel_shuffle(v1, v2, g);
+}
+
+template<typename T, cpp_enable_if(is_1d<T>)>
+void shuffle_swap(T& v1, size_t i, size_t new_i){
+    auto t = v1(i);
+    v1(i) = v1(new_i);
+    v1(new_i) = t;
+}
+
+template<typename T, cpp_disable_if(is_1d<T>)>
+void shuffle_swap(T& v1, size_t i, size_t new_i){
+    auto t = etl::force_temporary(v1(i));
+    v1(i) = v1(new_i);
+    v1(new_i) = t;
 }
 
 /*!
- * \brief Shuffle all the elements of two vectors, using the same permutation
- * \param v1 The first vector to shuffle
- * \param v2 The second vector to shuffle
+ * \brief Shuffle all the elements of two vectors or matrices, using the same permutation
+ *
+ * Note: This function will be executed on GPU if EGBLAS is
+ * configured and the par_shuffle_seed operation is available.
+ *
+ * \param v1 The first vector or matrix to shuffle
+ * \param v2 The second vector or matrix to shuffle
  */
-template<typename T1, typename T2, typename G, cpp_enable_iff(is_1d<T1>)>
+template<typename T1, typename T2, typename G>
 void parallel_shuffle(T1& v1, T2& v2, G&& g){
-    parallel_shuffle_flat(v1, v2, g);
+    cpp_assert(etl::dim<0>(v1) == etl::dim<0>(v2), "Impossible to shuffle together matrices of different first dimension");
+
+    const auto n = etl::dim<0>(v1);
+
+    if(n < 2){
+        return;
+    }
+
+    if /*constexpr*/ (impl::egblas::has_par_shuffle_seed) {
+        std::uniform_int_distribution<size_t> seed_dist;
+
+        v1.ensure_gpu_up_to_date();
+        v2.ensure_gpu_up_to_date();
+
+        impl::egblas::par_shuffle_seed(n,
+            v1.gpu_memory(), sizeof(etl::value_t<T1>) * (etl::size(v1) / n),
+            v2.gpu_memory(), sizeof(etl::value_t<T2>) * (etl::size(v2) / n),
+            seed_dist(g));
+
+        v1.invalidate_cpu();
+        v2.invalidate_cpu();
+    } else {
+        using distribution_t = typename std::uniform_int_distribution<size_t>;
+        using param_t        = typename distribution_t::param_type;
+
+        distribution_t dist;
+
+        for (auto i = n - 1; i > 0; --i) {
+            auto new_i = dist(g, param_t(0, i));
+
+            shuffle_swap(v1, i, new_i);
+            shuffle_swap(v2, i, new_i);
+        }
+    }
 }
 
 /*!
- * \brief Shuffle all the elements of two matrices, using the same permutation.
+ * \brief Merge sub inside merged at the given position
  *
- * The elements will be shuffled according to the first dimension of
- * the matrix.
+ * \param merged The merged result
+ * \param sub The data to merge inside merged
+ * \param index The position at which to merge
  *
- * \param m1 The first matrix to shuffle
- * \param m2 The first matrix to shuffle
+ * \return merged
  */
-template<typename T1, typename T2, cpp_enable_iff(decay_traits<T1>::dimensions() > 1)>
-void parallel_shuffle(T1& m1, T2& m2){
-    parallel_shuffle_first(m1, m2);
+template<typename M, typename N>
+M& merge(M& merged, const N& sub, size_t index){
+    const size_t s = etl::size(sub);
+    const size_t n = index * s;
+
+    memory_slice(merged, n, n + s) = sub;
+
+    return merged;
 }
 
 /*!
- * \brief Shuffle all the elements of two matrices, using the same permutation.
+ * \brief Merge sub inside merged at the given position, for each batch.
  *
- * The elements will be shuffled according to the first dimension of
- * the matrix.
+ * \param merged The merged result
+ * \param sub The data to merge inside merged
+ * \param index The position at which to merge
  *
- * \param m1 The first matrix to shuffle
- * \param m2 The first matrix to shuffle
+ * \return merged
  */
-template<typename T1, typename T2, typename G, cpp_enable_iff(decay_traits<T1>::dimensions() > 1)>
-void parallel_shuffle(T1& m1, T2& m2, G&& g){
-    parallel_shuffle_first(m1, m2, g);
+template<typename M, typename N>
+M& batch_merge(M& merged, const N& sub, size_t index){
+    const size_t s = etl::size(sub(0));
+    const size_t n = index * s;
+
+    for(size_t b = 0; b < etl::dim<0>(merged); ++b){
+        memory_slice(merged(b), n, n + s) = sub(b);
+    }
+
+    return merged;
+}
+
+/*!
+ * \brief Dispatch a part of merged to dispatched from the given position
+ *
+ * \param dispatched The dispatched result
+ * \param merged The data to dispatch inside dispatched
+ * \param index The position from which to dispatch
+ *
+ * \return dispatched
+ */
+template<typename M, typename N>
+M& dispatch(M& dispatched, const N& merged, size_t index){
+    const size_t s = etl::size(dispatched);
+    const size_t n = index * s;
+
+    dispatched = memory_slice(merged, n, n + s);
+
+    return dispatched;
+}
+
+/*!
+ * \brief Dispatch a part of merged to dispatched from the given position, for each batch
+ *
+ * \param dispatched The dispatched result
+ * \param merged The data to dispatch inside dispatched
+ * \param index The position from which to dispatch
+ *
+ * \return dispatched
+ */
+template<typename M, typename N>
+M& batch_dispatch(M& dispatched, const N& merged, size_t index){
+    const size_t s = etl::size(dispatched(0));
+    const size_t n = index * s;
+
+    for(size_t b = 0; b < etl::dim<0>(merged); ++b){
+        dispatched(b) = memory_slice(merged(b), n, n + s);
+    }
+
+    return dispatched;
+}
+
+/*!
+ * \brief Binarize the given ETL contrainer.
+ * \param matrix The container binarize
+ * \param b The binarization threshold.
+ */
+template<typename M, typename T>
+void binarize(M& matrix, T b){
+    using VT = value_t<M>;
+
+    for(auto& value : matrix){
+        value = value > b ? VT(1) : VT(0);
+    }
+}
+
+/*!
+ * \brief Normalize the given ETL contrainer to zero-mean and unit-variance.
+ * \param matrix The container to normalize
+ */
+template<typename M>
+void normalize_flat(M& matrix){
+    using VT = value_t<M>;
+
+    auto m = mean(matrix);
+
+    matrix = matrix - m;
+
+    auto s = stddev(matrix, 0.0);
+
+    if (s != VT(0)) {
+        matrix = matrix / s;
+    }
+}
+
+/*!
+ * \brief Normalize each sub container of the given ETL contrainer
+ * to zero-mean and unit-variance.
+ *
+ * \param matrix The container to normalize
+ */
+template<typename M>
+void normalize_sub(M& matrix){
+    using VT = value_t<M>;
+
+#ifdef ETL_CUDA
+    // The case of CUDA must be handled differently to avoid going
+    // back and forth between both memories
+    // While this could simply use egblas_normalize_sub, this would
+    // be much slower
+
+    auto mm          = matrix.memory_start();
+    const auto n     = etl::dim<0>(matrix);
+    const auto sub_n = etl::size(matrix) / n;
+
+    for (size_t i = 0; i < n; ++i) {
+        VT m(0);
+
+        for(size_t j = 0; j < sub_n; ++j){
+            m += mm[i * sub_n + j];
+        }
+
+        m /= VT(sub_n);
+
+        VT s(0);
+
+        for(size_t j = 0; j < sub_n; ++j){
+            s += (mm[i * sub_n + j] - m) * (mm[i * sub_n + j] - m);
+        }
+
+        s = std::sqrt(s / VT(sub_n));
+
+        for(size_t j = 0; j < sub_n; ++j){
+            mm[i * sub_n + j] = (mm[i * sub_n + j] - m) / s;
+        }
+    }
+#else
+    for (size_t i = 0; i < etl::dim<0>(matrix); ++i) {
+        auto m = mean(matrix(i));
+
+        matrix(i) = matrix(i) - m;
+
+        auto s = stddev(matrix(i), 0.0);
+
+        if (s != VT(0)) {
+            matrix(i) = matrix(i) / s;
+        }
+    }
+#endif
 }
 
 } //end of namespace etl

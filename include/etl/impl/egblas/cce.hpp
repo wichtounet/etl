@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -44,9 +44,10 @@ static constexpr bool has_cce_sloss = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline float cce_loss(size_t n, float* alpha, float* A , size_t lda, float* B , size_t ldb){
+inline float cce_loss(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_CCE_SLOSS
-    return egblas_cce_sloss(n, *alpha, A, lda, B, ldb);
+    inc_counter("egblas");
+    return egblas_cce_sloss(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -79,9 +80,10 @@ static constexpr bool has_cce_dloss = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline double cce_loss(size_t n, double* alpha, double* A , size_t lda, double* B , size_t ldb){
+inline double cce_loss(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_CCE_DLOSS
-    return egblas_cce_dloss(n, *alpha, A, lda, B, ldb);
+    inc_counter("egblas");
+    return egblas_cce_dloss(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -114,9 +116,10 @@ static constexpr bool has_cce_serror = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline float cce_error(size_t n, size_t m, float* alpha, float* A , float* B){
+inline float cce_error(size_t n, size_t m, float alpha, float* A , float* B){
 #ifdef EGBLAS_HAS_CCE_SERROR
-    return egblas_cce_serror(n, m, *alpha, A, B);
+    inc_counter("egblas");
+    return egblas_cce_serror(n, m, alpha, A, B);
 #else
     cpp_unused(n);
     cpp_unused(m);
@@ -148,9 +151,10 @@ static constexpr bool has_cce_derror = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline double cce_error(size_t n, size_t m, double* alpha, double* A , double* B){
+inline double cce_error(size_t n, size_t m, double alpha, double* A , double* B){
 #ifdef EGBLAS_HAS_CCE_DERROR
-    return egblas_cce_derror(n, m, *alpha, A, B);
+    inc_counter("egblas");
+    return egblas_cce_derror(n, m, alpha, A, B);
 #else
     cpp_unused(n);
     cpp_unused(m);

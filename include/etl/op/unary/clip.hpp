@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "etl/impl/egblas/clip.hpp"
+#include "etl/impl/egblas/clip_value.hpp"
 
 namespace etl {
 
@@ -40,10 +40,10 @@ struct clip_scalar_op {
      */
     template <typename E>
     static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_sclip)
-            || (is_double_precision_t<T> && impl::egblas::has_dclip)
-            || (is_complex_single_t<T> && impl::egblas::has_cclip)
-            || (is_complex_double_t<T> && impl::egblas::has_zclip);
+               (is_single_precision_t<T> && impl::egblas::has_sclip_value)
+            || (is_double_precision_t<T> && impl::egblas::has_dclip_value)
+            || (is_complex_single_t<T> && impl::egblas::has_cclip_value)
+            || (is_complex_double_t<T> && impl::egblas::has_zclip_value);
 
     S min; ///< The minimum for clipping
     S max; ///< The maximum for clipping
@@ -66,6 +66,7 @@ struct clip_scalar_op {
     }
 
 #ifdef __INTEL_COMPILER
+
     /*!
      * \brief Compute several applications of the operator at a time
      * \param x The vector on which to operate
@@ -76,6 +77,7 @@ struct clip_scalar_op {
     vec_type<V> load(const vec_type<V>& lhs) const noexcept {
         return V::min(V::max(lhs, V::set(min)), V::set(max));
     }
+
 #endif
 
     /*!
@@ -85,23 +87,12 @@ struct clip_scalar_op {
      *
      * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
-    template <typename X>
-    auto gpu_compute(const X& x) const noexcept {
-        decltype(auto) t1 = smart_gpu_compute(x);
+    template <typename X, typename Y>
+    auto gpu_compute_hint(const X& x, Y& y) const noexcept {
+        decltype(auto) t1 = smart_gpu_compute_hint(x, y);
 
         auto t2 = force_temporary_gpu(t1);
-
-#ifdef ETL_CUDA
-        auto min_gpu = impl::cuda::cuda_allocate_only<T>(1);
-        cuda_check(cudaMemcpy(min_gpu.get(), &min, 1 * sizeof(T), cudaMemcpyHostToDevice));
-
-        auto max_gpu = impl::cuda::cuda_allocate_only<T>(1);
-        cuda_check(cudaMemcpy(max_gpu.get(), &max, 1 * sizeof(T), cudaMemcpyHostToDevice));
-
-        T alpha(1.0);
-        impl::egblas::clip(etl::size(x), &alpha, min_gpu.get(), 0, max_gpu.get(), 0, t2.gpu_memory(), 1);
-#endif
-
+        impl::egblas::clip_value(etl::size(y), T(1), min, max, t2.gpu_memory(), 1);
         return t2;
     }
 
@@ -115,18 +106,7 @@ struct clip_scalar_op {
     Y& gpu_compute(const X& x, Y& y) const noexcept {
         smart_gpu_compute(x, y);
 
-#ifdef ETL_CUDA
-        auto min_gpu = impl::cuda::cuda_allocate_only<T>(1);
-        cuda_check(cudaMemcpy(min_gpu.get(), &min, 1 * sizeof(T), cudaMemcpyHostToDevice));
-
-        auto max_gpu = impl::cuda::cuda_allocate_only<T>(1);
-        cuda_check(cudaMemcpy(max_gpu.get(), &max, 1 * sizeof(T), cudaMemcpyHostToDevice));
-
-        T alpha(1.0);
-        impl::egblas::clip(etl::size(x), &alpha, min_gpu.get(), 0, max_gpu.get(), 0, y.gpu_memory(), 1);
-#else
-        cpp_unused(y);
-#endif
+        impl::egblas::clip_value(etl::size(y), T(1), min, max, y.gpu_memory(), 1);
 
         y.validate_gpu();
         y.invalidate_cpu();

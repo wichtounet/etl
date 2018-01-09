@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -65,14 +65,14 @@ constexpr size_t version_minor = 2;
 /*!
  * \brief The current revision version number of the library
  */
-constexpr size_t version_revision = 0;
+constexpr size_t version_revision = 1;
 
 } //end of namespace etl
 
 /*!
  * \brief String representation of the current version of the library.
  */
-#define ETL_VERSION_STR "1.2"
+#define ETL_VERSION_STR "1.2.1"
 
 /*!
  * \brief The current major version number of the library
@@ -87,4 +87,4 @@ constexpr size_t version_revision = 0;
 /*!
  * \brief The current revision version number of the library
  */
-#define ETL_VERSION_REVISION 0
+#define ETL_VERSION_REVISION 1

@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -200,7 +200,9 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    auto& gpu_compute(){
+    template <typename Y>
+    auto& gpu_compute_hint(Y& y){
+        cpu_unused(y);
         this->ensure_gpu_up_to_date();
         return *this;
     }
@@ -209,7 +211,9 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    const auto& gpu_compute() const {
+    template <typename Y>
+    const auto& gpu_compute_hint(Y& y) const {
+        cpu_unused(y);
         this->ensure_gpu_up_to_date();
         return *this;
     }

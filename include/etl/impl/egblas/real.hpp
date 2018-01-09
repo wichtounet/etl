@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -44,9 +44,10 @@ static constexpr bool has_creal = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void real(size_t n, float* alpha, std::complex<float>* A , size_t lda, float* B , size_t ldb){
+inline void real(size_t n, float alpha, std::complex<float>* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_CREAL
-    egblas_creal(n, *(alpha), reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
+    inc_counter("egblas");
+    egblas_creal(n, alpha, reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -68,9 +69,10 @@ inline void real(size_t n, float* alpha, std::complex<float>* A , size_t lda, fl
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void real(size_t n, float* alpha, etl::complex<float>* A , size_t lda, float* B , size_t ldb){
+inline void real(size_t n, float alpha, etl::complex<float>* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_CREAL
-    egblas_creal(n, *(alpha), reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
+    inc_counter("egblas");
+    egblas_creal(n, alpha, reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -101,9 +103,10 @@ static constexpr bool has_zreal = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void real(size_t n, double* alpha, std::complex<double>* A , size_t lda, double* B , size_t ldb){
+inline void real(size_t n, double alpha, std::complex<double>* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZREAL
-    egblas_zreal(n, *(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);
+    inc_counter("egblas");
+    egblas_zreal(n, alpha, reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -125,9 +128,10 @@ inline void real(size_t n, double* alpha, std::complex<double>* A , size_t lda, 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void real(size_t n, double* alpha, etl::complex<double>* A , size_t lda, double* B , size_t ldb){
+inline void real(size_t n, double alpha, etl::complex<double>* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZREAL
-    egblas_zreal(n, *(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);
+    inc_counter("egblas");
+    egblas_zreal(n, alpha, reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);

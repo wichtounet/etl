@@ -1,5 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014-2017 Baptiste Wicht
+// Copyright (c) 2014-2018 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
@@ -44,9 +44,10 @@ static constexpr bool has_scos = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cos(size_t n, float* alpha, float* A , size_t lda, float* B , size_t ldb){
+inline void cos(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
 #ifdef EGBLAS_HAS_SCOS
-    egblas_scos(n, *alpha, A, lda, B, ldb);
+    inc_counter("egblas");
+    egblas_scos(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -77,9 +78,10 @@ static constexpr bool has_dcos = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cos(size_t n, double* alpha, double* A , size_t lda, double* B , size_t ldb){
+inline void cos(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
 #ifdef EGBLAS_HAS_DCOS
-    egblas_dcos(n, *alpha, A, lda, B, ldb);
+    inc_counter("egblas");
+    egblas_dcos(n, alpha, A, lda, B, ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -110,9 +112,10 @@ static constexpr bool has_ccos = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cos(size_t n, std::complex<float>* alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+inline void cos(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CCOS
-    egblas_ccos(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+    inc_counter("egblas");
+    egblas_ccos(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -134,9 +137,10 @@ inline void cos(size_t n, std::complex<float>* alpha, std::complex<float>* A , s
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cos(size_t n, etl::complex<float>* alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+inline void cos(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
 #ifdef EGBLAS_HAS_CCOS
-    egblas_ccos(n, *reinterpret_cast<cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
+    inc_counter("egblas");
+    egblas_ccos(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -167,9 +171,10 @@ static constexpr bool has_zcos = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cos(size_t n, std::complex<double>* alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+inline void cos(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZCOS
-    egblas_zcos(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+    inc_counter("egblas");
+    egblas_zcos(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -191,9 +196,10 @@ inline void cos(size_t n, std::complex<double>* alpha, std::complex<double>* A ,
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cos(size_t n, etl::complex<double>* alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+inline void cos(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
 #ifdef EGBLAS_HAS_ZCOS
-    egblas_zcos(n, *reinterpret_cast<cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
+    inc_counter("egblas");
+    egblas_zcos(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
