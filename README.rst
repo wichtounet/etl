@@ -1,5 +1,5 @@
-Expression Templates Library (ETL) 1.3
-======================================
+Expression Templates Library (ETL) 1.3.0
+========================================
 
 |logo|    |coverage| |jenkins| |license| |doc|
 
