@@ -1,5 +1,5 @@
-ETL 1.2.1 - dev
-*************
+ETL 1.2.1 - 09.01.2018
+**********************
 
 * *Feature* Support for embeddings and embedding gradients
 * *Feature* Support for merging matrices together
