@@ -746,6 +746,53 @@ ETL_TEST_CASE("globals/parallel_shuffle/3", "[globals]") {
     REQUIRE_DIRECT(b == c);
 }
 
+ETL_TEST_CASE("globals/parallel_shuffle/4", "[globals]") {
+    etl::fast_matrix<double, 5, 2> a{0, 5, 1, 6, 2, 7, 3, 8, 4, 9};
+    etl::fast_matrix<double, 5> b{0,1,2,3,4};
+
+    parallel_shuffle(a, b);
+
+    REQUIRE_EQUALS(a(0)(0), b[0]);
+    REQUIRE_EQUALS(a(1)(0), b[1]);
+    REQUIRE_EQUALS(a(2)(0), b[2]);
+    REQUIRE_EQUALS(a(3)(0), b[3]);
+    REQUIRE_EQUALS(a(4)(0), b[4]);
+
+    REQUIRE_DIRECT(a[0] >= 0 && a[0] <= 9);
+    REQUIRE_DIRECT(a[1] >= 0 && a[1] <= 9);
+    REQUIRE_DIRECT(a[2] >= 0 && a[2] <= 9);
+    REQUIRE_DIRECT(a[3] >= 0 && a[3] <= 9);
+    REQUIRE_DIRECT(a[4] >= 0 && a[4] <= 9);
+    REQUIRE_DIRECT(a[5] >= 0 && a[5] <= 9);
+    REQUIRE_DIRECT(a[6] >= 0 && a[6] <= 9);
+    REQUIRE_DIRECT(a[7] >= 0 && a[7] <= 9);
+    REQUIRE_DIRECT(a[8] >= 0 && a[8] <= 9);
+    REQUIRE_DIRECT(a[9] >= 0 && a[9] <= 9);
+
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 0), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 1), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 2), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 3), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 4), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 5), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 6), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 7), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 8), 1);
+    REQUIRE_EQUALS(std::count(a.begin(), a.end(), 9), 1);
+
+    REQUIRE_DIRECT(b[0] >= 0 && b[0] <= 9);
+    REQUIRE_DIRECT(b[1] >= 0 && b[1] <= 9);
+    REQUIRE_DIRECT(b[2] >= 0 && b[2] <= 9);
+    REQUIRE_DIRECT(b[3] >= 0 && b[3] <= 9);
+    REQUIRE_DIRECT(b[4] >= 0 && b[4] <= 9);
+
+    REQUIRE_EQUALS(std::count(b.begin(), b.end(), 0), 1);
+    REQUIRE_EQUALS(std::count(b.begin(), b.end(), 1), 1);
+    REQUIRE_EQUALS(std::count(b.begin(), b.end(), 2), 1);
+    REQUIRE_EQUALS(std::count(b.begin(), b.end(), 3), 1);
+    REQUIRE_EQUALS(std::count(b.begin(), b.end(), 4), 1);
+}
+
 TEMPLATE_TEST_CASE_2("globals/binarize/0", "[globals]", Z, double, float) {
     etl::dyn_vector<Z> x  = {1.0, 200.0, 30.0, 50.0};
 
