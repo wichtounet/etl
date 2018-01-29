@@ -7,7 +7,7 @@
 
 #include "test_light.hpp"
 
-TEMPLATE_TEST_CASE_2("slice/1", "[slice]", Z, float, double) {
+TEMPLATE_TEST_CASE_2("memory_slice/1", "[slice]", Z, float, double) {
     etl::fast_matrix<Z, 2, 3> a = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
 
     auto s1 = etl::memory_slice<etl::aligned>(a, 0, 3);
