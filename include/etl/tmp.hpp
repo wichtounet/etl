@@ -12,49 +12,49 @@ namespace etl {
 /*!
  * \brief Traits to test if T is a specialization of TT<T, size_t>
  */
-template <template <typename, size_t> class TT, typename T>
+template <template <typename, size_t> typename TT, typename T>
 struct is_2 : std::false_type {};
 
 /*!
  * \copydoc is_2
  */
-template <template <typename, size_t> class TT, typename V1, size_t R>
+template <template <typename, size_t> typename TT, typename V1, size_t R>
 struct is_2<TT, TT<V1, R>> : std::true_type {};
 
 /*!
  * \brief Traits to test if T is a specialization of TT<T, size_t, size_t>
  */
-template <template <typename, size_t, size_t> class TT, typename T>
+template <template <typename, size_t, size_t> typename TT, typename T>
 struct is_3 : std::false_type {};
 
 /*!
  * \copydoc is_3
  */
-template <template <typename, size_t, size_t> class TT, typename V1, size_t R1, size_t R2>
+template <template <typename, size_t, size_t> typename TT, typename V1, size_t R1, size_t R2>
 struct is_3<TT, TT<V1, R1, R2>> : std::true_type {};
 
 /*!
  * \brief Traits to test if T is a specialization of TT<T, size_t...>
  */
-template <template <typename, size_t...> class TT, typename T>
+template <template <typename, size_t...> typename TT, typename T>
 struct is_var : std::false_type {};
 
 /*!
  * \copydoc is_var
  */
-template <template <typename, size_t...> class TT, typename V1, size_t... R>
+template <template <typename, size_t...> typename TT, typename V1, size_t... R>
 struct is_var<TT, TT<V1, R...>> : std::true_type {};
 
 /*!
  * \brief Traits to test if T is a specialization of TT<T1, T2, size_t...>
  */
-template <template <typename, typename, size_t...> class TT, typename T>
+template <template <typename, typename, size_t...> typename TT, typename T>
 struct is_var_2 : std::false_type {};
 
 /*!
  * \copydoc is_var_2
  */
-template <template <typename, typename, size_t...> class TT, typename V1, typename V2, size_t... R>
+template <template <typename, typename, size_t...> typename TT, typename V1, typename V2, size_t... R>
 struct is_var_2<TT, TT<V1, V2, R...>> : std::true_type {};
 
 /*!

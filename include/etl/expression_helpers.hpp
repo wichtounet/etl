@@ -106,7 +106,7 @@ etl::scalar<std::decay_t<T>> wrap_scalar(T&& value){
 /*!
  * \brief Helper to create a binary expr with left typing
  */
-template <typename LE, typename RE, template <typename> class OP>
+template <typename LE, typename RE, template <typename> typename OP>
 using left_binary_helper = binary_expr<value_t<LE>, build_type<LE>, OP<value_t<LE>>, build_type<RE>>;
 
 /*!
@@ -126,7 +126,7 @@ using left_binary_helper_op_scalar = binary_expr<wrap_scalar_value_t<LE>, build_
 /*!
  * \brief Helper to create a binary expr with right typing
  */
-template <typename LE, typename RE, template <typename> class OP>
+template <typename LE, typename RE, template <typename> typename OP>
 using right_binary_helper = binary_expr<value_t<RE>, build_type<LE>, OP<value_t<RE>>, build_type<RE>>;
 
 /*!
@@ -139,25 +139,25 @@ using right_binary_helper_op = binary_expr<value_t<RE>, build_type<LE>, OP, buil
 /*!
  * \brief Helper to create a binary expr with left typing
  */
-template <typename LE, typename RE, template <typename> class OP>
+template <typename LE, typename RE, template <typename> typename OP>
 using bool_left_binary_helper = binary_expr<bool, build_type<LE>, OP<value_t<LE>>, build_type<RE>>;
 
 /*!
  * \brief Helper to create a binary expr with right typing
  */
-template <typename LE, typename RE, template <typename> class OP>
+template <typename LE, typename RE, template <typename> typename OP>
 using bool_right_binary_helper = binary_expr<bool, build_type<LE>, OP<value_t<RE>>, build_type<RE>>;
 
 /*!
  * \brief Helper to create a binary expr with left typing
  */
-template <typename LE, typename RE, template <typename> class OP>
+template <typename LE, typename RE, template <typename> typename OP>
 using bool_left_binary_helper_scalar = binary_expr<bool, build_type<wrap_scalar_t<LE>>, OP<wrap_scalar_value_t<LE>>, build_type<wrap_scalar_t<RE>>>;
 
 /*!
  * \brief Helper to create an unary expression
  */
-template <typename E, template <typename> class OP>
+template <typename E, template <typename> typename OP>
 using unary_helper = unary_expr<value_t<E>, build_type<E>, OP<value_t<E>>>;
 
 /*!
@@ -175,20 +175,20 @@ using virtual_helper = unary_expr<E, OP, transform_op>;
 /*!
  * \brief Helper to create a stable transform unary expression
  */
-template <typename E, template <typename> class OP>
+template <typename E, template <typename> typename OP>
 using stable_transform_helper = unary_expr<value_t<E>, OP<build_type<E>>, transform_op>;
 
 /*!
  * \brief Helper to create a stable binary transform unary expression
  */
-template <typename LE, typename RE, template <typename, typename> class OP>
+template <typename LE, typename RE, template <typename, typename> typename OP>
 using stable_transform_binary_helper = unary_expr<value_t<LE>, OP<build_type<LE>, build_type<RE>>, transform_op>;
 
 /*!
  * \brief Make a stable unary transform unary expression
  * \param args Arguments to be forward to the op.
  */
-template <typename E, template <typename> class OP, typename... Args>
+template <typename E, template <typename> typename OP, typename... Args>
 auto make_transform_expr(Args&&... args) {
     return stable_transform_helper<E, OP>{OP<build_type<E>>(std::forward<Args>(args)...)};
 }
