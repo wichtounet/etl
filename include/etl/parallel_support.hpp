@@ -211,19 +211,19 @@ inline void engine_dispatch_2d(Functor&& functor, size_t last1, size_t last2, si
             ETL_PARALLEL_SESSION {
                 thread_engine::acquire();
 
-                auto block = thread_blocks(last1, last2);
+                auto [blocks1,blocks2] = thread_blocks(last1, last2);
 
-                const size_t block_1 = last1 / block.first + (last1 % block.first > 0);
-                const size_t block_2 = last2 / block.second + (last2 % block.second > 0);
+                const size_t block_1 = last1 / blocks1 + (last1 % blocks1 > 0);
+                const size_t block_2 = last2 / blocks2 + (last2 % blocks2 > 0);
 
-                for (size_t i = 0; i < block.first; ++i) {
+                for (size_t i = 0; i < blocks1; ++i) {
                     const size_t row = block_1 * i;
 
                     if (cpp_unlikely(row >= last1)) {
                         continue;
                     }
 
-                    for (size_t j = 0; j < block.second; ++j) {
+                    for (size_t j = 0; j < blocks2; ++j) {
                         const size_t column = block_2 * j;
 
                         if (cpp_unlikely(column >= last2)) {
