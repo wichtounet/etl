@@ -61,7 +61,7 @@ void inplace_rectangular_transpose(C&& mat) {
     // Note: cannot use operator(i,j) for lhs because it is indexed by its
     // previous scheme (N instead of M)
 
-    if /*constexpr*/ (row_major) {
+    if constexpr (row_major) {
         for (size_t i = 0; i < N; ++i) {
             size_t j = 0;
 
@@ -139,7 +139,7 @@ void transpose(A&& a, C&& c) {
         // Note: cannot use operator(i,j) for rhs because it is indexed by its
         // previous scheme (M instead of N)
 
-        if /*constexpr*/ (decay_traits<A>::storage_order == order::RowMajor) {
+        if constexpr (decay_traits<A>::storage_order == order::RowMajor) {
             for (size_t i = 0; i < m; ++i) {
                 size_t j = 0;
 

@@ -89,7 +89,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
 
         check(a, lhs);
 
-        if /*constexpr*/ (!Mean && cudnn_enabled && all_floating<A, L>) {
+        if constexpr (!Mean && cudnn_enabled && all_floating<A, L>) {
             impl::cudnn::bias_batch_mean_4d(smart_forward_gpu(a), lhs);
         } else {
             const auto N     = etl::size(a) / etl::size(lhs);
@@ -108,7 +108,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
                         mean += sum(a(b)(k));
                     }
 
-                    if /*constexpr*/ (Mean) {
+                    if constexpr (Mean) {
                         lhs(k) = mean / N;
                     } else {
                         lhs(k) = mean;
@@ -150,7 +150,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
                     mean += sum(a(b)(k));
                 }
 
-                if /*constexpr*/ (Mean) {
+                if constexpr (Mean) {
                     lhs(k) += mean / N;
                 } else {
                     lhs(k) += mean;
@@ -191,7 +191,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
                     mean += sum(a(b)(k));
                 }
 
-                if /*constexpr*/ (Mean) {
+                if constexpr (Mean) {
                     lhs(k) -= mean / N;
                 } else {
                     lhs(k) -= mean;
@@ -232,7 +232,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
                     mean += sum(a(b)(k));
                 }
 
-                if /*constexpr*/ (Mean) {
+                if constexpr (Mean) {
                     lhs(k) *= mean / N;
                 } else {
                     lhs(k) *= mean;
@@ -273,7 +273,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
                     mean += sum(a(b)(k));
                 }
 
-                if /*constexpr*/ (Mean) {
+                if constexpr (Mean) {
                     lhs(k) /= mean / N;
                 } else {
                     lhs(k) /= mean;
@@ -314,7 +314,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
                     mean += sum(a(b)(k));
                 }
 
-                if /*constexpr*/ (Mean) {
+                if constexpr (Mean) {
                     lhs(k) %= mean / N;
                 } else {
                     lhs(k) %= mean;
@@ -332,7 +332,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const bias_batch_mean_4d_expr& expr) {
-        if /*constexpr*/ (Mean) {
+        if constexpr (Mean) {
             return os << "bias_batch_mean_4d(" << expr._a << ")";
         } else {
             return os << "bias_batch_sum_4d(" << expr._a << ")";

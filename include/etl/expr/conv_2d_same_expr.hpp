@@ -90,7 +90,7 @@ struct conv_2d_same_expr : base_temporary_expr_bin<conv_2d_same_expr<A, B, Flipp
 
         check(a, b, c);
 
-        if /*constexpr*/ (Flipped){
+        if constexpr (Flipped){
             detail::conv2_same_flipped_impl::apply(a, b, c);
         } else {
             detail::conv2_same_impl::apply(a, b, c);

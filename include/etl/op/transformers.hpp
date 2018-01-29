@@ -46,7 +46,7 @@ struct mm_mul_transformer {
      * \return the value at the given index.
      */
     value_type operator[](size_t i) const {
-        if /*constexpr*/ (etl::decay_traits<left_type>::storage_order == order::RowMajor){
+        if constexpr (etl::decay_traits<left_type>::storage_order == order::RowMajor){
             const auto n = etl::dim<1>(right);
             return operator()(i / n, i % n);
         } else {
@@ -62,7 +62,7 @@ struct mm_mul_transformer {
      * \return the value at the given index.
      */
     value_type read_flat(size_t i) const {
-        if /*constexpr*/ (etl::decay_traits<left_type>::storage_order == order::RowMajor){
+        if constexpr (etl::decay_traits<left_type>::storage_order == order::RowMajor){
             const auto n = etl::dim<1>(right);
             return operator()(i / n, i % n);
         } else {
@@ -186,7 +186,7 @@ struct dyn_convmtx_transformer {
      * \return the value at the given index.
      */
     value_type operator[](size_t i) const {
-        if /*constexpr*/ (decay_traits<sub_type>::storage_order == order::RowMajor) {
+        if constexpr (decay_traits<sub_type>::storage_order == order::RowMajor) {
             size_t i_i = i / (etl::size(sub) + h - 1);
             size_t i_j = i % (etl::size(sub) + h - 1);
             return operator()(i_i, i_j);

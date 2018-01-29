@@ -215,7 +215,7 @@ public:
         validate_assign(*this, e);
 
         // Avoid aliasing issues
-        if /*constexpr*/ (!decay_traits<E>::is_linear) {
+        if constexpr (!decay_traits<E>::is_linear) {
             if (e.alias(*this)) {
                 // Create a temporary to hold the result
                 auto tmp = force_temporary_dim_only(*this);
@@ -411,7 +411,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const fast_matrix_impl& matrix) {
         cpp_unused(matrix);
 
-        if /*constexpr*/ (sizeof...(Dims) == 1) {
+        if constexpr (sizeof...(Dims) == 1) {
             return os << "V[" << concat_sizes(Dims...) << "]";
         }
 

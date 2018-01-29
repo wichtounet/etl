@@ -98,7 +98,7 @@ struct conv_4d_valid_filter_expr : base_temporary_expr_bin<conv_4d_valid_filter_
 
         check(a, b, c);
 
-        if /*constexpr*/ (Flipped){
+        if constexpr (Flipped){
             detail::conv4_valid_filter_flipped_impl<S1, S2, P1, P2>::apply(a, b, c);
         } else {
             detail::conv4_valid_filter_impl<S1, S2, P1, P2>::apply(a, b, c);

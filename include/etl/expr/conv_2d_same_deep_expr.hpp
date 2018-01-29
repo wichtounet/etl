@@ -91,7 +91,7 @@ struct conv_2d_same_deep_expr : base_temporary_expr_bin<conv_2d_same_deep_expr<A
 
         check(a, b, c);
 
-        if /*constexpr*/ (Flipped){
+        if constexpr (Flipped){
             detail::conv2_same_flipped_deep_impl::apply(smart_forward(a), smart_forward(b), c);
         } else {
             detail::conv2_same_deep_impl::apply(smart_forward(a), smart_forward(b), c);

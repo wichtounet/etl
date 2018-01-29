@@ -98,15 +98,15 @@ struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_f
 
         check(input, kernel, conv);
 
-        if /*constexpr*/ (Flipped) {
+        if constexpr (Flipped) {
             // The GPU implementation needs the real forward parameters, not the
             // converted backward parameters
-            if /*constexpr*/ (cudnn_enabled && all_floating<A, B, C>) {
+            if constexpr (cudnn_enabled && all_floating<A, B, C>) {
                 impl::cudnn::conv4_backward_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
                 return;
             } else {
                 // 1. Handle unit strides
-                if /*constexpr*/ (S1 == 1 && S2 == 1) {
+                if constexpr (S1 == 1 && S2 == 1) {
                     // Unit strides, zero padding -> Valid convolution with the correct padding
                     detail::dyn_conv4_valid_filter_flipped_impl::apply(input, kernel, conv, 1, 1, P1, P2);
                 }
@@ -122,12 +122,12 @@ struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_f
         } else {
             // The GPU implementation needs the real forward parameters, not the
             // converted backward parameters
-            if /*constexpr*/ (cudnn_enabled && all_floating<A, B, C>) {
+            if constexpr (cudnn_enabled && all_floating<A, B, C>) {
                 impl::cudnn::conv4_backward_filter(input, kernel, conv, S1, S2, P1, P2);
                 return;
             } else {
                 // 1. Handle unit strides
-                if /*constexpr*/ (S1 == 1 && S2 == 1) {
+                if constexpr (S1 == 1 && S2 == 1) {
                     // Unit strides -> Valid convolution with the correct padding
                     detail::dyn_conv4_valid_filter_impl::apply(input, kernel, conv, 1, 1, P1, P2);
                 }

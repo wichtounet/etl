@@ -100,7 +100,7 @@ struct dyn_conv_2d_backward_expr : base_temporary_expr_bin<dyn_conv_2d_backward_
         const size_t k1 = etl::dim<0>(kernel);
         const size_t k2 = etl::dim<1>(kernel);
 
-        if /*constexpr*/ (Flipped) {
+        if constexpr (Flipped) {
             // 1. Handle unit strides
             if (s1 == 1 && s2 == 1) {
                 if (p1 == 0 && p2 == 0) {

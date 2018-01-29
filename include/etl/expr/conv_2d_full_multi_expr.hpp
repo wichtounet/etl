@@ -175,7 +175,7 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
 
         constexpr_select auto impl = select_impl<C>();
 
-        if /*constexpr*/ (Flipped){
+        if constexpr (Flipped){
             if /*constexpr_select*/ (impl == etl::conv_multi_impl::VEC){
                 impl::vec::conv2_full_multi_flipped(smart_forward(input), smart_forward(kernel), conv);
             } else if /*constexpr_select*/ (impl == etl::conv_multi_impl::STD){

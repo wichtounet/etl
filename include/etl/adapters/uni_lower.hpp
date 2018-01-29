@@ -121,7 +121,7 @@ public:
         validate_assign(*this, e);
 
         // Avoid aliasing issues
-        if /*constexpr*/ (!decay_traits<E>::is_linear) {
+        if constexpr (!decay_traits<E>::is_linear) {
             if (e.alias(*this)) {
                 // Create a temporary to hold the result
                 this_type tmp(*this);

@@ -90,7 +90,7 @@ public:
     const_return_type operator[](size_t j) const {
         cpp_assert(j < m * n, "Invalid index inside sub_matrix_2d");
 
-        if /*constexpr*/ (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor){
             auto ii = base_i + j / n;
             auto jj = base_j + j % n;
 
@@ -111,7 +111,7 @@ public:
     return_type operator[](size_t j) {
         cpp_assert(j < m * n, "Invalid index inside sub_matrix_2d");
 
-        if /*constexpr*/ (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor){
             auto ii = base_i + j / n;
             auto jj = base_j + j % n;
 
@@ -133,7 +133,7 @@ public:
     value_type read_flat(size_t j) const noexcept(assert_nothrow) {
         cpp_assert(j < m * n, "Invalid index inside sub_matrix_2d");
 
-        if /*constexpr*/ (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor){
             auto ii = base_i + j / n;
             auto jj = base_j + j % n;
 

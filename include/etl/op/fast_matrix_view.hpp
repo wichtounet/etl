@@ -345,7 +345,7 @@ public:
      */
     explicit fast_matrix_view(sub_type sub): sub(sub) {
         // Accessing the memory through fast sub views means evaluation
-        if /*constexpr*/ (decay_traits<sub_type>::is_temporary){
+        if constexpr (decay_traits<sub_type>::is_temporary){
             standard_evaluator::pre_assign_rhs(*this);
         }
 

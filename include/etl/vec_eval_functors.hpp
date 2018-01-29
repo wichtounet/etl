@@ -66,7 +66,7 @@ struct VectorizedAssign : vectorized_base<V> {
 
         // 0. If possible and interesting, use streaming stores
 
-        if /*constexpr*/ (streaming){
+        if constexpr (streaming){
             if (N > stream_threshold / (sizeof(value_t<L_Expr>) * 3) && !rhs.alias(lhs)) {
                 for (; i < last; i += IT::size) {
                     lhs.template stream<vect_impl>(load(rhs, i), i);

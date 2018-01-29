@@ -373,7 +373,7 @@ public:
      */
     sub_view(sub_type sub_expr, size_t i) : sub_expr(sub_expr), i(i), sub_size(subsize(sub_expr)) {
         // Accessing the memory through fast sub views means evaluation
-        if /*constexpr*/ (decay_traits<sub_type>::is_temporary){
+        if constexpr (decay_traits<sub_type>::is_temporary){
             standard_evaluator::pre_assign_rhs(*this);
         }
 

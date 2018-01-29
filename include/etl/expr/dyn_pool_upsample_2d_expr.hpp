@@ -157,7 +157,7 @@ public:
 
         constexpr_select auto impl = select_impl<R>();
 
-        if /*constexpr*/ (Max) {
+        if constexpr (Max) {
             if /*constexpr_select*/ (impl == pool_impl::STD) {
                 impl::standard::max_pool_upsample_2d::apply(
                     smart_forward(a),

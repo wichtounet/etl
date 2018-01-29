@@ -277,7 +277,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
 
         check(a, b, c);
 
-        if /*constexpr*/ (!Strassen){
+        if constexpr (!Strassen){
             apply_raw(a, b, c);
         } else {
             etl::impl::standard::strassen_mm_mul(smart_forward(a), smart_forward(b), c);

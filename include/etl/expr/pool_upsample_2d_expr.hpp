@@ -177,7 +177,7 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
 
         constexpr_select auto impl = select_impl<R>();
 
-        if /*constexpr*/ (Max) {
+        if constexpr (Max) {
             if /*constexpr_select*/ (impl == pool_impl::STD) {
                 impl::standard::max_pool_upsample_2d::apply<C1, C2>(
                     smart_forward(a),

@@ -98,7 +98,7 @@ struct conv_4d_valid_back_expr : base_temporary_expr_bin<conv_4d_valid_back_expr
 
         check(a, b, c);
 
-        if /*constexpr*/ (Flipped){
+        if constexpr (Flipped){
             detail::conv4_valid_back_flipped_impl<S1, S2, P1, P2>::apply(a, b, c);
         } else {
             detail::conv4_valid_back_impl<S1, S2, P1, P2>::apply(a, b, c);

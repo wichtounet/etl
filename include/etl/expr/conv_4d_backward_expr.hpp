@@ -124,16 +124,16 @@ struct conv_4d_backward_expr : base_temporary_expr_bin<conv_4d_backward_expr<A, 
         const size_t K1 = etl::dim<2>(kernel);
         const size_t K2 = etl::dim<3>(kernel);
 
-        if /*constexpr*/ (Flipped) {
+        if constexpr (Flipped) {
             // The GPU implementation needs the real forward parameters, not the
             // converted backward parameters
-            if /*constexpr*/ (cudnn_enabled && all_floating<A, B, C>) {
+            if constexpr (cudnn_enabled && all_floating<A, B, C>) {
                 impl::cudnn::conv4_backward_data_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
                 return;
             } else {
                 // 1. Handle unit strides
-                if /*constexpr*/ (S1 == 1 && S2 == 1) {
-                    if /*constexpr*/ (P1 == 0 && P2 == 0) {
+                if constexpr (S1 == 1 && S2 == 1) {
+                    if constexpr (P1 == 0 && P2 == 0) {
                         // Unit strides, non-zero padding -> Full convolution
                         detail::conv4_full_flipped_impl::apply(input, kernel, conv);
                     } else {
@@ -146,7 +146,7 @@ struct conv_4d_backward_expr : base_temporary_expr_bin<conv_4d_backward_expr<A, 
                     // Fractionally-strided convolution needs inner padding of the input
                     auto strided_input = impl::common::inner_pad(input, S1, S2);
 
-                    if /*constexpr*/ (P1 == 0 && P2 == 0) {
+                    if constexpr (P1 == 0 && P2 == 0) {
                         // Non-unit strides, non-zero padding -> Fractionally-strided full convolution
                         detail::conv4_full_flipped_impl::apply(strided_input, kernel, conv);
                     } else {
@@ -158,13 +158,13 @@ struct conv_4d_backward_expr : base_temporary_expr_bin<conv_4d_backward_expr<A, 
         } else {
             // The GPU implementation needs the real forward parameters, not the
             // converted backward parameters
-            if /*constexpr*/ (cudnn_enabled && all_floating<A, B, C>) {
+            if constexpr (cudnn_enabled && all_floating<A, B, C>) {
                 impl::cudnn::conv4_backward_data(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
                 return;
             } else {
                 // 1. Handle unit strides
-                if /*constexpr*/ (S1 == 1 && S2 == 1) {
-                    if /*constexpr*/ (P1 == 0 && P2 == 0) {
+                if constexpr (S1 == 1 && S2 == 1) {
+                    if constexpr (P1 == 0 && P2 == 0) {
                         // Unit strides, non-zero padding -> Full convolution
                         detail::conv4_full_impl::apply(input, kernel, conv);
                     } else {
@@ -177,7 +177,7 @@ struct conv_4d_backward_expr : base_temporary_expr_bin<conv_4d_backward_expr<A, 
                     // Fractionally-strided convolution needs inner padding of the input
                     auto strided_input = impl::common::inner_pad(input, S1, S2);
 
-                    if /*constexpr*/ (P1 == 0 && P2 == 0) {
+                    if constexpr (P1 == 0 && P2 == 0) {
                         // Non-unit strides, non-zero padding -> Fractionally-strided full convolution
                         detail::conv4_full_impl::apply(strided_input, kernel, conv);
                     } else {

@@ -93,7 +93,7 @@ struct conv_2d_valid_multi_expr : base_temporary_expr_bin<conv_2d_valid_multi_ex
 
         check(a, b, c);
 
-        if /*constexpr*/ (Flipped){
+        if constexpr (Flipped){
             detail::conv2_valid_multi_flipped_impl<S1, S2, P1, P2>::apply(a, b, c);
         } else {
             detail::conv2_valid_multi_impl<S1, S2, P1, P2>::apply(a, b, c);

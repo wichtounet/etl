@@ -91,7 +91,7 @@ struct conv_2d_valid_deep_expr : base_temporary_expr_bin<conv_2d_valid_deep_expr
 
         check(a, b, c);
 
-        if /*constexpr*/ (Flipped){
+        if constexpr (Flipped){
             detail::conv2_valid_flipped_deep_impl<S1, S2, P1, P2>::apply(smart_forward(a), smart_forward(b), c);
         } else {
             detail::conv2_valid_deep_impl<S1, S2, P1, P2>::apply(smart_forward(a), smart_forward(b), c);

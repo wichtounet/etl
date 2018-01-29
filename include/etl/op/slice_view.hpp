@@ -67,7 +67,7 @@ public:
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](size_t j) const {
-        if /*constexpr*/ (decay_traits<sub_type>::storage_order == order::RowMajor) {
+        if constexpr (decay_traits<sub_type>::storage_order == order::RowMajor) {
             return sub[first * (etl::size(sub) / dim<0>(sub)) + j];
         } else {
             const auto sa = dim<0>(sub);
@@ -82,7 +82,7 @@ public:
      * \return a reference to the element at the given index.
      */
     return_type operator[](size_t j) {
-        if /*constexpr*/ (decay_traits<sub_type>::storage_order == order::RowMajor) {
+        if constexpr (decay_traits<sub_type>::storage_order == order::RowMajor) {
             return sub[first * (etl::size(sub) / dim<0>(sub)) + j];
         } else {
             const auto sa = dim<0>(sub);
@@ -98,7 +98,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(size_t j) const noexcept {
-        if /*constexpr*/ (decay_traits<sub_type>::storage_order == order::RowMajor) {
+        if constexpr (decay_traits<sub_type>::storage_order == order::RowMajor) {
             return sub.read_flat(first * (etl::size(sub) / dim<0>(sub)) + j);
         } else {
             const auto sa = dim<0>(sub);
@@ -306,7 +306,7 @@ public:
     slice_view(sub_type sub, size_t first, size_t last)
             : sub(sub), first(first), last(last), sub_size((etl::size(sub) / etl::dim<0>(sub)) * (last - first)) {
         // Accessing the memory through fast sub views means evaluation
-        if /*constexpr*/ (decay_traits<sub_type>::is_temporary){
+        if constexpr (decay_traits<sub_type>::is_temporary){
             standard_evaluator::pre_assign_rhs(*this);
         }
 

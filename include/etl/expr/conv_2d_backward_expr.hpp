@@ -116,10 +116,10 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
         const size_t K1 = etl::dim<0>(kernel);
         const size_t K2 = etl::dim<1>(kernel);
 
-        if /*constexpr*/ (Flipped) {
+        if constexpr (Flipped) {
             // 1. Handle unit strides
-            if /*constexpr*/ (S1 == 1 && S2 == 1) {
-                if /*constexpr*/ (P1 == 0 && P2 == 0) {
+            if constexpr (S1 == 1 && S2 == 1) {
+                if constexpr (P1 == 0 && P2 == 0) {
                     // Unit strides, non-zero padding -> Full convolution
                     detail::conv2_full_flipped_impl::apply(input, kernel, conv);
                 } else {
@@ -132,7 +132,7 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
                 // Fractionally-strided convolution needs inner padding of the input
                 auto strided_input = impl::common::inner_pad(input, S1, S2);
 
-                if /*constexpr*/ (P1 == 0 && P2 == 0) {
+                if constexpr (P1 == 0 && P2 == 0) {
                     // Non-unit strides, non-zero padding -> Fractionally-strided full convolution
                     detail::conv2_full_flipped_impl::apply(strided_input, kernel, conv);
                 } else {
@@ -142,8 +142,8 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
             }
         } else {
             // 1. Handle unit strides
-            if /*constexpr*/ (S1 == 1 && S2 == 1) {
-                if /*constexpr*/ (P1 == 0 && P2 == 0) {
+            if constexpr (S1 == 1 && S2 == 1) {
+                if constexpr (P1 == 0 && P2 == 0) {
                     // Unit strides, non-zero padding -> Full convolution
                     detail::conv2_full_impl::apply(input, kernel, conv);
                 } else {
@@ -156,7 +156,7 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
                 // Fractionally-strided convolution needs inner padding of the input
                 auto strided_input = impl::common::inner_pad(input, S1, S2);
 
-                if /*constexpr*/ (P1 == 0 && P2 == 0) {
+                if constexpr (P1 == 0 && P2 == 0) {
                     // Non-unit strides, non-zero padding -> Fractionally-strided full convolution
                     detail::conv2_full_impl::apply(strided_input, kernel, conv);
                 } else {

@@ -87,7 +87,7 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
-        if /*constexpr*/ (padding_impl) {
+        if constexpr (padding_impl) {
             if(need_padding<T>(k1, k2, p1, p2)){
                 const size_t pad = select_pad<T>(k1, k2);
 
@@ -268,7 +268,7 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
         // TODO Performance can be improved further by doing the
         // padding of the kernel inside the thread for small kernel (3x3, 5x5)
 
-        if /*constexpr*/ (padding_impl) {
+        if constexpr (padding_impl) {
             if(need_padding<T>(k1, k2, p1, p2)){
                 const size_t pad = select_pad<T>(k1, k2);
 
@@ -448,7 +448,7 @@ void conv4_valid_back(const I& input, const KK& kernel, CC&& conv, size_t s1, si
 
         conv = 0;
 
-        if /*constexpr*/ (padding_impl) {
+        if constexpr (padding_impl) {
             if(need_padding<T>(k1, k2, p1, p2)){
                 const size_t pad = select_pad<T>(k1, k2);
 
@@ -629,7 +629,7 @@ void conv4_valid_back_flipped(const I& input, const KK& kernel, CC&& conv, size_
         // TODO Performance can be improved further by doing the
         // padding of the kernel inside the thread for small kernel (3x3, 5x5)
 
-        if /*constexpr*/ (padding_impl) {
+        if constexpr (padding_impl) {
             if(need_padding<T>(k1, k2, p1, p2)){
                 const size_t pad = select_pad<T>(k1, k2);
 
@@ -808,7 +808,7 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
-        if /*constexpr*/ (padding_impl) {
+        if constexpr (padding_impl) {
             if(need_padding<T>(k1, k2, p1, p2)){
                 const size_t pad = select_pad<T>(k1, k2);
 
@@ -1036,7 +1036,7 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
-        if /*constexpr*/ (padding_impl) {
+        if constexpr (padding_impl) {
             if(need_padding<T>(k1, k2, p1, p2)){
                 const size_t pad = select_pad<T>(k1, k2);
 

@@ -444,7 +444,7 @@ inline void engine_dispatch_1d_slice(E&& expr, Functor&& functor, size_t thresho
             ETL_PARALLEL_SESSION {
                 thread_engine::acquire();
 
-                if /*constexpr*/ (decay_traits<E>::is_aligned && S > 1){
+                if constexpr (decay_traits<E>::is_aligned && S > 1){
                     if(n >= T * S){
                         // In case there is enough data, we align it
 
@@ -514,7 +514,7 @@ inline void engine_dispatch_1d_slice_binary(E1&& expr1, E2&& expr2, Functor&& fu
             ETL_PARALLEL_SESSION {
                 thread_engine::acquire();
 
-                if /*constexpr*/ (decay_traits<E1>::is_aligned && decay_traits<E2>::is_aligned && S > 1){
+                if constexpr (decay_traits<E1>::is_aligned && decay_traits<E2>::is_aligned && S > 1){
                     if(n >= T * S){
                         // In case there is enough data, we align it
 
@@ -602,7 +602,7 @@ inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor
             ETL_PARALLEL_SESSION {
                 thread_engine::acquire();
 
-                if /*constexpr*/ (decay_traits<E>::is_aligned && S > 1){
+                if constexpr (decay_traits<E>::is_aligned && S > 1){
                     if(n >= T * S){
                         // In case there is enough data, we align it
 

@@ -25,7 +25,7 @@ static void mm_mul(A&& a, B&& b, C&& c) {
 
     c = 0;
 
-    if /*constexpr*/ (row_major) {
+    if constexpr (row_major) {
         for (size_t i = 0; i < rows(a); i++) {
             for (size_t k = 0; k < columns(a); k++) {
                 for (size_t j = 0; j < columns(b); j++) {
@@ -108,7 +108,7 @@ static void vm_mul(A&& a, B&& b, C&& c) {
 
     c = 0;
 
-    if /*constexpr*/ (row_major) {
+    if constexpr (row_major) {
         for (size_t k = 0; k < etl::dim<0>(a); k++) {
             for (size_t j = 0; j < columns(b); j++) {
                 //optimized compound add of the multiplication
@@ -137,7 +137,7 @@ static void mv_mul(A&& a, B&& b, C&& c) {
 
     c = 0;
 
-    if /*constexpr*/ (row_major) {
+    if constexpr (row_major) {
         for (size_t i = 0; i < rows(a); i++) {
             for (size_t k = 0; k < columns(a); k++) {
                 //optimized compound add of the multiplication

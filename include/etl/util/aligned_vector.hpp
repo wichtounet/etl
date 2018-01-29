@@ -88,7 +88,7 @@ private:
     void release(){
         if(_data){
             //In case of non-trivial type, we need to call the destructors
-            if /*constexpr*/ (!std::is_trivial<T>::value) {
+            if constexpr (!std::is_trivial<T>::value) {
                 for (size_t i = 0; i < size; ++i) {
                     _data[i].~T();
                 }
@@ -104,12 +104,12 @@ private:
         auto* new_data = allocator.allocate(n);
 
         // Call all the constructors if necessary
-        if /*constexpr*/ (!std::is_trivial<T>::value) {
+        if constexpr (!std::is_trivial<T>::value) {
             new (new_data) T[n]();
         }
 
         // Initialize to the default values
-        if /*constexpr*/ (std::is_trivial<T>::value) {
+        if constexpr (std::is_trivial<T>::value) {
             std::fill_n(new_data, n, T());
         }
 

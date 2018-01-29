@@ -84,7 +84,7 @@ struct dyn_conv_2d_valid_multi_multi_expr : base_temporary_expr_bin<dyn_conv_2d_
 
         check(a, b, c);
 
-        if /*constexpr*/ (Flipped){
+        if constexpr (Flipped){
             detail::dyn_conv2_valid_multi_multi_flipped_impl::apply(a, b, c, s1, s2, p1, p2);
         } else {
             detail::dyn_conv2_valid_multi_multi_impl::apply(a, b, c, s1, s2, p1, p2);

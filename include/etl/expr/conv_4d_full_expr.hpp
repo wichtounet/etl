@@ -98,7 +98,7 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
 
         check(a, b, c);
 
-        if /*constexpr*/ (Flipped){
+        if constexpr (Flipped){
             detail::conv4_full_flipped_impl::apply(a, b, c);
         } else {
             detail::conv4_full_impl::apply(a, b, c);

@@ -37,7 +37,7 @@ void mkl_otrans(A&& a, C&& c) {
     auto mem_c = c.memory_start();
     auto mem_a = a.memory_start();
 
-    if /*constexpr*/ (decay_traits<A>::storage_order == order::RowMajor) {
+    if constexpr (decay_traits<A>::storage_order == order::RowMajor) {
         mkl_somatcopy('R', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0f, mem_a, etl::dim<1>(a), mem_c, etl::dim<0>(a));
     } else {
         mkl_somatcopy('C', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0f, mem_a, etl::dim<0>(a), mem_c, etl::dim<1>(a));
@@ -58,7 +58,7 @@ void mkl_otrans(A&& a, C&& c) {
     auto mem_c = c.memory_start();
     auto mem_a = a.memory_start();
 
-    if /*constexpr*/ (decay_traits<A>::storage_order == order::RowMajor) {
+    if constexpr (decay_traits<A>::storage_order == order::RowMajor) {
         mkl_domatcopy('R', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0, mem_a, etl::dim<1>(a), mem_c, etl::dim<0>(a));
     } else {
         mkl_domatcopy('C', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0, mem_a, etl::dim<0>(a), mem_c, etl::dim<1>(a));
@@ -75,7 +75,7 @@ template <typename C, cpp_enable_iff(is_single_precision<C>)>
 void mkl_itrans(C&& c) {
     c.ensure_cpu_up_to_date();
 
-    if /*constexpr*/ (decay_traits<C>::storage_order == order::RowMajor) {
+    if constexpr (decay_traits<C>::storage_order == order::RowMajor) {
         mkl_simatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
     } else {
         mkl_simatcopy('C', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<0>(c), etl::dim<1>(c));
@@ -92,7 +92,7 @@ template <typename C, cpp_enable_iff(is_double_precision<C>)>
 void mkl_itrans(C&& c) {
     c.ensure_cpu_up_to_date();
 
-    if /*constexpr*/ (decay_traits<C>::storage_order == order::RowMajor) {
+    if constexpr (decay_traits<C>::storage_order == order::RowMajor) {
         mkl_dimatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
     } else {
         mkl_dimatcopy('C', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, c.memory_start(), etl::dim<0>(c), etl::dim<1>(c));

@@ -180,7 +180,7 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
 
         constexpr_select auto impl = select_impl<R>();
 
-        if /*constexpr*/ (Max) {
+        if constexpr (Max) {
             if /*constexpr_select*/ (impl == pool_impl::STD) {
                 impl::standard::max_pool_upsample_3d::apply<C1, C2, C3>(
                     smart_forward(a),

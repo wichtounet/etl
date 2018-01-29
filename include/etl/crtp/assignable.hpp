@@ -34,7 +34,7 @@ struct assignable {
     derived_t& operator=(E&& e) {
         validate_assign(as_derived(), e);
 
-        if /*constexpr*/ (!decay_traits<E>::is_linear) {
+        if constexpr (!decay_traits<E>::is_linear) {
             if (e.alias(as_derived())) {
                 auto tmp = etl::force_temporary_dim_only(as_derived());
 

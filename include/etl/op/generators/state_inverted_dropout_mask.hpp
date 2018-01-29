@@ -42,7 +42,7 @@ struct state_inverted_dropout_mask_generator_op {
      * \brief Construct a new generator with the given start and end of the range
      */
     state_inverted_dropout_mask_generator_op(T probability) : probability(probability), rand_engine(std::time(nullptr)), distribution(T(0), T(1)) {
-        if /*constexpr*/ (impl::egblas::has_dropout_prepare) {
+        if constexpr (impl::egblas::has_dropout_prepare) {
             states = std::make_shared<void*>();
             *states = impl::egblas::dropout_prepare();
         }

@@ -35,7 +35,7 @@ struct Assign {
 
         size_t i = 0;
 
-        if /*constexpr*/ (unroll_normal_loops) {
+        if constexpr (unroll_normal_loops) {
             const size_t iend = N & size_t(-4);
 
             for (; i < iend; i += 4) {
@@ -67,7 +67,7 @@ struct AssignAdd {
 
         size_t i = 0;
 
-        if /*constexpr*/ (unroll_normal_loops) {
+        if constexpr (unroll_normal_loops) {
             const size_t iend = (N & size_t(-4));
 
             for (; i < iend; i += 4) {
@@ -99,7 +99,7 @@ struct AssignSub {
 
         size_t i = 0;
 
-        if /*constexpr*/ (unroll_normal_loops) {
+        if constexpr (unroll_normal_loops) {
             const size_t iend = (N & size_t(-4));
 
             for (; i < iend; i += 4) {
@@ -131,7 +131,7 @@ struct AssignMul {
 
         size_t i = 0;
 
-        if /*constexpr*/ (unroll_normal_loops) {
+        if constexpr (unroll_normal_loops) {
             const size_t iend = (N & size_t(-4));
 
             for (; i < iend; i += 4) {
@@ -163,7 +163,7 @@ struct AssignDiv {
 
         size_t i = 0;
 
-        if /*constexpr*/ (unroll_normal_loops) {
+        if constexpr (unroll_normal_loops) {
             const size_t iend = (N & size_t(-4));
 
             for (; i < iend; i += 4) {

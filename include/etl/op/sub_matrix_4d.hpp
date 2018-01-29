@@ -92,7 +92,7 @@ public:
     const_return_type operator[](size_t f) const {
         cpp_assert(f < m * n * o * p, "Invalid index inside sub_matrix_4d");
 
-        if /*constexpr*/ (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor){
             // Extract 4D indices from flat inside the view
             auto my_i = f / (n * o * p);
             auto t1    = f % (n * o * p);
@@ -125,7 +125,7 @@ public:
     return_type operator[](size_t f) {
         cpp_assert(f < m * n * o * p, "Invalid index inside sub_matrix_4d");
 
-        if /*constexpr*/ (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor){
             // Extract 4D indices from flat inside the view
             auto my_i = f / (n * o * p);
             auto t1    = f % (n * o * p);
@@ -159,7 +159,7 @@ public:
     value_type read_flat(size_t f) const noexcept(assert_nothrow) {
         cpp_assert(f < m * n * o * p, "Invalid index inside sub_matrix_4d");
 
-        if /*constexpr*/ (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor){
             // Extract 4D indices from flat inside the view
             auto my_i = f / (n * o * p);
             auto t1    = f % (n * o * p);

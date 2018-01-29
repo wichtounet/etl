@@ -386,7 +386,7 @@ bool conv4_full_flipped_small(const I& input, const KK& kernel, CC&& conv) {
     const size_t pad = k2 - 1;
     const size_t full_pad = pad * 2;
 
-    if /*constexpr*/ (padding_impl) {
+    if constexpr (padding_impl) {
         constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
         constexpr size_t SS = AS / 2;
 
@@ -530,7 +530,7 @@ bool conv4_full_flipped_padding(const I& input, const KK& kernel, CC&& conv) {
     const size_t k2 = etl::dim<3>(kernel);
 
     // Disabled for now because slower in fact than non-padded
-    if /*constexpr*/ (padding_impl && false) {
+    if constexpr (padding_impl && false) {
         constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
         constexpr size_t SS = AS / 2;
 
@@ -615,7 +615,7 @@ void conv4_full(const I& input, const K& kernel, C&& conv) {
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    if /*constexpr*/ (avx_enabled && sse3_enabled) {
+    if constexpr (avx_enabled && sse3_enabled) {
         const size_t k2 = etl::dim<3>(kernel);
 
         if (detail::prefer_sse<value_t<I>>(k2)) {
