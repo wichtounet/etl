@@ -96,26 +96,6 @@ template <typename S>
 using const_memory_t = typename std::decay_t<S>::const_memory_type;
 
 /*!
- * \brief Value traits to compute the multiplication of all the given values
- */
-template <size_t F, size_t... Dims>
-struct mul_all_impl final : std::integral_constant<size_t, F * mul_all_impl<Dims...>::value> {};
-
-/*!
- * \copydoc mul_all_impl
- */
-template <size_t F>
-struct mul_all_impl<F> final : std::integral_constant<size_t, F> {};
-
-//CPP17: Can be totally replaced with variadic fold expansion
-
-/*!
- * \brief Value traits to compute the multiplication of all the given values
- */
-template <size_t F, size_t... Dims>
-constexpr size_t mul_all = mul_all_impl<F, Dims...>::value;
-
-/*!
  * \brief Traits to get the Sth dimension in Dims..
  * \tparam S The searched dimension
  * \tparam I The current index (start at zero)

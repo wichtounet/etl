@@ -240,7 +240,7 @@ struct etl_traits<etl::conv_2d_valid_deep_expr<A, B, S1, S2, P1, P2, Flipped>> {
      */
     template <size_t... I>
     static constexpr size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
-        return mul_all<this_type::dim<I>()...>;
+        return (this_type::dim<I>() * ...);
     }
 
     /*!

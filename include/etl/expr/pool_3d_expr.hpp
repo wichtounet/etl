@@ -198,7 +198,7 @@ struct etl_traits<etl::pool_3d_expr<A, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>
      */
     template <size_t... I>
     static constexpr size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
-        return mul_all<dim<I>()...>;
+        return (dim<I>() * ...);
     }
 
     /*!

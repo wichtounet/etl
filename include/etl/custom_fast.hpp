@@ -34,7 +34,7 @@ struct custom_fast_matrix_impl final :
 
 public:
     static constexpr size_t n_dimensions = sizeof...(Dims);               ///< The number of dimensions
-    static constexpr size_t etl_size     = mul_all<Dims...>;       ///< The size of the matrix
+    static constexpr size_t etl_size     = (Dims * ...);                  ///< The size of the matrix
     static constexpr order storage_order = SO;                            ///< The storage order
     static constexpr bool array_impl     = !matrix_detail::is_vector<ST>; ///< true if the storage is an std::arraw, false otherwise
 

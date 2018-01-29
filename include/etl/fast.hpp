@@ -34,7 +34,7 @@ struct fast_matrix_impl final :
 
 public:
     static constexpr size_t n_dimensions = sizeof...(Dims);                        ///< The number of dimensions
-    static constexpr size_t etl_size     = mul_all<Dims...>;                ///< The size of the matrix
+    static constexpr size_t etl_size     = (Dims * ...);                           ///< The size of the matrix
     static constexpr order storage_order = SO;                                     ///< The storage order
     static constexpr bool array_impl     = !matrix_detail::is_vector<ST>;          ///< true if the storage is an std::arraw, false otherwise
     static constexpr size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
@@ -437,7 +437,7 @@ static_assert(std::is_nothrow_destructible<fast_vector<double, 2>>::value, "fast
  */
 template <size_t... Dims, typename T>
 fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...> fast_matrix_over(T* memory) {
-    return fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...>(cpp::array_wrapper<T>(memory, mul_all<Dims...>));
+    return fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...>(cpp::array_wrapper<T>(memory, (Dims * ...)));
 }
 
 /*!

@@ -85,8 +85,8 @@ using const_iterator_t = typename iterator_type<T>::const_iterator;
 
 template <typename D, typename T, typename ST, order SO, size_t... Dims>
 struct fast_matrix_base {
-    static constexpr size_t n_dimensions = sizeof...(Dims);         ///< The number of dimensions
-    static constexpr size_t etl_size     = mul_all<Dims...>; ///< The size of the matrix
+    static constexpr size_t n_dimensions = sizeof...(Dims); ///< The number of dimensions
+    static constexpr size_t etl_size     = (Dims * ...);    ///< The size of the matrix
 
     using value_type        = T;                 ///< The type of value
     using derived_t         = D;                 ///< The derived type

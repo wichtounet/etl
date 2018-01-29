@@ -77,7 +77,7 @@ static constexpr size_t alloc_size_mat(size_t size, size_t last) {
  */
 template <typename T, size_t... Dims>
 static constexpr size_t alloc_size_mat() {
-    return alloc_size_mat<T>(mul_all<Dims...>, nth_size<sizeof...(Dims) - 1, 0, Dims...>);
+    return alloc_size_mat<T>((Dims * ...), nth_size<sizeof...(Dims) - 1, 0, Dims...>);
 }
 
 template <typename T, typename ST, order SO, size_t... Dims>

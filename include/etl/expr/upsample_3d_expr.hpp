@@ -200,7 +200,7 @@ struct etl_traits<etl::upsample_3d_expr<A, C1, C2, C3>> {
      */
     template <size_t... I>
     static constexpr size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
-        return mul_all<dim<I>()...>;
+        return (dim<I>() * ...);
     }
 
     /*!

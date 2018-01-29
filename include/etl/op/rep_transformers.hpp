@@ -126,7 +126,7 @@ public:
      * \return the value at the given index.
      */
     value_type operator[](size_t i) const {
-        return this->sub[i / mul_all<D...>];
+        return this->sub[i / (D * ...)];
     }
 
     /*!
@@ -136,7 +136,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(size_t i) const noexcept {
-        return this->sub.read_flat(i / mul_all<D...>);
+        return this->sub.read_flat(i / (D * ...));
     }
 
     /*!
@@ -404,7 +404,7 @@ struct etl_traits<rep_r_transformer<T, D...>> {
      * \returns the size of the given expression
      */
     static size_t size(const expr_t& v) {
-        return mul_all<D...> * etl_traits<sub_expr_t>::size(v.sub);
+        return (D * ...) * etl_traits<sub_expr_t>::size(v.sub);
     }
 
     /*!
@@ -426,7 +426,7 @@ struct etl_traits<rep_r_transformer<T, D...>> {
      * \returns the size of an expression of this fast type.
      */
     static constexpr size_t size() {
-        return mul_all<D...> * etl_traits<sub_expr_t>::size();
+        return (D * ...) * etl_traits<sub_expr_t>::size();
     }
 
     /*!
@@ -493,7 +493,7 @@ struct etl_traits<rep_l_transformer<T, D...>> {
      * \returns the size of the given expression
      */
     static size_t size(const expr_t& v) {
-        return mul_all<D...> * etl_traits<sub_expr_t>::size(v.sub);
+        return (D * ...) * etl_traits<sub_expr_t>::size(v.sub);
     }
 
     /*!
@@ -515,7 +515,7 @@ struct etl_traits<rep_l_transformer<T, D...>> {
      * \returns the size of an expression of this fast type.
      */
     static constexpr size_t size() {
-        return mul_all<D...> * etl_traits<sub_expr_t>::size();
+        return (D * ...) * etl_traits<sub_expr_t>::size();
     }
 
     /*!
