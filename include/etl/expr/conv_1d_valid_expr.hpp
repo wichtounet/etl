@@ -107,19 +107,19 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
         if /*constexpr_select*/ (impl == etl::conv_impl::VEC) {
             engine_dispatch_1d([&](size_t first, size_t last) {
                 impl::vec::conv1_valid(input, kernel, conv, first, last);
-            }, 0, size(conv), parallel_dispatch);
+            }, 0, etl::size(conv), parallel_dispatch);
         } else if /*constexpr_select*/ (impl == etl::conv_impl::STD) {
             engine_dispatch_1d([&](size_t first, size_t last) {
                 impl::standard::conv1_valid(input, kernel, conv, first, last);
-            }, 0, size(conv), parallel_dispatch);
+            }, 0, etl::size(conv), parallel_dispatch);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
 #else
         if /*constexpr_select*/ (impl == etl::conv_impl::VEC) {
-            impl::vec::conv1_valid(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, size(conv));
+            impl::vec::conv1_valid(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
         } else if /*constexpr_select*/ (impl == etl::conv_impl::STD) {
-            impl::standard::conv1_valid(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, size(conv));
+            impl::standard::conv1_valid(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }

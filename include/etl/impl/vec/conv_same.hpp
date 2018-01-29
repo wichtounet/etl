@@ -26,7 +26,7 @@ void conv1_same(const I& input, const K& kernel, C&& conv, size_t first, size_t 
     cpp_assert(vec_enabled, "Cannot use vectorized mode");
     cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    size_t left = (size(kernel) - 1) / 2;
+    size_t left = (etl::size(kernel) - 1) / 2;
 
     input.ensure_cpu_up_to_date();
     kernel.ensure_cpu_up_to_date();
@@ -36,10 +36,10 @@ void conv1_same(const I& input, const K& kernel, C&& conv, size_t first, size_t 
     const auto* k  = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
-    etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out, first, last);
-    etl::impl::common::right_same_kernel(in, size(input), k, size(kernel), out, first, last);
+    etl::impl::common::left_same_kernel(in, etl::size(input), k, etl::size(kernel), out, first, last);
+    etl::impl::common::right_same_kernel(in, etl::size(input), k, etl::size(kernel), out, first, last);
 
-    conv1_valid_impl<default_vec>(input, kernel, memory_slice(conv, left, size(conv)), first, last);
+    conv1_valid_impl<default_vec>(input, kernel, memory_slice(conv, left, etl::size(conv)), first, last);
 }
 
 /*!

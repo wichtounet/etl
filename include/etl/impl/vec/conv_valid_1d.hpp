@@ -339,28 +339,13 @@ void conv1_valid_impl(const I& input, const K& kernel, C&& conv, size_t first, s
  * \param first The index where to start in the output matrix
  * \param last The index where to stop in the output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv1_possible<vector_mode, I, K, C>)>
-void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
-    conv1_valid_impl<default_vec>(input, kernel, conv, first, last);
-}
-
-/*!
- * \brief Vectorized implementation of a 1D 'valid' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- * \param first The index where to start in the output matrix
- * \param last The index where to stop in the output matrix
- */
-template <typename I, typename K, typename C, cpp_disable_iff(conv1_possible<vector_mode, I, K, C>)>
-void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(first);
-    cpp_unused(last);
-
-    cpp_unreachable("Invalid call to vec::conv_1_valid");
+template <typename I, typename K, typename C>
+void conv1_valid(const I& input, const K& kernel, C&& conv, [[maybe_unused]] size_t first, [[maybe_unused]] size_t last) {
+    if constexpr (conv1_possible<vector_mode, I, K, C>){
+        conv1_valid_impl<default_vec>(input, kernel, conv, first, last);
+    } else {
+        cpp_unreachable("Invalid call to vec::conv_1_valid");
+    }
 }
 
 } //end of namespace vec
