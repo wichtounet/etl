@@ -198,17 +198,6 @@ constexpr size_t gpu_inc_impl(){
 
 } // end of namespace traits_detail
 
-// CPP17: Remove and_v and use variadic &&
-
-/*!
- * \brief Simple helper variable template to perform an AND between a set of
- * boolean values.
- */
-template <bool... B>
-constexpr bool and_v = std::is_same<
-    cpp::tmp_detail::bool_list<true, B...>,
-    cpp::tmp_detail::bool_list<B..., true>>::value;
-
 /*!
  * \brief Traits to get information about ETL types
  *
@@ -529,7 +518,7 @@ constexpr bool is_single_precision = is_single_precision_t<value_t<T>>;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_single_precision = and_v<(is_single_precision<E>)...>;
+constexpr bool all_single_precision = (is_single_precision<E> && ...);
 
 /*!
  * \brief Traits to test if the given type is double precision type.
@@ -557,7 +546,7 @@ constexpr bool is_double_precision = is_double_precision_t<value_t<T>>;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_double_precision = and_v<(is_double_precision<E>)...>;
+constexpr bool all_double_precision = (is_double_precision<E> && ...);
 
 /*!
  * \brief Traits to test if the given ETL expresion contains floating point numbers.
@@ -578,14 +567,14 @@ constexpr bool is_floating_t = is_single_precision_t<T> || is_double_precision_t
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_floating = and_v<(is_floating<E>)...>;
+constexpr bool all_floating = (is_floating<E> && ...);
 
 /*!
  * \brief Traits to test if all the given types are floating point numbers.
  * \tparam E The types.
  */
 template <typename... E>
-constexpr bool all_floating_t = and_v<(is_floating_t<E>)...>;
+constexpr bool all_floating_t = (is_floating_t<E> && ...);
 
 /*!
  * \brief Traits to test if a type is a complex number type
@@ -633,14 +622,14 @@ constexpr bool is_complex_double_precision = is_complex_double_t<value_t<T>>;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_complex_single_precision = and_v<(is_complex_single_precision<E>)...>;
+constexpr bool all_complex_single_precision = (is_complex_single_precision<E> && ...);
 
 /*!
  * \brief Traits to test if all the given ETL expresion types contains double precision complex numbers.
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_complex_double_precision = and_v<(is_complex_double_precision<E>)...>;
+constexpr bool all_complex_double_precision = (is_complex_double_precision<E> && ...);
 
 /*!
  * \brief Traits to test if the given ETL expresion type contains complex numbers.
@@ -654,7 +643,7 @@ constexpr bool is_complex = is_complex_single_precision<T> || is_complex_double_
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_complex = and_v<(is_complex<E>)...>;
+constexpr bool all_complex = (is_complex<E> && ...);
 
 /*!
  * \brief Traits to test if the given ETL expresion type contains
@@ -698,7 +687,7 @@ constexpr bool is_dma = has_direct_access<E>;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_dma = and_v<(has_direct_access<E>)...>;
+constexpr bool all_dma = (has_direct_access<E> && ...);
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are row-major.
@@ -712,7 +701,7 @@ constexpr bool is_row_major = decay_traits<E>::storage_order == order::RowMajor;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_row_major = and_v<is_row_major<E>...>;
+constexpr bool all_row_major = (is_row_major<E> & ...);
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are column-major.
@@ -726,7 +715,7 @@ constexpr bool is_column_major = decay_traits<E>::storage_order == order::Column
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_column_major = and_v<is_column_major<E>...>;
+constexpr bool all_column_major = (is_column_major<E> && ...);
 
 /*!
  * \brief Traits to test if the given ETL expresion type is fast (sizes known at compile-time)
@@ -740,14 +729,14 @@ constexpr bool is_fast = decay_traits<E>::is_fast;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_fast = and_v<decay_traits<E>::is_fast...>;
+constexpr bool all_fast = (decay_traits<E>::is_fast && ...);
 
 /*!
  * \brief Traits to test if all the given types are ETL types.
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_etl_expr = and_v<(is_etl_expr<E>)...>;
+constexpr bool all_etl_expr = (is_etl_expr<E> && ...);
 
 /*!
  * \brief Traits to test if the given expression type is 1D
@@ -761,7 +750,7 @@ constexpr bool is_1d = decay_traits<T>::dimensions() == 1;
  * \tparam T The ETL expression type
  */
 template <typename... T>
-constexpr bool all_1d = and_v<is_1d<T>...>;
+constexpr bool all_1d = (is_1d<T> && ...);
 
 /*!
  * \brief Traits to test if the given expression type is 2D
@@ -775,7 +764,7 @@ constexpr bool is_2d = decay_traits<T>::dimensions() == 2;
  * \tparam T The ETL expression type
  */
 template <typename... T>
-constexpr bool all_2d = and_v<is_2d<T>...>;
+constexpr bool all_2d = (is_2d<T> && ...);
 
 /*!
  * \brief Traits to test if the given expression type is 3D
@@ -789,7 +778,7 @@ constexpr bool is_3d = decay_traits<T>::dimensions() == 3;
  * \tparam T The ETL expression type
  */
 template <typename... T>
-constexpr bool all_3d = and_v<is_3d<T>...>;
+constexpr bool all_3d = (is_3d<T> && ...);
 
 /*!
  * \brief Traits to test if the given expression type is 4D
@@ -803,14 +792,14 @@ constexpr bool is_4d = decay_traits<T>::dimensions() == 4;
  * \tparam T The ETL expression type
  */
 template <typename... T>
-constexpr bool all_4d = and_v<is_4d<T>...>;
+constexpr bool all_4d = (is_4d<T> && ...);
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are vectorizable.
  * \tparam E The ETL expression types.
  */
 template <vector_mode_t V, typename... E>
-constexpr bool all_vectorizable = and_v<(decay_traits<E>::template vectorizable<V>)...>;
+constexpr bool all_vectorizable = (decay_traits<E>::template vectorizable<V> && ...);
 
 /*!
  * \brief Traits to test if the given type are vectorizable types.
@@ -824,7 +813,7 @@ static constexpr bool vectorizable_t = get_intrinsic_traits<V>::template type<va
  * \tparam E The types.
  */
 template <vector_mode_t V, typename... E>
-constexpr bool all_vectorizable_t = and_v<(vectorizable_t<V, E>)...>;
+constexpr bool all_vectorizable_t = (vectorizable_t<V, E> & ...);
 
 /*!
  * \brief Traits to test if the given ETL expresion type is
@@ -840,7 +829,7 @@ constexpr bool is_thread_safe = decay_traits<E>::is_thread_safe;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_thread_safe = and_v<(decay_traits<E>::is_thread_safe)...>;
+constexpr bool all_thread_safe = (decay_traits<E>::is_thread_safe && ...);
 
 /*!
  * \brief Traits to test if the givn ETL expression is a padded value class.
@@ -861,7 +850,7 @@ constexpr bool is_aligned_value = is_dyn_matrix<T> || is_fast_matrix<T>;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_padded = and_v<(decay_traits<E>::is_padded)...>;
+constexpr bool all_padded = (decay_traits<E>::is_padded && ...);
 
 /*!
  * \brief Traits indicating if the given ETL expression's type is computable
@@ -879,7 +868,7 @@ constexpr bool is_gpu_computable = decay_traits<T>::gpu_computable;
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_gpu_computable = and_v<(decay_traits<E>::gpu_computable)...>;
+constexpr bool all_gpu_computable = (decay_traits<E>::gpu_computable && ...);
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are padded.
