@@ -1070,30 +1070,19 @@ void fft2_many(A&& a, C&& c) {
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_floating<A, B, C> && all_homogeneous<A, B, C>)>
-void conv1_full_fft(A&& a, B&& b, C&& c) {
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
+template <typename A, typename B, typename C>
+void conv1_full_fft([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
+    if constexpr (all_floating<A, B, C> && all_homogeneous<A, B, C>) {
+        a.ensure_cpu_up_to_date();
+        b.ensure_cpu_up_to_date();
 
-    detail::conv1_full_kernel(a.memory_start(), etl::size(a), b.memory_start(), etl::size(b), c.memory_start());
+        detail::conv1_full_kernel(a.memory_start(), etl::size(a), b.memory_start(), etl::size(b), c.memory_start());
 
-    c.validate_cpu();
-    c.invalidate_gpu();
-}
-
-/*!
- * \brief Perform the 1D full convolution of a with b and store the result in c
- * \param a The input matrix
- * \param b The kernel matrix
- * \param c The output matrix
- */
-template <typename A, typename B, typename C, cpp_disable_iff(all_floating<A, B, C> && all_homogeneous<A, B, C>)>
-void conv1_full_fft(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
-    cpp_unreachable("Invalid call to std::fft::conv1_full_fft");
+        c.validate_cpu();
+        c.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid call to std::fft::conv1_full_fft");
+    }
 }
 
 /*!
