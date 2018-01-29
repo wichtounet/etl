@@ -277,6 +277,8 @@ $(eval $(call add_test_executable,etl_test_embedding_lookup,src/test.cpp src/emb
 $(eval $(call add_test_executable,etl_test_merge,src/test.cpp src/merge.cpp))
 $(eval $(call add_test_executable,etl_test_reduc,src/test.cpp src/reduc.cpp))
 $(eval $(call add_test_executable,etl_test_bias_add,src/test.cpp src/bias_add.cpp))
+$(eval $(call add_test_executable,etl_test_slice,src/test.cpp src/slice.cpp))
+$(eval $(call add_test_executable,etl_test_memory_slice,src/test.cpp src/memory_slice.cpp))
 
 # Create the benchmark executables
 BENCH_FILES=$(wildcard benchmark/src/benchmark*cpp)
