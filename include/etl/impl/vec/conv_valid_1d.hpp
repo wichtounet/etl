@@ -329,8 +329,6 @@ void conv1_valid_impl(const I& input, const K& kernel, C&& conv, size_t first, s
     conv.invalidate_gpu();
 }
 
-// Note: CPP17 constexpr
-
 /*!
  * \brief Vectorized implementation of a 1D 'valid' convolution C = I * K
  * \param input The input matrix
