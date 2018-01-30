@@ -654,50 +654,35 @@ void gevm_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
  * \param b The rhs matrix
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_iff(is_row_major<B> && all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>)>
+template <typename A, typename B, typename C>
 void gevm(A&& a, B&& b, C&& c) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+    if constexpr (vec_enabled && vectorize_impl && all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>) {
+        a.ensure_cpu_up_to_date();
+        b.ensure_cpu_up_to_date();
 
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
+        const auto m = rows(b);
+        const auto n = columns(b);
 
-    const auto m = rows(b);
-    const auto n = columns(b);
+        if constexpr (is_row_major<B>) {
+            if (etl::size(b) < gevm_rm_small_threshold) {
+                gevm_small_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c);
+            } else {
+                gevm_large_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c);
+            }
+        } else {
+            if (etl::size(b) < gevm_cm_small_threshold) {
+                gevm_small_kernel_cc<default_vec>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+            } else {
+                c = 0;
 
-    if(etl::size(b) < gevm_rm_small_threshold){
-        gevm_small_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c);
+                gevm_large_kernel_cc<default_vec>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+            }
+        }
+
+        c.invalidate_gpu();
     } else {
-        gevm_large_kernel_rr<default_vec>(a.memory_start(), m, n, b.memory_start(), c);
+        cpp_unreachable("Invalid operation called vec::gevm");
     }
-
-    c.invalidate_gpu();
-}
-
-/*!
- * \brief Optimized version of GEVM for column major version
- * \param a The lhs vector
- * \param b The rhs matrix
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(is_column_major<B> && all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>)>
-void gevm(A&& a, B&& b, C&& c) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
-
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-
-    const auto m = rows(b);
-    const auto n = columns(b);
-
-    if(etl::size(b) < gevm_cm_small_threshold){
-        gevm_small_kernel_cc<default_vec>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
-    } else {
-        c = 0;
-
-        gevm_large_kernel_cc<default_vec>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
-    }
-
-    c.invalidate_gpu();
 }
 
 // Versions with transposition
@@ -708,87 +693,37 @@ void gevm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_iff(is_row_major<B> && all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>)>
+template <typename A, typename B, typename C>
 void gevm_t(A&& a, B&& b, C&& c) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+    if constexpr (vec_enabled && vectorize_impl && all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>) {
+        a.ensure_cpu_up_to_date();
+        b.ensure_cpu_up_to_date();
 
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
+        const auto m = rows(b);
+        const auto n = columns(b);
 
-    const auto m = rows(b);
-    const auto n = columns(b);
+        if constexpr (is_row_major<B>) {
+            if (etl::size(b) < gevm_rm_small_threshold) {
+                gevm_small_kernel_cc<default_vec>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+            } else {
+                c = 0;
 
-    if(etl::size(b) < gevm_rm_small_threshold){
-        gevm_small_kernel_cc<default_vec>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+                gevm_large_kernel_cc<default_vec>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+            }
+        } else {
+            if (etl::size(b) < gevm_cm_small_threshold) {
+                gevm_small_kernel_rr<default_vec>(a.memory_start(), n, m, b.memory_start(), c);
+            } else {
+                c = 0;
+
+                gevm_large_kernel_rr<default_vec>(a.memory_start(), n, m, b.memory_start(), c);
+            }
+        }
+
+        c.invalidate_gpu();
     } else {
-        c = 0;
-
-        gevm_large_kernel_cc<default_vec>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+        cpp_unreachable("Invalid operation called vec::gevm");
     }
-
-    c.invalidate_gpu();
-}
-
-/*!
- * \brief Optimized version of GEVM for column major version
- * \param a The lhs vector
- * \param b The rhs matrix
- * \param c The result vector
-  && all_homogeneous<A, B, C>*/
-template <typename A, typename B, typename C, cpp_enable_iff(is_column_major<B> && all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>)>
-void gevm_t(A&& a, B&& b, C&& c) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
-
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-
-    const auto m = rows(b);
-    const auto n = columns(b);
-
-    if(etl::size(b) < gevm_cm_small_threshold){
-        gevm_small_kernel_rr<default_vec>(a.memory_start(), n, m, b.memory_start(), c);
-    } else {
-        c = 0;
-
-        gevm_large_kernel_rr<default_vec>(a.memory_start(), n, m, b.memory_start(), c);
-    }
-
-    c.invalidate_gpu();
-}
-
-// Fallback functions for heterogeneous types
-// CPP17: Replace with a if constexpr in the base functions ?
-
-/*!
- * \brief GEVM with heterogeneous types
- *
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C> || !all_vectorizable<vector_mode, A, B, C>)>
-void gevm(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
-    cpp_unreachable("Invalid operation called vec::gevm");
-}
-
-/*!
- * \brief GEVM with heterogeneous types
- *
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C> || !all_vectorizable<vector_mode, A, B, C>)>
-void gevm_t(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
-    cpp_unreachable("Invalid operation called vec::gevm_t");
 }
 
 } //end of namespace vec
