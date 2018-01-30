@@ -177,221 +177,95 @@ inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, 
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff((all_row_major<A, B, C> || all_column_major<A, B, C>) && all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C>
 void gemm(A&& a, B&& b, C&& c) {
-    using T = value_t<A>;
+    if constexpr (all_homogeneous<A, B, C>) {
+        using T = value_t<A>;
 
-    static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+        T alpha(1.0);
+        T beta(0.0);
 
-    T alpha(1.0);
-    T beta(0.0);
+        a.ensure_cpu_up_to_date();
+        b.ensure_cpu_up_to_date();
 
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
+        if constexpr (all_row_major<A, B, C> || all_column_major<A, B, C>) {
+            constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    cblas_gemm(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasNoTrans, CblasNoTrans,
-        etl::rows(a), etl::columns(b), etl::columns(a),
-        alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), major_stride(b),
-        beta,
-        c.memory_start(), major_stride(c));
+            cblas_gemm(
+                row_major ? CblasRowMajor : CblasColMajor,
+                CblasNoTrans, CblasNoTrans,
+                etl::rows(a), etl::columns(b), etl::columns(a),
+                alpha,
+                a.memory_start(), major_stride(a),
+                b.memory_start(), major_stride(b),
+                beta,
+                c.memory_start(), major_stride(c));
+        } else if constexpr (all_row_major<B, C> && is_column_major<A>) {
+            cblas_gemm(
+                CblasRowMajor,
+                CblasTrans, CblasNoTrans,
+                etl::rows(a), etl::columns(b), etl::columns(a),
+                alpha,
+                a.memory_start(), major_stride(a),
+                b.memory_start(), major_stride(b),
+                beta,
+                c.memory_start(), major_stride(c));
+        } else if constexpr (all_row_major<A, C> && is_column_major<B>) {
+            cblas_gemm(
+                CblasRowMajor,
+                CblasNoTrans, CblasTrans,
+                etl::rows(a), etl::columns(b), etl::columns(a),
+                alpha,
+                a.memory_start(), major_stride(a),
+                b.memory_start(), major_stride(b),
+                beta,
+                c.memory_start(), major_stride(c));
+        } else if constexpr (is_row_major<C> && all_column_major<A, B>) {
+            cblas_gemm(
+                CblasRowMajor,
+                CblasTrans, CblasTrans,
+                etl::rows(a), etl::columns(b), etl::columns(a),
+                alpha,
+                a.memory_start(), major_stride(a),
+                b.memory_start(), major_stride(b),
+                beta,
+                c.memory_start(), major_stride(c));
+        } else if constexpr (is_row_major<A> && all_column_major<B, C>) {
+            cblas_gemm(
+                CblasColMajor,
+                CblasTrans, CblasNoTrans,
+                etl::rows(a), etl::columns(b), etl::columns(a),
+                alpha,
+                a.memory_start(), major_stride(a),
+                b.memory_start(), major_stride(b),
+                beta,
+                c.memory_start(), major_stride(c));
+        } else if constexpr (is_row_major<B> && all_column_major<A, C>) {
+            cblas_gemm(
+                CblasColMajor,
+                CblasNoTrans, CblasTrans,
+                etl::rows(a), etl::columns(b), etl::columns(a),
+                alpha,
+                a.memory_start(), major_stride(a),
+                b.memory_start(), major_stride(b),
+                beta,
+                c.memory_start(), major_stride(c));
+        } else if constexpr (all_row_major<A, B> && is_column_major<C>) {
+            cblas_gemm(
+                CblasColMajor,
+                CblasTrans, CblasTrans,
+                etl::rows(a), etl::columns(b), etl::columns(a),
+                alpha,
+                a.memory_start(), major_stride(a),
+                b.memory_start(), major_stride(b),
+                beta,
+                c.memory_start(), major_stride(c));
+        }
 
-    c.invalidate_gpu();
-}
-
-/*!
- * \brief Compute the matrix multiplication of a and b and store the result in c.
- *
- * A is a row-major matrix, B and C are column major.
- *
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_iff(all_row_major<B, C> && is_column_major<A> && all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c) {
-    using T = value_t<A>;
-
-    T alpha(1.0);
-    T beta(0.0);
-
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-
-    cblas_gemm(
-        CblasRowMajor,
-        CblasTrans, CblasNoTrans,
-        etl::rows(a), etl::columns(b), etl::columns(a),
-        alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), major_stride(b),
-        beta,
-        c.memory_start(), major_stride(c));
-
-    c.invalidate_gpu();
-}
-
-/*!
- * \brief Compute the matrix multiplication of a and b and store the result in c.
- *
- * A and C are row-major, B is column major.
- *
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_iff(all_row_major<A, C> && is_column_major<B> && all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c) {
-    using T = value_t<A>;
-
-    T alpha(1.0);
-    T beta(0.0);
-
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-
-    cblas_gemm(
-        CblasRowMajor,
-        CblasNoTrans, CblasTrans,
-        etl::rows(a), etl::columns(b), etl::columns(a),
-        alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), major_stride(b),
-        beta,
-        c.memory_start(), major_stride(c));
-
-    c.invalidate_gpu();
-}
-
-/*!
- * \brief Compute the matrix multiplication of a and b and store the result in c.
- *
- * C is row-major, A and B are column major.
- *
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_iff(is_row_major<C> && all_column_major<A, B> && all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c) {
-    using T = value_t<A>;
-
-    T alpha(1.0);
-    T beta(0.0);
-
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-
-    cblas_gemm(
-        CblasRowMajor,
-        CblasTrans, CblasTrans,
-        etl::rows(a), etl::columns(b), etl::columns(a),
-        alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), major_stride(b),
-        beta,
-        c.memory_start(), major_stride(c));
-
-    c.invalidate_gpu();
-}
-
-/*!
- * \brief Compute the matrix multiplication of a and b and store the result in c.
- *
- * A is row-major, B and C are column major.
- *
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_iff(is_row_major<A> && all_column_major<B, C> && all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c) {
-    using T = value_t<A>;
-
-    T alpha(1.0);
-    T beta(0.0);
-
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-
-    cblas_gemm(
-        CblasColMajor,
-        CblasTrans, CblasNoTrans,
-        etl::rows(a), etl::columns(b), etl::columns(a),
-        alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), major_stride(b),
-        beta,
-        c.memory_start(), major_stride(c));
-
-    c.invalidate_gpu();
-}
-
-/*!
- * \brief Compute the matrix multiplication of a and b and store the result in c.
- *
- * B is row-major, A and C are column major.
- *
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_iff(is_row_major<B> && all_column_major<A, C> && all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c) {
-    using T = value_t<A>;
-
-    T alpha(1.0);
-    T beta(0.0);
-
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-
-    cblas_gemm(
-        CblasColMajor,
-        CblasNoTrans, CblasTrans,
-        etl::rows(a), etl::columns(b), etl::columns(a),
-        alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), major_stride(b),
-        beta,
-        c.memory_start(), major_stride(c));
-
-    c.invalidate_gpu();
-}
-
-/*!
- * \brief Compute the matrix multiplication of a and b and store the result in c.
- *
- * A and B are row-major, C is column major.
- *
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_iff(all_row_major<A, B> && is_column_major<C> && all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c) {
-    using T = value_t<A>;
-
-    T alpha(1.0);
-    T beta(0.0);
-
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-
-    cblas_gemm(
-        CblasColMajor,
-        CblasTrans, CblasTrans,
-        etl::rows(a), etl::columns(b), etl::columns(a),
-        alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), major_stride(b),
-        beta,
-        c.memory_start(), major_stride(c));
-
-    c.invalidate_gpu();
+        c.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid operation called blas::gemm with heterogeneous types");
+    }
 }
 
 /*!
@@ -400,29 +274,33 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C>
 void gemm_nt(A&& a, B&& b, C&& c) {
-    using T = value_t<A>;
+    if constexpr (all_homogeneous<A, B, C>) {
+        using T = value_t<A>;
 
-    static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+        static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    T alpha(1.0);
-    T beta(0.0);
+        T alpha(1.0);
+        T beta(0.0);
 
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
+        a.ensure_cpu_up_to_date();
+        b.ensure_cpu_up_to_date();
 
-    cblas_gemm(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasNoTrans, CblasTrans,
-        etl::rows(a), etl::rows(b), etl::columns(a),
-        alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), major_stride(b),
-        beta,
-        c.memory_start(), major_stride(c));
+        cblas_gemm(
+            row_major ? CblasRowMajor : CblasColMajor,
+            CblasNoTrans, CblasTrans,
+            etl::rows(a), etl::rows(b), etl::columns(a),
+            alpha,
+            a.memory_start(), major_stride(a),
+            b.memory_start(), major_stride(b),
+            beta,
+            c.memory_start(), major_stride(c));
 
-    c.invalidate_gpu();
+        c.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid operation called blas::gemm_nt with heterogeneous types");
+    }
 }
 
 /*!
@@ -431,29 +309,33 @@ void gemm_nt(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C>
 void gemm_tn(A&& a, B&& b, C&& c) {
-    using T = value_t<A>;
+    if constexpr (all_homogeneous<A, B, C>) {
+        using T = value_t<A>;
 
-    static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+        static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    T alpha(1.0);
-    T beta(0.0);
+        T alpha(1.0);
+        T beta(0.0);
 
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
+        a.ensure_cpu_up_to_date();
+        b.ensure_cpu_up_to_date();
 
-    cblas_gemm(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasTrans, CblasNoTrans,
-        etl::columns(a), etl::columns(b), etl::rows(a),
-        alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), major_stride(b),
-        beta,
-        c.memory_start(), major_stride(c));
+        cblas_gemm(
+            row_major ? CblasRowMajor : CblasColMajor,
+            CblasTrans, CblasNoTrans,
+            etl::columns(a), etl::columns(b), etl::rows(a),
+            alpha,
+            a.memory_start(), major_stride(a),
+            b.memory_start(), major_stride(b),
+            beta,
+            c.memory_start(), major_stride(c));
 
-    c.invalidate_gpu();
+        c.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid operation called blas::gemm_tn with heterogeneous types");
+    }
 }
 
 /*!
@@ -462,29 +344,33 @@ void gemm_tn(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C>
 void gemm_tt(A&& a, B&& b, C&& c) {
-    using T = value_t<A>;
+    if constexpr (all_homogeneous<A, B, C>) {
+        using T = value_t<A>;
 
-    static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+        static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    T alpha(1.0);
-    T beta(0.0);
+        T alpha(1.0);
+        T beta(0.0);
 
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
+        a.ensure_cpu_up_to_date();
+        b.ensure_cpu_up_to_date();
 
-    cblas_gemm(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasTrans, CblasTrans,
-        etl::columns(a), etl::rows(b), etl::rows(a),
-        alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), major_stride(b),
-        beta,
-        c.memory_start(), major_stride(c));
+        cblas_gemm(
+            row_major ? CblasRowMajor : CblasColMajor,
+            CblasTrans, CblasTrans,
+            etl::columns(a), etl::rows(b), etl::rows(a),
+            alpha,
+            a.memory_start(), major_stride(a),
+            b.memory_start(), major_stride(b),
+            beta,
+            c.memory_start(), major_stride(c));
 
-    c.invalidate_gpu();
+        c.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid operation called blas::gemm_tt with heterogeneous types");
+    }
 }
 
 /*!
@@ -493,33 +379,37 @@ void gemm_tt(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C>
 void gemv(A&& a, B&& b, C&& c) {
-    cpp_assert(a.memory_start(), "Invalid memory for blas::gemv");
-    cpp_assert(b.memory_start(), "Invalid memory for blas::gemv");
-    cpp_assert(c.memory_start(), "Invalid memory for blas::gemv");
+    if constexpr (all_homogeneous<A, B, C>) {
+        cpp_assert(a.memory_start(), "Invalid memory for blas::gemv");
+        cpp_assert(b.memory_start(), "Invalid memory for blas::gemv");
+        cpp_assert(c.memory_start(), "Invalid memory for blas::gemv");
 
-    using T = value_t<A>;
+        using T = value_t<A>;
 
-    static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+        static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    T alpha(1.0);
-    T beta(0.0);
+        T alpha(1.0);
+        T beta(0.0);
 
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
+        a.ensure_cpu_up_to_date();
+        b.ensure_cpu_up_to_date();
 
-    cblas_gemv(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasNoTrans,
-        etl::rows(a), etl::columns(a),
-        alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), 1,
-        beta,
-        c.memory_start(), 1);
+        cblas_gemv(
+            row_major ? CblasRowMajor : CblasColMajor,
+            CblasNoTrans,
+            etl::rows(a), etl::columns(a),
+            alpha,
+            a.memory_start(), major_stride(a),
+            b.memory_start(), 1,
+            beta,
+            c.memory_start(), 1);
 
-    c.invalidate_gpu();
+        c.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid operation called blas::gemv with heterogeneous types");
+    }
 }
 
 /*!
@@ -528,29 +418,33 @@ void gemv(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C>
 void gemv_t(A&& a, B&& b, C&& c) {
-    using T = value_t<A>;
+    if constexpr (all_homogeneous<A, B, C>) {
+        using T = value_t<A>;
 
-    static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+        static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    T alpha(1.0);
-    T beta(0.0);
+        T alpha(1.0);
+        T beta(0.0);
 
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
+        a.ensure_cpu_up_to_date();
+        b.ensure_cpu_up_to_date();
 
-    cblas_gemv(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasTrans,
-        etl::rows(a), etl::columns(a),
-        alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), 1,
-        beta,
-        c.memory_start(), 1);
+        cblas_gemv(
+            row_major ? CblasRowMajor : CblasColMajor,
+            CblasTrans,
+            etl::rows(a), etl::columns(a),
+            alpha,
+            a.memory_start(), major_stride(a),
+            b.memory_start(), 1,
+            beta,
+            c.memory_start(), 1);
 
-    c.invalidate_gpu();
+        c.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid operation called blas::gemv_t with heterogeneous types");
+    }
 }
 
 /*!
@@ -559,29 +453,33 @@ void gemv_t(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C>
 void gevm(A&& a, B&& b, C&& c) {
-    using T = value_t<A>;
+    if constexpr (all_homogeneous<A, B, C>) {
+        using T = value_t<A>;
 
-    static constexpr bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+        static constexpr bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
-    T alpha(1.0);
-    T beta(0.0);
+        T alpha(1.0);
+        T beta(0.0);
 
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
+        a.ensure_cpu_up_to_date();
+        b.ensure_cpu_up_to_date();
 
-    cblas_gemv(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasTrans,
-        etl::rows(b), etl::columns(b),
-        alpha,
-        b.memory_start(), major_stride(b),
-        a.memory_start(), 1,
-        beta,
-        c.memory_start(), 1);
+        cblas_gemv(
+            row_major ? CblasRowMajor : CblasColMajor,
+            CblasTrans,
+            etl::rows(b), etl::columns(b),
+            alpha,
+            b.memory_start(), major_stride(b),
+            a.memory_start(), 1,
+            beta,
+            c.memory_start(), 1);
 
-    c.invalidate_gpu();
+        c.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid operation called blas::gemv with heterogeneous types");
+    }
 }
 
 /*!
@@ -590,160 +488,33 @@ void gevm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C>
 void gevm_t(A&& a, B&& b, C&& c) {
-    using T = value_t<A>;
+    if constexpr (all_homogeneous<A, B, C>) {
+        using T = value_t<A>;
 
-    static constexpr bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+        static constexpr bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
-    T alpha(1.0);
-    T beta(0.0);
+        T alpha(1.0);
+        T beta(0.0);
 
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
+        a.ensure_cpu_up_to_date();
+        b.ensure_cpu_up_to_date();
 
-    cblas_gemv(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasNoTrans,
-        etl::rows(b), etl::columns(b),
-        alpha,
-        b.memory_start(), major_stride(b),
-        a.memory_start(), 1,
-        beta,
-        c.memory_start(), 1);
+        cblas_gemv(
+            row_major ? CblasRowMajor : CblasColMajor,
+            CblasNoTrans,
+            etl::rows(b), etl::columns(b),
+            alpha,
+            b.memory_start(), major_stride(b),
+            a.memory_start(), 1,
+            beta,
+            c.memory_start(), 1);
 
-    c.invalidate_gpu();
-}
-
-// Fallback functions for heterogeneous types
-// CPP17: Replace with a if constexpr in the base functions ?
-
-/*!
- * \brief GEMM with heterogeneous types
- *
- * \param a The lhs matrix
- * \param b The rhs matrix
- * \param c The result matrix
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
-    cpp_unreachable("Invalid operation called blas::gemm with heterogeneous types");
-}
-
-/*!
- * \brief GEMM with heterogeneous types
- *
- * \param a The lhs matrix (row major)
- * \param b The rhs matrix (transposed row major)
- * \param c The result matrix (row major)
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemm_nt(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
-    cpp_unreachable("Invalid operation called blas::gemm_nt with heterogeneous types");
-}
-
-/*!
- * \brief GEMM with heterogeneous types
- *
- * \param a The lhs matrix (row major)
- * \param b The rhs matrix (transposed row major)
- * \param c The result matrix (row major)
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemm_tn(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
-    cpp_unreachable("Invalid operation called blas::gemm_tn with heterogeneous types");
-}
-
-/*!
- * \brief GEMM with heterogeneous types
- *
- * \param a The lhs matrix (row major)
- * \param b The rhs matrix (transposed row major)
- * \param c The result matrix (row major)
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemm_tt(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
-    cpp_unreachable("Invalid operation called blas::gemm_tt with heterogeneous types");
-}
-
-/*!
- * \brief GEMV with heterogeneous types
- *
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemv(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
-    cpp_unreachable("Invalid operation called blas::gemv with heterogeneous types");
-}
-
-/*!
- * \brief GEMV with heterogeneous types
- *
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemv_t(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
-    cpp_unreachable("Invalid operation called blas::gemv_t with heterogeneous types");
-}
-
-/*!
- * \brief GEVM with heterogeneous types
- *
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gevm(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
-    cpp_unreachable("Invalid operation called blas::gevm with heterogeneous types");
-}
-
-/*!
- * \brief GEVM with heterogeneous types
- *
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gevm_t(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
-    cpp_unreachable("Invalid operation called blas::gevm_t with heterogeneous types");
+        c.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid operation called blas::gemv_t with heterogeneous types");
+    }
 }
 
 /*!
@@ -1658,20 +1429,6 @@ void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t
 #else
 
 //COVERAGE_EXCLUDE_BEGIN
-
-/*!
- * \brief Compute the matrix multiplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C>
-void gemm(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: blas gemm");
-}
 
 /*!
  * \brief Compute the matrix multiplication of a and b and store the result in c
