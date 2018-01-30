@@ -1492,24 +1492,13 @@ bool safe_is_gpu_up_to_date(E&& expr){
  *
  * \return a direct expression
  */
-template <typename E, cpp_enable_iff(!is_temporary_expr<E>)>
+template <typename E>
 decltype(auto) smart_forward(E& expr) {
-    return make_temporary(expr);
-}
-
-/*!
- * \brief Smart forwarding for a temporary expression.
- *
- * This is guaranteed to produce a DMA expression in the most
- * efficient way possible.
- *
- * \param expr the Expresison from which to create a temporary.
- *
- * \return a direct expression
- */
-template <typename E, cpp_enable_iff(is_temporary_expr<E>)>
-decltype(auto) smart_forward(E& expr) {
-    return force_temporary(expr);
+    if constexpr (is_temporary_expr<E>){
+        return force_temporary(expr);
+    } else {
+        return make_temporary(expr);
+    }
 }
 
 /*!
@@ -1523,41 +1512,17 @@ decltype(auto) smart_forward(E& expr) {
  *
  * \return a direct GPU-able expression
  */
-template <typename E, cpp_enable_iff(!is_temporary_expr<E>)>
+template <typename E>
 decltype(auto) smart_forward_gpu(E& expr) {
-    return make_temporary(expr);
-}
-
-/*!
- * \brief Smart forwarding for a temporary expression that will be
- * computed in GPU.
- *
- * This is guaranteed to produce a DMA expression in the most
- * efficient way possible.
- *
- * \param expr the Expresison from which to create a temporary.
- *
- * \return a direct GPU-able expression
- */
-template <typename E, cpp_enable_iff(is_temporary_expr<E> && E::gpu_computable)>
-decltype(auto) smart_forward_gpu(E& expr) {
-    return force_temporary_gpu(expr);
-}
-
-/*!
- * \brief Smart forwarding for a temporary expression that will be
- * computed in GPU.
- *
- * This is guaranteed to produce a DMA expression in the most
- * efficient way possible.
- *
- * \param expr the Expresison from which to create a temporary.
- *
- * \return a direct GPU-able expression
- */
-template <typename E, cpp_enable_iff(is_temporary_expr<E> && !E::gpu_computable)>
-decltype(auto) smart_forward_gpu(E& expr) {
-    return force_temporary(expr);
+    if constexpr (is_temporary_expr<E>) {
+        if constexpr (E::gpu_computable) {
+            return force_temporary_gpu(expr);
+        } else {
+            return force_temporary(expr);
+        }
+    } else {
+        return make_temporary(expr);
+    }
 }
 
 // Unary smart_gpu_compute
@@ -1572,43 +1537,19 @@ decltype(auto) smart_forward_gpu(E& expr) {
  *
  * \return A gpu-computed expression reprensenting the results of the input expr
  */
-template <typename E, typename Y, cpp_enable_iff(is_temporary_expr<E> && !E::gpu_computable)>
+template <typename E, typename Y>
 decltype(auto) smart_gpu_compute_hint(E& expr, Y& y) {
-    cpp_unused(y);
-    auto t = force_temporary(expr);
-    t.ensure_gpu_up_to_date();
-    return t;
-}
-
-/*!
- * \brief Compute the expression into a representation that is GPU up to date.
- *
- * This function tries to minimize the number of copies and evaluations that is
- * performed.
- *
- * \param expr The expression that must be evaluated
- *
- * \return A gpu-computed expression reprensenting the results of the input expr
- */
-template <typename E, typename Y, cpp_enable_iff(is_temporary_expr<E> && E::gpu_computable)>
-decltype(auto) smart_gpu_compute_hint(E& expr, Y& y) {
-    cpp_unused(y);
-    return force_temporary_gpu(expr);
-}
-
-/*!
- * \brief Compute the expression into a representation that is GPU up to date.
- *
- * This function tries to minimize the number of copies and evaluations that is
- * performed.
- *
- * \param expr The expression that must be evaluated
- *
- * \return A gpu-computed expression reprensenting the results of the input expr
- */
-template <typename E, typename Y, cpp_enable_iff(!is_temporary_expr<E>)>
-decltype(auto) smart_gpu_compute_hint(E& expr, Y& y) {
-    return expr.gpu_compute_hint(y);
+    if constexpr (is_temporary_expr<E>){
+        if constexpr (E::gpu_computable) {
+            return force_temporary_gpu(expr);
+        } else {
+            auto t = force_temporary(expr);
+            t.ensure_gpu_up_to_date();
+            return t;
+        }
+    } else {
+        return expr.gpu_compute_hint(y);
+    }
 }
 
 // Binary smart_gpu_compute
@@ -1625,66 +1566,27 @@ decltype(auto) smart_gpu_compute_hint(E& expr, Y& y) {
  *
  * \return y
  */
-template <typename X, typename Y, cpp_enable_iff(is_temporary_expr<X> && !X::gpu_computable)>
+template <typename X, typename Y>
 decltype(auto) smart_gpu_compute(X& x, Y& y) {
-    auto t = force_temporary(x);
-    t.ensure_gpu_up_to_date();
-    y = t;
-    return y;
-}
-
-/*!
- * \brief Compute the expression into a representation that is GPU up to date
- * and store this representation in y.
- *
- * This function tries to minimize the number of copies and evaluations that is
- * performed. Ideally, the result will be directly computed inside y.
- *
- * \param x The expression that must be evaluated
- * \param y The expression into which store the GPU result of x
- *
- * \return y
- */
-template <typename X, typename Y, cpp_enable_iff(is_temporary_expr<X> && X::gpu_computable)>
-decltype(auto) smart_gpu_compute(X& x, Y& y) {
-    return y = x;
-}
-
-/*!
- * \brief Compute the expression into a representation that is GPU up to date
- * and store this representation in y.
- *
- * This function tries to minimize the number of copies and evaluations that is
- * performed. Ideally, the result will be directly computed inside y.
- *
- * \param x The expression that must be evaluated
- * \param y The expression into which store the GPU result of x
- *
- * \return y
- */
-template <typename X, typename Y, cpp_enable_iff(!is_temporary_expr<X> && !is_dma<X>)>
-decltype(auto) smart_gpu_compute(X& x, Y& y) {
-    return x.gpu_compute(y);
-}
-
-/*!
- * \brief Compute the expression into a representation that is GPU up to date
- * and store this representation in y.
- *
- * This function tries to minimize the number of copies and evaluations that is
- * performed. Ideally, the result will be directly computed inside y.
- *
- * \param x The expression that must be evaluated
- * \param y The expression into which store the GPU result of x
- *
- * \return y
- */
-template <typename X, typename Y, cpp_enable_iff(!is_temporary_expr<X> && is_dma<X>)>
-decltype(auto) smart_gpu_compute(X& x, Y& y) {
-    x.ensure_gpu_up_to_date();
-    y.ensure_gpu_allocated();
-    y.gpu_copy_from(x.gpu_memory());
-    return y;
+    if constexpr (is_temporary_expr<X>) {
+        if constexpr (X::gpu_computable) {
+            return y = x;
+        } else {
+            auto t = force_temporary(x);
+            t.ensure_gpu_up_to_date();
+            y = t;
+            return y;
+        }
+    } else {
+        if constexpr (is_dma<X>) {
+            x.ensure_gpu_up_to_date();
+            y.ensure_gpu_allocated();
+            y.gpu_copy_from(x.gpu_memory());
+            return y;
+        } else {
+            return x.gpu_compute(y);
+        }
+    }
 }
 
 // Select version
@@ -1701,26 +1603,13 @@ decltype(auto) smart_gpu_compute(X& x, Y& y) {
  *
  * \return either a temporary of the result of x (possibly x) or y
  */
-template <typename X, typename Y, cpp_enable_iff(should_gpu_compute_direct<X>)>
+template <typename X, typename Y>
 decltype(auto) select_smart_gpu_compute(X& x, Y& y) {
-    return smart_gpu_compute_hint(x, y);
-}
-
-/*!
- * \brief Compute the expression into a representation that is GPU up to date
- * and possibly store this representation in y.
- *
- * This function tries to minimize the number of copies and evaluations that is
- * performed. Ideally, the result will be directly computed inside y.
- *
- * \param x The expression that must be evaluated
- * \param y The expression into which store the GPU result of x
- *
- * \return either a temporary of the result of x (possibly x) or y
- */
-template <typename X, typename Y, cpp_disable_iff(should_gpu_compute_direct<X>)>
-decltype(auto) select_smart_gpu_compute(X& x, Y& y) {
-    return smart_gpu_compute(x, y);
+    if constexpr (should_gpu_compute_direct<X>) {
+        return smart_gpu_compute_hint(x, y);
+    } else {
+        return smart_gpu_compute(x, y);
+    }
 }
 
 /*!
