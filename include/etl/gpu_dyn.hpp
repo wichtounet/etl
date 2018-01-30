@@ -202,7 +202,7 @@ public:
      */
     template <typename Y>
     auto& gpu_compute_hint(Y& y){
-        cpu_unused(y);
+        cpp_unused(y);
         this->ensure_gpu_up_to_date();
         return *this;
     }
@@ -213,7 +213,7 @@ public:
      */
     template <typename Y>
     const auto& gpu_compute_hint(Y& y) const {
-        cpu_unused(y);
+        cpp_unused(y);
         this->ensure_gpu_up_to_date();
         return *this;
     }
