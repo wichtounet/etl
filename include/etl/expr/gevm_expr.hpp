@@ -87,7 +87,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      */
     template <typename C>
     static constexpr gemm_impl select_default_gevm_impl(bool no_gpu) {
-        constexpr bool vec_possible = all_vectorizable_t<vector_mode, A, B, C> && vec_enabled;
+        constexpr bool vec_possible = vectorize_impl && all_vectorizable_t<vector_mode, A, B, C> && vec_enabled;
         constexpr bool homo         = all_homogeneous<A, B, C>;
 
         if (cublas_enabled && homo && !no_gpu) {
