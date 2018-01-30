@@ -1319,7 +1319,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R>
     void assign_evaluate(E&& expr, R&& result) {
-        if (!detail::gpu_assign<E, R>) {
+        if constexpr (!detail::gpu_assign<E, R>) {
             //Evaluate sub parts, if any
             pre_assign_rhs(expr);
         }
