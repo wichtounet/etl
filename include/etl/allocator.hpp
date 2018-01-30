@@ -31,12 +31,12 @@ struct mangling_faker {};
  *
  */
 template<typename T>
-using is_mangle_able = cpp::or_u<
-    std::is_same<std::decay_t<T>, float>::value,
-    std::is_same<std::decay_t<T>, double>::value,
-    cpp::is_specialization_of_v<std::complex, std::decay_t<T>>,
-    cpp::is_specialization_of_v<etl::complex, std::decay_t<T>>
-    >;
+constexpr bool is_mangle_able =
+       std::is_same<std::decay_t<T>, float>::value
+    || std::is_same<std::decay_t<T>, double>::value
+    || cpp::is_specialization_of_v<std::complex, std::decay_t<T>>
+    || cpp::is_specialization_of_v<etl::complex, std::decay_t<T>>
+    ;
 
 /*!
  * \brief Allocated for aligned memory
@@ -82,7 +82,7 @@ struct aligned_allocator {
  */
 template <typename T, size_t S = sizeof(T)>
 auto allocate(size_t size, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
-    static_assert(is_mangle_able<T>::value, "allocate does not work with vector types");
+    static_assert(is_mangle_able<T>, "allocate does not work with vector types");
     return std::make_unique<T[]>(size);
 }
 
