@@ -585,142 +585,78 @@ void gemv_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
 }
 
 /*!
- * \brief Optimized version of GEMV for row major version
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(is_row_major<A> && all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>)>
-void gemv(A&& a, B&& b, C&& c) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
-
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-
-    const auto m = rows(a);
-    const auto n = columns(a);
-
-    if (etl::size(a) < gemv_rm_small_threshold) {
-        gemv_small_kernel_rr<default_vec, all_padded<A, B, C>>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
-    } else {
-        gemv_large_kernel_rr<default_vec, all_padded<A, B, C>>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
-    }
-
-    c.invalidate_gpu();
-}
-
-/*!
  * \brief Optimized version of GEMV for column major version
  * \param a The lhs matrix
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_iff(is_column_major<A> && all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>)>
+template <typename A, typename B, typename C>
 void gemv(A&& a, B&& b, C&& c) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+    if constexpr (vec_enabled && vectorize_impl && all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>) {
+        cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
+        a.ensure_cpu_up_to_date();
+        b.ensure_cpu_up_to_date();
 
-    const auto m = rows(a);
-    const auto n = columns(a);
+        const auto m = rows(a);
+        const auto n = columns(a);
 
-    if (etl::size(a) < gemv_cm_small_threshold) {
-        gemv_small_kernel_cc<default_vec, all_padded<A, B, C>>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+        if constexpr (is_row_major<A>) {
+            if (etl::size(a) < gemv_rm_small_threshold) {
+                gemv_small_kernel_rr<default_vec, all_padded<A, B, C>>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+            } else {
+                gemv_large_kernel_rr<default_vec, all_padded<A, B, C>>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+            }
+        } else {
+            if (etl::size(a) < gemv_cm_small_threshold) {
+                gemv_small_kernel_cc<default_vec, all_padded<A, B, C>>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+            } else {
+                c = 0;
+                gemv_large_kernel_cc<default_vec, all_padded<A, B, C>>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+            }
+        }
+
+        c.invalidate_gpu();
     } else {
-        c = 0;
-        gemv_large_kernel_cc<default_vec, all_padded<A, B, C>>(a.memory_start(), m, n, b.memory_start(), c.memory_start());
+        cpp_unreachable("Invalid operation called vec::gemv with heterogeneous types");
     }
-
-    c.invalidate_gpu();
 }
 
 // Versions with transpose
 
 /*!
- * \brief Optimized version of GEMV for row major version
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(is_row_major<A> && all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>)>
-void gemv_t(A&& a, B&& b, C&& c) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
-
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-
-    const auto m = rows(a);
-    const auto n = columns(a);
-
-    if (etl::size(a) < gemv_rm_small_threshold) {
-        gemv_small_kernel_cc<default_vec, all_padded<A, B, C>>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
-    } else {
-        gemv_large_kernel_cc<default_vec, all_padded<A, B, C>>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
-    }
-
-    c.invalidate_gpu();
-}
-
-/*!
  * \brief Optimized version of GEMV for column major version
  * \param a The lhs matrix
  * \param b The rhs vector
  * \param c The result vector
  */
-template <typename A, typename B, typename C, cpp_enable_iff(is_column_major<A> && all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>)>
+template <typename A, typename B, typename C>
 void gemv_t(A&& a, B&& b, C&& c) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+    if constexpr (vec_enabled && vectorize_impl && all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>) {
+        a.ensure_cpu_up_to_date();
+        b.ensure_cpu_up_to_date();
 
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
+        const auto m = rows(a);
+        const auto n = columns(a);
 
-    const auto m = rows(a);
-    const auto n = columns(a);
-
-    if (etl::size(a) < gemv_cm_small_threshold) {
-        gemv_small_kernel_rr<default_vec, all_padded<A, B, C>>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+        if constexpr (is_row_major<A>) {
+            if (etl::size(a) < gemv_rm_small_threshold) {
+                gemv_small_kernel_cc<default_vec, all_padded<A, B, C>>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+            } else {
+                gemv_large_kernel_cc<default_vec, all_padded<A, B, C>>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+            }
+        } else {
+            if (etl::size(a) < gemv_cm_small_threshold) {
+                gemv_small_kernel_rr<default_vec, all_padded<A, B, C>>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+            } else {
+                c = 0;
+                gemv_large_kernel_rr<default_vec, all_padded<A, B, C>>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+            }
+        }
+        c.invalidate_gpu();
     } else {
-        c = 0;
-        gemv_large_kernel_rr<default_vec, all_padded<A, B, C>>(a.memory_start(), n, m, b.memory_start(), c.memory_start());
+        cpp_unreachable("Invalid operation called vec::gemv with heterogeneous types");
     }
-
-    c.invalidate_gpu();
-}
-
-// Fallback functions for heterogeneous types
-// CPP17: Replace with a if constexpr in the base functions ?
-
-/*!
- * \brief GEMV with heterogeneous types
- *
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C> || !all_vectorizable<vector_mode, A, B, C>)>
-void gemv(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
-    cpp_unreachable("Invalid operation called vec::gemv with heterogeneous types");
-}
-
-/*!
- * \brief GEMV with heterogeneous types
- *
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C> || !all_vectorizable<vector_mode, A, B, C>)>
-void gemv_t(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
-    cpp_unreachable("Invalid operation called vec::gemv_t with heterogeneous types");
 }
 
 } //end of namespace vec

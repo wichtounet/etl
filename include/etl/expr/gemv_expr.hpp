@@ -95,7 +95,7 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
             return gemm_impl::CUBLAS;
         }
 
-        if(all_vectorizable_t<vector_mode, A, B, C> && vec_enabled && homo){
+        if(all_vectorizable_t<vector_mode, A, B, C> && vec_enabled && vectorize_impl && homo){
             return gemm_impl::VEC;
         }
 
