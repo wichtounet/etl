@@ -1350,20 +1350,13 @@ constexpr bool direct_assign_compatible =
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_iff(direct_assign_compatible<Expr, Result>)>
+template <typename Expr, typename Result>
 void std_assign_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::assign_evaluate(expr, result);
-}
-
-/*!
- * \brief Evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_iff(!direct_assign_compatible<Expr, Result>)>
-void std_assign_evaluate(Expr&& expr, Result&& result) {
-    static_assert(all_2d<Expr, Result>, "Invalid assign configuration");
-    standard_evaluator::assign_evaluate(transpose(expr), result);
+    if constexpr (direct_assign_compatible<Expr, Result>) {
+        standard_evaluator::assign_evaluate(expr, result);
+    } else {
+        standard_evaluator::assign_evaluate(transpose(expr), result);
+    }
 }
 
 /*!
@@ -1373,17 +1366,11 @@ void std_assign_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_iff(direct_assign_compatible<Expr, Result>)>
 void std_add_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::add_evaluate(expr, result);
-}
-
-/*!
- * \brief Compound add evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_iff(!direct_assign_compatible<Expr, Result>)>
-void std_add_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::add_evaluate(transpose(expr), result);
+    if constexpr (direct_assign_compatible<Expr, Result>) {
+        standard_evaluator::add_evaluate(expr, result);
+    } else {
+        standard_evaluator::add_evaluate(transpose(expr), result);
+    }
 }
 
 /*!
@@ -1391,19 +1378,13 @@ void std_add_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_iff(direct_assign_compatible<Expr, Result>)>
+template <typename Expr, typename Result>
 void std_sub_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::sub_evaluate(expr, result);
-}
-
-/*!
- * \brief Compound subtract evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_iff(!direct_assign_compatible<Expr, Result>)>
-void std_sub_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::sub_evaluate(transpose(expr), result);
+    if constexpr (direct_assign_compatible<Expr, Result>) {
+        standard_evaluator::sub_evaluate(expr, result);
+    } else {
+        standard_evaluator::sub_evaluate(transpose(expr), result);
+    }
 }
 
 /*!
@@ -1411,19 +1392,13 @@ void std_sub_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_iff(direct_assign_compatible<Expr, Result>)>
+template <typename Expr, typename Result>
 void std_mul_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::mul_evaluate(expr, result);
-}
-
-/*!
- * \brief Compound multiply evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_iff(!direct_assign_compatible<Expr, Result>)>
-void std_mul_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::mul_evaluate(transpose(expr), result);
+    if constexpr (direct_assign_compatible<Expr, Result>) {
+        standard_evaluator::mul_evaluate(expr, result);
+    } else {
+        standard_evaluator::mul_evaluate(transpose(expr), result);
+    }
 }
 
 /*!
@@ -1431,19 +1406,13 @@ void std_mul_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_iff(direct_assign_compatible<Expr, Result>)>
+template <typename Expr, typename Result>
 void std_div_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::div_evaluate(expr, result);
-}
-
-/*!
- * \brief Compound divide evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_iff(!direct_assign_compatible<Expr, Result>)>
-void std_div_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::div_evaluate(transpose(expr), result);
+    if constexpr (direct_assign_compatible<Expr, Result>) {
+        standard_evaluator::div_evaluate(expr, result);
+    } else {
+        standard_evaluator::div_evaluate(transpose(expr), result);
+    }
 }
 
 /*!
@@ -1451,19 +1420,13 @@ void std_div_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_iff(direct_assign_compatible<Expr, Result>)>
+template <typename Expr, typename Result>
 void std_mod_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::mod_evaluate(expr, result);
-}
-
-/*!
- * \brief Compound modulo evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_iff(!direct_assign_compatible<Expr, Result>)>
-void std_mod_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::mod_evaluate(transpose(expr), result);
+    if constexpr (direct_assign_compatible<Expr, Result>) {
+        standard_evaluator::mod_evaluate(expr, result);
+    } else {
+        standard_evaluator::mod_evaluate(transpose(expr), result);
+    }
 }
 
 /*!
