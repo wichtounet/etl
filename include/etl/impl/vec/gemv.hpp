@@ -10,11 +10,7 @@
 // The idea of the GEMM kernels is largely inspired by the kernels in Blaze by
 // Klaus Igleberg
 
-namespace etl {
-
-namespace impl {
-
-namespace vec {
+namespace etl::impl::vec {
 
 /*!
  * \brief Optimized version of small GEMV for row major version
@@ -659,6 +655,4 @@ void gemv_t(A&& a, B&& b, C&& c) {
     }
 }
 
-} //end of namespace vec
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec
