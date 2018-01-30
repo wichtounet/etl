@@ -282,103 +282,40 @@ namespace standard_evaluator {
 
     // Selector versions
 
-    /*!
-     * \brief Assign the result of the expression to the result.
-     *
-     * This does not consider GPU computation.
-     *
-     * \param expr The right hand side expression
-     * \param result The left hand side
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::standard_assign_no_gpu<E, R>)>
+    template <typename E, typename R>
     void assign_evaluate_impl_no_gpu(E&& expr, R&& result) {
-        standard_assign_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc assign_evaluate_impl_no_gpu
-     */
-    template <typename E, typename R, cpp_enable_iff(std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign_no_gpu<E, R>)>
-    void assign_evaluate_impl_no_gpu(E&& expr, R&& result) {
-        fast_assign_impl_full(expr, result);
-    }
-
-    /*!
-     * \copydoc assign_evaluate_impl_no_gpu
-     */
-    template <typename E, typename R, cpp_enable_iff(!std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign_no_gpu<E, R>)>
-    void assign_evaluate_impl_no_gpu(E&& expr, R&& result) {
-        fast_assign_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc assign_evaluate_impl_no_gpu
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_assign_no_gpu<E, R>)>
-    void assign_evaluate_impl_no_gpu(E&& expr, R&& result) {
-        direct_assign_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc assign_evaluate_impl_no_gpu
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_assign_no_gpu<E, R>)>
-    void assign_evaluate_impl_no_gpu(E&& expr, R&& result) {
-        vectorized_assign_impl(expr, result);
-    }
-
-    /*!
-     * \brief Assign the result of the expression to the result
-     * \param expr The right hand side expression
-     * \param result The left hand side
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::standard_assign<E, R>)>
-    void assign_evaluate_impl(E&& expr, R&& result) {
-        standard_assign_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc assign_evaluate_impl
-     */
-    template <typename E, typename R, cpp_enable_iff(std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign<E, R>)>
-    void assign_evaluate_impl(E&& expr, R&& result) {
-        fast_assign_impl_full(expr, result);
-    }
-
-    /*!
-     * \copydoc assign_evaluate_impl
-     */
-    template <typename E, typename R, cpp_enable_iff(!std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign<E, R>)>
-    void assign_evaluate_impl(E&& expr, R&& result) {
-        fast_assign_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc assign_evaluate_impl
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_assign<E, R>)>
-    void assign_evaluate_impl(E&& expr, R&& result) {
-        if (local_context().cpu || is_something_forced()) {
-            assign_evaluate_impl_no_gpu(expr, result);
-        } else {
-            gpu_assign_impl(expr, result);
+        if constexpr (detail::standard_assign_no_gpu<E, R>) {
+            standard_assign_impl(expr, result);
+        } else if constexpr (std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign_no_gpu<E, R>) {
+            fast_assign_impl_full(expr, result);
+        } else if constexpr (!std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign_no_gpu<E, R>) {
+            fast_assign_impl(expr, result);
+        } else if constexpr (detail::direct_assign_no_gpu<E, R>) {
+            direct_assign_impl(expr, result);
+        } else if constexpr (detail::vectorized_assign_no_gpu<E, R>) {
+            vectorized_assign_impl(expr, result);
         }
     }
 
-    /*!
-     * \copydoc assign_evaluate_impl
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_assign<E, R>)>
+    template <typename E, typename R>
     void assign_evaluate_impl(E&& expr, R&& result) {
-        direct_assign_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc assign_evaluate_impl
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_assign<E, R>)>
-    void assign_evaluate_impl(E&& expr, R&& result) {
-        vectorized_assign_impl(expr, result);
+        if constexpr (detail::standard_assign<E, R>) {
+            standard_assign_impl(expr, result);
+        } else if constexpr (std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign<E, R>) {
+            fast_assign_impl_full(expr, result);
+        } else if constexpr (!std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign<E, R>) {
+            fast_assign_impl(expr, result);
+        } else if constexpr (detail::gpu_assign<E, R>) {
+            if (local_context().cpu || is_something_forced()) {
+                assign_evaluate_impl_no_gpu(expr, result);
+            } else {
+                gpu_assign_impl(expr, result);
+            }
+        } else if constexpr (detail::direct_assign<E, R>) {
+            direct_assign_impl(expr, result);
+        } else if constexpr (detail::vectorized_assign<E, R>) {
+            vectorized_assign_impl(expr, result);
+        }
     }
 
     // Compound Assign Add functions implementations
@@ -532,25 +469,15 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::standard_compound_no_gpu<E, R>)>
+    template <typename E, typename R>
     void add_evaluate_no_gpu(E&& expr, R&& result) {
-        standard_compound_add_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc add_evaluate_no_gpu
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_compound_no_gpu<E, R>)>
-    void add_evaluate_no_gpu(E&& expr, R&& result) {
-        direct_compound_add_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc add_evaluate_no_gpu
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound_no_gpu<E, R>)>
-    void add_evaluate_no_gpu(E&& expr, R&& result) {
-        vectorized_compound_add_impl(expr, result);
+        if constexpr (detail::standard_compound_no_gpu<E, R>) {
+            standard_compound_add_impl(expr, result);
+        } else if constexpr (detail::direct_compound_no_gpu<E, R>) {
+            direct_compound_add_impl(expr, result);
+        } else if constexpr (detail::vectorized_compound_no_gpu<E, R>) {
+            vectorized_compound_add_impl(expr, result);
+        }
     }
 
     /*!
@@ -558,58 +485,28 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::standard_compound<E, R>)>
+    template <typename E, typename R>
     void add_evaluate(E&& expr, R&& result) {
-        standard_compound_add_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc add_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_compound<E, R>)>
-    void add_evaluate(E&& expr, R&& result) {
-        direct_compound_add_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc add_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound<E, R>)>
-    void add_evaluate(E&& expr, R&& result) {
-        vectorized_compound_add_impl(expr, result);
-    }
-
-#ifdef ETL_CUBLAS_MODE
-
-    /*!
-     * \copydoc add_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
-    void add_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu || is_something_forced()) {
-            add_evaluate_no_gpu(expr, result);
-        } else {
-            gpu_compound_add_impl(expr, result);
+        if constexpr (detail::standard_compound<E, R>) {
+            standard_compound_add_impl(expr, result);
+        } else if constexpr (detail::direct_compound<E, R>) {
+            direct_compound_add_impl(expr, result);
+        } else if constexpr (detail::vectorized_compound<E, R>) {
+            vectorized_compound_add_impl(expr, result);
+        } else if constexpr (cublas_enabled && detail::gpu_compound<E, R> && !is_scalar<E>) {
+            if (local_context().cpu || is_something_forced()) {
+                add_evaluate_no_gpu(expr, result);
+            } else {
+                gpu_compound_add_impl(expr, result);
+            }
+        } else if constexpr (egblas_enabled && detail::gpu_compound<E, R> && is_scalar<E>) {
+            if (local_context().cpu || is_something_forced()) {
+                add_evaluate_no_gpu(expr, result);
+            } else {
+                gpu_compound_add_scalar_impl(expr, result);
+            }
         }
     }
-
-#endif
-
-#ifdef ETL_EGBLAS_MODE
-
-    /*!
-     * \copydoc add_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
-    void add_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu || is_something_forced()) {
-            add_evaluate_no_gpu(expr, result);
-        } else {
-            gpu_compound_add_scalar_impl(expr, result);
-        }
-    }
-
-#endif
 
     // Compound assign sub implementation functions
 
@@ -753,32 +650,22 @@ namespace standard_evaluator {
     // Selector functions
 
     /*!
-     * \brief Subtract the result of the expression from the result
+     * \brief Subtract the result of the expression from the result.
      *
      * This does not consider the GPU.
      *
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::standard_compound_no_gpu<E, R>)>
+    template <typename E, typename R>
     void sub_evaluate_no_gpu(E&& expr, R&& result) {
-        standard_compound_sub_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc sub_evaluate_no_gpu
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_compound_no_gpu<E, R>)>
-    void sub_evaluate_no_gpu(E&& expr, R&& result) {
-        direct_compound_sub_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc sub_evaluate_no_gpu
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound_no_gpu<E, R>)>
-    void sub_evaluate_no_gpu(E&& expr, R&& result) {
-        vectorized_compound_sub_impl(expr, result);
+        if constexpr (detail::standard_compound_no_gpu<E, R>) {
+            standard_compound_sub_impl(expr, result);
+        } else if constexpr (detail::direct_compound_no_gpu<E, R>) {
+            direct_compound_sub_impl(expr, result);
+        } else if constexpr (detail::vectorized_compound_no_gpu<E, R>) {
+            vectorized_compound_sub_impl(expr, result);
+        }
     }
 
     /*!
@@ -786,60 +673,30 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::standard_compound<E, R>)>
+    template <typename E, typename R>
     void sub_evaluate(E&& expr, R&& result) {
-        standard_compound_sub_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc sub_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_compound<E, R>)>
-    void sub_evaluate(E&& expr, R&& result) {
-        direct_compound_sub_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc sub_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound<E, R>)>
-    void sub_evaluate(E&& expr, R&& result) {
-        vectorized_compound_sub_impl(expr, result);
-    }
-
-#ifdef ETL_CUBLAS_MODE
-
-    /*!
-     * \copydoc sub_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
-    void sub_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu || is_something_forced()) {
-            sub_evaluate_no_gpu(expr, result);
-        } else {
-            gpu_compound_sub_impl(expr, result);
+        if constexpr (detail::standard_compound<E, R>) {
+            standard_compound_sub_impl(expr, result);
+        } else if constexpr (detail::direct_compound<E, R>) {
+            direct_compound_sub_impl(expr, result);
+        } else if constexpr (detail::vectorized_compound<E, R>) {
+            vectorized_compound_sub_impl(expr, result);
+        } else if constexpr (cublas_enabled && detail::gpu_compound<E, R> && !is_scalar<E>) {
+            if (local_context().cpu || is_something_forced()) {
+                sub_evaluate_no_gpu(expr, result);
+            } else {
+                gpu_compound_sub_impl(expr, result);
+            }
+        } else if constexpr (egblas_enabled && detail::gpu_compound<E, R> && is_scalar<E>) {
+            if (local_context().cpu || is_something_forced()) {
+                sub_evaluate_no_gpu(expr, result);
+            } else {
+                gpu_compound_sub_scalar_impl(expr, result);
+            }
         }
     }
 
-#endif
-
-#ifdef ETL_EGBLAS_MODE
-
-    /*!
-     * \copydoc sub_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
-    void sub_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu || is_something_forced()) {
-            sub_evaluate_no_gpu(expr, result);
-        } else {
-            gpu_compound_sub_scalar_impl(expr, result);
-        }
-    }
-
-#endif
-
-    // Compound assign mul implmentation functions
+    // Compound assign mul implementation functions
 
     /*!
      * \brief Multiply the result by the result of the expression
@@ -980,91 +837,51 @@ namespace standard_evaluator {
     // Selector functions
 
     /*!
-     * \brief Multiply the result by the result of the expression
+     * \brief Subtract the result of the expression from the result.
      *
      * This does not consider the GPU.
      *
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::standard_compound_no_gpu<E, R>)>
+    template <typename E, typename R>
     void mul_evaluate_no_gpu(E&& expr, R&& result) {
-        standard_compound_mul_impl(expr, result);
+        if constexpr (detail::standard_compound_no_gpu<E, R>) {
+            standard_compound_mul_impl(expr, result);
+        } else if constexpr (detail::direct_compound_no_gpu<E, R>) {
+            direct_compound_mul_impl(expr, result);
+        } else if constexpr (detail::vectorized_compound_no_gpu<E, R>) {
+            vectorized_compound_mul_impl(expr, result);
+        }
     }
 
     /*!
-     * \copydoc mul_evaluate_no_gpu
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_compound_no_gpu<E, R>)>
-    void mul_evaluate_no_gpu(E&& expr, R&& result) {
-        direct_compound_mul_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc mul_evaluate_no_gpu
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound_no_gpu<E, R>)>
-    void mul_evaluate_no_gpu(E&& expr, R&& result) {
-        vectorized_compound_mul_impl(expr, result);
-    }
-
-    /*!
-     * \brief Multiply the result by the result of the expression
+     * \brief Subtract the result of the expression from the result
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::standard_compound<E, R>)>
+    template <typename E, typename R>
     void mul_evaluate(E&& expr, R&& result) {
-        standard_compound_mul_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc mul_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_compound<E, R>)>
-    void mul_evaluate(E&& expr, R&& result) {
-        direct_compound_mul_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc mul_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound<E, R>)>
-    void mul_evaluate(E&& expr, R&& result) {
-        vectorized_compound_mul_impl(expr, result);
-    }
-
-#ifdef ETL_EGBLAS_MODE
-
-    /*!
-     * \copydoc sub_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && !is_scalar<E>)>
-    void mul_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu || is_something_forced()) {
-            mul_evaluate_no_gpu(expr, result);
-        } else {
-            gpu_compound_mul_impl(expr, result);
+        if constexpr (detail::standard_compound<E, R>) {
+            standard_compound_mul_impl(expr, result);
+        } else if constexpr (detail::direct_compound<E, R>) {
+            direct_compound_mul_impl(expr, result);
+        } else if constexpr (detail::vectorized_compound<E, R>) {
+            vectorized_compound_mul_impl(expr, result);
+        } else if constexpr (egblas_enabled && detail::gpu_compound<E, R> && !is_scalar<E>) {
+            if (local_context().cpu || is_something_forced()) {
+                mul_evaluate_no_gpu(expr, result);
+            } else {
+                gpu_compound_mul_impl(expr, result);
+            }
+        } else if constexpr (cublas_enabled && detail::gpu_compound<E, R> && is_scalar<E>) {
+            if (local_context().cpu || is_something_forced()) {
+                mul_evaluate_no_gpu(expr, result);
+            } else {
+                gpu_compound_mul_scalar_impl(expr, result);
+            }
         }
     }
-
-#endif
-
-#ifdef ETL_CUBLAS_MODE
-
-    /*!
-     * \copydoc mul_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound<E, R> && is_scalar<E>)>
-    void mul_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu || is_something_forced()) {
-            mul_evaluate_no_gpu(expr, result);
-        } else {
-            gpu_compound_mul_scalar_impl(expr, result);
-        }
-    }
-
-#endif
 
     // Compound Assign Div implementation functions
 
@@ -1211,25 +1028,15 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::standard_compound_div_no_gpu<E, R>)>
+    template <typename E, typename R>
     void div_evaluate_no_gpu(E&& expr, R&& result) {
-        standard_compound_div_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc div_evaluate_no_gpu
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_compound_div_no_gpu<E, R>)>
-    void div_evaluate_no_gpu(E&& expr, R&& result) {
-        direct_compound_div_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc div_evaluate_no_gpu
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound_div_no_gpu<E, R>)>
-    void div_evaluate_no_gpu(E&& expr, R&& result) {
-        vectorized_compound_div_impl(expr, result);
+        if constexpr (detail::standard_compound_div_no_gpu<E, R>) {
+            standard_compound_div_impl(expr, result);
+        } else if constexpr (detail::direct_compound_div_no_gpu<E, R>) {
+            direct_compound_div_impl(expr, result);
+        } else if constexpr (detail::vectorized_compound_div_no_gpu<E, R>) {
+            vectorized_compound_div_impl(expr, result);
+        }
     }
 
     /*!
@@ -1237,58 +1044,28 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_iff(detail::standard_compound_div<E, R>)>
+    template <typename E, typename R>
     void div_evaluate(E&& expr, R&& result) {
-        standard_compound_div_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc div_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::direct_compound_div<E, R>)>
-    void div_evaluate(E&& expr, R&& result) {
-        direct_compound_div_impl(expr, result);
-    }
-
-    /*!
-     * \copydoc div_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::vectorized_compound_div<E, R>)>
-    void div_evaluate(E&& expr, R&& result) {
-        vectorized_compound_div_impl(expr, result);
-    }
-
-#ifdef ETL_EGBLAS_MODE
-
-    /*!
-     * \copydoc sub_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound_div<E, R> && !is_scalar<E>)>
-    void div_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu || is_something_forced()) {
-            div_evaluate_no_gpu(expr, result);
-        } else {
-            gpu_compound_div_impl(expr, result);
+        if constexpr (detail::standard_compound_div<E, R>) {
+            standard_compound_div_impl(expr, result);
+        } else if constexpr (detail::direct_compound_div<E, R>) {
+            direct_compound_div_impl(expr, result);
+        } else if constexpr (detail::vectorized_compound_div<E, R>) {
+            vectorized_compound_div_impl(expr, result);
+        } else if constexpr (egblas_enabled && detail::gpu_compound_div<E, R> && !is_scalar<E>) {
+            if (local_context().cpu || is_something_forced()) {
+                div_evaluate_no_gpu(expr, result);
+            } else {
+                gpu_compound_div_impl(expr, result);
+            }
+        } else if constexpr (cublas_enabled && detail::gpu_compound_div<E, R> && is_scalar<E>) {
+            if (local_context().cpu || is_something_forced()) {
+                div_evaluate_no_gpu(expr, result);
+            } else {
+                gpu_compound_div_scalar_impl(expr, result);
+            }
         }
     }
-
-#endif
-
-#ifdef ETL_CUBLAS_MODE
-
-    /*!
-     * \copydoc mul_evaluate
-     */
-    template <typename E, typename R, cpp_enable_iff(detail::gpu_compound_div<E, R> && is_scalar<E>)>
-    void div_evaluate(E&& expr, R&& result) {
-        if (local_context().cpu || is_something_forced()) {
-            div_evaluate_no_gpu(expr, result);
-        } else {
-            gpu_compound_div_scalar_impl(expr, result);
-        }
-    }
-
-#endif
 
     //Standard Mod Evaluate (no optimized versions for mod)
 
@@ -1364,7 +1141,7 @@ void std_assign_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_iff(direct_assign_compatible<Expr, Result>)>
+template <typename Expr, typename Result>
 void std_add_evaluate(Expr&& expr, Result&& result) {
     if constexpr (direct_assign_compatible<Expr, Result>) {
         standard_evaluator::add_evaluate(expr, result);
