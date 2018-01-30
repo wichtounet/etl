@@ -1062,8 +1062,6 @@ void fft2_many(A&& a, C&& c) {
     c = w;
 }
 
-//Note: CPP17 constexpr
-
 /*!
  * \brief Perform the 1D full convolution of a with b and store the result in c
  * \param a The input matrix
