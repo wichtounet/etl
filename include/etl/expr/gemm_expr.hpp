@@ -101,7 +101,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
             return gemm_impl::BLAS;
         }
 
-        if(vec_enabled && homo && all_vectorizable_t<vector_mode, AA, BB, C>){
+        if(vec_enabled && vectorize_impl && homo && all_vectorizable_t<vector_mode, AA, BB, C>){
             return gemm_impl::VEC;
         }
 
