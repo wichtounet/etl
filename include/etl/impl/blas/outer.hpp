@@ -16,11 +16,7 @@
 #include "cblas.h"
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace blas {
+namespace etl::impl::blas {
 
 #ifdef ETL_BLAS_MODE
 
@@ -30,7 +26,7 @@ namespace blas {
  * \param b The rhs expression
  * \param c The output expression
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_single_precision<A, B, C>)>
+template <typename A, typename B, typename C>
 void outer(const A& a, const B& b, C&& c) {
     c = 0;
 
@@ -38,35 +34,23 @@ void outer(const A& a, const B& b, C&& c) {
     b.ensure_cpu_up_to_date();
     c.ensure_cpu_up_to_date();
 
-    cblas_sger(
-        CblasRowMajor,
-        etl::dim<0>(a), etl::dim<0>(b),
-        1.0,
-        a.memory_start(), 1,
-        b.memory_start(), 1,
-        c.memory_start(), etl::dim<0>(b));
-
-    c.invalidate_gpu();
-}
-
-/*!
- * \copydoc outer
- */
-template <typename A, typename B, typename C, cpp_enable_iff(all_double_precision<A, B, C>)>
-void outer(const A& a, const B& b, C&& c) {
-    c = 0;
-
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-    c.ensure_cpu_up_to_date();
-
-    cblas_dger(
-        CblasRowMajor,
-        etl::dim<0>(a), etl::dim<0>(b),
-        1.0,
-        a.memory_start(), 1,
-        b.memory_start(), 1,
-        c.memory_start(), etl::dim<0>(b));
+    if constexpr (all_single_precision<A, B, C>) {
+        cblas_sger(
+            CblasRowMajor,
+            etl::dim<0>(a), etl::dim<0>(b),
+            1.0,
+            a.memory_start(), 1,
+            b.memory_start(), 1,
+            c.memory_start(), etl::dim<0>(b));
+    } else {
+        cblas_dger(
+            CblasRowMajor,
+            etl::dim<0>(a), etl::dim<0>(b),
+            1.0,
+            a.memory_start(), 1,
+            b.memory_start(), 1,
+            c.memory_start(), etl::dim<0>(b));
+    }
 
     c.invalidate_gpu();
 }
@@ -77,7 +61,7 @@ void outer(const A& a, const B& b, C&& c) {
  * \param b The rhs expression
  * \param c The output expression
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_single_precision<A, B, C>)>
+template <typename A, typename B, typename C>
 void batch_outer(const A& a, const B& b, C&& c) {
     const size_t m = etl::rows(c);
     const size_t n = etl::columns(c);
@@ -86,40 +70,27 @@ void batch_outer(const A& a, const B& b, C&& c) {
     a.ensure_cpu_up_to_date();
     b.ensure_cpu_up_to_date();
 
-    cblas_sgemm(
-        CblasRowMajor,
-        CblasTrans, CblasNoTrans,
-        m, n, k,
-        1.0f,
-        a.memory_start(), m,
-        b.memory_start(), n,
-        0.0f,
-        c.memory_start(), n);
-
-    c.invalidate_gpu();
-}
-
-/*!
- * \copydoc batch_outer
- */
-template <typename A, typename B, typename C, cpp_enable_iff(all_double_precision<A, B, C>)>
-void batch_outer(const A& a, const B& b, C&& c) {
-    const size_t m = etl::rows(c);
-    const size_t n = etl::columns(c);
-    const size_t k = etl::rows(a);
-
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-
-    cblas_dgemm(
-        CblasRowMajor,
-        CblasTrans, CblasNoTrans,
-        m, n, k,
-        1.0,
-        a.memory_start(), m,
-        b.memory_start(), n,
-        0.0,
-        c.memory_start(), n);
+    if constexpr (all_single_precision<A, B, C>) {
+        cblas_sgemm(
+            CblasRowMajor,
+            CblasTrans, CblasNoTrans,
+            m, n, k,
+            1.0f,
+            a.memory_start(), m,
+            b.memory_start(), n,
+            0.0f,
+            c.memory_start(), n);
+    } else {
+        cblas_dgemm(
+            CblasRowMajor,
+            CblasTrans, CblasNoTrans,
+            m, n, k,
+            1.0,
+            a.memory_start(), m,
+            b.memory_start(), n,
+            0.0,
+            c.memory_start(), n);
+    }
 
     c.invalidate_gpu();
 }
@@ -144,6 +115,4 @@ void batch_outer(const A& /*a*/, const B& /*b*/, C&& /*c*/) {
 
 #endif
 
-} //end of namespace blas
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::blas

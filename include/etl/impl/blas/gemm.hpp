@@ -16,11 +16,7 @@ extern "C" {
 }
 
 #endif
-namespace etl {
-
-namespace impl {
-
-namespace blas {
+namespace etl::impl::blas {
 
 /*!
  * \brief Traits indicating if BLAS 2D convolution is possible
@@ -1737,8 +1733,4 @@ void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t
 
 #endif
 
-    } //end of namespace blas
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::blas

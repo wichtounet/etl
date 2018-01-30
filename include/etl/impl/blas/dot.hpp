@@ -16,11 +16,7 @@
 #include "cblas.h" //For ddot/sdot
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace blas {
+namespace etl::impl::blas {
 
 #ifdef ETL_BLAS_MODE
 
@@ -30,43 +26,26 @@ namespace blas {
  * \param b The rhs expression
  * \return the sum
  */
-template <typename A, typename B, cpp_enable_iff(all_dma<A, B>&& all_single_precision<A, B>)>
+template <typename A, typename B>
 value_t<A> dot(const A& a, const B& b) {
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
+    if constexpr (all_dma<A, B>) {
+        a.ensure_cpu_up_to_date();
+        b.ensure_cpu_up_to_date();
 
-    const float* m_a = a.memory_start();
-    const float* m_b = b.memory_start();
-
-    return cblas_sdot(etl::size(a), m_a, 1, m_b, 1);
-}
-
-/*!
- * \copydoc dot
- */
-template <typename A, typename B, cpp_enable_iff(all_dma<A, B>&& all_double_precision<A, B>)>
-value_t<A> dot(const A& a, const B& b) {
-    a.ensure_cpu_up_to_date();
-    b.ensure_cpu_up_to_date();
-
-    const double* m_a = a.memory_start();
-    const double* m_b = b.memory_start();
-
-    return cblas_ddot(etl::size(a), m_a, 1, m_b, 1);
-}
-
-//COVERAGE_EXCLUDE_BEGIN
-
-/*!
- * \copydoc dot
- */
-template <typename A, typename B, cpp_enable_iff(!all_dma<A, B>)>
-value_t<A> dot(const A& /*a*/, const B& /*b*/) {
-    cpp_unreachable("BLAS not enabled/available");
-    return 0.0;
+        if constexpr (all_single_precision<A, B>) {
+            return cblas_sdot(etl::size(a), a.memory_start(), 1, b.memory_start(), 1);
+        } else {
+            return cblas_ddot(etl::size(a), a.memory_start(), 1, b.memory_start(), 1);
+        }
+    } else {
+        cpp_unreachable("BLAS not enabled/available");
+        return 0.0;
+    }
 }
 
 #else
+
+//COVERAGE_EXCLUDE_BEGIN
 
 /*!
  * \copydoc dot
@@ -81,6 +60,4 @@ value_t<A> dot(const A& /*a*/, const B& /*b*/) {
 
 #endif
 
-} //end of namespace blas
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::blas
