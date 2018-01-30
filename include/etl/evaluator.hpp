@@ -52,8 +52,6 @@ namespace standard_evaluator {
         expr.visit(eval_visitor);
     }
 
-// CPP17: if constexpr here
-#ifdef ETL_PARALLEL_SUPPORT
     /*!
      * \brief Assign the result of the expression to the result with the given Functor, using parallel implementation
      * \param expr The right hand side expression
@@ -61,23 +59,16 @@ namespace standard_evaluator {
      */
     template <typename Fun, typename E, typename R>
     void par_exec(E&& expr, R&& result) {
-        auto slice_functor = [&](auto&& lhs, auto&& rhs){
-            Fun::apply(lhs, rhs);
-        };
+        if constexpr (parallel_support) {
+            auto slice_functor = [&](auto&& lhs, auto&& rhs) {
+                Fun::apply(lhs, rhs);
+            };
 
-        engine_dispatch_1d_slice_binary(result, expr, slice_functor, 0);
+            engine_dispatch_1d_slice_binary(result, expr, slice_functor, 0);
+        } else {
+            Fun::apply(result, expr);
+        }
     }
-#else
-    /*!
-     * \brief Assign the result of the expression to the result with the given Functor, using parallel implementation
-     * \param expr The right hand side expression
-     * \param result The left hand side
-     */
-    template <typename Fun, typename E, typename R>
-    void par_exec(E&& expr, R&& result) {
-        Fun::apply(result, expr);
-    }
-#endif
 
     // Assign functions implementations
 
@@ -107,44 +98,43 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_iff(!is_gpu_dyn_matrix<R>)>
     void fast_assign_impl_full(E& expr, R& result) {
-//TODO(CPP17) if constexpr
-#ifdef ETL_CUDA
-        cpp_assert(expr.is_cpu_up_to_date() || expr.is_gpu_up_to_date(), "expr must be in valid state");
+        if constexpr (cuda_enabled) {
+            cpp_assert(expr.is_cpu_up_to_date() || expr.is_gpu_up_to_date(), "expr must be in valid state");
 
-        if(expr.is_cpu_up_to_date()){
-            direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
+            if (expr.is_cpu_up_to_date()) {
+                direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
 
-            result.validate_cpu();
-        }
-
-        if(expr.is_gpu_up_to_date()){
-            bool cpu_status = expr.is_cpu_up_to_date();
-
-            result.ensure_gpu_allocated();
-            result.gpu_copy_from(expr.gpu_memory());
-
-            // Restore CPU status because gpu_copy_from will erase it
-            if(cpu_status){
                 result.validate_cpu();
             }
+
+            if (expr.is_gpu_up_to_date()) {
+                bool cpu_status = expr.is_cpu_up_to_date();
+
+                result.ensure_gpu_allocated();
+                result.gpu_copy_from(expr.gpu_memory());
+
+                // Restore CPU status because gpu_copy_from will erase it
+                if (cpu_status) {
+                    result.validate_cpu();
+                }
+            }
+
+            // Invalidation must be done after validation to preserve
+            // valid CPU/GPU state
+
+            if (!expr.is_cpu_up_to_date()) {
+                result.invalidate_cpu();
+            }
+
+            if (!expr.is_gpu_up_to_date()) {
+                result.invalidate_gpu();
+            }
+
+            cpp_assert(expr.is_cpu_up_to_date() == result.is_cpu_up_to_date(), "fast_assign must preserve CPU status");
+            cpp_assert(expr.is_gpu_up_to_date() == result.is_gpu_up_to_date(), "fast_assign must preserve GPU status");
+        } else {
+            direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
         }
-
-        // Invalidation must be done after validation to preserve
-        // valid CPU/GPU state
-
-        if (!expr.is_cpu_up_to_date()) {
-            result.invalidate_cpu();
-        }
-
-        if (!expr.is_gpu_up_to_date()) {
-            result.invalidate_gpu();
-        }
-
-        cpp_assert(expr.is_cpu_up_to_date() == result.is_cpu_up_to_date(), "fast_assign must preserve CPU status");
-        cpp_assert(expr.is_gpu_up_to_date() == result.is_gpu_up_to_date(), "fast_assign must preserve GPU status");
-#else
-        direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
-#endif
     }
 
     /*!
@@ -157,26 +147,23 @@ namespace standard_evaluator {
      * \param result The left hand side
      */
     template <typename E, typename R, cpp_enable_iff(is_gpu_dyn_matrix<R>)>
-    void fast_assign_impl_full(E& expr, R& result) {
-//TODO(CPP17) if constexpr
-#ifdef ETL_CUDA
-        cpp_assert(expr.is_gpu_up_to_date(), "expr must be in valid state");
+    void fast_assign_impl_full([[maybe_unused]] E& expr, [[maybe_unused]] R& result) {
+        if constexpr (cuda_enabled) {
+            cpp_assert(expr.is_gpu_up_to_date(), "expr must be in valid state");
 
-        result.ensure_gpu_allocated();
-        result.gpu_copy_from(expr.gpu_memory());
+            result.ensure_gpu_allocated();
+            result.gpu_copy_from(expr.gpu_memory());
 
-        // Invalidation must be done after validation to preserve
-        // valid CPU/GPU state
+            // Invalidation must be done after validation to preserve
+            // valid CPU/GPU state
 
-        result.validate_gpu();
-        result.invalidate_cpu();
+            result.validate_gpu();
+            result.invalidate_cpu();
 
-        cpp_assert(result.is_gpu_up_to_date(), "fast_assign must preserve GPU status");
-#else
-        cpp_unused(expr);
-        cpp_unused(result);
-        cpp_unreachable("gpu_dyn_matrix should never be used without GPU support");
-#endif
+            cpp_assert(result.is_gpu_up_to_date(), "fast_assign must preserve GPU status");
+        } else {
+            cpp_unreachable("gpu_dyn_matrix should never be used without GPU support");
+        }
     }
 
     /*!
