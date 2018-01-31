@@ -164,14 +164,6 @@ protected:
     }
 
     /*!
-     * \brief Allocate the temporary
-     */
-    template <bool B = is_fast<derived_t>, cpp_enable_iff(B)>
-    result_type* allocate() const {
-        return new result_type;
-    }
-
-    /*!
      * \brief Allocate the dynamic temporary
      */
     template <size_t... I>
@@ -182,9 +174,12 @@ protected:
     /*!
      * \brief Allocate the temporary
      */
-    template <bool B = is_fast<derived_t>, cpp_disable_iff(B)>
     result_type* allocate() const {
-        return dyn_allocate(std::make_index_sequence<decay_traits<derived_t>::dimensions()>());
+        if constexpr (is_fast<derived_t>){
+            return new result_type;
+        } else {
+            return dyn_allocate(std::make_index_sequence<decay_traits<derived_t>::dimensions()>());
+        }
     }
 
 public:

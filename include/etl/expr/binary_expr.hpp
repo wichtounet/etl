@@ -369,19 +369,12 @@ struct etl_traits<etl::binary_expr<T, LE, BinaryOp, RE>> {
      * \param v The binary expr
      * \return a refernece to the main sub expression
      */
-    template <bool B = left_directed, cpp_enable_iff(B)>
     static constexpr auto& get(const expr_t& v) {
-        return v.lhs;
-    }
-
-    /*!
-     * \brief Get reference to the main sub expression
-     * \param v The binary expr
-     * \return a refernece to the main sub expression
-     */
-    template <bool B = left_directed, cpp_disable_iff(B)>
-    static constexpr auto& get(const expr_t& v) {
-        return v.rhs;
+        if constexpr (left_directed) {
+            return v.lhs;
+        } else {
+            return v.rhs;
+        }
     }
 
     /*!

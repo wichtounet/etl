@@ -286,17 +286,13 @@ struct forward_op_nc {
  * \brief Function to move or forward depending on a constant boolean flag
  * \tparam B Decides if return is moving (true) or forwarding (false)
  */
-template <bool B, typename T, cpp_enable_iff(B)>
+template <bool B, typename T>
 constexpr decltype(auto) optional_move(T&& t) {
-    return std::move(t);
-}
-
-/*!
- * \copydoc optional_move
- */
-template <bool B, typename T, cpp_disable_iff(B)>
-constexpr decltype(auto) optional_move(T&& t) {
-    return std::forward<T>(t);
+    if constexpr (B){
+        return std::move(t);
+    } else {
+        return std::forward<T>(t);
+    }
 }
 
 } //end of namespace etl

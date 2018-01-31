@@ -486,19 +486,13 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E, cpp_enable_iff(is_dma<E>)>
+    template<typename E>
     bool alias(const E& rhs) const noexcept {
-        return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
-    }
-
-    /*!
-     * \brief Test if this expression aliases with the given expression
-     * \param rhs The other expression to test
-     * \return true if the two expressions aliases, false otherwise
-     */
-    template<typename E, cpp_disable_iff(is_dma<E>)>
-    bool alias(const E& rhs) const noexcept {
-        return rhs.alias(as_derived());
+        if constexpr (is_dma<E>) {
+            return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
+        } else {
+            return rhs.alias(as_derived());
+        }
     }
 
     /*!
