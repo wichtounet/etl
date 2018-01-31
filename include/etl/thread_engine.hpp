@@ -39,7 +39,7 @@ struct conf_thread_engine {
      * \param fun The functor to execute
      * \param args The arguments to pass to the functor
      */
-    template <class Functor, typename... Args>
+    template <typename Functor, typename... Args>
     static void schedule(Functor&& fun, Args&&... args) {
         get_pool().do_task(std::forward<Functor>(fun), std::forward<Args>(args)...);
     }
@@ -88,7 +88,7 @@ struct thread_engine {
      * \brief Schedule a new task
      * \param fun The functor to execute
      */
-    template <class Functor, typename... Args>
+    template <typename Functor, typename... Args>
     static void schedule(Functor&& fun, Args&&... /*args*/) {
         cpp_unreachable("thread_engine can only be used if paralle support is enabled");
         cpp_unused(fun);
