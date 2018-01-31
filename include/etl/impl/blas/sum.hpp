@@ -35,33 +35,25 @@ namespace blas {
  * \param a The lhs expression
  * \return the sum
  */
-template <typename A, cpp_enable_iff(is_dma<A>&& is_single_precision<A>)>
+template <typename A>
 value_t<A> sum(const A& a) {
-    etl::dyn_vector<value_t<A>> ones(etl::size(a));
-    ones = 1.0f;
+    if constexpr (is_dma<A>) {
+        etl::dyn_vector<value_t<A>> ones(etl::size(a));
+        ones = value_t<A>(1);
 
-    a.ensure_cpu_up_to_date();
+        a.ensure_cpu_up_to_date();
 
-    const float* m_a = a.memory_start();
-    const float* m_b = ones.memory_start();
+        const auto* m_a = a.memory_start();
+        const auto* m_b = ones.memory_start();
 
-    return cblas_sdot(etl::size(a), m_a, 1, m_b, 1);
-}
-
-/*!
- * \copydoc sum
- */
-template <typename A, cpp_enable_iff(is_dma<A>&& is_double_precision<A>)>
-value_t<A> sum(const A& a) {
-    etl::dyn_vector<value_t<A>> ones(etl::size(a));
-    ones = 1.0;
-
-    a.ensure_cpu_up_to_date();
-
-    const double* m_a = a.memory_start();
-    const double* m_b = ones.memory_start();
-
-    return cblas_ddot(etl::size(a), m_a, 1, m_b, 1);
+        if constexpr (is_single_precision<A>) {
+            return cblas_sdot(etl::size(a), m_a, 1, m_b, 1);
+        } else if constexpr (is_double_precision<A>) {
+            return cblas_ddot(etl::size(a), m_a, 1, m_b, 1);
+        }
+    } else {
+        cpp_unreachable("BLAS not enabled/available");
+    }
 }
 
 /*!
@@ -69,42 +61,26 @@ value_t<A> sum(const A& a) {
  * \param a The lhs expression
  * \return the asum
  */
-template <typename A, cpp_enable_iff(is_dma<A>&& is_single_precision<A>)>
+template <typename A>
 value_t<A> asum(const A& a) {
-    a.ensure_cpu_up_to_date();
-    return cblas_sasum(etl::size(a), a.memory_start(), 1);
-}
+    if constexpr (is_dma<A>) {
+        a.ensure_cpu_up_to_date();
 
-/*!
- * \copydoc asum
- */
-template <typename A, cpp_enable_iff(is_dma<A>&& is_double_precision<A>)>
-value_t<A> asum(const A& a) {
-    a.ensure_cpu_up_to_date();
-    return cblas_dasum(etl::size(a), a.memory_start(), 1);
-}
-
-//COVERAGE_EXCLUDE_BEGIN
-
-/*!
- * \copydoc sum
- */
-template <typename A, cpp_enable_iff(!is_dma<A> || !is_floating<A>)>
-value_t<A> sum(const A& /*a*/) {
-    cpp_unreachable("BLAS not enabled/available");
-    return 0.0;
-}
-
-/*!
- * \copydoc asum
- */
-template <typename A, cpp_enable_iff(!is_dma<A> || !is_floating<A>)>
-value_t<A> asum(const A& /*a*/) {
-    cpp_unreachable("BLAS not enabled/available");
-    return 0.0;
+        if constexpr (is_single_precision<A>) {
+            return cblas_sasum(etl::size(a), a.memory_start(), 1);
+        } else if constexpr (is_double_precision<A>) {
+            return cblas_dasum(etl::size(a), a.memory_start(), 1);
+        } else {
+            cpp_unreachable("BLAS not enabled/available");
+        }
+    } else {
+        cpp_unreachable("BLAS not enabled/available");
+    }
 }
 
 #else
+
+//COVERAGE_EXCLUDE_BEGIN
 
 /*!
  * \copydoc sum
