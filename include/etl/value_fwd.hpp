@@ -16,7 +16,12 @@
 #include <cstddef>
 
 #include "cpp_utils/array_wrapper.hpp"
+
+#if __cpp_aligned_new >= 201606
+#include "cpp_utils/soft_aligned_array.hpp"
+#else
 #include "cpp_utils/aligned_array.hpp"
+#endif
 
 #include "etl/util/aligned_vector.hpp"
 
@@ -168,35 +173,44 @@ template <typename Matrix>
 struct uni_lower_matrix;
 
 /*
- * Note: the use of aligned_array has a lot of overhead. Unfortunately, this is
- * the only way to align dynamically allocated fast matrix. Once dynamic
- * allocation is fixed (C++17 normally), a simple struct with alignas should
- * suffice and should prove more memory-efficient.
+ * In C++17, aligned dynamic allocation of over-aligned type is now supported,
+ * so we use the soft_aligned_array.
+ *
+ * When this is not possible, we use the version with internal padding, but this
+ * has a big data overhead.
  */
+
+#if __cpp_aligned_new >= 201606
+template <typename T, std::size_t S, std::size_t A>
+using aligned_array = cpp::soft_aligned_array<T, S, A>;
+#else
+template <typename T, std::size_t S, std::size_t A>
+using aligned_array = cpp::aligned_array<T, S, A>;
+#endif
 
 /*!
  * \brief A static matrix with fixed dimensions, in row-major order
  */
 template <typename T, size_t... Dims>
-using fast_matrix = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size_mat<T, Dims...>(), default_intrinsic_traits<T>::alignment>, order::RowMajor, Dims...>;
+using fast_matrix = fast_matrix_impl<T, aligned_array<T, alloc_size_mat<T, Dims...>(), default_intrinsic_traits<T>::alignment>, order::RowMajor, Dims...>;
 
 /*!
  * \brief A static matrix with fixed dimensions, in column-major order
  */
 template <typename T, size_t... Dims>
-using fast_matrix_cm = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size_mat<T, Dims...>(), default_intrinsic_traits<T>::alignment>, order::ColumnMajor, Dims...>;
+using fast_matrix_cm = fast_matrix_impl<T, aligned_array<T, alloc_size_mat<T, Dims...>(), default_intrinsic_traits<T>::alignment>, order::ColumnMajor, Dims...>;
 
 /*!
  * \brief A static vector with fixed dimensions, in row-major order
  */
 template <typename T, size_t Rows>
-using fast_vector = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size_vec<T>(Rows), default_intrinsic_traits<T>::alignment>, order::RowMajor, Rows>;
+using fast_vector = fast_matrix_impl<T, aligned_array<T, alloc_size_vec<T>(Rows), default_intrinsic_traits<T>::alignment>, order::RowMajor, Rows>;
 
 /*!
  * \brief A static vector with fixed dimensions, in column-major order
  */
 template <typename T, size_t Rows>
-using fast_vector_cm = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size_vec<T>(Rows), default_intrinsic_traits<T>::alignment>, order::ColumnMajor, Rows>;
+using fast_vector_cm = fast_matrix_impl<T, aligned_array<T, alloc_size_vec<T>(Rows), default_intrinsic_traits<T>::alignment>, order::ColumnMajor, Rows>;
 
 /*!
  * \brief A hybrid vector with fixed dimensions, in row-major order
