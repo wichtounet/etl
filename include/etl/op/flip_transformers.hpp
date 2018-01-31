@@ -151,21 +151,14 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    template <bool C = matrix, cpp_disable_iff(C)>
     value_type operator[](size_t i) const {
-        return sub[etl::size(sub) - i - 1];
-    }
-
-    /*!
-     * \brief Returns the value at the given index
-     * \param i The index
-     * \return the value at the given index.
-     */
-    template <bool C = matrix, cpp_enable_iff(C)>
-    value_type operator[](size_t i) const {
-        size_t i_i = i / dim<1>(sub);
-        size_t i_j = i % dim<1>(sub);
-        return sub[i_i * dim<1>(sub) + (dim<1>(sub) - 1 - i_j)];
+        if constexpr (matrix) {
+            size_t i_i = i / dim<1>(sub);
+            size_t i_j = i % dim<1>(sub);
+            return sub[i_i * dim<1>(sub) + (dim<1>(sub) - 1 - i_j)];
+        } else {
+            return sub[etl::size(sub) - i - 1];
+        }
     }
 
     /*!
@@ -174,22 +167,14 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    template <bool C = matrix, cpp_disable_iff(C)>
     value_type read_flat(size_t i) const {
-        return sub.read_flat(etl::size(sub) - i - 1);
-    }
-
-    /*!
-     * \brief Returns the value at the given index
-     * This function never has side effects.
-     * \param i The index
-     * \return the value at the given index.
-     */
-    template <bool C = matrix, cpp_enable_iff(C)>
-    value_type read_flat(size_t i) const {
-        size_t i_i = i / dim<1>(sub);
-        size_t i_j = i % dim<1>(sub);
-        return sub.read_flat(i_i * dim<1>(sub) + (dim<1>(sub) - 1 - i_j));
+        if constexpr (matrix) {
+            size_t i_i = i / dim<1>(sub);
+            size_t i_j = i % dim<1>(sub);
+            return sub.read_flat(i_i * dim<1>(sub) + (dim<1>(sub) - 1 - i_j));
+        } else {
+            return sub.read_flat(etl::size(sub) - i - 1);
+        }
     }
 
     /*!
@@ -290,21 +275,14 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    template <bool C = matrix, cpp_disable_iff(C)>
     value_type operator[](size_t i) const {
-        return sub[i];
-    }
-
-    /*!
-     * \brief Returns the value at the given index
-     * \param i The index
-     * \return the value at the given index.
-     */
-    template <bool C = matrix, cpp_enable_iff(C)>
-    value_type operator[](size_t i) const {
-        size_t i_i = i / dim<1>(sub);
-        size_t i_j = i % dim<1>(sub);
-        return sub[(dim<0>(sub) - 1 - i_i) * dim<1>(sub) + i_j];
+        if constexpr (matrix) {
+            size_t i_i = i / dim<1>(sub);
+            size_t i_j = i % dim<1>(sub);
+            return sub[(dim<0>(sub) - 1 - i_i) * dim<1>(sub) + i_j];
+        } else {
+            return sub[i];
+        }
     }
 
     /*!
@@ -313,22 +291,14 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    template <bool C = matrix, cpp_disable_iff(C)>
     value_type read_flat(size_t i) const {
-        return sub.read_flat(i);
-    }
-
-    /*!
-     * \brief Returns the value at the given index
-     * This function never has side effects.
-     * \param i The index
-     * \return the value at the given index.
-     */
-    template <bool C = matrix, cpp_enable_iff(C)>
-    value_type read_flat(size_t i) const {
-        size_t i_i = i / dim<1>(sub);
-        size_t i_j = i % dim<1>(sub);
-        return sub.read_flat((dim<0>(sub) - 1 - i_i) * dim<1>(sub) + i_j);
+        if constexpr (matrix) {
+            size_t i_i = i / dim<1>(sub);
+            size_t i_j = i % dim<1>(sub);
+            return sub.read_flat((dim<0>(sub) - 1 - i_i) * dim<1>(sub) + i_j);
+        } else {
+            return sub.read_flat(i);
+        }
     }
 
     /*!

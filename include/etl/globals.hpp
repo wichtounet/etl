@@ -413,25 +413,29 @@ bool is_permutation_matrix(E&& expr){
  * \param expr The expression to test
  * \return true if the given expression is an hermitian matrix, false otherwise.
  */
-template <typename E, cpp_enable_iff(is_complex<E>)>
+template <typename E>
 bool is_hermitian(E&& expr){
-    // hermitian_matrix<E> is already enforced to be hermitian
-    if constexpr (is_hermitian_matrix<E>) {
-        return true;
-    } else {
-        if (!is_square(expr)) {
-            return false;
-        }
+    if constexpr (is_complex<E>) {
+        // hermitian_matrix<E> is already enforced to be hermitian
+        if constexpr (is_hermitian_matrix<E>) {
+            return true;
+        } else {
+            if (!is_square(expr)) {
+                return false;
+            }
 
-        for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
-            for (size_t j = 0; j < etl::dim<0>(expr); ++j) {
-                if (i != j && expr(i, j) != get_conj(expr(j, i))) {
-                    return false;
+            for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
+                for (size_t j = 0; j < etl::dim<0>(expr); ++j) {
+                    if (i != j && expr(i, j) != get_conj(expr(j, i))) {
+                        return false;
+                    }
                 }
             }
-        }
 
-        return true;
+            return true;
+        }
+    } else {
+        return false;
     }
 }
 
@@ -478,17 +482,6 @@ bool operator==(L&& lhs, R&& rhs){
 template <typename L, typename R, cpp_enable_iff(all_etl_expr<L, R>)>
 bool operator!=(L&& lhs, R&& rhs){
     return !(lhs == rhs);
-}
-
-/*!
- * \brief Indicates if the given expression represents an hermitian matrix
- * \param expr The expression to test
- * \return true if the given expression is an hermitian matrix, false otherwise.
- */
-template <typename E, cpp_disable_iff(is_complex<E>)>
-bool is_hermitian(E&& expr){
-    cpp_unused(expr);
-    return false;
 }
 
 /*!

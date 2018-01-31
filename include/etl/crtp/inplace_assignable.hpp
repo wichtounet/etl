@@ -64,158 +64,100 @@ struct inplace_assignable {
     /*!
      * \brief Fully flip each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_iff(etl_traits<S>::dimensions() > 3)>
     derived_t& deep_fflip_inplace() {
         decltype(auto) mat = as_derived();
 
-        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
-            mat(i).deep_fflip_inplace();
-        }
-
-        return mat;
-    }
-
-    /*!
-     * \brief Fully flip each sub 2D matrix in place.
-     */
-    template <typename S = D, cpp_enable_iff(is_3d<S>)>
-    derived_t& deep_fflip_inplace() {
-        decltype(auto) mat = as_derived();
-
-        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
-            mat(i).fflip_inplace();
-        }
-
-        return mat;
-    }
-
-    /*!
-     * \brief Transpose each sub 2D matrix in place.
-     */
-    template <typename S = D, cpp_enable_iff(is_dyn_matrix<S> && (etl_traits<S>::dimensions() > 3))>
-    derived_t& deep_transpose_inplace() {
-        decltype(auto) mat = as_derived();
-
-        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
-            mat(i).direct_deep_transpose_inplace();
-        }
-
-        static constexpr size_t d = etl_traits<S>::dimensions();
-
-        using std::swap;
-        swap(mat.unsafe_dimension_access(d - 1), mat.unsafe_dimension_access(d - 2));
-
-        return mat;
-    }
-
-    /*!
-     * \brief Transpose each sub 2D matrix in place.
-     */
-    template <typename S = D, cpp_enable_iff(is_dyn_matrix<S> && (is_3d<S>))>
-    derived_t& deep_transpose_inplace() {
-        decltype(auto) mat = as_derived();
-
-        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
-            mat(i).direct_transpose_inplace();
-        }
-
-        static constexpr size_t d = etl_traits<S>::dimensions();
-
-        using std::swap;
-        swap(mat.unsafe_dimension_access(d - 1), mat.unsafe_dimension_access(d - 2));
-
-        return mat;
-    }
-
-    /*!
-     * \brief Transpose each sub 2D matrix in place.
-     */
-    template <typename S = D, cpp_enable_iff(!is_dyn_matrix<S> && (etl_traits<S>::dimensions() > 3))>
-    derived_t& deep_transpose_inplace() {
-        decltype(auto) mat = as_derived();
-
-        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
-            mat(i).deep_transpose_inplace();
-        }
-
-        return mat;
-    }
-
-    /*!
-     * \brief Transpose each sub 2D matrix in place.
-     */
-    template <typename S = D, cpp_enable_iff(!is_dyn_matrix<S> && (is_3d<S>))>
-    derived_t& deep_transpose_inplace() {
-        decltype(auto) mat = as_derived();
-
-        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
-            mat(i).transpose_inplace();
-        }
-
-        return mat;
-    }
-
-    /*!
-     * \brief Transpose each sub 2D matrix in place.
-     */
-    template <typename S = D, cpp_enable_iff(etl_traits<S>::dimensions() > 3)>
-    derived_t& direct_deep_transpose_inplace() {
-        decltype(auto) mat = as_derived();
-
-        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
-            mat(i).direct_deep_transpose_inplace();
-        }
-
-        return mat;
-    }
-
-    /*!
-     * \brief Transpose each sub 2D matrix in place.
-     */
-    template <typename S = D, cpp_enable_iff(is_3d<S>)>
-    derived_t& direct_deep_transpose_inplace() {
-        decltype(auto) mat = as_derived();
-
-        for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
-            mat(i).direct_transpose_inplace();
-        }
-
-        return mat;
-    }
-
-    /*!
-     * \brief Transpose the matrix in place.
-     *
-     * Only square fast matrix can be transpose in place, dyn matrix don't have any limitation.
-     */
-    template <typename S = D, cpp_disable_iff(is_dyn_matrix<S>)>
-    derived_t& transpose_inplace() {
-        static_assert(is_2d<derived_t>, "Only 2D matrix can be transposed");
-        cpp_assert(etl::dim<0>(as_derived()) == etl::dim<1>(as_derived()), "Only square fast matrices can be tranposed inplace");
-
-        detail::inplace_square_transpose::apply(as_derived());
-
-        return as_derived();
-    }
-
-    /*!
-     * \brief Transpose the matrix in place.
-     *
-     * Only square fast matrix can be transpose in place, dyn matrix don't have any limitation.
-     */
-    template <typename S = D, cpp_enable_iff(is_dyn_matrix<S>)>
-    derived_t& transpose_inplace() {
-        static_assert(is_2d<derived_t>, "Only 2D matrix can be transposed");
-
-        decltype(auto) mat = as_derived();
-
-        if (etl::dim<0>(mat) == etl::dim<1>(mat)) {
-            detail::inplace_square_transpose::apply(mat);
+        if constexpr (is_3d<D>){
+            for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
+                mat(i).fflip_inplace();
+            }
         } else {
-            detail::inplace_rectangular_transpose::apply(mat);
+            for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
+                mat(i).deep_fflip_inplace();
+            }
+        }
+
+        return mat;
+    }
+
+    /*!
+     * \brief Transpose each sub 2D matrix in place.
+     */
+    derived_t& deep_transpose_inplace() {
+        decltype(auto) mat = as_derived();
+
+        if constexpr (is_dyn_matrix<derived_t>) {
+            if constexpr (is_3d<derived_t>) {
+                for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
+                    mat(i).direct_transpose_inplace();
+                }
+            } else {
+                for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
+                    mat(i).direct_deep_transpose_inplace();
+                }
+            }
+
+            static constexpr size_t d = etl_traits<derived_t>::dimensions();
 
             using std::swap;
-            swap(mat.unsafe_dimension_access(0), mat.unsafe_dimension_access(1));
+            swap(mat.unsafe_dimension_access(d - 1), mat.unsafe_dimension_access(d - 2));
+        } else {
+            if constexpr (is_3d<derived_t>) {
+                for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
+                    mat(i).transpose_inplace();
+                }
+            } else {
+                for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
+                    mat(i).deep_transpose_inplace();
+                }
+            }
+        }
+
+        return mat;
+    }
+
+    /*!
+     * \brief Transpose each sub 2D matrix in place.
+     */
+    derived_t& direct_deep_transpose_inplace() {
+        decltype(auto) mat = as_derived();
+
+        if constexpr (is_3d<derived_t>) {
+            for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
+                mat(i).direct_transpose_inplace();
+            }
+        } else {
+            for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
+                mat(i).direct_deep_transpose_inplace();
+            }
+        }
+
+        return mat;
+    }
+
+    /*!
+     * \brief Transpose the matrix in place.
+     *
+     * Only square fast matrix can be transpose in place, dyn matrix don't have any limitation.
+     */
+    derived_t& transpose_inplace() {
+        static_assert(is_2d<derived_t>, "Only 2D matrix can be transposed");
+
+        decltype(auto) mat = as_derived();
+
+        if constexpr (is_dyn_matrix<derived_t>){
+            if (etl::dim<0>(mat) == etl::dim<1>(mat)) {
+                detail::inplace_square_transpose::apply(mat);
+            } else {
+                detail::inplace_rectangular_transpose::apply(mat);
+
+                using std::swap;
+                swap(mat.unsafe_dimension_access(0), mat.unsafe_dimension_access(1));
+            }
+        } else {
+            cpp_assert(etl::dim<0>(mat) == etl::dim<1>(mat), "Only square fast matrices can be tranposed inplace");
+
+            detail::inplace_square_transpose::apply(mat);
         }
 
         return mat;
