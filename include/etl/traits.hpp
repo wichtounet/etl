@@ -170,32 +170,6 @@ struct is_gpu_temporary_impl : std::false_type {};
 template<typename E>
 struct is_gpu_temporary_impl <E, std::enable_if_t<is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr> && std::decay_t<E>::gpu_computable>> : std::true_type {};
 
-/*!
- * \brief Returns the space between two elements in GPU for the given type.
- *
- * This returns 1 for every type but for scalar which are 0.
- *
- * \return The space between two elements of the given type once
- * transferred in GPU memory
- */
-template<typename T, cpp_enable_iff((cpp::is_specialization_of_v<etl::scalar, std::decay_t<T>>))>
-constexpr size_t gpu_inc_impl() {
-    return 0;
-}
-
-/*!
- * \brief Returns the space between two elements in GPU for the given type.
- *
- * This returns 1 for every type but for scalar which are 0.
- *
- * \return The space between two elements of the given type once
- * transferred in GPU memory
- */
-template<typename T, cpp_disable_iff((cpp::is_specialization_of_v<etl::scalar, std::decay_t<T>>))>
-constexpr size_t gpu_inc_impl(){
-    return 1;
-}
-
 } // end of namespace traits_detail
 
 /*!
@@ -1618,6 +1592,6 @@ decltype(auto) select_smart_gpu_compute(X& x, Y& y) {
  * This is 1 for every type but for scalar which are 0.
  */
 template<typename T>
-constexpr size_t gpu_inc = traits_detail::gpu_inc_impl<T>();
+constexpr size_t gpu_inc = is_scalar<T> ? 0 : 1;
 
 } //end of namespace etl
