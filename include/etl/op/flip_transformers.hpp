@@ -153,7 +153,7 @@ public:
      */
     template <bool C = matrix, cpp_disable_iff(C)>
     value_type operator[](size_t i) const {
-        return sub[size(sub) - i - 1];
+        return sub[etl::size(sub) - i - 1];
     }
 
     /*!
@@ -176,7 +176,7 @@ public:
      */
     template <bool C = matrix, cpp_disable_iff(C)>
     value_type read_flat(size_t i) const {
-        return sub.read_flat(size(sub) - i - 1);
+        return sub.read_flat(etl::size(sub) - i - 1);
     }
 
     /*!
@@ -198,7 +198,7 @@ public:
      * \return The value at the position (i)
      */
     value_type operator()(size_t i) const {
-        return sub(size(sub) - 1 - i);
+        return sub(etl::size(sub) - 1 - i);
     }
 
     /*!
@@ -431,7 +431,7 @@ public:
         if (dimensions(sub) == 1) {
             return sub[i];
         } else {
-            return sub[size(sub) - i - 1];
+            return sub[etl::size(sub) - i - 1];
         }
     }
 
@@ -445,7 +445,7 @@ public:
         if (dimensions(sub) == 1) {
             return sub.read_flat(i);
         } else {
-            return sub.read_flat(size(sub) - i - 1);
+            return sub.read_flat(etl::size(sub) - i - 1);
         }
     }
 

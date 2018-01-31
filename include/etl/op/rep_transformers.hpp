@@ -195,7 +195,7 @@ public:
      * \return the value at the given index.
      */
     value_type operator[](size_t i) const {
-        return this->sub[i % size(this->sub)];
+        return this->sub[i % etl::size(this->sub)];
     }
 
     /*!
@@ -205,7 +205,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(size_t i) const noexcept {
-        return this->sub.read_flat(i % size(this->sub));
+        return this->sub.read_flat(i % etl::size(this->sub));
     }
 
     /*!
@@ -341,7 +341,7 @@ public:
      * \return the value at the given index.
      */
     value_type operator[](size_t i) const {
-        return this->sub[i % size(this->sub)];
+        return this->sub[i % etl::size(this->sub)];
     }
 
     /*!
@@ -351,7 +351,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(size_t i) const {
-        return this->sub.read_flat(i % size(this->sub));
+        return this->sub.read_flat(i % etl::size(this->sub));
     }
 
     /*!
