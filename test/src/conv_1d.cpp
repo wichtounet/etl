@@ -173,7 +173,7 @@ CONV1_FULL_TEST_CASE("convolution_1d/full_8", "convolution_1d_full") {
 
 CONV1_SAME_TEST_CASE("convolution_1d/same_0", "convolution_1d_same") {
     etl::dyn_vector<T> a = {1.0, 2.0, 3.0};
-    etl::dyn_vector<T> b = {0.0, 1.0};
+    etl::dyn_vector<T> b = {0.0, 1.0, 0.5};
     etl::dyn_vector<T> c(3);
 
     Impl::apply(a, b, c);
