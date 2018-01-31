@@ -184,7 +184,7 @@ void gemm(A&& a, B&& b, C&& c) {
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
 
-        if constexpr (all_row_major<A, B, C> || all_column_major<A, B, C>) {
+        if (all_row_major<A, B, C> || all_column_major<A, B, C>) {
             constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
             cblas_gemm(
@@ -196,7 +196,7 @@ void gemm(A&& a, B&& b, C&& c) {
                 b.memory_start(), major_stride(b),
                 beta,
                 c.memory_start(), major_stride(c));
-        } else if constexpr (all_row_major<B, C> && is_column_major<A>) {
+        } else if (all_row_major<B, C> && is_column_major<A>) {
             cblas_gemm(
                 CblasRowMajor,
                 CblasTrans, CblasNoTrans,
@@ -206,7 +206,7 @@ void gemm(A&& a, B&& b, C&& c) {
                 b.memory_start(), major_stride(b),
                 beta,
                 c.memory_start(), major_stride(c));
-        } else if constexpr (all_row_major<A, C> && is_column_major<B>) {
+        } else if (all_row_major<A, C> && is_column_major<B>) {
             cblas_gemm(
                 CblasRowMajor,
                 CblasNoTrans, CblasTrans,
@@ -216,7 +216,7 @@ void gemm(A&& a, B&& b, C&& c) {
                 b.memory_start(), major_stride(b),
                 beta,
                 c.memory_start(), major_stride(c));
-        } else if constexpr (is_row_major<C> && all_column_major<A, B>) {
+        } else if (is_row_major<C> && all_column_major<A, B>) {
             cblas_gemm(
                 CblasRowMajor,
                 CblasTrans, CblasTrans,
@@ -226,7 +226,7 @@ void gemm(A&& a, B&& b, C&& c) {
                 b.memory_start(), major_stride(b),
                 beta,
                 c.memory_start(), major_stride(c));
-        } else if constexpr (is_row_major<A> && all_column_major<B, C>) {
+        } else if (is_row_major<A> && all_column_major<B, C>) {
             cblas_gemm(
                 CblasColMajor,
                 CblasTrans, CblasNoTrans,
@@ -236,7 +236,7 @@ void gemm(A&& a, B&& b, C&& c) {
                 b.memory_start(), major_stride(b),
                 beta,
                 c.memory_start(), major_stride(c));
-        } else if constexpr (is_row_major<B> && all_column_major<A, C>) {
+        } else if (is_row_major<B> && all_column_major<A, C>) {
             cblas_gemm(
                 CblasColMajor,
                 CblasNoTrans, CblasTrans,
@@ -246,7 +246,7 @@ void gemm(A&& a, B&& b, C&& c) {
                 b.memory_start(), major_stride(b),
                 beta,
                 c.memory_start(), major_stride(c));
-        } else if constexpr (all_row_major<A, B> && is_column_major<C>) {
+        } else if (all_row_major<A, B> && is_column_major<C>) {
             cblas_gemm(
                 CblasColMajor,
                 CblasTrans, CblasTrans,

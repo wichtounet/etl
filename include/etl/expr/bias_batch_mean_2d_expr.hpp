@@ -290,7 +290,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const bias_batch_mean_2d_expr& expr) {
-        if constexpr (Mean) {
+        if (Mean) {
             return os << "bias_batch_mean_2d(" << expr._a << ")";
         } else {
             return os << "bias_batch_sum_2d(" << expr._a << ")";

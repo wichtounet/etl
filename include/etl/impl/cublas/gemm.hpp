@@ -312,7 +312,7 @@ void gemm(A&& a, B&& b, C&& c) {
 
     // Do the actual multiplication
 
-    if constexpr (row_major) {
+    if (row_major) {
         cublas_gemm(
             handle.get(),
             CUBLAS_OP_N, CUBLAS_OP_N,
@@ -430,7 +430,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
 
     // Do the actual multiplication
 
-    if constexpr (row_major) {
+    if (row_major) {
         cublas_gemm(
             handle.get(),
             CUBLAS_OP_T, CUBLAS_OP_N,
@@ -482,7 +482,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
 
     // Do the actual multiplication
 
-    if constexpr (row_major) {
+    if (row_major) {
         cublas_gemm(
             handle.get(),
             CUBLAS_OP_N, CUBLAS_OP_T,
@@ -534,7 +534,7 @@ void gemm_tt(A&& a, B&& b, C&& c) {
 
     // Do the actual multiplication
 
-    if constexpr (row_major) {
+    if (row_major) {
         cublas_gemm(
             handle.get(),
             CUBLAS_OP_T, CUBLAS_OP_T,
@@ -584,7 +584,7 @@ void gemv(A&& a, B&& b, C&& c) {
 
     //Perform the actual multiplication
 
-    if constexpr (row_major) {
+    if (row_major) {
         cublas_gemv(
             handle.get(),
             CUBLAS_OP_T,
@@ -636,7 +636,7 @@ void gemv_t(A&& a, B&& b, C&& c) {
 
     //Perform the actual multiplication
 
-    if constexpr (row_major) {
+    if (row_major) {
         cublas_gemv(
             handle.get(),
             CUBLAS_OP_N,
@@ -688,7 +688,7 @@ void gevm(A&& a, B&& b, C&& c) {
 
     //Perform the actual multiplication
 
-    if constexpr (row_major) {
+    if (row_major) {
         cublas_gemv(
             handle.get(),
             CUBLAS_OP_N,
@@ -740,7 +740,7 @@ void gevm_t(A&& a, B&& b, C&& c) {
 
     //Perform the actual multiplication
 
-    if constexpr (row_major) {
+    if (row_major) {
         cublas_gemv(
             handle.get(),
             CUBLAS_OP_T,

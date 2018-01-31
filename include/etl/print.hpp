@@ -52,7 +52,7 @@ std::string to_octave(T&& m) {
     etl::force(m);
 
     std::string v;
-    if constexpr (!Sub) {
+    if (!Sub) {
         v = "[";
     }
 
@@ -64,7 +64,7 @@ std::string to_octave(T&& m) {
         }
     }
 
-    if constexpr (!Sub) {
+    if (!Sub) {
         v += "]";
     }
 
@@ -81,7 +81,7 @@ std::string to_octave(T&& m) {
     etl::force(m);
 
     std::string v;
-    if constexpr (!Sub) {
+    if (!Sub) {
         v = "[";
     }
 
@@ -91,7 +91,7 @@ std::string to_octave(T&& m) {
         comma = ",";
     }
 
-    if constexpr (!Sub) {
+    if (!Sub) {
         v += "]";
     }
 

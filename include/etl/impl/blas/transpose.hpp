@@ -110,7 +110,7 @@ void inplace_rectangular_transpose(C&& c) {
  * \param a The matrix to transpose
  * \param c The target matrix
  */
-template <typename A, typename C, cpp_enable_iff(all_dma<A, C>&& all_floating<A, C>)>
+template <typename A, typename C>
 void transpose(A&& a, C&& c) {
     if constexpr (all_dma<A, C> && all_floating<A, C>) {
         auto mem_c = c.memory_start();
