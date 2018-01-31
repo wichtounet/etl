@@ -51,10 +51,10 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
         static constexpr etl::order order_lhs = decay_traits<C>::storage_order;
         static constexpr etl::order order_rhs = decay_traits<A>::storage_order;
 
-        static constexpr bool rm_to_rm = order_lhs == etl::order::RowMajor && order_rhs == etl::order::RowMajor;
-        static constexpr bool cm_to_cm = order_lhs == etl::order::ColumnMajor && order_rhs == etl::order::ColumnMajor;
-        static constexpr bool rm_to_cm = order_lhs == etl::order::RowMajor && order_rhs == etl::order::ColumnMajor;
-        static constexpr bool cm_to_rm = order_lhs == etl::order::ColumnMajor && order_rhs == etl::order::RowMajor;
+        [[maybe_unused]] static constexpr bool rm_to_rm = order_lhs == etl::order::RowMajor && order_rhs == etl::order::RowMajor;
+        [[maybe_unused]] static constexpr bool cm_to_cm = order_lhs == etl::order::ColumnMajor && order_rhs == etl::order::ColumnMajor;
+        [[maybe_unused]] static constexpr bool rm_to_cm = order_lhs == etl::order::RowMajor && order_rhs == etl::order::ColumnMajor;
+        [[maybe_unused]] static constexpr bool cm_to_rm = order_lhs == etl::order::ColumnMajor && order_rhs == etl::order::RowMajor;
 
         if constexpr (all_fast<A, C>) {
             static constexpr size_t L1 = decay_traits<C>::template dim<0>();
@@ -74,10 +74,10 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
             // Case 4: RM -> CM (two possible cases)
             static_assert(!cm_to_rm || ((L1 == R2 && L2 == R1) || (L1 == R1 && L2 == R2)), "Invalid dimensions for transposition");
         } else {
-            const size_t L1 = etl::dim<0>(c);
-            const size_t L2 = etl::dim<1>(c);
-            const size_t R1 = etl::dim<0>(a);
-            const size_t R2 = etl::dim<1>(a);
+            [[maybe_unused]] const size_t L1 = etl::dim<0>(c);
+            [[maybe_unused]] const size_t L2 = etl::dim<1>(c);
+            [[maybe_unused]] const size_t R1 = etl::dim<0>(a);
+            [[maybe_unused]] const size_t R2 = etl::dim<1>(a);
 
             // Case 1: RM -> RM
             cpp_assert(!rm_to_rm || (L1 == R2 && L2 == R1), "Invalid dimensions for transposition");
