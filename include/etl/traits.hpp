@@ -460,13 +460,6 @@ template <typename T>
 constexpr bool is_simple_lhs = is_etl_value_class<T> || is_unary_expr<T> || is_sub_view<T> || is_slice_view<T> || is_dyn_matrix_view<T>;
 
 /*!
- * \brief Traits indicating if the given ETL type has direct memory access.
- * \tparam T The type to test
- */
-template <typename T>
-constexpr bool has_direct_access = decay_traits<T>::is_direct;
-
-/*!
  * \brief Traits to test if a type is a scalar type
  * \tparam T The type to test.
  */
@@ -648,6 +641,13 @@ constexpr bool is_deep_double_precision = is_complex_double_precision<T> || is_d
  */
 template <typename T>
 constexpr bool is_gpu_t = is_floating_t<T> || is_complex_t<T> || is_bool_t<T>;
+
+/*!
+ * \brief Traits indicating if the given ETL type has direct memory access.
+ * \tparam T The type to test
+ */
+template <typename T>
+constexpr bool has_direct_access = decay_traits<T>::is_direct;
 
 /*!
  * \brief Traits to test if the given ETL expresion type has direct memory access (DMA).
@@ -1416,21 +1416,13 @@ void safe_ensure_cpu_up_to_date(E&& expr){
  *
  * \param expr The expression
  */
-template <typename E, cpp_enable_iff(is_dma<E>)>
+template <typename E>
 bool safe_is_cpu_up_to_date(E&& expr){
-    return expr.is_gpu_up_to_date();
-}
-
-/*!
- * \brief Indicates if the CPU memory is up to date. If the expression does
- * not have direct memory access, return true
- *
- * \param expr The expression
- */
-template <typename E, cpp_disable_iff(is_dma<E>)>
-bool safe_is_cpu_up_to_date(E&& expr){
-    cpp_unused(expr);
-    return true;
+    if constexpr (is_dma<E>){
+        return expr.is_cpu_up_to_date();
+    } else {
+        return true;
+    }
 }
 
 /*!
@@ -1439,21 +1431,13 @@ bool safe_is_cpu_up_to_date(E&& expr){
  *
  * \param expr The expression
  */
-template <typename E, cpp_enable_iff(is_dma<E>)>
+template <typename E>
 bool safe_is_gpu_up_to_date(E&& expr){
-    return expr.is_gpu_up_to_date();
-}
-
-/*!
- * \brief Indicates if the GPU memory is up to date. If the expression does
- * not have direct memory access, return false
- *
- * \param expr The expression
- */
-template <typename E, cpp_disable_iff(is_dma<E>)>
-bool safe_is_gpu_up_to_date(E&& expr){
-    cpp_unused(expr);
-    return false;
+    if constexpr (is_dma<E>){
+        return expr.is_gpu_up_to_date();
+    } else {
+        return false;
+    }
 }
 
 /*!

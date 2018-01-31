@@ -563,19 +563,13 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template <typename E, cpp_enable_iff(has_direct_access<Expr>  && is_dma<E>)>
+    template <typename E>
     bool alias(const E& rhs) const noexcept {
-        return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
-    }
-
-    /*!
-     * \brief Test if this expression aliases with the given expression
-     * \param rhs The other expression to test
-     * \return true if the two expressions aliases, false otherwise
-     */
-    template <typename E, cpp_disable_iff(has_direct_access<Expr>&& is_dma<E>)>
-    bool alias(const E& rhs) const noexcept {
-        return value.alias(rhs);
+        if constexpr (all_dma<E, Expr>) {
+            return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
+        } else {
+            return value.alias(rhs);
+        }
     }
 
     /*!
@@ -834,19 +828,13 @@ private:
      * \brief Assign the given value to each eleemnt of the unary expression
      * \param e The value
      */
-    template<bool B = is_dma<Expr>, cpp_enable_iff(B)>
-    void memory_set(const value_type& e){
-        direct_fill(memory_start(), memory_end(), e);
-    }
-
-    /*!
-     * \brief Assign the given value to each eleemnt of the unary expression
-     * \param e The value
-     */
-    template<bool B = is_dma<Expr>, cpp_disable_iff(B)>
-    void memory_set(const value_type& e){
-        for (size_t i = 0; i < size(*this); ++i) {
-            (*this)[i] = e;
+    void memory_set(const value_type& e) {
+        if constexpr (is_dma<Expr>) {
+            direct_fill(memory_start(), memory_end(), e);
+        } else {
+            for (size_t i = 0; i < size(*this); ++i) {
+                (*this)[i] = e;
+            }
         }
     }
 };
