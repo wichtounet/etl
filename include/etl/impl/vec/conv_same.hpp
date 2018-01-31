@@ -163,26 +163,13 @@ void conv2_same_impl(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K, C>)>
+template <typename I, typename K, typename C>
 void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
-    conv2_same_flipped_impl<default_vec>(input, kernel, conv);
-}
-
-/*!
- * \brief SSE implementation of a 2D 'same' convolution C = I * K, with the
- * flipped kernels of K.
- *
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K, C>)>
-void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-
-    cpp_unreachable("Invalid call to vec::conv2_same_flipped");
+    if constexpr (conv2_possible<vector_mode, I, K, C>) {
+        conv2_same_flipped_impl<default_vec>(input, kernel, conv);
+    } else {
+        cpp_unreachable("Invalid call to vec::conv2_same_flipped");
+    }
 }
 
 /*!
@@ -191,24 +178,13 @@ void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K, C>)>
+template <typename I, typename K, typename C>
 void conv2_same(const I& input, const K& kernel, C&& conv) {
-    conv2_same_impl<default_vec>(input, kernel, conv);
-}
-
-/*!
- * \brief SSE implementation of a 2D 'same' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K, C>)>
-void conv2_same(const I& input, const K& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-
-    cpp_unreachable("Invalid call to vec::conv2_same");
+    if constexpr (conv2_possible<vector_mode, I, K, C>) {
+        conv2_same_impl<default_vec>(input, kernel, conv);
+    } else {
+        cpp_unreachable("Invalid call to vec::conv2_same_flipped");
+    }
 }
 
 /*!
@@ -218,20 +194,24 @@ void conv2_same(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K, C>)>
+template <typename I, typename K, typename C>
 void conv2_same_multi(const I& input, const K& kernel, C&& conv) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+    if constexpr (conv2_possible<vector_mode, I, K, C>) {
+        cpp_assert(vec_enabled, "Cannot use vectorized mode");
+        cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    const size_t Kn = etl::dim<0>(kernel);
+        const size_t Kn = etl::dim<0>(kernel);
 
-    auto batch_fun_k = [&input, &kernel, &conv](const size_t first, const size_t last) {
-        for (size_t k = first; k < last; ++k) {
-            conv2_same_impl<default_vec>(input, kernel(k), conv(k));
-        }
-    };
+        auto batch_fun_k = [&input, &kernel, &conv](const size_t first, const size_t last) {
+            for (size_t k = first; k < last; ++k) {
+                conv2_same_impl<default_vec>(input, kernel(k), conv(k));
+            }
+        };
 
-    engine_dispatch_1d(batch_fun_k, 0, Kn, 2UL);
+        engine_dispatch_1d(batch_fun_k, 0, Kn, 2UL);
+    } else {
+        cpp_unreachable("Invalid call to vec::conv2_same_flipped");
+    }
 }
 
 /*!
@@ -241,52 +221,24 @@ void conv2_same_multi(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K, C>)>
+template <typename I, typename K, typename C>
 void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+    if constexpr (conv2_possible<vector_mode, I, K, C>) {
+        cpp_assert(vec_enabled, "Cannot use vectorized mode");
+        cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    const size_t Kn = etl::dim<0>(kernel);
+        const size_t Kn = etl::dim<0>(kernel);
 
-    auto batch_fun_k = [&input, &kernel, &conv](const size_t first, const size_t last) {
-        for (size_t k = first; k < last; ++k) {
-            conv2_same_flipped_impl<default_vec>(input, kernel(k), conv(k));
-        }
-    };
+        auto batch_fun_k = [&input, &kernel, &conv](const size_t first, const size_t last) {
+            for (size_t k = first; k < last; ++k) {
+                conv2_same_flipped_impl<default_vec>(input, kernel(k), conv(k));
+            }
+        };
 
-    engine_dispatch_1d(batch_fun_k, 0, Kn, 2UL);
-}
-
-/*!
- * \brief VEC implementation of a 2D 'same' convolution C = I * K, with multiple kernels, with kernels flipped.
- *
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K, C>)>
-void conv2_same_multi(const I& input, const K& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-
-    cpp_unreachable("Invalid call to vec::conv2_same_multi");
-}
-
-/*!
- * \brief VEC implementation of a 2D 'same' convolution C = I * K, with multiple kernels, with kernels flipped.
- *
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K, C>)>
-void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-
-    cpp_unreachable("Invalid call to vec::conv2_same_multi_flipped");
+        engine_dispatch_1d(batch_fun_k, 0, Kn, 2UL);
+    } else {
+        cpp_unreachable("Invalid call to vec::conv2_same_flipped");
+    }
 }
 
 } //end of namespace etl::impl::vec

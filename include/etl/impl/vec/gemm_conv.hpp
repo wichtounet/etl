@@ -18,70 +18,76 @@ namespace etl::impl::vec {
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K_T, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K_T, C>)>
-void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi([[maybe_unused]] const I& input,
+                            [[maybe_unused]] const K_T& kernels,
+                            [[maybe_unused]] C&& conv,
+                            [[maybe_unused]] size_t s1,
+                            [[maybe_unused]] size_t s2,
+                            [[maybe_unused]] size_t p1,
+                            [[maybe_unused]] size_t p2) {
+    if constexpr (conv2_possible<vector_mode, I, K_T, C>) {
+        cpp_assert(vec_enabled, "Cannot use vectorized mode");
+        cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    using T = value_t<I>;
+        using T = value_t<I>;
 
-    const size_t K  = etl::dim<0>(kernels);
-    const size_t i1 = etl::dim<0>(input);
-    const size_t i2 = etl::dim<1>(input);
-    const size_t k1 = etl::dim<1>(kernels);
-    const size_t k2 = etl::dim<2>(kernels);
+        const size_t K  = etl::dim<0>(kernels);
+        const size_t i1 = etl::dim<0>(input);
+        const size_t i2 = etl::dim<1>(input);
+        const size_t k1 = etl::dim<1>(kernels);
+        const size_t k2 = etl::dim<2>(kernels);
 
-    // unit-strided result dimensions
-    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
-    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
+        // unit-strided result dimensions
+        const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+        const size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
-    // real final dimensions
-    const size_t f1 = etl::dim<1>(conv);
-    const size_t f2 = etl::dim<2>(conv);
+        // real final dimensions
+        const size_t f1 = etl::dim<1>(conv);
+        const size_t f2 = etl::dim<2>(conv);
 
-    input.ensure_cpu_up_to_date();
-    kernels.ensure_cpu_up_to_date();
+        input.ensure_cpu_up_to_date();
+        kernels.ensure_cpu_up_to_date();
 
-    auto prepared_k = force_temporary(kernels);
+        auto prepared_k = force_temporary(kernels);
 
-    // Flip the kernels
-    prepared_k.deep_fflip_inplace();
+        // Flip the kernels
+        prepared_k.deep_fflip_inplace();
 
-    etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
+        etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
 
-    if(p1 || p2){
-        etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
-        input_padded = T(0);
+        if (p1 || p2) {
+            etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
+            input_padded = T(0);
 
-        impl::common::pad_2d_input(input, input_padded, p1, p2);
+            impl::common::pad_2d_input(input, input_padded, p1, p2);
 
-        im2col_direct_tr(input_col, input_padded, k1, k2);
-    } else {
-        im2col_direct_tr(input_col, input, k1, k2);
-    }
+            im2col_direct_tr(input_col, input_padded, k1, k2);
+        } else {
+            im2col_direct_tr(input_col, input, k1, k2);
+        }
 
-    if(s1 > 1 || s2 > 1){
-        etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
+        if (s1 > 1 || s2 > 1) {
+            etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
 
-        gemm_large_kernel_rr_to_r<default_vec>(
-            prepared_k.memory_start(), input_col.memory_start(), tmp_result.memory_start(),
-            K, c1 * c2, k1 * k2, T(0));
+            gemm_large_kernel_rr_to_r<default_vec>(prepared_k.memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, c1 * c2, k1 * k2, T(0));
 
-        // Strided copy of the large result into the small result
-        for (size_t k = 0; k < K; ++k) {
-            for (size_t i = 0; i < f1; ++i) {
-                for (size_t j = 0; j < f2; ++j) {
-                    conv(k, i, j) = tmp_result(k, i * s1, j * s2);
+            // Strided copy of the large result into the small result
+            for (size_t k = 0; k < K; ++k) {
+                for (size_t i = 0; i < f1; ++i) {
+                    for (size_t j = 0; j < f2; ++j) {
+                        conv(k, i, j) = tmp_result(k, i * s1, j * s2);
+                    }
                 }
             }
+        } else {
+            gemm_large_kernel_rr_to_r<default_vec>(prepared_k.memory_start(), input_col.memory_start(), conv.memory_start(), K, f1 * f2, k1 * k2, T(0));
         }
-    } else {
-        gemm_large_kernel_rr_to_r<default_vec>(
-            prepared_k.memory_start(), input_col.memory_start(), conv.memory_start(),
-            K, f1 * f2, k1 * k2, T(0));
-    }
 
-    conv.invalidate_gpu();
+        conv.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid call to vec::blas_conv2_valid_multi");
+    }
 }
 
 /*!
@@ -90,169 +96,71 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K_T, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K_T, C>)>
-void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_flipped([[maybe_unused]] I&& input,
+                                    [[maybe_unused]] K_T&& kernels,
+                                    [[maybe_unused]] C&& conv,
+                                    [[maybe_unused]] size_t s1,
+                                    [[maybe_unused]] size_t s2,
+                                    [[maybe_unused]] size_t p1,
+                                    [[maybe_unused]] size_t p2) {
+    if constexpr (conv2_possible<vector_mode, I, K_T, C>) {
+        cpp_assert(vec_enabled, "Cannot use vectorized mode");
+        cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    using T = value_t<I>;
+        using T = value_t<I>;
 
-    const size_t K  = etl::dim<0>(kernels);
-    const size_t i1 = etl::dim<0>(input);
-    const size_t i2 = etl::dim<1>(input);
-    const size_t k1 = etl::dim<1>(kernels);
-    const size_t k2 = etl::dim<2>(kernels);
+        const size_t K  = etl::dim<0>(kernels);
+        const size_t i1 = etl::dim<0>(input);
+        const size_t i2 = etl::dim<1>(input);
+        const size_t k1 = etl::dim<1>(kernels);
+        const size_t k2 = etl::dim<2>(kernels);
 
-    // unit-strided result dimensions
-    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
-    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
+        // unit-strided result dimensions
+        const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+        const size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
-    // real final dimensions
-    const size_t f1 = etl::dim<1>(conv);
-    const size_t f2 = etl::dim<2>(conv);
+        // real final dimensions
+        const size_t f1 = etl::dim<1>(conv);
+        const size_t f2 = etl::dim<2>(conv);
 
-    input.ensure_cpu_up_to_date();
-    kernels.ensure_cpu_up_to_date();
+        input.ensure_cpu_up_to_date();
+        kernels.ensure_cpu_up_to_date();
 
-    etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
+        etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
 
-    if(p1 || p2){
-        etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
-        input_padded = T(0);
+        if (p1 || p2) {
+            etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
+            input_padded = T(0);
 
-        impl::common::pad_2d_input(input, input_padded, p1, p2);
+            impl::common::pad_2d_input(input, input_padded, p1, p2);
 
-        im2col_direct_tr(input_col, input_padded, k1, k2);
-    } else {
-        im2col_direct_tr(input_col, input, k1, k2);
-    }
-
-    if(s1 > 1 || s2 > 1){
-        etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
-
-        gemm_large_kernel_rr_to_r<default_vec>(
-            kernels.memory_start(), input_col.memory_start(), tmp_result.memory_start(),
-            K, c1 * c2, k1 * k2, T(0));
-
-        // Strided copy of the large result into the small result
-        for (size_t k = 0; k < K; ++k) {
-            for (size_t i = 0; i < f1; ++i) {
-                for (size_t j = 0; j < f2; ++j) {
-                    conv(k, i, j) = tmp_result(k, i * s1, j * s2);
-                }
-            }
-        }
-    } else {
-        gemm_large_kernel_rr_to_r<default_vec>(
-            kernels.memory_start(), input_col.memory_start(), conv.memory_start(),
-            K, f1 * f2, k1 * k2, T(0));
-    }
-
-    conv.invalidate_gpu();
-}
-
-template <typename I, typename K_T, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K_T, C>)>
-void blas_conv2_valid_multi(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernels);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unreachable("Invalid call to vec::blas_conv2_valid_multi");
-}
-
-template <typename I, typename K_T, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K_T, C>)>
-void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernels);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unreachable("Invalid call to vec::blas_conv2_valid_multi_flipped");
-}
-
-/*!
- * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple images and multiple kernels
- * \param input The input matrix
- * \param kernels The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K_T, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K_T, C>)>
-void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
-
-    using T = value_t<I>;
-
-    const size_t N  = etl::dim<0>(input);
-    const size_t i1 = etl::dim<1>(input);
-    const size_t i2 = etl::dim<2>(input);
-
-    const size_t K  = etl::dim<0>(kernels);
-    const size_t k1 = etl::dim<1>(kernels);
-    const size_t k2 = etl::dim<2>(kernels);
-
-    // unit-strided result dimensions
-    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
-    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
-
-    // real final dimensions
-    const size_t f1 = etl::dim<2>(conv);
-    const size_t f2 = etl::dim<3>(conv);
-
-    input.ensure_cpu_up_to_date();
-    kernels.ensure_cpu_up_to_date();
-
-    auto prepared_k = force_temporary(kernels);
-
-    // Flip the kernels
-    prepared_k.deep_fflip_inplace();
-
-    etl::dyn_matrix<T, 2> input_col(k1 * k2, N * c1 * c2);
-
-    if(p1 || p2){
-        etl::dyn_matrix<T, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
-        input_padded = T(0);
-
-        for(size_t i = 0; i < N; ++i){
-            impl::common::pad_2d_input(input(i), input_padded(i), p1, p2);
+            im2col_direct_tr(input_col, input_padded, k1, k2);
+        } else {
+            im2col_direct_tr(input_col, input, k1, k2);
         }
 
-        im2col_direct_tr_multi(input_col, input_padded, k1, k2);
-    } else {
-        im2col_direct_tr_multi(input_col, input, k1, k2);
-    }
+        if (s1 > 1 || s2 > 1) {
+            etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
 
-    if(s1 > 1 || s2 > 1){
-        etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
+            gemm_large_kernel_rr_to_r<default_vec>(kernels.memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, c1 * c2, k1 * k2, T(0));
 
-        gemm_large_kernel_rr_to_r<default_vec>(
-            prepared_k.memory_start(), input_col.memory_start(), tmp_result.memory_start(),
-            K, N * c1 * c2, k1 * k2, T(0));
-
-        // Strided copy of the large result into the small result
-        for (size_t k = 0; k < K; ++k) {
-            for (size_t i = 0; i < N; ++i) {
-                for (size_t ii = 0; ii < f1; ++ii) {
+            // Strided copy of the large result into the small result
+            for (size_t k = 0; k < K; ++k) {
+                for (size_t i = 0; i < f1; ++i) {
                     for (size_t j = 0; j < f2; ++j) {
-                        conv(k, i, ii, j) = tmp_result(k, i, ii * s1, j * s2);
+                        conv(k, i, j) = tmp_result(k, i * s1, j * s2);
                     }
                 }
             }
+        } else {
+            gemm_large_kernel_rr_to_r<default_vec>(kernels.memory_start(), input_col.memory_start(), conv.memory_start(), K, f1 * f2, k1 * k2, T(0));
         }
-    } else {
-        gemm_large_kernel_rr_to_r<default_vec>(
-            prepared_k.memory_start(), input_col.memory_start(), conv.memory_start(),
-            K, N * c1 * c2, k1 * k2, T(0));
-    }
 
-    conv.invalidate_gpu();
+        conv.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid call to vec::blas_conv2_valid_multi_flipped");
+    }
 }
 
 /*!
@@ -261,71 +169,83 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K_T, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K_T, C>)>
-void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_multi([[maybe_unused]] const I& input,
+                                  [[maybe_unused]] const K_T& kernels,
+                                  [[maybe_unused]] C&& conv,
+                                  [[maybe_unused]] size_t s1,
+                                  [[maybe_unused]] size_t s2,
+                                  [[maybe_unused]] size_t p1,
+                                  [[maybe_unused]] size_t p2) {
+    if constexpr (conv2_possible<vector_mode, I, K_T, C>) {
+        cpp_assert(vec_enabled, "Cannot use vectorized mode");
+        cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    using T = value_t<I>;
+        using T = value_t<I>;
 
-    const size_t N  = etl::dim<0>(input);
-    const size_t i1 = etl::dim<1>(input);
-    const size_t i2 = etl::dim<2>(input);
+        const size_t N  = etl::dim<0>(input);
+        const size_t i1 = etl::dim<1>(input);
+        const size_t i2 = etl::dim<2>(input);
 
-    const size_t K  = etl::dim<0>(kernels);
-    const size_t k1 = etl::dim<1>(kernels);
-    const size_t k2 = etl::dim<2>(kernels);
+        const size_t K  = etl::dim<0>(kernels);
+        const size_t k1 = etl::dim<1>(kernels);
+        const size_t k2 = etl::dim<2>(kernels);
 
-    // unit-strided result dimensions
-    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
-    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
+        // unit-strided result dimensions
+        const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+        const size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
-    // real final dimensions
-    const size_t f1 = etl::dim<2>(conv);
-    const size_t f2 = etl::dim<3>(conv);
+        // real final dimensions
+        const size_t f1 = etl::dim<2>(conv);
+        const size_t f2 = etl::dim<3>(conv);
 
-    input.ensure_cpu_up_to_date();
-    kernels.ensure_cpu_up_to_date();
+        input.ensure_cpu_up_to_date();
+        kernels.ensure_cpu_up_to_date();
 
-    etl::dyn_matrix<T, 2> input_col(k1 * k2, N * c1 * c2);
+        auto prepared_k = force_temporary(kernels);
 
-    if(p1 || p2){
-        etl::dyn_matrix<T, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
-        input_padded = T(0);
+        // Flip the kernels
+        prepared_k.deep_fflip_inplace();
 
-        for(size_t i = 0; i < N; ++i){
-            impl::common::pad_2d_input(input(i), input_padded(i), p1, p2);
+        etl::dyn_matrix<T, 2> input_col(k1 * k2, N * c1 * c2);
+
+        if (p1 || p2) {
+            etl::dyn_matrix<T, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
+            input_padded = T(0);
+
+            for (size_t i = 0; i < N; ++i) {
+                impl::common::pad_2d_input(input(i), input_padded(i), p1, p2);
+            }
+
+            im2col_direct_tr_multi(input_col, input_padded, k1, k2);
+        } else {
+            im2col_direct_tr_multi(input_col, input, k1, k2);
         }
 
-        im2col_direct_tr_multi(input_col, input_padded, k1, k2);
-    } else {
-        im2col_direct_tr_multi(input_col, input, k1, k2);
-    }
+        if (s1 > 1 || s2 > 1) {
+            etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
 
-    if(s1 > 1 || s2 > 1){
-        etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
+            gemm_large_kernel_rr_to_r<default_vec>(prepared_k.memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, N * c1 * c2, k1 * k2,
+                                                   T(0));
 
-        gemm_large_kernel_rr_to_r<default_vec>(
-            kernels.memory_start(), input_col.memory_start(), tmp_result.memory_start(),
-            K, N * c1 * c2, k1 * k2, T(0));
-
-        // Strided copy of the large result into the small result
-        for (size_t k = 0; k < K; ++k) {
-            for (size_t i = 0; i < N; ++i) {
-                for (size_t ii = 0; ii < f1; ++ii) {
-                    for (size_t j = 0; j < f2; ++j) {
-                        conv(k, i, ii, j) = tmp_result(k, i, ii * s1, j * s2);
+            // Strided copy of the large result into the small result
+            for (size_t k = 0; k < K; ++k) {
+                for (size_t i = 0; i < N; ++i) {
+                    for (size_t ii = 0; ii < f1; ++ii) {
+                        for (size_t j = 0; j < f2; ++j) {
+                            conv(k, i, ii, j) = tmp_result(k, i, ii * s1, j * s2);
+                        }
                     }
                 }
             }
+        } else {
+            gemm_large_kernel_rr_to_r<default_vec>(prepared_k.memory_start(), input_col.memory_start(), conv.memory_start(), K, N * c1 * c2, k1 * k2, T(0));
         }
+
+        conv.invalidate_gpu();
     } else {
-        gemm_large_kernel_rr_to_r<default_vec>(
-            kernels.memory_start(), input_col.memory_start(), conv.memory_start(),
-            K, N * c1 * c2, k1 * k2, T(0));
+        cpp_unreachable("Invalid call to vec::blas_conv2_valid_multi_flipped");
     }
-
-    conv.invalidate_gpu();
 }
 
 /*!
@@ -334,36 +254,77 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K_T, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K_T, C>)>
-void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernels);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_multi_flipped([[maybe_unused]] const I& input,
+                                          [[maybe_unused]] const K_T& kernels,
+                                          [[maybe_unused]] C&& conv,
+                                          [[maybe_unused]] size_t s1,
+                                          [[maybe_unused]] size_t s2,
+                                          [[maybe_unused]] size_t p1,
+                                          [[maybe_unused]] size_t p2) {
+    if constexpr (conv2_possible<vector_mode, I, K_T, C>) {
+        cpp_assert(vec_enabled, "Cannot use vectorized mode");
+        cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    cpp_unreachable("Invalid call to vec::blas_conv2_valid_multi_multi");
-}
+        using T = value_t<I>;
 
-/*!
- * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple images and multiple kernels
- * \param input The input matrix
- * \param kernels The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K_T, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K_T, C>)>
-void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernels);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+        const size_t N  = etl::dim<0>(input);
+        const size_t i1 = etl::dim<1>(input);
+        const size_t i2 = etl::dim<2>(input);
 
-    cpp_unreachable("Invalid call to vec::blas_conv2_valid_multi_multi_flipped");
+        const size_t K  = etl::dim<0>(kernels);
+        const size_t k1 = etl::dim<1>(kernels);
+        const size_t k2 = etl::dim<2>(kernels);
+
+        // unit-strided result dimensions
+        const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+        const size_t c2 = (i2 - k2 + 2 * p2) + 1;
+
+        // real final dimensions
+        const size_t f1 = etl::dim<2>(conv);
+        const size_t f2 = etl::dim<3>(conv);
+
+        input.ensure_cpu_up_to_date();
+        kernels.ensure_cpu_up_to_date();
+
+        etl::dyn_matrix<T, 2> input_col(k1 * k2, N * c1 * c2);
+
+        if (p1 || p2) {
+            etl::dyn_matrix<T, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
+            input_padded = T(0);
+
+            for (size_t i = 0; i < N; ++i) {
+                impl::common::pad_2d_input(input(i), input_padded(i), p1, p2);
+            }
+
+            im2col_direct_tr_multi(input_col, input_padded, k1, k2);
+        } else {
+            im2col_direct_tr_multi(input_col, input, k1, k2);
+        }
+
+        if (s1 > 1 || s2 > 1) {
+            etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
+
+            gemm_large_kernel_rr_to_r<default_vec>(kernels.memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, N * c1 * c2, k1 * k2, T(0));
+
+            // Strided copy of the large result into the small result
+            for (size_t k = 0; k < K; ++k) {
+                for (size_t i = 0; i < N; ++i) {
+                    for (size_t ii = 0; ii < f1; ++ii) {
+                        for (size_t j = 0; j < f2; ++j) {
+                            conv(k, i, ii, j) = tmp_result(k, i, ii * s1, j * s2);
+                        }
+                    }
+                }
+            }
+        } else {
+            gemm_large_kernel_rr_to_r<default_vec>(kernels.memory_start(), input_col.memory_start(), conv.memory_start(), K, N * c1 * c2, k1 * k2, T(0));
+        }
+
+        conv.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid call to vec::blas_conv2_valid_multi_flipped");
+    }
 }
 
 /*!
@@ -415,9 +376,8 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
                     for (size_t c = 0; c < C; ++c) {
                         im2col_direct_tr(input_col, input(i)(c), m1, m2);
 
-                        gemm_large_kernel_rr_to_r<default_vec>(
-                            kernels(c).memory_start(), input_col.memory_start(), conv(i).memory_start(),
-                            K, c1 * c2, m1 * m2, T(1.0));
+                        gemm_large_kernel_rr_to_r<default_vec>(kernels(c).memory_start(), input_col.memory_start(), conv(i).memory_start(), K, c1 * c2, m1 * m2,
+                                                               T(1.0));
                     }
                 }
             } else {
@@ -437,9 +397,8 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
                         }
 
                         if (s1 > 1 || s2 > 1) {
-                            gemm_large_kernel_rr_to_r<default_vec>(
-                                kernels(c).memory_start(), input_col.memory_start(), tmp_result.memory_start(),
-                                K, sc1 * sc2, m1 * m2, T(0.0));
+                            gemm_large_kernel_rr_to_r<default_vec>(kernels(c).memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, sc1 * sc2,
+                                                                   m1 * m2, T(0.0));
 
                             // Strided copy of the large result into the small result
                             for (size_t k = 0; k < K; ++k) {
@@ -450,9 +409,8 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
                                 }
                             }
                         } else {
-                            gemm_large_kernel_rr_to_r<default_vec>(
-                                kernels(c).memory_start(), input_col.memory_start(), conv(i).memory_start(),
-                                K, c1 * c2, m1 * m2, T(1.0));
+                            gemm_large_kernel_rr_to_r<default_vec>(kernels(c).memory_start(), input_col.memory_start(), conv(i).memory_start(), K, c1 * c2,
+                                                                   m1 * m2, T(1.0));
                         }
                     }
                 }
@@ -475,23 +433,33 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
  * \param p1 The padding of the first dimension
  * \param p2 The padding of the second dimension
  */
-template <typename I_T, typename K_T, typename C_T, cpp_enable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
-void blas_conv4_valid(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    const auto K = etl::dim<0>(kernel); // The number of kernels
-    const auto C = etl::dim<1>(input);  // The number of channels
+template <typename I_T, typename K_T, typename C_T>
+void blas_conv4_valid([[maybe_unused]] I_T&& input,
+                      [[maybe_unused]] K_T&& kernel,
+                      [[maybe_unused]] C_T&& conv,
+                      [[maybe_unused]] size_t s1,
+                      [[maybe_unused]] size_t s2,
+                      [[maybe_unused]] size_t p1,
+                      [[maybe_unused]] size_t p2) {
+    if constexpr (conv2_possible<vector_mode, I_T, K_T, C_T>) {
+        const auto K = etl::dim<0>(kernel); // The number of kernels
+        const auto C = etl::dim<1>(input);  // The number of channels
 
-    const auto m1 = etl::dim<2>(kernel);
-    const auto m2 = etl::dim<3>(kernel);
+        const auto m1 = etl::dim<2>(kernel);
+        const auto m2 = etl::dim<3>(kernel);
 
-    etl::dyn_matrix<value_t<I_T>, 4> kernels(C, K, m1, m2);
+        etl::dyn_matrix<value_t<I_T>, 4> kernels(C, K, m1, m2);
 
-    for(size_t c = 0; c < C; ++c){
-        for(size_t k = 0; k < K; ++k){
-            kernels(c)(k) = fflip(kernel(k)(c));
+        for (size_t c = 0; c < C; ++c) {
+            for (size_t k = 0; k < K; ++k) {
+                kernels(c)(k) = fflip(kernel(k)(c));
+            }
         }
-    }
 
-    blas_conv4_valid_prepared(input, kernel, kernels, conv, s1, s2, p1, p2);
+        blas_conv4_valid_prepared(input, kernel, kernels, conv, s1, s2, p1, p2);
+    } else {
+        cpp_unreachable("Invalid call to vec::blas_conv4_valid");
+    }
 }
 
 /*!
@@ -504,69 +472,27 @@ void blas_conv4_valid(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s
  * \param p1 The padding of the first dimension
  * \param p2 The padding of the second dimension
  */
-template <typename I_T, typename K_T, typename C_T, cpp_enable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
+template <typename I_T, typename K_T, typename C_T>
 void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    const auto K = etl::dim<0>(kernel); // The number of kernels
-    const auto C = etl::dim<1>(input);  // The number of channels
+    if constexpr (conv2_possible<vector_mode, I_T, K_T, C_T>) {
+        const auto K = etl::dim<0>(kernel); // The number of kernels
+        const auto C = etl::dim<1>(input);  // The number of channels
 
-    const auto m1 = etl::dim<2>(kernel);
-    const auto m2 = etl::dim<3>(kernel);
+        const auto m1 = etl::dim<2>(kernel);
+        const auto m2 = etl::dim<3>(kernel);
 
-    etl::dyn_matrix<value_t<I_T>, 4> kernels(C, K, m1, m2);
+        etl::dyn_matrix<value_t<I_T>, 4> kernels(C, K, m1, m2);
 
-    for(size_t c = 0; c < C; ++c){
-        for(size_t k = 0; k < K; ++k){
-            kernels(c)(k) = kernel(k)(c);
+        for (size_t c = 0; c < C; ++c) {
+            for (size_t k = 0; k < K; ++k) {
+                kernels(c)(k) = kernel(k)(c);
+            }
         }
+
+        blas_conv4_valid_prepared(input, kernel, kernels, conv, s1, s2, p1, p2);
+    } else {
+        cpp_unreachable("Invalid call to vec::blas_conv4_valid");
     }
-
-    blas_conv4_valid_prepared(input, kernel, kernels, conv, s1, s2, p1, p2);
-}
-
-/*!
- * \brief Compute a 4D valid convolution using a vectorized matrix multiplication kernel
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- * \param s1 The stride of the first dimension
- * \param s2 The stride of the second dimension
- * \param p1 The padding of the first dimension
- * \param p2 The padding of the second dimension
- */
-template <typename I_T, typename K_T, typename C_T, cpp_disable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
-void blas_conv4_valid(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unreachable("Invalid call to vec::blas_conv4_valid");
-}
-
-/*!
- * \brief Compute a 4D valid convolution using a vectorized matrix multiplication kernel
- * \param input The input matrix
- * \param kernel The kernel matrix, with flipped kernels
- * \param conv The output matrix
- * \param s1 The stride of the first dimension
- * \param s2 The stride of the second dimension
- * \param p1 The padding of the first dimension
- * \param p2 The padding of the second dimension
- */
-template <typename I_T, typename K_T, typename C_T, cpp_disable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
-void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unreachable("Invalid call to vec::blas_conv4_valid_flipped");
 }
 
 /*!
@@ -617,9 +543,8 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                 // Optimize for the most common case
                 if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
                     im2col_direct_tr(input_col, input(i)(c), k1, k2);
-                    gemm_large_kernel_rr_to_r<default_vec>(
-                        kernel(i).memory_start(), input_col.memory_start(), conv_temp(c).memory_start(),
-                        K, f1 * f2, k1 * k2, T(1.0));
+                    gemm_large_kernel_rr_to_r<default_vec>(kernel(i).memory_start(), input_col.memory_start(), conv_temp(c).memory_start(), K, f1 * f2, k1 * k2,
+                                                           T(1.0));
                 } else {
                     if (p1 || p2) {
                         etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
@@ -635,9 +560,8 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                     if (s1 > 1 || s2 > 1) {
                         etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
 
-                        gemm_large_kernel_rr_to_r<default_vec>(
-                            kernel(i).memory_start(), input_col.memory_start(), tmp_result.memory_start(),
-                            K, c1 * c2, k1 * k2, T(0.0));
+                        gemm_large_kernel_rr_to_r<default_vec>(kernel(i).memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, c1 * c2,
+                                                               k1 * k2, T(0.0));
 
                         // Strided copy of the large result into the small result
                         for (size_t k = 0; k < K; ++k) {
@@ -648,9 +572,8 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                             }
                         }
                     } else {
-                        gemm_large_kernel_rr_to_r<default_vec>(
-                            kernel(i).memory_start(), input_col.memory_start(), conv_temp(c).memory_start(),
-                            K, f1 * f2, k1 * k2, T(1.0));
+                        gemm_large_kernel_rr_to_r<default_vec>(kernel(i).memory_start(), input_col.memory_start(), conv_temp(c).memory_start(), K, f1 * f2,
+                                                               k1 * k2, T(1.0));
                     }
                 }
             }
@@ -678,14 +601,18 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
  * \param p1 The padding of the first dimension
  * \param p2 The padding of the second dimension
  */
-template <typename I_T, typename K_T, typename C_T, cpp_enable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
+template <typename I_T, typename K_T, typename C_T>
 void blas_conv4_valid_filter(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    auto prepared_k = force_temporary(kernel);
+    if constexpr (conv2_possible<vector_mode, I_T, K_T, C_T>) {
+        auto prepared_k = force_temporary(kernel);
 
-    // Flip the kernels
-    prepared_k.deep_fflip_inplace();
+        // Flip the kernels
+        prepared_k.deep_fflip_inplace();
 
-    blas_conv4_valid_filter_prepared(input, prepared_k, conv, s1, s2, p1, p2);
+        blas_conv4_valid_filter_prepared(input, prepared_k, conv, s1, s2, p1, p2);
+    } else {
+        cpp_unreachable("Invalid call to vec::blas_conv4_valid");
+    }
 }
 
 /*!
@@ -698,55 +625,13 @@ void blas_conv4_valid_filter(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, s
  * \param p1 The padding of the first dimension
  * \param p2 The padding of the second dimension
  */
-template <typename I_T, typename K_T, typename C_T, cpp_enable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
+template <typename I_T, typename K_T, typename C_T>
 void blas_conv4_valid_filter_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    blas_conv4_valid_filter_prepared(input, kernel, conv, s1, s2, p1, p2);
-}
-
-/*!
- * \brief Compute a 4D valid filter convolution using a vectorized matrix multiplication kernel
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- * \param s1 The stride of the first dimension
- * \param s2 The stride of the second dimension
- * \param p1 The padding of the first dimension
- * \param p2 The padding of the second dimension
- */
-template <typename I_T, typename K_T, typename C_T, cpp_disable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
-void blas_conv4_valid_filter(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unreachable("Invalid call to vec::blas_conv4_valid_filter");
-}
-
-/*!
- * \brief Compute a 4D valid filter convolution using a vectorized matrix multiplication kernel
- * \param input The input matrix
- * \param kernel The kernel matrix, with flipped kernels
- * \param conv The output matrix
- * \param s1 The stride of the first dimension
- * \param s2 The stride of the second dimension
- * \param p1 The padding of the first dimension
- * \param p2 The padding of the second dimension
- */
-template <typename I_T, typename K_T, typename C_T, cpp_disable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
-void blas_conv4_valid_filter_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unreachable("Invalid call to vec::blas_conv4_filter_back");
+    if constexpr (conv2_possible<vector_mode, I_T, K_T, C_T>) {
+        blas_conv4_valid_filter_prepared(input, kernel, conv, s1, s2, p1, p2);
+    } else {
+        cpp_unreachable("Invalid call to vec::blas_conv4_valid");
+    }
 }
 
 /*!
@@ -795,9 +680,8 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
                         im2col_direct_tr(input_col, input(i)(k), k1, k2);
 
                         // conv(i) = kernel(k) * input_col
-                        gemm_large_kernel_rr_to_r<default_vec>(
-                            kernel(k).memory_start(), input_col.memory_start(), conv(i).memory_start(),
-                            C, c1 * c2, k1 * k2, T(1.0));
+                        gemm_large_kernel_rr_to_r<default_vec>(kernel(k).memory_start(), input_col.memory_start(), conv(i).memory_start(), C, c1 * c2, k1 * k2,
+                                                               T(1.0));
                     }
                 }
             } else {
@@ -818,9 +702,8 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
 
                         if (s1 > 1 || s2 > 1) {
                             // tmp_result = kernel(k) * input_col
-                            gemm_large_kernel_rr_to_r<default_vec>(
-                                kernel(k).memory_start(), input_col.memory_start(), tmp_result.memory_start(),
-                                C, c1 * c2, k1 * k2, T(0.0));
+                            gemm_large_kernel_rr_to_r<default_vec>(kernel(k).memory_start(), input_col.memory_start(), tmp_result.memory_start(), C, c1 * c2,
+                                                                   k1 * k2, T(0.0));
 
                             // Strided copy of the large result into the small result
                             for (size_t c = 0; c < C; ++c) {
@@ -832,9 +715,8 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
                             }
                         } else {
                             // conv(i) = kernel(k) * input_col
-                            gemm_large_kernel_rr_to_r<default_vec>(
-                                kernel(k).memory_start(), input_col.memory_start(), conv(i).memory_start(),
-                                C, c1 * c2, k1 * k2, T(1.0));
+                            gemm_large_kernel_rr_to_r<default_vec>(kernel(k).memory_start(), input_col.memory_start(), conv(i).memory_start(), C, c1 * c2,
+                                                                   k1 * k2, T(1.0));
                         }
                     }
                 }
@@ -857,14 +739,18 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
  * \param p1 The padding of the first dimension
  * \param p2 The padding of the second dimension
  */
-template <typename I_T, typename K_T, typename C_T, cpp_enable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
+template <typename I_T, typename K_T, typename C_T>
 void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    auto prepared_k = force_temporary(kernel);
+    if constexpr (conv2_possible<vector_mode, I_T, K_T, C_T>) {
+        auto prepared_k = force_temporary(kernel);
 
-    // Flip the kernels
-    prepared_k.deep_fflip_inplace();
+        // Flip the kernels
+        prepared_k.deep_fflip_inplace();
 
-    blas_conv4_valid_back_prepared(input, prepared_k, conv, s1, s2, p1, p2);
+        blas_conv4_valid_back_prepared(input, prepared_k, conv, s1, s2, p1, p2);
+    } else {
+        cpp_unreachable("Invalid call to vec::blas_conv4_valid");
+    }
 }
 
 /*!
@@ -877,55 +763,13 @@ void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, siz
  * \param p1 The padding of the first dimension
  * \param p2 The padding of the second dimension
  */
-template <typename I_T, typename K_T, typename C_T, cpp_enable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
+template <typename I_T, typename K_T, typename C_T>
 void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    blas_conv4_valid_back_prepared(input, kernel, conv, s1, s2, p1, p2);
-}
-
-/*!
- * \brief Compute a 4D valid backward convolution, using a BLAS matrix multiplication kernel
- * \param input The input matrix
- * \param kernel The kernel matrix, with flipped kernels
- * \param conv The output matrix
- * \param s1 The stride of the first dimension
- * \param s2 The stride of the second dimension
- * \param p1 The padding of the first dimension
- * \param p2 The padding of the second dimension
- */
-template <typename I_T, typename K_T, typename C_T, cpp_disable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
-void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unreachable("Invalid call to vec::blas_conv4_valid_back");
-}
-
-/*!
- * \brief Compute a 4D valid backward convolution, with flipped kernels,  using a BLAS matrix multiplication kernel
- * \param input The input matrix
- * \param kernel The kernel matrix, with flipped kernels
- * \param conv The output matrix
- * \param s1 The stride of the first dimension
- * \param s2 The stride of the second dimension
- * \param p1 The padding of the first dimension
- * \param p2 The padding of the second dimension
- */
-template <typename I_T, typename K_T, typename C_T, cpp_disable_iff(conv2_possible<vector_mode, I_T, K_T, C_T>)>
-void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unreachable("Invalid call to vec::blas_conv4_valid_back_flipped");
+    if constexpr (conv2_possible<vector_mode, I_T, K_T, C_T>) {
+        blas_conv4_valid_back_prepared(input, kernel, conv, s1, s2, p1, p2);
+    } else {
+        cpp_unreachable("Invalid call to vec::blas_conv4_valid");
+    }
 }
 
 } //end of namespace etl::impl::vec

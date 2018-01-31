@@ -72,7 +72,7 @@ void conv2_full_flipped_impl(const I& input, const K& kernel, C&& conv, value_t<
         conv.ensure_cpu_up_to_date();
     }
 
-    auto* in = input.memory_start();
+    auto* in  = input.memory_start();
     auto* kkk = kernel.memory_start();
     auto* out = conv.memory_start();
 
@@ -106,7 +106,7 @@ void conv2_full_flipped_impl(const I& input, const K& kernel, C&& conv, value_t<
                     }
                 }
 
-                out[i * c2 +j] = vec_type::hadd(r1) + temp1;
+                out[i * c2 + j] = vec_type::hadd(r1) + temp1;
             }
         }
     } else {
@@ -139,7 +139,7 @@ void conv2_full_flipped_impl(const I& input, const K& kernel, C&& conv, value_t<
                     }
                 }
 
-                out[i * c2 +j] = beta * out[i * c2 +j] + vec_type::hadd(r1) + temp1;
+                out[i * c2 + j] = beta * out[i * c2 + j] + vec_type::hadd(r1) + temp1;
             }
         }
     }
@@ -176,10 +176,14 @@ void conv2_full_impl(const I& input, const K& kernel, C&& conv, value_t<I> beta)
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K, C>)>
+template <typename I, typename K, typename C>
 void conv2_full(const I& input, const K& kernel, C&& conv) {
-    using T = value_t<I>;
-    conv2_full_impl<default_vec>(input, kernel, conv, T(0.0));
+    if constexpr (conv2_possible<vector_mode, I, K, C>) {
+        using T = value_t<I>;
+        conv2_full_impl<default_vec>(input, kernel, conv, T(0.0));
+    } else {
+        cpp_unreachable("Invalid call to vec::conv2_full");
+    }
 }
 
 /*!
@@ -188,40 +192,14 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K, C>)>
-void conv2_full(const I& input, const K& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-
-    cpp_unreachable("Invalid call to vec::conv2_full");
-}
-
-/*!
- * \brief SSE implementation of a 2D 'full' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K, C>)>
+template <typename I, typename K, typename C>
 void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
-    using T = value_t<I>;
-    conv2_full_flipped_impl<default_vec>(input, kernel, conv, T(0));
-}
-
-/*!
- * \brief SSE implementation of a 2D 'full' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K, C>)>
-void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-
-    cpp_unreachable("Invalid call to vec::conv2_full_flipped");
+    if constexpr (conv2_possible<vector_mode, I, K, C>) {
+        using T = value_t<I>;
+        conv2_full_flipped_impl<default_vec>(input, kernel, conv, T(0));
+    } else {
+        cpp_unreachable("Invalid call to vec::conv2_full");
+    }
 }
 
 /*!
@@ -231,22 +209,26 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K, C>)>
+template <typename I, typename K, typename C>
 void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+    if constexpr (conv2_possible<vector_mode, I, K, C>) {
+        cpp_assert(vec_enabled, "Cannot use vectorized mode");
+        cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    using T = value_t<I>;
+        using T = value_t<I>;
 
-    const size_t KK = etl::dim<0>(kernel);
+        const size_t KK = etl::dim<0>(kernel);
 
-    auto batch_fun_k = [&input, &kernel, &conv](const size_t first, const size_t last) {
-        for (size_t k = first; k < last; ++k) {
-            conv2_full_impl<default_vec>(input, kernel(k), conv(k), T(0));
-        }
-    };
+        auto batch_fun_k = [&input, &kernel, &conv](const size_t first, const size_t last) {
+            for (size_t k = first; k < last; ++k) {
+                conv2_full_impl<default_vec>(input, kernel(k), conv(k), T(0));
+            }
+        };
 
-    engine_dispatch_1d(batch_fun_k, 0, KK, 2UL);
+        engine_dispatch_1d(batch_fun_k, 0, KK, 2UL);
+    } else {
+        cpp_unreachable("Invalid call to vec::conv2_full");
+    }
 }
 
 /*!
@@ -255,52 +237,26 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K, C>)>
+template <typename I, typename K, typename C>
 void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+    if constexpr (conv2_possible<vector_mode, I, K, C>) {
+        cpp_assert(vec_enabled, "Cannot use vectorized mode");
+        cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    using T = value_t<I>;
+        using T = value_t<I>;
 
-    const size_t KK = etl::dim<0>(kernel);
+        const size_t KK = etl::dim<0>(kernel);
 
-    auto batch_fun_k = [&input, &kernel, &conv](const size_t first, const size_t last) {
-        for (size_t k = first; k < last; ++k) {
-            conv2_full_flipped_impl<default_vec>(input, kernel(k), conv(k), T(0));
-        }
-    };
+        auto batch_fun_k = [&input, &kernel, &conv](const size_t first, const size_t last) {
+            for (size_t k = first; k < last; ++k) {
+                conv2_full_flipped_impl<default_vec>(input, kernel(k), conv(k), T(0));
+            }
+        };
 
-    engine_dispatch_1d(batch_fun_k, 0, KK, 2UL);
-}
-
-/*!
- * \brief AVX implementation of a 2D 'full' convolution C = I * K, with multiple flipped kernels
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K, C>)>
-void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-
-    cpp_unreachable("Invalid call to vec::conv2_full_multi");
-}
-
-/*!
- * \brief AVX implementation of a 2D 'full' convolution C = I * K, with multiple flipped kernels
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C, cpp_disable_iff(conv2_possible<vector_mode, I, K, C>)>
-void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-
-    cpp_unreachable("Invalid call to vec::conv2_full_multi_flipped");
+        engine_dispatch_1d(batch_fun_k, 0, KK, 2UL);
+    } else {
+        cpp_unreachable("Invalid call to vec::conv2_full");
+    }
 }
 
 /*!
@@ -379,7 +335,7 @@ bool conv4_full_flipped_small(const I& input, const KK& kernel, CC&& conv) {
         return false;
     }
 
-    const size_t pad = k2 - 1;
+    const size_t pad      = k2 - 1;
     const size_t full_pad = pad * 2;
 
     if constexpr (padding_impl) {
@@ -606,21 +562,25 @@ bool conv4_full_flipped_padding(const I& input, const KK& kernel, CC&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv2_possible<vector_mode, I, K, C>)>
+template <typename I, typename K, typename C>
 void conv4_full(const I& input, const K& kernel, C&& conv) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+    if constexpr (conv2_possible<vector_mode, I, K, C>) {
+        cpp_assert(vec_enabled, "Cannot use vectorized mode");
+        cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    if constexpr (avx_enabled && sse3_enabled) {
-        const size_t k2 = etl::dim<3>(kernel);
+        if constexpr (avx_enabled && sse3_enabled) {
+            const size_t k2 = etl::dim<3>(kernel);
 
-        if (detail::prefer_sse<value_t<I>>(k2)) {
-            return conv4_full_impl<detail::safe_avx_vec>(input, kernel, conv);
+            if (detail::prefer_sse<value_t<I>>(k2)) {
+                return conv4_full_impl<detail::safe_avx_vec>(input, kernel, conv);
+            } else {
+                return conv4_full_impl<detail::safe_sse_vec>(input, kernel, conv);
+            }
         } else {
-            return conv4_full_impl<detail::safe_sse_vec>(input, kernel, conv);
+            return conv4_full_impl<default_vec>(input, kernel, conv);
         }
     } else {
-        return conv4_full_impl<default_vec>(input, kernel, conv);
+        cpp_unreachable("Invalid call to vec::conv2_full");
     }
 }
 
@@ -630,109 +590,83 @@ void conv4_full(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename KK, typename CC, cpp_enable_iff(conv2_possible<vector_mode, I, KK, CC>)>
+template <typename I, typename KK, typename CC>
 void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
-    cpp_assert(vec_enabled, "Cannot use vectorized mode");
-    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+    if constexpr (conv2_possible<vector_mode, I, KK, CC>) {
+        cpp_assert(vec_enabled, "Cannot use vectorized mode");
+        cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
 
-    using T = value_t<I>;
+        using T = value_t<I>;
 
-    const size_t N = etl::dim<0>(input);
-    const size_t K = etl::dim<0>(kernel);
-    const size_t C = etl::dim<1>(kernel);
+        const size_t N = etl::dim<0>(input);
+        const size_t K = etl::dim<0>(kernel);
+        const size_t C = etl::dim<1>(kernel);
 
-    if (K > 0) {
-        const size_t k2 = etl::dim<3>(kernel);
+        if (K > 0) {
+            const size_t k2 = etl::dim<3>(kernel);
 
-        input.ensure_cpu_up_to_date();
-        kernel.ensure_cpu_up_to_date();
+            input.ensure_cpu_up_to_date();
+            kernel.ensure_cpu_up_to_date();
 
-        // 1. Try optimized algorithms for small kernels
+            // 1. Try optimized algorithms for small kernels
 
-        if (conv4_full_flipped_small(input, kernel, conv)) {
-            conv.invalidate_gpu();
-            return;
-        }
+            if (conv4_full_flipped_small(input, kernel, conv)) {
+                conv.invalidate_gpu();
+                return;
+            }
 
-        // 2. Try padding implementation
+            // 2. Try padding implementation
 
-        if (conv4_full_flipped_padding(input, kernel, conv)) {
-            conv.invalidate_gpu();
-            return;
-        }
+            if (conv4_full_flipped_padding(input, kernel, conv)) {
+                conv.invalidate_gpu();
+                return;
+            }
 
-        // 3. General algorithms
+            // 3. General algorithms
 
-        if (detail::prefer_sse<T>(k2)) {
-            auto batch_fun_nc = [&](const size_t first, const size_t last) {
-                if (last - first) {
-                    for (size_t nc = first; nc < last; ++nc) {
-                        const size_t i = nc / C;
-                        const size_t c = nc % C;
+            if (detail::prefer_sse<T>(k2)) {
+                auto batch_fun_nc = [&](const size_t first, const size_t last) {
+                    if (last - first) {
+                        for (size_t nc = first; nc < last; ++nc) {
+                            const size_t i = nc / C;
+                            const size_t c = nc % C;
 
-                        // k = 0
-                        conv2_full_flipped_impl<detail::safe_sse_vec>(input(i)(0), kernel(0)(c), conv(i)(c), T(0));
+                            // k = 0
+                            conv2_full_flipped_impl<detail::safe_sse_vec>(input(i)(0), kernel(0)(c), conv(i)(c), T(0));
 
-                        for (size_t k = 1; k < K; ++k) {
-                            conv2_full_flipped_impl<detail::safe_sse_vec>(input(i)(k), kernel(k)(c), conv(i)(c), T(1));
+                            for (size_t k = 1; k < K; ++k) {
+                                conv2_full_flipped_impl<detail::safe_sse_vec>(input(i)(k), kernel(k)(c), conv(i)(c), T(1));
+                            }
                         }
                     }
-                }
-            };
+                };
 
-            engine_dispatch_1d(batch_fun_nc, 0, N * C, 2UL);
-        } else {
-            auto batch_fun_nc = [&](const size_t first, const size_t last) {
-                if (last - first) {
-                    for (size_t nc = first; nc < last; ++nc) {
-                        const size_t i = nc / C;
-                        const size_t c = nc % C;
+                engine_dispatch_1d(batch_fun_nc, 0, N * C, 2UL);
+            } else {
+                auto batch_fun_nc = [&](const size_t first, const size_t last) {
+                    if (last - first) {
+                        for (size_t nc = first; nc < last; ++nc) {
+                            const size_t i = nc / C;
+                            const size_t c = nc % C;
 
-                        // k = 0
-                        conv2_full_flipped_impl<detail::safe_avx_vec>(input(i)(0), kernel(0)(c), conv(i)(c), T(0));
+                            // k = 0
+                            conv2_full_flipped_impl<detail::safe_avx_vec>(input(i)(0), kernel(0)(c), conv(i)(c), T(0));
 
-                        for (size_t k = 1; k < K; ++k) {
-                            conv2_full_flipped_impl<detail::safe_avx_vec>(input(i)(k), kernel(k)(c), conv(i)(c), T(1));
+                            for (size_t k = 1; k < K; ++k) {
+                                conv2_full_flipped_impl<detail::safe_avx_vec>(input(i)(k), kernel(k)(c), conv(i)(c), T(1));
+                            }
                         }
                     }
-                }
-            };
+                };
 
-            engine_dispatch_1d(batch_fun_nc, 0, N * C, 2UL);
+                engine_dispatch_1d(batch_fun_nc, 0, N * C, 2UL);
+            }
+
+            conv.invalidate_gpu();
         }
-
-        conv.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid call to vec::conv2_full");
     }
-}
-
-/*!
- * \brief Vectorized implementation of a 4D 'full' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename KK, typename CC, cpp_disable_iff(conv2_possible<vector_mode, I, KK, CC>)>
-void conv4_full(const I& input, const KK& kernel, CC&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-
-    cpp_unreachable("Invalid call to vec::conv4_full");
-}
-
-/*!
- * \brief Vectorized implementation of a 4D 'full' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename KK, typename CC, cpp_disable_iff(conv2_possible<vector_mode, I, KK, CC>)>
-void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-
-    cpp_unreachable("Invalid call to vec::conv4_full_flipped");
 }
 
 } //end of namespace etl::impl::vec
