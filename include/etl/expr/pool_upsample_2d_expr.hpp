@@ -52,51 +52,29 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename R, cpp_enable_iff(all_fast<A, B, C, R>)>
-    static void check(const A& a, const B& b, const C& c, const R& result) {
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
-        cpp_unused(result);
-
+    template <typename R>
+    static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c, [[maybe_unused]] const R& result) {
         static constexpr size_t D = etl::decay_traits<A>::dimensions();
 
         static_assert(etl::decay_traits<B>::dimensions() == D, "Invalid dimensions in max_pool_upsample_3d");
         static_assert(etl::decay_traits<C>::dimensions() == D, "Invalid dimensions in max_pool_upsample_3d");
         static_assert(etl::decay_traits<R>::dimensions() == D, "Invalid dimensions in max_pool_upsample_3d");
 
-        static_assert(etl::decay_traits<R>::size() == etl::decay_traits<A>::size(), "max_pool_upsample_2d:A and R must have the same size");
-        static_assert(etl::decay_traits<B>::size() == etl::decay_traits<C>::size(), "max_pool_upsample_2d:B and C must have the same size");
+        if constexpr (all_fast<A, B, C, R>) {
+            static_assert(etl::decay_traits<R>::size() == etl::decay_traits<A>::size(), "max_pool_upsample_2d:A and R must have the same size");
+            static_assert(etl::decay_traits<B>::size() == etl::decay_traits<C>::size(), "max_pool_upsample_2d:B and C must have the same size");
 
-        static_assert(etl::decay_traits<A>::template dim<D - 2>() == C1 * etl::decay_traits<B>::template dim<D - 2>(),
-                      "Invalid pooling dimensions for max_pool_upsample_2d");
-        static_assert(etl::decay_traits<A>::template dim<D - 1>() == C2 * etl::decay_traits<B>::template dim<D - 1>(),
-                      "Invalid pooling dimensions for max_pool_upsample_2d");
-    }
+            static_assert(etl::decay_traits<A>::template dim<D - 2>() == C1 * etl::decay_traits<B>::template dim<D - 2>(),
+                          "Invalid pooling dimensions for max_pool_upsample_2d");
+            static_assert(etl::decay_traits<A>::template dim<D - 1>() == C2 * etl::decay_traits<B>::template dim<D - 1>(),
+                          "Invalid pooling dimensions for max_pool_upsample_2d");
+        } else {
+            cpp_assert(etl::size(result) == etl::size(a), "max_pool_upsample_2d:A and R must have the same size");
+            cpp_assert(etl::size(b) == etl::size(c), "max_pool_upsample_2d:B and C must have the same size");
 
-    /*!
-     * \brief Validate the transposition dimensions
-     * \param a The input matrix
-     * \þaram c The output matrix
-     */
-    template <typename R, cpp_disable_iff(all_fast<A, B, C, R>)>
-    static void check(const A& a, const B& b, const C& c, const R& result) {
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
-        cpp_unused(result);
-
-        static constexpr size_t D = etl::decay_traits<A>::dimensions();
-
-        static_assert(etl::decay_traits<B>::dimensions() == D, "Invalid dimensions in max_pool_upsample_3d");
-        static_assert(etl::decay_traits<C>::dimensions() == D, "Invalid dimensions in max_pool_upsample_3d");
-        static_assert(etl::decay_traits<R>::dimensions() == D, "Invalid dimensions in max_pool_upsample_3d");
-
-        cpp_assert(etl::size(result) == etl::size(a), "max_pool_upsample_2d:A and R must have the same size");
-        cpp_assert(etl::size(b) == etl::size(c), "max_pool_upsample_2d:B and C must have the same size");
-
-        cpp_assert(etl::dim<D - 2>(a) == C1 * etl::dim<D - 2>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
-        cpp_assert(etl::dim<D - 1>(a) == C2 * etl::dim<D - 1>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
+            cpp_assert(etl::dim<D - 2>(a) == C1 * etl::dim<D - 2>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
+            cpp_assert(etl::dim<D - 1>(a) == C2 * etl::dim<D - 1>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
+        }
     }
 
     /*!

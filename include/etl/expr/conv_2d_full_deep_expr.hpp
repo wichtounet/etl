@@ -47,35 +47,19 @@ struct conv_2d_full_deep_expr : base_temporary_expr_bin<conv_2d_full_deep_expr<A
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C, cpp_disable_iff(all_fast<A, B, C>)>
-    static void check(const I& input, const K& kernel, const C& conv){
+    template <typename I, typename K, typename C>
+    static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv){
         static_assert(etl::dimensions<I>() == D, "Invalid number of dimensions for input of conv2_full_deep");
         static_assert(etl::dimensions<K>() == D, "Invalid number of dimensions for kernel of conv2_full_deep");
         static_assert(etl::dimensions<C>() == D, "Invalid number of dimensions for conv of conv2_full_deep");
 
-        cpp_assert(etl::dim(conv, D - 2) == etl::dim(input, D - 2) + etl::dim(kernel, D - 2) - 1, "Invalid dimensions for conv2_full_deep");
-        cpp_assert(etl::dim(conv, D - 1) == etl::dim(input, D - 1) + etl::dim(kernel, D - 1) - 1, "Invalid dimensions for conv2_full_deep");
-
-        cpp_unused(input);
-        cpp_unused(kernel);
-        cpp_unused(conv);
-    }
-
-    /*!
-     * \brief Assert that the convolution is done on correct dimensions
-     */
-    template <typename I, typename K, typename C, cpp_enable_iff(all_fast<A, B, C>)>
-    static void check(const I& input, const K& kernel, const C& conv){
-        static_assert(etl::dimensions<I>() == D, "Invalid number of dimensions for input of conv2_full_deep");
-        static_assert(etl::dimensions<K>() == D, "Invalid number of dimensions for kernel of conv2_full_deep");
-        static_assert(etl::dimensions<C>() == D, "Invalid number of dimensions for conv of conv2_full_deep");
-
-        static_assert(etl::dim<D - 2, C>() == etl::dim<D - 2, I>() + etl::dim<D - 2, K>() - 1, "Invalid dimensions for conv2_full_deep");
-        static_assert(etl::dim<D - 1, C>() == etl::dim<D - 1, I>() + etl::dim<D - 1, K>() - 1, "Invalid dimensions for conv2_full_deep");
-
-        cpp_unused(input);
-        cpp_unused(kernel);
-        cpp_unused(conv);
+        if constexpr (all_fast<A, B, C>) {
+            static_assert(etl::dim<D - 2, C>() == etl::dim<D - 2, I>() + etl::dim<D - 2, K>() - 1, "Invalid dimensions for conv2_full_deep");
+            static_assert(etl::dim<D - 1, C>() == etl::dim<D - 1, I>() + etl::dim<D - 1, K>() - 1, "Invalid dimensions for conv2_full_deep");
+        } else {
+            cpp_assert(etl::dim(conv, D - 2) == etl::dim(input, D - 2) + etl::dim(kernel, D - 2) - 1, "Invalid dimensions for conv2_full_deep");
+            cpp_assert(etl::dim(conv, D - 1) == etl::dim(input, D - 1) + etl::dim(kernel, D - 1) - 1, "Invalid dimensions for conv2_full_deep");
+        }
     }
 
     /*!

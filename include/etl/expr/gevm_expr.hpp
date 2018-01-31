@@ -51,32 +51,19 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \param b The right side matrix
      * \param c The result matrix
      */
-    template <typename C, cpp_disable_iff(all_fast<A, B, C>)>
-    static void check(const A& a, const B& b, const C& c) {
-        cpp_assert(
-            dim<0>(a) == dim<0>(b)         //exterior dimension 1
-                && dim<1>(b) == dim<0>(c), //exterior dimension 2
-            "Invalid sizes for multiplication");
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
-    }
-
-    /*!
-     * \brief Assert for the validity of the matrix-matrix multiplication operation
-     * \param a The left side matrix
-     * \param b The right side matrix
-     * \param c The result matrix
-     */
-    template <typename C, cpp_enable_iff(all_fast<A, B, C>)>
-    static void check(const A& a, const B& b, const C& c) {
-        static_assert(
-            dim<0, A>() == dim<0, B>()         //exterior dimension 1
-                && dim<1, B>() == dim<0, C>(), //exterior dimension 2
-            "Invalid sizes for multiplication");
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
+    template <typename C>
+    static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c) {
+        if constexpr (all_fast<A, B, C>) {
+            static_assert(
+                dim<0, A>() == dim<0, B>()         //exterior dimension 1
+                    && dim<1, B>() == dim<0, C>(), //exterior dimension 2
+                "Invalid sizes for multiplication");
+        } else {
+            cpp_assert(
+                dim<0>(a) == dim<0>(b)         //exterior dimension 1
+                    && dim<1>(b) == dim<0>(c), //exterior dimension 2
+                "Invalid sizes for multiplication");
+        }
     }
 
     // Assignment functions

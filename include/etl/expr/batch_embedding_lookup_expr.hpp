@@ -43,39 +43,21 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_enable_iff(all_fast<A, B, C>)>
-    static void check(const A& a, const B& b, const C& c) {
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
-
+    template <typename C>
+    static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c) {
         static_assert(etl::dimensions<A>() == 2, "The input of batch_embedding_lookup is a 2d matrix");
         static_assert(etl::dimensions<B>() == 2, "The vocabulary input of batch_embedding_lookup is a 2d matrix");
         static_assert(etl::dimensions<C>() == 3, "The output of batch_embedding_lookup is 3d matrix");
 
-        static_assert(etl::dim<0, A>() == etl::dim<0, C>(), "Invalid dimensions for batch_embedding_lookup");
-        static_assert(etl::dim<1, A>() == etl::dim<1, C>(), "Invalid dimensions for batch_embedding_lookup");
-        static_assert(etl::dim<1, B>() == etl::dim<2, C>(), "Invalid dimensions for batch_embedding_lookup");
-    }
-
-    /*!
-     * \brief Validate the transposition dimensions
-     * \param a The input matrix
-     * \þaram c The output matrix
-     */
-    template <typename C, cpp_disable_iff(all_fast<A, B, C>)>
-    static void check(const A& a, const B& b, const C& c) {
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
-
-        static_assert(etl::dimensions<A>() == 2, "The input of batch_embedding_lookup is a 2d matrix");
-        static_assert(etl::dimensions<B>() == 2, "The vocabulary input of batch_embedding_lookup is a 2d matrix");
-        static_assert(etl::dimensions<C>() == 3, "The output of batch_embedding_lookup is 3d matrix");
-
-        cpp_assert(etl::dim<0>(a) == etl::dim<0>(c), "Invalid dimensions for batch_embedding_lookup");
-        cpp_assert(etl::dim<1>(a) == etl::dim<1>(c), "Invalid dimensions for batch_embedding_lookup");
-        cpp_assert(etl::dim<1>(b) == etl::dim<2>(c), "Invalid dimensions for batch_embedding_lookup");
+        if constexpr (all_fast<A, B, C>) {
+            static_assert(etl::dim<0, A>() == etl::dim<0, C>(), "Invalid dimensions for batch_embedding_lookup");
+            static_assert(etl::dim<1, A>() == etl::dim<1, C>(), "Invalid dimensions for batch_embedding_lookup");
+            static_assert(etl::dim<1, B>() == etl::dim<2, C>(), "Invalid dimensions for batch_embedding_lookup");
+        } else {
+            cpp_assert(etl::dim<0>(a) == etl::dim<0>(c), "Invalid dimensions for batch_embedding_lookup");
+            cpp_assert(etl::dim<1>(a) == etl::dim<1>(c), "Invalid dimensions for batch_embedding_lookup");
+            cpp_assert(etl::dim<1>(b) == etl::dim<2>(c), "Invalid dimensions for batch_embedding_lookup");
+        }
     }
 
     // Assignment functions

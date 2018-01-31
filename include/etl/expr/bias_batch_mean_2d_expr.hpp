@@ -46,31 +46,16 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_enable_iff(all_fast<A, C>)>
-    static void check(const A& a, const C& c) {
-        cpp_unused(a);
-        cpp_unused(c);
-
+    template <typename C>
+    static void check([[maybe_unused]] const A& a, [[maybe_unused]] const C& c) {
         static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_mean_2d is a vector");
         static_assert(etl::dimensions<A>() == 2, "The input of bias_batch_mean_2d is a 2d matrix");
 
-        static_assert(etl::dim<1, A>() == etl::dim<0, C>(), "Invalid dimensions for bias_batch_mean_2d");
-    }
-
-    /*!
-     * \brief Validate the transposition dimensions
-     * \param a The input matrix
-     * \þaram c The output matrix
-     */
-    template <typename C, cpp_disable_iff(all_fast<A, C>)>
-    static void check(const A& a, const C& c) {
-        static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_mean_2d is a vector");
-        static_assert(etl::dimensions<A>() == 2, "The input of bias_batch_mean_2d is a 2d matrix");
-
-        cpp_assert(etl::dim<1>(a) == etl::dim<0>(c), "Invalid dimensions for bias_batch_mean_2d");
-
-        cpp_unused(a);
-        cpp_unused(c);
+        if constexpr (all_fast<A, C>) {
+            static_assert(etl::dim<1, A>() == etl::dim<0, C>(), "Invalid dimensions for bias_batch_mean_2d");
+        } else {
+            cpp_assert(etl::dim<1>(a) == etl::dim<0>(c), "Invalid dimensions for bias_batch_mean_2d");
+        }
     }
 
     // Assignment functions

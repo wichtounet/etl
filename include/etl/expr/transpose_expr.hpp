@@ -46,11 +46,8 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_enable_iff(all_fast<A,C>)>
-    static void check(const A& a, const C& c) {
-        cpp_unused(a);
-        cpp_unused(c);
-
+    template <typename C>
+    static void check([[maybe_unused]] const A& a, [[maybe_unused]] const C& c) {
         static constexpr etl::order order_lhs = decay_traits<C>::storage_order;
         static constexpr etl::order order_rhs = decay_traits<A>::storage_order;
 
@@ -59,65 +56,41 @@ struct transpose_expr : base_temporary_expr_un<transpose_expr<A>, A> {
         static constexpr bool rm_to_cm = order_lhs == etl::order::RowMajor && order_rhs == etl::order::ColumnMajor;
         static constexpr bool cm_to_rm = order_lhs == etl::order::ColumnMajor && order_rhs == etl::order::RowMajor;
 
-        static constexpr size_t L1 = decay_traits<C>::template dim<0>();
-        static constexpr size_t L2 = decay_traits<C>::template dim<1>();
-        static constexpr size_t R1 = decay_traits<A>::template dim<0>();
-        static constexpr size_t R2 = decay_traits<A>::template dim<1>();
+        if constexpr (all_fast<A, C>) {
+            static constexpr size_t L1 = decay_traits<C>::template dim<0>();
+            static constexpr size_t L2 = decay_traits<C>::template dim<1>();
+            static constexpr size_t R1 = decay_traits<A>::template dim<0>();
+            static constexpr size_t R2 = decay_traits<A>::template dim<1>();
 
-        // Case 1: RM -> RM
-        static_assert(!rm_to_rm || (L1 == R2 && L2 == R1), "Invalid dimensions for transposition");
+            // Case 1: RM -> RM
+            static_assert(!rm_to_rm || (L1 == R2 && L2 == R1), "Invalid dimensions for transposition");
 
-        // Case 2: CM -> CM
-        static_assert(!cm_to_cm || (L1 == R2 && L2 == R1), "Invalid dimensions for transposition");
+            // Case 2: CM -> CM
+            static_assert(!cm_to_cm || (L1 == R2 && L2 == R1), "Invalid dimensions for transposition");
 
-        // Case 3: RM -> CM (two possible cases)
-        static_assert(!rm_to_cm || ((L1 == R2 && L2 == R1) || (L1 == R1 && L2 == R2)), "Invalid dimensions for transposition");
+            // Case 3: RM -> CM (two possible cases)
+            static_assert(!rm_to_cm || ((L1 == R2 && L2 == R1) || (L1 == R1 && L2 == R2)), "Invalid dimensions for transposition");
 
-        // Case 4: RM -> CM (two possible cases)
-        static_assert(!cm_to_rm || ((L1 == R2 && L2 == R1) || (L1 == R1 && L2 == R2)), "Invalid dimensions for transposition");
-    }
+            // Case 4: RM -> CM (two possible cases)
+            static_assert(!cm_to_rm || ((L1 == R2 && L2 == R1) || (L1 == R1 && L2 == R2)), "Invalid dimensions for transposition");
+        } else {
+            const size_t L1 = etl::dim<0>(c);
+            const size_t L2 = etl::dim<1>(c);
+            const size_t R1 = etl::dim<0>(a);
+            const size_t R2 = etl::dim<1>(a);
 
-    /*!
-     * \brief Validate the transposition dimensions
-     * \param a The input matrix
-     * \þaram c The output matrix
-     */
-    template <typename C, cpp_disable_iff(all_fast<A,C>)>
-    static void check(const A& a, const C& c) {
-        static constexpr etl::order order_lhs = decay_traits<A>::storage_order;
-        static constexpr etl::order order_rhs = decay_traits<A>::storage_order;
+            // Case 1: RM -> RM
+            cpp_assert(!rm_to_rm || (L1 == R2 && L2 == R1), "Invalid dimensions for transposition");
 
-        static constexpr bool rm_to_rm = order_lhs == etl::order::RowMajor && order_rhs == etl::order::RowMajor;
-        static constexpr bool cm_to_cm = order_lhs == etl::order::ColumnMajor && order_rhs == etl::order::ColumnMajor;
-        static constexpr bool rm_to_cm = order_lhs == etl::order::RowMajor && order_rhs == etl::order::ColumnMajor;
-        static constexpr bool cm_to_rm = order_lhs == etl::order::ColumnMajor && order_rhs == etl::order::RowMajor;
+            // Case 2: CM -> CM
+            cpp_assert(!cm_to_cm || (L1 == R2 && L2 == R1), "Invalid dimensions for transposition");
 
-        const size_t L1 = etl::dim<0>(c);
-        const size_t L2 = etl::dim<1>(c);
-        const size_t R1 = etl::dim<0>(a);
-        const size_t R2 = etl::dim<1>(a);
+            // Case 3: RM -> CM (two possible cases)
+            cpp_assert(!rm_to_cm || ((L1 == R2 && L2 == R1) || (L1 == R1 && L2 == R2)), "Invalid dimensions for transposition");
 
-        // Case 1: RM -> RM
-        cpp_assert(!rm_to_rm || (L1 == R2 && L2 == R1), "Invalid dimensions for transposition");
-
-        // Case 2: CM -> CM
-        cpp_assert(!cm_to_cm || (L1 == R2 && L2 == R1), "Invalid dimensions for transposition");
-
-        // Case 3: RM -> CM (two possible cases)
-        cpp_assert(!rm_to_cm || ((L1 == R2 && L2 == R1) || (L1 == R1 && L2 == R2)), "Invalid dimensions for transposition");
-
-        // Case 4: RM -> CM (two possible cases)
-        cpp_assert(!cm_to_rm || ((L1 == R2 && L2 == R1) || (L1 == R1 && L2 == R2)), "Invalid dimensions for transposition");
-
-        cpp_unused(L1);
-        cpp_unused(L2);
-        cpp_unused(R1);
-        cpp_unused(R2);
-
-        cpp_unused(rm_to_rm);
-        cpp_unused(rm_to_cm);
-        cpp_unused(cm_to_rm);
-        cpp_unused(cm_to_cm);
+            // Case 4: RM -> CM (two possible cases)
+            cpp_assert(!cm_to_rm || ((L1 == R2 && L2 == R1) || (L1 == R1 && L2 == R2)), "Invalid dimensions for transposition");
+        }
     }
 
     // Assignment functions

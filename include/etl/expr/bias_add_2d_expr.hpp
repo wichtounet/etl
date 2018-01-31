@@ -49,41 +49,23 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_enable_iff(all_fast<A, B, C>)>
-    static void check(const A& a, const B& b, const C& c) {
+    template <typename C>
+    static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c) {
         static_assert(etl::dimensions<A>() == 2, "The input of bias_add_2d is a 2D matrix");
         static_assert(etl::dimensions<B>() == 1, "The input of bias_add_2d is a vector of biases");
         static_assert(etl::dimensions<C>() == 2, "The output of bias_add_2d is a 2D matrix");
 
-        static_assert(etl::dim<1, A>() == etl::dim<0, B>(), "Invalid dimensions for bias_add_2d");
+        if constexpr (all_fast<A, B, C>) {
+            static_assert(etl::dim<1, A>() == etl::dim<0, B>(), "Invalid dimensions for bias_add_2d");
 
-        static_assert(etl::dim<0, A>() == etl::dim<0, C>(), "Invalid dimensions for bias_add_2d");
-        static_assert(etl::dim<1, A>() == etl::dim<1, C>(), "Invalid dimensions for bias_add_2d");
+            static_assert(etl::dim<0, A>() == etl::dim<0, C>(), "Invalid dimensions for bias_add_2d");
+            static_assert(etl::dim<1, A>() == etl::dim<1, C>(), "Invalid dimensions for bias_add_2d");
+        } else {
+            cpp_assert(etl::dim<1>(a) == etl::dim<0>(b), "Invalid dimensions for bias_add_2d");
 
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
-    }
-
-    /*!
-     * \brief Validate the transposition dimensions
-     * \param a The input matrix
-     * \þaram c The output matrix
-     */
-    template <typename C, cpp_disable_iff(all_fast<A, B, C>)>
-    static void check(const A& a, const B& b, const C& c) {
-        static_assert(etl::dimensions<A>() == 2, "The input of bias_add_2d is a 2D matrix");
-        static_assert(etl::dimensions<B>() == 1, "The input of bias_add_2d is a vector of biases");
-        static_assert(etl::dimensions<C>() == 2, "The output of bias_add_2d is a 2D matrix");
-
-        cpp_assert(etl::dim<1>(a) == etl::dim<0>(b), "Invalid dimensions for bias_add_2d");
-
-        cpp_assert(etl::dim<0>(a) == etl::dim<0>(c), "Invalid dimensions for bias_add_2d");
-        cpp_assert(etl::dim<1>(a) == etl::dim<1>(c), "Invalid dimensions for bias_add_2d");
-
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
+            cpp_assert(etl::dim<0>(a) == etl::dim<0>(c), "Invalid dimensions for bias_add_2d");
+            cpp_assert(etl::dim<1>(a) == etl::dim<1>(c), "Invalid dimensions for bias_add_2d");
+        }
     }
 
     // Assignment functions

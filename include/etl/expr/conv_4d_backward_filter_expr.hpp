@@ -46,43 +46,27 @@ struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_f
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C, cpp_disable_iff(all_fast<A, B, C>)>
+    template <typename I, typename K, typename C>
     static void check(const I& input, const K& kernel, const C& conv){
         static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_backward_filter");
         static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_backward_filter");
         static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_backward_filter");
 
-        cpp_assert(etl::dim(conv, 0) == etl::dim(kernel, 1), "Invalid dimensions for conv4_backward_filter");
-        cpp_assert(etl::dim(conv, 1) == etl::dim(input, 1), "Invalid dimensions for conv4_backward_filter");
-        cpp_assert(etl::dim(input, 0) == etl::dim(kernel, 0), "Invalid dimensions for conv4_backward_filter");
+        if constexpr (all_fast<A, B, C>) {
+            static_assert(etl::dim<0, C>() == etl::dim<1, K>(), "Invalid dimensions for conv4_backward_filter");
+            static_assert(etl::dim<1, C>() == etl::dim<1, I>(), "Invalid dimensions for conv4_backward_filter");
+            static_assert(etl::dim<0, I>() == etl::dim<0, K>(), "Invalid dimensions for conv4_backward_filter");
 
-        cpp_assert(etl::dim(conv, 2) == etl::dim(input, 2) - (S1 * (etl::dim(kernel, 2) - 1) + 1) + 2 * P1 + 1, "Invalid dimensions for conv2_backward");
-        cpp_assert(etl::dim(conv, 3) == etl::dim(input, 3) - (S2 * (etl::dim(kernel, 3) - 1) + 1)  + 2 * P2 + 1, "Invalid dimensions for conv2_backward");
+            static_assert(etl::dim<2, C>() == etl::dim<2, I>() - (S1 * (etl::dim<2, K>() - 1) + 1) + 2 * P1 + 1, "Invalid dimensions for conv2_backward");
+            static_assert(etl::dim<3, C>() == etl::dim<3, I>() - (S2 * (etl::dim<3, K>() - 1) + 1) + 2 * P2 + 1, "Invalid dimensions for conv2_backward");
+        } else {
+            cpp_assert(etl::dim(conv, 0) == etl::dim(kernel, 1), "Invalid dimensions for conv4_backward_filter");
+            cpp_assert(etl::dim(conv, 1) == etl::dim(input, 1), "Invalid dimensions for conv4_backward_filter");
+            cpp_assert(etl::dim(input, 0) == etl::dim(kernel, 0), "Invalid dimensions for conv4_backward_filter");
 
-        cpp_unused(input);
-        cpp_unused(kernel);
-        cpp_unused(conv);
-    }
-
-    /*!
-     * \brief Assert that the convolution is done on correct dimensions
-     */
-    template <typename I, typename K, typename C, cpp_enable_iff(all_fast<A, B, C>)>
-    static void check(const I& input, const K& kernel, const C& conv){
-        static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_backward_filter");
-        static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_backward_filter");
-        static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_backward_filter");
-
-        static_assert(etl::dim<0, C>() == etl::dim<1, K>(), "Invalid dimensions for conv4_backward_filter");
-        static_assert(etl::dim<1, C>() == etl::dim<1, I>(), "Invalid dimensions for conv4_backward_filter");
-        static_assert(etl::dim<0, I>() == etl::dim<0, K>(), "Invalid dimensions for conv4_backward_filter");
-
-        static_assert(etl::dim<2, C>() == etl::dim<2, I>() - (S1 * (etl::dim<2, K>() - 1) + 1) + 2 * P1 + 1, "Invalid dimensions for conv2_backward");
-        static_assert(etl::dim<3, C>() == etl::dim<3, I>() - (S2 * (etl::dim<3, K>() - 1) + 1) + 2 * P2 + 1, "Invalid dimensions for conv2_backward");
-
-        cpp_unused(input);
-        cpp_unused(kernel);
-        cpp_unused(conv);
+            cpp_assert(etl::dim(conv, 2) == etl::dim(input, 2) - (S1 * (etl::dim(kernel, 2) - 1) + 1) + 2 * P1 + 1, "Invalid dimensions for conv2_backward");
+            cpp_assert(etl::dim(conv, 3) == etl::dim(input, 3) - (S2 * (etl::dim(kernel, 3) - 1) + 1) + 2 * P2 + 1, "Invalid dimensions for conv2_backward");
+        }
     }
 
     /*!

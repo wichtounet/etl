@@ -43,41 +43,21 @@ struct batch_embedding_gradients_expr : base_temporary_expr_tern<batch_embedding
      * \param a The input matrix
      * \þaram lhs The output matrix
      */
-    template <typename L, cpp_enable_iff(all_fast<A, B, C, L>)>
-    static void check(const A& a, const B& b, const C& c, const L& lhs) {
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
-        cpp_unused(lhs);
-
+    template <typename L>
+    static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c, [[maybe_unused]] const L& lhs) {
         static_assert(etl::dimensions<A>() == 2, "The input of batch_embedding_gradients is a 1d matrix");
         static_assert(etl::dimensions<B>() == 3, "The vocabulary input of batch_embedding_gradients is a 2d matrix");
         static_assert(etl::dimensions<L>() == 2, "The output of batch_embedding_gradients is 2d matrix");
 
-        static_assert(etl::dim<0, A>() == etl::dim<0, B>(), "Invalid dimensions for batch_embedding_gradients");
-        static_assert(etl::dim<1, A>() == etl::dim<1, B>(), "Invalid dimensions for batch_embedding_gradients");
-        static_assert(etl::dim<2, B>() == etl::dim<1, L>(), "Invalid dimensions for batch_embedding_gradients");
-    }
-
-    /*!
-     * \brief Validate the transposition dimensions
-     * \param a The input matrix
-     * \þaram lhs The output matrix
-     */
-    template <typename L, cpp_disable_iff(all_fast<A, B, C, L>)>
-    static void check(const A& a, const B& b, const C& c, const L& lhs) {
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
-        cpp_unused(lhs);
-
-        static_assert(etl::dimensions<A>() == 2, "The input of batch_embedding_gradients is a 1d matrix");
-        static_assert(etl::dimensions<B>() == 3, "The vocabulary input of batch_embedding_gradients is a 2d matrix");
-        static_assert(etl::dimensions<L>() == 2, "The output of batch_embedding_gradients is 2d matrix");
-
-        cpp_assert(etl::dim<0>(a) == etl::dim<0>(b), "Invalid dimensions for batch_embedding_gradients");
-        cpp_assert(etl::dim<1>(a) == etl::dim<1>(b), "Invalid dimensions for batch_embedding_gradients");
-        cpp_assert(etl::dim<2>(b) == etl::dim<1>(lhs), "Invalid dimensions for batch_embedding_gradients");
+        if constexpr (all_fast<A, B, C, L>) {
+            static_assert(etl::dim<0, A>() == etl::dim<0, B>(), "Invalid dimensions for batch_embedding_gradients");
+            static_assert(etl::dim<1, A>() == etl::dim<1, B>(), "Invalid dimensions for batch_embedding_gradients");
+            static_assert(etl::dim<2, B>() == etl::dim<1, L>(), "Invalid dimensions for batch_embedding_gradients");
+        } else {
+            cpp_assert(etl::dim<0>(a) == etl::dim<0>(b), "Invalid dimensions for batch_embedding_gradients");
+            cpp_assert(etl::dim<1>(a) == etl::dim<1>(b), "Invalid dimensions for batch_embedding_gradients");
+            cpp_assert(etl::dim<2>(b) == etl::dim<1>(lhs), "Invalid dimensions for batch_embedding_gradients");
+        }
     }
 
     // Assignment functions

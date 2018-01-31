@@ -46,37 +46,19 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C, cpp_enable_iff(all_fast<A, B, C>)>
+    template <typename C>
     static void check(const A& a, const B& b, const C& c) {
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
-
         static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_var_2d is a vector");
         static_assert(etl::dimensions<A>() == 2, "The input of bias_batch_var_2d is a 2d matrix");
         static_assert(etl::dimensions<B>() == 1, "The input of bias_batch_var_2d is a vector");
 
-        static_assert(etl::dim<1, A>() == etl::dim<0, C>(), "Invalid dimensions for bias_batch_var_2d");
-        static_assert(etl::dim<0, B>() == etl::dim<0, C>(), "Invalid dimensions for bias_batch_var_2d");
-    }
-
-    /*!
-     * \brief Validate the transposition dimensions
-     * \param a The input matrix
-     * \þaram c The output matrix
-     */
-    template <typename C, cpp_disable_iff(all_fast<A, B, C>)>
-    static void check(const A& a, const B& b, const C& c) {
-        static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_var_2d is a vector");
-        static_assert(etl::dimensions<B>() == 1, "The input of bias_batch_var_2d is a vector");
-        static_assert(etl::dimensions<A>() == 2, "The input of bias_batch_var_2d is a 2d matrix");
-
-        cpp_assert(etl::dim<1>(a) == etl::dim<0>(c), "Invalid dimensions for bias_batch_var_2d");
-        cpp_assert(etl::dim<0>(b) == etl::dim<0>(c), "Invalid dimensions for bias_batch_var_2d");
-
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
+        if constexpr (all_fast<A, B, C>) {
+            static_assert(etl::dim<1, A>() == etl::dim<0, C>(), "Invalid dimensions for bias_batch_var_2d");
+            static_assert(etl::dim<0, B>() == etl::dim<0, C>(), "Invalid dimensions for bias_batch_var_2d");
+        } else {
+            cpp_assert(etl::dim<1>(a) == etl::dim<0>(c), "Invalid dimensions for bias_batch_var_2d");
+            cpp_assert(etl::dim<0>(b) == etl::dim<0>(c), "Invalid dimensions for bias_batch_var_2d");
+        }
     }
 
     // Assignment functions

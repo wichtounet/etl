@@ -68,35 +68,19 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C, cpp_disable_iff(all_fast<A, B, C>)>
-    static void check(const I& input, const K& kernel, const C& conv){
+    template <typename I, typename K, typename C>
+    static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv){
         static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_backward");
         static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_backward");
         static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_backward");
 
-        cpp_assert(etl::dim(conv, 0) == S1 * (etl::dim(input, 0) - 1) + etl::dim(kernel, 0) - 2 * P1, "Invalid dimensions for conv2_backward");
-        cpp_assert(etl::dim(conv, 1) == S2 * (etl::dim(input, 1) - 1) + etl::dim(kernel, 1) - 2 * P2, "Invalid dimensions for conv2_backward");
-
-        cpp_unused(input);
-        cpp_unused(kernel);
-        cpp_unused(conv);
-    }
-
-    /*!
-     * \brief Assert that the convolution is done on correct dimensions
-     */
-    template <typename I, typename K, typename C, cpp_enable_iff(all_fast<A, B, C>)>
-    static void check(const I& input, const K& kernel, const C& conv){
-        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_backward");
-        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_backward");
-        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_backward");
-
-        static_assert(etl::dim<0, C>() == S1 * (etl::dim<0, I>() - 1) + etl::dim<0, K>() - 2 * P1, "Invalid dimensions for conv2_backward");
-        static_assert(etl::dim<1, C>() == S2 * (etl::dim<1, I>() - 1) + etl::dim<1, K>() - 2 * P2, "Invalid dimensions for conv2_backward");
-
-        cpp_unused(input);
-        cpp_unused(kernel);
-        cpp_unused(conv);
+        if constexpr (all_fast<A, B, C>) {
+            static_assert(etl::dim<0, C>() == S1 * (etl::dim<0, I>() - 1) + etl::dim<0, K>() - 2 * P1, "Invalid dimensions for conv2_backward");
+            static_assert(etl::dim<1, C>() == S2 * (etl::dim<1, I>() - 1) + etl::dim<1, K>() - 2 * P2, "Invalid dimensions for conv2_backward");
+        } else {
+            cpp_assert(etl::dim(conv, 0) == S1 * (etl::dim(input, 0) - 1) + etl::dim(kernel, 0) - 2 * P1, "Invalid dimensions for conv2_backward");
+            cpp_assert(etl::dim(conv, 1) == S2 * (etl::dim(input, 1) - 1) + etl::dim(kernel, 1) - 2 * P2, "Invalid dimensions for conv2_backward");
+        }
     }
 
     /*!
