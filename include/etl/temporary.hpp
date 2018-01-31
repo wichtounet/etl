@@ -215,7 +215,7 @@ decltype(auto) force_temporary_dim_only(E&& expr) {
  */
 template <typename E>
 decltype(auto) make_temporary(E&& expr) {
-    if constexpr (has_direct_access<E>) {
+    if constexpr (is_dma<E>) {
         return std::forward<E>(expr);
     } else {
         return force_temporary(std::forward<E>(expr));

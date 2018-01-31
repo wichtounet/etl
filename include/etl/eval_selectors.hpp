@@ -75,7 +75,7 @@ constexpr bool fast_assign = all_dma<E, R>;
  * \brief Integral constant indicating if a GPU assign is possible
  */
 template <typename E, typename R>
-constexpr bool gpu_assign = all_homogeneous<E, R> && !fast_assign<E, R> && all_gpu_computable<E, R> && has_direct_access<R> && !is_scalar<E>;
+constexpr bool gpu_assign = all_homogeneous<E, R> && !fast_assign<E, R> && all_gpu_computable<E, R> && is_dma<R> && !is_scalar<E>;
 
 /*!
  * \brief Integral constant indicating if a vectorized assign is possible
@@ -87,13 +87,13 @@ constexpr bool vectorized_assign = !fast_assign<E, R> && !gpu_assign<E, R> && ar
  * \brief Integral constant indicating if a direct assign is possible
  */
 template <typename E, typename R>
-constexpr bool direct_assign = !gpu_assign<E, R> && !are_vectorizable<E, R> && !has_direct_access<E> && has_direct_access<R>;
+constexpr bool direct_assign = !gpu_assign<E, R> && !are_vectorizable<E, R> && !is_dma<E> && is_dma<R>;
 
 /*!
  * \brief Integral constant indicating if a standard assign is necessary
  */
 template <typename E, typename R>
-constexpr bool standard_assign = !has_direct_access<R>;
+constexpr bool standard_assign = !is_dma<R>;
 
 //Selectors for compound operations
 
@@ -101,7 +101,7 @@ constexpr bool standard_assign = !has_direct_access<R>;
  * \brief Integral constant indicating if a GPU compound assign is possible
  */
 template <typename E, typename R>
-constexpr bool gpu_compound = all_homogeneous<E, R> && all_gpu_computable<E, R> && has_direct_access<R> && cublas_enabled && egblas_enabled;
+constexpr bool gpu_compound = all_homogeneous<E, R> && all_gpu_computable<E, R> && is_dma<R> && cublas_enabled && egblas_enabled;
 
 /*!
  * \brief Integral constant indicating if a vectorized compound assign is possible
@@ -113,7 +113,7 @@ constexpr bool vectorized_compound = !gpu_compound<E, R> && are_vectorizable<E, 
  * \brief Integral constant indicating if a direct compound assign is possible
  */
 template <typename E, typename R>
-constexpr bool direct_compound = !gpu_compound<E, R> && !vectorized_compound<E, R> && has_direct_access<R>;
+constexpr bool direct_compound = !gpu_compound<E, R> && !vectorized_compound<E, R> && is_dma<R>;
 
 /*!
  * \brief Integral constant indicating if a standard compound assign is necessary
@@ -127,7 +127,7 @@ constexpr bool standard_compound = !gpu_compound<E, R> && !vectorized_compound<E
  * \brief Integral constant indicating if a GPU compound assign is possible
  */
 template <typename E, typename R>
-constexpr bool gpu_compound_div = all_homogeneous<E, R> && all_gpu_computable<E, R> && has_direct_access<R> && cublas_enabled && egblas_enabled;
+constexpr bool gpu_compound_div = all_homogeneous<E, R> && all_gpu_computable<E, R> && is_dma<R> && cublas_enabled && egblas_enabled;
 
 /*!
  * \brief Integral constant indicating if a vectorized compound div assign is possible
@@ -139,7 +139,7 @@ constexpr bool vectorized_compound_div = !gpu_compound_div<E, R> && (is_floating
  * \brief Integral constant indicating if a direct compound div assign is possible
  */
 template <typename E, typename R>
-constexpr bool direct_compound_div = !gpu_compound_div<E, R> && !vectorized_compound_div<E, R> && has_direct_access<R>;
+constexpr bool direct_compound_div = !gpu_compound_div<E, R> && !vectorized_compound_div<E, R> && is_dma<R>;
 
 /*!
  * \brief Integral constant indicating if a standard compound div assign is necessary
@@ -167,13 +167,13 @@ constexpr bool vectorized_assign_no_gpu = !fast_assign_no_gpu<E, R> && are_vecto
  * \brief Integral constant indicating if a direct assign is possible
  */
 template <typename E, typename R>
-constexpr bool direct_assign_no_gpu = !are_vectorizable<E, R> && !has_direct_access<E> && has_direct_access<R>;
+constexpr bool direct_assign_no_gpu = !are_vectorizable<E, R> && !is_dma<E> && is_dma<R>;
 
 /*!
  * \brief Integral constant indicating if a standard assign is necessary
  */
 template <typename E, typename R>
-constexpr bool standard_assign_no_gpu = !has_direct_access<R>;
+constexpr bool standard_assign_no_gpu = !is_dma<R>;
 
 //Selectors for compound operations
 
@@ -187,7 +187,7 @@ constexpr bool vectorized_compound_no_gpu = are_vectorizable<E, R>;
  * \brief Integral constant indicating if a direct compound assign is possible
  */
 template <typename E, typename R>
-constexpr bool direct_compound_no_gpu = !vectorized_compound_no_gpu<E, R> && has_direct_access<R>;
+constexpr bool direct_compound_no_gpu = !vectorized_compound_no_gpu<E, R> && is_dma<R>;
 
 /*!
  * \brief Integral constant indicating if a standard compound assign is necessary
@@ -207,7 +207,7 @@ constexpr bool vectorized_compound_div_no_gpu = (is_floating_t<value_t<E>> || is
  * \brief Integral constant indicating if a direct compound div assign is possible
  */
 template <typename E, typename R>
-constexpr bool direct_compound_div_no_gpu = !vectorized_compound_div_no_gpu<E, R> && has_direct_access<R>;
+constexpr bool direct_compound_div_no_gpu = !vectorized_compound_div_no_gpu<E, R> && is_dma<R>;
 
 /*!
  * \brief Integral constant indicating if a standard compound div assign is necessary

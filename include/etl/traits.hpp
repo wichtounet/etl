@@ -647,21 +647,14 @@ constexpr bool is_gpu_t = is_floating_t<T> || is_complex_t<T> || is_bool_t<T>;
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool has_direct_access = decay_traits<T>::is_direct;
-
-/*!
- * \brief Traits to test if the given ETL expresion type has direct memory access (DMA).
- * \tparam E The ETL expression type.
- */
-template <typename E>
-constexpr bool is_dma = has_direct_access<E>;
+constexpr bool is_dma = decay_traits<T>::is_direct;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types have direct memory access (DMA).
  * \tparam E The ETL expression types.
  */
 template <typename... E>
-constexpr bool all_dma = (has_direct_access<E> && ...);
+constexpr bool all_dma = (is_dma<E> && ...);
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are row-major.
@@ -856,14 +849,14 @@ constexpr bool all_homogeneous = cpp::is_homogeneous_v<value_t<E>...>;
  * of this type.
  */
 template <typename T>
-constexpr bool fast_sub_view_able = has_direct_access<T> && decay_traits<T>::storage_order == order::RowMajor;
+constexpr bool fast_sub_view_able = is_dma<T> && decay_traits<T>::storage_order == order::RowMajor;
 
 /*!
  * \brief Simple utility traits indicating if a light sub_matrix can be created out
  * of this type.
  */
 template <typename T>
-constexpr bool fast_sub_matrix_able = has_direct_access<T>;
+constexpr bool fast_sub_matrix_able = is_dma<T>;
 
 /*!
  * \brief Simple utility traits indicating if a light slice view can be created out

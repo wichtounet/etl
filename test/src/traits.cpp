@@ -299,7 +299,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/binary_fast_mat", "etl_traits<binary<fast_mat, 
     REQUIRE_EQUALS(columns_3, 2UL);
 }
 
-TEMPLATE_TEST_CASE_2("etl_traits/has_direct_access", "has_direct_access", Z, float, double) {
+TEMPLATE_TEST_CASE_2("etl_traits/is_dma", "is_dma", Z, float, double) {
     using mat_type_1 = etl::fast_matrix<Z, 3, 2, 4, 4>;
     mat_type_1 a(3.3);
 
@@ -307,54 +307,54 @@ TEMPLATE_TEST_CASE_2("etl_traits/has_direct_access", "has_direct_access", Z, flo
     mat_type_2 b(3, 2, 4, 4);
 
     //Values have direct access
-    REQUIRE_DIRECT(etl::has_direct_access<mat_type_1>);
-    REQUIRE_DIRECT(etl::has_direct_access<mat_type_2>);
+    REQUIRE_DIRECT(etl::is_dma<mat_type_1>);
+    REQUIRE_DIRECT(etl::is_dma<mat_type_2>);
 
     //The type should always be decayed
-    REQUIRE_DIRECT(etl::has_direct_access<const mat_type_1&&>);
-    REQUIRE_DIRECT(etl::has_direct_access<const mat_type_2&&>);
+    REQUIRE_DIRECT(etl::is_dma<const mat_type_1&&>);
+    REQUIRE_DIRECT(etl::is_dma<const mat_type_2&&>);
 
     //Values have direct access
     REQUIRE_DIRECT(etl::is_fast_matrix<decltype(a)>);
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(a)>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(a)>);
     REQUIRE_DIRECT(etl::is_dyn_matrix<decltype(b)>);
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(b)>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(b)>);
 
     //Sub have direct access
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(a(1))>);
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(b(2))>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(a(1))>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(b(2))>);
 
     //Sub have direct access
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(a(0)(1))>);
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(b(1)(2))>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(a(0)(1))>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(b(1)(2))>);
 
     //Sub have direct access
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(a(0)(1)(3))>);
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(b(1)(2)(0))>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(a(0)(1)(3))>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(b(1)(2)(0))>);
 
     //View have direct access
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape<6, 16>(a))>);
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape(b, 6, 16))>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(etl::reshape<6, 16>(a))>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(etl::reshape(b, 6, 16))>);
 
     //Temporary unary expressions have direct access
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::fft_1d(a(1)(0)(0)))>);
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::fft_1d(b(1)(0)(0)))>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(etl::fft_1d(a(1)(0)(0)))>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(etl::fft_1d(b(1)(0)(0)))>);
 
     //Temporary binary expressions have direct access
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(a(0)(0) * a(0)(0))>);
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(b(0)(0) * b(0)(0))>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(a(0)(0) * a(0)(0))>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(b(0)(0) * b(0)(0))>);
 
     //Mixes should have direct access even as deep as possible
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape<4, 2>(etl::reshape<2, 8>(a(0)(0) * a(0)(0))(1))(0))>);
-    REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape<4, 2>(etl::reshape<2, 8>(b(0)(0) * b(0)(0))(1))(0))>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(etl::reshape<4, 2>(etl::reshape<2, 8>(a(0)(0) * a(0)(0))(1))(0))>);
+    REQUIRE_DIRECT(etl::is_dma<decltype(etl::reshape<4, 2>(etl::reshape<2, 8>(b(0)(0) * b(0)(0))(1))(0))>);
 
     //Binary do not have direct access
-    REQUIRE_DIRECT(!etl::has_direct_access<decltype(a + b)>);
-    REQUIRE_DIRECT(!etl::has_direct_access<decltype(b + b)>);
+    REQUIRE_DIRECT(!etl::is_dma<decltype(a + b)>);
+    REQUIRE_DIRECT(!etl::is_dma<decltype(b + b)>);
 
     //Unary do not have direct access
-    REQUIRE_DIRECT(!etl::has_direct_access<decltype(abs(a))>);
-    REQUIRE_DIRECT(!etl::has_direct_access<decltype(abs(b))>);
+    REQUIRE_DIRECT(!etl::is_dma<decltype(abs(a))>);
+    REQUIRE_DIRECT(!etl::is_dma<decltype(abs(b))>);
 
     if (etl::vec_enabled) {
         //Some unary can be vectorizable

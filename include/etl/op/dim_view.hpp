@@ -128,7 +128,7 @@ public:
      * \return a pointer tot the first element in memory.
      */
     memory_type memory_start() noexcept {
-        static_assert(has_direct_access<T> && D == 1, "This expression does not have direct memory access");
+        static_assert(is_dma<T> && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + i * subsize(sub);
     }
 
@@ -137,7 +137,7 @@ public:
      * \return a pointer tot the first element in memory.
      */
     const_memory_type memory_start() const noexcept {
-        static_assert(has_direct_access<T> && D == 1, "This expression does not have direct memory access");
+        static_assert(is_dma<T> && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + i * subsize(sub);
     }
 
@@ -146,7 +146,7 @@ public:
      * \return a pointer tot the past-the-end element in memory.
      */
     memory_type memory_end() noexcept {
-        static_assert(has_direct_access<T> && D == 1, "This expression does not have direct memory access");
+        static_assert(is_dma<T> && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
 
@@ -155,7 +155,7 @@ public:
      * \return a pointer tot the past-the-end element in memory.
      */
     const_memory_type memory_end() const noexcept {
-        static_assert(has_direct_access<T> && D == 1, "This expression does not have direct memory access");
+        static_assert(is_dma<T> && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
 

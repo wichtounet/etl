@@ -8,20 +8,20 @@
 
 #include <cmath>
 
-TEMPLATE_TEST_CASE_2("direct_access/traits", "has_direct_access", Z, double, float) {
+TEMPLATE_TEST_CASE_2("direct_access/traits", "is_dma", Z, double, float) {
     etl::fast_matrix<Z, 3, 2> a;
 
     using expr_1 = etl::fast_matrix<Z, 3, 2>;
     using expr_2 = etl::dyn_matrix<Z, 3>;
 
-    REQUIRE_DIRECT(etl::has_direct_access<expr_1>);
-    REQUIRE_DIRECT(etl::has_direct_access<expr_2>);
+    REQUIRE_DIRECT(etl::is_dma<expr_1>);
+    REQUIRE_DIRECT(etl::is_dma<expr_2>);
 
     using expr_3 = decltype(a + a);
     using expr_4 = decltype(etl::abs(a));
 
-    REQUIRE_DIRECT(!etl::has_direct_access<expr_3>);
-    REQUIRE_DIRECT(!etl::has_direct_access<expr_4>);
+    REQUIRE_DIRECT(!etl::is_dma<expr_3>);
+    REQUIRE_DIRECT(!etl::is_dma<expr_4>);
 
     using expr_5  = decltype(a(1));
     using expr_6  = decltype(etl::reshape<2, 3>(a));
@@ -30,12 +30,12 @@ TEMPLATE_TEST_CASE_2("direct_access/traits", "has_direct_access", Z, double, flo
     using expr_9  = decltype(etl::reshape(a + a, 2, 3));
     using expr_10 = decltype(etl::row(a, 1));
 
-    REQUIRE_DIRECT(etl::has_direct_access<expr_5>);
-    REQUIRE_DIRECT(etl::has_direct_access<expr_6>);
-    REQUIRE_DIRECT(!etl::has_direct_access<expr_7>);
-    REQUIRE_DIRECT(etl::has_direct_access<expr_8>);
-    REQUIRE_DIRECT(!etl::has_direct_access<expr_9>);
-    REQUIRE_DIRECT(etl::has_direct_access<expr_10>);
+    REQUIRE_DIRECT(etl::is_dma<expr_5>);
+    REQUIRE_DIRECT(etl::is_dma<expr_6>);
+    REQUIRE_DIRECT(!etl::is_dma<expr_7>);
+    REQUIRE_DIRECT(etl::is_dma<expr_8>);
+    REQUIRE_DIRECT(!etl::is_dma<expr_9>);
+    REQUIRE_DIRECT(etl::is_dma<expr_10>);
 }
 
 TEMPLATE_TEST_CASE_2("direct_access/fast_matrix", "direct_access", Z, double, float) {
