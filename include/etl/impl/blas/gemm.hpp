@@ -1029,7 +1029,7 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
     };
 
     if constexpr (is_parallel){
-        if  /*constexpr*/ (is_blas_parallel) {
+        if constexpr (is_blas_parallel) {
             auto mkl_threads = mkl_get_max_threads();
 
             mkl_set_num_threads(1);
@@ -1369,7 +1369,7 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
     };
 
     if constexpr (is_parallel){
-        if  /*constexpr*/ (is_blas_parallel) {
+        if constexpr (is_blas_parallel) {
             auto mkl_threads = mkl_get_max_threads();
 
             mkl_set_num_threads(1);
