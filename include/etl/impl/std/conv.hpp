@@ -24,8 +24,8 @@ namespace standard {
 template <typename I, typename K, typename C>
 void conv1_full(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
     for (size_t i = first; i < last; ++i) {
-        const auto lo = i >= size(kernel) - 1 ? i - (size(kernel) - 1) : 0;
-        const auto hi = (i < size(input) - 1 ? i : size(input) - 1) + 1;
+        const auto lo = i >= etl::size(kernel) - 1 ? i - (etl::size(kernel) - 1) : 0;
+        const auto hi = (i < etl::size(input) - 1 ? i : etl::size(input) - 1) + 1;
 
         value_t<I> temp = 0.0;
 
@@ -48,13 +48,13 @@ void conv1_full(const I& input, const K& kernel, C&& conv, size_t first, size_t 
 template <typename I, typename K, typename C>
 void conv1_same(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
     for (size_t j = first; j < last; ++j) {
-        size_t l_lo = std::max<int>(0, j - (size(kernel) - 1) / 2);
-        size_t l_hi = std::min<int>(size(input) - 1, j + size(kernel) / 2) + 1;
+        size_t l_lo = std::max<int>(0, j - (etl::size(kernel) - 1) / 2);
+        size_t l_hi = std::min<int>(etl::size(input) - 1, j + etl::size(kernel) / 2) + 1;
 
         value_t<I> temp = 0.0;
 
         for (size_t l = l_lo; l < l_hi; ++l) {
-            temp += input(l) * kernel(j - l + size(kernel) / 2);
+            temp += input(l) * kernel(j - l + etl::size(kernel) / 2);
         }
 
         conv[j] = temp;
@@ -74,8 +74,8 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, size_t first, size_t
     for (size_t j = first; j < last; ++j) {
         value_t<I> temp = 0.0;
 
-        for (size_t l = j; l < j + size(kernel); ++l) {
-            temp += input[l] * kernel[j + size(kernel) - 1 - l];
+        for (size_t l = j; l < j + etl::size(kernel); ++l) {
+            temp += input[l] * kernel[j + etl::size(kernel) - 1 - l];
         }
 
         conv[j] = temp;
