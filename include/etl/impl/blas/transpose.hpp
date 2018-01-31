@@ -17,11 +17,7 @@
 #include "mkl_trans.h"
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace blas {
+namespace etl::impl::blas {
 
 #ifdef ETL_MKL_MODE
 
@@ -171,6 +167,4 @@ void transpose(A&& a, C&& c) {
 
 #endif
 
-} //end of namespace blas
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::blas

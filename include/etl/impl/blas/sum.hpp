@@ -22,11 +22,7 @@
  * use a vector of ones and a dot product
  */
 
-namespace etl {
-
-namespace impl {
-
-namespace blas {
+namespace etl::impl::blas {
 
 #ifdef ETL_BLAS_MODE
 
@@ -106,6 +102,4 @@ value_t<A> asum(const A& /*a*/) {
 
 #endif
 
-} //end of namespace blas
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::blas

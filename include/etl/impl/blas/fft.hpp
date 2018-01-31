@@ -13,11 +13,7 @@
 #include "etl/impl/common/conv.hpp"
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace blas {
+namespace etl::impl::blas {
 
 /*!
  * \brief Traits indicating if 1D FFT with BLAS is
@@ -2237,8 +2233,4 @@ void fft_conv2_valid_multi_multi_flipped(I&& a, K_T&& b, C&& c, size_t s1, size_
 
 #endif
 
-} //end of namespace blas
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::blas

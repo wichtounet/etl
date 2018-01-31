@@ -16,6 +16,7 @@ extern "C" {
 }
 
 #endif
+
 namespace etl::impl::blas {
 
 /*!
