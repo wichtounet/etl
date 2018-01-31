@@ -28,8 +28,6 @@
 
 #pragma once
 
-#include "cpp_utils/static_if.hpp"
-
 #include "etl/eval_selectors.hpp"       //Method selectors
 #include "etl/linear_eval_functors.hpp" //Implementation functors
 #include "etl/vec_eval_functors.hpp"    //Implementation functors

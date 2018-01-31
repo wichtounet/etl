@@ -764,9 +764,7 @@ public:
      */
     void ensure_gpu_up_to_date() const {
         if constexpr (is_dma<Expr>) {
-            cpp::static_if<is_dma<Expr>>([&,this](auto f){
-                f(_gpu).ensure_gpu_up_to_date(f(this)->memory_start(), etl::size(f(value)));
-            });
+            _gpu.ensure_gpu_up_to_date(memory_start(), etl::size(value));
         } else {
             value.ensure_gpu_up_to_date();
         }
@@ -778,9 +776,7 @@ public:
      */
     void ensure_cpu_up_to_date() const {
         if constexpr (is_dma<Expr>) {
-            cpp::static_if<is_dma<Expr>>([&,this](auto f){
-                f(_gpu).ensure_cpu_up_to_date(f(this)->memory_start(), etl::size(f(value)));
-            });
+            _gpu.ensure_cpu_up_to_date(memory_start(), etl::size(value));
         } else {
             value.ensure_cpu_up_to_date();
         }
