@@ -28,13 +28,7 @@
  * the pointer. But there is a small overhead when using this technique :s
  */
 
-namespace etl {
-
-namespace impl {
-
-namespace vec {
-
-namespace detail {
+namespace etl::impl::vec::detail {
 
 /*!
  * \brief Handle a point in the border for computation of valid convolution.
@@ -424,8 +418,4 @@ void conv2_valid_micro_kernel(const I& input, const K& kernel, C&& conv, size_t 
     conv2_valid_flipped_micro_kernel<V>(input, kernel_reverse, conv, s1, s2, p1, p2, beta);
 }
 
-} // end of namespace detail
-
-} //end of namespace vec
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec::detail

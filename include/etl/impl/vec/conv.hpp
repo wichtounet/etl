@@ -7,9 +7,7 @@
 
 #pragma once
 
-namespace etl {
-namespace impl {
-namespace vec {
+namespace etl::impl::vec {
 
 /*!
  * \brief Traits indicating if vectorized 1D convolution is possible
@@ -120,9 +118,7 @@ using safe_sse_vec = no_vec;
 #endif
 
 } //end of namespace detail
-} //end of namespace vec
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec
 
 // Note: Valid must be included first!
 

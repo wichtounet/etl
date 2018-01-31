@@ -9,11 +9,7 @@
 
 #include "etl/impl/common/conv.hpp"
 
-namespace etl {
-
-namespace impl {
-
-namespace vec {
+namespace etl::impl::vec {
 
 /*!
  * \brief Vectorized implementation of a 1D 'valid' convolution C = I * K
@@ -346,6 +342,4 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, [[maybe_unused]] siz
     }
 }
 
-} //end of namespace vec
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec

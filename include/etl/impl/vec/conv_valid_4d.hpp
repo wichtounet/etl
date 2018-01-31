@@ -10,11 +10,7 @@
 #include "etl/impl/common/conv.hpp"
 #include "etl/impl/vec/conv_valid_kernels.hpp"
 
-namespace etl {
-
-namespace impl {
-
-namespace vec {
+namespace etl::impl::vec {
 
 /*!
  * \brief Decide if padding is used for the given kernel dimensions and the
@@ -1354,6 +1350,4 @@ void conv4_valid_back_flipped(const I& input, const KK& kernel, CC&& conv, size_
     cpp_unreachable("Invalid call to vec::conv4_valid_back_flipped");
 }
 
-} //end of namespace vec
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec

@@ -10,14 +10,7 @@
 #include "etl/impl/common/conv.hpp"
 #include "etl/impl/vec/conv.hpp"
 
-// The idea of the GEMM kernels is largely inspired by the kernels in Blaze by
-// Klaus Igleberg
-
-namespace etl {
-
-namespace impl {
-
-namespace vec {
+namespace etl::impl::vec {
 
 /*!
  * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
@@ -935,8 +928,4 @@ void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t
     cpp_unreachable("Invalid call to vec::blas_conv4_valid_back_flipped");
 }
 
-} //end of namespace vec
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::vec

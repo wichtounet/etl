@@ -10,11 +10,7 @@
 #include "etl/impl/common/conv.hpp"
 #include "etl/impl/vec/conv_valid_kernels.hpp"
 
-namespace etl {
-
-namespace impl {
-
-namespace vec {
+namespace etl::impl::vec {
 
 /*!
  * \brief Standard implementation of a 2D 'valid' convolution C = I * K
@@ -651,6 +647,4 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
     cpp_unreachable("Invalid call to vec::conv2_valid_multi_multi_flipped");
 }
 
-} //end of namespace vec
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec

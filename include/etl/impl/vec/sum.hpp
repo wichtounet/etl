@@ -12,11 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace vec {
+namespace etl::impl::vec {
 
 /*!
  * \brief Vectorized sum computation
@@ -231,6 +227,4 @@ value_t<L> asum(const L& lhs) {
     cpp_unreachable("vec::asum called with invalid parameters");
 }
 
-} //end of namespace vec
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec

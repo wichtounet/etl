@@ -13,11 +13,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace vec {
+namespace etl::impl::vec {
 
 // The 8-times unrolled loop is poorly handled by clang (3.9, 4.0)
 #ifndef ETL_GEMM_SMALL_RR_R_UNROLL_8

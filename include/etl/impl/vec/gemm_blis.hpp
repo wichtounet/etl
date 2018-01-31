@@ -7,11 +7,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace vec {
+namespace etl::impl::vec {
 
 /*!
  * \brief BLIS-like GEMM config
@@ -408,6 +404,4 @@ void gemm_large_kernel_workspace_rr(const T* , const T* , T* , size_t , size_t ,
     // Nothing to do here
 }
 
-} //end of namespace vec
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec

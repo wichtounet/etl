@@ -12,11 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace vec {
+namespace etl::impl::vec {
 
 /*!
  * \brief Compute the dot product of a and b using vectorized code
@@ -147,6 +143,4 @@ value_t<L> dot(const L& lhs, const R& rhs) {
     return dot_impl<default_vec>(lhs, rhs);
 }
 
-} //end of namespace vec
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec

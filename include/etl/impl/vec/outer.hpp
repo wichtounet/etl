@@ -12,11 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace vec {
+namespace etl::impl::vec {
 
 /*!
  * \brief Compute the batch outer product of a and b and store the result in c
@@ -292,6 +288,4 @@ void batch_outer(const A& lhs, const B& rhs, C&& c) {
     cpp_unreachable("Invalid call to vec::outer");
 }
 
-} //end of namespace standard
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec

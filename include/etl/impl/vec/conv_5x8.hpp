@@ -7,10 +7,7 @@
 
 #pragma once
 
-namespace etl {
-namespace impl {
-namespace vec {
-namespace detail {
+namespace etl::impl::vec::detail {
 
 #ifndef __clang__
 #pragma GCC diagnostic push
@@ -243,7 +240,4 @@ void conv2_valid_flipped_micro_kernel_5x8(const T* in, size_t n1, size_t n2, con
 #pragma GCC diagnostic pop
 #endif
 
-} //end of namespace detail
-} //end of namespace vec
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec::detail

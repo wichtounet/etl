@@ -12,11 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace vec {
+namespace etl::impl::vec {
 
 /*!
  * \brief Compute the bias addition of b into x and store the result in y
@@ -198,6 +194,4 @@ void bias_add_2d(const A& x, const B& b, C&& y) {
     bias_add_2d_impl<default_vec>(x, b, y);
 }
 
-} //end of namespace standard
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec

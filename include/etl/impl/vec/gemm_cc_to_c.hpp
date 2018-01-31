@@ -13,11 +13,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace vec {
+namespace etl::impl::vec {
 
 /*!
  * \brief Optimized version of small GEMM for column major version
@@ -490,6 +486,4 @@ void gemm_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
     }
 }
 
-} //end of namespace vec
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec

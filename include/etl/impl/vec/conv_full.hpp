@@ -7,11 +7,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace vec {
+namespace etl::impl::vec {
 
 /*!
  * \brief Vectorized implementation of a 1D 'full' convolution C = I * K
@@ -739,6 +735,4 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
     cpp_unreachable("Invalid call to vec::conv4_full_flipped");
 }
 
-} //end of namespace vec
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec

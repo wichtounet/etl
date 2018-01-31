@@ -7,11 +7,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace vec {
+namespace etl::impl::vec {
 
 /*!
  * \brief Vectorized implementation of a 1D 'same' convolution C = I * K
@@ -293,6 +289,4 @@ void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
     cpp_unreachable("Invalid call to vec::conv2_same_multi_flipped");
 }
 
-} //end of namespace vec
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::vec
