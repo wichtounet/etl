@@ -415,7 +415,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      *
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
-    const decltype(auto) operator()(size_t i) const noexcept(assert_nothrow) {
+    decltype(auto) operator()(size_t i) const noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
 
         if constexpr (n_dimensions == 1) {
