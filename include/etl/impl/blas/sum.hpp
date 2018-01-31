@@ -43,13 +43,15 @@ value_t<A> sum(const A& a) {
 
         a.ensure_cpu_up_to_date();
 
-        const auto* m_a = a.memory_start();
-        const auto* m_b = ones.memory_start();
+        [[maybe_unused]] const auto* m_a = a.memory_start();
+        [[maybe_unused]] const auto* m_b = ones.memory_start();
 
         if constexpr (is_single_precision<A>) {
             return cblas_sdot(etl::size(a), m_a, 1, m_b, 1);
         } else if constexpr (is_double_precision<A>) {
             return cblas_ddot(etl::size(a), m_a, 1, m_b, 1);
+        } else {
+            cpp_unreachable("BLAS not enabled/available");
         }
     } else {
         cpp_unreachable("BLAS not enabled/available");
