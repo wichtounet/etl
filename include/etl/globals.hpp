@@ -527,7 +527,7 @@ inline bool approx_equals_float(T a, T b, TE epsilon) {
 template <typename L, typename E>
 bool approx_equals(L&& lhs, E&& rhs, value_t<L> eps){
     // Both expressions must have the same number of dimensions
-    if constexpr (etl::dimensions(lhs) != etl::dimensions(rhs)) {
+    if constexpr (etl::dimensions<L>() != etl::dimensions<E>()) {
         return false;
     } else {
         // The dimensions must be the same
