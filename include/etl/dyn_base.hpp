@@ -379,36 +379,52 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
     }
 
     /*!
-     * \brief Access the ith element of the matrix
+     * \brief Access the ith element of the  container.
+     *
+     * If the container is vector, this returns a reference to the ith element
+     * of the vector. If the container is a matrix, this returns a sub view
+     * inside the first dimension of the matrix at the ith index.
+     *
      * \param i The index of the element to search
-     * \return a reference to the ith element
+     * \return a reference to the ith element or a sub a view
      *
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
-    template <bool B = n_dimensions == 1, cpp_enable_iff(B)>
-    value_type& operator()(size_t i) noexcept(assert_nothrow) {
+    decltype(auto) operator()(size_t i) noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
 
-        ensure_cpu_up_to_date();
-        invalidate_gpu();
+        if constexpr (n_dimensions == 1) {
+            ensure_cpu_up_to_date();
+            invalidate_gpu();
 
-        return _memory[i];
+            return _memory[i];
+        } else {
+            return sub(as_derived(), i);
+        }
     }
 
     /*!
-     * \brief Access the ith element of the matrix
+     * \brief Access the ith element of the  container.
+     *
+     * If the container is vector, this returns a reference to the ith element
+     * of the vector. If the container is a matrix, this returns a sub view
+     * inside the first dimension of the matrix at the ith index.
+     *
      * \param i The index of the element to search
-     * \return a reference to the ith element
+     * \return a reference to the ith element or a sub a view
      *
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
-    template <bool B = n_dimensions == 1, cpp_enable_iff(B)>
-    const value_type& operator()(size_t i) const noexcept(assert_nothrow) {
+    const decltype(auto) operator()(size_t i) const noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
 
-        ensure_cpu_up_to_date();
+        if constexpr (n_dimensions == 1) {
+            ensure_cpu_up_to_date();
 
-        return _memory[i];
+            return _memory[i];
+        } else {
+            return sub(as_derived(), i);
+        }
     }
 
     /*!
@@ -525,26 +541,6 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      */
     const_memory_type memory_end() const noexcept {
         return _memory + _size;
-    }
-
-    /*!
-     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
-     * \param i The index to use
-     * \return a sub view of the matrix at position i.
-     */
-    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
-    auto operator()(size_t i) noexcept {
-        return sub(as_derived(), i);
-    }
-
-    /*!
-     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
-     * \param i The index to use
-     * \return a sub view of the matrix at position i.
-     */
-    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
-    auto operator()(size_t i) const noexcept {
-        return sub(as_derived(), i);
     }
 
     /*!
