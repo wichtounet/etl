@@ -4,8 +4,7 @@
 ---
 BasedOnStyle: Google
 IndentWidth: 4
-# clang-format is not very good to break long lines, don't let it do it
-ColumnLimit: 0
+ColumnLimit: 160
 ---
 Language: Cpp
 Standard: Cpp11
@@ -35,6 +34,8 @@ AlwaysBreakTemplateDeclarations: true
 
 # Nice alignement
 AlignConsecutiveAssignments: true
+AlignOperands: true
+BinPackParameters: false
 
 # Improve ternary operators alignement
 BreakBeforeTernaryOperators: true
@@ -51,8 +52,11 @@ CommentPragmas:  '^[^ ]'
 
 # Avoid empty lines
 KeepEmptyLinesAtTheStartOfBlocks: false
-MaxEmptyLinesToKeep: 1
 
 # Force pointers to the type
 DerivePointerAlignment: false
 PointerAlignment: Left
+
+BreakBeforeBinaryOperators: NonAssignment
+
+FixNamespaceComments: true
