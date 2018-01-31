@@ -246,7 +246,10 @@ struct plus_binary_op {
         decltype(auto) x = smart_gpu_compute_hint(lhs_rhs, yy);
         decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
 
-        impl::egblas::axpy_3(etl::size(yy), lhs_lhs.value, x.gpu_memory(), 1, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+        constexpr auto incx = gpu_inc<decltype(lhs_rhs)>;
+        constexpr auto incy = gpu_inc<decltype(rhs)>;
+
+        impl::egblas::axpy_3(etl::size(yy), lhs_lhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();
@@ -270,7 +273,10 @@ struct plus_binary_op {
         decltype(auto) x = smart_gpu_compute_hint(lhs_lhs, yy);
         decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
 
-        impl::egblas::axpy_3(etl::size(yy), lhs_rhs.value, x.gpu_memory(), 1, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+        constexpr auto incx = gpu_inc<decltype(lhs_lhs)>;
+        constexpr auto incy = gpu_inc<decltype(rhs)>;
+
+        impl::egblas::axpy_3(etl::size(yy), lhs_rhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();
@@ -294,7 +300,10 @@ struct plus_binary_op {
         decltype(auto) x = smart_gpu_compute_hint(rhs_rhs, yy);
         decltype(auto) y = smart_gpu_compute_hint(lhs, yy);
 
-        impl::egblas::axpy_3(etl::size(yy), rhs_lhs.value, x.gpu_memory(), 1, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+        constexpr auto incx = gpu_inc<decltype(rhs_rhs)>;
+        constexpr auto incy = gpu_inc<decltype(lhs)>;
+
+        impl::egblas::axpy_3(etl::size(yy), rhs_lhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();
@@ -318,7 +327,10 @@ struct plus_binary_op {
         decltype(auto) x = smart_gpu_compute_hint(rhs_lhs, yy);
         decltype(auto) y = smart_gpu_compute_hint(lhs, yy);
 
-        impl::egblas::axpy_3(etl::size(yy), rhs_rhs.value, x.gpu_memory(), 1, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+        constexpr auto incx = gpu_inc<decltype(rhs_lhs)>;
+        constexpr auto incy = gpu_inc<decltype(lhs)>;
+
+        impl::egblas::axpy_3(etl::size(yy), rhs_rhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();
@@ -345,7 +357,10 @@ struct plus_binary_op {
         decltype(auto) x = smart_gpu_compute_hint(lhs_rhs, yy);
         decltype(auto) y = smart_gpu_compute_hint(rhs_rhs, yy);
 
-        impl::egblas::axpby_3(etl::size(yy), lhs_lhs.value, x.gpu_memory(), 1, rhs_lhs.value, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+        constexpr auto incx = gpu_inc<decltype(lhs_rhs)>;
+        constexpr auto incy = gpu_inc<decltype(rhs_rhs)>;
+
+        impl::egblas::axpby_3(etl::size(yy), lhs_lhs.value, x.gpu_memory(), incx, rhs_lhs.value, y.gpu_memory(), incy, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();
@@ -372,7 +387,10 @@ struct plus_binary_op {
         decltype(auto) x = smart_gpu_compute_hint(lhs_rhs, yy);
         decltype(auto) y = smart_gpu_compute_hint(rhs_lhs, yy);
 
-        impl::egblas::axpby_3(etl::size(yy), lhs_lhs.value, x.gpu_memory(), 1, rhs_rhs.value, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+        constexpr auto incx = gpu_inc<decltype(lhs_rhs)>;
+        constexpr auto incy = gpu_inc<decltype(rhs_lhs)>;
+
+        impl::egblas::axpby_3(etl::size(yy), lhs_lhs.value, x.gpu_memory(), incx, rhs_rhs.value, y.gpu_memory(), incy, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();
@@ -399,7 +417,10 @@ struct plus_binary_op {
         decltype(auto) x = smart_gpu_compute_hint(lhs_lhs, yy);
         decltype(auto) y = smart_gpu_compute_hint(rhs_rhs, yy);
 
-        impl::egblas::axpby_3(etl::size(yy), lhs_rhs.value, x.gpu_memory(), 1, rhs_lhs.value, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+        constexpr auto incx = gpu_inc<decltype(lhs_lhs)>;
+        constexpr auto incy = gpu_inc<decltype(rhs_rhs)>;
+
+        impl::egblas::axpby_3(etl::size(yy), lhs_rhs.value, x.gpu_memory(), incx, rhs_lhs.value, y.gpu_memory(), incy, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();
@@ -426,7 +447,10 @@ struct plus_binary_op {
         decltype(auto) x = smart_gpu_compute_hint(lhs_lhs, yy);
         decltype(auto) y = smart_gpu_compute_hint(rhs_lhs, yy);
 
-        impl::egblas::axpby_3(etl::size(yy), lhs_rhs.value, x.gpu_memory(), 1, rhs_rhs.value, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+        constexpr auto incx = gpu_inc<decltype(lhs_lhs)>;
+        constexpr auto incy = gpu_inc<decltype(rhs_lhs)>;
+
+        impl::egblas::axpby_3(etl::size(yy), lhs_rhs.value, x.gpu_memory(), incx, rhs_rhs.value, y.gpu_memory(), incy, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();
@@ -447,8 +471,11 @@ struct plus_binary_op {
         decltype(auto) x = smart_gpu_compute_hint(lhs, yy);
         decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
 
+        constexpr auto incx = gpu_inc<decltype(lhs)>;
+        constexpr auto incy = gpu_inc<decltype(rhs)>;
+
         value_t<L> alpha(1);
-        impl::egblas::axpy_3(etl::size(yy), alpha, x.gpu_memory(), 1, y.gpu_memory(), 1, yy.gpu_memory(), 1);
+        impl::egblas::axpy_3(etl::size(yy), alpha, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
 
         yy.validate_gpu();
         yy.invalidate_cpu();
