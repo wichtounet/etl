@@ -131,11 +131,11 @@ struct sum_impl {
     static value_t<E> apply(const E& e) {
         constexpr_select const auto impl = select_sum_impl<E>();
 
-        if /*constexpr_select*/ (impl == etl::sum_impl::VEC) {
+        if constexpr_select (impl == etl::sum_impl::VEC) {
             return impl::vec::sum(e);
-        } else if /*constexpr_select*/ (impl == etl::sum_impl::BLAS) {
+        } else if constexpr_select (impl == etl::sum_impl::BLAS) {
             return impl::blas::sum(e);
-        } else if /*constexpr_select*/ (impl == etl::sum_impl::CUBLAS) {
+        } else if constexpr_select (impl == etl::sum_impl::CUBLAS) {
             return impl::cublas::sum(e);
         } else {
             return impl::standard::sum(e);
@@ -154,11 +154,11 @@ struct asum_impl {
     static value_t<E> apply(const E& e) {
         constexpr_select const auto impl = select_sum_impl<E>();
 
-        if /*constexpr_select*/ (impl == etl::sum_impl::VEC) {
+        if constexpr_select (impl == etl::sum_impl::VEC) {
             return impl::vec::asum(e);
-        } else if /*constexpr_select*/ (impl == etl::sum_impl::BLAS) {
+        } else if constexpr_select (impl == etl::sum_impl::BLAS) {
             return impl::blas::asum(e);
-        } else if /*constexpr_select*/ (impl == etl::sum_impl::CUBLAS) {
+        } else if constexpr_select (impl == etl::sum_impl::CUBLAS) {
             return impl::cublas::asum(e);
         } else {
             return impl::standard::asum(e);

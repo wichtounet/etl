@@ -148,13 +148,13 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
 
         constexpr_select auto impl = select_batch_outer_impl<C>();
 
-        if /*constexpr_select*/ (impl == etl::outer_impl::STD) {
+        if constexpr_select (impl == etl::outer_impl::STD) {
             etl::impl::standard::batch_outer(smart_forward(a), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == etl::outer_impl::BLAS) {
+        } else if constexpr_select (impl == etl::outer_impl::BLAS) {
             etl::impl::blas::batch_outer(smart_forward(a), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == etl::outer_impl::CUBLAS) {
+        } else if constexpr_select (impl == etl::outer_impl::CUBLAS) {
             etl::impl::cublas::batch_outer(smart_forward_gpu(a), smart_forward_gpu(b), c);
-        } else if /*constexpr_select*/ (impl == etl::outer_impl::VEC) {
+        } else if constexpr_select (impl == etl::outer_impl::VEC) {
             etl::impl::vec::batch_outer(smart_forward(a), smart_forward(b), c);
         } else {
             cpp_unreachable("Invalid batch_outer selection");

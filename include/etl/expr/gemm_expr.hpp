@@ -182,13 +182,13 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gemm_impl<AA, BB, C>();
 
-        if /*constexpr_select*/ (impl == gemm_impl::STD) {
+        if constexpr_select (impl == gemm_impl::STD) {
             etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::VEC) {
+        } else if constexpr_select (impl == gemm_impl::VEC) {
             etl::impl::vec::gemm(smart_forward(a), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::BLAS) {
+        } else if constexpr_select (impl == gemm_impl::BLAS) {
             etl::impl::blas::gemm_tt(smart_forward(a.a()), smart_forward(b.a()), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::CUBLAS) {
+        } else if constexpr_select (impl == gemm_impl::CUBLAS) {
             etl::impl::cublas::gemm_tt(smart_forward_gpu(a.a()), smart_forward_gpu(b.a()), c);
         } else {
             cpp_unreachable("Invalid selection of gemm");
@@ -205,13 +205,13 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gemm_impl<AA, BB, C>();
 
-        if  /*constexpr_select*/ (impl == gemm_impl::STD) {
+        if  constexpr_select (impl == gemm_impl::STD) {
             etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::VEC) {
+        } else if constexpr_select (impl == gemm_impl::VEC) {
             etl::impl::vec::gemm_nt(smart_forward(a), smart_forward(b.a()), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::BLAS) {
+        } else if constexpr_select (impl == gemm_impl::BLAS) {
             etl::impl::blas::gemm_nt(smart_forward(a), smart_forward(b.a()), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::CUBLAS) {
+        } else if constexpr_select (impl == gemm_impl::CUBLAS) {
             etl::impl::cublas::gemm_nt(smart_forward_gpu(a), smart_forward_gpu(b.a()), c);
         } else {
             cpp_unreachable("Invalid selection of gemm");
@@ -228,13 +228,13 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gemm_impl<AA, BB, C>();
 
-        if  /*constexpr_select*/ (impl == gemm_impl::STD) {
+        if  constexpr_select (impl == gemm_impl::STD) {
             etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::VEC) {
+        } else if constexpr_select (impl == gemm_impl::VEC) {
             etl::impl::vec::gemm_tn(smart_forward(a.a()), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::BLAS) {
+        } else if constexpr_select (impl == gemm_impl::BLAS) {
             etl::impl::blas::gemm_tn(smart_forward(a.a()), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::CUBLAS) {
+        } else if constexpr_select (impl == gemm_impl::CUBLAS) {
             etl::impl::cublas::gemm_tn(smart_forward_gpu(a.a()), smart_forward_gpu(b), c);
         } else {
             cpp_unreachable("Invalid selection of gemm");
@@ -251,13 +251,13 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gemm_impl<AA, BB, C>();
 
-        if  /*constexpr_select*/ (impl == gemm_impl::STD) {
+        if  constexpr_select (impl == gemm_impl::STD) {
             etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::VEC) {
+        } else if constexpr_select (impl == gemm_impl::VEC) {
             etl::impl::vec::gemm(smart_forward(a), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::BLAS) {
+        } else if constexpr_select (impl == gemm_impl::BLAS) {
             etl::impl::blas::gemm(smart_forward(a), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::CUBLAS) {
+        } else if constexpr_select (impl == gemm_impl::CUBLAS) {
             etl::impl::cublas::gemm(smart_forward_gpu(a), smart_forward_gpu(b), c);
         } else {
             cpp_unreachable("Invalid selection of gemm");

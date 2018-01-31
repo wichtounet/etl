@@ -123,7 +123,7 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
 
         constexpr_select auto impl = select_impl<C>();
 
-        if /*constexpr_select*/ (impl == batch_softmax_impl::CUDNN) {
+        if constexpr_select (impl == batch_softmax_impl::CUDNN) {
             decltype(auto) a_gpu = smart_forward_gpu(a);
 
             if constexpr (Stable) {
@@ -131,7 +131,7 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
             } else {
                 impl::cudnn::softmax(a_gpu, c);
             }
-        } else if /*constexpr_select*/ (impl == batch_softmax_impl::STD) {
+        } else if constexpr_select (impl == batch_softmax_impl::STD) {
             if constexpr (Stable) {
                 for (size_t i = 0; i < etl::dim<0>(c); ++i) {
                     c(i) = exp(a(i)) / sum(exp(a(i)));

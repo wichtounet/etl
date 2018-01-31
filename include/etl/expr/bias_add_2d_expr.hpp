@@ -103,11 +103,11 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
 
         constexpr_select auto impl = select_impl<L>();
 
-        if /*constexpr_select*/ (impl == bias_add_impl::VEC) {
+        if constexpr_select (impl == bias_add_impl::VEC) {
             impl::vec::bias_add_2d(smart_forward(a), smart_forward(b), lhs);
-        } else if /*constexpr_select*/ (impl == bias_add_impl::STD) {
+        } else if constexpr_select (impl == bias_add_impl::STD) {
             impl::standard::bias_add_2d(smart_forward(a), smart_forward(b), lhs);
-        } else if /*constexpr_select*/ (impl == bias_add_impl::EGBLAS) {
+        } else if constexpr_select (impl == bias_add_impl::EGBLAS) {
             decltype(auto) e_x = smart_forward_gpu(a);
             decltype(auto) e_b = smart_forward_gpu(b);
             auto& e_y = lhs;
@@ -120,7 +120,7 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
 
             e_y.validate_gpu();
             e_y.invalidate_cpu();
-        } else if /*constexpr_select*/ (impl == bias_add_impl::CUDNN) {
+        } else if constexpr_select (impl == bias_add_impl::CUDNN) {
             impl::cudnn::bias_add_2d(smart_forward_gpu(a), smart_forward_gpu(b), lhs);
         } else {
             cpp_unreachable("Invalid bias_add_2d selection");

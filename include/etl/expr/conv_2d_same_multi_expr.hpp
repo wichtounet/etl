@@ -170,17 +170,17 @@ struct conv_2d_same_multi_expr : base_temporary_expr_bin<conv_2d_same_multi_expr
         constexpr_select auto impl = select_impl<C>();
 
         if constexpr (Flipped){
-            if /*constexpr_select*/ (impl == etl::conv_multi_impl::VEC) {
+            if constexpr_select (impl == etl::conv_multi_impl::VEC) {
                 impl::vec::conv2_same_multi_flipped(input, kernel, conv);
-            } else if /*constexpr_select*/ (impl == etl::conv_multi_impl::STD) {
+            } else if constexpr_select (impl == etl::conv_multi_impl::STD) {
                 impl::standard::conv2_same_multi_flipped(input, kernel, conv);
             } else {
                 cpp_unreachable("Invalid conv implementation selection");
             }
         } else {
-            if /*constexpr_select*/ (impl == etl::conv_multi_impl::VEC){
+            if constexpr_select (impl == etl::conv_multi_impl::VEC){
                 impl::vec::conv2_same_multi(input, kernel, conv);
-            } else if /*constexpr_select*/ (impl == etl::conv_multi_impl::STD){
+            } else if constexpr_select (impl == etl::conv_multi_impl::STD){
                 impl::standard::conv2_same_multi(input, kernel, conv);
             } else {
                 cpp_unreachable("Invalid conv implementation selection");

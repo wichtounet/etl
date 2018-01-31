@@ -102,33 +102,33 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
 
         bool parallel_dispatch = detail::select_parallel(input, kernel, conv);
 
-        if /*constexpr_select*/ (impl == etl::conv_impl::VEC) {
+        if constexpr_select (impl == etl::conv_impl::VEC) {
             engine_dispatch_1d([&](size_t first, size_t last) {
                 impl::vec::conv1_full(input, kernel, conv, first, last);
             }, 0, etl::size(conv), parallel_dispatch);
-        } else if /*constexpr_select*/ (impl == etl::conv_impl::STD) {
+        } else if constexpr_select (impl == etl::conv_impl::STD) {
             engine_dispatch_1d([&](size_t first, size_t last) {
                 impl::standard::conv1_full(input, kernel, conv, first, last);
             }, 0, etl::size(conv), parallel_dispatch);
-        } else if /*constexpr_select*/ (impl == etl::conv_impl::FFT_STD) {
+        } else if constexpr_select (impl == etl::conv_impl::FFT_STD) {
             impl::standard::conv1_full_fft(smart_forward(input_raw), smart_forward(kernel_raw), conv);
-        } else if /*constexpr_select*/ (impl == etl::conv_impl::FFT_MKL) {
+        } else if constexpr_select (impl == etl::conv_impl::FFT_MKL) {
             impl::blas::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv);
-        } else if /*constexpr_select*/ (impl == etl::conv_impl::FFT_CUFFT) {
+        } else if constexpr_select (impl == etl::conv_impl::FFT_CUFFT) {
             impl::cufft::conv1_full(smart_forward_gpu(input_raw), smart_forward_gpu(kernel_raw), conv);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
 #else
-        if /*constexpr_select*/ (impl == etl::conv_impl::VEC) {
+        if constexpr_select (impl == etl::conv_impl::VEC) {
             impl::vec::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
-        } else if /*constexpr_select*/ (impl == etl::conv_impl::STD) {
+        } else if constexpr_select (impl == etl::conv_impl::STD) {
             impl::standard::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
-        } else if /*constexpr_select*/ (impl == etl::conv_impl::FFT_STD) {
+        } else if constexpr_select (impl == etl::conv_impl::FFT_STD) {
             impl::standard::conv1_full_fft(smart_forward(input_raw), smart_forward(kernel_raw), conv);
-        } else if /*constexpr_select*/ (impl == etl::conv_impl::FFT_MKL) {
+        } else if constexpr_select (impl == etl::conv_impl::FFT_MKL) {
             impl::blas::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv);
-        } else if /*constexpr_select*/ (impl == etl::conv_impl::FFT_CUFFT) {
+        } else if constexpr_select (impl == etl::conv_impl::FFT_CUFFT) {
             impl::cufft::conv1_full(smart_forward_gpu(input_raw), smart_forward_gpu(kernel_raw), conv);
         } else {
             cpp_unreachable("Invalid conv implementation selection");

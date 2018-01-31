@@ -176,29 +176,29 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
         constexpr_select auto impl = select_impl<C>();
 
         if constexpr (Flipped){
-            if /*constexpr_select*/ (impl == etl::conv_multi_impl::VEC){
+            if constexpr_select (impl == etl::conv_multi_impl::VEC){
                 impl::vec::conv2_full_multi_flipped(smart_forward(input), smart_forward(kernel), conv);
-            } else if /*constexpr_select*/ (impl == etl::conv_multi_impl::STD){
+            } else if constexpr_select (impl == etl::conv_multi_impl::STD){
                 impl::standard::conv2_full_multi_flipped(smart_forward(input), smart_forward(kernel), conv);
-            } else if /*constexpr_select*/ (impl == etl::conv_multi_impl::FFT_STD) {
+            } else if constexpr_select (impl == etl::conv_multi_impl::FFT_STD) {
                 impl::standard::conv2_full_multi_flipped_fft(smart_forward(input), smart_forward(kernel), conv);
-            } else if /*constexpr_select*/ (impl == etl::conv_multi_impl::FFT_MKL) {
+            } else if constexpr_select (impl == etl::conv_multi_impl::FFT_MKL) {
                 impl::blas::conv2_full_multi_flipped(smart_forward(input), smart_forward(kernel), conv);
-            } else if /*constexpr_select*/ (impl == etl::conv_multi_impl::FFT_CUFFT) {
+            } else if constexpr_select (impl == etl::conv_multi_impl::FFT_CUFFT) {
                 impl::cufft::conv2_full_multi_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
             } else {
                 cpp_unreachable("Invalid conv implementation selection");
             }
         } else {
-            if /*constexpr_select*/ (impl == etl::conv_multi_impl::VEC) {
+            if constexpr_select (impl == etl::conv_multi_impl::VEC) {
                 impl::vec::conv2_full_multi(smart_forward(input), smart_forward(kernel), conv);
-            } else if /*constexpr_select*/ (impl == etl::conv_multi_impl::STD) {
+            } else if constexpr_select (impl == etl::conv_multi_impl::STD) {
                 impl::standard::conv2_full_multi(smart_forward(input), smart_forward(kernel), conv);
-            } else if /*constexpr_select*/ (impl == etl::conv_multi_impl::FFT_STD) {
+            } else if constexpr_select (impl == etl::conv_multi_impl::FFT_STD) {
                 impl::standard::conv2_full_multi_fft(smart_forward(input), smart_forward(kernel), conv);
-            } else if /*constexpr_select*/ (impl == etl::conv_multi_impl::FFT_MKL) {
+            } else if constexpr_select (impl == etl::conv_multi_impl::FFT_MKL) {
                 impl::blas::conv2_full_multi(smart_forward(input), smart_forward(kernel), conv);
-            } else if /*constexpr_select*/ (impl == etl::conv_multi_impl::FFT_CUFFT) {
+            } else if constexpr_select (impl == etl::conv_multi_impl::FFT_CUFFT) {
                 impl::cufft::conv2_full_multi(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
             } else {
                 cpp_unreachable("Invalid conv implementation selection");

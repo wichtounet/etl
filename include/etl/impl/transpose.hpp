@@ -196,11 +196,11 @@ struct inplace_square_transpose {
     static void apply(C&& c) {
         constexpr_select const auto impl = select_in_square_transpose_impl<C>();
 
-        if /*constexpr_select*/ (impl == transpose_impl::MKL) {
+        if constexpr_select (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_square_transpose(c);
-        } else if /*constexpr_select*/ (impl == transpose_impl::CUBLAS) {
+        } else if constexpr_select (impl == transpose_impl::CUBLAS) {
             etl::impl::cublas::inplace_square_transpose(c);
-        } else if /*constexpr_select*/ (impl == transpose_impl::STD) {
+        } else if constexpr_select (impl == transpose_impl::STD) {
             etl::impl::standard::inplace_square_transpose(c);
         } else {
             cpp_unreachable("Invalid transpose_impl selection");
@@ -220,11 +220,11 @@ struct inplace_rectangular_transpose {
     static void apply(C&& c) {
         constexpr_select const auto impl = select_normal_transpose_impl<C, C>();
 
-        if /*constexpr_select*/ (impl == transpose_impl::MKL) {
+        if constexpr_select (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_rectangular_transpose(c);
-        } else if /*constexpr_select*/ (impl == transpose_impl::CUBLAS) {
+        } else if constexpr_select (impl == transpose_impl::CUBLAS) {
             etl::impl::cublas::inplace_rectangular_transpose(c);
-        } else if /*constexpr_select*/ (impl == transpose_impl::STD) {
+        } else if constexpr_select (impl == transpose_impl::STD) {
             etl::impl::standard::inplace_rectangular_transpose(c);
         } else {
             cpp_unreachable("Invalid transpose_impl selection");
@@ -245,7 +245,7 @@ struct transpose {
     static void apply(A&& a, C&& c) {
         constexpr_select const auto impl = select_normal_transpose_impl<A, C>();
 
-        if /*constexpr_select*/ (impl == transpose_impl::CUBLAS) {
+        if constexpr_select (impl == transpose_impl::CUBLAS) {
             c.ensure_gpu_allocated();
 
             decltype(auto) aa = smart_forward_gpu(a);
@@ -276,9 +276,9 @@ struct transpose {
                 return;
             }
 
-            if /*constexpr_select*/ (impl == transpose_impl::MKL) {
+            if constexpr_select (impl == transpose_impl::MKL) {
                 etl::impl::blas::transpose(aa, c);
-            } else if /*constexpr_select*/ (impl == transpose_impl::STD) {
+            } else if constexpr_select (impl == transpose_impl::STD) {
                 etl::impl::standard::transpose(aa, c);
             } else {
                 cpp_unreachable("Invalid transpose_impl selection");

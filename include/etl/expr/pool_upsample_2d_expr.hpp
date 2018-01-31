@@ -178,13 +178,13 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
         constexpr_select auto impl = select_impl<R>();
 
         if constexpr (Max) {
-            if /*constexpr_select*/ (impl == pool_impl::STD) {
+            if constexpr_select (impl == pool_impl::STD) {
                 impl::standard::max_pool_upsample_2d::apply<C1, C2>(
                     smart_forward(a),
                     smart_forward(b),
                     smart_forward(c),
                     result);
-            } else if /*constexpr_select*/ (impl == pool_impl::CUDNN) {
+            } else if constexpr_select (impl == pool_impl::CUDNN) {
                 impl::cudnn::max_pool_upsample_2d::apply(
                     smart_forward_gpu(a),
                     smart_forward_gpu(b),
@@ -195,13 +195,13 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
                 cpp_unreachable("Invalid pool implementation");
             }
         } else {
-            if /*constexpr_select*/ (impl == pool_impl::STD) {
+            if constexpr_select (impl == pool_impl::STD) {
                 impl::standard::avg_pool_upsample_2d::apply<C1, C2>(
                     smart_forward(a),
                     smart_forward(b),
                     smart_forward(c),
                     result);
-            } else if /*constexpr_select*/ (impl == pool_impl::CUDNN) {
+            } else if constexpr_select (impl == pool_impl::CUDNN) {
                 impl::cudnn::avg_pool_upsample_2d::apply(
                     smart_forward_gpu(a),
                     smart_forward_gpu(b),

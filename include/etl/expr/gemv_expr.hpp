@@ -178,13 +178,13 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gemv_impl<C>();
 
-        if /*constexpr_select*/ (impl == gemm_impl::STD) {
+        if constexpr_select (impl == gemm_impl::STD) {
             etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::BLAS) {
+        } else if constexpr_select (impl == gemm_impl::BLAS) {
             etl::impl::blas::gemv_t(smart_forward(a.a()), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::VEC) {
+        } else if constexpr_select (impl == gemm_impl::VEC) {
             etl::impl::vec::gemv_t(smart_forward(a.a()), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::CUBLAS) {
+        } else if constexpr_select (impl == gemm_impl::CUBLAS) {
             etl::impl::cublas::gemv_t(smart_forward_gpu(a.a()), smart_forward_gpu(b), c);
         } else {
             cpp_unreachable("Invalid selection for gevm");
@@ -201,13 +201,13 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gemv_impl<C>();
 
-        if /*constexpr_select*/ (impl == gemm_impl::STD) {
+        if constexpr_select (impl == gemm_impl::STD) {
             etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::BLAS) {
+        } else if constexpr_select (impl == gemm_impl::BLAS) {
             etl::impl::blas::gemv(smart_forward(a), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::VEC) {
+        } else if constexpr_select (impl == gemm_impl::VEC) {
             etl::impl::vec::gemv(smart_forward(a), smart_forward(b), c);
-        } else if /*constexpr_select*/ (impl == gemm_impl::CUBLAS) {
+        } else if constexpr_select (impl == gemm_impl::CUBLAS) {
             etl::impl::cublas::gemv(smart_forward_gpu(a), smart_forward_gpu(b), c);
         } else {
             cpp_unreachable("Invalid selection for gevm");
