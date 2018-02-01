@@ -148,107 +148,100 @@ void dgescal(size_t m, size_t n, T alpha, T* X, size_t incRowX, size_t incColX) 
 }
 
 /*!
- * \brief General pico kernel for BLIS
+ * \brief Optimized pico kernel for BLIS, for avx and float
  */
-template <typename V, typename T, cpp_disable_iff(std::is_same<float, T>::value && vector_mode == vector_mode_t::AVX)>
-void gemm_pico_kernel(size_t kc, const T* A, const T* B, T* AB) {
+template <typename V, typename T>
+void gemm_pico_kernel(size_t kc, const T* ETL_RESTRICT A, const T* ETL_RESTRICT B, T* ETL_RESTRICT AB) {
     static constexpr const size_t MR = gemm_config<T>::MR;
     static constexpr const size_t NR = gemm_config<T>::NR;
 
-    for (size_t l = 0; l < MR * NR; ++l) {
-        AB[l] = 0;
-    }
+    if constexpr (std::is_same<float, T>::value && vector_mode == vector_mode_t::AVX) {
+        using vec_type = V;
 
-    for (size_t l = 0; l < kc; ++l) {
-        for (size_t j = 0; j < NR; ++j) {
-            for (size_t i = 0; i < MR; ++i) {
-                AB[j * MR + i] += A[l * MR + i] * B[l * NR + j];
+        static constexpr size_t vec_size = vec_type::template traits<T>::size;
+
+        static_assert(NR == 4, "Invalid algorithm selection");
+        static_assert(vec_size == MR, "Invalid algorith selection");
+
+        auto AB1 = vec_type::template zero<T>();
+        auto AB2 = vec_type::template zero<T>();
+        auto AB3 = vec_type::template zero<T>();
+        auto AB4 = vec_type::template zero<T>();
+
+        size_t l = 0;
+
+        for (; l + 3 < kc; l += 4) {
+            auto A1 = vec_type::loadu(A + (l + 0) * MR);
+
+            AB1 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 0]), AB1);
+            AB2 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 1]), AB2);
+            AB3 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 2]), AB3);
+            AB4 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 3]), AB4);
+
+            auto A2 = vec_type::loadu(A + (l + 1) * MR);
+
+            AB1 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 0]), AB1);
+            AB2 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 1]), AB2);
+            AB3 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 2]), AB3);
+            AB4 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 3]), AB4);
+
+            auto A3 = vec_type::loadu(A + (l + 2) * MR);
+
+            AB1 = vec_type::fmadd(A3, vec_type::set(B[(l + 2) * NR + 0]), AB1);
+            AB2 = vec_type::fmadd(A3, vec_type::set(B[(l + 2) * NR + 1]), AB2);
+            AB3 = vec_type::fmadd(A3, vec_type::set(B[(l + 2) * NR + 2]), AB3);
+            AB4 = vec_type::fmadd(A3, vec_type::set(B[(l + 2) * NR + 3]), AB4);
+
+            auto A4 = vec_type::loadu(A + (l + 3) * MR);
+
+            AB1 = vec_type::fmadd(A4, vec_type::set(B[(l + 3) * NR + 0]), AB1);
+            AB2 = vec_type::fmadd(A4, vec_type::set(B[(l + 3) * NR + 1]), AB2);
+            AB3 = vec_type::fmadd(A4, vec_type::set(B[(l + 3) * NR + 2]), AB3);
+            AB4 = vec_type::fmadd(A4, vec_type::set(B[(l + 3) * NR + 3]), AB4);
+        }
+
+        for (; l + 1 < kc; l += 2) {
+            auto A1 = vec_type::loadu(A + (l + 0) * MR);
+
+            AB1 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 0]), AB1);
+            AB2 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 1]), AB2);
+            AB3 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 2]), AB3);
+            AB4 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 3]), AB4);
+
+            auto A2 = vec_type::loadu(A + (l + 1) * MR);
+
+            AB1 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 0]), AB1);
+            AB2 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 1]), AB2);
+            AB3 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 2]), AB3);
+            AB4 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 3]), AB4);
+        }
+
+        if (l < kc) {
+            auto A1 = vec_type::loadu(A + (l + 0) * MR);
+
+            AB1 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 0]), AB1);
+            AB2 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 1]), AB2);
+            AB3 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 2]), AB3);
+            AB4 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 3]), AB4);
+        }
+
+        vec_type::storeu(AB + 0 * MR, AB1);
+        vec_type::storeu(AB + 1 * MR, AB2);
+        vec_type::storeu(AB + 2 * MR, AB3);
+        vec_type::storeu(AB + 3 * MR, AB4);
+    } else {
+        for (size_t l = 0; l < MR * NR; ++l) {
+            AB[l] = 0;
+        }
+
+        for (size_t l = 0; l < kc; ++l) {
+            for (size_t j = 0; j < NR; ++j) {
+                for (size_t i = 0; i < MR; ++i) {
+                    AB[j * MR + i] += A[l * MR + i] * B[l * NR + j];
+                }
             }
         }
     }
-}
-
-/*!
- * \brief Optimized pico kernel for BLIS, for avx and float
- */
-template <typename V, typename T, cpp_enable_iff(std::is_same<float, T>::value && vector_mode == vector_mode_t::AVX)>
-void gemm_pico_kernel(size_t kc, const T* ETL_RESTRICT A, const T* ETL_RESTRICT B, T* ETL_RESTRICT AB) {
-    using vec_type = V;
-
-    static constexpr size_t vec_size = vec_type::template traits<T>::size;
-
-    static constexpr const size_t MR = gemm_config<T>::MR;
-    static constexpr const size_t NR = gemm_config<T>::NR;
-
-    static_assert(NR == 4, "Invalid algorithm selection");
-    static_assert(vec_size == MR, "Invalid algorith selection");
-
-    auto AB1 = vec_type::template zero<T>();
-    auto AB2 = vec_type::template zero<T>();
-    auto AB3 = vec_type::template zero<T>();
-    auto AB4 = vec_type::template zero<T>();
-
-    size_t l = 0;
-
-    for (; l + 3 < kc; l += 4) {
-        auto A1 = vec_type::loadu(A + (l + 0) * MR);
-
-        AB1 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 0]), AB1);
-        AB2 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 1]), AB2);
-        AB3 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 2]), AB3);
-        AB4 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 3]), AB4);
-
-        auto A2 = vec_type::loadu(A + (l + 1) * MR);
-
-        AB1 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 0]), AB1);
-        AB2 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 1]), AB2);
-        AB3 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 2]), AB3);
-        AB4 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 3]), AB4);
-
-        auto A3 = vec_type::loadu(A + (l + 2) * MR);
-
-        AB1 = vec_type::fmadd(A3, vec_type::set(B[(l + 2) * NR + 0]), AB1);
-        AB2 = vec_type::fmadd(A3, vec_type::set(B[(l + 2) * NR + 1]), AB2);
-        AB3 = vec_type::fmadd(A3, vec_type::set(B[(l + 2) * NR + 2]), AB3);
-        AB4 = vec_type::fmadd(A3, vec_type::set(B[(l + 2) * NR + 3]), AB4);
-
-        auto A4 = vec_type::loadu(A + (l + 3) * MR);
-
-        AB1 = vec_type::fmadd(A4, vec_type::set(B[(l + 3) * NR + 0]), AB1);
-        AB2 = vec_type::fmadd(A4, vec_type::set(B[(l + 3) * NR + 1]), AB2);
-        AB3 = vec_type::fmadd(A4, vec_type::set(B[(l + 3) * NR + 2]), AB3);
-        AB4 = vec_type::fmadd(A4, vec_type::set(B[(l + 3) * NR + 3]), AB4);
-    }
-
-    for (; l + 1 < kc; l += 2) {
-        auto A1 = vec_type::loadu(A + (l + 0) * MR);
-
-        AB1 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 0]), AB1);
-        AB2 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 1]), AB2);
-        AB3 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 2]), AB3);
-        AB4 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 3]), AB4);
-
-        auto A2 = vec_type::loadu(A + (l + 1) * MR);
-
-        AB1 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 0]), AB1);
-        AB2 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 1]), AB2);
-        AB3 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 2]), AB3);
-        AB4 = vec_type::fmadd(A2, vec_type::set(B[(l + 1) * NR + 3]), AB4);
-    }
-
-    if (l < kc) {
-        auto A1 = vec_type::loadu(A + (l + 0) * MR);
-
-        AB1 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 0]), AB1);
-        AB2 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 1]), AB2);
-        AB3 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 2]), AB3);
-        AB4 = vec_type::fmadd(A1, vec_type::set(B[(l + 0) * NR + 3]), AB4);
-    }
-
-    vec_type::storeu(AB + 0 * MR, AB1);
-    vec_type::storeu(AB + 1 * MR, AB2);
-    vec_type::storeu(AB + 2 * MR, AB3);
-    vec_type::storeu(AB + 3 * MR, AB4);
 }
 
 /*!

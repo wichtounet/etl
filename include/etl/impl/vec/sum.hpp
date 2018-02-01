@@ -152,30 +152,30 @@ value_t<L> asum_impl(const L& lhs) {
  * \param lhs The lhs expression
  * \return the sum of the elements of lhs
  */
-template <typename L, cpp_enable_iff(vec_enabled && all_vectorizable<vector_mode, L>)>
-value_t<L> sum(const L& lhs) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+template <typename L>
+value_t<L> sum([[maybe_unused]] const L& lhs) {
+    if constexpr (vec_enabled && all_vectorizable<vector_mode, L>) {
+        using T = value_t<L>;
 
-    using T = value_t<L>;
+        T acc(0);
 
-    T acc(0);
+        auto acc_functor = [&acc](T value) { acc += value; };
 
-    auto acc_functor = [&acc](T value) {
-        acc += value;
-    };
+        auto batch_fun = [](auto& sub) {
+            // The default vectorization scheme should be sufficient
+            return sum_impl<default_vec>(sub);
+        };
 
-    auto batch_fun = [](auto& sub){
-        // The default vectorization scheme should be sufficient
-        return sum_impl<default_vec>(sub);
-    };
+        if (etl::size(lhs) < sum_parallel_threshold) {
+            return sum_impl<default_vec>(lhs);
+        } else {
+            engine_dispatch_1d_acc_slice(lhs, batch_fun, acc_functor, vec_sum_parallel_threshold);
+        }
 
-    if(etl::size(lhs) < sum_parallel_threshold){
-        return sum_impl<default_vec>(lhs);
+        return acc;
     } else {
-        engine_dispatch_1d_acc_slice(lhs, batch_fun, acc_functor, vec_sum_parallel_threshold);
+        cpp_unreachable("vec::sum called with invalid parameters");
     }
-
-    return acc;
 }
 
 /*!
@@ -183,48 +183,26 @@ value_t<L> sum(const L& lhs) {
  * \param lhs The lhs expression
  * \return the absolute sum of the elements of lhs
  */
-template <typename L, cpp_enable_iff(vec_enabled && all_vectorizable<vector_mode, L>)>
-value_t<L> asum(const L& lhs) {
-    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+template <typename L>
+value_t<L> asum([[maybe_unused]] const L& lhs) {
+    if constexpr (vec_enabled && all_vectorizable<vector_mode, L>) {
+        using T = value_t<L>;
 
-    using T = value_t<L>;
+        T acc(0);
 
-    T acc(0);
+        auto acc_functor = [&acc](T value) { acc += value; };
 
-    auto acc_functor = [&acc](T value) {
-        acc += value;
-    };
+        auto batch_fun = [](auto& sub) {
+            // The default vectorization scheme should be sufficient
+            return asum_impl<default_vec>(sub);
+        };
 
-    auto batch_fun = [](auto& sub){
-        // The default vectorization scheme should be sufficient
-        return asum_impl<default_vec>(sub);
-    };
+        engine_dispatch_1d_acc_slice(lhs, batch_fun, acc_functor, vec_sum_parallel_threshold);
 
-    engine_dispatch_1d_acc_slice(lhs, batch_fun, acc_functor, vec_sum_parallel_threshold);
-
-    return acc;
-}
-
-/*!
- * \brief Compute the sum of lhs
- * \param lhs The lhs expression
- * \return the sum of the elements of lhs
- */
-template <typename L, cpp_disable_iff(vec_enabled && all_vectorizable<vector_mode, L>)>
-value_t<L> sum(const L& lhs) {
-    cpp_unused(lhs);
-    cpp_unreachable("vec::sum called with invalid parameters");
-}
-
-/*!
- * \brief Compute the asum of lhs
- * \param lhs The lhs expression
- * \return the asum of the elements of lhs
- */
-template <typename L, cpp_disable_iff(vec_enabled && all_vectorizable<vector_mode, L>)>
-value_t<L> asum(const L& lhs) {
-    cpp_unused(lhs);
-    cpp_unreachable("vec::asum called with invalid parameters");
+        return acc;
+    } else {
+        cpp_unreachable("vec::sum called with invalid parameters");
+    }
 }
 
 } //end of namespace etl::impl::vec
