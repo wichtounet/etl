@@ -205,7 +205,7 @@ struct mat_cache_key_impl <M, false, 4> {
      * \return true if the key is equivalent with the given matrix
      */
     bool operator==(M& rhs){
-        return a == etl::dim<0>(rhs) && b == etl::dim<1>(rhs) && b == etl::dim<1>(rhs) && b == etl::dim<1>(rhs);
+        return a == etl::dim<0>(rhs) && b == etl::dim<1>(rhs) && c == etl::dim<2>(rhs) && d == etl::dim<3>(rhs);
     }
 };
 
