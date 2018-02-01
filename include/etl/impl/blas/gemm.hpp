@@ -32,10 +32,7 @@ namespace etl::impl::blas {
  * \param C The type of the output matrix
  */
 template <typename I, typename K, typename C>
-constexpr bool blas_conv2_possible =
-                cblas_enabled
-            &&  all_homogeneous<I, K, C>
-            &&  all_row_major<I, K, C>;
+constexpr bool blas_conv2_possible = cblas_enabled&& all_homogeneous<I, K, C>&& all_row_major<I, K, C>;
 
 #ifdef ETL_BLAS_MODE
 
@@ -58,48 +55,120 @@ constexpr bool blas_conv2_possible =
  * \param C The C matrix
  * \param ldc The leading dimension of C
  */
-inline void cblas_gemm(CBLAS_LAYOUT Layout, CBLAS_TRANSPOSE TransA, CBLAS_TRANSPOSE TransB, size_t M, size_t N, size_t K,
-        const float alpha, const float* A, size_t lda, const float* B, size_t ldb, const float beta, float* C, size_t ldc) {
+inline void cblas_gemm(CBLAS_LAYOUT Layout,
+                       CBLAS_TRANSPOSE TransA,
+                       CBLAS_TRANSPOSE TransB,
+                       size_t M,
+                       size_t N,
+                       size_t K,
+                       const float alpha,
+                       const float* A,
+                       size_t lda,
+                       const float* B,
+                       size_t ldb,
+                       const float beta,
+                       float* C,
+                       size_t ldc) {
     cblas_sgemm(Layout, TransA, TransB, M, N, K, alpha, A, lda, B, ldb, beta, C, ldc);
 }
 
 /*!
  * \copydoc cblas_gemm
  */
-inline void cblas_gemm(CBLAS_LAYOUT Layout, CBLAS_TRANSPOSE TransA, CBLAS_TRANSPOSE TransB, size_t M, size_t N, size_t K,
-        const double alpha, const double* A, size_t lda, const double* B, size_t ldb, const double beta, double* C, size_t ldc) {
+inline void cblas_gemm(CBLAS_LAYOUT Layout,
+                       CBLAS_TRANSPOSE TransA,
+                       CBLAS_TRANSPOSE TransB,
+                       size_t M,
+                       size_t N,
+                       size_t K,
+                       const double alpha,
+                       const double* A,
+                       size_t lda,
+                       const double* B,
+                       size_t ldb,
+                       const double beta,
+                       double* C,
+                       size_t ldc) {
     cblas_dgemm(Layout, TransA, TransB, M, N, K, alpha, A, lda, B, ldb, beta, C, ldc);
 }
 
 /*!
  * \copydoc cblas_gemm
  */
-inline void cblas_gemm(CBLAS_LAYOUT Layout, CBLAS_TRANSPOSE TransA, CBLAS_TRANSPOSE TransB, size_t M, size_t N, size_t K,
-        const etl::complex<float> alpha, const etl::complex<float>* A, size_t lda, const etl::complex<float>* B, size_t ldb, const etl::complex<float> beta, etl::complex<float>* C, size_t ldc) {
+inline void cblas_gemm(CBLAS_LAYOUT Layout,
+                       CBLAS_TRANSPOSE TransA,
+                       CBLAS_TRANSPOSE TransB,
+                       size_t M,
+                       size_t N,
+                       size_t K,
+                       const etl::complex<float> alpha,
+                       const etl::complex<float>* A,
+                       size_t lda,
+                       const etl::complex<float>* B,
+                       size_t ldb,
+                       const etl::complex<float> beta,
+                       etl::complex<float>* C,
+                       size_t ldc) {
     cblas_cgemm(Layout, TransA, TransB, M, N, K, &alpha, A, lda, B, ldb, &beta, C, ldc);
 }
 
 /*!
  * \copydoc cblas_gemm
  */
-inline void cblas_gemm(CBLAS_LAYOUT Layout, CBLAS_TRANSPOSE TransA, CBLAS_TRANSPOSE TransB, size_t M, size_t N, size_t K,
-        const etl::complex<double> alpha, const etl::complex<double>* A, size_t lda, const etl::complex<double>* B, size_t ldb, const etl::complex<double> beta, etl::complex<double>* C, size_t ldc) {
+inline void cblas_gemm(CBLAS_LAYOUT Layout,
+                       CBLAS_TRANSPOSE TransA,
+                       CBLAS_TRANSPOSE TransB,
+                       size_t M,
+                       size_t N,
+                       size_t K,
+                       const etl::complex<double> alpha,
+                       const etl::complex<double>* A,
+                       size_t lda,
+                       const etl::complex<double>* B,
+                       size_t ldb,
+                       const etl::complex<double> beta,
+                       etl::complex<double>* C,
+                       size_t ldc) {
     cblas_zgemm(Layout, TransA, TransB, M, N, K, &alpha, A, lda, B, ldb, &beta, C, ldc);
 }
 
 /*!
  * \copydoc cblas_gemm
  */
-inline void cblas_gemm(CBLAS_LAYOUT Layout, CBLAS_TRANSPOSE TransA, CBLAS_TRANSPOSE TransB, size_t M, size_t N, size_t K,
-        const std::complex<float> alpha, const std::complex<float>* A, size_t lda, const std::complex<float>* B, size_t ldb, const std::complex<float> beta, std::complex<float>* C, size_t ldc) {
+inline void cblas_gemm(CBLAS_LAYOUT Layout,
+                       CBLAS_TRANSPOSE TransA,
+                       CBLAS_TRANSPOSE TransB,
+                       size_t M,
+                       size_t N,
+                       size_t K,
+                       const std::complex<float> alpha,
+                       const std::complex<float>* A,
+                       size_t lda,
+                       const std::complex<float>* B,
+                       size_t ldb,
+                       const std::complex<float> beta,
+                       std::complex<float>* C,
+                       size_t ldc) {
     cblas_cgemm(Layout, TransA, TransB, M, N, K, &alpha, A, lda, B, ldb, &beta, C, ldc);
 }
 
 /*!
  * \copydoc cblas_gemm
  */
-inline void cblas_gemm(CBLAS_LAYOUT Layout, CBLAS_TRANSPOSE TransA, CBLAS_TRANSPOSE TransB, size_t M, size_t N, size_t K,
-        const std::complex<double> alpha, const std::complex<double>* A, size_t lda, const std::complex<double>* B, size_t ldb, const std::complex<double> beta, std::complex<double>* C, size_t ldc) {
+inline void cblas_gemm(CBLAS_LAYOUT Layout,
+                       CBLAS_TRANSPOSE TransA,
+                       CBLAS_TRANSPOSE TransB,
+                       size_t M,
+                       size_t N,
+                       size_t K,
+                       const std::complex<double> alpha,
+                       const std::complex<double>* A,
+                       size_t lda,
+                       const std::complex<double>* B,
+                       size_t ldb,
+                       const std::complex<double> beta,
+                       std::complex<double>* C,
+                       size_t ldc) {
     cblas_zgemm(Layout, TransA, TransB, M, N, K, &alpha, A, lda, B, ldb, &beta, C, ldc);
 }
 
@@ -120,48 +189,108 @@ inline void cblas_gemm(CBLAS_LAYOUT Layout, CBLAS_TRANSPOSE TransA, CBLAS_TRANSP
  * \param Y The Y vector
  * \param incY The stride of Y
  */
-inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, size_t M, size_t N, const float alpha, const float *A, size_t lda,
-        const float *X, size_t incX, const float beta, float *Y, size_t incY){
+inline void cblas_gemv(const CBLAS_LAYOUT Layout,
+                       const CBLAS_TRANSPOSE TransA,
+                       size_t M,
+                       size_t N,
+                       const float alpha,
+                       const float* A,
+                       size_t lda,
+                       const float* X,
+                       size_t incX,
+                       const float beta,
+                       float* Y,
+                       size_t incY) {
     cblas_sgemv(Layout, TransA, M, N, alpha, A, lda, X, incX, beta, Y, incY);
 }
 
 /*!
  * \copydoc cblas_gemv
  */
-inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, size_t M, size_t N, const double alpha, const double *A, size_t lda,
-        const double *X, size_t incX, const double beta, double *Y, size_t incY){
+inline void cblas_gemv(const CBLAS_LAYOUT Layout,
+                       const CBLAS_TRANSPOSE TransA,
+                       size_t M,
+                       size_t N,
+                       const double alpha,
+                       const double* A,
+                       size_t lda,
+                       const double* X,
+                       size_t incX,
+                       const double beta,
+                       double* Y,
+                       size_t incY) {
     cblas_dgemv(Layout, TransA, M, N, alpha, A, lda, X, incX, beta, Y, incY);
 }
 
 /*!
  * \copydoc cblas_gemv
  */
-inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, size_t M, size_t N, const std::complex<float> alpha, const std::complex<float> *A, size_t lda,
-        const std::complex<float> *X, size_t incX, const std::complex<float> beta, std::complex<float> *Y, size_t incY){
+inline void cblas_gemv(const CBLAS_LAYOUT Layout,
+                       const CBLAS_TRANSPOSE TransA,
+                       size_t M,
+                       size_t N,
+                       const std::complex<float> alpha,
+                       const std::complex<float>* A,
+                       size_t lda,
+                       const std::complex<float>* X,
+                       size_t incX,
+                       const std::complex<float> beta,
+                       std::complex<float>* Y,
+                       size_t incY) {
     cblas_cgemv(Layout, TransA, M, N, &alpha, A, lda, X, incX, &beta, Y, incY);
 }
 
 /*!
  * \copydoc cblas_gemv
  */
-inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, size_t M, size_t N, const std::complex<double> alpha, const std::complex<double> *A, size_t lda,
-        const std::complex<double> *X, size_t incX, const std::complex<double> beta, std::complex<double> *Y, size_t incY){
+inline void cblas_gemv(const CBLAS_LAYOUT Layout,
+                       const CBLAS_TRANSPOSE TransA,
+                       size_t M,
+                       size_t N,
+                       const std::complex<double> alpha,
+                       const std::complex<double>* A,
+                       size_t lda,
+                       const std::complex<double>* X,
+                       size_t incX,
+                       const std::complex<double> beta,
+                       std::complex<double>* Y,
+                       size_t incY) {
     cblas_zgemv(Layout, TransA, M, N, &alpha, A, lda, X, incX, &beta, Y, incY);
 }
 
 /*!
  * \copydoc cblas_gemv
  */
-inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, size_t M, size_t N, const etl::complex<float> alpha, const etl::complex<float> *A, size_t lda,
-        const etl::complex<float> *X, size_t incX, const etl::complex<float> beta, etl::complex<float> *Y, size_t incY){
+inline void cblas_gemv(const CBLAS_LAYOUT Layout,
+                       const CBLAS_TRANSPOSE TransA,
+                       size_t M,
+                       size_t N,
+                       const etl::complex<float> alpha,
+                       const etl::complex<float>* A,
+                       size_t lda,
+                       const etl::complex<float>* X,
+                       size_t incX,
+                       const etl::complex<float> beta,
+                       etl::complex<float>* Y,
+                       size_t incY) {
     cblas_cgemv(Layout, TransA, M, N, &alpha, A, lda, X, incX, &beta, Y, incY);
 }
 
 /*!
  * \copydoc cblas_gemv
  */
-inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, size_t M, size_t N, const etl::complex<double> alpha, const etl::complex<double> *A, size_t lda,
-        const etl::complex<double> *X, size_t incX, const etl::complex<double> beta, etl::complex<double> *Y, size_t incY){
+inline void cblas_gemv(const CBLAS_LAYOUT Layout,
+                       const CBLAS_TRANSPOSE TransA,
+                       size_t M,
+                       size_t N,
+                       const etl::complex<double> alpha,
+                       const etl::complex<double>* A,
+                       size_t lda,
+                       const etl::complex<double>* X,
+                       size_t incX,
+                       const etl::complex<double> beta,
+                       etl::complex<double>* Y,
+                       size_t incY) {
     cblas_zgemv(Layout, TransA, M, N, &alpha, A, lda, X, incX, &beta, Y, incY);
 }
 
@@ -175,7 +304,7 @@ inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, 
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemm(A&& a, B&& b, C&& c) {
+void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     if constexpr (all_homogeneous<A, B, C>) {
         using T = value_t<A>;
 
@@ -188,75 +317,26 @@ void gemm(A&& a, B&& b, C&& c) {
         if (all_row_major<A, B, C> || all_column_major<A, B, C>) {
             constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-            cblas_gemm(
-                row_major ? CblasRowMajor : CblasColMajor,
-                CblasNoTrans, CblasNoTrans,
-                etl::rows(a), etl::columns(b), etl::columns(a),
-                alpha,
-                a.memory_start(), major_stride(a),
-                b.memory_start(), major_stride(b),
-                beta,
-                c.memory_start(), major_stride(c));
+            cblas_gemm(row_major ? CblasRowMajor : CblasColMajor, CblasNoTrans, CblasNoTrans, etl::rows(a), etl::columns(b), etl::columns(a), alpha,
+                       a.memory_start(), major_stride(a), b.memory_start(), major_stride(b), beta, c.memory_start(), major_stride(c));
         } else if (all_row_major<B, C> && is_column_major<A>) {
-            cblas_gemm(
-                CblasRowMajor,
-                CblasTrans, CblasNoTrans,
-                etl::rows(a), etl::columns(b), etl::columns(a),
-                alpha,
-                a.memory_start(), major_stride(a),
-                b.memory_start(), major_stride(b),
-                beta,
-                c.memory_start(), major_stride(c));
+            cblas_gemm(CblasRowMajor, CblasTrans, CblasNoTrans, etl::rows(a), etl::columns(b), etl::columns(a), alpha, a.memory_start(), major_stride(a),
+                       b.memory_start(), major_stride(b), beta, c.memory_start(), major_stride(c));
         } else if (all_row_major<A, C> && is_column_major<B>) {
-            cblas_gemm(
-                CblasRowMajor,
-                CblasNoTrans, CblasTrans,
-                etl::rows(a), etl::columns(b), etl::columns(a),
-                alpha,
-                a.memory_start(), major_stride(a),
-                b.memory_start(), major_stride(b),
-                beta,
-                c.memory_start(), major_stride(c));
+            cblas_gemm(CblasRowMajor, CblasNoTrans, CblasTrans, etl::rows(a), etl::columns(b), etl::columns(a), alpha, a.memory_start(), major_stride(a),
+                       b.memory_start(), major_stride(b), beta, c.memory_start(), major_stride(c));
         } else if (is_row_major<C> && all_column_major<A, B>) {
-            cblas_gemm(
-                CblasRowMajor,
-                CblasTrans, CblasTrans,
-                etl::rows(a), etl::columns(b), etl::columns(a),
-                alpha,
-                a.memory_start(), major_stride(a),
-                b.memory_start(), major_stride(b),
-                beta,
-                c.memory_start(), major_stride(c));
+            cblas_gemm(CblasRowMajor, CblasTrans, CblasTrans, etl::rows(a), etl::columns(b), etl::columns(a), alpha, a.memory_start(), major_stride(a),
+                       b.memory_start(), major_stride(b), beta, c.memory_start(), major_stride(c));
         } else if (is_row_major<A> && all_column_major<B, C>) {
-            cblas_gemm(
-                CblasColMajor,
-                CblasTrans, CblasNoTrans,
-                etl::rows(a), etl::columns(b), etl::columns(a),
-                alpha,
-                a.memory_start(), major_stride(a),
-                b.memory_start(), major_stride(b),
-                beta,
-                c.memory_start(), major_stride(c));
+            cblas_gemm(CblasColMajor, CblasTrans, CblasNoTrans, etl::rows(a), etl::columns(b), etl::columns(a), alpha, a.memory_start(), major_stride(a),
+                       b.memory_start(), major_stride(b), beta, c.memory_start(), major_stride(c));
         } else if (is_row_major<B> && all_column_major<A, C>) {
-            cblas_gemm(
-                CblasColMajor,
-                CblasNoTrans, CblasTrans,
-                etl::rows(a), etl::columns(b), etl::columns(a),
-                alpha,
-                a.memory_start(), major_stride(a),
-                b.memory_start(), major_stride(b),
-                beta,
-                c.memory_start(), major_stride(c));
+            cblas_gemm(CblasColMajor, CblasNoTrans, CblasTrans, etl::rows(a), etl::columns(b), etl::columns(a), alpha, a.memory_start(), major_stride(a),
+                       b.memory_start(), major_stride(b), beta, c.memory_start(), major_stride(c));
         } else if (all_row_major<A, B> && is_column_major<C>) {
-            cblas_gemm(
-                CblasColMajor,
-                CblasTrans, CblasTrans,
-                etl::rows(a), etl::columns(b), etl::columns(a),
-                alpha,
-                a.memory_start(), major_stride(a),
-                b.memory_start(), major_stride(b),
-                beta,
-                c.memory_start(), major_stride(c));
+            cblas_gemm(CblasColMajor, CblasTrans, CblasTrans, etl::rows(a), etl::columns(b), etl::columns(a), alpha, a.memory_start(), major_stride(a),
+                       b.memory_start(), major_stride(b), beta, c.memory_start(), major_stride(c));
         }
 
         c.invalidate_gpu();
@@ -272,7 +352,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemm_nt(A&& a, B&& b, C&& c) {
+void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     if constexpr (all_homogeneous<A, B, C>) {
         using T = value_t<A>;
 
@@ -284,15 +364,8 @@ void gemm_nt(A&& a, B&& b, C&& c) {
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
 
-        cblas_gemm(
-            row_major ? CblasRowMajor : CblasColMajor,
-            CblasNoTrans, CblasTrans,
-            etl::rows(a), etl::rows(b), etl::columns(a),
-            alpha,
-            a.memory_start(), major_stride(a),
-            b.memory_start(), major_stride(b),
-            beta,
-            c.memory_start(), major_stride(c));
+        cblas_gemm(row_major ? CblasRowMajor : CblasColMajor, CblasNoTrans, CblasTrans, etl::rows(a), etl::rows(b), etl::columns(a), alpha, a.memory_start(),
+                   major_stride(a), b.memory_start(), major_stride(b), beta, c.memory_start(), major_stride(c));
 
         c.invalidate_gpu();
     } else {
@@ -307,7 +380,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemm_tn(A&& a, B&& b, C&& c) {
+void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     if constexpr (all_homogeneous<A, B, C>) {
         using T = value_t<A>;
 
@@ -319,15 +392,8 @@ void gemm_tn(A&& a, B&& b, C&& c) {
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
 
-        cblas_gemm(
-            row_major ? CblasRowMajor : CblasColMajor,
-            CblasTrans, CblasNoTrans,
-            etl::columns(a), etl::columns(b), etl::rows(a),
-            alpha,
-            a.memory_start(), major_stride(a),
-            b.memory_start(), major_stride(b),
-            beta,
-            c.memory_start(), major_stride(c));
+        cblas_gemm(row_major ? CblasRowMajor : CblasColMajor, CblasTrans, CblasNoTrans, etl::columns(a), etl::columns(b), etl::rows(a), alpha, a.memory_start(),
+                   major_stride(a), b.memory_start(), major_stride(b), beta, c.memory_start(), major_stride(c));
 
         c.invalidate_gpu();
     } else {
@@ -342,7 +408,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemm_tt(A&& a, B&& b, C&& c) {
+void gemm_tt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     if constexpr (all_homogeneous<A, B, C>) {
         using T = value_t<A>;
 
@@ -354,15 +420,8 @@ void gemm_tt(A&& a, B&& b, C&& c) {
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
 
-        cblas_gemm(
-            row_major ? CblasRowMajor : CblasColMajor,
-            CblasTrans, CblasTrans,
-            etl::columns(a), etl::rows(b), etl::rows(a),
-            alpha,
-            a.memory_start(), major_stride(a),
-            b.memory_start(), major_stride(b),
-            beta,
-            c.memory_start(), major_stride(c));
+        cblas_gemm(row_major ? CblasRowMajor : CblasColMajor, CblasTrans, CblasTrans, etl::columns(a), etl::rows(b), etl::rows(a), alpha, a.memory_start(),
+                   major_stride(a), b.memory_start(), major_stride(b), beta, c.memory_start(), major_stride(c));
 
         c.invalidate_gpu();
     } else {
@@ -377,7 +436,7 @@ void gemm_tt(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemv(A&& a, B&& b, C&& c) {
+void gemv([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     if constexpr (all_homogeneous<A, B, C>) {
         cpp_assert(a.memory_start(), "Invalid memory for blas::gemv");
         cpp_assert(b.memory_start(), "Invalid memory for blas::gemv");
@@ -393,15 +452,8 @@ void gemv(A&& a, B&& b, C&& c) {
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
 
-        cblas_gemv(
-            row_major ? CblasRowMajor : CblasColMajor,
-            CblasNoTrans,
-            etl::rows(a), etl::columns(a),
-            alpha,
-            a.memory_start(), major_stride(a),
-            b.memory_start(), 1,
-            beta,
-            c.memory_start(), 1);
+        cblas_gemv(row_major ? CblasRowMajor : CblasColMajor, CblasNoTrans, etl::rows(a), etl::columns(a), alpha, a.memory_start(), major_stride(a),
+                   b.memory_start(), 1, beta, c.memory_start(), 1);
 
         c.invalidate_gpu();
     } else {
@@ -416,7 +468,7 @@ void gemv(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemv_t(A&& a, B&& b, C&& c) {
+void gemv_t([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     if constexpr (all_homogeneous<A, B, C>) {
         using T = value_t<A>;
 
@@ -428,15 +480,8 @@ void gemv_t(A&& a, B&& b, C&& c) {
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
 
-        cblas_gemv(
-            row_major ? CblasRowMajor : CblasColMajor,
-            CblasTrans,
-            etl::rows(a), etl::columns(a),
-            alpha,
-            a.memory_start(), major_stride(a),
-            b.memory_start(), 1,
-            beta,
-            c.memory_start(), 1);
+        cblas_gemv(row_major ? CblasRowMajor : CblasColMajor, CblasTrans, etl::rows(a), etl::columns(a), alpha, a.memory_start(), major_stride(a),
+                   b.memory_start(), 1, beta, c.memory_start(), 1);
 
         c.invalidate_gpu();
     } else {
@@ -451,7 +496,7 @@ void gemv_t(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gevm(A&& a, B&& b, C&& c) {
+void gevm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     if constexpr (all_homogeneous<A, B, C>) {
         using T = value_t<A>;
 
@@ -463,15 +508,8 @@ void gevm(A&& a, B&& b, C&& c) {
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
 
-        cblas_gemv(
-            row_major ? CblasRowMajor : CblasColMajor,
-            CblasTrans,
-            etl::rows(b), etl::columns(b),
-            alpha,
-            b.memory_start(), major_stride(b),
-            a.memory_start(), 1,
-            beta,
-            c.memory_start(), 1);
+        cblas_gemv(row_major ? CblasRowMajor : CblasColMajor, CblasTrans, etl::rows(b), etl::columns(b), alpha, b.memory_start(), major_stride(b),
+                   a.memory_start(), 1, beta, c.memory_start(), 1);
 
         c.invalidate_gpu();
     } else {
@@ -486,7 +524,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gevm_t(A&& a, B&& b, C&& c) {
+void gevm_t([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     if constexpr (all_homogeneous<A, B, C>) {
         using T = value_t<A>;
 
@@ -498,15 +536,8 @@ void gevm_t(A&& a, B&& b, C&& c) {
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
 
-        cblas_gemv(
-            row_major ? CblasRowMajor : CblasColMajor,
-            CblasNoTrans,
-            etl::rows(b), etl::columns(b),
-            alpha,
-            b.memory_start(), major_stride(b),
-            a.memory_start(), 1,
-            beta,
-            c.memory_start(), 1);
+        cblas_gemv(row_major ? CblasRowMajor : CblasColMajor, CblasNoTrans, etl::rows(b), etl::columns(b), alpha, b.memory_start(), major_stride(b),
+                   a.memory_start(), 1, beta, c.memory_start(), 1);
 
         c.invalidate_gpu();
     } else {
@@ -520,81 +551,77 @@ void gevm_t(A&& a, B&& b, C&& c) {
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K_T, typename C, cpp_enable_iff(blas_conv2_possible<I, K_T, C>)>
-void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    using T = value_t<I>;
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi([[maybe_unused]] const I& input,
+                            [[maybe_unused]] const K_T& kernels,
+                            [[maybe_unused]] C&& conv,
+                            [[maybe_unused]] size_t s1,
+                            [[maybe_unused]] size_t s2,
+                            [[maybe_unused]] size_t p1,
+                            [[maybe_unused]] size_t p2) {
+    if constexpr (blas_conv2_possible<I, K_T, C>) {
+        using T = value_t<I>;
 
-    const size_t K  = etl::dim<0>(kernels);
-    const size_t i1 = etl::dim<0>(input);
-    const size_t i2 = etl::dim<1>(input);
-    const size_t k1 = etl::dim<1>(kernels);
-    const size_t k2 = etl::dim<2>(kernels);
+        const size_t K  = etl::dim<0>(kernels);
+        const size_t i1 = etl::dim<0>(input);
+        const size_t i2 = etl::dim<1>(input);
+        const size_t k1 = etl::dim<1>(kernels);
+        const size_t k2 = etl::dim<2>(kernels);
 
-    // unit-strided result dimensions
-    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
-    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
+        // unit-strided result dimensions
+        const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+        const size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
-    // real final dimensions
-    const size_t f1 = etl::dim<1>(conv);
-    const size_t f2 = etl::dim<2>(conv);
+        // real final dimensions
+        const size_t f1 = etl::dim<1>(conv);
+        const size_t f2 = etl::dim<2>(conv);
 
-    input.ensure_cpu_up_to_date();
-    kernels.ensure_cpu_up_to_date();
+        input.ensure_cpu_up_to_date();
+        kernels.ensure_cpu_up_to_date();
 
-    auto prepared_k = force_temporary(kernels);
+        auto prepared_k = force_temporary(kernels);
 
-    // Flip the kernels
-    prepared_k.deep_fflip_inplace();
+        // Flip the kernels
+        prepared_k.deep_fflip_inplace();
 
-    etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
+        etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
 
-    if(p1 || p2){
-        etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
-        input_padded = T(0);
+        if (p1 || p2) {
+            etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
+            input_padded = T(0);
 
-        impl::common::pad_2d_input(input, input_padded, p1, p2);
+            impl::common::pad_2d_input(input, input_padded, p1, p2);
 
-        im2col_direct_tr(input_col, input_padded, k1, k2);
-    } else {
-        im2col_direct_tr(input_col, input, k1, k2);
-    }
+            im2col_direct_tr(input_col, input_padded, k1, k2);
+        } else {
+            im2col_direct_tr(input_col, input, k1, k2);
+        }
 
-    if(s1 > 1 || s2 > 1){
-        etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
+        if (s1 > 1 || s2 > 1) {
+            etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
 
-        // tmp_result = prepared_k * input_col
-        cblas_gemm(
-            CblasRowMajor,
-            CblasNoTrans, CblasNoTrans,
-            K, c1 * c2, k1 * k2,
-            T(1.0),
-            prepared_k.memory_start(), k1 * k2,
-            input_col.memory_start(), c1 * c2,
-            T(0.0),
-            tmp_result.memory_start(), c1 * c2);
+            // tmp_result = prepared_k * input_col
+            cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, c1 * c2, k1 * k2, T(1.0), prepared_k.memory_start(), k1 * k2, input_col.memory_start(),
+                       c1 * c2, T(0.0), tmp_result.memory_start(), c1 * c2);
 
-        // Strided copy of the large result into the small result
-        for (size_t k = 0; k < K; ++k) {
-            for (size_t i = 0; i < f1; ++i) {
-                for (size_t j = 0; j < f2; ++j) {
-                    conv(k, i, j) = tmp_result(k, i * s1, j * s2);
+            // Strided copy of the large result into the small result
+            for (size_t k = 0; k < K; ++k) {
+                for (size_t i = 0; i < f1; ++i) {
+                    for (size_t j = 0; j < f2; ++j) {
+                        conv(k, i, j) = tmp_result(k, i * s1, j * s2);
+                    }
                 }
             }
+        } else {
+            // conv = prepared_k * input_col
+            cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, c1 * c2, k1 * k2, T(1.0), prepared_k.memory_start(), k1 * k2, input_col.memory_start(),
+                       c1 * c2, T(0.0), conv.memory_start(), f1 * f2);
         }
-    } else {
-        // conv = prepared_k * input_col
-        cblas_gemm(
-            CblasRowMajor,
-            CblasNoTrans, CblasNoTrans,
-            K, c1 * c2, k1 * k2,
-            T(1.0),
-            prepared_k.memory_start(), k1 * k2,
-            input_col.memory_start(), c1 * c2,
-            T(0.0),
-            conv.memory_start(), f1 * f2);
-    }
 
-    conv.invalidate_gpu();
+        conv.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid call to blas_conv2_valid_multi");
+    }
 }
 
 /*!
@@ -603,114 +630,72 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K_T, typename C, cpp_enable_iff(blas_conv2_possible<I, K_T, C>)>
-void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    using T = value_t<I>;
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_flipped([[maybe_unused]] I&& input,
+                                    [[maybe_unused]] K_T&& kernels,
+                                    [[maybe_unused]] C&& conv,
+                                    [[maybe_unused]] size_t s1,
+                                    [[maybe_unused]] size_t s2,
+                                    [[maybe_unused]] size_t p1,
+                                    [[maybe_unused]] size_t p2) {
+    if constexpr (blas_conv2_possible<I, K_T, C>) {
+        using T = value_t<I>;
 
-    const size_t K  = etl::dim<0>(kernels);
-    const size_t i1 = etl::dim<0>(input);
-    const size_t i2 = etl::dim<1>(input);
-    const size_t k1 = etl::dim<1>(kernels);
-    const size_t k2 = etl::dim<2>(kernels);
+        const size_t K  = etl::dim<0>(kernels);
+        const size_t i1 = etl::dim<0>(input);
+        const size_t i2 = etl::dim<1>(input);
+        const size_t k1 = etl::dim<1>(kernels);
+        const size_t k2 = etl::dim<2>(kernels);
 
-    // unit-strided result dimensions
-    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
-    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
+        // unit-strided result dimensions
+        const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+        const size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
-    // real final dimensions
-    const size_t f1 = etl::dim<1>(conv);
-    const size_t f2 = etl::dim<2>(conv);
+        // real final dimensions
+        const size_t f1 = etl::dim<1>(conv);
+        const size_t f2 = etl::dim<2>(conv);
 
-    input.ensure_cpu_up_to_date();
-    kernels.ensure_cpu_up_to_date();
+        input.ensure_cpu_up_to_date();
+        kernels.ensure_cpu_up_to_date();
 
-    etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
+        etl::dyn_matrix<T, 2> input_col(k1 * k2, c1 * c2);
 
-    if(p1 || p2){
-        etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
-        input_padded = T(0);
+        if (p1 || p2) {
+            etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
+            input_padded = T(0);
 
-        impl::common::pad_2d_input(input, input_padded, p1, p2);
+            impl::common::pad_2d_input(input, input_padded, p1, p2);
 
-        im2col_direct_tr(input_col, input_padded, k1, k2);
-    } else {
-        im2col_direct_tr(input_col, input, k1, k2);
-    }
+            im2col_direct_tr(input_col, input_padded, k1, k2);
+        } else {
+            im2col_direct_tr(input_col, input, k1, k2);
+        }
 
-    if(s1 > 1 || s2 > 1){
-        etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
+        if (s1 > 1 || s2 > 1) {
+            etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
 
-        // tmp_result = kernels * input_col
-        cblas_gemm(
-            CblasRowMajor,
-            CblasNoTrans, CblasNoTrans,
-            K, c1 * c2, k1 * k2,
-            T(1.0),
-            kernels.memory_start(), k1 * k2,
-            input_col.memory_start(), c1 * c2,
-            T(0.0),
-            tmp_result.memory_start(), c1 * c2);
+            // tmp_result = kernels * input_col
+            cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, c1 * c2, k1 * k2, T(1.0), kernels.memory_start(), k1 * k2, input_col.memory_start(),
+                       c1 * c2, T(0.0), tmp_result.memory_start(), c1 * c2);
 
-        // Strided copy of the large result into the small result
-        for (size_t k = 0; k < K; ++k) {
-            for (size_t i = 0; i < f1; ++i) {
-                for (size_t j = 0; j < f2; ++j) {
-                    conv(k, i, j) = tmp_result(k, i * s1, j * s2);
+            // Strided copy of the large result into the small result
+            for (size_t k = 0; k < K; ++k) {
+                for (size_t i = 0; i < f1; ++i) {
+                    for (size_t j = 0; j < f2; ++j) {
+                        conv(k, i, j) = tmp_result(k, i * s1, j * s2);
+                    }
                 }
             }
+        } else {
+            // conv = kernels * input_col
+            cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, c1 * c2, k1 * k2, T(1.0), kernels.memory_start(), k1 * k2, input_col.memory_start(),
+                       c1 * c2, T(0.0), conv.memory_start(), f1 * f2);
         }
+
+        conv.invalidate_gpu();
     } else {
-        // conv = kernels * input_col
-        cblas_gemm(
-            CblasRowMajor,
-            CblasNoTrans, CblasNoTrans,
-            K, c1 * c2, k1 * k2,
-            T(1.0),
-            kernels.memory_start(), k1 * k2,
-            input_col.memory_start(), c1 * c2,
-            T(0.0),
-            conv.memory_start(), f1 * f2);
+        cpp_unreachable("Invalid call to blas_conv2_valid_multi");
     }
-
-    conv.invalidate_gpu();
-}
-
-/*!
- * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
- * \param input The input matrix
- * \param kernels The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K_T, typename C, cpp_disable_iff(blas_conv2_possible<I, K_T, C>)>
-void blas_conv2_valid_multi(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernels);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unreachable("Invalid call to blas::blas_conv2_valid_multi");
-}
-
-/*!
- * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
- * \param input The input matrix
- * \param kernels The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K_T, typename C, cpp_disable_iff(blas_conv2_possible<I, K_T, C>)>
-void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernels);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unreachable("Invalid call to blas::blas_conv2_valid_multi_flipped");
 }
 
 /*!
@@ -719,85 +704,81 @@ void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K_T, typename C, cpp_enable_iff(blas_conv2_possible<I, K_T, C>)>
-void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    using T = value_t<I>;
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_multi([[maybe_unused]] const I& input,
+                                  [[maybe_unused]] const K_T& kernels,
+                                  [[maybe_unused]] C&& conv,
+                                  [[maybe_unused]] size_t s1,
+                                  [[maybe_unused]] size_t s2,
+                                  [[maybe_unused]] size_t p1,
+                                  [[maybe_unused]] size_t p2) {
+    if constexpr (blas_conv2_possible<I, K_T, C>) {
+        using T = value_t<I>;
 
-    const size_t N  = etl::dim<0>(input);
-    const size_t i1 = etl::dim<1>(input);
-    const size_t i2 = etl::dim<2>(input);
+        const size_t N  = etl::dim<0>(input);
+        const size_t i1 = etl::dim<1>(input);
+        const size_t i2 = etl::dim<2>(input);
 
-    const size_t K  = etl::dim<0>(kernels);
-    const size_t k1 = etl::dim<1>(kernels);
-    const size_t k2 = etl::dim<2>(kernels);
+        const size_t K  = etl::dim<0>(kernels);
+        const size_t k1 = etl::dim<1>(kernels);
+        const size_t k2 = etl::dim<2>(kernels);
 
-    // unit-strided result dimensions
-    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
-    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
+        // unit-strided result dimensions
+        const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+        const size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
-    // real final dimensions
-    const size_t f1 = etl::dim<2>(conv);
-    const size_t f2 = etl::dim<3>(conv);
+        // real final dimensions
+        const size_t f1 = etl::dim<2>(conv);
+        const size_t f2 = etl::dim<3>(conv);
 
-    input.ensure_cpu_up_to_date();
-    kernels.ensure_cpu_up_to_date();
+        input.ensure_cpu_up_to_date();
+        kernels.ensure_cpu_up_to_date();
 
-    auto prepared_k = force_temporary(kernels);
+        auto prepared_k = force_temporary(kernels);
 
-    // Flip the kernels
-    prepared_k.deep_fflip_inplace();
+        // Flip the kernels
+        prepared_k.deep_fflip_inplace();
 
-    etl::dyn_matrix<T, 2> input_col(k1 * k2, N * c1 * c2);
+        etl::dyn_matrix<T, 2> input_col(k1 * k2, N * c1 * c2);
 
-    if(p1 || p2){
-        etl::dyn_matrix<T, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
-        input_padded = T(0);
+        if (p1 || p2) {
+            etl::dyn_matrix<T, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
+            input_padded = T(0);
 
-        for(size_t i = 0; i < N; ++i){
-            impl::common::pad_2d_input(input(i), input_padded(i), p1, p2);
+            for (size_t i = 0; i < N; ++i) {
+                impl::common::pad_2d_input(input(i), input_padded(i), p1, p2);
+            }
+
+            im2col_direct_tr_multi(input_col, input_padded, k1, k2);
+        } else {
+            im2col_direct_tr_multi(input_col, input, k1, k2);
         }
 
-        im2col_direct_tr_multi(input_col, input_padded, k1, k2);
-    } else {
-        im2col_direct_tr_multi(input_col, input, k1, k2);
-    }
+        if (s1 > 1 || s2 > 1) {
+            etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
 
-    if(s1 > 1 || s2 > 1){
-        etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
+            cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, N * c1 * c2, k1 * k2, T(1.0), prepared_k.memory_start(), k1 * k2, input_col.memory_start(),
+                       N * c1 * c2, T(0.0), tmp_result.memory_start(), N * c1 * c2);
 
-        cblas_gemm(
-            CblasRowMajor,
-            CblasNoTrans, CblasNoTrans,
-            K, N * c1 * c2, k1 * k2,
-            T(1.0),
-            prepared_k.memory_start(), k1 * k2,
-            input_col.memory_start(), N * c1 * c2,
-            T(0.0),
-            tmp_result.memory_start(), N * c1 * c2);
-
-        // Strided copy of the large result into the small result
-        for (size_t k = 0; k < K; ++k) {
-            for (size_t i = 0; i < N; ++i) {
-                for (size_t ii = 0; ii < f1; ++ii) {
-                    for (size_t j = 0; j < f2; ++j) {
-                        conv(k, i, ii, j) = tmp_result(k, i, ii * s1, j * s2);
+            // Strided copy of the large result into the small result
+            for (size_t k = 0; k < K; ++k) {
+                for (size_t i = 0; i < N; ++i) {
+                    for (size_t ii = 0; ii < f1; ++ii) {
+                        for (size_t j = 0; j < f2; ++j) {
+                            conv(k, i, ii, j) = tmp_result(k, i, ii * s1, j * s2);
+                        }
                     }
                 }
             }
+        } else {
+            cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, N * c1 * c2, k1 * k2, T(1.0), prepared_k.memory_start(), k1 * k2, input_col.memory_start(),
+                       N * c1 * c2, T(0.0), conv.memory_start(), N * f1 * f2);
         }
-    } else {
-        cblas_gemm(
-            CblasRowMajor,
-            CblasNoTrans, CblasNoTrans,
-            K, N * c1 * c2, k1 * k2,
-            T(1.0),
-            prepared_k.memory_start(), k1 * k2,
-            input_col.memory_start(), N * c1 * c2,
-            T(0.0),
-            conv.memory_start(), N * f1 * f2);
-    }
 
-    conv.invalidate_gpu();
+        conv.invalidate_gpu();
+    } else {
+        cpp_unreachable("Invalid call to blas_conv2_valid_multi");
+    }
 }
 
 /*!
@@ -806,118 +787,76 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K_T, typename C, cpp_enable_iff(blas_conv2_possible<I, K_T, C>)>
-void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    using T = value_t<I>;
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_multi_flipped([[maybe_unused]] const I& input,
+                                          [[maybe_unused]] const K_T& kernels,
+                                          [[maybe_unused]] C&& conv,
+                                          [[maybe_unused]] size_t s1,
+                                          [[maybe_unused]] size_t s2,
+                                          [[maybe_unused]] size_t p1,
+                                          [[maybe_unused]] size_t p2) {
+    if constexpr (blas_conv2_possible<I, K_T, C>) {
+        using T = value_t<I>;
 
-    const size_t N  = etl::dim<0>(input);
-    const size_t i1 = etl::dim<1>(input);
-    const size_t i2 = etl::dim<2>(input);
+        const size_t N  = etl::dim<0>(input);
+        const size_t i1 = etl::dim<1>(input);
+        const size_t i2 = etl::dim<2>(input);
 
-    const size_t K  = etl::dim<0>(kernels);
-    const size_t k1 = etl::dim<1>(kernels);
-    const size_t k2 = etl::dim<2>(kernels);
+        const size_t K  = etl::dim<0>(kernels);
+        const size_t k1 = etl::dim<1>(kernels);
+        const size_t k2 = etl::dim<2>(kernels);
 
-    // unit-strided result dimensions
-    const size_t c1 = (i1 - k1 + 2 * p1) + 1;
-    const size_t c2 = (i2 - k2 + 2 * p2) + 1;
+        // unit-strided result dimensions
+        const size_t c1 = (i1 - k1 + 2 * p1) + 1;
+        const size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
-    // real final dimensions
-    const size_t f1 = etl::dim<2>(conv);
-    const size_t f2 = etl::dim<3>(conv);
+        // real final dimensions
+        const size_t f1 = etl::dim<2>(conv);
+        const size_t f2 = etl::dim<3>(conv);
 
-    input.ensure_cpu_up_to_date();
-    kernels.ensure_cpu_up_to_date();
+        input.ensure_cpu_up_to_date();
+        kernels.ensure_cpu_up_to_date();
 
-    etl::dyn_matrix<T, 2> input_col(k1 * k2, N * c1 * c2);
+        etl::dyn_matrix<T, 2> input_col(k1 * k2, N * c1 * c2);
 
-    if(p1 || p2){
-        etl::dyn_matrix<T, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
-        input_padded = T(0);
+        if (p1 || p2) {
+            etl::dyn_matrix<T, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
+            input_padded = T(0);
 
-        for(size_t i = 0; i < N; ++i){
-            impl::common::pad_2d_input(input(i), input_padded(i), p1, p2);
+            for (size_t i = 0; i < N; ++i) {
+                impl::common::pad_2d_input(input(i), input_padded(i), p1, p2);
+            }
+
+            im2col_direct_tr_multi(input_col, input_padded, k1, k2);
+        } else {
+            im2col_direct_tr_multi(input_col, input, k1, k2);
         }
 
-        im2col_direct_tr_multi(input_col, input_padded, k1, k2);
-    } else {
-        im2col_direct_tr_multi(input_col, input, k1, k2);
-    }
+        if (s1 > 1 || s2 > 1) {
+            etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
 
-    if(s1 > 1 || s2 > 1){
-        etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
+            cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, N * c1 * c2, k1 * k2, T(1.0), kernels.memory_start(), k1 * k2, input_col.memory_start(),
+                       N * c1 * c2, T(0.0), tmp_result.memory_start(), N * c1 * c2);
 
-        cblas_gemm(
-            CblasRowMajor,
-            CblasNoTrans, CblasNoTrans,
-            K, N * c1 * c2, k1 * k2,
-            T(1.0),
-            kernels.memory_start(), k1 * k2,
-            input_col.memory_start(), N * c1 * c2,
-            T(0.0),
-            tmp_result.memory_start(), N * c1 * c2);
-
-        // Strided copy of the large result into the small result
-        for (size_t k = 0; k < K; ++k) {
-            for (size_t i = 0; i < N; ++i) {
-                for (size_t ii = 0; ii < f1; ++ii) {
-                    for (size_t j = 0; j < f2; ++j) {
-                        conv(k, i, ii, j) = tmp_result(k, i, ii * s1, j * s2);
+            // Strided copy of the large result into the small result
+            for (size_t k = 0; k < K; ++k) {
+                for (size_t i = 0; i < N; ++i) {
+                    for (size_t ii = 0; ii < f1; ++ii) {
+                        for (size_t j = 0; j < f2; ++j) {
+                            conv(k, i, ii, j) = tmp_result(k, i, ii * s1, j * s2);
+                        }
                     }
                 }
             }
+        } else {
+            cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, N * c1 * c2, k1 * k2, T(1.0), kernels.memory_start(), k1 * k2, input_col.memory_start(),
+                       N * c1 * c2, T(0.0), conv.memory_start(), N * f1 * f2);
         }
+
+        conv.invalidate_gpu();
     } else {
-        cblas_gemm(
-            CblasRowMajor,
-            CblasNoTrans, CblasNoTrans,
-            K, N * c1 * c2, k1 * k2,
-            T(1.0),
-            kernels.memory_start(), k1 * k2,
-            input_col.memory_start(), N * c1 * c2,
-            T(0.0),
-            conv.memory_start(), N * f1 * f2);
+        cpp_unreachable("Invalid call to blas_conv2_valid_multi");
     }
-
-    conv.invalidate_gpu();
-}
-
-/*!
- * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
- * \param input The input matrix
- * \param kernels The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K_T, typename C, cpp_disable_iff(blas_conv2_possible<I, K_T, C>)>
-void blas_conv2_valid_multi_multi(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernels);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unreachable("Invalid call to blas::blas_conv2_valid_multi_multi");
-}
-
-/*!
- * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
- * \param input The input matrix
- * \param kernels The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K_T, typename C, cpp_disable_iff(blas_conv2_possible<I, K_T, C>)>
-void blas_conv2_valid_multi_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernels);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unreachable("Invalid call to blas::blas_conv2_valid_multi_multi_flipped");
 }
 
 /*!
@@ -966,15 +905,8 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
                     for (size_t c = 0; c < C; ++c) {
                         im2col_direct_tr(input_col, input(i)(c), m1, m2);
 
-                        cblas_gemm(
-                            CblasRowMajor,
-                            CblasNoTrans, CblasNoTrans,
-                            K, sc1 * sc2, m1 * m2,
-                            T(1.0),
-                            kernels(c).memory_start(), m1 * m2,
-                            input_col.memory_start(), sc1 * sc2,
-                            T(1.0),
-                            conv(i).memory_start(), sc1 * sc2);
+                        cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, sc1 * sc2, m1 * m2, T(1.0), kernels(c).memory_start(), m1 * m2,
+                                   input_col.memory_start(), sc1 * sc2, T(1.0), conv(i).memory_start(), sc1 * sc2);
                     }
                 }
             } else {
@@ -994,15 +926,8 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
                         }
 
                         if (s1 > 1 || s2 > 1) {
-                            cblas_gemm(
-                                CblasRowMajor,
-                                CblasNoTrans, CblasNoTrans,
-                                K, sc1 * sc2, m1 * m2,
-                                T(1.0),
-                                kernels(c).memory_start(), m1 * m2,
-                                input_col.memory_start(), sc1 * sc2,
-                                T(0.0),
-                                tmp_result.memory_start(), sc1 * sc2);
+                            cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, sc1 * sc2, m1 * m2, T(1.0), kernels(c).memory_start(), m1 * m2,
+                                       input_col.memory_start(), sc1 * sc2, T(0.0), tmp_result.memory_start(), sc1 * sc2);
 
                             // Strided copy of the large result into the small result
                             for (size_t k = 0; k < K; ++k) {
@@ -1013,15 +938,8 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
                                 }
                             }
                         } else {
-                            cblas_gemm(
-                                CblasRowMajor,
-                                CblasNoTrans, CblasNoTrans,
-                                K, c1 * c2, m1 * m2,
-                                T(1.0),
-                                kernels(c).memory_start(), m1 * m2,
-                                input_col.memory_start(), sc1 * sc2,
-                                T(1.0),
-                                conv(i).memory_start(), c1 * c2);
+                            cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, c1 * c2, m1 * m2, T(1.0), kernels(c).memory_start(), m1 * m2,
+                                       input_col.memory_start(), sc1 * sc2, T(1.0), conv(i).memory_start(), c1 * c2);
                         }
                     }
                 }
@@ -1029,7 +947,7 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
         }
     };
 
-    if constexpr (is_parallel){
+    if constexpr (is_parallel) {
         if constexpr (is_blas_parallel) {
             auto mkl_threads = mkl_get_max_threads();
 
@@ -1068,8 +986,8 @@ void blas_conv4_valid(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s
 
     etl::dyn_matrix<value_t<I_T>, 4> kernels(C, K, m1, m2);
 
-    for(size_t c = 0; c < C; ++c){
-        for(size_t k = 0; k < K; ++k){
+    for (size_t c = 0; c < C; ++c) {
+        for (size_t k = 0; k < K; ++k) {
             kernels(c)(k) = fflip(kernel(k)(c));
         }
     }
@@ -1097,8 +1015,8 @@ void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, 
 
     etl::dyn_matrix<value_t<I_T>, 4> kernels(C, K, m1, m2);
 
-    for(size_t c = 0; c < C; ++c){
-        for(size_t k = 0; k < K; ++k){
+    for (size_t c = 0; c < C; ++c) {
+        for (size_t k = 0; k < K; ++k) {
             kernels(c)(k) = kernel(k)(c);
         }
     }
@@ -1151,15 +1069,8 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                 // Optimize for the most common case
                 if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
                     im2col_direct_tr(input_col, input(i)(c), k1, k2);
-                    cblas_gemm(
-                        CblasRowMajor,
-                        CblasNoTrans, CblasNoTrans,
-                        K, c1 * c2, k1 * k2,
-                        T(1.0),
-                        kernel(i).memory_start(), k1 * k2,
-                        input_col.memory_start(), c1 * c2,
-                        T(1.0),
-                        conv_temp(c).memory_start(), f1 * f2);
+                    cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, c1 * c2, k1 * k2, T(1.0), kernel(i).memory_start(), k1 * k2,
+                               input_col.memory_start(), c1 * c2, T(1.0), conv_temp(c).memory_start(), f1 * f2);
                 } else {
                     if (p1 || p2) {
                         etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
@@ -1175,15 +1086,8 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                     if (s1 > 1 || s2 > 1) {
                         etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
 
-                        cblas_gemm(
-                            CblasRowMajor,
-                            CblasNoTrans, CblasNoTrans,
-                            K, c1 * c2, k1 * k2,
-                            T(1.0),
-                            kernel(i).memory_start(), k1 * k2,
-                            input_col.memory_start(), c1 * c2,
-                            T(0.0),
-                            tmp_result.memory_start(), c1 * c2);
+                        cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, c1 * c2, k1 * k2, T(1.0), kernel(i).memory_start(), k1 * k2,
+                                   input_col.memory_start(), c1 * c2, T(0.0), tmp_result.memory_start(), c1 * c2);
 
                         // Strided copy of the large result into the small result
                         for (size_t k = 0; k < K; ++k) {
@@ -1194,15 +1098,8 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                             }
                         }
                     } else {
-                        cblas_gemm(
-                            CblasRowMajor,
-                            CblasNoTrans, CblasNoTrans,
-                            K, c1 * c2, k1 * k2,
-                            T(1.0),
-                            kernel(i).memory_start(), k1 * k2,
-                            input_col.memory_start(), c1 * c2,
-                            T(1.0),
-                            conv_temp(c).memory_start(), f1 * f2);
+                        cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, K, c1 * c2, k1 * k2, T(1.0), kernel(i).memory_start(), k1 * k2,
+                                   input_col.memory_start(), c1 * c2, T(1.0), conv_temp(c).memory_start(), f1 * f2);
                     }
                 }
             }
@@ -1302,15 +1199,8 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
                         im2col_direct_tr(input_col, input(i)(k), k1, k2);
 
                         // conv(i) = kernel(k) * input_col
-                        cblas_gemm(
-                            CblasRowMajor,
-                            CblasNoTrans, CblasNoTrans,
-                            C, c1 * c2, k1 * k2,
-                            T(1.0),
-                            kernel(k).memory_start(), k1 * k2,
-                            input_col.memory_start(), c1 * c2,
-                            T(1.0),
-                            conv(i).memory_start(), f1 * f2);
+                        cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, C, c1 * c2, k1 * k2, T(1.0), kernel(k).memory_start(), k1 * k2,
+                                   input_col.memory_start(), c1 * c2, T(1.0), conv(i).memory_start(), f1 * f2);
                     }
                 }
             } else {
@@ -1333,15 +1223,8 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
 
                         if (s1 > 1 || s2 > 1) {
                             // tmp_result = kernel(k) * input_col
-                            cblas_gemm(
-                                CblasRowMajor,
-                                CblasNoTrans, CblasNoTrans,
-                                C, c1 * c2, k1 * k2,
-                                T(1.0),
-                                kernel(k).memory_start(), k1 * k2,
-                                input_col.memory_start(), c1 * c2,
-                                T(0.0),
-                                tmp_result.memory_start(), c1 * c2);
+                            cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, C, c1 * c2, k1 * k2, T(1.0), kernel(k).memory_start(), k1 * k2,
+                                       input_col.memory_start(), c1 * c2, T(0.0), tmp_result.memory_start(), c1 * c2);
 
                             // Strided copy of the large result into the small result
                             for (size_t c = 0; c < C; ++c) {
@@ -1353,15 +1236,8 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
                             }
                         } else {
                             // conv(i) = kernel(k) * input_col
-                            cblas_gemm(
-                                CblasRowMajor,
-                                CblasNoTrans, CblasNoTrans,
-                                C, c1 * c2, k1 * k2,
-                                T(1.0),
-                                kernel(k).memory_start(), k1 * k2,
-                                input_col.memory_start(), c1 * c2,
-                                T(1.0),
-                                conv(i).memory_start(), f1 * f2);
+                            cblas_gemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, C, c1 * c2, k1 * k2, T(1.0), kernel(k).memory_start(), k1 * k2,
+                                       input_col.memory_start(), c1 * c2, T(1.0), conv(i).memory_start(), f1 * f2);
                         }
                     }
                 }
@@ -1369,7 +1245,7 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
         }
     };
 
-    if constexpr (is_parallel){
+    if constexpr (is_parallel) {
         if constexpr (is_blas_parallel) {
             auto mkl_threads = mkl_get_max_threads();
 
@@ -1609,7 +1485,7 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2){
+void blas_conv4_valid(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -1631,7 +1507,7 @@ void blas_conv4_valid(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2){
+void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -1653,7 +1529,7 @@ void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, 
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_filter(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2){
+void blas_conv4_valid_filter(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -1675,7 +1551,7 @@ void blas_conv4_valid_filter(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, s
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_filter_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2){
+void blas_conv4_valid_filter_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -1697,7 +1573,7 @@ void blas_conv4_valid_filter_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2){
+void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -1719,7 +1595,7 @@ void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, siz
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2){
+void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -1730,7 +1606,7 @@ void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
-//COVERAGE_EXCLUDE_END
+    //COVERAGE_EXCLUDE_END
 
 #endif
 
