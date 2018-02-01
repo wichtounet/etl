@@ -1310,6 +1310,20 @@ void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t
  * param c The result
  */
 template <typename A, typename B, typename C>
+void gemm(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+    cpp_unreachable("Unsupported feature called: blas gemm");
+}
+
+/*!
+ * \brief Compute the matrix multiplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
+template <typename A, typename B, typename C>
 void gemm_nt(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
