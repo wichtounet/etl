@@ -19,11 +19,7 @@
 
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace cudnn {
+namespace etl::impl::cudnn {
 
 /*!
  * \brief Traits indicating if Convolution with CUDNN is
@@ -864,8 +860,4 @@ void conv4_backward_data_flipped(I&& input, K&& kernel, C&& conv, size_t s1, siz
 
 //COVERAGE_EXCLUDE_END
 
-} //end of namespace cudnn
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::cudnn
