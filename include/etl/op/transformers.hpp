@@ -139,22 +139,17 @@ struct mm_mul_transformer {
     }
 
 private:
-    template <typename A, typename B, cpp_disable_iff(all_fast<A, B>)>
-    void check_mmul_sizes(const A& a, const B& b) {
-        cpp_assert(
-            dim<1>(a) == dim<0>(b) //interior dimensions
-            ,
-            "Invalid sizes for multiplication");
-        cpp_unused(a);
-        cpp_unused(b);
-    }
-
-    template <typename A, typename B, cpp_enable_iff(all_fast<A, B>)>
-    void check_mmul_sizes(const A& /*a*/, const B& /*b*/) {
-        static_assert(
-            etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>() //interior dimensions
-            ,
-            "Invalid sizes for multiplication");
+    template <typename A, typename B>
+    void check_mmul_sizes([[maybe_unused]] const A& a, [[maybe_unused]] const B& b) {
+        if constexpr (all_fast<A, B>) {
+            static_assert(etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>() //interior dimensions
+                          ,
+                          "Invalid sizes for multiplication");
+        } else {
+            cpp_assert(dim<1>(a) == dim<0>(b) //interior dimensions
+                       ,
+                       "Invalid sizes for multiplication");
+        }
     }
 };
 
@@ -427,52 +422,43 @@ void convmtx2_direct_t(M& m, A&& sub, size_t k1, size_t k2) {
  * \param k1 The first dimension of ther kernel
  * \param k2 The second dimension of ther kernel
  */
-template <typename A, typename M, cpp_disable_iff(all_dma<A, M>)>
+template <typename A, typename M>
 void im2col_direct(M& m, A&& sub, size_t k1, size_t k2) {
-    const size_t i1 = etl::dim<0>(sub);
-    const size_t i2 = etl::dim<1>(sub);
+    if constexpr (all_dma<A, M>) {
+        // This is a direct memory version
+        // On gcc and clang, this is significantly faster
+        const size_t i1 = etl::dim<0>(sub);
+        const size_t i2 = etl::dim<1>(sub);
 
-    const size_t m_width = (i1 - k1 + 1) * (i2 - k2 + 1);
+        const auto m_width = (i1 - k1 + 1) * (i2 - k2 + 1);
 
-    for (size_t b = 0; b < m_width; ++b) {
-        auto s_i = b % (i1 - k1 + 1);
-        auto s_j = b / (i1 - k1 + 1);
+        const auto mm = m.memory_start();
+        const auto ss = sub.memory_start();
 
-        for (size_t b_i = 0; b_i < k1; ++b_i) {
-            for (size_t b_j = 0; b_j < k2; ++b_j) {
-                m(b_j * k1 + b_i, b) = sub(s_i + b_i, s_j + b_j);
+        for (size_t b = 0; b < m_width; ++b) {
+            auto s_i = b % (i1 - k1 + 1);
+            auto s_j = b / (i1 - k1 + 1);
+
+            for (size_t b_i = 0; b_i < k1; ++b_i) {
+                for (size_t b_j = 0; b_j < k2; ++b_j) {
+                    mm[(b_j * k1 + b_i) * m_width + b] = ss[(s_i + b_i) * i2 + s_j + b_j];
+                }
             }
         }
-    }
-}
+    } else {
+        const size_t i1 = etl::dim<0>(sub);
+        const size_t i2 = etl::dim<1>(sub);
 
-// This is a direct memory version
-// On gcc and clang, this is significantly faster
+        const size_t m_width = (i1 - k1 + 1) * (i2 - k2 + 1);
 
-/*!
- * \brief Convert an image to a sequence of image columns to be multiplied by kernels of size (k1,k2)
- * \param m The output matrix
- * \param sub The input image
- * \param k1 The first dimension of ther kernel
- * \param k2 The second dimension of ther kernel
- */
-template <typename A, typename M, cpp_enable_iff(all_dma<A, M>)>
-void im2col_direct(M& m, A&& sub, size_t k1, size_t k2) {
-    const size_t i1 = etl::dim<0>(sub);
-    const size_t i2 = etl::dim<1>(sub);
+        for (size_t b = 0; b < m_width; ++b) {
+            auto s_i = b % (i1 - k1 + 1);
+            auto s_j = b / (i1 - k1 + 1);
 
-    const auto m_width = (i1 - k1 + 1) * (i2 - k2 + 1);
-
-    const auto mm = m.memory_start();
-    const auto ss = sub.memory_start();
-
-    for (size_t b = 0; b < m_width; ++b) {
-        auto s_i = b % (i1 - k1 + 1);
-        auto s_j = b / (i1 - k1 + 1);
-
-        for (size_t b_i = 0; b_i < k1; ++b_i) {
-            for (size_t b_j = 0; b_j < k2; ++b_j) {
-                mm[(b_j * k1 + b_i) * m_width + b] = ss[(s_i + b_i) * i2 + s_j + b_j];
+            for (size_t b_i = 0; b_i < k1; ++b_i) {
+                for (size_t b_j = 0; b_j < k2; ++b_j) {
+                    m(b_j * k1 + b_i, b) = sub(s_i + b_i, s_j + b_j);
+                }
             }
         }
     }

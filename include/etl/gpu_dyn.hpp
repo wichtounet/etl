@@ -289,26 +289,19 @@ public:
      * This must only be called when the matrix has no dimensions
      * \param e The expression to get the dimensions from.
      */
-    template <typename E, cpp_enable_iff(etl::decay_traits<E>::is_generator)>
-    void inherit(const E& e){
-        cpp_unreachable("Impossible to inherit dimensions from generators");
-        cpp_unused(e);
-    }
+    template <typename E>
+    void inherit([[maybe_unused]] const E& e){
+        if constexpr (etl::decay_traits<E>::is_generator){
+            cpp_unreachable("Impossible to inherit dimensions from generators");
+        } else {
+            cpp_assert(n_dimensions == etl::dimensions(e), "Invalid number of dimensions");
 
-    /*!
-     * \brief Inherit the dimensions of an ETL expressions.
-     * This must only be called when the matrix has no dimensions
-     * \param e The expression to get the dimensions from.
-     */
-    template <typename E, cpp_disable_iff(etl::decay_traits<E>::is_generator)>
-    void inherit(const E& e){
-        cpp_assert(n_dimensions == etl::dimensions(e), "Invalid number of dimensions");
-
-        // Compute the size and new dimensions
-        _size = 1;
-        for (size_t d = 0; d < n_dimensions; ++d) {
-            _dimensions[d] = etl::dim(e, d);
-            _size *= _dimensions[d];
+            // Compute the size and new dimensions
+            _size = 1;
+            for (size_t d = 0; d < n_dimensions; ++d) {
+                _dimensions[d] = etl::dim(e, d);
+                _size *= _dimensions[d];
+            }
         }
     }
 

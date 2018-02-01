@@ -622,29 +622,18 @@ value_t<A> dot(const A& a, const B& b) {
  * \param b The right expression
  * \return The dot product of the two expressions
  */
-template <typename A, typename B, cpp_enable_iff(all_fast<A, B>)>
+template <typename A, typename B>
 etl::fast_vector<value_t<A>, 3> cross(const A& a, const B& b) {
     static_assert(etl::is_1d<A>, "Cross product is only valid for 1D vectors");
     static_assert(etl::is_1d<B>, "Cross product is only valid for 1D vectors");
-    static_assert(etl::decay_traits<A>::size() == 3, "Cross product is only valid for 1D vectors of size 3");
-    static_assert(etl::decay_traits<B>::size() == 3, "Cross product is only valid for 1D vectors of size 3");
 
-    return {a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]};
-}
-
-/*!
- * \brief Returns the dot product of the two given expressions.
- * \param a The left expression
- * \param b The right expression
- * \return The dot product of the two expressions
- */
-template <typename A, typename B, cpp_disable_iff(all_fast<A, B>)>
-etl::dyn_vector<value_t<A>> cross(const A& a, const B& b) {
-    static_assert(etl::is_1d<A>, "Cross product is only valid for 1D vectors");
-    static_assert(etl::is_1d<B>, "Cross product is only valid for 1D vectors");
-
-    cpp_assert(etl::decay_traits<A>::size(a) == 3, "Cross product is only valid for 1D vectors of size 3");
-    cpp_assert(etl::decay_traits<B>::size(b) == 3, "Cross product is only valid for 1D vectors of size 3");
+    if constexpr (all_fast<A, B>) {
+        static_assert(etl::decay_traits<A>::size() == 3, "Cross product is only valid for 1D vectors of size 3");
+        static_assert(etl::decay_traits<B>::size() == 3, "Cross product is only valid for 1D vectors of size 3");
+    } else {
+        cpp_assert(etl::decay_traits<A>::size(a) == 3, "Cross product is only valid for 1D vectors of size 3");
+        cpp_assert(etl::decay_traits<B>::size(b) == 3, "Cross product is only valid for 1D vectors of size 3");
+    }
 
     return {a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]};
 }

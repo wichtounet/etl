@@ -162,26 +162,15 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  *
  * \param expr The expression to assert
  */
-template <typename E, cpp_enable_iff(is_fast<E>)>
-void assert_square(E&& expr) {
+template <typename E>
+void assert_square([[maybe_unused]] E&& expr) {
     static_assert(is_2d<E>, "Function undefined for non-square matrix");
-    static_assert(decay_traits<E>::template dim<0>() == decay_traits<E>::template dim<1>(), "Function undefined for non-square matrix");
-    cpp_unused(expr);
-}
 
-/*!
- * \brief Make sure that the expression is square
- *
- * This function uses assertion to validate the condition. If possible, the
- * assertion is done at compile time.
- *
- * \param expr The expression to assert
- */
-template <typename E, cpp_disable_iff(is_fast<E>)>
-void assert_square(E&& expr) {
-    static_assert(is_2d<E>, "Function undefined for non-square matrix");
-    cpp_assert(etl::dim<0>(expr) == etl::dim<1>(expr), "Function undefined for non-square matrix");
-    cpp_unused(expr);
+    if constexpr (is_fast<E>) {
+        static_assert(decay_traits<E>::template dim<0>() == decay_traits<E>::template dim<1>(), "Function undefined for non-square matrix");
+    } else {
+        cpp_assert(etl::dim<0>(expr) == etl::dim<1>(expr), "Function undefined for non-square matrix");
+    }
 }
 
 namespace detail {
