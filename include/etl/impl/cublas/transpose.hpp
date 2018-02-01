@@ -41,8 +41,19 @@ using cdouble = std::complex<double>; ///< Complex double type
  * \param C A pointer to c's memory
  * \param ldc The leading dimension of c
  */
-inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb, size_t m, size_t n,
-                        const float* alpha, const float* A, size_t lda, const float* beta, const float* B, size_t ldb, float* C, size_t ldc) {
+inline void cublas_geam(cublasHandle_t handle,
+                        cublasOperation_t transa,
+                        cublasOperation_t transb,
+                        size_t m,
+                        size_t n,
+                        const float* alpha,
+                        const float* A,
+                        size_t lda,
+                        const float* beta,
+                        const float* B,
+                        size_t ldb,
+                        float* C,
+                        size_t ldc) {
     inc_counter("cublas");
     cublas_check(cublasSgeam(handle, transa, transb, m, n, alpha, A, lda, beta, B, ldb, C, ldc));
 }
@@ -63,8 +74,19 @@ inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasO
  * \param C A pointer to c's memory
  * \param ldc The leading dimension of c
  */
-inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb, size_t m, size_t n,
-                        const double* alpha, const double* A, size_t lda, const double* beta, const double* B, size_t ldb, double* C, size_t ldc) {
+inline void cublas_geam(cublasHandle_t handle,
+                        cublasOperation_t transa,
+                        cublasOperation_t transb,
+                        size_t m,
+                        size_t n,
+                        const double* alpha,
+                        const double* A,
+                        size_t lda,
+                        const double* beta,
+                        const double* B,
+                        size_t ldb,
+                        double* C,
+                        size_t ldc) {
     inc_counter("cublas");
     cublas_check(cublasDgeam(handle, transa, transb, m, n, alpha, A, lda, beta, B, ldb, C, ldc));
 }
@@ -85,8 +107,19 @@ inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasO
  * \param C A pointer to c's memory
  * \param ldc The leading dimension of c
  */
-inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb, size_t m, size_t n,
-                        const cfloat* alpha, const cfloat* A, size_t lda, const cfloat* beta, const cfloat* B, size_t ldb, cfloat* C, size_t ldc) {
+inline void cublas_geam(cublasHandle_t handle,
+                        cublasOperation_t transa,
+                        cublasOperation_t transb,
+                        size_t m,
+                        size_t n,
+                        const cfloat* alpha,
+                        const cfloat* A,
+                        size_t lda,
+                        const cfloat* beta,
+                        const cfloat* B,
+                        size_t ldb,
+                        cfloat* C,
+                        size_t ldc) {
     inc_counter("cublas");
     cublas_check(cublasCgeam(handle, transa, transb, m, n,
                 reinterpret_cast<const cuComplex*>(alpha), reinterpret_cast<const cuComplex*>(A), lda,
@@ -110,9 +143,19 @@ inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasO
  * \param C A pointer to c's memory
  * \param ldc The leading dimension of c
  */
-inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb, size_t m, size_t n,
-                        const cdouble* alpha, const cdouble* A, size_t lda, const cdouble* beta,
-                        const cdouble* B, size_t ldb, cdouble* C, size_t ldc) {
+inline void cublas_geam(cublasHandle_t handle,
+                        cublasOperation_t transa,
+                        cublasOperation_t transb,
+                        size_t m,
+                        size_t n,
+                        const cdouble* alpha,
+                        const cdouble* A,
+                        size_t lda,
+                        const cdouble* beta,
+                        const cdouble* B,
+                        size_t ldb,
+                        cdouble* C,
+                        size_t ldc) {
     inc_counter("cublas");
     cublas_check(cublasZgeam(handle, transa, transb, m, n,
                 reinterpret_cast<const cuDoubleComplex*>(alpha), reinterpret_cast<const cuDoubleComplex*>(A), lda,
@@ -124,37 +167,43 @@ inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasO
  * \brief Inplace transposition of the square matrix c
  * \param c The matrix to transpose
  */
-template <typename C, cpp_enable_iff(is_dma<C>&& is_floating<C>)>
+template <typename C>
 void inplace_square_transpose(C&& c) {
-    decltype(auto) handle = start_cublas();
+    if constexpr (is_dma<C> && is_floating<C>) {
+        decltype(auto) handle = start_cublas();
 
-    using T = value_t<C>;
+        using T = value_t<C>;
 
-    static constexpr bool row_major = decay_traits<C>::storage_order == order::RowMajor;
+        static constexpr bool row_major = decay_traits<C>::storage_order == order::RowMajor;
 
-    auto alpha = T(1);
-    auto beta  = T(0);
+        auto alpha = T(1);
+        auto beta  = T(0);
 
-    auto a_gpu = cuda::cuda_allocate_only<T>(etl::size(c));
+        auto a_gpu = cuda::cuda_allocate_only<T>(etl::size(c));
 
-    c.ensure_gpu_up_to_date();
+        c.ensure_gpu_up_to_date();
 
-    cuda_check(cudaMemcpy(a_gpu.get(), c.gpu_memory(), etl::size(c) * sizeof(T), cudaMemcpyDeviceToDevice));
+        cuda_check(cudaMemcpy(a_gpu.get(), c.gpu_memory(), etl::size(c) * sizeof(T), cudaMemcpyDeviceToDevice));
 
-    if (row_major) {
-        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(c), etl::dim<1>(c), &alpha, a_gpu.get(), etl::dim<1>(c), &beta, a_gpu.get(), etl::dim<1>(c), c.gpu_memory(), etl::dim<0>(c));
+        if (row_major) {
+            cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(c), etl::dim<1>(c), &alpha, a_gpu.get(), etl::dim<1>(c), &beta, a_gpu.get(),
+                        etl::dim<1>(c), c.gpu_memory(), etl::dim<0>(c));
+        } else {
+            cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<1>(c), etl::dim<0>(c), &alpha, a_gpu.get(), etl::dim<0>(c), &beta, a_gpu.get(),
+                        etl::dim<0>(c), c.gpu_memory(), etl::dim<1>(c));
+        }
+
+        c.invalidate_cpu();
     } else {
-        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<1>(c), etl::dim<0>(c), &alpha, a_gpu.get(), etl::dim<0>(c), &beta, a_gpu.get(), etl::dim<0>(c), c.gpu_memory(), etl::dim<1>(c));
+        cpp_unreachable("Invalid function call: cublas:inplace_square_transpose");
     }
-
-    c.invalidate_cpu();
 }
 
 /*!
  * \brief Inplace transposition of the rectangular matrix c
  * \param c The matrix to transpose
  */
-template <typename C, cpp_enable_iff(is_dma<C>&& is_floating<C>)>
+template <typename C>
 void inplace_rectangular_transpose(C&& c) {
     inplace_square_transpose(c);
 }
@@ -164,58 +213,32 @@ void inplace_rectangular_transpose(C&& c) {
  * \param a The matrix to transpose
  * \param c The target matrix
  */
-template <typename A, typename C, cpp_enable_iff(all_dma<A, C>&& all_floating<A, C>)>
+template <typename A, typename C>
 void transpose(A&& a, C&& c) {
-    decltype(auto) handle = start_cublas();
+    if constexpr (all_dma<C> && all_floating<C>) {
+        decltype(auto) handle = start_cublas();
 
-    static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+        static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto alpha = value_t<A>(1.0);
-    auto beta  = value_t<A>(0.0);
+        auto alpha = value_t<A>(1.0);
+        auto beta  = value_t<A>(0.0);
 
-    a.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
+        a.ensure_gpu_up_to_date();
+        c.ensure_gpu_allocated();
 
-    if (row_major) {
-        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(a), etl::dim<1>(a), &alpha, a.gpu_memory(), etl::dim<1>(a), &beta, a.gpu_memory(), etl::dim<1>(a), c.gpu_memory(), etl::dim<1>(c));
+        if (row_major) {
+            cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(a), etl::dim<1>(a), &alpha, a.gpu_memory(), etl::dim<1>(a), &beta, a.gpu_memory(),
+                        etl::dim<1>(a), c.gpu_memory(), etl::dim<1>(c));
+        } else {
+            cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<1>(a), etl::dim<0>(a), &alpha, a.gpu_memory(), etl::dim<0>(a), &beta, a.gpu_memory(),
+                        etl::dim<0>(a), c.gpu_memory(), etl::dim<0>(c));
+        }
+
+        c.validate_gpu();
+        c.invalidate_cpu();
     } else {
-        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<1>(a), etl::dim<0>(a), &alpha, a.gpu_memory(), etl::dim<0>(a), &beta, a.gpu_memory(), etl::dim<0>(a), c.gpu_memory(), etl::dim<0>(c));
+        cpp_unreachable("Invalid function call: cublas:transpose");
     }
-
-    c.validate_gpu();
-    c.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace transposition of the square matrix c
- * \param c The matrix to transpose
- */
-template <typename C, cpp_disable_iff(is_dma<C>&& is_floating<C>)>
-void inplace_square_transpose(C&& c) {
-    cpp_unused(c);
-    cpp_unreachable("Invalid CUBLAS function called");
-}
-
-/*!
- * \brief Inplace transposition of the rectangular matrix c
- * \param c The matrix to transpose
- */
-template <typename C, cpp_disable_iff(is_dma<C>&& is_floating<C>)>
-void inplace_rectangular_transpose(C&& c) {
-    cpp_unused(c);
-    cpp_unreachable("Invalid CUBLAS function called");
-}
-
-/*!
- * \brief Transpose the matrix a and the store the result in c
- * \param a The matrix to transpose
- * \param c The target matrix
- */
-template <typename A, typename C, cpp_disable_iff(all_dma<A, C>&& all_floating<A, C>)>
-void transpose(A&& a, C&& c) {
-    cpp_unused(a);
-    cpp_unused(c);
-    cpp_unreachable("Invalid CUBLAS function called");
 }
 
 #else

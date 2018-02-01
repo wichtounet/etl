@@ -335,66 +335,60 @@ void gemm_macro_kernel(size_t mc, size_t nc, size_t kc, T alpha, T beta, T* C, s
  * \param C The result matrix
  * \param beta The multipliying of the previous value
  */
-template <typename V, typename T, cpp_enable_iff(is_floating_t<T>)>
+template <typename V, typename T>
 void gemm_large_kernel_workspace_rr(const T* A, const T* B, T* C, size_t m, size_t n, size_t k, T beta) {
-    static constexpr const size_t MC = gemm_config<T>::MC;
-    static constexpr const size_t KC = gemm_config<T>::KC;
-    static constexpr const size_t NC = gemm_config<T>::NC;
+    if constexpr (is_floating<T>) {
+        static constexpr const size_t MC = gemm_config<T>::MC;
+        static constexpr const size_t KC = gemm_config<T>::KC;
+        static constexpr const size_t NC = gemm_config<T>::NC;
 
-    static constexpr const size_t MR = gemm_config<T>::MR;
-    static constexpr const size_t NR = gemm_config<T>::NR;
+        static constexpr const size_t MR = gemm_config<T>::MR;
+        static constexpr const size_t NR = gemm_config<T>::NR;
 
-    etl::dyn_matrix<T, 2> _A(MC, KC);
-    etl::dyn_matrix<T, 2> _B(KC, NC);
-    etl::dyn_matrix<T, 2> _C(MR, NR);
+        etl::dyn_matrix<T, 2> _A(MC, KC);
+        etl::dyn_matrix<T, 2> _B(KC, NC);
+        etl::dyn_matrix<T, 2> _C(MR, NR);
 
-    const size_t mb = (m + MC - 1) / MC;
-    const size_t nb = (n + NC - 1) / NC;
-    const size_t kb = (k + KC - 1) / KC;
+        const size_t mb = (m + MC - 1) / MC;
+        const size_t nb = (n + NC - 1) / NC;
+        const size_t kb = (k + KC - 1) / KC;
 
-    const size_t _mc = m % MC;
-    const size_t _nc = n % NC;
-    const size_t _kc = k % KC;
+        const size_t _mc = m % MC;
+        const size_t _nc = n % NC;
+        const size_t _kc = k % KC;
 
-    const size_t incRowA = k;
-    const size_t incColA = 1;
+        const size_t incRowA = k;
+        const size_t incColA = 1;
 
-    const size_t incRowB = n;
-    const size_t incColB = 1;
+        const size_t incRowB = n;
+        const size_t incColB = 1;
 
-    const size_t incRowC = n;
-    const size_t incColC = 1;
+        const size_t incRowC = n;
+        const size_t incColC = 1;
 
-    const T alpha = 1.0;
+        const T alpha = 1.0;
 
-    for (size_t j = 0; j < nb; ++j) {
-        const size_t nc = (j != nb - 1 || _nc == 0) ? NC : _nc;
+        for (size_t j = 0; j < nb; ++j) {
+            const size_t nc = (j != nb - 1 || _nc == 0) ? NC : _nc;
 
-        for (size_t l = 0; l < kb; ++l) {
-            const size_t kc = (l != kb - 1 || _kc == 0) ? KC : _kc;
-            T _beta         = (l == 0) ? beta : 1.0;
+            for (size_t l = 0; l < kb; ++l) {
+                const size_t kc = (l != kb - 1 || _kc == 0) ? KC : _kc;
+                T _beta         = (l == 0) ? beta : 1.0;
 
-            pack_b(kc, nc, &B[l * KC * incRowB + j * NC * incColB], incRowB, incColB, _B.memory_start());
+                pack_b(kc, nc, &B[l * KC * incRowB + j * NC * incColB], incRowB, incColB, _B.memory_start());
 
-            for (size_t i = 0; i < mb; ++i) {
-                const size_t mc = (i != mb - 1 || _mc == 0) ? MC : _mc;
+                for (size_t i = 0; i < mb; ++i) {
+                    const size_t mc = (i != mb - 1 || _mc == 0) ? MC : _mc;
 
-                pack_a(mc, kc, &A[i * MC * incRowA + l * KC * incColA], incRowA, incColA, _A.memory_start());
+                    pack_a(mc, kc, &A[i * MC * incRowA + l * KC * incColA], incRowA, incColA, _A.memory_start());
 
-                gemm_macro_kernel<V>(mc, nc, kc, alpha, _beta,
-                                   &C[i * MC * incRowC + j * NC * incColC],
-                                   incRowC, incColC, _A, _B, _C);
+                    gemm_macro_kernel<V>(mc, nc, kc, alpha, _beta, &C[i * MC * incRowC + j * NC * incColC], incRowC, incColC, _A, _B, _C);
+                }
             }
         }
+    } else {
+        cpp_unreachable("Should probably not get called");
     }
-}
-
-/*!
- * \copydoc gemm_large_kernel_workspace_rr
- */
-template <typename V, typename T, cpp_disable_iff(is_floating_t<T>)>
-void gemm_large_kernel_workspace_rr(const T* , const T* , T* , size_t , size_t , size_t , T ) {
-    // Nothing to do here
 }
 
 } //end of namespace etl::impl::vec
