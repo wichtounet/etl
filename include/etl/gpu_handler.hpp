@@ -27,8 +27,8 @@ private:
      * \param size The memory  size
      * \return The allocated GPU memory
      */
-    template<typename T>
-    static T* base_allocate(size_t size){
+    template <typename T>
+    static T* base_allocate(size_t size) {
         T* memory = nullptr;
 
         auto cuda_status = cudaMalloc(&memory, size * sizeof(T));
@@ -49,7 +49,7 @@ private:
      * \param gpu_memory The GPU memory allocated
      * \param size The size of the allocated GPU memory
      */
-    static void base_release(const void* gpu_memory){
+    static void base_release(const void* gpu_memory) {
         //Note: the const_cast is only here to allow compilation
         cuda_check(cudaFree((const_cast<void*>(gpu_memory))));
 
@@ -63,8 +63,8 @@ public:
      * \param size The memory  size
      * \return The allocated GPU memory
      */
-    template<typename T>
-    static T* allocate(size_t size){
+    template <typename T>
+    static T* allocate(size_t size) {
         return base_allocate<T>(size);
     }
 
@@ -73,7 +73,7 @@ public:
      * \param gpu_memory The GPU memory allocated
      * \param size The size of the allocated GPU memory
      */
-    static void release(const void* gpu_memory, size_t size){
+    static void release(const void* gpu_memory, size_t size) {
         base_release(gpu_memory);
 
         cpp_unused(size);
@@ -85,7 +85,7 @@ public:
      * This has no effect if the allocator does not use a memory
      * pool.
      */
-    static void clear(){
+    static void clear() {
         // This allocator does not store memory
     }
 
@@ -95,7 +95,7 @@ public:
     static constexpr size_t entries = ETL_GPU_POOL_SIZE;  ///< The entries limit of the pool
 #else
 #ifdef ETL_GPU_POOL_LIMIT
-    static constexpr size_t entries = 256; ///< The entries limit of the pool
+    static constexpr size_t entries = 256;                ///< The entries limit of the pool
 #else
     static constexpr size_t entries = 64; ///< The entries limit of the pool
 #endif
@@ -132,7 +132,7 @@ public:
      * \brief Return a reference to the GPU pool
      * \return a reference to the GPU pool
      */
-    static mini_pool& get_pool(){
+    static mini_pool& get_pool() {
         static mini_pool pool;
         return pool;
     }
@@ -141,7 +141,7 @@ public:
      * \brief Return a reference to the GPU pool size
      * \return a reference to the GPU pool size
      */
-    static size_t& get_pool_size(){
+    static size_t& get_pool_size() {
         static size_t pool_size = 0;
         return pool_size;
     }
@@ -150,7 +150,7 @@ public:
      * \brief Return the lock for the pool
      * \return a reference to the pool lock
      */
-    static std::mutex& get_lock(){
+    static std::mutex& get_lock() {
         static std::mutex lock;
         return lock;
     }
@@ -161,8 +161,8 @@ public:
      * \param size The memory  size
      * \return The allocated GPU memory
      */
-    template<typename T>
-    static T* allocate(size_t size){
+    template <typename T>
+    static T* allocate(size_t size) {
         const auto real_size = size * sizeof(T);
 
         // Try to get memory from the pool
@@ -194,8 +194,8 @@ public:
      * \param gpu_memory The GPU memory allocated
      * \param size The size of the allocated GPU memory
      */
-    template<typename T>
-    static void release(const T* gpu_memory, size_t size){
+    template <typename T>
+    static void release(const T* gpu_memory, size_t size) {
         // Try to get an empty slot
 
         {
@@ -226,14 +226,14 @@ public:
      * This has no effect if the allocator does not use a memory
      * pool.
      */
-    static void clear(){
+    static void clear() {
         std::lock_guard<std::mutex> l(get_lock());
 
         // Release each used slots
         // and clear them
 
-        for(auto& slot : get_pool().cache){
-            if(slot.memory){
+        for (auto& slot : get_pool().cache) {
+            if (slot.memory) {
                 base_release(slot.memory);
 
                 slot.memory = nullptr;
@@ -252,7 +252,7 @@ public:
  * This handler is responsible for allocating the memory and keeping CPU and GPU
  * memory consistency.
  */
-template<typename T>
+template <typename T>
 struct gpu_memory_handler {
 private:
     mutable T* gpu_memory_         = nullptr; ///< The GPU memory pointer
@@ -268,14 +268,15 @@ public:
      * \brief Copy construct a gpu_memory_handler
      * \param the gpu_memory_handler to copy from
      */
-    gpu_memory_handler(const gpu_memory_handler& rhs) : gpu_memory_size(rhs.gpu_memory_size), cpu_up_to_date(rhs.cpu_up_to_date), gpu_up_to_date(rhs.gpu_up_to_date) {
-        if(rhs.gpu_up_to_date){
+    gpu_memory_handler(const gpu_memory_handler& rhs)
+            : gpu_memory_size(rhs.gpu_memory_size), cpu_up_to_date(rhs.cpu_up_to_date), gpu_up_to_date(rhs.gpu_up_to_date) {
+        if (rhs.gpu_up_to_date) {
             gpu_allocate_impl(gpu_memory_size);
 
             gpu_copy_from(rhs.gpu_memory_, gpu_memory_size);
 
             // The CPU status can be erased by gpu_copy_from
-            if(rhs.cpu_up_to_date){
+            if (rhs.cpu_up_to_date) {
                 validate_cpu();
             }
         } else {
@@ -289,8 +290,8 @@ public:
     /*!
      * \brief Move construct a gpu_memory_handler
      */
-    gpu_memory_handler(gpu_memory_handler&& rhs)
-            noexcept : gpu_memory_(rhs.gpu_memory_), gpu_memory_size(rhs.gpu_memory_size), cpu_up_to_date(rhs.cpu_up_to_date), gpu_up_to_date(rhs.gpu_up_to_date) {
+    gpu_memory_handler(gpu_memory_handler&& rhs) noexcept
+            : gpu_memory_(rhs.gpu_memory_), gpu_memory_size(rhs.gpu_memory_size), cpu_up_to_date(rhs.cpu_up_to_date), gpu_up_to_date(rhs.gpu_up_to_date) {
         rhs.gpu_memory_     = nullptr;
         rhs.gpu_memory_size = 0;
     }
@@ -300,7 +301,7 @@ public:
      * \param the gpu_memory_handler to copy from
      * \return a reference to this object
      */
-    gpu_memory_handler& operator=(const gpu_memory_handler& rhs){
+    gpu_memory_handler& operator=(const gpu_memory_handler& rhs) {
         if (this != &rhs) {
             // Release the previous memory, if any
             if (gpu_memory_) {
@@ -321,8 +322,8 @@ public:
             }
 
             // Copy the status (at the end, otherwise gpu_copy_from will screw them)
-            cpu_up_to_date  = rhs.cpu_up_to_date;
-            gpu_up_to_date  = rhs.gpu_up_to_date;
+            cpu_up_to_date = rhs.cpu_up_to_date;
+            gpu_up_to_date = rhs.gpu_up_to_date;
         }
 
         return *this;
@@ -357,7 +358,7 @@ public:
      * \brief Destroys the GPU memory handler. This effectively
      * releases any memory allocated.
      */
-    ~gpu_memory_handler(){
+    ~gpu_memory_handler() {
         if (gpu_memory_) {
             gpu_memory_allocator::release(gpu_memory_, gpu_memory_size);
         }
@@ -394,7 +395,7 @@ public:
         if (gpu_memory_) {
             gpu_memory_allocator::release(gpu_memory_, gpu_memory_size);
 
-            gpu_memory_ = nullptr;
+            gpu_memory_     = nullptr;
             gpu_memory_size = 0;
         }
 
@@ -455,7 +456,7 @@ public:
             gpu_allocate_impl(etl_size);
         }
 
-        if(!gpu_up_to_date){
+        if (!gpu_up_to_date) {
             cpu_to_gpu(cpu_memory, etl_size);
         }
     }
@@ -467,7 +468,7 @@ public:
      * \param etl_size The size of the memory
      */
     void ensure_cpu_up_to_date(const T* cpu_memory, size_t etl_size) const {
-        if(!cpu_up_to_date){
+        if (!cpu_up_to_date) {
             gpu_to_cpu(cpu_memory, etl_size);
         }
     }
@@ -482,17 +483,14 @@ public:
         cpp_assert(gpu_memory, "Cannot copy from invalid memory");
         cpp_assert(etl_size, "Cannot copy with a size of zero");
 
-        cuda_check(cudaMemcpy(
-            const_cast<std::remove_const_t<T>*>(gpu_memory_),
-            const_cast<std::remove_const_t<T>*>(gpu_memory),
-            etl_size * sizeof(T), cudaMemcpyDeviceToDevice));
+        cuda_check(cudaMemcpy(const_cast<std::remove_const_t<T>*>(gpu_memory_), const_cast<std::remove_const_t<T>*>(gpu_memory), etl_size * sizeof(T),
+                              cudaMemcpyDeviceToDevice));
 
         gpu_up_to_date = true;
         cpu_up_to_date = false;
     }
 
 private:
-
     /*!
      * \brief Allocate memory on the GPU for the expression
      */
@@ -513,10 +511,8 @@ private:
         cpp_assert(cpu_memory, "cpu_memory is nullptr in entry to cpu_to_gpu");
         cpp_assert(gpu_memory_, "gpu_memory_ is nullptr in entry to cpu_to_gpu");
 
-        cuda_check(cudaMemcpy(
-            const_cast<std::remove_const_t<T>*>(gpu_memory_),
-            const_cast<std::remove_const_t<T>*>(cpu_memory),
-            etl_size * sizeof(T), cudaMemcpyHostToDevice));
+        cuda_check(cudaMemcpy(const_cast<std::remove_const_t<T>*>(gpu_memory_), const_cast<std::remove_const_t<T>*>(cpu_memory), etl_size * sizeof(T),
+                              cudaMemcpyHostToDevice));
 
         gpu_up_to_date = true;
 
@@ -533,10 +529,8 @@ private:
         cpp_assert(cpu_memory, "cpu_memory is nullptr in entry to gpu_to_cpu");
         cpp_assert(gpu_memory_, "gpu_memory_ is nullptr in entry to gpu_to_cpu");
 
-        cuda_check(cudaMemcpy(
-            const_cast<std::remove_const_t<T>*>(cpu_memory),
-            const_cast<std::remove_const_t<T>*>(gpu_memory_),
-            etl_size * sizeof(T), cudaMemcpyDeviceToHost));
+        cuda_check(cudaMemcpy(const_cast<std::remove_const_t<T>*>(cpu_memory), const_cast<std::remove_const_t<T>*>(gpu_memory_), etl_size * sizeof(T),
+                              cudaMemcpyDeviceToHost));
 
         cpu_up_to_date = true;
 
@@ -553,7 +547,7 @@ private:
 };
 
 #else
-template<typename T>
+template <typename T>
 struct gpu_memory_handler {
     /*!
      * \brief Return GPU memory of this expression, if any.
