@@ -473,7 +473,13 @@ void blas_conv4_valid([[maybe_unused]] I_T&& input,
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void blas_conv4_valid_flipped([[maybe_unused]] I_T&& input,
+                              [[maybe_unused]] K_T&& kernel,
+                              [[maybe_unused]] C_T&& conv,
+                              [[maybe_unused]] size_t s1,
+                              [[maybe_unused]] size_t s2,
+                              [[maybe_unused]] size_t p1,
+                              [[maybe_unused]] size_t p2) {
     if constexpr (conv2_possible<vector_mode, I_T, K_T, C_T>) {
         const auto K = etl::dim<0>(kernel); // The number of kernels
         const auto C = etl::dim<1>(input);  // The number of channels
@@ -602,7 +608,13 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_filter(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void blas_conv4_valid_filter([[maybe_unused]] I_T&& input,
+                             [[maybe_unused]] K_T&& kernel,
+                             [[maybe_unused]] C_T&& conv,
+                             [[maybe_unused]] size_t s1,
+                             [[maybe_unused]] size_t s2,
+                             [[maybe_unused]] size_t p1,
+                             [[maybe_unused]] size_t p2) {
     if constexpr (conv2_possible<vector_mode, I_T, K_T, C_T>) {
         auto prepared_k = force_temporary(kernel);
 
@@ -626,7 +638,13 @@ void blas_conv4_valid_filter(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, s
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_filter_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void blas_conv4_valid_filter_flipped([[maybe_unused]] I_T&& input,
+                                     [[maybe_unused]] K_T&& kernel,
+                                     [[maybe_unused]] C_T&& conv,
+                                     [[maybe_unused]] size_t s1,
+                                     [[maybe_unused]] size_t s2,
+                                     [[maybe_unused]] size_t p1,
+                                     [[maybe_unused]] size_t p2) {
     if constexpr (conv2_possible<vector_mode, I_T, K_T, C_T>) {
         blas_conv4_valid_filter_prepared(input, kernel, conv, s1, s2, p1, p2);
     } else {
@@ -740,7 +758,13 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void blas_conv4_valid_back([[maybe_unused]] I_T&& input,
+                           [[maybe_unused]] K_T&& kernel,
+                           [[maybe_unused]] C_T&& conv,
+                           [[maybe_unused]] size_t s1,
+                           [[maybe_unused]] size_t s2,
+                           [[maybe_unused]] size_t p1,
+                           [[maybe_unused]] size_t p2) {
     if constexpr (conv2_possible<vector_mode, I_T, K_T, C_T>) {
         auto prepared_k = force_temporary(kernel);
 
@@ -764,7 +788,13 @@ void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, siz
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void blas_conv4_valid_back_flipped([[maybe_unused]] I_T&& input,
+                                   [[maybe_unused]] K_T&& kernel,
+                                   [[maybe_unused]] C_T&& conv,
+                                   [[maybe_unused]] size_t s1,
+                                   [[maybe_unused]] size_t s2,
+                                   [[maybe_unused]] size_t p1,
+                                   [[maybe_unused]] size_t p2) {
     if constexpr (conv2_possible<vector_mode, I_T, K_T, C_T>) {
         blas_conv4_valid_back_prepared(input, kernel, conv, s1, s2, p1, p2);
     } else {
