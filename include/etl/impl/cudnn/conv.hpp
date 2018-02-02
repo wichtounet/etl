@@ -67,7 +67,7 @@ void conv2_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
     using type = std::remove_const_t<value_t<I>>;
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     decltype(auto) handle = start_cudnn();
 
@@ -83,8 +83,8 @@ void conv2_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
 
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
-    cudnn_check(cudnnGetConvolutionForwardAlgorithm(handle.get(), *input_tensor, *filter, convolution,
-        *output_tensor, CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+    cudnn_check(cudnnGetConvolutionForwardAlgorithm(handle.get(), *input_tensor, *filter, convolution, *output_tensor,
+                                                    CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
 
     // Prepare the workspace
     size_t workspace_size = 0;
@@ -92,7 +92,7 @@ void conv2_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
 
     impl::cuda::cuda_memory<type> workspace;
 
-    if(workspace_size){
+    if (workspace_size) {
         workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
     }
 
@@ -104,11 +104,8 @@ void conv2_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
 
     // Perform the convolution
 
-    cudnn_check(cudnnConvolutionForward(handle.get(),
-        alpha, *input_tensor, input.gpu_memory(),
-        *filter, kernel.gpu_memory(),
-        convolution, conv_algo, workspace.get(), workspace_size,
-        beta, *output_tensor, conv.gpu_memory()));
+    cudnn_check(cudnnConvolutionForward(handle.get(), alpha, *input_tensor, input.gpu_memory(), *filter, kernel.gpu_memory(), convolution, conv_algo,
+                                        workspace.get(), workspace_size, beta, *output_tensor, conv.gpu_memory()));
 
     conv.validate_gpu();
     conv.invalidate_cpu();
@@ -127,9 +124,19 @@ void conv2_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
  * \param p1 The first dimension padding (left and right)
  * \param p2 The second dimension padding (top and bottom)
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
-void conv2_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv2_valid_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
+template <typename I, typename K, typename C>
+void conv2_valid([[maybe_unused]] I&& input,
+                 [[maybe_unused]] K&& kernel,
+                 [[maybe_unused]] C&& conv,
+                 [[maybe_unused]] size_t s1,
+                 [[maybe_unused]] size_t s2,
+                 [[maybe_unused]] size_t p1,
+                 [[maybe_unused]] size_t p2) {
+    if constexpr (conv_possible<I, K, C>) {
+        conv2_valid_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
+    } else {
+        cpp_unreachable("CUDNN not available/enabled");
+    }
 }
 
 /*!
@@ -143,9 +150,19 @@ void conv2_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p
  * \param p1 The first dimension padding (left and right)
  * \param p2 The second dimension padding (top and bottom)
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
-void conv2_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv2_valid_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
+template <typename I, typename K, typename C>
+void conv2_valid_flipped([[maybe_unused]] I&& input,
+                         [[maybe_unused]] K&& kernel,
+                         [[maybe_unused]] C&& conv,
+                         [[maybe_unused]] size_t s1,
+                         [[maybe_unused]] size_t s2,
+                         [[maybe_unused]] size_t p1,
+                         [[maybe_unused]] size_t p2) {
+    if constexpr (conv_possible<I, K, C>) {
+        conv2_valid_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
+    } else {
+        cpp_unreachable("CUDNN not available/enabled");
+    }
 }
 
 /*!
@@ -159,7 +176,7 @@ void conv4_forward_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
     using type = value_t<I>;
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     decltype(auto) handle = start_cudnn();
 
@@ -175,8 +192,8 @@ void conv4_forward_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
 
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
-    cudnn_check(cudnnGetConvolutionForwardAlgorithm(handle.get(), *input_tensor, *filter, convolution,
-        *output_tensor, CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+    cudnn_check(cudnnGetConvolutionForwardAlgorithm(handle.get(), *input_tensor, *filter, convolution, *output_tensor,
+                                                    CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
 
     // Prepare the workspace
     size_t workspace_size = 0;
@@ -184,7 +201,7 @@ void conv4_forward_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
 
     impl::cuda::cuda_memory<type> workspace;
 
-    if(workspace_size){
+    if (workspace_size) {
         workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
     }
 
@@ -196,11 +213,8 @@ void conv4_forward_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
 
     // Perform the convolution
 
-    cudnn_check(cudnnConvolutionForward(handle.get(),
-        alpha, *input_tensor, input.gpu_memory(),
-        *filter, kernel.gpu_memory(),
-        convolution, conv_algo, workspace.get(), workspace_size,
-        beta, *output_tensor, conv.gpu_memory()));
+    cudnn_check(cudnnConvolutionForward(handle.get(), alpha, *input_tensor, input.gpu_memory(), *filter, kernel.gpu_memory(), convolution, conv_algo,
+                                        workspace.get(), workspace_size, beta, *output_tensor, conv.gpu_memory()));
 
     conv.validate_gpu();
     conv.invalidate_cpu();
@@ -215,9 +229,19 @@ void conv4_forward_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
-void conv4_forward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv4_forward_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
+template <typename I, typename K, typename C>
+void conv4_forward([[maybe_unused]] I&& input,
+                   [[maybe_unused]] K&& kernel,
+                   [[maybe_unused]] C&& conv,
+                   [[maybe_unused]] size_t s1,
+                   [[maybe_unused]] size_t s2,
+                   [[maybe_unused]] size_t p1,
+                   [[maybe_unused]] size_t p2) {
+    if constexpr (conv_possible<I, K, C>) {
+        conv4_forward_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
+    } else {
+        cpp_unreachable("CUDNN not available/enabled");
+    }
 }
 
 /*!
@@ -226,9 +250,19 @@ void conv4_forward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
-void conv4_forward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv4_forward_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
+template <typename I, typename K, typename C>
+void conv4_forward_flipped([[maybe_unused]] I&& input,
+                           [[maybe_unused]] K&& kernel,
+                           [[maybe_unused]] C&& conv,
+                           [[maybe_unused]] size_t s1,
+                           [[maybe_unused]] size_t s2,
+                           [[maybe_unused]] size_t p1,
+                           [[maybe_unused]] size_t p2) {
+    if constexpr (conv_possible<I, K, C>) {
+        conv4_forward_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
+    } else {
+        cpp_unreachable("CUDNN not available/enabled");
+    }
 }
 
 /*!
@@ -244,7 +278,7 @@ void conv4_backward_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_
     using type = value_t<I>;
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     decltype(auto) handle = start_cudnn();
 
@@ -260,8 +294,8 @@ void conv4_backward_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_
 
     // Find the algorithm to use
     cudnnConvolutionBwdFilterAlgo_t conv_algo;
-    cudnn_check(cudnnGetConvolutionBackwardFilterAlgorithm(handle.get(), *input_tensor, *output_tensor, convolution,
-        *filter, CUDNN_CONVOLUTION_BWD_FILTER_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+    cudnn_check(cudnnGetConvolutionBackwardFilterAlgorithm(handle.get(), *input_tensor, *output_tensor, convolution, *filter,
+                                                           CUDNN_CONVOLUTION_BWD_FILTER_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
 
     // Prepare the workspace
     size_t workspace_size = 0;
@@ -269,7 +303,7 @@ void conv4_backward_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_
 
     impl::cuda::cuda_memory<type> workspace;
 
-    if(workspace_size){
+    if (workspace_size) {
         workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
     }
 
@@ -281,11 +315,8 @@ void conv4_backward_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_
 
     // Perform the convolution
 
-    cudnn_check(cudnnConvolutionBackwardFilter(handle.get(),
-        alpha, *input_tensor, input.gpu_memory(),
-        *output_tensor, kernel.gpu_memory(),
-        convolution, conv_algo, workspace.get(), workspace_size,
-        beta, *filter, conv.gpu_memory()));
+    cudnn_check(cudnnConvolutionBackwardFilter(handle.get(), alpha, *input_tensor, input.gpu_memory(), *output_tensor, kernel.gpu_memory(), convolution,
+                                               conv_algo, workspace.get(), workspace_size, beta, *filter, conv.gpu_memory()));
 
     conv.validate_gpu();
     conv.invalidate_cpu();
@@ -302,9 +333,19 @@ void conv4_backward_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
-void conv4_backward_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv4_backward_filter_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
+template <typename I, typename K, typename C>
+void conv4_backward_filter([[maybe_unused]] I&& input,
+                           [[maybe_unused]] K&& kernel,
+                           [[maybe_unused]] C&& conv,
+                           [[maybe_unused]] size_t s1,
+                           [[maybe_unused]] size_t s2,
+                           [[maybe_unused]] size_t p1,
+                           [[maybe_unused]] size_t p2) {
+    if constexpr (conv_possible<I, K, C>) {
+        conv4_backward_filter_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
+    } else {
+        cpp_unreachable("CUDNN not available/enabled");
+    }
 }
 
 /*!
@@ -315,9 +356,19 @@ void conv4_backward_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
-void conv4_backward_filter_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv4_backward_filter_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
+template <typename I, typename K, typename C>
+void conv4_backward_filter_flipped([[maybe_unused]] I&& input,
+                                   [[maybe_unused]] K&& kernel,
+                                   [[maybe_unused]] C&& conv,
+                                   [[maybe_unused]] size_t s1,
+                                   [[maybe_unused]] size_t s2,
+                                   [[maybe_unused]] size_t p1,
+                                   [[maybe_unused]] size_t p2) {
+    if constexpr (conv_possible<I, K, C>) {
+        conv4_backward_filter_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
+    } else {
+        cpp_unreachable("CUDNN not available/enabled");
+    }
 }
 
 /*!
@@ -331,7 +382,7 @@ void conv2_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
     using type = std::remove_const_t<value_t<I>>;
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     decltype(auto) handle = start_cudnn();
 
@@ -347,8 +398,8 @@ void conv2_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
 
     // Find the algorithm to use
     cudnnConvolutionBwdDataAlgo_t conv_algo;
-    cudnn_check(cudnnGetConvolutionBackwardDataAlgorithm(handle.get(), *filter, *input_tensor, convolution,
-        *output_tensor, CUDNN_CONVOLUTION_BWD_DATA_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+    cudnn_check(cudnnGetConvolutionBackwardDataAlgorithm(handle.get(), *filter, *input_tensor, convolution, *output_tensor,
+                                                         CUDNN_CONVOLUTION_BWD_DATA_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
 
     // Prepare the workspace
     size_t workspace_size = 0;
@@ -356,7 +407,7 @@ void conv2_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
 
     impl::cuda::cuda_memory<type> workspace;
 
-    if(workspace_size){
+    if (workspace_size) {
         workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
     }
 
@@ -368,11 +419,8 @@ void conv2_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
 
     // Perform the convolution
 
-    cudnn_check(cudnnConvolutionBackwardData(handle.get(),
-        alpha, *filter, kernel.gpu_memory(),
-        *input_tensor, input.gpu_memory(),
-        convolution, conv_algo, workspace.get(), workspace_size,
-        beta, *output_tensor, conv.gpu_memory()));
+    cudnn_check(cudnnConvolutionBackwardData(handle.get(), alpha, *filter, kernel.gpu_memory(), *input_tensor, input.gpu_memory(), convolution, conv_algo,
+                                             workspace.get(), workspace_size, beta, *output_tensor, conv.gpu_memory()));
 
     conv.validate_gpu();
     conv.invalidate_cpu();
@@ -387,9 +435,13 @@ void conv2_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
-void conv2_full(I&& input, K&& kernel, C&& conv) {
-    conv2_full_set(input, kernel, conv, CUDNN_CROSS_CORRELATION);
+template <typename I, typename K, typename C>
+void conv2_full([[maybe_unused]] I&& input, [[maybe_unused]] K&& kernel, [[maybe_unused]] C&& conv) {
+    if constexpr (conv_possible<I, K, C>) {
+        conv2_full_set(input, kernel, conv, CUDNN_CROSS_CORRELATION);
+    } else {
+        cpp_unreachable("CUDNN not available/enabled");
+    }
 }
 
 /*!
@@ -398,9 +450,13 @@ void conv2_full(I&& input, K&& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
-void conv2_full_flipped(I&& input, K&& kernel, C&& conv) {
-    conv2_full_set(input, kernel, conv, CUDNN_CONVOLUTION);
+template <typename I, typename K, typename C>
+void conv2_full_flipped([[maybe_unused]] I&& input, [[maybe_unused]] K&& kernel, [[maybe_unused]] C&& conv) {
+    if constexpr (conv_possible<I, K, C>) {
+        conv2_full_set(input, kernel, conv, CUDNN_CONVOLUTION);
+    } else {
+        cpp_unreachable("CUDNN not available/enabled");
+    }
 }
 
 /*!
@@ -416,7 +472,7 @@ void conv2_valid_multi_set(I& input, K&& kernel, C&& conv, size_t s1, size_t s2,
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     decltype(auto) handle = start_cudnn();
 
@@ -442,8 +498,8 @@ void conv2_valid_multi_set(I& input, K&& kernel, C&& conv, size_t s1, size_t s2,
 
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
-    cudnn_check(cudnnGetConvolutionForwardAlgorithm(handle.get(), input_tensor, filter, convolution,
-        output_tensor, CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+    cudnn_check(cudnnGetConvolutionForwardAlgorithm(handle.get(), input_tensor, filter, convolution, output_tensor,
+                                                    CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
 
     // Prepare the workspace
     size_t workspace_size = 0;
@@ -451,7 +507,7 @@ void conv2_valid_multi_set(I& input, K&& kernel, C&& conv, size_t s1, size_t s2,
 
     impl::cuda::cuda_memory<type> workspace;
 
-    if(workspace_size){
+    if (workspace_size) {
         workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
     }
 
@@ -463,11 +519,8 @@ void conv2_valid_multi_set(I& input, K&& kernel, C&& conv, size_t s1, size_t s2,
 
     // Perform the convolution
 
-    cudnn_check(cudnnConvolutionForward(handle.get(),
-        alpha, input_tensor, input.gpu_memory(),
-        filter, kernel.gpu_memory(),
-        convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv.gpu_memory()));
+    cudnn_check(cudnnConvolutionForward(handle.get(), alpha, input_tensor, input.gpu_memory(), filter, kernel.gpu_memory(), convolution, conv_algo,
+                                        workspace.get(), workspace_size, beta, output_tensor, conv.gpu_memory()));
 
     conv.validate_gpu();
     conv.invalidate_cpu();
@@ -485,9 +538,19 @@ void conv2_valid_multi_set(I& input, K&& kernel, C&& conv, size_t s1, size_t s2,
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
-void conv2_valid_multi(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv2_valid_multi_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
+template <typename I, typename K, typename C>
+void conv2_valid_multi([[maybe_unused]] I&& input,
+                       [[maybe_unused]] K&& kernel,
+                       [[maybe_unused]] C&& conv,
+                       [[maybe_unused]] size_t s1,
+                       [[maybe_unused]] size_t s2,
+                       [[maybe_unused]] size_t p1,
+                       [[maybe_unused]] size_t p2) {
+    if constexpr (conv_possible<I, K, C>) {
+        conv2_valid_multi_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
+    } else {
+        cpp_unreachable("CUDNN not available/enabled");
+    }
 }
 
 /*!
@@ -496,9 +559,19 @@ void conv2_valid_multi(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
-void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv2_valid_multi_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
+template <typename I, typename K, typename C>
+void conv2_valid_multi_flipped([[maybe_unused]] I&& input,
+                               [[maybe_unused]] K&& kernel,
+                               [[maybe_unused]] C&& conv,
+                               [[maybe_unused]] size_t s1,
+                               [[maybe_unused]] size_t s2,
+                               [[maybe_unused]] size_t p1,
+                               [[maybe_unused]] size_t p2) {
+    if constexpr (conv_possible<I, K, C>) {
+        conv2_valid_multi_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
+    } else {
+        cpp_unreachable("CUDNN not available/enabled");
+    }
 }
 
 /*!
@@ -512,7 +585,7 @@ void conv4_backward_data_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMo
     using type = value_t<I>;
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     decltype(auto) handle = start_cudnn();
 
@@ -528,8 +601,8 @@ void conv4_backward_data_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMo
 
     // Find the algorithm to use
     cudnnConvolutionBwdDataAlgo_t conv_algo;
-    cudnn_check(cudnnGetConvolutionBackwardDataAlgorithm(handle.get(), *filter, *input_tensor, convolution,
-        *output_tensor, CUDNN_CONVOLUTION_BWD_DATA_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+    cudnn_check(cudnnGetConvolutionBackwardDataAlgorithm(handle.get(), *filter, *input_tensor, convolution, *output_tensor,
+                                                         CUDNN_CONVOLUTION_BWD_DATA_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
 
     // Prepare the workspace
     size_t workspace_size = 0;
@@ -537,7 +610,7 @@ void conv4_backward_data_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMo
 
     impl::cuda::cuda_memory<type> workspace;
 
-    if(workspace_size){
+    if (workspace_size) {
         workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
     }
 
@@ -549,11 +622,8 @@ void conv4_backward_data_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMo
 
     // Perform the convolution
 
-    cudnn_check(cudnnConvolutionBackwardData(handle.get(),
-        alpha, *filter, kernel.gpu_memory(),
-        *input_tensor, input.gpu_memory(),
-        convolution, conv_algo, workspace.get(), workspace_size,
-        beta, *output_tensor, conv.gpu_memory()));
+    cudnn_check(cudnnConvolutionBackwardData(handle.get(), alpha, *filter, kernel.gpu_memory(), *input_tensor, input.gpu_memory(), convolution, conv_algo,
+                                             workspace.get(), workspace_size, beta, *output_tensor, conv.gpu_memory()));
 
     conv.validate_gpu();
     conv.invalidate_cpu();
@@ -568,9 +638,19 @@ void conv4_backward_data_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMo
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
-void conv4_backward_data(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv4_backward_data_set(input, kernel, conv, CUDNN_CROSS_CORRELATION, s1, s2, p1, p2);
+template <typename I, typename K, typename C>
+void conv4_backward_data([[maybe_unused]] I&& input,
+                         [[maybe_unused]] K&& kernel,
+                         [[maybe_unused]] C&& conv,
+                         [[maybe_unused]] size_t s1,
+                         [[maybe_unused]] size_t s2,
+                         [[maybe_unused]] size_t p1,
+                         [[maybe_unused]] size_t p2) {
+    if constexpr (conv_possible<I, K, C>) {
+        conv4_backward_data_set(input, kernel, conv, CUDNN_CROSS_CORRELATION, s1, s2, p1, p2);
+    } else {
+        cpp_unreachable("CUDNN not available/enabled");
+    }
 }
 
 /*!
@@ -579,9 +659,19 @@ void conv4_backward_data(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
-void conv4_backward_data_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv4_backward_data_set(input, kernel, conv, CUDNN_CONVOLUTION, s1, s2, p1, p2);
+template <typename I, typename K, typename C>
+void conv4_backward_data_flipped([[maybe_unused]] I&& input,
+                                 [[maybe_unused]] K&& kernel,
+                                 [[maybe_unused]] C&& conv,
+                                 [[maybe_unused]] size_t s1,
+                                 [[maybe_unused]] size_t s2,
+                                 [[maybe_unused]] size_t p1,
+                                 [[maybe_unused]] size_t p2) {
+    if constexpr (conv_possible<I, K, C>) {
+        conv4_backward_data_set(input, kernel, conv, CUDNN_CONVOLUTION, s1, s2, p1, p2);
+    } else {
+        cpp_unreachable("CUDNN not available/enabled");
+    }
 }
 
 /*!
@@ -590,9 +680,13 @@ void conv4_backward_data_flipped(I&& input, K&& kernel, C&& conv, size_t s1, siz
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
-void conv4_backward_data_full(I&& input, K&& kernel, C&& conv) {
-    conv4_backward_data_set(input, kernel, conv, CUDNN_CROSS_CORRELATION, 1, 1, 0, 0);
+template <typename I, typename K, typename C>
+void conv4_backward_data_full([[maybe_unused]] I&& input, [[maybe_unused]] K&& kernel, [[maybe_unused]] C&& conv) {
+    if constexpr (conv_possible<I, K, C>) {
+        conv4_backward_data_set(input, kernel, conv, CUDNN_CROSS_CORRELATION, 1, 1, 0, 0);
+    } else {
+        cpp_unreachable("CUDNN not available/enabled");
+    }
 }
 
 /*!
@@ -601,12 +695,16 @@ void conv4_backward_data_full(I&& input, K&& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_enable_iff(conv_possible<I, K, C>)>
-void conv4_backward_data_full_flipped(I&& input, K&& kernel, C&& conv) {
-    conv4_backward_data_set(input, kernel, conv, CUDNN_CONVOLUTION, 1, 1, 0, 0);
+template <typename I, typename K, typename C>
+void conv4_backward_data_full_flipped([[maybe_unused]] I&& input, [[maybe_unused]] K&& kernel, [[maybe_unused]] C&& conv) {
+    if constexpr (conv_possible<I, K, C>) {
+        conv4_backward_data_set(input, kernel, conv, CUDNN_CONVOLUTION, 1, 1, 0, 0);
+    } else {
+        cpp_unreachable("CUDNN not available/enabled");
+    }
 }
 
-#endif
+#else
 
 //COVERAGE_EXCLUDE_BEGIN
 
@@ -620,7 +718,7 @@ void conv4_backward_data_full_flipped(I&& input, K&& kernel, C&& conv) {
  * \param p1 The first dimension padding (left and right)
  * \param p2 The second dimension padding (top and bottom)
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
+template <typename I, typename K, typename C>
 void conv2_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -642,7 +740,7 @@ void conv2_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p
  * \param p1 The first dimension padding (left and right)
  * \param p2 The second dimension padding (top and bottom)
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
+template <typename I, typename K, typename C>
 void conv2_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -660,7 +758,7 @@ void conv2_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
+template <typename I, typename K, typename C>
 void conv4_forward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -678,7 +776,7 @@ void conv4_forward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
+template <typename I, typename K, typename C>
 void conv4_forward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -698,7 +796,7 @@ void conv4_forward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
+template <typename I, typename K, typename C>
 void conv4_backward_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -718,7 +816,7 @@ void conv4_backward_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
+template <typename I, typename K, typename C>
 void conv4_backward_filter_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -736,7 +834,7 @@ void conv4_backward_filter_flipped(I&& input, K&& kernel, C&& conv, size_t s1, s
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
+template <typename I, typename K, typename C>
 void conv2_full(I&& input, K&& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -750,7 +848,7 @@ void conv2_full(I&& input, K&& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
+template <typename I, typename K, typename C>
 void conv2_full_flipped(I&& input, K&& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -764,7 +862,7 @@ void conv2_full_flipped(I&& input, K&& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
+template <typename I, typename K, typename C>
 void conv4_backward_data_full(I&& input, K&& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -778,7 +876,7 @@ void conv4_backward_data_full(I&& input, K&& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
+template <typename I, typename K, typename C>
 void conv4_backward_data_full_flipped(I&& input, K&& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -792,7 +890,7 @@ void conv4_backward_data_full_flipped(I&& input, K&& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
+template <typename I, typename K, typename C>
 void conv2_valid_multi(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -810,7 +908,7 @@ void conv2_valid_multi(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
+template <typename I, typename K, typename C>
 void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -828,7 +926,7 @@ void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
+template <typename I, typename K, typename C>
 void conv4_backward_data(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -846,7 +944,7 @@ void conv4_backward_data(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C, cpp_disable_iff(conv_possible<I, K, C>)>
+template <typename I, typename K, typename C>
 void conv4_backward_data_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -859,5 +957,7 @@ void conv4_backward_data_flipped(I&& input, K&& kernel, C&& conv, size_t s1, siz
 }
 
 //COVERAGE_EXCLUDE_END
+
+#endif
 
 } //end of namespace etl::impl::cudnn
