@@ -489,7 +489,13 @@ void conv2_valid_multi_multi([[maybe_unused]] const I& input,
  * \param p2 The second dimension padding (top and bottom)
  */
 template <typename I, typename KK, typename C>
-void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void conv2_valid_multi_multi_flipped([[maybe_unused]] const I& input,
+                                     [[maybe_unused]] const KK& kernel,
+                                     [[maybe_unused]] C&& conv,
+                                     [[maybe_unused]] size_t s1,
+                                     [[maybe_unused]] size_t s2,
+                                     [[maybe_unused]] size_t p1,
+                                     [[maybe_unused]] size_t p2) {
     if constexpr (conv2_possible<vector_mode, I, KK, C>) {
         cpp_assert(vec_enabled, "Cannot use vectorized mode");
         cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
