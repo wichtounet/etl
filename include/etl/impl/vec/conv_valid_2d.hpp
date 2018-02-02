@@ -76,7 +76,7 @@ void conv2_valid_flipped([[maybe_unused]] const I& input,
             return;
         }
 
-        if (padding_impl) {
+        if constexpr (padding_impl) {
             constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
             constexpr size_t SS = AS / 2;
 
@@ -170,7 +170,7 @@ void conv2_valid([[maybe_unused]] const I& input,
             return;
         }
 
-        if (padding_impl) {
+        if constexpr (padding_impl) {
             constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
             constexpr size_t SS = AS / 2;
 
@@ -230,7 +230,7 @@ void conv2_valid_multi([[maybe_unused]] const I& input,
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
-        if (padding_impl) {
+        if constexpr (padding_impl) {
             static constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
             static constexpr size_t SS = AS / 2;
 
@@ -319,7 +319,7 @@ void conv2_valid_multi_flipped([[maybe_unused]] const I& input,
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
-        if (padding_impl) {
+        if constexpr (padding_impl) {
             constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
             constexpr size_t SS = AS / 2;
 
@@ -410,7 +410,7 @@ void conv2_valid_multi_multi([[maybe_unused]] const I& input,
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
-        if (padding_impl) {
+        if constexpr (padding_impl) {
             static constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
             static constexpr size_t SS = AS / 2;
 
@@ -504,7 +504,7 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
-        if (padding_impl) {
+        if constexpr (padding_impl) {
             constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
             constexpr size_t SS = AS / 2;
 

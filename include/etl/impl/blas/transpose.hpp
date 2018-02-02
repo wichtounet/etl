@@ -34,13 +34,13 @@ void mkl_otrans(A&& a, C&& c) {
     auto mem_a = a.memory_start();
 
     if constexpr (all_single_precision<A, C>) {
-        if (decay_traits<A>::storage_order == order::RowMajor) {
+        if (is_row_major<A>) {
             mkl_somatcopy('R', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0f, mem_a, etl::dim<1>(a), mem_c, etl::dim<0>(a));
         } else {
             mkl_somatcopy('C', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0f, mem_a, etl::dim<0>(a), mem_c, etl::dim<1>(a));
         }
     } else if constexpr (all_double_precision<A, C>) {
-        if (decay_traits<A>::storage_order == order::RowMajor) {
+        if (is_row_major<A>) {
             mkl_domatcopy('R', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0, mem_a, etl::dim<1>(a), mem_c, etl::dim<0>(a));
         } else {
             mkl_domatcopy('C', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0, mem_a, etl::dim<0>(a), mem_c, etl::dim<1>(a));
@@ -59,13 +59,13 @@ void mkl_itrans(C&& c) {
     c.ensure_cpu_up_to_date();
 
     if constexpr (is_single_precision<C>) {
-        if (decay_traits<C>::storage_order == order::RowMajor) {
+        if (is_row_major<C>) {
             mkl_simatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
         } else {
             mkl_simatcopy('C', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<0>(c), etl::dim<1>(c));
         }
     } else if constexpr (is_double_precision<C>) {
-        if (decay_traits<C>::storage_order == order::RowMajor) {
+        if (is_row_major<C>) {
             mkl_dimatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
         } else {
             mkl_dimatcopy('C', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, c.memory_start(), etl::dim<0>(c), etl::dim<1>(c));

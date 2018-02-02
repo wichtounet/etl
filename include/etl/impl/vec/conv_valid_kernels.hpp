@@ -303,22 +303,24 @@ void conv2_valid_flipped_inner_kernel(const T* in, size_t n1, size_t n2, const T
         }
     }
 
-    if (!padding_impl && m2 % vec_size != 0) {
-        size_t rem = m2 % vec_size;
-        for (size_t i = p1; i < c1 - p1; ++i) {
-            for (size_t j = p2; j < c2 - p2; ++j) {
-                T temp = 0.0;
+    if constexpr (!padding_impl) {
+        if (m2 % vec_size != 0) {
+            size_t rem = m2 % vec_size;
+            for (size_t i = p1; i < c1 - p1; ++i) {
+                for (size_t j = p2; j < c2 - p2; ++j) {
+                    T temp = 0.0;
 
-                const size_t i_i = i * s1 - p1;
-                const size_t i_j = j * s2 - p2;
+                    const size_t i_i = i * s1 - p1;
+                    const size_t i_j = j * s2 - p2;
 
-                for (size_t k = 0; k < m1; ++k) {
-                    for (size_t l = m2 - rem; l < m2; ++l) {
-                        temp += in[i_i + k * n2 + i_j + l] * kkk[k * m2 + l];
+                    for (size_t k = 0; k < m1; ++k) {
+                        for (size_t l = m2 - rem; l < m2; ++l) {
+                            temp += in[i_i + k * n2 + i_j + l] * kkk[k * m2 + l];
+                        }
                     }
-                }
 
-                out[i * c2 + j] += temp;
+                    out[i * c2 + j] += temp;
+                }
             }
         }
     }
