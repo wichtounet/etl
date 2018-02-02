@@ -32,7 +32,7 @@ constexpr size_t gemv_cm_small_threshold = 1000; ///< The number of elements of 
 
 constexpr size_t parallel_threshold = 2 * 1024; ///< The minimum number of elements before considering parallel implementation
 
-constexpr size_t sum_parallel_threshold = 1024 * 2; ///< The minimum number of elements before considering parallel acc implementation
+constexpr size_t sum_parallel_threshold     = 1024 * 2; ///< The minimum number of elements before considering parallel acc implementation
 constexpr size_t vec_sum_parallel_threshold = 1024 * 2; ///< The minimum number of elements before considering parallel acc implementation
 
 constexpr size_t conv1_parallel_threshold_conv   = 100; ///< The mimum output size before considering parallel convolution
@@ -63,7 +63,7 @@ constexpr size_t gemv_cm_small_threshold = 2400000; ///< The number of elements 
 
 constexpr size_t parallel_threshold = 128 * 1024; ///< The minimum number of elements before considering parallel implementation
 
-constexpr size_t sum_parallel_threshold = 1024 * 32; ///< The minimum number of elements before considering parallel acc implementation
+constexpr size_t sum_parallel_threshold     = 1024 * 32;  ///< The minimum number of elements before considering parallel acc implementation
 constexpr size_t vec_sum_parallel_threshold = 1024 * 128; ///< The minimum number of elements before considering parallel acc implementation
 
 constexpr size_t conv1_parallel_threshold_conv   = 100; ///< The mimum output size before considering parallel convolution

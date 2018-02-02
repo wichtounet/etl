@@ -79,7 +79,7 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
         standard_evaluator::pre_assign_rhs(b);
 
         const auto BB = etl::dim<0>(a);
-        const auto I = etl::dim<1>(a);
+        const auto I  = etl::dim<1>(a);
 
         for (size_t bb = 0; bb < BB; ++bb) {
             for (size_t i = 0; i < I; ++i) {
@@ -105,7 +105,7 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
         standard_evaluator::pre_assign_rhs(b);
 
         const auto BB = etl::dim<0>(a);
-        const auto I = etl::dim<1>(a);
+        const auto I  = etl::dim<1>(a);
 
         for (size_t bb = 0; bb < BB; ++bb) {
             for (size_t i = 0; i < I; ++i) {
@@ -131,7 +131,7 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
         standard_evaluator::pre_assign_rhs(b);
 
         const auto BB = etl::dim<0>(a);
-        const auto I = etl::dim<1>(a);
+        const auto I  = etl::dim<1>(a);
 
         for (size_t bb = 0; bb < BB; ++bb) {
             for (size_t i = 0; i < I; ++i) {
@@ -157,7 +157,7 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
         standard_evaluator::pre_assign_rhs(b);
 
         const auto BB = etl::dim<0>(a);
-        const auto I = etl::dim<1>(a);
+        const auto I  = etl::dim<1>(a);
 
         for (size_t bb = 0; bb < BB; ++bb) {
             for (size_t i = 0; i < I; ++i) {
@@ -183,7 +183,7 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
         standard_evaluator::pre_assign_rhs(b);
 
         const auto BB = etl::dim<0>(a);
-        const auto I = etl::dim<1>(a);
+        const auto I  = etl::dim<1>(a);
 
         for (size_t bb = 0; bb < BB; ++bb) {
             for (size_t i = 0; i < I; ++i) {
@@ -209,7 +209,7 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
         standard_evaluator::pre_assign_rhs(b);
 
         const auto BB = etl::dim<0>(a);
-        const auto I = etl::dim<1>(a);
+        const auto I  = etl::dim<1>(a);
 
         for (size_t bb = 0; bb < BB; ++bb) {
             for (size_t i = 0; i < I; ++i) {
@@ -272,9 +272,9 @@ struct etl_traits<etl::batch_embedding_lookup_expr<A, B>> {
     static constexpr size_t dim() {
         static_assert(DD < 3, "Invalid dimensions access");
 
-        if(DD == 0){
+        if (DD == 0) {
             return decay_traits<A>::template dim<0>();
-        } else if(DD == 1){
+        } else if (DD == 1) {
             return decay_traits<A>::template dim<1>();
         } else {
             return decay_traits<B>::template dim<1>();
@@ -290,9 +290,9 @@ struct etl_traits<etl::batch_embedding_lookup_expr<A, B>> {
     static size_t dim(const expr_t& e, size_t d) {
         cpp_assert(d < 3, "Invalid dimensions access");
         cpp_unused(d);
-        if(d == 0){
+        if (d == 0) {
             return etl::dim<0>(e._a);
-        } else if(d == 1){
+        } else if (d == 1) {
             return etl::dim<1>(e._a);
         } else {
             return etl::dim<1>(e._b);

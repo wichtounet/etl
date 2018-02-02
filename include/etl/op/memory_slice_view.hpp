@@ -35,12 +35,11 @@ private:
     friend struct etl_traits<memory_slice_view>;
 
 public:
-
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<value_type>;
+    template <typename V = default_vec>
+    using vec_type = typename V::template vec_type<value_type>;
 
     /*!
      * \brief Construct a new memory_slice_view over the given sub expression
@@ -48,8 +47,7 @@ public:
      * \param first The first index
      * \param last The last index
      */
-    memory_slice_view(sub_type sub, size_t first, size_t last)
-            : sub(sub), first(first), last(last) {}
+    memory_slice_view(sub_type sub, size_t first, size_t last) : sub(sub), first(first), last(last) {}
 
     /*!
      * \brief Returns the element at the given index
@@ -102,7 +100,7 @@ public:
      */
     template <typename V = default_vec>
     auto loadu(size_t x) const noexcept {
-        return sub.template loadu<V>(x + first );
+        return sub.template loadu<V>(x + first);
     }
 
     /*!
@@ -161,7 +159,7 @@ public:
      * \return a pointer tot the first element in memory.
      */
     memory_type memory_start() noexcept {
-        return sub.memory_start() + first ;
+        return sub.memory_start() + first;
     }
 
     /*!
@@ -169,7 +167,7 @@ public:
      * \return a pointer tot the first element in memory.
      */
     const_memory_type memory_start() const noexcept {
-        return sub.memory_start() + first ;
+        return sub.memory_start() + first;
     }
 
     /*!
@@ -177,7 +175,7 @@ public:
      * \return a pointer tot the past-the-end element in memory.
      */
     memory_type memory_end() noexcept {
-        return sub.memory_start() + last ;
+        return sub.memory_start() + last;
     }
 
     /*!
@@ -194,8 +192,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -203,8 +201,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -212,8 +210,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -221,8 +219,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -230,8 +228,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -239,8 +237,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -282,21 +280,21 @@ struct etl_traits<etl::memory_slice_view<T, Aligned>> {
     using sub_expr_t = std::decay_t<T>;                             ///< The sub expression type
     using value_type = typename etl_traits<sub_expr_t>::value_type; ///< The value type
 
-    static constexpr bool is_etl          = true;                                    ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer  = false;                                   ///< Indicates if the type is a transformer
-    static constexpr bool is_view         = true;                                    ///< Indicates if the type is a view
-    static constexpr bool is_magic_view   = false;                                   ///< Indicates if the type is a magic view
-    static constexpr bool is_fast         = false;                                   ///< Indicates if the expression is fast
-    static constexpr bool is_linear       = etl_traits<sub_expr_t>::is_linear;       ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe  = etl_traits<sub_expr_t>::is_thread_safe;  ///< Indicates if the expression is thread safe
-    static constexpr bool is_value        = false;                                   ///< Indicates if the expression is of value type
-    static constexpr bool is_direct       = etl_traits<sub_expr_t>::is_direct;       ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator    = false;                                   ///< Indicates if the expression is a generator
-    static constexpr bool is_padded       = false;                                   ///< Indicates if the expression is padded
-    static constexpr bool is_aligned      = Aligned;                                   ///< Indicates if the expression is padded
-    static constexpr bool is_temporary    = etl_traits<sub_expr_t>::is_temporary;      ///< Indicates if the exxpression needs a evaluator visitor
-    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
-    static constexpr order storage_order  = etl_traits<sub_expr_t>::storage_order;   ///< The expression's storage order
+    static constexpr bool is_etl         = true;                                   ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                                  ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = true;                                   ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                  ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = false;                                  ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = etl_traits<sub_expr_t>::is_linear;      ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = etl_traits<sub_expr_t>::is_thread_safe; ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                  ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = etl_traits<sub_expr_t>::is_direct;      ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                  ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                                  ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = Aligned;                                ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = etl_traits<sub_expr_t>::is_temporary;   ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr bool gpu_computable = false;                                  ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order = etl_traits<sub_expr_t>::storage_order;  ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

@@ -19,7 +19,7 @@ namespace etl {
  *
  * This function must be called if ETL_GPU_POOL is used
  */
-inline void exit(){
+inline void exit() {
 #ifdef ETL_CUDA
 #ifdef ETL_GPU_POOL
     etl::gpu_memory_allocator::clear();

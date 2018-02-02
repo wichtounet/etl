@@ -27,9 +27,9 @@ void bias_add_4d_impl(const L& x, const R& b, C&& y) {
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-    const auto B = etl::dim<0>(x);
-    const auto M = etl::dim<2>(x);
-    const auto N = etl::dim<3>(x);
+    const auto B  = etl::dim<0>(x);
+    const auto M  = etl::dim<2>(x);
+    const auto N  = etl::dim<3>(x);
     const auto MN = M * N;
 
     x.ensure_cpu_up_to_date();

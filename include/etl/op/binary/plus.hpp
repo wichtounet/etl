@@ -20,7 +20,7 @@ struct is_axpy_left_left_impl {
 };
 
 template <typename T0, typename T1, typename T2, typename RightExpr, typename R>
-struct is_axpy_left_left_impl <binary_expr<T0, etl::scalar<T1>, etl::mul_binary_op<T2>, RightExpr>, R> {
+struct is_axpy_left_left_impl<binary_expr<T0, etl::scalar<T1>, etl::mul_binary_op<T2>, RightExpr>, R> {
     static constexpr bool value = !is_scalar<R>;
 };
 
@@ -32,7 +32,7 @@ struct is_axpy_left_right_impl {
 };
 
 template <typename T0, typename T1, typename T2, typename LeftExpr, typename R>
-struct is_axpy_left_right_impl <binary_expr<T0, LeftExpr, etl::mul_binary_op<T2>, etl::scalar<T1>>, R> {
+struct is_axpy_left_right_impl<binary_expr<T0, LeftExpr, etl::mul_binary_op<T2>, etl::scalar<T1>>, R> {
     static constexpr bool value = !is_scalar<R>;
 };
 
@@ -44,7 +44,7 @@ struct is_axpy_right_left_impl {
 };
 
 template <typename T0, typename T1, typename T2, typename RightExpr, typename L>
-struct is_axpy_right_left_impl <L, binary_expr<T0, etl::scalar<T1>, etl::mul_binary_op<T2>, RightExpr>> {
+struct is_axpy_right_left_impl<L, binary_expr<T0, etl::scalar<T1>, etl::mul_binary_op<T2>, RightExpr>> {
     static constexpr bool value = !is_scalar<L> && !is_scalar<RightExpr>;
 };
 
@@ -56,7 +56,7 @@ struct is_axpy_right_right_impl {
 };
 
 template <typename T0, typename T1, typename T2, typename LeftExpr, typename L>
-struct is_axpy_right_right_impl <L, binary_expr<T0, LeftExpr, etl::mul_binary_op<T2>, etl::scalar<T1>>> {
+struct is_axpy_right_right_impl<L, binary_expr<T0, LeftExpr, etl::mul_binary_op<T2>, etl::scalar<T1>>> {
     static constexpr bool value = !is_scalar<LeftExpr>;
 };
 
@@ -68,7 +68,8 @@ struct is_axpby_left_left_impl {
 };
 
 template <typename LT1, typename LT2, typename LT3, typename LRightExpr, typename RT1, typename RT2, typename RT3, typename RRightExpr>
-struct is_axpby_left_left_impl <binary_expr<LT1, etl::scalar<LT2>, etl::mul_binary_op<LT3>, LRightExpr>, binary_expr<RT1, etl::scalar<RT2>, etl::mul_binary_op<RT3>, RRightExpr>> {
+struct is_axpby_left_left_impl<binary_expr<LT1, etl::scalar<LT2>, etl::mul_binary_op<LT3>, LRightExpr>,
+                               binary_expr<RT1, etl::scalar<RT2>, etl::mul_binary_op<RT3>, RRightExpr>> {
     static constexpr bool value = true;
 };
 
@@ -80,7 +81,8 @@ struct is_axpby_left_right_impl {
 };
 
 template <typename LT1, typename LT2, typename LT3, typename LRightExpr, typename RT1, typename RT2, typename RT3, typename RLeftExpr>
-struct is_axpby_left_right_impl <binary_expr<LT1, etl::scalar<LT2>, etl::mul_binary_op<LT3>, LRightExpr>, binary_expr<RT1, RLeftExpr, etl::mul_binary_op<RT3>, etl::scalar<RT2>>> {
+struct is_axpby_left_right_impl<binary_expr<LT1, etl::scalar<LT2>, etl::mul_binary_op<LT3>, LRightExpr>,
+                                binary_expr<RT1, RLeftExpr, etl::mul_binary_op<RT3>, etl::scalar<RT2>>> {
     static constexpr bool value = true;
 };
 
@@ -92,7 +94,8 @@ struct is_axpby_right_left_impl {
 };
 
 template <typename LT1, typename LT2, typename LT3, typename LLeftExpr, typename RT1, typename RT2, typename RT3, typename RRightExpr>
-struct is_axpby_right_left_impl <binary_expr<LT1, LLeftExpr, etl::mul_binary_op<LT3>, etl::scalar<LT2>>, binary_expr<RT1, etl::scalar<RT2>, etl::mul_binary_op<RT3>, RRightExpr>> {
+struct is_axpby_right_left_impl<binary_expr<LT1, LLeftExpr, etl::mul_binary_op<LT3>, etl::scalar<LT2>>,
+                                binary_expr<RT1, etl::scalar<RT2>, etl::mul_binary_op<RT3>, RRightExpr>> {
     static constexpr bool value = true;
 };
 
@@ -104,7 +107,8 @@ struct is_axpby_right_right_impl {
 };
 
 template <typename LT1, typename LT2, typename LT3, typename LLeftExpr, typename RT1, typename RT2, typename RT3, typename RLeftExpr>
-struct is_axpby_right_right_impl <binary_expr<LT1, LLeftExpr, etl::mul_binary_op<LT3>, etl::scalar<LT2>>, binary_expr<RT1, RLeftExpr, etl::mul_binary_op<RT3>, etl::scalar<RT2>>> {
+struct is_axpby_right_right_impl<binary_expr<LT1, LLeftExpr, etl::mul_binary_op<LT3>, etl::scalar<LT2>>,
+                                 binary_expr<RT1, RLeftExpr, etl::mul_binary_op<RT3>, etl::scalar<RT2>>> {
     static constexpr bool value = true;
 };
 
@@ -148,9 +152,9 @@ static constexpr bool is_special_plus = is_axpy<L, R> || is_axpby<L, R>;
  */
 template <typename T>
 struct plus_binary_op {
-    static constexpr bool linear         = true;           ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe    = true;           ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func      = false;          ///< Indicates if the description must be printed as function
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -163,33 +167,22 @@ struct plus_binary_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    template<typename L, typename R>
+    template <typename L, typename R>
     static constexpr bool gpu_computable =
-            (
-                    (!is_scalar<L> && !is_scalar<R>)
-                &&  (
-                            (is_single_precision_t<T> && impl::egblas::has_saxpy_3 && impl::egblas::has_saxpby_3)
-                        ||  (is_double_precision_t<T> && impl::egblas::has_daxpy_3 && impl::egblas::has_daxpby_3)
-                        ||  (is_complex_single_t<T> && impl::egblas::has_caxpy_3 && impl::egblas::has_caxpby_3)
-                        ||  (is_complex_double_t<T> && impl::egblas::has_zaxpy_3 && impl::egblas::has_zaxpby_3)
-                    )
-            )
-        ||  (
-                    (is_scalar<L> != is_scalar<R>)
-                &&  (
-                            (is_single_precision_t<T> && impl::egblas::has_scalar_sadd)
-                        ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dadd)
-                        ||  (is_complex_single_t<T> && impl::egblas::has_scalar_cadd)
-                        ||  (is_complex_double_t<T> && impl::egblas::has_scalar_zadd)
-                    )
-            )
-        ;
+        ((!is_scalar<L> && !is_scalar<R>)&&((is_single_precision_t<T> && impl::egblas::has_saxpy_3 && impl::egblas::has_saxpby_3)
+                                            || (is_double_precision_t<T> && impl::egblas::has_daxpy_3 && impl::egblas::has_daxpby_3)
+                                            || (is_complex_single_t<T> && impl::egblas::has_caxpy_3 && impl::egblas::has_caxpby_3)
+                                            || (is_complex_double_t<T> && impl::egblas::has_zaxpy_3 && impl::egblas::has_zaxpby_3)))
+        || ((is_scalar<L> != is_scalar<R>)&&((is_single_precision_t<T> && impl::egblas::has_scalar_sadd)
+                                             || (is_double_precision_t<T> && impl::egblas::has_scalar_dadd)
+                                             || (is_complex_single_t<T> && impl::egblas::has_scalar_cadd)
+                                             || (is_complex_double_t<T> && impl::egblas::has_scalar_zadd)));
 
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs

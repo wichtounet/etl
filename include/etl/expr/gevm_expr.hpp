@@ -24,10 +24,10 @@ namespace etl {
  */
 template <typename A, typename B>
 struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
-    using value_type  = value_t<A>;                              ///< The type of value of the expression
-    using this_type   = gevm_expr<A, B>;                         ///< The type of this expression
+    using value_type  = value_t<A>;                               ///< The type of value of the expression
+    using this_type   = gevm_expr<A, B>;                          ///< The type of this expression
     using base_type   = base_temporary_expr_bin<this_type, A, B>; ///< The base type
-    using left_traits = decay_traits<A>;                         ///< The traits of the sub type
+    using left_traits = decay_traits<A>;                          ///< The traits of the sub type
 
     static constexpr auto storage_order = left_traits::storage_order; ///< The sub storage order
 
@@ -54,15 +54,13 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
     template <typename C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c) {
         if constexpr (all_fast<A, B, C>) {
-            static_assert(
-                dim<0, A>() == dim<0, B>()         //exterior dimension 1
-                    && dim<1, B>() == dim<0, C>(), //exterior dimension 2
-                "Invalid sizes for multiplication");
+            static_assert(dim<0, A>() == dim<0, B>()         //exterior dimension 1
+                              && dim<1, B>() == dim<0, C>(), //exterior dimension 2
+                          "Invalid sizes for multiplication");
         } else {
-            cpp_assert(
-                dim<0>(a) == dim<0>(b)         //exterior dimension 1
-                    && dim<1>(b) == dim<0>(c), //exterior dimension 2
-                "Invalid sizes for multiplication");
+            cpp_assert(dim<0>(a) == dim<0>(b)         //exterior dimension 1
+                           && dim<1>(b) == dim<0>(c), //exterior dimension 2
+                       "Invalid sizes for multiplication");
         }
     }
 
@@ -81,11 +79,11 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
             return gemm_impl::CUBLAS;
         }
 
-        if(vec_possible && homo){
+        if (vec_possible && homo) {
             return gemm_impl::VEC;
         }
 
-        if(cblas_enabled && homo){
+        if (cblas_enabled && homo) {
             return gemm_impl::BLAS;
         }
 
@@ -106,27 +104,28 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
             switch (forced) {
                 //CUBLAS cannot always be used
                 case gemm_impl::CUBLAS:
-                    if (!cublas_enabled || !all_homogeneous<A, B, C> || local_context().cpu) {                                                            //COVERAGE_EXCLUDE_LINE
-                        std::cerr << "Forced selection to CUBLAS gevm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_gevm_impl<C>(local_context().cpu);                                                                       //COVERAGE_EXCLUDE_LINE
-                    }                                                                                                                     //COVERAGE_EXCLUDE_LINE
+                    if (!cublas_enabled || !all_homogeneous<A, B, C> || local_context().cpu) { //COVERAGE_EXCLUDE_LINE
+                        std::cerr << "Forced selection to CUBLAS gevm implementation, but not possible for this expression"
+                                  << std::endl;                                  //COVERAGE_EXCLUDE_LINE
+                        return select_default_gevm_impl<C>(local_context().cpu); //COVERAGE_EXCLUDE_LINE
+                    }                                                            //COVERAGE_EXCLUDE_LINE
 
                     return forced;
 
                 //BLAS cannot always be used
                 case gemm_impl::BLAS:
-                    if (!cblas_enabled || !all_homogeneous<A, B, C>) {                                                           //COVERAGE_EXCLUDE_LINE
+                    if (!cblas_enabled || !all_homogeneous<A, B, C>) {                                                                  //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to BLAS gevm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_gevm_impl<C>(local_context().cpu);                                                                     //COVERAGE_EXCLUDE_LINE
+                        return select_default_gevm_impl<C>(local_context().cpu);                                                        //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
                     return forced;
 
                 //VEC cannot always be used
                 case gemm_impl::VEC:
-                    if (!vec_enabled || !all_vectorizable<vector_mode, A, B, C> || !all_homogeneous<A, B, C>) {          //COVERAGE_EXCLUDE_LINE
+                    if (!vec_enabled || !all_vectorizable<vector_mode, A, B, C> || !all_homogeneous<A, B, C>) {                        //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to VEC gevm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_gevm_impl<C>(local_context().cpu);                                                                    //COVERAGE_EXCLUDE_LINE
+                        return select_default_gevm_impl<C>(local_context().cpu);                                                       //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                  //COVERAGE_EXCLUDE_LINE
 
                     return forced;
@@ -164,15 +163,23 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gevm_impl<C>();
 
-        if constexpr_select (impl == gemm_impl::STD) {
-            etl::impl::standard::vm_mul(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::BLAS) {
-            etl::impl::blas::gevm_t(smart_forward(a), smart_forward(b.a()), c);
-        } else if constexpr_select (impl == gemm_impl::VEC) {
-            etl::impl::vec::gevm_t(smart_forward(a), smart_forward(b.a()), c);
-        } else if constexpr_select (impl == gemm_impl::CUBLAS) {
-            etl::impl::cublas::gevm_t(smart_forward_gpu(a), smart_forward_gpu(b.a()), c);
-        } else {
+        if
+            constexpr_select(impl == gemm_impl::STD) {
+                etl::impl::standard::vm_mul(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::BLAS) {
+                etl::impl::blas::gevm_t(smart_forward(a), smart_forward(b.a()), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::VEC) {
+                etl::impl::vec::gevm_t(smart_forward(a), smart_forward(b.a()), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::CUBLAS) {
+                etl::impl::cublas::gevm_t(smart_forward_gpu(a), smart_forward_gpu(b.a()), c);
+            }
+        else {
             cpp_unreachable("Invalid selection for gevm");
         }
     }
@@ -187,15 +194,23 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gevm_impl<C>();
 
-        if constexpr_select (impl == gemm_impl::STD) {
-            etl::impl::standard::vm_mul(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::BLAS) {
-            etl::impl::blas::gevm(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::VEC) {
-            etl::impl::vec::gevm(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::CUBLAS) {
-            etl::impl::cublas::gevm(smart_forward_gpu(a), smart_forward_gpu(b), c);
-        } else {
+        if
+            constexpr_select(impl == gemm_impl::STD) {
+                etl::impl::standard::vm_mul(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::BLAS) {
+                etl::impl::blas::gevm(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::VEC) {
+                etl::impl::vec::gevm(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::CUBLAS) {
+                etl::impl::cublas::gevm(smart_forward_gpu(a), smart_forward_gpu(b), c);
+            }
+        else {
             cpp_unreachable("Invalid selection for gevm");
         }
     }
@@ -204,8 +219,8 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template<typename C>
-    void assign_to(C&& c)  const {
+    template <typename C>
+    void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, B, C>, "gemm only supported for ETL expressions");
 
         check(this->a(), this->b(), c);
@@ -217,8 +232,8 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -226,8 +241,8 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -235,8 +250,8 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -244,8 +259,8 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -253,8 +268,8 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -282,21 +297,21 @@ struct etl_traits<etl::gevm_expr<A, B>> {
     using right_traits = etl_traits<right_expr_t>; ///< The right sub traits
     using value_type   = value_t<A>;               ///< The value type of the expression
 
-    static constexpr bool is_etl                  = true;                                          ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer          = false;                                         ///< Indicates if the type is a transformer
-    static constexpr bool is_view                 = false;                                         ///< Indicates if the type is a view
-    static constexpr bool is_magic_view           = false;                                         ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = left_traits::is_fast && right_traits::is_fast; ///< Indicates if the expression is fast
-    static constexpr bool is_linear               = false;                                          ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe          = true;                                          ///< Indicates if the expression is thread safe
-    static constexpr bool is_value                = false;                                         ///< Indicates if the expression is of value type
-    static constexpr bool is_direct               = true;                                          ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator            = false;                                         ///< Indicates if the expression is a generator
-    static constexpr bool is_padded               = false;                                         ///< Indicates if the expression is padded
-    static constexpr bool is_aligned              = true;                                          ///< Indicates if the expression is padded
-    static constexpr bool is_temporary            = true;                                          ///< Indicates if the expression needs a evaluator visitor
-    static constexpr bool gpu_computable          = is_gpu_t<value_type> && cublas_enabled;        ///< Indicates if the expression can be computed on GPU
-    static constexpr order storage_order          = left_traits::storage_order;                     ///< The expression's storage order
+    static constexpr bool is_etl         = true;                                          ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                                         ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                         ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                         ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = left_traits::is_fast && right_traits::is_fast; ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                         ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = true;                                          ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                         ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = true;                                          ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                         ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                                         ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = true;                                          ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = true;                                          ///< Indicates if the expression needs a evaluator visitor
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cublas_enabled;        ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order = left_traits::storage_order;                    ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -358,7 +373,7 @@ struct etl_traits<etl::gevm_expr<A, B>> {
  * \param b The right hand side matrix
  * \return An expression representing the vector-matrix multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_iff(is_1d<A> && is_2d<B>)>
+template <typename A, typename B, cpp_enable_iff(is_1d<A>&& is_2d<B>)>
 gevm_expr<detail::build_type<A>, detail::build_type<B>> operator*(A&& a, B&& b) {
     return gevm_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
@@ -369,7 +384,7 @@ gevm_expr<detail::build_type<A>, detail::build_type<B>> operator*(A&& a, B&& b) 
  * \param b The right hand side matrix
  * \return An expression representing the vector-matrix multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_iff(is_1d<A> && is_2d<B>)>
+template <typename A, typename B, cpp_enable_iff(is_1d<A>&& is_2d<B>)>
 gevm_expr<detail::build_type<A>, detail::build_type<B>> mul(A&& a, B&& b) {
     return gevm_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
@@ -381,8 +396,8 @@ gevm_expr<detail::build_type<A>, detail::build_type<B>> mul(A&& a, B&& b) {
  * \param c The expression used to store the result
  * \return An expression representing the vector-matrix multiplication of a and b
  */
-template <typename A, typename B, typename C, cpp_enable_iff(is_1d<A> && is_2d<B>)>
-auto mul(A&& a, B&& b, C&& c){
+template <typename A, typename B, typename C, cpp_enable_iff(is_1d<A>&& is_2d<B>)>
+auto mul(A&& a, B&& b, C&& c) {
     c = mul(a, b);
     return c;
 }

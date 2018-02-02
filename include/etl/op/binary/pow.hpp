@@ -17,9 +17,9 @@ namespace etl {
  */
 template <typename T, typename E>
 struct pow_binary_op {
-    static constexpr bool linear         = true;  ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe    = true;  ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func      = true;  ///< Indicates if the description must be printed as function
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func   = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -28,25 +28,20 @@ struct pow_binary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable =
-                (V == vector_mode_t::SSE3 && is_single_precision_t<T>)
-            ||  (V == vector_mode_t::AVX && is_single_precision_t<T>)
-            ||  (intel_compiler && !is_complex_t<T>);
+        (V == vector_mode_t::SSE3 && is_single_precision_t<T>) || (V == vector_mode_t::AVX && is_single_precision_t<T>) || (intel_compiler && !is_complex_t<T>);
 
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename L, typename R>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_spow_yx)
-            || (is_double_precision_t<T> && impl::egblas::has_dpow_yx)
-            || (is_complex_single_t<T> && impl::egblas::has_cpow_yx)
-            || (is_complex_double_t<T> && impl::egblas::has_zpow_yx);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_spow_yx) || (is_double_precision_t<T> && impl::egblas::has_dpow_yx)
+                                           || (is_complex_single_t<T> && impl::egblas::has_cpow_yx) || (is_complex_double_t<T> && impl::egblas::has_zpow_yx);
 
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -141,9 +136,9 @@ struct pow_binary_op {
  */
 template <typename T, typename E>
 struct precise_pow_binary_op {
-    static constexpr bool linear         = true;  ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe    = true;  ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func      = true;  ///< Indicates if the description must be printed as function
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func   = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -183,9 +178,9 @@ struct precise_pow_binary_op {
  */
 template <typename T, typename E>
 struct integer_pow_binary_op {
-    static constexpr bool linear         = true;  ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe    = true;  ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func      = true;  ///< Indicates if the description must be printed as function
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func   = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -199,11 +194,8 @@ struct integer_pow_binary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename L, typename R>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_spow_yx)
-            || (is_double_precision_t<T> && impl::egblas::has_dpow_yx)
-            || (is_complex_single_t<T> && impl::egblas::has_cpow_yx)
-            || (is_complex_double_t<T> && impl::egblas::has_zpow_yx);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_spow_yx) || (is_double_precision_t<T> && impl::egblas::has_dpow_yx)
+                                           || (is_complex_single_t<T> && impl::egblas::has_cpow_yx) || (is_complex_double_t<T> && impl::egblas::has_zpow_yx);
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -214,7 +206,7 @@ struct integer_pow_binary_op {
     static constexpr T apply(const T& x, E value) noexcept {
         T r(1);
 
-        for(size_t i = 0; i < value; ++i){
+        for (size_t i = 0; i < value; ++i) {
             r *= x;
         }
 

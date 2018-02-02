@@ -32,17 +32,14 @@ struct abs_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_sabs)
-            || (is_double_precision_t<T> && impl::egblas::has_dabs)
-            || (is_complex_single_t<T> && impl::egblas::has_cabs)
-            || (is_complex_double_t<T> && impl::egblas::has_zabs);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_sabs) || (is_double_precision_t<T> && impl::egblas::has_dabs)
+                                           || (is_complex_single_t<T> && impl::egblas::has_cabs) || (is_complex_double_t<T> && impl::egblas::has_zabs);
 
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on x

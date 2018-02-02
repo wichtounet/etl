@@ -17,7 +17,7 @@ namespace etl::detail {
 /*!
  * \brief The functor impl for 2D+ conv.
  */
-template<size_t S1, size_t S2, size_t P1, size_t P2>
+template <size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv2_valid_deep_impl {
     /*!
      * \brief Apply the convolution
@@ -49,7 +49,7 @@ struct conv2_valid_deep_impl {
 /*!
  * \brief The functor impl for 2D+ conv.
  */
-template<size_t S1, size_t S2, size_t P1, size_t P2>
+template <size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv2_valid_flipped_deep_impl {
     /*!
      * \brief Apply the convolution

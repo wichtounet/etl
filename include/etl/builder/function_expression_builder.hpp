@@ -9,7 +9,7 @@
  * \file
  * \brief Contains all the operators and functions to build expressions
  * representing mathematical functions.
-*/
+ */
 
 #pragma once
 

@@ -60,8 +60,8 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
      *
      * This routine does not consider the local context
      */
-    template<typename C>
-    constexpr static batch_softmax_impl select_default_impl(bool no_gpu){
+    template <typename C>
+    constexpr static batch_softmax_impl select_default_impl(bool no_gpu) {
         if (cudnn_enabled && all_homogeneous<A, C> && all_floating<A, C> && !no_gpu) {
             return batch_softmax_impl::CUDNN;
         }
@@ -74,8 +74,8 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
     /*!
      * \brief Select the best possible implementation for the batch softmax operation
      */
-    template<typename C>
-    static batch_softmax_impl select_impl(){
+    template <typename C>
+    static batch_softmax_impl select_impl() {
         return select_default_impl<C>(local_context().cpu);
     }
 
@@ -84,8 +84,8 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
     /*!
      * \brief Select the best possible implementation for the batch softmax operation
      */
-    template<typename C>
-    constexpr static batch_softmax_impl select_impl(){
+    template <typename C>
+    constexpr static batch_softmax_impl select_impl() {
         return select_default_impl<C>(false);
     }
 
@@ -95,8 +95,8 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template<typename C, cpp_enable_iff(decay_traits<C>::storage_order == storage_order)>
-    void assign_to(C&& c)  const {
+    template <typename C, cpp_enable_iff(decay_traits<C>::storage_order == storage_order)>
+    void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, C>, "Function expression only supported for ETL expressions");
 
         auto& a = this->a();
@@ -107,26 +107,30 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
 
         constexpr_select auto impl = select_impl<C>();
 
-        if constexpr_select (impl == batch_softmax_impl::CUDNN) {
-            decltype(auto) a_gpu = smart_forward_gpu(a);
+        if
+            constexpr_select(impl == batch_softmax_impl::CUDNN) {
+                decltype(auto) a_gpu = smart_forward_gpu(a);
 
-            if constexpr (Stable) {
-                impl::cudnn::stable_softmax(a_gpu, c);
-            } else {
-                impl::cudnn::softmax(a_gpu, c);
-            }
-        } else if constexpr_select (impl == batch_softmax_impl::STD) {
-            if constexpr (Stable) {
-                for (size_t i = 0; i < etl::dim<0>(c); ++i) {
-                    c(i) = exp(a(i)) / sum(exp(a(i)));
-                }
-            } else {
-                for (size_t i = 0; i < etl::dim<0>(c); ++i) {
-                    auto m = max(a(i));
-                    c(i)   = exp(a(i) - m) / sum(exp(a(i) - m));
+                if constexpr (Stable) {
+                    impl::cudnn::stable_softmax(a_gpu, c);
+                } else {
+                    impl::cudnn::softmax(a_gpu, c);
                 }
             }
-        } else {
+        else if
+            constexpr_select(impl == batch_softmax_impl::STD) {
+                if constexpr (Stable) {
+                    for (size_t i = 0; i < etl::dim<0>(c); ++i) {
+                        c(i) = exp(a(i)) / sum(exp(a(i)));
+                    }
+                } else {
+                    for (size_t i = 0; i < etl::dim<0>(c); ++i) {
+                        auto m = max(a(i));
+                        c(i)   = exp(a(i) - m) / sum(exp(a(i) - m));
+                    }
+                }
+            }
+        else {
             cpp_unreachable("Invalid selection for batch_softmax");
         }
     }
@@ -135,8 +139,8 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
      * \brief Assign to a matrix of a different storage order
      * \param c The expression to which assign
      */
-    template<typename C, cpp_enable_iff(decay_traits<C>::storage_order != storage_order)>
-    void assign_to(C&& c)  const {
+    template <typename C, cpp_enable_iff(decay_traits<C>::storage_order != storage_order)>
+    void assign_to(C&& c) const {
         std_assign_evaluate(*this, c);
     }
 
@@ -144,8 +148,8 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -153,8 +157,8 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -162,8 +166,8 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -171,8 +175,8 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -180,8 +184,8 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -205,7 +209,7 @@ struct etl_traits<etl::batch_softmax_expr<A, Stable>> {
     using expr_t     = etl::batch_softmax_expr<A, Stable>; ///< The expression type
     using sub_expr_t = std::decay_t<A>;                    ///< The sub expression type
     using sub_traits = etl_traits<sub_expr_t>;             ///< The sub traits
-    using value_type = value_t<A>;                       ///< The value type of the expression
+    using value_type = value_t<A>;                         ///< The value type of the expression
 
     static constexpr bool is_etl         = true;                                 ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer = false;                                ///< Indicates if the type is a transformer

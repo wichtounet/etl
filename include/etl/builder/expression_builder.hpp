@@ -8,7 +8,7 @@
 /*!
  * \file
  * \brief Contains all the operators and functions to build expressions.
-*/
+ */
 
 #pragma once
 
@@ -737,16 +737,12 @@ namespace detail {
  * \brief Helper to compute the return type for max/min operation
  */
 template <typename E>
-using value_return_t =std::conditional_t<
-            decay_traits<E>::is_value,
-            std::conditional_t<
-                std::is_lvalue_reference<E>::value,
-                std::conditional_t<
-                    std::is_const<std::remove_reference_t<E>>::value,
-                    const value_t<E>&,
-                    value_t<E>&>,
-                value_t<E>>,
-            value_t<E>>;
+using value_return_t =
+    std::conditional_t<decay_traits<E>::is_value,
+                       std::conditional_t<std::is_lvalue_reference<E>::value,
+                                          std::conditional_t<std::is_const<std::remove_reference_t<E>>::value, const value_t<E>&, value_t<E>&>,
+                                          value_t<E>>,
+                       value_t<E>>;
 
 } //end of namespace detail
 

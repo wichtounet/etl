@@ -30,11 +30,7 @@ namespace etl::impl::cudnn {
  * \param C The type of the output matrix
  */
 template <typename I, typename K, typename C>
-constexpr bool conv_possible =
-                cudnn_enabled
-            &&  all_homogeneous<I, K, C>
-            &&  all_row_major<I, K, C>
-            &&  all_dma<I, K, C>;
+constexpr bool conv_possible = cudnn_enabled&& all_homogeneous<I, K, C>&& all_row_major<I, K, C>&& all_dma<I, K, C>;
 
 /*!
  * \brief Traits indicating if Convolution with CUDNN is
@@ -44,11 +40,7 @@ constexpr bool conv_possible =
  * \param K The type of the kernel matrix
  */
 template <typename I, typename K>
-constexpr bool conv_possible_ =
-                cudnn_enabled
-            &&  all_homogeneous<I, K>
-            &&  all_row_major<I, K>
-            &&  all_dma<I, K>;
+constexpr bool conv_possible_ = cudnn_enabled&& all_homogeneous<I, K>&& all_row_major<I, K>&& all_dma<I, K>;
 
 #ifdef ETL_CUDNN_MODE
 
@@ -956,7 +948,7 @@ void conv4_backward_data_flipped(I&& input, K&& kernel, C&& conv, size_t s1, siz
     cpp_unreachable("Unsupported feature called: cudnn conv4_backward_data_flipped");
 }
 
-//COVERAGE_EXCLUDE_END
+    //COVERAGE_EXCLUDE_END
 
 #endif
 

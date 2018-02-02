@@ -117,10 +117,8 @@ inline void cublas_geam(cublasHandle_t handle,
                         cfloat* C,
                         size_t ldc) {
     inc_counter("cublas");
-    cublas_check(cublasCgeam(handle, transa, transb, m, n,
-                reinterpret_cast<const cuComplex*>(alpha), reinterpret_cast<const cuComplex*>(A), lda,
-                reinterpret_cast<const cuComplex*>(beta), reinterpret_cast<const cuComplex*>(B), ldb,
-                reinterpret_cast<cuComplex*>(C), ldc));
+    cublas_check(cublasCgeam(handle, transa, transb, m, n, reinterpret_cast<const cuComplex*>(alpha), reinterpret_cast<const cuComplex*>(A), lda,
+                             reinterpret_cast<const cuComplex*>(beta), reinterpret_cast<const cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc));
 }
 
 /*!
@@ -153,10 +151,9 @@ inline void cublas_geam(cublasHandle_t handle,
                         cdouble* C,
                         size_t ldc) {
     inc_counter("cublas");
-    cublas_check(cublasZgeam(handle, transa, transb, m, n,
-                reinterpret_cast<const cuDoubleComplex*>(alpha), reinterpret_cast<const cuDoubleComplex*>(A), lda,
-                reinterpret_cast<const cuDoubleComplex*>(beta), reinterpret_cast<const cuDoubleComplex*>(B), ldb,
-                reinterpret_cast<cuDoubleComplex*>(C), ldc));
+    cublas_check(cublasZgeam(handle, transa, transb, m, n, reinterpret_cast<const cuDoubleComplex*>(alpha), reinterpret_cast<const cuDoubleComplex*>(A), lda,
+                             reinterpret_cast<const cuDoubleComplex*>(beta), reinterpret_cast<const cuDoubleComplex*>(B), ldb,
+                             reinterpret_cast<cuDoubleComplex*>(C), ldc));
 }
 
 /*!
@@ -273,7 +270,7 @@ void transpose(A&& a, C&& c) {
     cpp_unreachable("CUBLAS not enabled/available");
 }
 
-//COVERAGE_EXCLUDE_END
+    //COVERAGE_EXCLUDE_END
 
 #endif
 

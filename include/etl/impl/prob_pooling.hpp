@@ -19,8 +19,8 @@ namespace etl::impl::standard {
  * \param exp_sub The exponentials
  * \param base The output matrix
  */
-template<typename T>
-inline void pmp_h_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base){
+template <typename T>
+inline void pmp_h_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base) {
     const size_t M = etl::dim<0>(exp_sub);
     const size_t N = etl::dim<1>(exp_sub);
 
@@ -30,11 +30,8 @@ inline void pmp_h_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 
         for (size_t n = 0; n < N; ++n) {
             const auto start_nn = (n >> 1) << 1;
 
-            base(m, n) =
-                exp_sub(start_mm + 0, start_nn + 0)
-                + exp_sub(start_mm + 0, start_nn + 1)
-                + exp_sub(start_mm + 1, start_nn + 0)
-                + exp_sub(start_mm + 1, start_nn + 1);
+            base(m, n) = exp_sub(start_mm + 0, start_nn + 0) + exp_sub(start_mm + 0, start_nn + 1) + exp_sub(start_mm + 1, start_nn + 0)
+                         + exp_sub(start_mm + 1, start_nn + 1);
         }
     }
 }
@@ -46,8 +43,8 @@ inline void pmp_h_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 
  * \tparam C1 The first dimension pooling ratio
  * \tparam C2 The second dimension pooling ratio
  */
-template<size_t C1, size_t C2, typename T>
-inline void pmp_h_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base){
+template <size_t C1, size_t C2, typename T>
+inline void pmp_h_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base) {
     const size_t M = etl::dim<0>(exp_sub);
     const size_t N = etl::dim<1>(exp_sub);
 
@@ -77,8 +74,8 @@ inline void pmp_h_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& 
  * \param c1 The first dimension pooling ratio
  * \param c2 The second dimension pooling ratio
  */
-template<typename T>
-inline void pmp_h_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base, size_t c1, size_t c2){
+template <typename T>
+inline void pmp_h_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base, size_t c1, size_t c2) {
     const size_t M = etl::dim<0>(exp_sub);
     const size_t N = etl::dim<1>(exp_sub);
 
@@ -109,7 +106,7 @@ struct pmp_h_impl {
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    template<typename A>
+    template <typename A>
     static constexpr bool gpu_computable = false;
 
     /*!
@@ -243,7 +240,7 @@ struct dyn_pmp_h_impl {
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    template<typename A>
+    template <typename A>
     static constexpr bool gpu_computable = false;
 
     /*!
@@ -394,8 +391,8 @@ struct dyn_pmp_h_impl {
  * \param exp_sub The exponentials
  * \param base The output matrix
  */
-template<typename T>
-inline void pmp_p_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base){
+template <typename T>
+inline void pmp_p_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base) {
     const size_t M = etl::dim<0>(exp_sub);
     const size_t N = etl::dim<1>(exp_sub);
 
@@ -405,11 +402,8 @@ inline void pmp_p_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 
         for (size_t n = 0; n < N / 2; ++n) {
             const auto start_nn = n * 2;
 
-            base(m, n) =
-                    exp_sub(start_mm + 0, start_nn + 0)
-                +   exp_sub(start_mm + 0, start_nn + 1)
-                +   exp_sub(start_mm + 1, start_nn + 0)
-                +   exp_sub(start_mm + 1, start_nn + 1);
+            base(m, n) = exp_sub(start_mm + 0, start_nn + 0) + exp_sub(start_mm + 0, start_nn + 1) + exp_sub(start_mm + 1, start_nn + 0)
+                         + exp_sub(start_mm + 1, start_nn + 1);
         }
     }
 }
@@ -421,8 +415,8 @@ inline void pmp_p_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 
  * \tparam C1 The first dimension pooling ratio
  * \tparam C2 The second dimension pooling ratio
  */
-template<size_t C1, size_t C2, typename T>
-inline void pmp_p_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base){
+template <size_t C1, size_t C2, typename T>
+inline void pmp_p_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base) {
     const size_t M = etl::dim<0>(exp_sub);
     const size_t N = etl::dim<1>(exp_sub);
 
@@ -452,8 +446,8 @@ inline void pmp_p_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& 
  * \param c1 The first dimension pooling ratio
  * \param c2 The second dimension pooling ratio
  */
-template<typename T>
-inline void pmp_p_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base, size_t c1, size_t c2){
+template <typename T>
+inline void pmp_p_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base, size_t c1, size_t c2) {
     const size_t M = etl::dim<0>(exp_sub);
     const size_t N = etl::dim<1>(exp_sub);
 
@@ -484,7 +478,7 @@ struct pmp_p_impl {
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    template<typename A>
+    template <typename A>
     static constexpr bool gpu_computable = false;
 
     /*!
@@ -612,7 +606,7 @@ struct dyn_pmp_p_impl {
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    template<typename A>
+    template <typename A>
     static constexpr bool gpu_computable = false;
 
     /*!

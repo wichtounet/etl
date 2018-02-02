@@ -14,7 +14,7 @@ namespace detail {
 /*!
  * \brief RAII helper for run and validating parallel session
  */
-template<typename T>
+template <typename T>
 struct parallel_session {
     /*!
      * \brief Default construct a parallel session
@@ -56,7 +56,7 @@ bool parallel_session<T>::active = false;
  * \brief Indicates if a parallel session is currently active
  * \return true if a parallel section is active, false otherwise
  */
-inline bool is_parallel_session(){
+inline bool is_parallel_session() {
     return detail::parallel_session<bool>::active;
 }
 

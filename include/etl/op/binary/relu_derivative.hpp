@@ -14,9 +14,9 @@ namespace etl {
  */
 template <typename T>
 struct relu_derivative_binary_op {
-    static constexpr bool linear         = true;           ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe    = true;           ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func      = false;          ///< Indicates if the description must be printed as function
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -29,14 +29,14 @@ struct relu_derivative_binary_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    template<typename L, typename R>
+    template <typename L, typename R>
     static constexpr bool gpu_computable = cudnn_enabled;
 
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -57,7 +57,7 @@ struct relu_derivative_binary_op {
      */
     template <typename V = default_vec>
     static ETL_STRONG_INLINE(vec_type<V>) load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
-        auto t1 =  V::round_up(V::min(V::set(T(1.0)), lhs));
+        auto t1 = V::round_up(V::min(V::set(T(1.0)), lhs));
 
         return V::mul(t1, rhs);
     }

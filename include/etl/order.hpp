@@ -22,7 +22,7 @@ enum class order {
  * \param o The order to reverse
  * \return the reversed equivalent storage order
  */
-constexpr order reverse(order o){
+constexpr order reverse(order o) {
     return o == order::RowMajor ? order::ColumnMajor : order::RowMajor;
 }
 

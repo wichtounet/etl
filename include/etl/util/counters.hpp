@@ -22,7 +22,7 @@ inline void dump_counters() {
  * \brief Increase the given counter
  * \param name The name of the counter to increase
  */
-inline void inc_counter(const char* name){
+inline void inc_counter(const char* name) {
     cpp_unused(name);
 }
 
@@ -43,28 +43,25 @@ struct counter_t {
     const char* name;
     std::atomic<size_t> count;
 
-    counter_t()
-            : name(nullptr), count(0) {}
+    counter_t() : name(nullptr), count(0) {}
 
-    counter_t(const counter_t& rhs)
-            : name(rhs.name), count(rhs.count.load()) {}
+    counter_t(const counter_t& rhs) : name(rhs.name), count(rhs.count.load()) {}
 
     counter_t& operator=(const counter_t& rhs) {
         if (&rhs != this) {
-            name     = rhs.name;
-            count    = rhs.count.load();
+            name  = rhs.name;
+            count = rhs.count.load();
         }
 
         return *this;
     }
 
-    counter_t(counter_t&& rhs)
-            : name(std::move(rhs.name)), count(rhs.count.load()) {}
+    counter_t(counter_t&& rhs) : name(std::move(rhs.name)), count(rhs.count.load()) {}
 
     counter_t& operator=(counter_t&& rhs) {
         if (&rhs != this) {
-            name     = std::move(rhs.name);
-            count    = rhs.count.load();
+            name  = std::move(rhs.name);
+            count = rhs.count.load();
         }
 
         return *this;
@@ -75,14 +72,13 @@ struct counters_t {
     std::array<counter_t, max_counters> counters;
     std::mutex lock;
 
-    void reset(){
+    void reset() {
         std::lock_guard<std::mutex> l(lock);
 
-        for(auto& counter : counters){
-            counter.name = nullptr;
+        for (auto& counter : counters) {
+            counter.name  = nullptr;
             counter.count = 0;
         }
-
     }
 };
 
@@ -106,9 +102,7 @@ inline void dump_counters() {
     decltype(auto) counters = get_counters().counters;
 
     //Sort the counters by count (DESC)
-    std::sort(counters.begin(), counters.end(), [](auto& left, auto& right) {
-        return left.count > right.count;
-    });
+    std::sort(counters.begin(), counters.end(), [](auto& left, auto& right) { return left.count > right.count; });
 
     // Print all the used counters
     for (decltype(auto) counter : counters) {

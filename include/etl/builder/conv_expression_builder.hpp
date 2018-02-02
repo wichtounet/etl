@@ -8,7 +8,7 @@
 /*!
  * \file conv_expression_builder.hpp
  * \brief Contains all the operators and functions to build convolution expressions.
-*/
+ */
 
 #pragma once
 

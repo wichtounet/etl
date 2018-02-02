@@ -32,7 +32,7 @@ constexpr etl::cce_impl select_cce_loss_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    if(impl::egblas::has_cce_sloss && impl::egblas::has_cce_dloss){
+    if (impl::egblas::has_cce_sloss && impl::egblas::has_cce_dloss) {
         return etl::cce_impl::EGBLAS;
     }
 
@@ -50,7 +50,7 @@ constexpr etl::cce_impl select_cce_error_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    if(impl::egblas::has_cce_serror && impl::egblas::has_cce_derror){
+    if (impl::egblas::has_cce_serror && impl::egblas::has_cce_derror) {
         return etl::cce_impl::EGBLAS;
     }
 

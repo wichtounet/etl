@@ -39,7 +39,7 @@ struct simd_pack {
      * \brief Construct a new simd_pack around the given vector
      * \param value The vector value to build around
      */
-    simd_pack(intrinsic_type value) : value(value){
+    simd_pack(intrinsic_type value) : value(value) {
         // Nothing else to init
     }
 

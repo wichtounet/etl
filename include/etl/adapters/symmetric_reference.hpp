@@ -30,8 +30,8 @@ struct symmetric_reference {
     using expr_t                   = M;                                ///< The symmetric matrix
 
     matrix_type& matrix;   ///< Reference to the matrix
-    size_t i;         ///< The first index
-    size_t j;         ///< The second index
+    size_t i;              ///< The first index
+    size_t j;              ///< The second index
     value_type& value;     ///< Reference to the value
     value_type& sym_value; ///< Reference to the symmetric value
 
@@ -41,8 +41,7 @@ struct symmetric_reference {
      * \param i The index i of the first dimension
      * \param j The index j of the second dimension
      */
-    symmetric_reference(matrix_type& matrix, size_t i, size_t j)
-            : matrix(matrix), i(i), j(j), value(matrix(i, j)), sym_value(matrix(j, i)) {
+    symmetric_reference(matrix_type& matrix, size_t i, size_t j) : matrix(matrix), i(i), j(j), value(matrix(i, j)), sym_value(matrix(j, i)) {
         //Nothing else to init
     }
 
@@ -53,7 +52,7 @@ struct symmetric_reference {
      */
     symmetric_reference& operator=(const value_type& rhs) {
         value = rhs;
-        if(i != j){
+        if (i != j) {
             sym_value = rhs;
         }
         return *this;
@@ -66,7 +65,7 @@ struct symmetric_reference {
      */
     symmetric_reference& operator+=(value_type rhs) {
         value += rhs;
-        if(i != j){
+        if (i != j) {
             sym_value += rhs;
         }
         return *this;
@@ -79,7 +78,7 @@ struct symmetric_reference {
      */
     symmetric_reference& operator-=(value_type rhs) {
         value -= rhs;
-        if(i != j){
+        if (i != j) {
             sym_value -= rhs;
         }
         return *this;
@@ -92,7 +91,7 @@ struct symmetric_reference {
      */
     symmetric_reference& operator*=(value_type rhs) {
         value *= rhs;
-        if(i != j){
+        if (i != j) {
             sym_value *= rhs;
         }
         return *this;
@@ -105,7 +104,7 @@ struct symmetric_reference {
      */
     symmetric_reference& operator/=(value_type rhs) {
         value /= rhs;
-        if(i != j){
+        if (i != j) {
             sym_value /= rhs;
         }
         return *this;
@@ -118,7 +117,7 @@ struct symmetric_reference {
      */
     symmetric_reference& operator%=(value_type rhs) {
         value %= rhs;
-        if(i != j){
+        if (i != j) {
             sym_value %= rhs;
         }
         return *this;

@@ -33,7 +33,7 @@ void gemm_small_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
 
     size_t i = 0;
 
-    for( ; i + 3 < M; i += 4){
+    for (; i + 3 < M; i += 4) {
         size_t j = 0;
 
         for (; j + 1 < N; j += 2) {
@@ -143,7 +143,7 @@ void gemm_small_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
         }
     }
 
-    for( ; i + 1 < M; i += 2){
+    for (; i + 1 < M; i += 2) {
         size_t j = 0;
 
         for (; j + 1 < N; j += 2) {
@@ -219,7 +219,7 @@ void gemm_small_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
         }
     }
 
-    for( ; i < M; ++i){
+    for (; i < M; ++i) {
         size_t j = 0;
 
         for (; j + 1 < N; j += 2) {

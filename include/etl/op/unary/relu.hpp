@@ -29,13 +29,13 @@ struct relu_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = is_floating<E> && cudnn_enabled;
+    static constexpr bool gpu_computable = is_floating<E>&& cudnn_enabled;
 
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on x

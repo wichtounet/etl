@@ -13,7 +13,7 @@
 #pragma once
 
 #include "etl/fast_base.hpp"
-#include "etl/direct_fill.hpp"    //direct_fill with GPU support
+#include "etl/direct_fill.hpp" //direct_fill with GPU support
 
 namespace etl {
 
@@ -23,13 +23,12 @@ namespace etl {
  * The matrix support an arbitrary number of dimensions.
  */
 template <typename T, typename ST, order SO, size_t... Dims>
-struct custom_fast_matrix_impl final :
-        fast_matrix_base<custom_fast_matrix_impl<T, ST, SO, Dims...>, T, ST, SO, Dims...>,
-        inplace_assignable<custom_fast_matrix_impl<T, ST, SO, Dims...>>,
-        expression_able<custom_fast_matrix_impl<T, ST, SO, Dims...>>,
-        value_testable<custom_fast_matrix_impl<T, ST, SO, Dims...>>,
-        iterable<custom_fast_matrix_impl<T, ST, SO, Dims...>, SO == order::RowMajor>,
-        dim_testable<custom_fast_matrix_impl<T, ST, SO, Dims...>> {
+struct custom_fast_matrix_impl final : fast_matrix_base<custom_fast_matrix_impl<T, ST, SO, Dims...>, T, ST, SO, Dims...>,
+                                       inplace_assignable<custom_fast_matrix_impl<T, ST, SO, Dims...>>,
+                                       expression_able<custom_fast_matrix_impl<T, ST, SO, Dims...>>,
+                                       value_testable<custom_fast_matrix_impl<T, ST, SO, Dims...>>,
+                                       iterable<custom_fast_matrix_impl<T, ST, SO, Dims...>, SO == order::RowMajor>,
+                                       dim_testable<custom_fast_matrix_impl<T, ST, SO, Dims...>> {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
@@ -47,17 +46,17 @@ public:
     using const_memory_type  = const value_type*;                               ///< The const memory type
 
     using base_type::dim;
+    using base_type::memory_end;
+    using base_type::memory_start;
     using base_type::size;
     using iterable_base_type::begin;
     using iterable_base_type::end;
-    using base_type::memory_start;
-    using base_type::memory_end;
 
     /*!
      * \brief The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
 private:
     using base_type::_data;
@@ -150,7 +149,7 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_iff(std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
+    template <typename E, cpp_enable_iff(std::is_convertible<value_t<E>, value_type>::value&& is_etl_expr<E>)>
     custom_fast_matrix_impl& operator=(E&& e) {
         validate_assign(*this, e);
 
@@ -193,7 +192,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    auto& gpu_compute_hint(Y& y){
+    auto& gpu_compute_hint(Y& y) {
         cpp_unused(y);
         this->ensure_gpu_up_to_date();
         return *this;
@@ -284,8 +283,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -293,8 +292,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -302,8 +301,8 @@ public:
      * \brief Subtract from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -311,8 +310,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -320,8 +319,8 @@ public:
      * \brief Divide to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -329,8 +328,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 

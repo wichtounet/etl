@@ -28,19 +28,31 @@ struct conv2_full_impl {
     static void apply(const I& input, const K& kernel, C& conv) {
         constexpr_select auto impl = select_conv2_impl_new<conv_type::FULL, I, K, C>();
 
-        if constexpr_select (impl == etl::conv_impl::VEC) {
-            impl::vec::conv2_full(smart_forward(input), smart_forward(kernel), conv);
-        } else if constexpr_select (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_full(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
-        } else if constexpr_select (impl == etl::conv_impl::STD) {
-            impl::standard::conv2_full(smart_forward(input), smart_forward(kernel), conv);
-        } else if constexpr_select (impl == etl::conv_impl::FFT_STD) {
-            impl::standard::conv2_full_fft(smart_forward(input), smart_forward(kernel), conv);
-        } else if constexpr_select (impl == etl::conv_impl::FFT_MKL) {
-            impl::blas::conv2_full(smart_forward(input), smart_forward(kernel), conv);
-        } else if constexpr_select (impl == etl::conv_impl::FFT_CUFFT) {
-            impl::cufft::conv2_full(smart_forward(input), smart_forward(kernel), conv);
-        } else {
+        if
+            constexpr_select(impl == etl::conv_impl::VEC) {
+                impl::vec::conv2_full(smart_forward(input), smart_forward(kernel), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::CUDNN) {
+                impl::cudnn::conv2_full(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::STD) {
+                impl::standard::conv2_full(smart_forward(input), smart_forward(kernel), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::FFT_STD) {
+                impl::standard::conv2_full_fft(smart_forward(input), smart_forward(kernel), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::FFT_MKL) {
+                impl::blas::conv2_full(smart_forward(input), smart_forward(kernel), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::FFT_CUFFT) {
+                impl::cufft::conv2_full(smart_forward(input), smart_forward(kernel), conv);
+            }
+        else {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
@@ -60,19 +72,31 @@ struct conv2_full_flipped_impl {
     static void apply(const I& input, const K& kernel, C& conv) {
         constexpr_select auto impl = select_conv2_impl_new<conv_type::FULL, I, K, C>();
 
-        if constexpr_select (impl == etl::conv_impl::VEC) {
-            impl::vec::conv2_full_flipped(smart_forward(input), smart_forward(kernel), conv);
-        } else if constexpr_select (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_full_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
-        } else if constexpr_select (impl == etl::conv_impl::STD) {
-            impl::standard::conv2_full_flipped(smart_forward(input), smart_forward(kernel), conv);
-        } else if constexpr_select (impl == etl::conv_impl::FFT_STD) {
-            impl::standard::conv2_full_fft_flipped(smart_forward(input), smart_forward(kernel), conv);
-        } else if constexpr_select (impl == etl::conv_impl::FFT_MKL) {
-            impl::blas::conv2_full_flipped(smart_forward(input), smart_forward(kernel), conv);
-        } else if constexpr_select (impl == etl::conv_impl::FFT_CUFFT) {
-            impl::cufft::conv2_full_flipped(smart_forward(input), smart_forward(kernel), conv);
-        } else {
+        if
+            constexpr_select(impl == etl::conv_impl::VEC) {
+                impl::vec::conv2_full_flipped(smart_forward(input), smart_forward(kernel), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::CUDNN) {
+                impl::cudnn::conv2_full_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::STD) {
+                impl::standard::conv2_full_flipped(smart_forward(input), smart_forward(kernel), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::FFT_STD) {
+                impl::standard::conv2_full_fft_flipped(smart_forward(input), smart_forward(kernel), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::FFT_MKL) {
+                impl::blas::conv2_full_flipped(smart_forward(input), smart_forward(kernel), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::FFT_CUFFT) {
+                impl::cufft::conv2_full_flipped(smart_forward(input), smart_forward(kernel), conv);
+            }
+        else {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
@@ -92,11 +116,15 @@ struct conv2_same_impl {
     static void apply(const I& input, const K& kernel, C& conv) {
         constexpr_select auto impl = select_conv2_impl_new<conv_type::SAME, I, K, C>();
 
-        if constexpr_select (impl == etl::conv_impl::VEC) {
-            impl::vec::conv2_same(smart_forward(input), smart_forward(kernel), conv);
-        } else if constexpr_select (impl == etl::conv_impl::STD) {
-            impl::standard::conv2_same(smart_forward(input), smart_forward(kernel), conv);
-        } else {
+        if
+            constexpr_select(impl == etl::conv_impl::VEC) {
+                impl::vec::conv2_same(smart_forward(input), smart_forward(kernel), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::STD) {
+                impl::standard::conv2_same(smart_forward(input), smart_forward(kernel), conv);
+            }
+        else {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
@@ -116,11 +144,15 @@ struct conv2_same_flipped_impl {
     static void apply(const I& input, const K& kernel, C& conv) {
         constexpr_select auto impl = select_conv2_impl_new<conv_type::SAME, I, K, C>();
 
-        if constexpr_select (impl == etl::conv_impl::VEC) {
-            impl::vec::conv2_same_flipped(smart_forward(input), smart_forward(kernel), conv);
-        } else if constexpr_select (impl == etl::conv_impl::STD) {
-            impl::standard::conv2_same_flipped(smart_forward(input), smart_forward(kernel), conv);
-        } else {
+        if
+            constexpr_select(impl == etl::conv_impl::VEC) {
+                impl::vec::conv2_same_flipped(smart_forward(input), smart_forward(kernel), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::STD) {
+                impl::standard::conv2_same_flipped(smart_forward(input), smart_forward(kernel), conv);
+            }
+        else {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
@@ -129,7 +161,7 @@ struct conv2_same_flipped_impl {
 /*!
  * \brief The functor impl for 2D valid conv
  */
-template<size_t S1, size_t S2, size_t P1, size_t P2>
+template <size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv2_valid_impl {
     /*!
      * \brief Apply the convolution
@@ -143,11 +175,15 @@ struct conv2_valid_impl {
 
         if /*constepxr_select*/ (impl == etl::conv_impl::VEC) {
             impl::vec::conv2_valid(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
-        } else if constexpr_select (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_valid(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
-        } else if constexpr_select (impl == etl::conv_impl::STD) {
-            impl::standard::conv2_valid(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
-        } else {
+        } else if
+            constexpr_select(impl == etl::conv_impl::CUDNN) {
+                impl::cudnn::conv2_valid(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::STD) {
+                impl::standard::conv2_valid(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
+            }
+        else {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
@@ -156,7 +192,7 @@ struct conv2_valid_impl {
 /*!
  * \brief The functor impl for 2D valid conv
  */
-template<size_t S1, size_t S2, size_t P1, size_t P2>
+template <size_t S1, size_t S2, size_t P1, size_t P2>
 struct conv2_valid_flipped_impl {
     /*!
      * \brief Apply the convolution
@@ -170,11 +206,15 @@ struct conv2_valid_flipped_impl {
 
         if /*constepxr_select*/ (impl == etl::conv_impl::VEC) {
             impl::vec::conv2_valid_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
-        } else if constexpr_select (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_valid_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
-        } else if constexpr_select (impl == etl::conv_impl::STD) {
-            impl::standard::conv2_valid_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
-        } else {
+        } else if
+            constexpr_select(impl == etl::conv_impl::CUDNN) {
+                impl::cudnn::conv2_valid_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::STD) {
+                impl::standard::conv2_valid_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
+            }
+        else {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
@@ -196,11 +236,15 @@ struct dyn_conv2_valid_impl {
 
         if /*constepxr_select*/ (impl == etl::conv_impl::VEC) {
             impl::vec::conv2_valid(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
-        } else if constexpr_select (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_valid(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
-        } else if constexpr_select (impl == etl::conv_impl::STD) {
-            impl::standard::conv2_valid(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
-        } else {
+        } else if
+            constexpr_select(impl == etl::conv_impl::CUDNN) {
+                impl::cudnn::conv2_valid(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::STD) {
+                impl::standard::conv2_valid(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
+            }
+        else {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
@@ -222,11 +266,15 @@ struct dyn_conv2_valid_flipped_impl {
 
         if /*constepxr_select*/ (impl == etl::conv_impl::VEC) {
             impl::vec::conv2_valid_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
-        } else if constexpr_select (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_valid_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
-        } else if constexpr_select (impl == etl::conv_impl::STD) {
-            impl::standard::conv2_valid_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
-        } else {
+        } else if
+            constexpr_select(impl == etl::conv_impl::CUDNN) {
+                impl::cudnn::conv2_valid_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::STD) {
+                impl::standard::conv2_valid_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
+            }
+        else {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }

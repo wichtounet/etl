@@ -12,14 +12,14 @@ namespace etl::impl::vec {
 /*!
  * \brief BLIS-like GEMM config
  */
-template<typename T>
+template <typename T>
 struct gemm_config;
 
 /*!
  * \brief BLIS-like GEMM config for single-precision
  */
-template<>
-struct gemm_config <float> {
+template <>
+struct gemm_config<float> {
     static constexpr size_t MC = 768;  ///< The first dimension buffer
     static constexpr size_t KC = 384;  ///< The second dimension buffer
     static constexpr size_t NC = 4096; ///< The third dimension buffer
@@ -31,8 +31,8 @@ struct gemm_config <float> {
 /*!
  * \brief BLIS-like GEMM config for double-precision
  */
-template<>
-struct gemm_config <double> {
+template <>
+struct gemm_config<double> {
     static constexpr size_t MC = 384;  ///< The first dimension buffer
     static constexpr size_t KC = 384;  ///< The second dimension buffer
     static constexpr size_t NC = 4096; ///< The third dimension buffer
@@ -44,8 +44,8 @@ struct gemm_config <double> {
 /*!
  * \brief Packing panels of A, with padding if required.
  */
-template<typename T>
-void pack_a(size_t mc, size_t kc, const T *A, size_t incRowA, size_t incColA, T* _A){
+template <typename T>
+void pack_a(size_t mc, size_t kc, const T* A, size_t incRowA, size_t incColA, T* _A) {
     static constexpr const size_t MR = gemm_config<T>::MR;
 
     const size_t mp  = mc / MR;
@@ -110,7 +110,7 @@ void pack_b(size_t kc, size_t nc, const T* B, size_t incRowB, size_t incColB, T*
 /*!
  * \brief Compute Y += alpha*X
  */
-template<typename T>
+template <typename T>
 void dgeaxpy(size_t m, size_t n, T alpha, const T* X, size_t incRowX, size_t incColX, T* Y, size_t incRowY, size_t incColY) {
     if (alpha != 1.0) {
         for (size_t j = 0; j < n; ++j) {
@@ -282,7 +282,7 @@ void gemm_micro_kernel(size_t kc, T alpha, const T* A, const T* B, T beta, T* C,
         } else if (beta != T(1.0)) {
             for (size_t j = 0; j < NR; ++j) {
                 for (size_t i = 0; i < MR; ++i) {
-                    C[i * incRowC + j * incColC] = beta * C[i * incRowC + j * incColC]+ alpha * AB[i + j * MR];
+                    C[i * incRowC + j * incColC] = beta * C[i * incRowC + j * incColC] + alpha * AB[i + j * MR];
                 }
             }
         }
@@ -294,7 +294,17 @@ void gemm_micro_kernel(size_t kc, T alpha, const T* A, const T* B, T beta, T* C,
  * are already packed in _A and _B
  */
 template <typename V, typename T>
-void gemm_macro_kernel(size_t mc, size_t nc, size_t kc, T alpha, T beta, T* C, size_t incRowC, size_t incColC, etl::dyn_matrix<T, 2>& _A, etl::dyn_matrix<T, 2>& _B, etl::dyn_matrix<T, 2>& _C) {
+void gemm_macro_kernel(size_t mc,
+                       size_t nc,
+                       size_t kc,
+                       T alpha,
+                       T beta,
+                       T* C,
+                       size_t incRowC,
+                       size_t incColC,
+                       etl::dyn_matrix<T, 2>& _A,
+                       etl::dyn_matrix<T, 2>& _B,
+                       etl::dyn_matrix<T, 2>& _C) {
     static constexpr const size_t MR = gemm_config<T>::MR;
     static constexpr const size_t NR = gemm_config<T>::NR;
 

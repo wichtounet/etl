@@ -40,7 +40,7 @@ static constexpr bool has_cimag = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void imag(size_t n, float alpha, std::complex<float>* A , size_t lda, float* B , size_t ldb){
+inline void imag(size_t n, float alpha, std::complex<float>* A, size_t lda, float* B, size_t ldb) {
 #ifdef EGBLAS_HAS_Cimag
     inc_counter("egblas");
     egblas_cimag(n, alpha, reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
@@ -65,7 +65,7 @@ inline void imag(size_t n, float alpha, std::complex<float>* A , size_t lda, flo
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void imag(size_t n, float alpha, etl::complex<float>* A , size_t lda, float* B , size_t ldb){
+inline void imag(size_t n, float alpha, etl::complex<float>* A, size_t lda, float* B, size_t ldb) {
 #ifdef EGBLAS_HAS_Cimag
     inc_counter("egblas");
     egblas_cimag(n, alpha, reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
@@ -99,7 +99,7 @@ static constexpr bool has_zimag = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void imag(size_t n, double alpha, std::complex<double>* A , size_t lda, double* B , size_t ldb){
+inline void imag(size_t n, double alpha, std::complex<double>* A, size_t lda, double* B, size_t ldb) {
 #ifdef EGBLAS_HAS_Zimag
     inc_counter("egblas");
     egblas_zimag(n, alpha, reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);
@@ -124,7 +124,7 @@ inline void imag(size_t n, double alpha, std::complex<double>* A , size_t lda, d
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void imag(size_t n, double alpha, etl::complex<double>* A , size_t lda, double* B , size_t ldb){
+inline void imag(size_t n, double alpha, etl::complex<double>* A, size_t lda, double* B, size_t ldb) {
 #ifdef EGBLAS_HAS_Zimag
     inc_counter("egblas");
     egblas_zimag(n, alpha, reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);

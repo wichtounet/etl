@@ -17,8 +17,8 @@ namespace etl {
  */
 template <typename T>
 struct sqrt_unary_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -32,17 +32,14 @@ struct sqrt_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_ssqrt)
-            || (is_double_precision_t<T> && impl::egblas::has_dsqrt)
-            || (is_complex_single_t<T> && impl::egblas::has_csqrt)
-            || (is_complex_double_t<T> && impl::egblas::has_zsqrt);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_ssqrt) || (is_double_precision_t<T> && impl::egblas::has_dsqrt)
+                                           || (is_complex_single_t<T> && impl::egblas::has_csqrt) || (is_complex_double_t<T> && impl::egblas::has_zsqrt);
 
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -114,7 +111,7 @@ struct sqrt_unary_op {
  * \copydoc sqrt_unary_op
  */
 template <typename TT>
-struct sqrt_unary_op <etl::complex<TT>> {
+struct sqrt_unary_op<etl::complex<TT>> {
     using T = etl::complex<TT>; ///< The real operand type
 
     static constexpr bool linear      = true; ///< Indicates if the operator is linear
@@ -132,11 +129,8 @@ struct sqrt_unary_op <etl::complex<TT>> {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_ssqrt)
-            || (is_double_precision_t<T> && impl::egblas::has_dsqrt)
-            || (is_complex_single_t<T> && impl::egblas::has_csqrt)
-            || (is_complex_double_t<T> && impl::egblas::has_zsqrt);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_ssqrt) || (is_double_precision_t<T> && impl::egblas::has_dsqrt)
+                                           || (is_complex_single_t<T> && impl::egblas::has_csqrt) || (is_complex_double_t<T> && impl::egblas::has_zsqrt);
 
     /*!
      * \brief Apply the unary operator on x

@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "etl/dyn_base.hpp"    //The base class and utilities
+#include "etl/dyn_base.hpp" //The base class and utilities
 
 namespace etl {
 
@@ -22,8 +22,7 @@ namespace etl {
  * The matrix support an arbitrary number of dimensions.
  */
 template <typename T, order SO, size_t D>
-struct gpu_dyn_matrix_impl final : dense_dyn_base<gpu_dyn_matrix_impl<T, SO, D>, T, SO, D>,
-                               dim_testable<gpu_dyn_matrix_impl<T, SO, D>> {
+struct gpu_dyn_matrix_impl final : dense_dyn_base<gpu_dyn_matrix_impl<T, SO, D>, T, SO, D>, dim_testable<gpu_dyn_matrix_impl<T, SO, D>> {
     static constexpr size_t n_dimensions = D;                                      ///< The number of dimensions
     static constexpr order storage_order = SO;                                     ///< The storage order
     static constexpr size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
@@ -42,13 +41,13 @@ struct gpu_dyn_matrix_impl final : dense_dyn_base<gpu_dyn_matrix_impl<T, SO, D>,
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
 private:
-    using base_type::_size;
     using base_type::_dimensions;
     using base_type::_memory;
+    using base_type::_size;
 
     using base_type::check_invariants;
 
@@ -82,7 +81,7 @@ public:
      * \param rhs The matrix to move
      */
     gpu_dyn_matrix_impl(gpu_dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)) {
-        _memory = rhs._memory;
+        _memory     = rhs._memory;
         rhs._memory = nullptr;
     }
 
@@ -126,10 +125,10 @@ public:
         if (this != &rhs) {
             _gpu = std::move(rhs._gpu);
 
-            _size               = rhs._size;
-            _dimensions         = std::move(rhs._dimensions);
+            _size       = rhs._size;
+            _dimensions = std::move(rhs._dimensions);
 
-            rhs._size = 0;
+            rhs._size   = 0;
             rhs._memory = nullptr;
         }
 
@@ -143,12 +142,14 @@ public:
      * \param e The expression containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename E, cpp_enable_iff(!std::is_same<std::decay_t<E>, gpu_dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
+    template <typename E,
+              cpp_enable_iff(!std::is_same<std::decay_t<E>, gpu_dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value
+                             && is_etl_expr<E>)>
     gpu_dyn_matrix_impl& operator=(E&& e) noexcept {
         // It is possible that the matrix was not initialized before
         // In the case, get the the dimensions from the expression and
         // initialize the matrix
-        if(!_size){
+        if (!_size) {
             inherit(e);
         } else {
             validate_assign(*this, e);
@@ -201,7 +202,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    auto& gpu_compute_hint(Y& y){
+    auto& gpu_compute_hint(Y& y) {
         cpp_unused(y);
         this->ensure_gpu_up_to_date();
         return *this;
@@ -224,8 +225,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -233,8 +234,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -242,8 +243,8 @@ public:
      * \brief Subtract from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -251,8 +252,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -260,8 +261,8 @@ public:
      * \brief Divide to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -269,8 +270,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -290,8 +291,8 @@ public:
      * \param e The expression to get the dimensions from.
      */
     template <typename E>
-    void inherit([[maybe_unused]] const E& e){
-        if constexpr (etl::decay_traits<E>::is_generator){
+    void inherit([[maybe_unused]] const E& e) {
+        if constexpr (etl::decay_traits<E>::is_generator) {
             cpp_unreachable("Impossible to inherit dimensions from generators");
         } else {
             cpp_assert(n_dimensions == etl::dimensions(e), "Invalid number of dimensions");
@@ -311,7 +312,7 @@ public:
      * This must only be called when the matrix has no dimensions
      */
     void resize_scalar() {
-        _size = 1;
+        _size          = 1;
         _dimensions[0] = 1;
     }
 

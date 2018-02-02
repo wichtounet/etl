@@ -91,7 +91,7 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, siz
  */
 template <typename Functor>
 inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t last, size_t threshold) {
-    auto serial_functor = [&functor](size_t first, size_t last){
+    auto serial_functor = [&functor](size_t first, size_t last) {
         SERIAL_SECTION {
             functor(first, last);
         }
@@ -118,7 +118,7 @@ inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t la
  */
 template <typename Functor>
 inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last, size_t threshold) {
-    auto cpu_functor = [&functor](size_t first, size_t last){
+    auto cpu_functor = [&functor](size_t first, size_t last) {
         CPU_SECTION {
             functor(first, last);
         }
@@ -211,7 +211,7 @@ inline void engine_dispatch_2d(Functor&& functor, size_t last1, size_t last2, si
             ETL_PARALLEL_SESSION {
                 thread_engine::acquire();
 
-                auto [blocks1,blocks2] = thread_blocks(last1, last2);
+                auto[blocks1, blocks2] = thread_blocks(last1, last2);
 
                 const size_t block_1 = last1 / blocks1 + (last1 % blocks1 > 0);
                 const size_t block_2 = last2 / blocks2 + (last2 % blocks2 > 0);
@@ -307,7 +307,7 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, boo
  */
 template <typename Functor>
 inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t last, bool select) {
-    auto serial_functor = [&functor](size_t first, size_t last){
+    auto serial_functor = [&functor](size_t first, size_t last) {
         SERIAL_SECTION {
             functor(first, last);
         }
@@ -365,7 +365,7 @@ inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_
  */
 template <typename Functor>
 inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last, bool select) {
-    auto cpu_functor = [&functor](size_t first, size_t last){
+    auto cpu_functor = [&functor](size_t first, size_t last) {
         CPU_SECTION {
             functor(first, last);
         }
@@ -385,9 +385,9 @@ inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last,
  */
 template <typename TT, typename Functor, typename AccFunctor>
 inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, size_t first, size_t last, size_t threshold) {
-    const size_t n     = last - first;
+    const size_t n = last - first;
 
-    if(n){
+    if (n) {
         if (engine_select_parallel(n, threshold)) {
             const size_t T     = std::min(n, etl::threads);
             const size_t batch = n / T;
@@ -397,9 +397,7 @@ inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, 
             ETL_PARALLEL_SESSION {
                 thread_engine::acquire();
 
-                auto sub_functor = [&futures, &functor](size_t t, size_t first, size_t last) {
-                    futures[t] = functor(first, last);
-                };
+                auto sub_functor = [&futures, &functor](size_t t, size_t first, size_t last) { futures[t] = functor(first, last); };
 
                 for (size_t t = 0; t < T - 1; ++t) {
                     thread_engine::schedule(sub_functor, t, first + t * batch, first + (t + 1) * batch);
@@ -437,21 +435,21 @@ inline void engine_dispatch_1d_slice(E&& expr, Functor&& functor, size_t thresho
 
     const size_t n = etl::size(expr);
 
-    if(n){
+    if (n) {
         if (engine_select_parallel(n, threshold)) {
             const size_t T = std::min(n, etl::threads);
 
             ETL_PARALLEL_SESSION {
                 thread_engine::acquire();
 
-                if constexpr (decay_traits<E>::is_aligned && S > 1){
-                    if(n >= T * S){
+                if constexpr (decay_traits<E>::is_aligned && S > 1) {
+                    if (n >= T * S) {
                         // In case there is enough data, we align it
 
-                        const size_t n_aligned = (n + (S - 1)) & ~(S - 1);
-                        const size_t blocks = n_aligned / S;
+                        const size_t n_aligned         = (n + (S - 1)) & ~(S - 1);
+                        const size_t blocks            = n_aligned / S;
                         const size_t blocks_per_thread = blocks / T;
-                        const size_t batch = blocks_per_thread * S;
+                        const size_t batch             = blocks_per_thread * S;
 
                         for (size_t t = 0; t < T - 1; ++t) {
                             thread_engine::schedule(functor, memory_slice<aligned>(expr, t * batch, (t + 1) * batch));
@@ -507,45 +505,40 @@ inline void engine_dispatch_1d_slice_binary(E1&& expr1, E2&& expr2, Functor&& fu
 
     const size_t n = etl::size(expr1);
 
-    if(n){
+    if (n) {
         if (engine_select_parallel(n, threshold)) {
             const size_t T = std::min(n, etl::threads);
 
             ETL_PARALLEL_SESSION {
                 thread_engine::acquire();
 
-                if constexpr (decay_traits<E1>::is_aligned && decay_traits<E2>::is_aligned && S > 1){
-                    if(n >= T * S){
+                if constexpr (decay_traits<E1>::is_aligned && decay_traits<E2>::is_aligned && S > 1) {
+                    if (n >= T * S) {
                         // In case there is enough data, we align it
 
-                        const size_t n_aligned = (n + (S - 1)) & ~(S - 1);
-                        const size_t blocks = n_aligned / S;
+                        const size_t n_aligned         = (n + (S - 1)) & ~(S - 1);
+                        const size_t blocks            = n_aligned / S;
                         const size_t blocks_per_thread = blocks / T;
-                        const size_t batch = blocks_per_thread * S;
+                        const size_t batch             = blocks_per_thread * S;
 
                         for (size_t t = 0; t < T - 1; ++t) {
-                            thread_engine::schedule(functor,
-                                memory_slice<aligned>(expr1, t * batch, (t + 1) * batch),
-                                memory_slice<aligned>(expr2, t * batch, (t + 1) * batch));
+                            thread_engine::schedule(functor, memory_slice<aligned>(expr1, t * batch, (t + 1) * batch),
+                                                    memory_slice<aligned>(expr2, t * batch, (t + 1) * batch));
                         }
 
-                        thread_engine::schedule(functor,
-                            memory_slice<aligned>(expr1, (T - 1) * batch, n),
-                            memory_slice<aligned>(expr2, (T - 1) * batch, n));
+                        thread_engine::schedule(functor, memory_slice<aligned>(expr1, (T - 1) * batch, n), memory_slice<aligned>(expr2, (T - 1) * batch, n));
                     } else {
                         // Not enough data to consider aligning
 
                         const size_t batch = n / T;
 
                         for (size_t t = 0; t < T - 1; ++t) {
-                            thread_engine::schedule(functor,
-                                memory_slice<unaligned>(expr1, t * batch, (t + 1) * batch),
-                                memory_slice<unaligned>(expr2, t * batch, (t + 1) * batch));
+                            thread_engine::schedule(functor, memory_slice<unaligned>(expr1, t * batch, (t + 1) * batch),
+                                                    memory_slice<unaligned>(expr2, t * batch, (t + 1) * batch));
                         }
 
-                        thread_engine::schedule(functor,
-                            memory_slice<unaligned>(expr1, (T - 1) * batch, n),
-                            memory_slice<unaligned>(expr2, (T - 1) * batch, n));
+                        thread_engine::schedule(functor, memory_slice<unaligned>(expr1, (T - 1) * batch, n),
+                                                memory_slice<unaligned>(expr2, (T - 1) * batch, n));
                     }
                 } else {
                     // If the data is not aligned in the first, don't make any effort to align it
@@ -553,14 +546,11 @@ inline void engine_dispatch_1d_slice_binary(E1&& expr1, E2&& expr2, Functor&& fu
                     const size_t batch = n / T;
 
                     for (size_t t = 0; t < T - 1; ++t) {
-                        thread_engine::schedule(functor,
-                            memory_slice<unaligned>(expr1, t * batch, (t + 1) * batch),
-                            memory_slice<unaligned>(expr2, t * batch, (t + 1) * batch));
+                        thread_engine::schedule(functor, memory_slice<unaligned>(expr1, t * batch, (t + 1) * batch),
+                                                memory_slice<unaligned>(expr2, t * batch, (t + 1) * batch));
                     }
 
-                    thread_engine::schedule(functor,
-                        memory_slice<unaligned>(expr1, (T - 1) * batch, n),
-                        memory_slice<unaligned>(expr2, (T - 1) * batch, n));
+                    thread_engine::schedule(functor, memory_slice<unaligned>(expr1, (T - 1) * batch, n), memory_slice<unaligned>(expr2, (T - 1) * batch, n));
                 }
 
                 thread_engine::wait();
@@ -589,27 +579,25 @@ inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor
 
     const size_t n = etl::size(expr);
 
-    if(n){
+    if (n) {
         if (engine_select_parallel(n, threshold)) {
             const size_t T = std::min(n, etl::threads);
 
             std::vector<TT> futures(T);
 
-            auto sub_functor = [&futures, &functor](size_t t, auto&& sub_expr) {
-                futures[t] = functor(sub_expr);
-            };
+            auto sub_functor = [&futures, &functor](size_t t, auto&& sub_expr) { futures[t] = functor(sub_expr); };
 
             ETL_PARALLEL_SESSION {
                 thread_engine::acquire();
 
-                if constexpr (decay_traits<E>::is_aligned && S > 1){
-                    if(n >= T * S){
+                if constexpr (decay_traits<E>::is_aligned && S > 1) {
+                    if (n >= T * S) {
                         // In case there is enough data, we align it
 
-                        const size_t n_aligned = (n + (S - 1)) & ~(S - 1);
-                        const size_t blocks = n_aligned / S;
+                        const size_t n_aligned         = (n + (S - 1)) & ~(S - 1);
+                        const size_t blocks            = n_aligned / S;
                         const size_t blocks_per_thread = blocks / T;
-                        const size_t batch = blocks_per_thread * S;
+                        const size_t batch             = blocks_per_thread * S;
 
                         for (size_t t = 0; t < T - 1; ++t) {
                             thread_engine::schedule(sub_functor, t, memory_slice<aligned>(expr, t * batch, (t + 1) * batch));

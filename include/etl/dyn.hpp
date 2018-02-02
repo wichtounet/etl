@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include "etl/dyn_base.hpp" //The base class and utilities
-#include "etl/direct_fill.hpp"    //direct_fill with GPU support
+#include "etl/dyn_base.hpp"    //The base class and utilities
+#include "etl/direct_fill.hpp" //direct_fill with GPU support
 
 namespace etl {
 
@@ -30,16 +30,16 @@ struct dyn_matrix_impl final : dense_dyn_base<dyn_matrix_impl<T, SO, D>, T, SO, 
                                iterable<dyn_matrix_impl<T, SO, D>, SO == order::RowMajor>,
                                dim_testable<dyn_matrix_impl<T, SO, D>> {
     static constexpr size_t n_dimensions = D;                                      ///< The number of dimensions
-    static constexpr order storage_order      = SO;                                     ///< The storage order
+    static constexpr order storage_order = SO;                                     ///< The storage order
     static constexpr size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
 
-    using this_type              = dyn_matrix_impl<T, SO, D>;                       ///< The type of this expression
-    using base_type              = dense_dyn_base<this_type, T, SO, D>;             ///< The base type
-    using iterable_base_type     = iterable<this_type, SO == order::RowMajor>;      ///< The iterable base type
-    using value_type             = T;                                               ///< The value type
+    using this_type              = dyn_matrix_impl<T, SO, D>;                  ///< The type of this expression
+    using base_type              = dense_dyn_base<this_type, T, SO, D>;        ///< The base type
+    using iterable_base_type     = iterable<this_type, SO == order::RowMajor>; ///< The iterable base type
+    using value_type             = T;                                          ///< The value type
     using dimension_storage_impl = std::array<size_t, n_dimensions>;           ///< The type used to store the dimensions
-    using memory_type            = value_type*;                                     ///< The memory type
-    using const_memory_type      = const value_type*;                               ///< The const memory type
+    using memory_type            = value_type*;                                ///< The memory type
+    using const_memory_type      = const value_type*;                          ///< The const memory type
 
     using iterator       = std::conditional_t<SO == order::RowMajor, value_type*, etl::iterator<this_type>>;             ///< The iterator type
     using const_iterator = std::conditional_t<SO == order::RowMajor, const value_type*, etl::iterator<const this_type>>; ///< The const iterator type
@@ -47,22 +47,22 @@ struct dyn_matrix_impl final : dense_dyn_base<dyn_matrix_impl<T, SO, D>, T, SO, 
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
 private:
-    using base_type::_size;
     using base_type::_dimensions;
     using base_type::_memory;
+    using base_type::_size;
 
-    using base_type::release;
     using base_type::allocate;
     using base_type::check_invariants;
+    using base_type::release;
 
 public:
     using base_type::dim;
-    using base_type::memory_start;
     using base_type::memory_end;
+    using base_type::memory_start;
     using iterable_base_type::begin;
     using iterable_base_type::end;
 
@@ -85,7 +85,7 @@ public:
     dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept(assert_nothrow) : base_type(rhs) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
-        if(rhs.is_cpu_up_to_date()){
+        if (rhs.is_cpu_up_to_date()) {
             direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
         }
 
@@ -98,7 +98,7 @@ public:
      * \param rhs The matrix to move
      */
     dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)) {
-        _memory = rhs._memory;
+        _memory     = rhs._memory;
         rhs._memory = nullptr;
     }
 
@@ -121,10 +121,7 @@ public:
      * The number of dimesnions must be the same as the D template
      * parameter of the matrix.
      */
-    template <typename... S, cpp_enable_iff(
-                                 (sizeof...(S) == D)
-                                 && cpp::all_convertible_to_v<size_t, S...>
-                                 )>
+    template <typename... S, cpp_enable_iff((sizeof...(S) == D) && cpp::all_convertible_to_v<size_t, S...>)>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}}) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
     }
@@ -134,8 +131,9 @@ public:
      * \param sizes The dimensions of the matrix followed by an initializer_list
      */
     template <typename... S, cpp_enable_iff(dyn_detail::is_initializer_list_constructor<S...>::value)>
-    explicit dyn_matrix_impl(S... sizes) noexcept : base_type(util::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...),
-                                                              dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
+    explicit dyn_matrix_impl(S... sizes) noexcept
+            : base_type(util::size(std::make_index_sequence<(sizeof...(S) - 1)>(), sizes...),
+                        dyn_detail::sizes(std::make_index_sequence<(sizeof...(S) - 1)>(), sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         static_assert(sizeof...(S) == D + 1, "Invalid number of dimensions");
@@ -148,11 +146,10 @@ public:
      * \brief Construct a matrix with the given dimensions and values
      * \param sizes The dimensions of the matrix followed by a values_t
      */
-    template <typename... S, cpp_enable_iff(
-                                 (sizeof...(S) == D)
-                                 && cpp::is_specialization_of_v<values_t, typename cpp::last_type<size_t, S...>::type>)>
-    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
-                                                                              dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
+    template <typename... S, cpp_enable_iff((sizeof...(S) == D) && cpp::is_specialization_of_v<values_t, typename cpp::last_type<size_t, S...>::type>)>
+    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept
+            : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
+                        dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         auto list = cpp::last_value(sizes...).template list<value_type>();
@@ -165,14 +162,10 @@ public:
      *
      * Every element of the matrix will be set to this value.
      */
-    template <typename... S, cpp_enable_iff(
-                                              (sizeof...(S) == D)
-                                              && !cpp::is_specialization_of_v<values_t, typename cpp::last_type<size_t, S...>::type>
-                                              )>
-    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept : base_type(
-                                                               util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
-                                                               dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)
-                                                            ){
+    template <typename... S, cpp_enable_iff((sizeof...(S) == D) && !cpp::is_specialization_of_v<values_t, typename cpp::last_type<size_t, S...>::type>)>
+    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept
+            : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
+                        dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         intel_decltype_auto value = cpp::last_value(s1, sizes...);
@@ -186,8 +179,7 @@ public:
      * Only possible for 1D matrices
      */
     template <typename Container, cpp_enable_iff(std::is_convertible<typename Container::value_type, value_type>::value)>
-    explicit dyn_matrix_impl(const Container& container)
-            : base_type(container.size(), {{container.size()}}){
+    explicit dyn_matrix_impl(const Container& container) : base_type(container.size(), {{container.size()}}) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         static_assert(D == 1, "Only 1D matrix can be constructed from containers");
@@ -236,15 +228,15 @@ public:
      */
     dyn_matrix_impl& operator=(dyn_matrix_impl&& rhs) noexcept {
         if (this != &rhs) {
-            if(_memory){
+            if (_memory) {
                 release(_memory, _size);
             }
 
-            _size               = rhs._size;
-            _dimensions         = std::move(rhs._dimensions);
-            _memory             = rhs._memory;
+            _size       = rhs._size;
+            _dimensions = std::move(rhs._dimensions);
+            _memory     = rhs._memory;
 
-            rhs._size = 0;
+            rhs._size   = 0;
             rhs._memory = nullptr;
         }
 
@@ -257,10 +249,10 @@ public:
      * \brief Resize with the new dimensions in the given array
      * \param dimensions The new dimensions
      */
-    void resize_arr(const dimension_storage_impl& dimensions){
+    void resize_arr(const dimension_storage_impl& dimensions) {
         auto new_size = std::accumulate(dimensions.begin(), dimensions.end(), size_t(1), std::multiplies<size_t>());
 
-        if(_memory){
+        if (_memory) {
             auto new_memory = allocate(alloc_size_mat<T>(new_size, (dimensions.back())));
 
             for (size_t i = 0; i < std::min(_size, new_size); ++i) {
@@ -271,7 +263,7 @@ public:
 
             _memory = new_memory;
         } else {
-            _memory     = allocate(alloc_size_mat<T>(new_size, (dimensions.back())));
+            _memory = allocate(alloc_size_mat<T>(new_size, (dimensions.back())));
         }
 
         _size       = new_size;
@@ -282,13 +274,13 @@ public:
      * \brief Resize with the new given dimensions
      * \param sizes The new dimensions
      */
-    template<typename... Sizes>
-    void resize(Sizes... sizes){
+    template <typename... Sizes>
+    void resize(Sizes... sizes) {
         static_assert(sizeof...(Sizes), "Cannot change number of dimensions");
 
         auto new_size = util::size(sizes...);
 
-        if(_memory){
+        if (_memory) {
             auto new_memory = allocate(alloc_size_mat<T>(new_size, cpp::last_value(sizes...)));
 
             for (size_t i = 0; i < std::min(_size, new_size); ++i) {
@@ -299,7 +291,7 @@ public:
 
             _memory = new_memory;
         } else {
-            _memory     = allocate(alloc_size_mat<T>(new_size, cpp::last_value(sizes...)));
+            _memory = allocate(alloc_size_mat<T>(new_size, cpp::last_value(sizes...)));
         }
 
         _size       = new_size;
@@ -311,12 +303,14 @@ public:
      * \param e The expression containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename E, cpp_enable_iff(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
+    template <typename E,
+              cpp_enable_iff(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value
+                             && is_etl_expr<E>)>
     dyn_matrix_impl& operator=(E&& e) noexcept {
         // It is possible that the matrix was not initialized before
         // In the case, get the the dimensions from the expression and
         // initialize the matrix
-        if(!_memory){
+        if (!_memory) {
             inherit(e);
         } else {
             validate_assign(*this, e);
@@ -354,9 +348,9 @@ public:
     template <typename Container, cpp_enable_iff(!is_etl_expr<Container> && std::is_convertible<typename Container::value_type, value_type>::value)>
     dyn_matrix_impl& operator=(const Container& vec) {
         // Inherit from the dimensions if possible
-        if(!_memory && D == 1){
+        if (!_memory && D == 1) {
             // Compute the size and new dimensions
-            _size = vec.size();
+            _size          = vec.size();
             _dimensions[0] = vec.size();
 
             // Allocate the new memory
@@ -392,7 +386,7 @@ public:
      * \brief Destruct the matrix and release all its memory
      */
     ~dyn_matrix_impl() noexcept {
-        if(_memory){
+        if (_memory) {
             release(_memory, _size);
         }
     }
@@ -402,13 +396,13 @@ public:
      *
      * Using a matrix after it has been cleared is considered as Undefined Behaviour.
      */
-    void clear(){
-        if(_memory){
+    void clear() {
+        if (_memory) {
             release(_memory, _size);
         }
 
         _memory = nullptr;
-        _size = 0;
+        _size   = 0;
     }
 
     /*!
@@ -416,7 +410,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    auto& gpu_compute_hint(Y& y){
+    auto& gpu_compute_hint(Y& y) {
         cpp_unused(y);
         this->ensure_gpu_up_to_date();
         return *this;
@@ -455,7 +449,8 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(void) store(const vec_type<V> in, size_t i) noexcept {
+    ETL_STRONG_INLINE(void)
+    store(const vec_type<V> in, size_t i) noexcept {
         V::store(_memory + i, in);
     }
 
@@ -466,7 +461,8 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(void) storeu(const vec_type<V> in, size_t i) noexcept {
+    ETL_STRONG_INLINE(void)
+    storeu(const vec_type<V> in, size_t i) noexcept {
         V::storeu(_memory + i, in);
     }
 
@@ -477,7 +473,8 @@ public:
      * \tparam V The vectorization mode to use
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(void) stream(const vec_type<V> in, size_t i) noexcept {
+    ETL_STRONG_INLINE(void)
+    stream(const vec_type<V> in, size_t i) noexcept {
         V::stream(_memory + i, in);
     }
 
@@ -487,8 +484,9 @@ public:
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the matrix
      */
-    template<typename V = default_vec>
-    ETL_STRONG_INLINE(vec_type<V>) load(size_t i) const noexcept {
+    template <typename V = default_vec>
+    ETL_STRONG_INLINE(vec_type<V>)
+    load(size_t i) const noexcept {
         return V::load(_memory + i);
     }
 
@@ -498,8 +496,9 @@ public:
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the matrix
      */
-    template<typename V = default_vec>
-    ETL_STRONG_INLINE(vec_type<V>) loadu(size_t i) const noexcept {
+    template <typename V = default_vec>
+    ETL_STRONG_INLINE(vec_type<V>)
+    loadu(size_t i) const noexcept {
         return V::loadu(_memory + i);
     }
 
@@ -521,11 +520,11 @@ public:
      * \param e The expression to get the dimensions from.
      */
     template <typename E>
-    void inherit_if_null(const E& e){
+    void inherit_if_null(const E& e) {
         static_assert(n_dimensions == etl::decay_traits<E>::dimensions(), "Cannot inherit from an expression with different number of dimensions");
         static_assert(!etl::decay_traits<E>::is_generator, "Cannot inherit dimensions from a generator expression");
 
-        if(!_memory){
+        if (!_memory) {
             inherit(e);
         }
     }
@@ -536,8 +535,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -545,8 +544,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -554,8 +553,8 @@ public:
      * \brief Subtract from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -563,8 +562,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -572,8 +571,8 @@ public:
      * \brief Divide to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -581,8 +580,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -603,7 +602,7 @@ private:
      * \param e The expression to get the dimensions from.
      */
     template <typename E>
-    void inherit([[maybe_unused]] const E& e){
+    void inherit([[maybe_unused]] const E& e) {
         if constexpr (etl::decay_traits<E>::is_generator) {
             cpp_unreachable("Impossible to inherit dimensions from generators");
         } else {
@@ -661,8 +660,8 @@ static_assert(std::is_nothrow_destructible<dyn_vector<double>>::value, "dyn_vect
  *
  * \return A dyn matrix of the given dimensions.
  */
-template<typename T, typename... Sizes>
-etl::dyn_matrix<T, sizeof...(Sizes)> make_dyn_matrix(Sizes... sizes){
+template <typename T, typename... Sizes>
+etl::dyn_matrix<T, sizeof...(Sizes)> make_dyn_matrix(Sizes... sizes) {
     return etl::dyn_matrix<T, sizeof...(Sizes)>(sizes...);
 }
 
@@ -682,12 +681,12 @@ void swap(dyn_matrix_impl<T, SO, D>& lhs, dyn_matrix_impl<T, SO, D>& rhs) {
  * \param matrix The matrix to serialize
  */
 template <typename Stream, typename T, order SO, size_t D>
-void serialize(serializer<Stream>& os, const dyn_matrix_impl<T, SO, D>& matrix){
-    for(size_t i = 0; i < etl::dimensions(matrix); ++i){
+void serialize(serializer<Stream>& os, const dyn_matrix_impl<T, SO, D>& matrix) {
+    for (size_t i = 0; i < etl::dimensions(matrix); ++i) {
         os << matrix.dim(i);
     }
 
-    for(const auto& value : matrix){
+    for (const auto& value : matrix) {
         os << value;
     }
 }
@@ -698,16 +697,16 @@ void serialize(serializer<Stream>& os, const dyn_matrix_impl<T, SO, D>& matrix){
  * \param matrix The matrix to deserialize
  */
 template <typename Stream, typename T, order SO, size_t D>
-void deserialize(deserializer<Stream>& is, dyn_matrix_impl<T, SO, D>& matrix){
+void deserialize(deserializer<Stream>& is, dyn_matrix_impl<T, SO, D>& matrix) {
     typename std::decay_t<decltype(matrix)>::dimension_storage_impl new_dimensions;
 
-    for(auto& value : new_dimensions){
+    for (auto& value : new_dimensions) {
         is >> value;
     }
 
     matrix.resize_arr(new_dimensions);
 
-    for(auto& value : matrix){
+    for (auto& value : matrix) {
         is >> value;
     }
 }

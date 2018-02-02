@@ -31,7 +31,7 @@ namespace etl::impl::cublas {
  * \param A The memory of the vector a
  * \param lda The leading dimension of a
  */
-inline void cublas_scal(cublasHandle_t handle, size_t n, const float* alpha, float* A , size_t lda){
+inline void cublas_scal(cublasHandle_t handle, size_t n, const float* alpha, float* A, size_t lda) {
     inc_counter("cublas");
     cublas_check(cublasSscal(handle, n, alpha, A, lda));
 }
@@ -44,7 +44,7 @@ inline void cublas_scal(cublasHandle_t handle, size_t n, const float* alpha, flo
  * \param A The memory of the vector a
  * \param lda The leading dimension of a
  */
-inline void cublas_scal(cublasHandle_t handle, size_t n, const double* alpha, double* A , size_t lda){
+inline void cublas_scal(cublasHandle_t handle, size_t n, const double* alpha, double* A, size_t lda) {
     inc_counter("cublas");
     cublas_check(cublasDscal(handle, n, alpha, A, lda));
 }
@@ -59,7 +59,7 @@ inline void cublas_scal(cublasHandle_t handle, size_t n, const double* alpha, do
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cublas_scal(cublasHandle_t handle, size_t n, const std::complex<float>* alpha, std::complex<float>* A , size_t lda){
+inline void cublas_scal(cublasHandle_t handle, size_t n, const std::complex<float>* alpha, std::complex<float>* A, size_t lda) {
     inc_counter("cublas");
     cublas_check(cublasCscal(handle, n, reinterpret_cast<const cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda));
 }
@@ -74,7 +74,7 @@ inline void cublas_scal(cublasHandle_t handle, size_t n, const std::complex<floa
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cublas_scal(cublasHandle_t handle, size_t n, const std::complex<double>* alpha, std::complex<double>* A , size_t lda){
+inline void cublas_scal(cublasHandle_t handle, size_t n, const std::complex<double>* alpha, std::complex<double>* A, size_t lda) {
     inc_counter("cublas");
     cublas_check(cublasZscal(handle, n, reinterpret_cast<const cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda));
 }
@@ -89,7 +89,7 @@ inline void cublas_scal(cublasHandle_t handle, size_t n, const std::complex<doub
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cublas_scal(cublasHandle_t handle, size_t n, const etl::complex<float>* alpha, etl::complex<float>* A , size_t lda){
+inline void cublas_scal(cublasHandle_t handle, size_t n, const etl::complex<float>* alpha, etl::complex<float>* A, size_t lda) {
     inc_counter("cublas");
     cublas_check(cublasCscal(handle, n, reinterpret_cast<const cuComplex*>(alpha), reinterpret_cast<cuComplex*>(A), lda));
 }
@@ -104,7 +104,7 @@ inline void cublas_scal(cublasHandle_t handle, size_t n, const etl::complex<floa
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cublas_scal(cublasHandle_t handle, size_t n, const etl::complex<double>* alpha, etl::complex<double>* A , size_t lda){
+inline void cublas_scal(cublasHandle_t handle, size_t n, const etl::complex<double>* alpha, etl::complex<double>* A, size_t lda) {
     inc_counter("cublas");
     cublas_check(cublasZscal(handle, n, reinterpret_cast<const cuDoubleComplex*>(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda));
 }

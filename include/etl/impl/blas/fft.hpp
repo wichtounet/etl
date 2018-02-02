@@ -23,10 +23,9 @@ namespace etl::impl::blas {
  * \param B The type of the output matrix
  */
 template <typename A, typename B>
-constexpr bool fft1_possible =
-                mkl_enabled
-            &&  ((is_deep_single_precision<A> && is_deep_single_precision<B>) || (is_deep_double_precision<A> && is_deep_double_precision<B>))
-            &&  all_dma<A, B>;
+constexpr bool fft1_possible = mkl_enabled
+                               && ((is_deep_single_precision<A> && is_deep_single_precision<B>) || (is_deep_double_precision<A> && is_deep_double_precision<B>))
+                               && all_dma<A, B>;
 
 /*!
  * \brief Traits indicating if 2D FFT with BLAS is
@@ -36,11 +35,9 @@ constexpr bool fft1_possible =
  * \param B The type of the output matrix
  */
 template <typename A, typename B>
-constexpr bool fft2_possible =
-                mkl_enabled
-            &&  ((is_deep_single_precision<A> && is_deep_single_precision<B>) || (is_deep_double_precision<A> && is_deep_double_precision<B>))
-            &&  all_row_major<A, B>
-            &&  all_dma<A, B>;
+constexpr bool fft2_possible = mkl_enabled
+                               && ((is_deep_single_precision<A> && is_deep_single_precision<B>) || (is_deep_double_precision<A> && is_deep_double_precision<B>))
+                               && all_row_major<A, B>&& all_dma<A, B>;
 
 /*!
  * \brief Traits indicating if 2D Convolution with BLAS is
@@ -51,11 +48,7 @@ constexpr bool fft2_possible =
  * \param C The type of the output matrix
  */
 template <typename I, typename K, typename C>
-constexpr bool conv1_possible =
-                mkl_enabled
-            &&  all_homogeneous<I, K, C>
-            &&  all_floating<I, K, C>
-            &&  all_dma<I, K, C>;
+constexpr bool conv1_possible = mkl_enabled&& all_homogeneous<I, K, C>&& all_floating<I, K, C>&& all_dma<I, K, C>;
 
 /*!
  * \brief Traits indicating if 2D Convolution with BLAS is
@@ -66,12 +59,7 @@ constexpr bool conv1_possible =
  * \param C The type of the output matrix
  */
 template <typename I, typename K, typename C>
-constexpr bool conv2_possible =
-                mkl_enabled
-            &&  all_floating<I, K, C>
-            &&  all_homogeneous<I, K, C>
-            &&  all_row_major<I, K, C>
-            &&  all_dma<I, K, C>;
+constexpr bool conv2_possible = mkl_enabled&& all_floating<I, K, C>&& all_homogeneous<I, K, C>&& all_row_major<I, K, C>&& all_dma<I, K, C>;
 
 #ifdef ETL_MKL_MODE
 
@@ -722,8 +710,8 @@ inline void inplace_ifft2_kernel(std::complex<double>* in, size_t d1, size_t d2)
  * \param s2 The second dimension of the output
  * \return The padded input
  */
-template<typename I>
-etl::dyn_vector<etl::complex<etl::value_t<I>>> pad_one(const I& input, size_t s1, size_t s2){
+template <typename I>
+etl::dyn_vector<etl::complex<etl::value_t<I>>> pad_one(const I& input, size_t s1, size_t s2) {
     using T = value_t<I>;
 
     const auto m1 = etl::dim<0>(input);
@@ -750,8 +738,8 @@ etl::dyn_vector<etl::complex<etl::value_t<I>>> pad_one(const I& input, size_t s1
  * \param s2 The second dimension of the output
  * \return The padded input
  */
-template<typename I>
-etl::dyn_vector<etl::complex<etl::value_t<I>>> pad_one_fft2(const I& input, size_t s1, size_t s2){
+template <typename I>
+etl::dyn_vector<etl::complex<etl::value_t<I>>> pad_one_fft2(const I& input, size_t s1, size_t s2) {
     auto input_padded = pad_one(input, s1, s2);
 
     mkl_detail::inplace_fft2_kernel(safe_cast(input_padded.memory_start()), s1, s2);
@@ -803,7 +791,7 @@ void conv2_full_kernel(const A& a, size_t m1, size_t m2, const B& b, size_t n1, 
  * \param a The input expression
  * \param c The output expression
  */
-template<typename A, typename C>
+template <typename A, typename C>
 void fft1(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -880,7 +868,7 @@ void ifft1_real(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template<typename A, typename C>
+template <typename A, typename C>
 void fft1_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
@@ -1575,7 +1563,7 @@ void conv4_full_flipped(II&& input, KK&& kernel, CC&& conv) {
  */
 template <typename I, typename K_T, typename C>
 void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    const size_t K = etl::dim<0>(kernels);
+    const size_t K  = etl::dim<0>(kernels);
     const size_t i1 = etl::dim<0>(input);
     const size_t i2 = etl::dim<1>(input);
     const size_t k1 = etl::dim<1>(kernels);
@@ -1658,11 +1646,11 @@ void fft_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s1
  */
 template <typename I, typename K_T, typename C>
 void fft_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    const size_t N = etl::dim<0>(input);
+    const size_t N  = etl::dim<0>(input);
     const size_t i1 = etl::dim<1>(input);
     const size_t i2 = etl::dim<2>(input);
 
-    const size_t K = etl::dim<0>(kernels);
+    const size_t K  = etl::dim<0>(kernels);
     const size_t k1 = etl::dim<1>(kernels);
     const size_t k2 = etl::dim<2>(kernels);
 
@@ -2048,7 +2036,7 @@ void fft_conv2_valid_multi_multi_flipped(I&& a, K_T&& b, C&& c, size_t s1, size_
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
-//COVERAGE_EXCLUDE_END
+    //COVERAGE_EXCLUDE_END
 
 #endif
 

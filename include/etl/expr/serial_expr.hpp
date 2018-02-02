@@ -8,7 +8,7 @@
 /*!
  * \file
  * \brief Contains an expression that is forced to be executed serially
-*/
+ */
 
 #pragma once
 
@@ -25,7 +25,6 @@ struct serial_expr final {
     using value_type = value_t<Expr>; ///< The value type
 
 private:
-
     Expr value;
 
     friend struct wrapper_traits<serial_expr>;
@@ -38,13 +37,12 @@ public:
      * \brief Construt a new optimized expression around the given ETL expression
      * \param l The ETL expression
      */
-    explicit serial_expr(Expr l)
-            : value(std::forward<Expr>(l)) {
+    explicit serial_expr(Expr l) : value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
     //Expresison can be copied and moved
-    serial_expr(const serial_expr& e) = default;
+    serial_expr(const serial_expr& e)     = default;
     serial_expr(serial_expr&& e) noexcept = default;
 
     //Expressions are invariant
@@ -67,8 +65,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         auto old_serial = local_context().serial;
 
         local_context().serial = true;
@@ -82,8 +80,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         auto old_serial = local_context().serial;
 
         local_context().serial = true;
@@ -97,8 +95,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         auto old_serial = local_context().serial;
 
         local_context().serial = true;
@@ -112,8 +110,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         auto old_serial = local_context().serial;
 
         local_context().serial = true;
@@ -127,8 +125,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         auto old_serial = local_context().serial;
 
         local_context().serial = true;
@@ -142,8 +140,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         auto old_serial = local_context().serial;
 
         local_context().serial = true;

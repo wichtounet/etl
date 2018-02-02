@@ -17,8 +17,8 @@ namespace etl {
  */
 template <typename T>
 struct softplus_unary_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -32,11 +32,10 @@ struct softplus_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_ssoftplus)
-            || (is_double_precision_t<T> && impl::egblas::has_dsoftplus)
-            || (is_complex_single_t<T> && impl::egblas::has_csoftplus)
-            || (is_complex_double_t<T> && impl::egblas::has_zsoftplus);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_ssoftplus)
+                                           || (is_double_precision_t<T> && impl::egblas::has_dsoftplus)
+                                           || (is_complex_single_t<T> && impl::egblas::has_csoftplus)
+                                           || (is_complex_double_t<T> && impl::egblas::has_zsoftplus);
 
     /*!
      * \brief Apply the unary operator on x

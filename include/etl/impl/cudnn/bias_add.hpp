@@ -38,7 +38,7 @@ void bias_add_4d(I&& x, K&& b, C&& y) {
     auto data_type = std::is_same<std::remove_const_t<type>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     decltype(auto) handle = start_cudnn();
 
@@ -58,15 +58,11 @@ void bias_add_4d(I&& x, K&& b, C&& y) {
 
     // Copy x -> y
 
-    cudnn_check(cudnnTransformTensor(handle.get(),
-        alpha, *x_tensor, x.gpu_memory(),
-        beta, *y_tensor, y.gpu_memory()));
+    cudnn_check(cudnnTransformTensor(handle.get(), alpha, *x_tensor, x.gpu_memory(), beta, *y_tensor, y.gpu_memory()));
 
     // Add b -> y
 
-    cudnn_check(cudnnAddTensor(handle.get(),
-        alpha, b_tensor, b.gpu_memory(),
-        alpha, *y_tensor, y.gpu_memory()));
+    cudnn_check(cudnnAddTensor(handle.get(), alpha, b_tensor, b.gpu_memory(), alpha, *y_tensor, y.gpu_memory()));
 
     y.validate_gpu();
     y.invalidate_cpu();
@@ -88,7 +84,7 @@ void bias_add_2d(I&& x, K&& b, C&& y) {
     auto data_type = std::is_same<std::remove_const_t<type>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     decltype(auto) handle = start_cudnn();
 
@@ -108,9 +104,7 @@ void bias_add_2d(I&& x, K&& b, C&& y) {
 
     // Copy x -> y
 
-    cudnn_check(cudnnTransformTensor(handle.get(),
-        alpha, *x_tensor, x.gpu_memory(),
-        beta, *y_tensor, y.gpu_memory()));
+    cudnn_check(cudnnTransformTensor(handle.get(), alpha, *x_tensor, x.gpu_memory(), beta, *y_tensor, y.gpu_memory()));
 
     // Add b -> y
 
@@ -166,7 +160,7 @@ void bias_add_2d(I&& x, K&& b, C&& y) {
     cpp_unreachable("CUDNN not available/enabled");
 }
 
-//COVERAGE_EXCLUDE_END
+    //COVERAGE_EXCLUDE_END
 
 #endif
 

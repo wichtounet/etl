@@ -40,7 +40,7 @@ static constexpr bool has_spow_yx = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void pow_yx(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
+inline void pow_yx(size_t n, float alpha, float* A, size_t lda, float* B, size_t ldb) {
 #ifdef EGBLAS_HAS_SPOW_YX
     inc_counter("egblas");
     egblas_spow_yx(n, alpha, A, lda, B, ldb);
@@ -74,7 +74,7 @@ static constexpr bool has_dpow_yx = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void pow_yx(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
+inline void pow_yx(size_t n, double alpha, double* A, size_t lda, double* B, size_t ldb) {
 #ifdef EGBLAS_HAS_DPOW_YX
     inc_counter("egblas");
     egblas_dpow_yx(n, alpha, A, lda, B, ldb);
@@ -108,7 +108,7 @@ static constexpr bool has_cpow_yx = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void pow_yx(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+inline void pow_yx(size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CPOW_YX
     inc_counter("egblas");
     egblas_cpow_yx(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
@@ -133,7 +133,7 @@ inline void pow_yx(size_t n, std::complex<float> alpha, std::complex<float>* A ,
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void pow_yx(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+inline void pow_yx(size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CPOW_YX
     inc_counter("egblas");
     egblas_cpow_yx(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
@@ -167,7 +167,7 @@ static constexpr bool has_zpow_yx = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void pow_yx(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+inline void pow_yx(size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZPOW_YX
     inc_counter("egblas");
     egblas_zpow_yx(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
@@ -192,7 +192,7 @@ inline void pow_yx(size_t n, std::complex<double> alpha, std::complex<double>* A
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void pow_yx(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+inline void pow_yx(size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZPOW_YX
     inc_counter("egblas");
     egblas_zpow_yx(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);

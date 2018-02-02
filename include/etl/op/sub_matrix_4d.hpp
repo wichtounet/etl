@@ -30,12 +30,10 @@ struct sub_matrix_4d;
  * \tparam T The type of expression on which the view is made
  */
 template <typename T, bool Aligned>
-struct sub_matrix_4d <T, Aligned, std::enable_if_t<true>> final :
-    iterable<sub_matrix_4d<T, Aligned>, false>,
-    assignable<sub_matrix_4d<T, Aligned>, value_t<T>>,
-    value_testable<sub_matrix_4d<T, Aligned>>,
-    inplace_assignable<sub_matrix_4d<T, Aligned>>
-{
+struct sub_matrix_4d<T, Aligned, std::enable_if_t<true>> final : iterable<sub_matrix_4d<T, Aligned>, false>,
+                                                                 assignable<sub_matrix_4d<T, Aligned>, value_t<T>>,
+                                                                 value_testable<sub_matrix_4d<T, Aligned>>,
+                                                                 inplace_assignable<sub_matrix_4d<T, Aligned>> {
     static_assert(is_etl_expr<T>, "sub_matrix_4d<T> only works with ETL expressions");
 
     using this_type            = sub_matrix_4d<T, Aligned>;                                            ///< The type of this expression
@@ -53,8 +51,8 @@ struct sub_matrix_4d <T, Aligned, std::enable_if_t<true>> final :
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<value_type>;
+    template <typename V = default_vec>
+    using vec_type = typename V::template vec_type<value_type>;
 
     using assignable_base_type::operator=;
     using iterable_base_type::begin;
@@ -82,7 +80,7 @@ public:
      * \param i The sub index
      */
     sub_matrix_4d(sub_type sub_expr, size_t i, size_t j, size_t k, size_t l, size_t m, size_t n, size_t o, size_t p)
-            : sub_expr(sub_expr), base_i(i), base_j(j), base_k(k), base_l(l), m(m), n(n), o(o), p(p)  {}
+            : sub_expr(sub_expr), base_i(i), base_j(j), base_k(k), base_l(l), m(m), n(n), o(o), p(p) {}
 
     /*!
      * \brief Returns the element at the given index
@@ -92,12 +90,12 @@ public:
     const_return_type operator[](size_t f) const {
         cpp_assert(f < m * n * o * p, "Invalid index inside sub_matrix_4d");
 
-        if constexpr (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor) {
             // Extract 4D indices from flat inside the view
             auto my_i = f / (n * o * p);
-            auto t1    = f % (n * o * p);
+            auto t1   = f % (n * o * p);
             auto my_j = t1 / (o * p);
-            auto t2 = t1 % (o * p);
+            auto t2   = t1 % (o * p);
             auto my_k = t2 / p;
             auto my_l = t2 % p;
 
@@ -125,12 +123,12 @@ public:
     return_type operator[](size_t f) {
         cpp_assert(f < m * n * o * p, "Invalid index inside sub_matrix_4d");
 
-        if constexpr (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor) {
             // Extract 4D indices from flat inside the view
             auto my_i = f / (n * o * p);
-            auto t1    = f % (n * o * p);
+            auto t1   = f % (n * o * p);
             auto my_j = t1 / (o * p);
-            auto t2 = t1 % (o * p);
+            auto t2   = t1 % (o * p);
             auto my_k = t2 / p;
             auto my_l = t2 % p;
 
@@ -159,12 +157,12 @@ public:
     value_type read_flat(size_t f) const noexcept(assert_nothrow) {
         cpp_assert(f < m * n * o * p, "Invalid index inside sub_matrix_4d");
 
-        if constexpr (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor) {
             // Extract 4D indices from flat inside the view
             auto my_i = f / (n * o * p);
-            auto t1    = f % (n * o * p);
+            auto t1   = f % (n * o * p);
             auto my_j = t1 / (o * p);
-            auto t2 = t1 % (o * p);
+            auto t2   = t1 % (o * p);
             auto my_k = t2 / p;
             auto my_l = t2 % p;
 
@@ -250,8 +248,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -259,8 +257,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -268,8 +266,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -277,8 +275,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -286,8 +284,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -295,8 +293,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -335,8 +333,8 @@ public:
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const sub_matrix_4d& v) {
-        return os << "sub(" << v.sub_expr << ", " << v.base_i << ", " << v.base_j << ", " << v.base_k << ", " << v.base_l
-                  << ", " << v.m << ", " << v.n << ", " << v.o << ", " << v.p << ")";
+        return os << "sub(" << v.sub_expr << ", " << v.base_i << ", " << v.base_j << ", " << v.base_k << ", " << v.base_l << ", " << v.m << ", " << v.n << ", "
+                  << v.o << ", " << v.p << ")";
     }
 };
 
@@ -363,7 +361,7 @@ struct etl_traits<etl::sub_matrix_4d<T, Aligned>> {
     static constexpr bool is_padded      = false;                      ///< Indicates if the expression is padded
     static constexpr bool is_aligned     = false;                      ///< Indicates if the expression is padded
     static constexpr bool is_temporary   = sub_traits::is_temporary;   ///< Indicates if the exxpression needs a evaluator visitor
-    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
+    static constexpr bool gpu_computable = false;                      ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order = sub_traits::storage_order;  ///< The expression's storage order
 
     /*!
@@ -390,11 +388,11 @@ struct etl_traits<etl::sub_matrix_4d<T, Aligned>> {
      * \return The dth dimension of the given expression
      */
     static size_t dim(const expr_t& v, size_t d) noexcept {
-        if(d == 0){
+        if (d == 0) {
             return v.m;
-        } else if(d == 1){
+        } else if (d == 1) {
             return v.n;
-        } else if(d == 2){
+        } else if (d == 2) {
             return v.o;
         } else {
             return v.p;

@@ -28,10 +28,7 @@ namespace etl {
  * \tparam T The type of return of the distribution
  */
 template <typename T>
-using uniform_distribution = std::conditional_t<
-    std::is_floating_point<T>::value,
-    std::uniform_real_distribution<T>,
-    std::uniform_int_distribution<T>>;
+using uniform_distribution = std::conditional_t<std::is_floating_point<T>::value, std::uniform_real_distribution<T>, std::uniform_int_distribution<T>>;
 
 /*!
  * \brief Generator from an uniform distribution
@@ -48,18 +45,16 @@ struct uniform_generator_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    static constexpr bool gpu_computable =
-                curand_enabled &&
-               ((is_single_precision_t<T> && impl::egblas::has_scalar_sadd && impl::egblas::has_scalar_smul)
-            ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dadd && impl::egblas::has_scalar_dmul));
+    static constexpr bool gpu_computable = curand_enabled
+                                           && ((is_single_precision_t<T> && impl::egblas::has_scalar_sadd && impl::egblas::has_scalar_smul)
+                                               || (is_double_precision_t<T> && impl::egblas::has_scalar_dadd && impl::egblas::has_scalar_dmul));
 
     /*!
      * \brief Construct a new generator with the given start and end of the range
      * \param start The beginning of the range
      * \param end The end of the range
      */
-    uniform_generator_op(T start, T end)
-            : start(start), end(end), rand_engine(std::time(nullptr)), distribution(start, end) {}
+    uniform_generator_op(T start, T end) : start(start), end(end), rand_engine(std::time(nullptr)), distribution(start, end) {}
 
     /*!
      * \brief Generate a new value
@@ -169,18 +164,16 @@ struct uniform_generator_g_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    static constexpr bool gpu_computable =
-                curand_enabled &&
-               ((is_single_precision_t<T> && impl::egblas::has_scalar_sadd && impl::egblas::has_scalar_smul)
-            ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dadd && impl::egblas::has_scalar_dmul));
+    static constexpr bool gpu_computable = curand_enabled
+                                           && ((is_single_precision_t<T> && impl::egblas::has_scalar_sadd && impl::egblas::has_scalar_smul)
+                                               || (is_double_precision_t<T> && impl::egblas::has_scalar_dadd && impl::egblas::has_scalar_dmul));
 
     /*!
      * \brief Construct a new generator with the given start and end of the range
      * \param start The beginning of the range
      * \param end The end of the range
      */
-    uniform_generator_g_op(G& g, T start, T end)
-            : start(start), end(end), rand_engine(g), distribution(start, end) {}
+    uniform_generator_g_op(G& g, T start, T end) : start(start), end(end), rand_engine(g), distribution(start, end) {}
 
     /*!
      * \brief Generate a new value

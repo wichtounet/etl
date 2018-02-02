@@ -8,7 +8,7 @@
 /*!
  * \file
  * \brief Contains traits for wrapper expressions
-*/
+ */
 
 #pragma once
 

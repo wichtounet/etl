@@ -30,12 +30,10 @@ struct sub_matrix_3d;
  * \tparam T The type of expression on which the view is made
  */
 template <typename T, bool Aligned>
-struct sub_matrix_3d <T, Aligned, std::enable_if_t<true>> final :
-    iterable<sub_matrix_3d<T, Aligned>, false>,
-    assignable<sub_matrix_3d<T, Aligned>, value_t<T>>,
-    value_testable<sub_matrix_3d<T, Aligned>>,
-    inplace_assignable<sub_matrix_3d<T, Aligned>>
-{
+struct sub_matrix_3d<T, Aligned, std::enable_if_t<true>> final : iterable<sub_matrix_3d<T, Aligned>, false>,
+                                                                 assignable<sub_matrix_3d<T, Aligned>, value_t<T>>,
+                                                                 value_testable<sub_matrix_3d<T, Aligned>>,
+                                                                 inplace_assignable<sub_matrix_3d<T, Aligned>> {
     static_assert(is_etl_expr<T>, "sub_matrix_3d<T> only works with ETL expressions");
 
     using this_type            = sub_matrix_3d<T, Aligned>;                                            ///< The type of this expression
@@ -53,8 +51,8 @@ struct sub_matrix_3d <T, Aligned, std::enable_if_t<true>> final :
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<value_type>;
+    template <typename V = default_vec>
+    using vec_type = typename V::template vec_type<value_type>;
 
     using assignable_base_type::operator=;
     using iterable_base_type::begin;
@@ -80,7 +78,7 @@ public:
      * \param i The sub index
      */
     sub_matrix_3d(sub_type sub_expr, size_t i, size_t j, size_t k, size_t m, size_t n, size_t o)
-            : sub_expr(sub_expr), base_i(i), base_j(j), base_k(k), m(m), n(n), o(o)  {}
+            : sub_expr(sub_expr), base_i(i), base_j(j), base_k(k), m(m), n(n), o(o) {}
 
     /*!
      * \brief Returns the element at the given index
@@ -90,7 +88,7 @@ public:
     const_return_type operator[](size_t f) const {
         cpp_assert(f < m * n * o, "Invalid index inside sub_matrix_3d");
 
-        if constexpr (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor) {
             // Extract 3D indices from flat inside the view
             auto my_i = f / (n * o);
             auto t    = f % (n * o);
@@ -119,7 +117,7 @@ public:
     return_type operator[](size_t f) {
         cpp_assert(f < m * n * o, "Invalid index inside sub_matrix_3d");
 
-        if constexpr (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor) {
             // Extract 3D indices from flat inside the view
             auto my_i = f / (n * o);
             auto t    = f % (n * o);
@@ -149,7 +147,7 @@ public:
     value_type read_flat(size_t f) const noexcept(assert_nothrow) {
         cpp_assert(f < m * n * o, "Invalid index inside sub_matrix_3d");
 
-        if constexpr (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor) {
             // Extract 3D indices from flat inside the view
             auto my_i = f / (n * o);
             auto t    = f % (n * o);
@@ -234,8 +232,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -243,8 +241,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -252,8 +250,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -261,8 +259,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -270,8 +268,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -279,8 +277,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -319,7 +317,7 @@ public:
      * \return the output stream
      */
     friend std::ostream& operator<<(std::ostream& os, const sub_matrix_3d& v) {
-        return os << "sub(" << v.sub_expr << ", " << v.base_i << ", " << v.base_j << ", " << v.base_k<< ", " << v.m << ", " << v.n << ", " << v.o << ")";
+        return os << "sub(" << v.sub_expr << ", " << v.base_i << ", " << v.base_j << ", " << v.base_k << ", " << v.m << ", " << v.n << ", " << v.o << ")";
     }
 };
 
@@ -346,7 +344,7 @@ struct etl_traits<etl::sub_matrix_3d<T, Aligned>> {
     static constexpr bool is_padded      = false;                      ///< Indicates if the expression is padded
     static constexpr bool is_aligned     = false;                      ///< Indicates if the expression is padded
     static constexpr bool is_temporary   = sub_traits::is_temporary;   ///< Indicates if the exxpression needs a evaluator visitor
-    static constexpr bool gpu_computable = false;                                         ///< Indicates if the expression can be computed on GPU
+    static constexpr bool gpu_computable = false;                      ///< Indicates if the expression can be computed on GPU
     static constexpr order storage_order = sub_traits::storage_order;  ///< The expression's storage order
 
     /*!
@@ -373,9 +371,9 @@ struct etl_traits<etl::sub_matrix_3d<T, Aligned>> {
      * \return The dth dimension of the given expression
      */
     static size_t dim(const expr_t& v, size_t d) noexcept {
-        if(d == 0){
+        if (d == 0) {
             return v.m;
-        } else if(d == 1){
+        } else if (d == 1) {
             return v.n;
         } else {
             return v.o;

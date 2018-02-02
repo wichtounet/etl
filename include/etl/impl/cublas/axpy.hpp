@@ -33,7 +33,7 @@ namespace etl::impl::cublas {
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cublas_axpy(cublasHandle_t handle, size_t n, const float* alpha, const float* A , size_t lda, float* B , size_t ldb){
+inline void cublas_axpy(cublasHandle_t handle, size_t n, const float* alpha, const float* A, size_t lda, float* B, size_t ldb) {
     inc_counter("cublas");
     cublas_check(cublasSaxpy(handle, n, alpha, A, lda, B, ldb));
 }
@@ -48,7 +48,7 @@ inline void cublas_axpy(cublasHandle_t handle, size_t n, const float* alpha, con
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cublas_axpy(cublasHandle_t handle, size_t n, const double* alpha, const double* A , size_t lda, double* B , size_t ldb){
+inline void cublas_axpy(cublasHandle_t handle, size_t n, const double* alpha, const double* A, size_t lda, double* B, size_t ldb) {
     inc_counter("cublas");
     cublas_check(cublasDaxpy(handle, n, alpha, A, lda, B, ldb));
 }
@@ -63,9 +63,11 @@ inline void cublas_axpy(cublasHandle_t handle, size_t n, const double* alpha, co
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cublas_axpy(cublasHandle_t handle, size_t n, const std::complex<float>* alpha, const std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+inline void cublas_axpy(
+    cublasHandle_t handle, size_t n, const std::complex<float>* alpha, const std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb) {
     inc_counter("cublas");
-    cublas_check(cublasCaxpy(handle, n, reinterpret_cast<const cuComplex*>(alpha), reinterpret_cast<const cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb));
+    cublas_check(
+        cublasCaxpy(handle, n, reinterpret_cast<const cuComplex*>(alpha), reinterpret_cast<const cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb));
 }
 
 /*!
@@ -78,9 +80,11 @@ inline void cublas_axpy(cublasHandle_t handle, size_t n, const std::complex<floa
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cublas_axpy(cublasHandle_t handle, size_t n, const std::complex<double>* alpha, const std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+inline void cublas_axpy(
+    cublasHandle_t handle, size_t n, const std::complex<double>* alpha, const std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb) {
     inc_counter("cublas");
-    cublas_check(cublasZaxpy(handle, n, reinterpret_cast<const cuDoubleComplex*>(alpha), reinterpret_cast<const cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb));
+    cublas_check(cublasZaxpy(handle, n, reinterpret_cast<const cuDoubleComplex*>(alpha), reinterpret_cast<const cuDoubleComplex*>(A), lda,
+                             reinterpret_cast<cuDoubleComplex*>(B), ldb));
 }
 
 /*!
@@ -93,9 +97,11 @@ inline void cublas_axpy(cublasHandle_t handle, size_t n, const std::complex<doub
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cublas_axpy(cublasHandle_t handle, size_t n, const etl::complex<float>* alpha, const etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+inline void cublas_axpy(
+    cublasHandle_t handle, size_t n, const etl::complex<float>* alpha, const etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb) {
     inc_counter("cublas");
-    cublas_check(cublasCaxpy(handle, n, reinterpret_cast<const cuComplex*>(alpha), reinterpret_cast<const cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb));
+    cublas_check(
+        cublasCaxpy(handle, n, reinterpret_cast<const cuComplex*>(alpha), reinterpret_cast<const cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb));
 }
 
 /*!
@@ -108,9 +114,11 @@ inline void cublas_axpy(cublasHandle_t handle, size_t n, const etl::complex<floa
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cublas_axpy(cublasHandle_t handle, size_t n, const etl::complex<double>* alpha, const etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+inline void cublas_axpy(
+    cublasHandle_t handle, size_t n, const etl::complex<double>* alpha, const etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb) {
     inc_counter("cublas");
-    cublas_check(cublasZaxpy(handle, n, reinterpret_cast<const cuDoubleComplex*>(alpha), reinterpret_cast<const cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb));
+    cublas_check(cublasZaxpy(handle, n, reinterpret_cast<const cuDoubleComplex*>(alpha), reinterpret_cast<const cuDoubleComplex*>(A), lda,
+                             reinterpret_cast<cuDoubleComplex*>(B), ldb));
 }
 
 #endif

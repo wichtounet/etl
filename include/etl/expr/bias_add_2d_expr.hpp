@@ -74,8 +74,8 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>, "bias_add_2d only supported for ETL expressions");
 
         auto& a = this->a();
@@ -85,26 +85,34 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
 
         constexpr_select auto impl = select_impl<L>();
 
-        if constexpr_select (impl == bias_add_impl::VEC) {
-            impl::vec::bias_add_2d(smart_forward(a), smart_forward(b), lhs);
-        } else if constexpr_select (impl == bias_add_impl::STD) {
-            impl::standard::bias_add_2d(smart_forward(a), smart_forward(b), lhs);
-        } else if constexpr_select (impl == bias_add_impl::EGBLAS) {
-            decltype(auto) e_x = smart_forward_gpu(a);
-            decltype(auto) e_b = smart_forward_gpu(b);
-            auto& e_y = lhs;
+        if
+            constexpr_select(impl == bias_add_impl::VEC) {
+                impl::vec::bias_add_2d(smart_forward(a), smart_forward(b), lhs);
+            }
+        else if
+            constexpr_select(impl == bias_add_impl::STD) {
+                impl::standard::bias_add_2d(smart_forward(a), smart_forward(b), lhs);
+            }
+        else if
+            constexpr_select(impl == bias_add_impl::EGBLAS) {
+                decltype(auto) e_x = smart_forward_gpu(a);
+                decltype(auto) e_b = smart_forward_gpu(b);
+                auto& e_y          = lhs;
 
-            e_x.ensure_gpu_up_to_date();
-            e_b.ensure_gpu_up_to_date();
-            e_y.ensure_gpu_allocated();
+                e_x.ensure_gpu_up_to_date();
+                e_b.ensure_gpu_up_to_date();
+                e_y.ensure_gpu_allocated();
 
-            impl::egblas::bias_add_2d(etl::dim<0>(a), etl::dim<1>(a), e_x.gpu_memory(), 1, e_b.gpu_memory(), 1, e_y.gpu_memory(), 1);
+                impl::egblas::bias_add_2d(etl::dim<0>(a), etl::dim<1>(a), e_x.gpu_memory(), 1, e_b.gpu_memory(), 1, e_y.gpu_memory(), 1);
 
-            e_y.validate_gpu();
-            e_y.invalidate_cpu();
-        } else if constexpr_select (impl == bias_add_impl::CUDNN) {
-            impl::cudnn::bias_add_2d(smart_forward_gpu(a), smart_forward_gpu(b), lhs);
-        } else {
+                e_y.validate_gpu();
+                e_y.invalidate_cpu();
+            }
+        else if
+            constexpr_select(impl == bias_add_impl::CUDNN) {
+                impl::cudnn::bias_add_2d(smart_forward_gpu(a), smart_forward_gpu(b), lhs);
+            }
+        else {
             cpp_unreachable("Invalid bias_add_2d selection");
         }
     }
@@ -113,8 +121,8 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -122,8 +130,8 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -131,8 +139,8 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -140,8 +148,8 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -149,8 +157,8 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -165,7 +173,6 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
     }
 
 private:
-
     /*!
      * \brief Select the default implementation for this expression.
      *
@@ -193,7 +200,7 @@ private:
             return etl::bias_add_impl::CUDNN;
         }
 
-        if(vec_possible){
+        if (vec_possible) {
             return etl::bias_add_impl::VEC;
         }
 
@@ -217,7 +224,10 @@ private:
             switch (forced) {
                 // EGBLAS cannot always be used
                 case bias_add_impl::EGBLAS:
-                    if (!all_homogeneous<A, B, C> || !((is_single_precision<A> && impl::egblas::has_sbias_add_2d) || (is_double_precision<A> && impl::egblas::has_sbias_add_2d)) || local_context().cpu) {
+                    if (!all_homogeneous<
+                            A, B,
+                            C> || !((is_single_precision<A> && impl::egblas::has_sbias_add_2d) || (is_double_precision<A> && impl::egblas::has_sbias_add_2d))
+                        || local_context().cpu) {
                         std::cerr << "Forced selection to EGBLAS bias_add implementation, but not possible for this expression" << std::endl;
                         return def;
                     }
@@ -356,7 +366,7 @@ struct etl_traits<etl::bias_add_2d_expr<A, B>> {
  * \return The transpose of the given expression.
  */
 template <typename E, typename B>
-bias_add_2d_expr<detail::build_type<E>, detail::build_type<B>> bias_add_2d(const E& x, const B& biases){
+bias_add_2d_expr<detail::build_type<E>, detail::build_type<B>> bias_add_2d(const E& x, const B& biases) {
     static_assert(all_etl_expr<E, B>, "etl::bias_add_2d can only be used on ETL expressions");
     static_assert(is_2d<E>, "etl::bias_add_2d is only defined for 2D input");
     static_assert(is_1d<B>, "etl::bias_add_2d is only defined for 1D bias vector");

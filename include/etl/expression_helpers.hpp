@@ -8,11 +8,11 @@
 /*!
  * \file expression_helpers.hpp
  * \brief Contains internal helpers to build expressions.
-*/
+ */
 
 #pragma once
 
-namespace etl::detail{
+namespace etl::detail {
 
 /*!
  * \brief Helper to build the type for a sub expression
@@ -21,10 +21,7 @@ namespace etl::detail{
  * expression.
  */
 template <typename T>
-using build_type = std::conditional_t<
-    is_etl_value<T>,
-    const std::decay_t<T>&,
-    std::decay_t<T>>;
+using build_type = std::conditional_t<is_etl_value<T>, const std::decay_t<T>&, std::decay_t<T>>;
 
 /*!
  * \brief Helper to build the identity type for a sub expression
@@ -33,13 +30,9 @@ using build_type = std::conditional_t<
  * and a copy for another expression.
  */
 template <typename T>
-using build_identity_type = std::conditional_t<
-    is_etl_value<T>,
-    std::conditional_t<
-        std::is_const<std::remove_reference_t<T>>::value,
-        const std::decay_t<T>&,
-        std::decay_t<T>&>,
-    std::decay_t<T>>;
+using build_identity_type = std::conditional_t<is_etl_value<T>,
+                                               std::conditional_t<std::is_const<std::remove_reference_t<T>>::value, const std::decay_t<T>&, std::decay_t<T>&>,
+                                               std::decay_t<T>>;
 
 /*!
  * \brief Wraps a type either into a scalar or keep the ETL expression.
@@ -57,7 +50,7 @@ struct wrap_scalar_value_t_impl;
  * \brief Extract the value type of the given type taking scalar into account
  */
 template <typename T>
-struct wrap_scalar_value_t_impl <T, std::enable_if_t<etl::is_etl_expr<T>>> {
+struct wrap_scalar_value_t_impl<T, std::enable_if_t<etl::is_etl_expr<T>>> {
     /*!
      * \brief The resulting type of the traits.
      */
@@ -68,7 +61,7 @@ struct wrap_scalar_value_t_impl <T, std::enable_if_t<etl::is_etl_expr<T>>> {
  * \brief Extract the value type of the given type taking scalar into account
  */
 template <typename T>
-struct wrap_scalar_value_t_impl <T, std::enable_if_t<!etl::is_etl_expr<T>>> {
+struct wrap_scalar_value_t_impl<T, std::enable_if_t<!etl::is_etl_expr<T>>> {
     /*!
      * \brief The resulting type of the traits.
      */
@@ -86,8 +79,8 @@ using wrap_scalar_value_t = typename wrap_scalar_value_t_impl<T>::type;
  * \param value The value to wraps
  * \return an etl::scalar or a forwarded expression
  */
-template<typename T, cpp_enable_iff(is_etl_expr<T>)>
-decltype(auto) wrap_scalar(T&& value){
+template <typename T, cpp_enable_iff(is_etl_expr<T>)>
+decltype(auto) wrap_scalar(T&& value) {
     return std::forward<T>(value);
 }
 
@@ -96,8 +89,8 @@ decltype(auto) wrap_scalar(T&& value){
  * \param value The value to wraps
  * \return an etl::scalar or a forwarded expression
  */
-template<typename T, cpp_enable_iff(!is_etl_expr<T>)>
-etl::scalar<std::decay_t<T>> wrap_scalar(T&& value){
+template <typename T, cpp_enable_iff(!is_etl_expr<T>)>
+etl::scalar<std::decay_t<T>> wrap_scalar(T&& value) {
     return etl::scalar<std::decay_t<T>>{value};
 }
 

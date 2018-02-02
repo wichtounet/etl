@@ -29,10 +29,10 @@ constexpr etl::conv_impl select_default_conv1_impl_new(bool no_gpu) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    if(TT == conv_type::FULL){
-        if(impl::cufft::conv1_possible<I, K, C> && !no_gpu){
+    if (TT == conv_type::FULL) {
+        if (impl::cufft::conv1_possible<I, K, C> && !no_gpu) {
             return etl::conv_impl::FFT_CUFFT;
-        } else if(impl::blas::conv1_possible<I, K, C>){
+        } else if (impl::blas::conv1_possible<I, K, C>) {
             //TODO This should only be done for some sizes
             return etl::conv_impl::FFT_MKL;
         }
@@ -111,7 +111,7 @@ constexpr etl::conv_impl select_default_conv_impl(bool no_gpu) {
         return etl::conv_impl::STD;
     }
 
-    if(impl::cudnn::conv_possible<I, K, C> && (TT == conv_type::VALID || TT == conv_type::FULL) && is_2d<I> && !no_gpu){
+    if (impl::cudnn::conv_possible<I, K, C> && (TT == conv_type::VALID || TT == conv_type::FULL) && is_2d<I> && !no_gpu) {
         return etl::conv_impl::CUDNN;
     } else if (impl::vec::conv2_possible<vector_mode, I, K, C>) {
         return etl::conv_impl::VEC;

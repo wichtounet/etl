@@ -16,7 +16,7 @@ namespace etl {
  * \tparam A The transposed type
  */
 template <typename A>
-struct dyn_prob_pool_2d_expr  : base_temporary_expr_un<dyn_prob_pool_2d_expr <A>, A, false> {
+struct dyn_prob_pool_2d_expr : base_temporary_expr_un<dyn_prob_pool_2d_expr<A>, A, false> {
     using value_type = value_t<A>;                                  ///< The type of value of the expression
     using this_type  = dyn_prob_pool_2d_expr<A>;                    ///< The type of this expression
     using base_type  = base_temporary_expr_un<this_type, A, false>; ///< The base type
@@ -37,7 +37,7 @@ struct dyn_prob_pool_2d_expr  : base_temporary_expr_un<dyn_prob_pool_2d_expr <A>
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    explicit dyn_prob_pool_2d_expr (A a, size_t c1, size_t c2) : base_type(a), c1(c1), c2(c2) {
+    explicit dyn_prob_pool_2d_expr(A a, size_t c1, size_t c2) : base_type(a), c1(c1), c2(c2) {
         //Nothing else to init
     }
 
@@ -47,25 +47,22 @@ struct dyn_prob_pool_2d_expr  : base_temporary_expr_un<dyn_prob_pool_2d_expr <A>
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>, "max_pool_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<L>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
         auto& a = this->a();
 
-        impl::standard::dyn_pmp_h_impl::template apply<>(
-            smart_forward(a),
-            lhs,
-            c1, c2, c1, c2, 0, 0);
+        impl::standard::dyn_pmp_h_impl::template apply<>(smart_forward(a), lhs, c1, c2, c1, c2, 0, 0);
     }
 
     /*!
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -73,8 +70,8 @@ struct dyn_prob_pool_2d_expr  : base_temporary_expr_un<dyn_prob_pool_2d_expr <A>
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -82,8 +79,8 @@ struct dyn_prob_pool_2d_expr  : base_temporary_expr_un<dyn_prob_pool_2d_expr <A>
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -91,8 +88,8 @@ struct dyn_prob_pool_2d_expr  : base_temporary_expr_un<dyn_prob_pool_2d_expr <A>
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -100,8 +97,8 @@ struct dyn_prob_pool_2d_expr  : base_temporary_expr_un<dyn_prob_pool_2d_expr <A>
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -121,7 +118,7 @@ struct dyn_prob_pool_2d_expr  : base_temporary_expr_un<dyn_prob_pool_2d_expr <A>
  * \tparam A The transposed sub type
  */
 template <typename A>
-struct etl_traits<etl::dyn_prob_pool_2d_expr <A>> {
+struct etl_traits<etl::dyn_prob_pool_2d_expr<A>> {
     using expr_t     = etl::dyn_prob_pool_2d_expr<A>; ///< The expression type
     using sub_expr_t = std::decay_t<A>;               ///< The sub expression type
     using sub_traits = etl_traits<sub_expr_t>;        ///< The sub traits

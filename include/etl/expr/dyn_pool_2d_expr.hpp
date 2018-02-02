@@ -17,10 +17,10 @@ namespace etl {
  */
 template <typename A, typename Impl>
 struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, false> {
-    using value_type = value_t<A>;                           ///< The type of value of the expression
-    using this_type  = dyn_pool_2d_expr<A, Impl>;            ///< The type of this expression
+    using value_type = value_t<A>;                                  ///< The type of value of the expression
+    using this_type  = dyn_pool_2d_expr<A, Impl>;                   ///< The type of this expression
     using base_type  = base_temporary_expr_un<this_type, A, false>; ///< The base type
-    using sub_traits = decay_traits<A>;                      ///< The traits of the sub type
+    using sub_traits = decay_traits<A>;                             ///< The traits of the sub type
 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
 
@@ -41,7 +41,8 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    explicit dyn_pool_2d_expr(A a, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) : base_type(a), c1(c1), c2(c2), s1(s1), s2(s2), p1(p1), p2(p2) {
+    explicit dyn_pool_2d_expr(A a, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2)
+            : base_type(a), c1(c1), c2(c2), s1(s1), s2(s2), p1(p1), p2(p2) {
         //Nothing else to init
     }
 
@@ -51,25 +52,22 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template<typename C>
-    void assign_to(C&& c)  const {
+    template <typename C>
+    void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, C>, "max_pool_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
         auto& a = this->a();
 
-        Impl::template apply<>(
-            a,
-            c,
-            c1, c2, s1, s2, p1, p2);
+        Impl::template apply<>(a, c, c1, c2, s1, s2, p1, p2);
     }
 
     /*!
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -77,8 +75,8 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -86,8 +84,8 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -95,8 +93,8 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -104,8 +102,8 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -133,21 +131,21 @@ struct etl_traits<etl::dyn_pool_2d_expr<A, Impl>> {
 
     static constexpr size_t D = sub_traits::dimensions(); ///< The number of dimensions of this expressions
 
-    static constexpr bool is_etl                  = true;                      ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer          = false;                     ///< Indicates if the type is a transformer
-    static constexpr bool is_view                 = false;                     ///< Indicates if the type is a view
-    static constexpr bool is_magic_view           = false;                     ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = false;                     ///< Indicates if the expression is fast
-    static constexpr bool is_linear               = false;                      ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe          = true;                      ///< Indicates if the expression is thread safe
-    static constexpr bool is_value                = false;                     ///< Indicates if the expression is of value type
-    static constexpr bool is_direct               = true;                      ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator            = false;                     ///< Indicates if the expression is a generator
-    static constexpr bool is_padded               = false;                     ///< Indicates if the expression is padded
-    static constexpr bool is_aligned              = true;                      ///< Indicates if the expression is padded
-    static constexpr bool is_temporary = true;                      ///< Indicates if the expression needs a evaluator visitor
-    static constexpr order storage_order          = sub_traits::storage_order; ///< The expression's storage order
-    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
+    static constexpr bool is_etl         = true;                                 ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                                ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = false;                                ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = true;                                 ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = true;                                 ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                                ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = true;                                 ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = true;                                 ///< Indicates if the expression needs a evaluator visitor
+    static constexpr order storage_order = sub_traits::storage_order;            ///< The expression's storage order
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled; ///< Indicates if the expression can be computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -166,7 +164,7 @@ struct etl_traits<etl::dyn_pool_2d_expr<A, Impl>> {
     static size_t dim(const expr_t& e, size_t d) {
         if (d == D - 2) {
             return (etl::dim(e._a, d) - e.c1 + 2 * e.p1) / e.s1 + 1;
-        } else if (d == D - 1){
+        } else if (d == D - 1) {
             return (etl::dim(e._a, d) - e.c2 + 2 * e.p2) / e.s2 + 1;
         } else {
             return etl::dim(e._a, d);

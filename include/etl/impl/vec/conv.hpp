@@ -23,11 +23,7 @@ namespace etl::impl::vec {
  * \param C The type of the output matrix
  */
 template <vector_mode_t V, typename I, typename K, typename C>
-constexpr bool conv1_possible =
-                vec_enabled
-            &&  vectorize_impl
-            &&  all_homogeneous<I, K, C>
-            &&  all_vectorizable<V, I, K, C>;
+constexpr bool conv1_possible = vec_enabled&& vectorize_impl&& all_homogeneous<I, K, C>&& all_vectorizable<V, I, K, C>;
 
 /*!
  * \brief Traits indicating if vectorized 2D convolution is possible
@@ -43,12 +39,7 @@ constexpr bool conv1_possible =
  * \param C The type of the output matrix
  */
 template <vector_mode_t V, typename I, typename K, typename C>
-constexpr bool conv2_possible =
-                vec_enabled
-            &&  vectorize_impl
-            &&  all_homogeneous<I, K, C>
-            &&  all_vectorizable<V, I, K, C>
-            &&  all_row_major<I, K, C>;
+constexpr bool conv2_possible = vec_enabled&& vectorize_impl&& all_homogeneous<I, K, C>&& all_vectorizable<V, I, K, C>&& all_row_major<I, K, C>;
 
 namespace detail {
 
@@ -59,9 +50,7 @@ namespace detail {
  */
 template <typename T>
 constexpr bool prefer_sse(const size_t n) {
-    return !avx_enabled || (sse3_enabled && (std::is_same<T, float>::value
-                                                 ? (n % 4 < n % 8)
-                                                 : (n % 2 < n % 4)));
+    return !avx_enabled || (sse3_enabled && (std::is_same<T, float>::value ? (n % 4 < n % 8) : (n % 2 < n % 4)));
 }
 
 /*!

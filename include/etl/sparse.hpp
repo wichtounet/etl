@@ -26,9 +26,9 @@ struct sparse_reference {
     using const_raw_reference_type = std::add_const_t<value_type>&;    ///< A raw const reference type
 
     matrix_type& matrix;  ///< Reference to the matrix
-    size_t i;        ///< The first index
-    size_t j;        ///< The second index
-    size_t n;        ///< hint
+    size_t i;             ///< The first index
+    size_t j;             ///< The second index
+    size_t n;             ///< hint
     raw_pointer_type ptr; ///< Pointer to the element
 
     /*!
@@ -37,8 +37,7 @@ struct sparse_reference {
      * \param i The index i of the first dimension
      * \param j The index j of the second dimension
      */
-    sparse_reference(matrix_type& matrix, size_t i, size_t j)
-            : matrix(matrix), i(i), j(j) {
+    sparse_reference(matrix_type& matrix, size_t i, size_t j) : matrix(matrix), i(i), j(j) {
         n = matrix.find_n(i, j);
         matrix.unsafe_set_hint(i, j, n, matrix.get_hint(i, j, n));
         ptr = &matrix.unsafe_ref_hint(n);
@@ -234,16 +233,16 @@ struct sparse_matrix_impl<T, sparse_storage::COO, D> final : dyn_base<sparse_mat
     static_assert(n_dimensions == 2, "Only 2D sparse matrix are supported");
 
 private:
-    using base_type::_size;
     using base_type::_dimensions;
+    using base_type::_size;
     memory_type _memory;          ///< The memory
     index_memory_type _row_index; ///< The row index
     index_memory_type _col_index; ///< The column index
-    size_t nnz;              ///< The number of nonzeros in the matrix
+    size_t nnz;                   ///< The number of nonzeros in the matrix
 
-    using base_type::release;
     using base_type::allocate;
     using base_type::check_invariants;
+    using base_type::release;
 
     /*!
      * \brief Build the content of the sparse matrix from an
@@ -264,7 +263,7 @@ private:
             _row_index = base_type::template allocate<index_type>(nnz);
             _col_index = base_type::template allocate<index_type>(nnz);
 
-            auto it       = iterable.begin();
+            auto it  = iterable.begin();
             size_t n = 0;
 
             for (size_t i = 0; i < rows(); ++i) {
@@ -473,7 +472,7 @@ private:
      * \param e The expression to get the dimensions from.
      */
     template <typename E, cpp_enable_iff(etl::decay_traits<E>::is_generator)>
-    void inherit(const E& e){
+    void inherit(const E& e) {
         cpp_assert(false, "Impossible to inherit dimensions from generators");
         cpp_unused(e);
     }
@@ -484,7 +483,7 @@ private:
      * \param e The expression to get the dimensions from.
      */
     template <typename E, cpp_disable_iff(etl::decay_traits<E>::is_generator)>
-    void inherit(const E& e){
+    void inherit(const E& e) {
         cpp_assert(n_dimensions == etl::dimensions(e), "Invalid number of dimensions");
 
         // Compute the size and new dimensions
@@ -496,9 +495,9 @@ private:
     }
 
 public:
+    using base_type::columns;
     using base_type::dim;
     using base_type::rows;
-    using base_type::columns;
     using base_type::size;
 
     // Construction
@@ -515,11 +514,8 @@ public:
      * filled with zeroes
      */
     template <typename... S, cpp_enable_iff(sizeof...(S) == D && cpp::all_convertible_to_v<size_t, S...>)>
-    explicit sparse_matrix_impl(S... sizes) noexcept : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}}),
-                                                       _memory(nullptr),
-                                                       _row_index(nullptr),
-                                                       _col_index(nullptr),
-                                                       nnz(0) {
+    explicit sparse_matrix_impl(S... sizes) noexcept
+            : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}}), _memory(nullptr), _row_index(nullptr), _col_index(nullptr), nnz(0) {
         //Nothing else to init
     }
 
@@ -528,8 +524,9 @@ public:
      * and use the initializer list to fill the matrix
      */
     template <typename... S, cpp_enable_iff(dyn_detail::is_initializer_list_constructor<S...>::value)>
-    explicit sparse_matrix_impl(S... sizes) noexcept : base_type(util::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...),
-                                                                 dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
+    explicit sparse_matrix_impl(S... sizes) noexcept
+            : base_type(util::size(std::make_index_sequence<(sizeof...(S) - 1)>(), sizes...),
+                        dyn_detail::sizes(std::make_index_sequence<(sizeof...(S) - 1)>(), sizes...)) {
         static_assert(sizeof...(S) == D + 1, "Invalid number of dimensions");
 
         auto list = cpp::last_value(sizes...);
@@ -540,11 +537,10 @@ public:
      * \brief Construct a new sparse matrix of the given dimensions
      * and use the list of values list to fill the matrix
      */
-    template <typename S1, typename... S, cpp_enable_iff(
-                                              (sizeof...(S) == D)
-                                              && cpp::is_specialization_of_v<values_t, typename cpp::last_type<S1, S...>::type>)>
-    explicit sparse_matrix_impl(S1 s1, S... sizes) noexcept : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
-                                                                        dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
+    template <typename S1, typename... S, cpp_enable_iff((sizeof...(S) == D) && cpp::is_specialization_of_v<values_t, typename cpp::last_type<S1, S...>::type>)>
+    explicit sparse_matrix_impl(S1 s1, S... sizes) noexcept
+            : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
+                        dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         auto list = cpp::last_value(sizes...).template list<value_type>();
         build_from_iterable(list);
     }
@@ -578,12 +574,14 @@ public:
     /*!
      * \brief Assign an ETL expression to the sparse matrix
      */
-    template <typename E, cpp_enable_iff(!std::is_same<std::decay_t<E>, sparse_matrix_impl<T, storage_format, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
+    template <typename E,
+              cpp_enable_iff(!std::is_same<std::decay_t<E>, sparse_matrix_impl<T, storage_format, D>>::value
+                             && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
     sparse_matrix_impl& operator=(E&& e) noexcept {
         // It is possible that the matrix was not initialized before
         // In the case, get the the dimensions from the expression and
         // initialize the matrix
-        if(!_size){
+        if (!_size) {
             inherit(e);
         } else {
             validate_assign(*this, e);
@@ -782,7 +780,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
+    template <typename V>
     void visit(V&& visitor) const {
         cpp_unused(visitor);
     }
@@ -818,8 +816,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -827,8 +825,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -836,8 +834,8 @@ public:
      * \brief sub to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -845,8 +843,8 @@ public:
      * \brief mul to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -854,8 +852,8 @@ public:
      * \brief Div to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -863,8 +861,8 @@ public:
      * \brief Mod to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 

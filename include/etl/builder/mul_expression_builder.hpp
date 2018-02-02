@@ -8,7 +8,7 @@
 /*!
  * \file mul_expression_builder.hpp
  * \brief Contains all the operators and functions to build multiplication expressions.
-*/
+ */
 
 #pragma once
 

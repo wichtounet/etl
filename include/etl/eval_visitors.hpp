@@ -9,7 +9,7 @@
  * \file eval_visitors.hpp
  * \brief Contains the visitors used by the evaluator to process the
  * expression trees.
-*/
+ */
 
 #pragma once
 

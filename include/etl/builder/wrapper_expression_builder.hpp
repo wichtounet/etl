@@ -9,7 +9,7 @@
  * \file
  * \brief Contains all the operators and functions to build expressions for
  * wrapping expressions.
-*/
+ */
 
 #pragma once
 

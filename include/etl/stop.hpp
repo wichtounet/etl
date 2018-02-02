@@ -41,7 +41,7 @@ struct build_matrix_type<M, std::index_sequence<I...>> {
  * \param value The ETL expression
  * \return A value class with the values of the given expression
  */
-template <typename T, cpp_enable_iff(is_etl_expr<T> && etl_traits<T>::is_fast)>
+template <typename T, cpp_enable_iff(is_etl_expr<T>&& etl_traits<T>::is_fast)>
 auto s(T&& value) {
     typename build_matrix_type<T, std::make_index_sequence<etl_traits<T>::dimensions()>>::type mat;
     mat = value;

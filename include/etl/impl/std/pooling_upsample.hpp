@@ -25,7 +25,7 @@ struct max_pool_upsample_2d {
      */
     template <size_t C1, size_t C2, typename A, typename B, typename C, typename M>
     static void pool_block_2d(const A& in, const B& out, const C& errors, M& m, size_t i, size_t j) {
-        auto max = out(i, j);
+        auto max   = out(i, j);
         auto error = errors(i, j);
 
         for (size_t ii = 0; ii < C1; ++ii) {
@@ -51,7 +51,7 @@ struct max_pool_upsample_2d {
      */
     template <size_t C1, size_t C2, typename A, typename B, typename C, typename M>
     static void pool_block_3d(const A& in, const B& out, const C& errors, M& m, size_t q, size_t i, size_t j) {
-        auto max = out(q, i, j);
+        auto max   = out(q, i, j);
         auto error = errors(q, i, j);
 
         for (size_t ii = 0; ii < C1; ++ii) {
@@ -77,7 +77,7 @@ struct max_pool_upsample_2d {
      */
     template <size_t C1, size_t C2, typename A, typename B, typename C, typename M>
     static void pool_block_4d(const A& in, const B& out, const C& errors, M& m, size_t p, size_t q, size_t i, size_t j) {
-        auto max = out(p, q, i, j);
+        auto max   = out(p, q, i, j);
         auto error = errors(p, q, i, j);
 
         for (size_t ii = 0; ii < C1; ++ii) {
@@ -103,7 +103,7 @@ struct max_pool_upsample_2d {
      */
     template <typename A, typename B, typename C, typename M>
     static void pool_block_2d(const A& in, const B& out, const C& errors, M& m, size_t i, size_t j, size_t c1, size_t c2) {
-        auto max = out(i, j);
+        auto max   = out(i, j);
         auto error = errors(i, j);
 
         for (size_t ii = 0; ii < c1; ++ii) {
@@ -129,7 +129,7 @@ struct max_pool_upsample_2d {
      */
     template <typename A, typename B, typename C, typename M>
     static void pool_block_3d(const A& in, const B& out, const C& errors, M& m, size_t q, size_t i, size_t j, size_t c1, size_t c2) {
-        auto max = out(q, i, j);
+        auto max   = out(q, i, j);
         auto error = errors(q, i, j);
 
         for (size_t ii = 0; ii < c1; ++ii) {
@@ -155,7 +155,7 @@ struct max_pool_upsample_2d {
      */
     template <typename A, typename B, typename C, typename M>
     static void pool_block_4d(const A& in, const B& out, const C& errors, M& m, size_t p, size_t q, size_t i, size_t j, size_t c1, size_t c2) {
-        auto max = out(p, q, i, j);
+        auto max   = out(p, q, i, j);
         auto error = errors(p, q, i, j);
 
         for (size_t ii = 0; ii < c1; ++ii) {
@@ -318,7 +318,7 @@ struct max_pool_upsample_2d {
      */
     template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
     static void apply(A&& in, B&& out, C&& errors, M& m) {
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply<C1, C2>(in(i), out(i), errors(i), m(i));
         }
     }
@@ -332,7 +332,7 @@ struct max_pool_upsample_2d {
      */
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply(in(i), out(i), errors(i), m(i), c1, c2);
         }
     }
@@ -356,7 +356,7 @@ struct max_pool_upsample_3d {
      */
     template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C, typename M>
     static void pool_block_3d(const A& in, const B& out, const C& errors, M& m, size_t i, size_t j, size_t k) {
-        auto max = out(i, j, k);
+        auto max   = out(i, j, k);
         auto error = errors(i, j, k);
 
         for (size_t ii = 0; ii < C1; ++ii) {
@@ -386,7 +386,7 @@ struct max_pool_upsample_3d {
      */
     template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C, typename M>
     static void pool_block_4d(const A& in, const B& out, const C& errors, M& m, size_t n, size_t i, size_t j, size_t k) {
-        auto max = out(n, i, j, k);
+        auto max   = out(n, i, j, k);
         auto error = errors(n, i, j, k);
 
         for (size_t ii = 0; ii < C1; ++ii) {
@@ -435,7 +435,7 @@ struct max_pool_upsample_3d {
      */
     template <typename A, typename B, typename C, typename M>
     static void pool_block_3d(const A& in, const B& out, const C& errors, M& m, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3) {
-        auto max = out(i, j, k);
+        auto max   = out(i, j, k);
         auto error = errors(i, j, k);
 
         for (size_t ii = 0; ii < c1; ++ii) {
@@ -465,7 +465,7 @@ struct max_pool_upsample_3d {
      */
     template <typename A, typename B, typename C, typename M>
     static void pool_block_4d(const A& in, const B& out, const C& errors, M& m, size_t n, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3) {
-        auto max = out(n, i, j, k);
+        auto max   = out(n, i, j, k);
         auto error = errors(n, i, j, k);
 
         for (size_t ii = 0; ii < c1; ++ii) {
@@ -574,7 +574,7 @@ struct max_pool_upsample_3d {
      */
     template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C, typename M, cpp_enable_iff(!is_3d<A> && !is_4d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M& m) {
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply<C1, C2, C3>(in(i), out(i), errors(i), m(i));
         }
     }
@@ -589,7 +589,7 @@ struct max_pool_upsample_3d {
      */
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(!is_3d<A> && !is_4d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t c3) {
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply(in(i), out(i), errors(i), m(i), c1, c2, c3);
         }
     }
@@ -886,7 +886,7 @@ struct avg_pool_upsample_2d {
      */
     template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
     static void apply(A&& in, B&& out, C&& errors, M& m) {
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply<C1, C2>(in(i), out(i), errors(i), m(i));
         }
     }
@@ -900,7 +900,7 @@ struct avg_pool_upsample_2d {
      */
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply(in(i), out(i), errors(i), m(i), c1, c2);
         }
     }
@@ -1130,7 +1130,7 @@ struct avg_pool_upsample_3d {
      */
     template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C, typename M, cpp_enable_iff(!is_3d<A> && !is_4d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M& m) {
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply<C1, C2, C3>(in(i), out(i), errors(i), m(i));
         }
     }
@@ -1145,7 +1145,7 @@ struct avg_pool_upsample_3d {
      */
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(!is_3d<A> && !is_4d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t c3) {
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply(in(i), out(i), errors(i), m(i), c1, c2, c3);
         }
     }

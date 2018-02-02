@@ -14,9 +14,9 @@ namespace etl {
  */
 template <typename T, typename E>
 struct one_if_binary_op {
-    static constexpr bool linear    = true; ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func = true; ///< Indicates if the description must be printed as function
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func   = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -29,7 +29,7 @@ struct one_if_binary_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    template<typename L, typename R>
+    template <typename L, typename R>
     static constexpr bool gpu_computable = false;
 
     /*!

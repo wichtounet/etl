@@ -33,8 +33,7 @@ struct truncated_normal_generator_op {
      * \param mean The mean
      * \param stddev The standard deviation
      */
-    truncated_normal_generator_op(T mean, T stddev)
-            : rand_engine(std::time(nullptr)), distribution(mean, stddev) {}
+    truncated_normal_generator_op(T mean, T stddev) : rand_engine(std::time(nullptr)), distribution(mean, stddev) {}
 
     /*!
      * \brief Generate a new value
@@ -79,8 +78,7 @@ struct truncated_normal_generator_g_op {
      * \param mean The mean
      * \param stddev The standard deviation
      */
-    truncated_normal_generator_g_op(G& g, T mean, T stddev)
-            : rand_engine(g), distribution(mean, stddev) {}
+    truncated_normal_generator_g_op(G& g, T mean, T stddev) : rand_engine(g), distribution(mean, stddev) {}
 
     /*!
      * \brief Generate a new value

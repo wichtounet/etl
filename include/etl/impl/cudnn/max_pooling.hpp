@@ -37,7 +37,7 @@ void pool_2d(cudnnPoolingMode_t mode, const X& x, Y&& y, size_t c1, size_t c2, s
     auto y_tensor = create_tensor_wrapper(y);
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     // Allocate GPU memory, if necessary
 
@@ -71,7 +71,7 @@ void pool_3d(cudnnPoolingMode_t mode, const X& x, Y&& y, size_t c1, size_t c2, s
     auto y_tensor = create_tensor_wrapper_5d(y);
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     // Allocate GPU memory, if necessary
 
@@ -113,7 +113,7 @@ struct max_pool_2d {
      */
     template <typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions > 4)>
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
-        for(size_t i = 0; i < etl::dim<0>(sub); ++i){
+        for (size_t i = 0; i < etl::dim<0>(sub); ++i) {
             apply(sub(i), m(i), c1, c2, s1, s2, p1, p2);
         }
     }
@@ -146,7 +146,7 @@ struct avg_pool_2d {
      */
     template <typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions > 4)>
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
-        for(size_t i = 0; i < etl::dim<0>(sub); ++i){
+        for (size_t i = 0; i < etl::dim<0>(sub); ++i) {
             apply(sub(i), m(i), c1, c2, s1, s2, p1, p2);
         }
     }
@@ -179,7 +179,7 @@ struct max_pool_3d {
      */
     template <typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions > 4)>
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
-        for(size_t i = 0; i < etl::dim<0>(sub); ++i){
+        for (size_t i = 0; i < etl::dim<0>(sub); ++i) {
             apply(sub(i), m(i), c1, c2, c3, s1, s2, s3, p1, p2, p3);
         }
     }
@@ -212,7 +212,7 @@ struct avg_pool_3d {
      */
     template <typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions > 4)>
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
-        for(size_t i = 0; i < etl::dim<0>(sub); ++i){
+        for (size_t i = 0; i < etl::dim<0>(sub); ++i) {
             apply(sub(i), m(i), c1, c2, c3, s1, s2, s3, p1, p2, p3);
         }
     }

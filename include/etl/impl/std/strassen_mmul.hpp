@@ -110,7 +110,7 @@ void strassen_mm_mul_r(const A& a, const B& b, C& c) {
 
         for (size_t i = 0; i < new_n; i++) {
             for (size_t j = 0; j < new_n; j++) {
-                c(i + new_n, j) = c21(i, j);
+                c(i + new_n, j)         = c21(i, j);
                 c(i + new_n, j + new_n) = c22(i, j);
             }
         }
@@ -178,7 +178,7 @@ void strassen_mm_mul_r(const A& a, const B& b, C& c) {
 
         for (size_t i = 0; i < new_n; i++) {
             for (size_t j = 0; j < new_n; j++) {
-                c(i + new_n, j) = c21(i, j);
+                c(i + new_n, j)         = c21(i, j);
                 c(i + new_n, j + new_n) = c22(i, j);
             }
         }

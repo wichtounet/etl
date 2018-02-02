@@ -84,10 +84,8 @@ using value_t = typename decay_traits<E>::value_type;
  * \brief Traits to extract the direct memory type out of an ETL type
  */
 template <typename S>
-using memory_t = std::conditional_t<
-    std::is_const<std::remove_reference_t<S>>::value,
-    typename std::decay_t<S>::const_memory_type,
-    typename std::decay_t<S>::memory_type>;
+using memory_t =
+    std::conditional_t<std::is_const<std::remove_reference_t<S>>::value, typename std::decay_t<S>::const_memory_type, typename std::decay_t<S>::memory_type>;
 
 /*!
  * \brief Traits to extract the direct const memory type out of an ETL type
@@ -148,9 +146,7 @@ size_t dyn_nth_size(size_t d) {
  */
 template <size_t D1, size_t... D>
 size_t dyn_nth_size(size_t i) {
-    return i == 0
-               ? D1
-               : dyn_nth_size<D...>(i - 1);
+    return i == 0 ? D1 : dyn_nth_size<D...>(i - 1);
 }
 
 /*!
@@ -169,22 +165,20 @@ struct sequence_equal<std::index_sequence<>, std::index_sequence<>> : std::true_
  * \copydoc sequence_equal
  */
 template <size_t... I1, size_t... I2>
-struct sequence_equal<std::index_sequence<I1...>, std::index_sequence<I2...>,
-                      std::enable_if_t<sizeof...(I1) != sizeof...(I2)>> : std::false_type {};
+struct sequence_equal<std::index_sequence<I1...>, std::index_sequence<I2...>, std::enable_if_t<sizeof...(I1) != sizeof...(I2)>> : std::false_type {};
 
 /*!
  * \copydoc sequence_equal
  */
 template <size_t I, size_t... I1, size_t... I2>
-struct sequence_equal<std::index_sequence<I, I1...>, std::index_sequence<I, I2...>,
-                      std::enable_if_t<sizeof...(I1) == sizeof...(I2)>> : sequence_equal<std::index_sequence<I1...>, std::index_sequence<I2...>> {};
+struct sequence_equal<std::index_sequence<I, I1...>, std::index_sequence<I, I2...>, std::enable_if_t<sizeof...(I1) == sizeof...(I2)>>
+        : sequence_equal<std::index_sequence<I1...>, std::index_sequence<I2...>> {};
 
 /*!
  * \copydoc sequence_equal
  */
 template <size_t I11, size_t I21, size_t... I1, size_t... I2>
-struct sequence_equal<std::index_sequence<I11, I1...>, std::index_sequence<I21, I2...>,
-                      cpp::disable_if_t<I11 == I21>> : std::false_type {};
+struct sequence_equal<std::index_sequence<I11, I1...>, std::index_sequence<I21, I2...>, cpp::disable_if_t<I11 == I21>> : std::false_type {};
 
 /*!
  * \brief Implementation for TMP utility to hold a range of integers
@@ -261,11 +255,8 @@ struct forward_op {
 };
 
 template <typename T>
-using remove_const_deep =
-    std::conditional_t<
-        std::is_lvalue_reference<T>::value,
-        std::add_lvalue_reference_t<std::remove_const_t<std::remove_reference_t<T>>>,
-        std::remove_const_t<T>>;
+using remove_const_deep = std::
+    conditional_t<std::is_lvalue_reference<T>::value, std::add_lvalue_reference_t<std::remove_const_t<std::remove_reference_t<T>>>, std::remove_const_t<T>>;
 
 /*!
  * \brief Functor that forwards a value and removes the constness of
@@ -288,7 +279,7 @@ struct forward_op_nc {
  */
 template <bool B, typename T>
 constexpr decltype(auto) optional_move(T&& t) {
-    if constexpr (B){
+    if constexpr (B) {
         return std::move(t);
     } else {
         return std::forward<T>(t);

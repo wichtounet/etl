@@ -14,9 +14,9 @@ namespace etl {
  */
 template <typename T>
 struct no_intrinsic_traits {
-    static constexpr bool vectorizable     = false;      ///< Boolean flag indicating if the type is vectorizable or not
-    static constexpr size_t size      = 1;          ///< Numbers of elements done at once
-    static constexpr size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
+    static constexpr bool vectorizable = false;      ///< Boolean flag indicating if the type is vectorizable or not
+    static constexpr size_t size       = 1;          ///< Numbers of elements done at once
+    static constexpr size_t alignment  = alignof(T); ///< Necessary number of bytes of alignment for this type
 
     using intrinsic_type = T; ///< The intrinsic type
 };
@@ -232,8 +232,8 @@ struct no_vec {
     /*!
      * \brief Return a vector type filled with zeroes of the correct type
      */
-    template<typename T>
-    static T zero(){
+    template <typename T>
+    static T zero() {
         return T();
     }
 };

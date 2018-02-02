@@ -453,9 +453,7 @@ void optimize(Builder parent_builder, Expr& expr) {
 template <typename Expr, typename Result>
 void optimized_forward(Expr& expr, Result result) {
     if (is_optimizable_deep(expr)) {
-        optimize(
-            [result](auto&& new_expr) mutable { optimized_forward(new_expr, result); },
-            expr);
+        optimize([result](auto&& new_expr) mutable { optimized_forward(new_expr, result); }, expr);
         return;
     }
 

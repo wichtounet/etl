@@ -40,7 +40,7 @@ static constexpr bool has_sinvcbrt = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void invcbrt(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
+inline void invcbrt(size_t n, float alpha, float* A, size_t lda, float* B, size_t ldb) {
 #ifdef EGBLAS_HAS_SINVCBRT
     inc_counter("egblas");
     egblas_sinvcbrt(n, alpha, A, lda, B, ldb);
@@ -74,7 +74,7 @@ static constexpr bool has_dinvcbrt = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void invcbrt(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
+inline void invcbrt(size_t n, double alpha, double* A, size_t lda, double* B, size_t ldb) {
 #ifdef EGBLAS_HAS_DINVCBRT
     inc_counter("egblas");
     egblas_dinvcbrt(n, alpha, A, lda, B, ldb);
@@ -108,7 +108,7 @@ static constexpr bool has_cinvcbrt = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void invcbrt(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+inline void invcbrt(size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CINVCBRT
     inc_counter("egblas");
     egblas_cinvcbrt(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
@@ -133,7 +133,7 @@ inline void invcbrt(size_t n, std::complex<float> alpha, std::complex<float>* A 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void invcbrt(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+inline void invcbrt(size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CINVCBRT
     inc_counter("egblas");
     egblas_cinvcbrt(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
@@ -167,7 +167,7 @@ static constexpr bool has_zinvcbrt = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void invcbrt(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+inline void invcbrt(size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZINVCBRT
     inc_counter("egblas");
     egblas_zinvcbrt(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
@@ -192,7 +192,7 @@ inline void invcbrt(size_t n, std::complex<double> alpha, std::complex<double>* 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void invcbrt(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+inline void invcbrt(size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZINVCBRT
     inc_counter("egblas");
     egblas_zinvcbrt(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);

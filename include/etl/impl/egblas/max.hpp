@@ -298,7 +298,8 @@ static constexpr bool has_cmax3 = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void max(size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb, std::complex<float>* C, size_t ldc) {
+inline void max(
+    size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb, std::complex<float>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_CMAX3
     inc_counter("egblas");
     egblas_cmax(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
@@ -325,7 +326,8 @@ inline void max(size_t n, std::complex<float> alpha, std::complex<float>* A, siz
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void max(size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb, etl::complex<float>* C, size_t ldc) {
+inline void max(
+    size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb, etl::complex<float>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_CMAX3
     inc_counter("egblas");
     egblas_cmax(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
@@ -361,10 +363,12 @@ static constexpr bool has_zmax3 = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void max(size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb, std::complex<double>* C, size_t ldc) {
+inline void max(
+    size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb, std::complex<double>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_ZMAX3
     inc_counter("egblas");
-    egblas_zmax(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb, reinterpret_cast<cuDoubleComplex*>(C), ldc);
+    egblas_zmax(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb,
+                reinterpret_cast<cuDoubleComplex*>(C), ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -388,10 +392,12 @@ inline void max(size_t n, std::complex<double> alpha, std::complex<double>* A, s
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void max(size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb, etl::complex<double>* C, size_t ldc) {
+inline void max(
+    size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb, etl::complex<double>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_ZMAX3
     inc_counter("egblas");
-    egblas_zmax(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb, reinterpret_cast<cuDoubleComplex*>(C), ldc);
+    egblas_zmax(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb,
+                reinterpret_cast<cuDoubleComplex*>(C), ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);

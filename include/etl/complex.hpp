@@ -39,8 +39,7 @@ struct complex {
      * \param re The real part
      * \param im The imaginary part
      */
-    constexpr complex(const T& re = T(), const T& im = T())
-            : real(re), imag(im) {
+    constexpr complex(const T& re = T(), const T& im = T()) : real(re), imag(im) {
         // Nothing else to init
     }
 
@@ -57,8 +56,7 @@ struct complex {
      * \param rhs The complex to copy from
      */
     template <typename X>
-    constexpr complex(const complex<X>& rhs)
-            : real(rhs.real), imag(rhs.imag) {
+    constexpr complex(const complex<X>& rhs) : real(rhs.real), imag(rhs.imag) {
         // Nothing else to init
     }
 
@@ -68,8 +66,8 @@ struct complex {
      * \return a reference to this
      */
     complex& operator=(const T& rhs) noexcept {
-        real         = rhs;
-        imag         = 0.0;
+        real = rhs;
+        imag = 0.0;
 
         return *this;
     }
@@ -87,8 +85,8 @@ struct complex {
      * \return a reference to this
      */
     complex& operator=(const std::complex<T>& rhs) noexcept {
-        real         = rhs.real();
-        imag         = rhs.imag();
+        real = rhs.real();
+        imag = rhs.imag();
 
         return *this;
     }
@@ -98,7 +96,7 @@ struct complex {
      * \param rhs The complex number to add
      * \return a reference to this
      */
-    template<typename X>
+    template <typename X>
     complex& operator+=(const complex<X>& rhs) {
         real += rhs.real;
         imag += rhs.imag;
@@ -111,7 +109,7 @@ struct complex {
      * \param rhs The complex number to add
      * \return a reference to this
      */
-    template<typename X>
+    template <typename X>
     complex& operator-=(const complex<X>& rhs) {
         real -= rhs.real;
         imag -= rhs.imag;
@@ -124,7 +122,7 @@ struct complex {
      * \param rhs The complex number to add
      * \return a reference to this
      */
-    template<typename X>
+    template <typename X>
     complex& operator*=(const complex<X>& rhs) {
         T ac = real * rhs.real;
         T bd = imag * rhs.imag;
@@ -143,7 +141,7 @@ struct complex {
      * \param rhs The complex number to add
      * \return a reference to this
      */
-    template<typename X>
+    template <typename X>
     complex& operator/=(const complex<X>& rhs) {
         T ac = real * rhs.real;
         T bd = imag * rhs.imag;
@@ -288,8 +286,8 @@ inline complex<T> operator/(const complex<T>& lhs, const complex<T>& rhs) {
  * \param z The input complex number
  * \return The magnitude of z
  */
-template<typename T>
-T abs(complex<T> z){
+template <typename T>
+T abs(complex<T> z) {
     auto x = z.real;
     auto y = z.imag;
     auto s = std::max(std::abs(x), std::abs(y));
@@ -309,8 +307,8 @@ T abs(complex<T> z){
  * \param z The input complex number
  * \return The phase angle of z
  */
-template<typename T>
-T arg(complex<T> z){
+template <typename T>
+T arg(complex<T> z) {
     auto x = z.real;
     auto y = z.imag;
 
@@ -322,8 +320,8 @@ T arg(complex<T> z){
  * \param z The input complex number
  * \return The square root of z
  */
-template<typename T>
-complex<T> sqrt(complex<T> z){
+template <typename T>
+complex<T> sqrt(complex<T> z) {
     auto x = z.real;
     auto y = z.imag;
 
@@ -347,8 +345,8 @@ complex<T> sqrt(complex<T> z){
  * \param z The input complex number
  * \return The inverse square root of z
  */
-template<typename T>
-complex<T> invsqrt(complex<T> z){
+template <typename T>
+complex<T> invsqrt(complex<T> z) {
     return complex<T>(T(1)) / sqrt(z);
 }
 
@@ -357,8 +355,8 @@ complex<T> invsqrt(complex<T> z){
  * \param z The input complex number
  * \return The cubic root of z
  */
-template<typename T>
-complex<T> cbrt(complex<T> z){
+template <typename T>
+complex<T> cbrt(complex<T> z) {
     auto z_abs = etl::abs(z);
     auto z_arg = etl::arg(z);
 
@@ -373,8 +371,8 @@ complex<T> cbrt(complex<T> z){
  * \param z The input complex number
  * \return The inverse cubic root of z
  */
-template<typename T>
-complex<T> invcbrt(complex<T> z){
+template <typename T>
+complex<T> invcbrt(complex<T> z) {
     return complex<T>(T(1)) / cbrt(z);
 }
 
@@ -383,8 +381,8 @@ complex<T> invcbrt(complex<T> z){
  * \param z The input complex number
  * \return The complex logarithm, in base e, of z
  */
-template<typename T>
-complex<T> log(complex<T> z){
+template <typename T>
+complex<T> log(complex<T> z) {
     return {std::log(etl::abs(z)), etl::arg(z)};
 }
 
@@ -393,8 +391,8 @@ complex<T> log(complex<T> z){
  * \param z The input complex number
  * \return The complex logarithm, in base 2, of z
  */
-template<typename T>
-complex<T> log2(complex<T> z){
+template <typename T>
+complex<T> log2(complex<T> z) {
     return etl::log(z) / etl::log(etl::complex<T>{T(2)});
 }
 
@@ -403,8 +401,8 @@ complex<T> log2(complex<T> z){
  * \param z The input complex number
  * \return The complex logarithm, in base 10, of z
  */
-template<typename T>
-complex<T> log10(complex<T> z){
+template <typename T>
+complex<T> log10(complex<T> z) {
     return etl::log(z) / etl::log(etl::complex<T>{T(10)});
 }
 
@@ -413,8 +411,8 @@ complex<T> log10(complex<T> z){
  * \param z The input complex number
  * \return The sinus of z
  */
-template<typename T>
-complex<T> sin(complex<T> z){
+template <typename T>
+complex<T> sin(complex<T> z) {
     return {std::sin(z.real) * std::cosh(z.imag), std::cos(z.real) * std::sinh(z.imag)};
 }
 
@@ -423,8 +421,8 @@ complex<T> sin(complex<T> z){
  * \param z The input complex number
  * \return The cosine of z
  */
-template<typename T>
-complex<T> cos(complex<T> z){
+template <typename T>
+complex<T> cos(complex<T> z) {
     return {std::cos(z.real) * std::cosh(z.imag), -std::sin(z.real) * std::sinh(z.imag)};
 }
 
@@ -433,8 +431,8 @@ complex<T> cos(complex<T> z){
  * \param z The input complex number
  * \return The tangent of z
  */
-template<typename T>
-complex<T> tan(complex<T> z){
+template <typename T>
+complex<T> tan(complex<T> z) {
     return sin(z) / cos(z);
 }
 
@@ -443,8 +441,8 @@ complex<T> tan(complex<T> z){
  * \param z The input complex number
  * \return The hyperbolic cosine of z
  */
-template<typename T>
-complex<T> cosh(complex<T> z){
+template <typename T>
+complex<T> cosh(complex<T> z) {
     return {std::cosh(z.real) * std::cos(z.imag), std::sinh(z.real) * std::sin(z.imag)};
 }
 
@@ -453,8 +451,8 @@ complex<T> cosh(complex<T> z){
  * \param z The input complex number
  * \return The hyperbolic sinus of z
  */
-template<typename T>
-complex<T> sinh(complex<T> z){
+template <typename T>
+complex<T> sinh(complex<T> z) {
     return {std::sinh(z.real) * std::cos(z.imag), std::cosh(z.real) * std::sin(z.imag)};
 }
 
@@ -463,8 +461,8 @@ complex<T> sinh(complex<T> z){
  * \param z The input complex number
  * \return The hyperbolic tangent of z
  */
-template<typename T>
-complex<T> tanh(complex<T> z){
+template <typename T>
+complex<T> tanh(complex<T> z) {
     return sinh(z) / cosh(z);
 }
 
@@ -575,7 +573,7 @@ inline etl::complex<T> get_conj(const etl::complex<T>& c) {
  * \return The output stream
  */
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const etl::complex<T>& c){
+std::ostream& operator<<(std::ostream& os, const etl::complex<T>& c) {
     return os << "C(" << c.real << "," << c.imag << ")";
 }
 

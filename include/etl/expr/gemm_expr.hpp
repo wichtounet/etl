@@ -55,17 +55,15 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
     template <typename C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c) {
         if constexpr (all_fast<A, B, C>) {
-            static_assert(
-                dim<1, A>() == dim<0, B>()         //interior dimensions
-                    && dim<0, A>() == dim<0, C>()  //exterior dimension 1
-                    && dim<1, B>() == dim<1, C>(), //exterior dimension 2
-                "Invalid sizes for multiplication");
+            static_assert(dim<1, A>() == dim<0, B>()         //interior dimensions
+                              && dim<0, A>() == dim<0, C>()  //exterior dimension 1
+                              && dim<1, B>() == dim<1, C>(), //exterior dimension 2
+                          "Invalid sizes for multiplication");
         } else {
-            cpp_assert(
-                dim<1>(a) == dim<0>(b)         //interior dimensions
-                    && dim<0>(a) == dim<0>(c)  //exterior dimension 1
-                    && dim<1>(b) == dim<1>(c), //exterior dimension 2
-                "Invalid sizes for multiplication");
+            cpp_assert(dim<1>(a) == dim<0>(b)         //interior dimensions
+                           && dim<0>(a) == dim<0>(c)  //exterior dimension 1
+                           && dim<1>(b) == dim<1>(c), //exterior dimension 2
+                       "Invalid sizes for multiplication");
         }
     }
 
@@ -88,7 +86,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
             return gemm_impl::BLAS;
         }
 
-        if(vec_enabled && vectorize_impl && homo && all_vectorizable_t<vector_mode, AA, BB, C>){
+        if (vec_enabled && vectorize_impl && homo && all_vectorizable_t<vector_mode, AA, BB, C>) {
             return gemm_impl::VEC;
         }
 
@@ -111,28 +109,29 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
             switch (forced) {
                 //CUBLAS cannot always be used
                 case gemm_impl::CUBLAS:
-                    if (!cublas_enabled || !all_homogeneous<AA, BB, C> || local_context().cpu) {                                                                                     //COVERAGE_EXCLUDE_LINE
-                        std::cerr << "Forced selection to CUBLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return def;                                                              //COVERAGE_EXCLUDE_LINE
-                    }                                                                                                                     //COVERAGE_EXCLUDE_LINE
+                    if (!cublas_enabled || !all_homogeneous<AA, BB, C> || local_context().cpu) { //COVERAGE_EXCLUDE_LINE
+                        std::cerr << "Forced selection to CUBLAS gemm implementation, but not possible for this expression"
+                                  << std::endl; //COVERAGE_EXCLUDE_LINE
+                        return def;             //COVERAGE_EXCLUDE_LINE
+                    }                           //COVERAGE_EXCLUDE_LINE
 
                     return forced;
 
                 //BLAS cannot always be used
                 case gemm_impl::BLAS:
-                    if (!cblas_enabled || !all_homogeneous<AA, BB, C>) {                                                                                    //COVERAGE_EXCLUDE_LINE
+                    if (!cblas_enabled || !all_homogeneous<AA, BB, C>) {                                                                //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to BLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return def;                                                            //COVERAGE_EXCLUDE_LINE
+                        return def;                                                                                                     //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
                     return forced;
 
                 //VEC cannot always be used
                 case gemm_impl::VEC:
-                    if (!vec_enabled || !all_vectorizable_t<vector_mode, AA, BB, C> || !all_homogeneous<AA, BB, C>) {                                               //COVERAGE_EXCLUDE_LINE
+                    if (!vec_enabled || !all_vectorizable_t<vector_mode, AA, BB, C> || !all_homogeneous<AA, BB, C>) {                  //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to VEC gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return def;                                                            //COVERAGE_EXCLUDE_LINE
-                    }                                                                                                                   //COVERAGE_EXCLUDE_LINE
+                        return def;                                                                                                    //COVERAGE_EXCLUDE_LINE
+                    }                                                                                                                  //COVERAGE_EXCLUDE_LINE
 
                     return forced;
 
@@ -165,19 +164,27 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \param b The B matrix
      * \param c The C matrix (output)
      */
-    template <typename AA, typename BB, typename C, cpp_enable_iff(is_transpose_expr<AA> && is_transpose_expr<BB>)>
+    template <typename AA, typename BB, typename C, cpp_enable_iff(is_transpose_expr<AA>&& is_transpose_expr<BB>)>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gemm_impl<AA, BB, C>();
 
-        if constexpr_select (impl == gemm_impl::STD) {
-            etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::VEC) {
-            etl::impl::vec::gemm(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::BLAS) {
-            etl::impl::blas::gemm_tt(smart_forward(a.a()), smart_forward(b.a()), c);
-        } else if constexpr_select (impl == gemm_impl::CUBLAS) {
-            etl::impl::cublas::gemm_tt(smart_forward_gpu(a.a()), smart_forward_gpu(b.a()), c);
-        } else {
+        if
+            constexpr_select(impl == gemm_impl::STD) {
+                etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::VEC) {
+                etl::impl::vec::gemm(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::BLAS) {
+                etl::impl::blas::gemm_tt(smart_forward(a.a()), smart_forward(b.a()), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::CUBLAS) {
+                etl::impl::cublas::gemm_tt(smart_forward_gpu(a.a()), smart_forward_gpu(b.a()), c);
+            }
+        else {
             cpp_unreachable("Invalid selection of gemm");
         }
     }
@@ -192,15 +199,23 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gemm_impl<AA, BB, C>();
 
-        if  constexpr_select (impl == gemm_impl::STD) {
-            etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::VEC) {
-            etl::impl::vec::gemm_nt(smart_forward(a), smart_forward(b.a()), c);
-        } else if constexpr_select (impl == gemm_impl::BLAS) {
-            etl::impl::blas::gemm_nt(smart_forward(a), smart_forward(b.a()), c);
-        } else if constexpr_select (impl == gemm_impl::CUBLAS) {
-            etl::impl::cublas::gemm_nt(smart_forward_gpu(a), smart_forward_gpu(b.a()), c);
-        } else {
+        if
+            constexpr_select(impl == gemm_impl::STD) {
+                etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::VEC) {
+                etl::impl::vec::gemm_nt(smart_forward(a), smart_forward(b.a()), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::BLAS) {
+                etl::impl::blas::gemm_nt(smart_forward(a), smart_forward(b.a()), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::CUBLAS) {
+                etl::impl::cublas::gemm_nt(smart_forward_gpu(a), smart_forward_gpu(b.a()), c);
+            }
+        else {
             cpp_unreachable("Invalid selection of gemm");
         }
     }
@@ -215,15 +230,23 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gemm_impl<AA, BB, C>();
 
-        if  constexpr_select (impl == gemm_impl::STD) {
-            etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::VEC) {
-            etl::impl::vec::gemm_tn(smart_forward(a.a()), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::BLAS) {
-            etl::impl::blas::gemm_tn(smart_forward(a.a()), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::CUBLAS) {
-            etl::impl::cublas::gemm_tn(smart_forward_gpu(a.a()), smart_forward_gpu(b), c);
-        } else {
+        if
+            constexpr_select(impl == gemm_impl::STD) {
+                etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::VEC) {
+                etl::impl::vec::gemm_tn(smart_forward(a.a()), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::BLAS) {
+                etl::impl::blas::gemm_tn(smart_forward(a.a()), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::CUBLAS) {
+                etl::impl::cublas::gemm_tn(smart_forward_gpu(a.a()), smart_forward_gpu(b), c);
+            }
+        else {
             cpp_unreachable("Invalid selection of gemm");
         }
     }
@@ -238,15 +261,23 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gemm_impl<AA, BB, C>();
 
-        if  constexpr_select (impl == gemm_impl::STD) {
-            etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::VEC) {
-            etl::impl::vec::gemm(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::BLAS) {
-            etl::impl::blas::gemm(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::CUBLAS) {
-            etl::impl::cublas::gemm(smart_forward_gpu(a), smart_forward_gpu(b), c);
-        } else {
+        if
+            constexpr_select(impl == gemm_impl::STD) {
+                etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::VEC) {
+                etl::impl::vec::gemm(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::BLAS) {
+                etl::impl::blas::gemm(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::CUBLAS) {
+                etl::impl::cublas::gemm(smart_forward_gpu(a), smart_forward_gpu(b), c);
+            }
+        else {
             cpp_unreachable("Invalid selection of gemm");
         }
     }
@@ -255,8 +286,8 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template<typename C>
-    void assign_to(C&& c)  const {
+    template <typename C>
+    void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, B, C>, "gemm only supported for ETL expressions");
 
         auto& a = this->a();
@@ -264,7 +295,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
 
         check(a, b, c);
 
-        if constexpr (!Strassen){
+        if constexpr (!Strassen) {
             apply_raw(a, b, c);
         } else {
             etl::impl::standard::strassen_mm_mul(smart_forward(a), smart_forward(b), c);
@@ -275,8 +306,8 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -284,8 +315,8 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -293,8 +324,8 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -302,8 +333,8 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -311,8 +342,8 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -334,11 +365,11 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
 template <typename A, typename B, bool Strassen>
 struct etl_traits<etl::gemm_expr<A, B, Strassen>> {
     using expr_t       = etl::gemm_expr<A, B, Strassen>; ///< The expression type
-    using left_expr_t  = std::decay_t<A>;            ///< The left sub expression type
-    using right_expr_t = std::decay_t<B>;            ///< The right sub expression type
-    using left_traits  = etl_traits<left_expr_t>;    ///< The left sub traits
-    using right_traits = etl_traits<right_expr_t>;   ///< The right sub traits
-    using value_type   = value_t<A>;                 ///< The value type of the expression
+    using left_expr_t  = std::decay_t<A>;                ///< The left sub expression type
+    using right_expr_t = std::decay_t<B>;                ///< The right sub expression type
+    using left_traits  = etl_traits<left_expr_t>;        ///< The left sub traits
+    using right_traits = etl_traits<right_expr_t>;       ///< The right sub traits
+    using value_type   = value_t<A>;                     ///< The value type of the expression
 
     static constexpr bool is_etl         = true;                                          ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer = false;                                         ///< Indicates if the type is a transformer
@@ -354,7 +385,7 @@ struct etl_traits<etl::gemm_expr<A, B, Strassen>> {
     static constexpr bool is_aligned     = true;                                          ///< Indicates if the expression is padded
     static constexpr bool is_temporary   = true;                                          ///< Indicates if the expression needs a evaluator visitor
     static constexpr order storage_order = left_traits::storage_order;                    ///< The expression's storage order
-    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;                                  ///< Indicates if the expression can be computed on GPU
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;          ///< Indicates if the expression can be computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -370,8 +401,7 @@ struct etl_traits<etl::gemm_expr<A, B, Strassen>> {
      */
     template <size_t DD>
     static constexpr size_t dim() {
-        return DD == 0 ? decay_traits<A>::template dim<0>()
-                       : decay_traits<B>::template dim<1>();
+        return DD == 0 ? decay_traits<A>::template dim<0>() : decay_traits<B>::template dim<1>();
     }
 
     /*!
@@ -381,7 +411,7 @@ struct etl_traits<etl::gemm_expr<A, B, Strassen>> {
      * \return the dth dimension of the expression
      */
     static size_t dim(const expr_t& e, size_t d) {
-        if (d == 0){
+        if (d == 0) {
             return etl::dim(e._a, 0);
         } else {
             return etl::dim(e._b, 1);
@@ -484,7 +514,7 @@ auto strassen_mul(A&& a, B&& b, C&& c) {
     static_assert(all_etl_expr<A, B, C>, "Matrix multiplication only supported for ETL expressions");
     static_assert(all_2d<A, B, C>, "Matrix multiplication only works in 2D");
 
-    c = mul(a,b);
+    c = mul(a, b);
     return c;
 }
 

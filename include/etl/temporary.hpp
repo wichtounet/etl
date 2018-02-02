@@ -33,11 +33,10 @@ struct build_fast_dyn_matrix_type<E, std::index_sequence<I...>> {
     /*!
      * \brief The resulting fast_dyn_matrix type
      */
-    using type = fast_matrix_impl<
-        value_t<E>,
-        etl::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
-        decay_traits<E>::storage_order,
-        decay_traits<E>::template dim<I>()...>;
+    using type = fast_matrix_impl<value_t<E>,
+                                  etl::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
+                                  decay_traits<E>::storage_order,
+                                  decay_traits<E>::template dim<I>()...>;
 };
 
 /*!
@@ -61,11 +60,10 @@ struct build_fast_dyn_matrix_type_opp<E, std::index_sequence<I...>> {
     /*!
      * \brief The resulting fast_dyn_matrix type
      */
-    using type = fast_matrix_impl<
-        value_t<E>,
-        etl::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
-        reverse(decay_traits<E>::storage_order),
-        decay_traits<E>::template dim<I>()...>;
+    using type = fast_matrix_impl<value_t<E>,
+                                  etl::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
+                                  reverse(decay_traits<E>::storage_order),
+                                  decay_traits<E>::template dim<I>()...>;
 };
 
 /*!
@@ -74,7 +72,7 @@ struct build_fast_dyn_matrix_type_opp<E, std::index_sequence<I...>> {
  * \param expr The expression
  */
 template <typename E, size_t... I>
-decltype(auto) build_dyn_matrix_type(E&& expr, std::index_sequence<I...>){
+decltype(auto) build_dyn_matrix_type(E&& expr, std::index_sequence<I...>) {
     return dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()>(etl::dim<I>(expr)...);
 }
 
@@ -135,7 +133,7 @@ decltype(auto) force_temporary_dyn(E&& expr) {
  */
 template <typename E>
 decltype(auto) force_temporary_opp(E&& expr) {
-    if constexpr (is_fast<E>){
+    if constexpr (is_fast<E>) {
         typename detail::build_fast_dyn_matrix_type_opp<E, std::make_index_sequence<decay_traits<E>::dimensions()>>::type mat;
         mat = std::forward<E>(expr);
         return mat;

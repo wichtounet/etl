@@ -30,39 +30,34 @@ namespace etl::impl::cudnn {
 /*!
  * \brief Compare the dimensions of the two given matrices
  */
-template<typename M, cpp_enable_iff(is_1d<M>)>
-bool fast_compare(M& lhs, M& rhs){
+template <typename M, cpp_enable_iff(is_1d<M>)>
+bool fast_compare(M& lhs, M& rhs) {
     return etl::dim<0>(lhs) == etl::dim<0>(rhs);
 }
 
 /*!
  * \brief Compare the dimensions of the two given matrices
  */
-template<typename M, cpp_enable_iff(is_2d<M>)>
-bool fast_compare(M& lhs, M& rhs){
-    return etl::dim<0>(lhs) == etl::dim<0>(rhs)
-        && etl::dim<1>(lhs) == etl::dim<1>(rhs);
+template <typename M, cpp_enable_iff(is_2d<M>)>
+bool fast_compare(M& lhs, M& rhs) {
+    return etl::dim<0>(lhs) == etl::dim<0>(rhs) && etl::dim<1>(lhs) == etl::dim<1>(rhs);
 }
 
 /*!
  * \brief Compare the dimensions of the two given matrices
  */
-template<typename M, cpp_enable_iff(is_3d<M>)>
-bool fast_compare(M& lhs, M& rhs){
-    return etl::dim<0>(lhs) == etl::dim<0>(rhs)
-        && etl::dim<1>(lhs) == etl::dim<1>(rhs)
-        && etl::dim<2>(lhs) == etl::dim<2>(rhs);
+template <typename M, cpp_enable_iff(is_3d<M>)>
+bool fast_compare(M& lhs, M& rhs) {
+    return etl::dim<0>(lhs) == etl::dim<0>(rhs) && etl::dim<1>(lhs) == etl::dim<1>(rhs) && etl::dim<2>(lhs) == etl::dim<2>(rhs);
 }
 
 /*!
  * \brief Compare the dimensions of the two given matrices
  */
-template<typename M, cpp_enable_iff(is_4d<M>)>
-bool fast_compare(M& lhs, M& rhs){
-    return etl::dim<0>(lhs) == etl::dim<0>(rhs)
-        && etl::dim<1>(lhs) == etl::dim<1>(rhs)
-        && etl::dim<2>(lhs) == etl::dim<2>(rhs)
-        && etl::dim<3>(lhs) == etl::dim<3>(rhs);
+template <typename M, cpp_enable_iff(is_4d<M>)>
+bool fast_compare(M& lhs, M& rhs) {
+    return etl::dim<0>(lhs) == etl::dim<0>(rhs) && etl::dim<1>(lhs) == etl::dim<1>(rhs) && etl::dim<2>(lhs) == etl::dim<2>(rhs)
+           && etl::dim<3>(lhs) == etl::dim<3>(rhs);
 }
 
 /*!
@@ -75,13 +70,13 @@ struct mat_cache_key_impl;
  * \copydoc mat_cache_key_impl
  */
 template <typename M>
-struct mat_cache_key_impl <M, false, 1> {
+struct mat_cache_key_impl<M, false, 1> {
     size_t a; ///< The first dimension
 
     /*!
      * \brief Construct an empty (undefined values) mat_cache_key_impl
      */
-    mat_cache_key_impl(){
+    mat_cache_key_impl() {
         // Nothing else to init
     }
 
@@ -98,7 +93,7 @@ struct mat_cache_key_impl <M, false, 1> {
      * \param rhs The matrix to be compared against
      * \return true if the key is equivalent with the given matrix
      */
-    bool operator==(M& rhs){
+    bool operator==(M& rhs) {
         return a == etl::dim<0>(rhs);
     }
 };
@@ -107,14 +102,14 @@ struct mat_cache_key_impl <M, false, 1> {
  * \copydoc mat_cache_key_impl
  */
 template <typename M>
-struct mat_cache_key_impl <M, false, 2> {
+struct mat_cache_key_impl<M, false, 2> {
     size_t a; ///< The first dimension
     size_t b; ///< The second dimension
 
     /*!
      * \brief Construct an empty (undefined values) mat_cache_key_impl
      */
-    mat_cache_key_impl(){
+    mat_cache_key_impl() {
         // Nothing else to init
     }
 
@@ -131,7 +126,7 @@ struct mat_cache_key_impl <M, false, 2> {
      * \param rhs The matrix to be compared against
      * \return true if the key is equivalent with the given matrix
      */
-    bool operator==(M& rhs){
+    bool operator==(M& rhs) {
         return a == etl::dim<0>(a) && b == etl::dim<1>(rhs);
     }
 };
@@ -140,7 +135,7 @@ struct mat_cache_key_impl <M, false, 2> {
  * \copydoc mat_cache_key_impl
  */
 template <typename M>
-struct mat_cache_key_impl <M, false, 3> {
+struct mat_cache_key_impl<M, false, 3> {
     size_t a; ///< The first dimension
     size_t b; ///< The second dimension
     size_t c; ///< The third dimension
@@ -148,7 +143,7 @@ struct mat_cache_key_impl <M, false, 3> {
     /*!
      * \brief Construct an empty (undefined values) mat_cache_key_impl
      */
-    mat_cache_key_impl(){
+    mat_cache_key_impl() {
         // Nothing else to init
     }
 
@@ -165,7 +160,7 @@ struct mat_cache_key_impl <M, false, 3> {
      * \param rhs The matrix to be compared against
      * \return true if the key is equivalent with the given matrix
      */
-    bool operator==(M& rhs){
+    bool operator==(M& rhs) {
         return a == etl::dim<0>(rhs) && b == etl::dim<1>(rhs) && c == etl::dim<2>(rhs);
     }
 };
@@ -174,7 +169,7 @@ struct mat_cache_key_impl <M, false, 3> {
  * \copydoc mat_cache_key_impl
  */
 template <typename M>
-struct mat_cache_key_impl <M, false, 4> {
+struct mat_cache_key_impl<M, false, 4> {
     size_t a; ///< The first dimension
     size_t b; ///< The second dimension
     size_t c; ///< The third dimension
@@ -183,7 +178,7 @@ struct mat_cache_key_impl <M, false, 4> {
     /*!
      * \brief Construct an empty (undefined values) mat_cache_key_impl
      */
-    mat_cache_key_impl(){
+    mat_cache_key_impl() {
         // Nothing else to init
     }
 
@@ -200,7 +195,7 @@ struct mat_cache_key_impl <M, false, 4> {
      * \param rhs The matrix to be compared against
      * \return true if the key is equivalent with the given matrix
      */
-    bool operator==(M& rhs){
+    bool operator==(M& rhs) {
         return a == etl::dim<0>(rhs) && b == etl::dim<1>(rhs) && c == etl::dim<2>(rhs) && d == etl::dim<3>(rhs);
     }
 };
@@ -223,7 +218,7 @@ struct ternary_cache_key {
     /*!
      * \brief Construct an empty key (undefined values)
      */
-    ternary_cache_key(){
+    ternary_cache_key() {
         // Nothing else to init
     }
 
@@ -270,9 +265,9 @@ struct ternary_static_cache {
      * \return the position of the key if found, otherwise, return last
      */
     template <typename A, typename B, typename C>
-    size_t find(A& a, B& b, C& c){
-        for(size_t i = 0; i < size; ++i){
-            if(keys[i].equals(a, b, c)){
+    size_t find(A& a, B& b, C& c) {
+        for (size_t i = 0; i < size; ++i) {
+            if (keys[i].equals(a, b, c)) {
                 return i;
             }
         }
@@ -289,8 +284,8 @@ struct ternary_static_cache {
      * if the cache is full, return last
      */
     template <typename A, typename B, typename C>
-    size_t insert(A& a, B& b, C& c){
-        if(size == last - 1){
+    size_t insert(A& a, B& b, C& c) {
+        if (size == last - 1) {
             return last;
         }
 
@@ -306,7 +301,7 @@ struct ternary_static_cache {
      * \param i The index to get the value from
      * \return A reference to the value at the given position
      */
-    auto& operator[](size_t i){
+    auto& operator[](size_t i) {
         return values[i];
     }
 };

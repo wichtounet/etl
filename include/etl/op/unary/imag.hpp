@@ -17,8 +17,8 @@ namespace etl {
  */
 template <typename T>
 struct imag_unary_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -32,9 +32,7 @@ struct imag_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_complex_single_t<T> && impl::egblas::has_cimag)
-            || (is_complex_double_t<T> && impl::egblas::has_zimag);
+    static constexpr bool gpu_computable = (is_complex_single_t<T> && impl::egblas::has_cimag) || (is_complex_double_t<T> && impl::egblas::has_zimag);
 
     /*!
      * \brief Apply the unary operator on x

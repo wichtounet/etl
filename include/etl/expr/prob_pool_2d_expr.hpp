@@ -48,24 +48,22 @@ struct prob_pool_2d_expr : base_temporary_expr_un<prob_pool_2d_expr<A, C1, C2>, 
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template<typename C>
-    void assign_to(C&& c)  const {
+    template <typename C>
+    void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, C>, "max_pool_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
         auto& a = this->a();
 
-        impl::standard::pmp_h_impl::template apply<C1, C2, C1, C2, 0, 0>(
-            smart_forward(a),
-            c);
+        impl::standard::pmp_h_impl::template apply<C1, C2, C1, C2, 0, 0>(smart_forward(a), c);
     }
 
     /*!
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -73,8 +71,8 @@ struct prob_pool_2d_expr : base_temporary_expr_un<prob_pool_2d_expr<A, C1, C2>, 
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -82,8 +80,8 @@ struct prob_pool_2d_expr : base_temporary_expr_un<prob_pool_2d_expr<A, C1, C2>, 
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -91,8 +89,8 @@ struct prob_pool_2d_expr : base_temporary_expr_un<prob_pool_2d_expr<A, C1, C2>, 
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -100,8 +98,8 @@ struct prob_pool_2d_expr : base_temporary_expr_un<prob_pool_2d_expr<A, C1, C2>, 
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 

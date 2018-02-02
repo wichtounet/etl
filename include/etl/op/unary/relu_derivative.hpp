@@ -17,8 +17,8 @@ namespace etl {
  */
 template <typename T>
 struct relu_derivative_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -32,13 +32,13 @@ struct relu_derivative_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = is_floating_t<T> && impl::egblas::has_srelu_der_out && impl::egblas::has_drelu_der_out;
+    static constexpr bool gpu_computable = is_floating_t<T>&& impl::egblas::has_srelu_der_out&& impl::egblas::has_drelu_der_out;
 
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on x

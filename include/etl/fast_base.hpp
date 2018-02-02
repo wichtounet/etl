@@ -94,7 +94,7 @@ struct fast_matrix_base {
     using memory_type       = value_type*;       ///< The memory type
     using const_memory_type = const value_type*; ///< The const memory type
 
-    using iterator = std::conditional_t<SO == order::RowMajor, value_type*, etl::iterator<derived_t>>;             ///< The iterator type
+    using iterator       = std::conditional_t<SO == order::RowMajor, value_type*, etl::iterator<derived_t>>;             ///< The iterator type
     using const_iterator = std::conditional_t<SO == order::RowMajor, const value_type*, etl::iterator<const derived_t>>; ///< The iterator type
 
 protected:
@@ -172,7 +172,7 @@ public:
      */
     fast_matrix_base(const fast_matrix_base& rhs) : _data(), _gpu(rhs._gpu) {
         // Only perform the copy if the CPU is up to date
-        if(rhs._gpu.is_cpu_up_to_date()){
+        if (rhs._gpu.is_cpu_up_to_date()) {
             _data = rhs._data;
         } else {
             init();
@@ -187,7 +187,7 @@ public:
      */
     fast_matrix_base(fast_matrix_base&& rhs) noexcept : _data(), _gpu(std::move(rhs._gpu)) {
         // Only perform the copy if the CPU is up to date
-        if(_gpu.is_cpu_up_to_date()){
+        if (_gpu.is_cpu_up_to_date()) {
             _data = std::move(rhs._data);
         } else {
             init();

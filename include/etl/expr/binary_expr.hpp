@@ -15,17 +15,13 @@ namespace etl {
  * A binary expression has a left hand side expression and a right hand side expression and for each element applies a binary opeartor to both expressions.
  */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct binary_expr final :
-        dim_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>,
-        value_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>,
-        iterable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>
-{
+struct binary_expr final : dim_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>,
+                           value_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>,
+                           iterable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
 private:
-    static_assert(
-                         (std::is_same<LeftExpr, scalar<T>>::value && std::is_same<RightExpr, scalar<T>>::value)
+    static_assert((std::is_same<LeftExpr, scalar<T>>::value && std::is_same<RightExpr, scalar<T>>::value)
                       || (is_etl_expr<LeftExpr> && std::is_same<RightExpr, scalar<T>>::value)
-                      || (is_etl_expr<RightExpr> && std::is_same<LeftExpr, scalar<T>>::value)
-                      || (all_etl_expr<LeftExpr, RightExpr>),
+                      || (is_etl_expr<RightExpr> && std::is_same<LeftExpr, scalar<T>>::value) || (all_etl_expr<LeftExpr, RightExpr>),
                   "One argument must be an ETL expression and the other one convertible to T");
 
     using this_type = binary_expr<T, LeftExpr, BinaryOp, RightExpr>; ///< This type
@@ -49,7 +45,7 @@ public:
      * \brief The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     //Cannot be constructed with no args
     binary_expr() = delete;
@@ -59,8 +55,7 @@ public:
      * \param l The left hand side of the expression
      * \param r The right hand side of the expression
      */
-    binary_expr(LeftExpr l, RightExpr r)
-            : lhs(std::forward<LeftExpr>(l)), rhs(std::forward<RightExpr>(r)) {
+    binary_expr(LeftExpr l, RightExpr r) : lhs(std::forward<LeftExpr>(l)), rhs(std::forward<RightExpr>(r)) {
         //Nothing else to init
     }
 
@@ -118,7 +113,8 @@ public:
      * \return a vector containing several results of the expression
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(vec_type<V>) load(size_t i) const {
+    ETL_STRONG_INLINE(vec_type<V>)
+    load(size_t i) const {
         return BinaryOp::template load<V>(lhs.template load<V>(i), rhs.template load<V>(i));
     }
 
@@ -129,7 +125,8 @@ public:
      * \return a vector containing several results of the expression
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(vec_type<V>) loadu(size_t i) const {
+    ETL_STRONG_INLINE(vec_type<V>)
+    loadu(size_t i) const {
         return BinaryOp::template load<V>(lhs.template loadu<V>(i), rhs.template loadu<V>(i));
     }
 
@@ -150,7 +147,7 @@ public:
      * \param i The index to use
      * \return a sub view of the expression at position i.
      */
-    template <bool B = (safe_dimensions<this_type> > 1), cpp_enable_iff(B)>
+    template <bool B = (safe_dimensions<this_type>> 1), cpp_enable_iff(B)>
     auto operator()(size_t i) {
         return sub(*this, i);
     }
@@ -160,7 +157,7 @@ public:
      * \param i The index to use
      * \return a sub view of the expression at position i.
      */
-    template <bool B = (safe_dimensions<this_type> > 1), cpp_enable_iff(B)>
+    template <bool B = (safe_dimensions<this_type>> 1), cpp_enable_iff(B)>
     auto operator()(size_t i) const {
         return sub(*this, i);
     }
@@ -189,7 +186,7 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    template<typename Y>
+    template <typename Y>
     decltype(auto) gpu_compute_hint(Y& y) const {
         return BinaryOp::gpu_compute_hint(lhs, rhs, y);
     }
@@ -198,7 +195,7 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    template<typename Y>
+    template <typename Y>
     decltype(auto) gpu_compute(Y& y) const {
         return BinaryOp::gpu_compute(lhs, rhs, y);
     }
@@ -327,11 +324,12 @@ public:
 template <typename T, typename LE, typename BinaryOp, typename RE>
 struct etl_traits<etl::binary_expr<T, LE, BinaryOp, RE>> {
     using expr_t       = etl::binary_expr<T, LE, BinaryOp, RE>; ///< The type of the expression
-    using left_expr_t  = std::decay_t<LE>;                             ///< The type of the left expression
-    using right_expr_t = std::decay_t<RE>;                            ///< The type of the right expression
-    using value_type   = T;                                                  ///< The value type
+    using left_expr_t  = std::decay_t<LE>;                      ///< The type of the left expression
+    using right_expr_t = std::decay_t<RE>;                      ///< The type of the right expression
+    using value_type   = T;                                     ///< The value type
 
-    static constexpr bool left_directed = cpp::not_u<etl_traits<left_expr_t>::is_generator>::value; ///< True if directed by the left expression, false otherwise
+    static constexpr bool left_directed =
+        cpp::not_u<etl_traits<left_expr_t>::is_generator>::value; ///< True if directed by the left expression, false otherwise
 
     using sub_expr_t = std::conditional_t<left_directed, left_expr_t, right_expr_t>; ///< The type of sub expression
 
@@ -339,26 +337,27 @@ struct etl_traits<etl::binary_expr<T, LE, BinaryOp, RE>> {
     using left_traits  = etl_traits<left_expr_t>;  ///< The left traits
     using right_traits = etl_traits<right_expr_t>; ///< The right traits
 
-    static constexpr bool is_etl         = true;                                                                                 ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer = false;                                                                                ///< Indicates if the type is a transformer
-    static constexpr bool is_view        = false;                                                                                ///< Indicates if the type is a view
-    static constexpr bool is_magic_view  = false;                                                                                ///< Indicates if the type is a magic view
-    static constexpr bool is_fast        = sub_traits::is_fast;                                                                  ///< Indicates if the expression is fast
-    static constexpr bool is_linear      = left_traits::is_linear && right_traits::is_linear && BinaryOp::linear;                ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe = left_traits::is_thread_safe && right_traits::is_thread_safe && BinaryOp::thread_safe; ///< Indicates if the expression is linear
-    static constexpr bool is_value       = false;                                                                                ///< Indicates if the expression is of value type
-    static constexpr bool is_direct      = false;                                                                                ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator   = left_traits::is_generator && right_traits::is_generator;                              ///< Indicates if the expression is a generator expression
-    static constexpr bool is_temporary   = left_traits::is_temporary || right_traits::is_temporary;                              ///< Indicates if the expression needs an evaluator visitor
-    static constexpr bool is_padded      = is_linear && left_traits::is_padded && right_traits::is_padded;                       ///< Indicates if the expression is padded
-    static constexpr bool is_aligned     = is_linear && left_traits::is_aligned && right_traits::is_aligned;                     ///< Indicates if the expression is padded
-    static constexpr order storage_order = left_traits::is_generator ? right_traits::storage_order : left_traits::storage_order; ///< The expression storage order
+    static constexpr bool is_etl         = true;                ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;               ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;               ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;               ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = sub_traits::is_fast; ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = left_traits::is_linear && right_traits::is_linear && BinaryOp::linear; ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe =
+        left_traits::is_thread_safe && right_traits::is_thread_safe && BinaryOp::thread_safe;     ///< Indicates if the expression is linear
+    static constexpr bool is_value     = false;                                                   ///< Indicates if the expression is of value type
+    static constexpr bool is_direct    = false;                                                   ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator = left_traits::is_generator && right_traits::is_generator; ///< Indicates if the expression is a generator expression
+    static constexpr bool is_temporary = left_traits::is_temporary || right_traits::is_temporary; ///< Indicates if the expression needs an evaluator visitor
+    static constexpr bool is_padded    = is_linear && left_traits::is_padded && right_traits::is_padded;   ///< Indicates if the expression is padded
+    static constexpr bool is_aligned   = is_linear && left_traits::is_aligned && right_traits::is_aligned; ///< Indicates if the expression is padded
+    static constexpr order storage_order =
+        left_traits::is_generator ? right_traits::storage_order : left_traits::storage_order; ///< The expression storage order
 
     /*!
      * \brief Indicates if the expression can be computed on GPU
      */
-    static constexpr bool gpu_computable =
-        all_gpu_computable<LE, RE> && BinaryOp::template gpu_computable<LE, RE> && all_homogeneous<LE, RE>;
+    static constexpr bool gpu_computable = all_gpu_computable<LE, RE> && BinaryOp::template gpu_computable<LE, RE> && all_homogeneous<LE, RE>;
 
     template <vector_mode_t V>
     static constexpr bool vectorizable =

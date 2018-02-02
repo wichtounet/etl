@@ -12,7 +12,7 @@
  * If ETL is configured to use parallel, this has no effect. When
  * ETL is not configured in parallel, this allows for fine-grained
  * parallelism selection.
-*/
+ */
 
 #pragma once
 
@@ -35,7 +35,6 @@ private:
     friend struct wrapper_traits<parallel_expr>;
 
 public:
-
     //Cannot be constructed with no args
     parallel_expr() = delete;
 
@@ -43,13 +42,12 @@ public:
      * \brief Construt a new optimized expression around the given ETL expression
      * \param l The ETL expression
      */
-    explicit parallel_expr(Expr l)
-            : value(std::forward<Expr>(l)) {
+    explicit parallel_expr(Expr l) : value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
     //Expresison can be copied and moved
-    parallel_expr(const parallel_expr& e) = default;
+    parallel_expr(const parallel_expr& e)     = default;
     parallel_expr(parallel_expr&& e) noexcept = default;
 
     //Expressions are invariant
@@ -72,8 +70,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         auto old_parallel = local_context().parallel;
 
         local_context().parallel = true;
@@ -87,8 +85,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         auto old_parallel = local_context().parallel;
 
         local_context().parallel = true;
@@ -102,8 +100,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         auto old_parallel = local_context().parallel;
 
         local_context().parallel = true;
@@ -117,8 +115,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         auto old_parallel = local_context().parallel;
 
         local_context().parallel = true;
@@ -132,8 +130,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         auto old_parallel = local_context().parallel;
 
         local_context().parallel = true;
@@ -147,8 +145,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         auto old_parallel = local_context().parallel;
 
         local_context().parallel = true;

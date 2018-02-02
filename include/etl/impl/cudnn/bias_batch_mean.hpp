@@ -33,7 +33,7 @@ void bias_batch_mean_4d(X&& x, Y&& y) {
     using type = value_t<X>;
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     decltype(auto) handle = start_cudnn();
 
@@ -48,9 +48,7 @@ void bias_batch_mean_4d(X&& x, Y&& y) {
 
     // Perform the convolution
 
-    cudnn_check(cudnnConvolutionBackwardBias(handle.get(),
-        alpha, *x_tensor, x.gpu_memory(),
-        beta, *y_tensor, y.gpu_memory()));
+    cudnn_check(cudnnConvolutionBackwardBias(handle.get(), alpha, *x_tensor, x.gpu_memory(), beta, *y_tensor, y.gpu_memory()));
 
     y.validate_gpu();
     y.invalidate_cpu();
@@ -66,7 +64,7 @@ void bias_batch_mean_2d(X&& x, Y&& y) {
     using type = value_t<X>;
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     decltype(auto) handle = start_cudnn();
 
@@ -81,9 +79,7 @@ void bias_batch_mean_2d(X&& x, Y&& y) {
 
     // Perform the convolution
 
-    cudnn_check(cudnnConvolutionBackwardBias(handle.get(),
-        alpha, *x_tensor, x.gpu_memory(),
-        beta, *y_tensor, y.gpu_memory()));
+    cudnn_check(cudnnConvolutionBackwardBias(handle.get(), alpha, *x_tensor, x.gpu_memory(), beta, *y_tensor, y.gpu_memory()));
 
     y.validate_gpu();
     y.invalidate_cpu();
@@ -115,7 +111,7 @@ void bias_batch_mean_2d(X&& x, Y&& y) {
     cpp_unused(y);
 }
 
-//COVERAGE_EXCLUDE_END
+    //COVERAGE_EXCLUDE_END
 
 #endif
 

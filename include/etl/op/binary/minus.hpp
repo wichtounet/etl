@@ -7,7 +7,6 @@
 
 #pragma once
 
-
 namespace etl {
 
 /*!
@@ -15,9 +14,9 @@ namespace etl {
  */
 template <typename T>
 struct minus_binary_op {
-    static constexpr bool linear         = true;           ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe    = true;           ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func      = false;          ///< Indicates if the description must be printed as function
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func   = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -30,33 +29,22 @@ struct minus_binary_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    template<typename L, typename R>
+    template <typename L, typename R>
     static constexpr bool gpu_computable =
-            (
-                    (!is_scalar<L> && !is_scalar<R>)
-                &&  (
-                            (is_single_precision_t<T> && impl::egblas::has_saxpy_3 && impl::egblas::has_saxpby_3)
-                        ||  (is_double_precision_t<T> &&  impl::egblas::has_daxpy_3 && impl::egblas::has_daxpby_3)
-                        ||  (is_complex_single_t<T>   && impl::egblas::has_caxpy_3 && impl::egblas::has_caxpby_3)
-                        ||  (is_complex_double_t<T>   && impl::egblas::has_zaxpy_3 && impl::egblas::has_zaxpby_3)
-                    )
-            )
-        ||  (
-                    (is_scalar<L> != is_scalar<R>)
-                &&  (
-                            (is_single_precision_t<T> && impl::egblas::has_scalar_sadd && impl::egblas::has_scalar_smul)
-                        ||  (is_double_precision_t<T> && impl::egblas::has_scalar_dadd && impl::egblas::has_scalar_dmul)
-                        ||  (is_complex_single_t<T>   && impl::egblas::has_scalar_cadd && impl::egblas::has_scalar_cmul)
-                        ||  (is_complex_double_t<T>   && impl::egblas::has_scalar_zadd && impl::egblas::has_scalar_zmul)
-                    )
-            )
-        ;
+        ((!is_scalar<L> && !is_scalar<R>)&&((is_single_precision_t<T> && impl::egblas::has_saxpy_3 && impl::egblas::has_saxpby_3)
+                                            || (is_double_precision_t<T> && impl::egblas::has_daxpy_3 && impl::egblas::has_daxpby_3)
+                                            || (is_complex_single_t<T> && impl::egblas::has_caxpy_3 && impl::egblas::has_caxpby_3)
+                                            || (is_complex_double_t<T> && impl::egblas::has_zaxpy_3 && impl::egblas::has_zaxpby_3)))
+        || ((is_scalar<L> != is_scalar<R>)&&((is_single_precision_t<T> && impl::egblas::has_scalar_sadd && impl::egblas::has_scalar_smul)
+                                             || (is_double_precision_t<T> && impl::egblas::has_scalar_dadd && impl::egblas::has_scalar_dmul)
+                                             || (is_complex_single_t<T> && impl::egblas::has_scalar_cadd && impl::egblas::has_scalar_cmul)
+                                             || (is_complex_double_t<T> && impl::egblas::has_scalar_zadd && impl::egblas::has_scalar_zmul)));
 
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -105,7 +93,7 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpy_right_left<L,R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpy_right_left<L, R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
         auto& rhs_lhs = rhs.get_lhs();
         auto& rhs_rhs = rhs.get_rhs();
@@ -132,7 +120,7 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpy_right_right<L,R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpy_right_right<L, R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
         auto& rhs_lhs = rhs.get_lhs();
         auto& rhs_rhs = rhs.get_rhs();
@@ -159,7 +147,7 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpy_left_left<L,R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpy_left_left<L, R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
         auto& lhs_lhs = lhs.get_lhs();
         auto& lhs_rhs = lhs.get_rhs();
@@ -186,7 +174,7 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpy_left_right<L,R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpy_left_right<L, R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
         auto& lhs_lhs = lhs.get_lhs();
         auto& lhs_rhs = lhs.get_rhs();
@@ -213,7 +201,7 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpby_left_left<L,R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpby_left_left<L, R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
         auto& lhs_lhs = lhs.get_lhs();
         auto& lhs_rhs = lhs.get_rhs();
@@ -243,7 +231,7 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpby_left_right<L,R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpby_left_right<L, R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
         auto& lhs_lhs = lhs.get_lhs();
         auto& lhs_rhs = lhs.get_rhs();
@@ -273,7 +261,7 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpby_right_left<L,R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpby_right_left<L, R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
         auto& lhs_lhs = lhs.get_lhs();
         auto& lhs_rhs = lhs.get_rhs();
@@ -303,7 +291,7 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpby_right_right<L,R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(is_axpby_right_right<L, R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
         auto& lhs_lhs = lhs.get_lhs();
         auto& lhs_rhs = lhs.get_rhs();
@@ -333,7 +321,7 @@ struct minus_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R> && !is_special_plus<L,R>)>
+    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R> && !is_special_plus<L, R>)>
     static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
         decltype(auto) x = smart_gpu_compute_hint(lhs, yy);
         decltype(auto) y = smart_gpu_compute_hint(rhs, yy);

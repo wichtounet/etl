@@ -32,17 +32,14 @@ struct tan_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_stan)
-            || (is_double_precision_t<T> && impl::egblas::has_dtan)
-            || (is_complex_single_t<T> && impl::egblas::has_ctan)
-            || (is_complex_double_t<T> && impl::egblas::has_ztan);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_stan) || (is_double_precision_t<T> && impl::egblas::has_dtan)
+                                           || (is_complex_single_t<T> && impl::egblas::has_ctan) || (is_complex_double_t<T> && impl::egblas::has_ztan);
 
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -115,7 +112,7 @@ struct tan_unary_op {
  * \copydoc tan_unary_op
  */
 template <typename TT>
-struct tan_unary_op <etl::complex<TT>> {
+struct tan_unary_op<etl::complex<TT>> {
     using T = etl::complex<TT>; ///< The real type
 
     static constexpr bool linear      = true; ///< Indicates if the operator is linear
@@ -133,11 +130,8 @@ struct tan_unary_op <etl::complex<TT>> {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_stan)
-            || (is_double_precision_t<T> && impl::egblas::has_dtan)
-            || (is_complex_single_t<T> && impl::egblas::has_ctan)
-            || (is_complex_double_t<T> && impl::egblas::has_ztan);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_stan) || (is_double_precision_t<T> && impl::egblas::has_dtan)
+                                           || (is_complex_single_t<T> && impl::egblas::has_ctan) || (is_complex_double_t<T> && impl::egblas::has_ztan);
 
     /*!
      * \brief Apply the unary operator on x

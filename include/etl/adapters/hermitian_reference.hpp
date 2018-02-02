@@ -29,8 +29,8 @@ struct hermitian_reference {
     using expr_t                   = M;                                ///< The hermitian matrix
 
     matrix_type& matrix;   ///< Reference to the matrix
-    size_t i;         ///< The first index
-    size_t j;         ///< The second index
+    size_t i;              ///< The first index
+    size_t j;              ///< The second index
     value_type& value;     ///< Reference to the value
     value_type& sym_value; ///< Reference to the symmetric value
 
@@ -40,8 +40,7 @@ struct hermitian_reference {
      * \param i The index i of the first dimension
      * \param j The index j of the second dimension
      */
-    hermitian_reference(matrix_type& matrix, size_t i, size_t j)
-            : matrix(matrix), i(i), j(j), value(matrix(i, j)), sym_value(matrix(j, i)) {
+    hermitian_reference(matrix_type& matrix, size_t i, size_t j) : matrix(matrix), i(i), j(j), value(matrix(i, j)), sym_value(matrix(j, i)) {
         //Nothing else to init
     }
 
@@ -52,7 +51,7 @@ struct hermitian_reference {
      */
     hermitian_reference& operator=(const value_type& rhs) {
         value = rhs;
-        if(i != j){
+        if (i != j) {
             sym_value = get_conj(value);
         }
         return *this;
@@ -65,7 +64,7 @@ struct hermitian_reference {
      */
     hermitian_reference& operator+=(value_type rhs) {
         value += rhs;
-        if(i != j){
+        if (i != j) {
             sym_value = get_conj(value);
         }
         return *this;
@@ -78,7 +77,7 @@ struct hermitian_reference {
      */
     hermitian_reference& operator-=(value_type rhs) {
         value -= rhs;
-        if(i != j){
+        if (i != j) {
             sym_value = get_conj(value);
         }
         return *this;
@@ -91,7 +90,7 @@ struct hermitian_reference {
      */
     hermitian_reference& operator*=(value_type rhs) {
         value *= rhs;
-        if(i != j){
+        if (i != j) {
             sym_value *= get_conj(value);
         }
         return *this;
@@ -104,7 +103,7 @@ struct hermitian_reference {
      */
     hermitian_reference& operator/=(value_type rhs) {
         value /= rhs;
-        if(i != j){
+        if (i != j) {
             sym_value = get_conj(value);
         }
         return *this;
@@ -117,7 +116,7 @@ struct hermitian_reference {
      */
     hermitian_reference& operator%=(value_type rhs) {
         value %= rhs;
-        if(i != j){
+        if (i != j) {
             sym_value = get_conj(value);
         }
         return *this;
@@ -173,7 +172,7 @@ struct hermitian_reference {
      * \param ref The hermitian reference to output
      * \return The output stream
      */
-    friend std::ostream& operator<<(std::ostream& os, const hermitian_reference& ref){
+    friend std::ostream& operator<<(std::ostream& os, const hermitian_reference& ref) {
         typename M::value_type c = ref;
         return os << c;
     }
@@ -183,7 +182,7 @@ struct hermitian_reference {
  * \brief Specialization of get_conj for hermitian_reference
  */
 template <typename M>
-inline typename M::value_type get_conj(const hermitian_reference<M>& ref){
+inline typename M::value_type get_conj(const hermitian_reference<M>& ref) {
     typename M::value_type c = ref;
     using etl::get_conj;
     return get_conj(c);

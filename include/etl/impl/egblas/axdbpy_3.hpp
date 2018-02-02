@@ -71,7 +71,7 @@ static constexpr bool has_daxdbpy_3 = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axdbpy_3(size_t n, double alpha, double* A , size_t lda, double beta, double* B , size_t ldb, double* C, size_t ldc){
+inline void axdbpy_3(size_t n, double alpha, double* A, size_t lda, double beta, double* B, size_t ldb, double* C, size_t ldc) {
 #ifdef EGBLAS_HAS_DAXDBPY_3
     inc_counter("egblas");
     egblas_daxdbpy_3(n, alpha, A, lda, beta, B, ldb, C, ldc);
@@ -105,10 +105,19 @@ static constexpr bool has_caxdbpy_3 = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axdbpy_3(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float> beta, std::complex<float>* B , size_t ldb, std::complex<float>* C, size_t ldc){
+inline void axdbpy_3(size_t n,
+                     std::complex<float> alpha,
+                     std::complex<float>* A,
+                     size_t lda,
+                     std::complex<float> beta,
+                     std::complex<float>* B,
+                     size_t ldb,
+                     std::complex<float>* C,
+                     size_t ldc) {
 #ifdef EGBLAS_HAS_CAXDBPY_3
     inc_counter("egblas");
-    egblas_caxdbpy_3(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
+    egblas_caxdbpy_3(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuComplex*>(B), ldb,
+                     reinterpret_cast<cuComplex*>(C), ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -133,10 +142,19 @@ inline void axdbpy_3(size_t n, std::complex<float> alpha, std::complex<float>* A
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axdbpy_3(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float> beta, etl::complex<float>* B , size_t ldb, etl::complex<float>* C, size_t ldc){
+inline void axdbpy_3(size_t n,
+                     etl::complex<float> alpha,
+                     etl::complex<float>* A,
+                     size_t lda,
+                     etl::complex<float> beta,
+                     etl::complex<float>* B,
+                     size_t ldb,
+                     etl::complex<float>* C,
+                     size_t ldc) {
 #ifdef EGBLAS_HAS_CAXDBPY_3
     inc_counter("egblas");
-    egblas_caxdbpy_3(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
+    egblas_caxdbpy_3(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuComplex*>(B), ldb,
+                     reinterpret_cast<cuComplex*>(C), ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -151,7 +169,6 @@ inline void axdbpy_3(size_t n, etl::complex<float> alpha, etl::complex<float>* A
     cpp_unreachable("Invalid call to egblas::axdbpy");
 #endif
 }
-
 
 #ifdef EGBLAS_HAS_ZAXDBPY_3
 static constexpr bool has_zaxdbpy_3 = true;
@@ -168,10 +185,19 @@ static constexpr bool has_zaxdbpy_3 = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axdbpy_3(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double> beta, std::complex<double>* B , size_t ldb, std::complex<double>* C, size_t ldc){
+inline void axdbpy_3(size_t n,
+                     std::complex<double> alpha,
+                     std::complex<double>* A,
+                     size_t lda,
+                     std::complex<double> beta,
+                     std::complex<double>* B,
+                     size_t ldb,
+                     std::complex<double>* C,
+                     size_t ldc) {
 #ifdef EGBLAS_HAS_ZAXDBPY_3
     inc_counter("egblas");
-    egblas_zaxdbpy_3(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuDoubleComplex*>(B), ldb, reinterpret_cast<cuDoubleComplex*>(C), ldc);
+    egblas_zaxdbpy_3(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuDoubleComplex*>(B), ldb,
+                     reinterpret_cast<cuDoubleComplex*>(C), ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -196,10 +222,19 @@ inline void axdbpy_3(size_t n, std::complex<double> alpha, std::complex<double>*
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axdbpy_3(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double> beta, etl::complex<double>* B , size_t ldb, etl::complex<double>* C, size_t ldc){
+inline void axdbpy_3(size_t n,
+                     etl::complex<double> alpha,
+                     etl::complex<double>* A,
+                     size_t lda,
+                     etl::complex<double> beta,
+                     etl::complex<double>* B,
+                     size_t ldb,
+                     etl::complex<double>* C,
+                     size_t ldc) {
 #ifdef EGBLAS_HAS_ZAXDBPY_3
     inc_counter("egblas");
-    egblas_zaxdbpy_3(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuDoubleComplex*>(B), ldb, reinterpret_cast<cuDoubleComplex*>(C), ldc);
+    egblas_zaxdbpy_3(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuDoubleComplex*>(B), ldb,
+                     reinterpret_cast<cuDoubleComplex*>(C), ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);

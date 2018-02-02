@@ -69,7 +69,7 @@ static constexpr bool has_daxpby = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axpby(size_t n, double alpha, double* A , size_t lda, double beta, double* B , size_t ldb){
+inline void axpby(size_t n, double alpha, double* A, size_t lda, double beta, double* B, size_t ldb) {
 #ifdef EGBLAS_HAS_DAXPBY
     inc_counter("egblas");
     egblas_daxpby(n, alpha, A, lda, beta, B, ldb);
@@ -101,7 +101,7 @@ static constexpr bool has_caxpby = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axpby(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float> beta, std::complex<float>* B , size_t ldb){
+inline void axpby(size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float> beta, std::complex<float>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CAXPBY
     inc_counter("egblas");
     egblas_caxpby(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuComplex*>(B), ldb);
@@ -127,7 +127,7 @@ inline void axpby(size_t n, std::complex<float> alpha, std::complex<float>* A , 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axpby(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, std::complex<float> beta, etl::complex<float>* B , size_t ldb){
+inline void axpby(size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, std::complex<float> beta, etl::complex<float>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CAXPBY
     inc_counter("egblas");
     egblas_caxpby(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuComplex*>(B), ldb);
@@ -144,7 +144,6 @@ inline void axpby(size_t n, etl::complex<float> alpha, etl::complex<float>* A , 
 #endif
 }
 
-
 #ifdef EGBLAS_HAS_ZAXPBY
 static constexpr bool has_zaxpby = true;
 #else
@@ -160,7 +159,7 @@ static constexpr bool has_zaxpby = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axpby(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double> beta, std::complex<double>* B , size_t ldb){
+inline void axpby(size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double> beta, std::complex<double>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZAXPBY
     inc_counter("egblas");
     egblas_zaxpby(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuDoubleComplex*>(B), ldb);
@@ -186,7 +185,7 @@ inline void axpby(size_t n, std::complex<double> alpha, std::complex<double>* A 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axpby(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, std::complex<double> beta, etl::complex<double>* B , size_t ldb){
+inline void axpby(size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, std::complex<double> beta, etl::complex<double>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZAXPBY
     inc_counter("egblas");
     egblas_zaxpby(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, complex_cast(beta), reinterpret_cast<cuDoubleComplex*>(B), ldb);

@@ -8,7 +8,7 @@
 /*!
  * \file pooling_expression_builder.hpp
  * \brief Contains all the pooling operators and functions to build expressions.
-*/
+ */
 
 #pragma once
 

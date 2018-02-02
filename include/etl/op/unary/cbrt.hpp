@@ -32,11 +32,8 @@ struct cbrt_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_scbrt)
-            || (is_double_precision_t<T> && impl::egblas::has_dcbrt)
-            || (is_complex_single_t<T> && impl::egblas::has_ccbrt)
-            || (is_complex_double_t<T> && impl::egblas::has_zcbrt);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_scbrt) || (is_double_precision_t<T> && impl::egblas::has_dcbrt)
+                                           || (is_complex_single_t<T> && impl::egblas::has_ccbrt) || (is_complex_double_t<T> && impl::egblas::has_zcbrt);
 
     /*!
      * \brief Apply the unary operator on x
@@ -97,7 +94,7 @@ struct cbrt_unary_op {
  * \copydoc cbrt_unary_op
  */
 template <typename TT>
-struct cbrt_unary_op <std::complex<TT>>{
+struct cbrt_unary_op<std::complex<TT>> {
     using T = std::complex<TT>; ///< The real type
 
     static constexpr bool linear      = true; ///< Indicates if the operator is linear
@@ -115,11 +112,8 @@ struct cbrt_unary_op <std::complex<TT>>{
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_scbrt)
-            || (is_double_precision_t<T> && impl::egblas::has_dcbrt)
-            || (is_complex_single_t<T> && impl::egblas::has_ccbrt)
-            || (is_complex_double_t<T> && impl::egblas::has_zcbrt);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_scbrt) || (is_double_precision_t<T> && impl::egblas::has_dcbrt)
+                                           || (is_complex_single_t<T> && impl::egblas::has_ccbrt) || (is_complex_double_t<T> && impl::egblas::has_zcbrt);
 
     /*!
      * \brief Apply the unary operator on x
@@ -186,7 +180,7 @@ struct cbrt_unary_op <std::complex<TT>>{
  * \copydoc cbrt_unary_op
  */
 template <typename TT>
-struct cbrt_unary_op <etl::complex<TT>>{
+struct cbrt_unary_op<etl::complex<TT>> {
     using T = etl::complex<TT>; ///< The real type
 
     static constexpr bool linear      = true; ///< Indicates if the operator is linear
@@ -204,11 +198,8 @@ struct cbrt_unary_op <etl::complex<TT>>{
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_scbrt)
-            || (is_double_precision_t<T> && impl::egblas::has_dcbrt)
-            || (is_complex_single_t<T> && impl::egblas::has_ccbrt)
-            || (is_complex_double_t<T> && impl::egblas::has_zcbrt);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_scbrt) || (is_double_precision_t<T> && impl::egblas::has_dcbrt)
+                                           || (is_complex_single_t<T> && impl::egblas::has_ccbrt) || (is_complex_double_t<T> && impl::egblas::has_zcbrt);
 
     /*!
      * \brief Apply the unary operator on x

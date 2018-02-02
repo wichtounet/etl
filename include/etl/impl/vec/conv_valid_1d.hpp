@@ -335,7 +335,7 @@ void conv1_valid_impl(const I& input, const K& kernel, C&& conv, size_t first, s
  */
 template <typename I, typename K, typename C>
 void conv1_valid(const I& input, const K& kernel, C&& conv, [[maybe_unused]] size_t first, [[maybe_unused]] size_t last) {
-    if constexpr (conv1_possible<vector_mode, I, K, C>){
+    if constexpr (conv1_possible<vector_mode, I, K, C>) {
         conv1_valid_impl<default_vec>(input, kernel, conv, first, last);
     } else {
         cpp_unreachable("Invalid call to vec::conv_1_valid");

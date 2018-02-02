@@ -38,7 +38,7 @@ struct context {
     forced_impl<conv4_impl> conv4_selector;           ///< Forced selector for conv4
     forced_impl<gemm_impl> gemm_selector;             ///< Forced selector for gemm
     forced_impl<outer_impl> outer_selector;           ///< Forced selector for outer product
-    forced_impl<bias_add_impl> bias_add_selector;           ///< Forced selector for bias_add product
+    forced_impl<bias_add_impl> bias_add_selector;     ///< Forced selector for bias_add product
     forced_impl<fft_impl> fft_selector;               ///< Forced selector for fft
 #endif
 };
@@ -57,20 +57,12 @@ inline context& local_context() {
  * \return true if something is forced in the context, false
  * otherwise
  */
-inline bool is_something_forced(){
+inline bool is_something_forced() {
 #ifdef ETL_MANUAL_SELECT
     auto& c = local_context();
-    return c.sum_selector.forced
-        || c.pool_selector.forced
-        || c.transpose_selector.forced
-        || c.dot_selector.forced
-        || c.conv_selector.forced
-        || c.conv_multi_selector.forced
-        || c.conv4_selector.forced
-        || c.gemm_selector.forced
-        || c.outer_selector.forced
-        || c.bias_add_selector.forced
-        || c.fft_selector.forced;
+    return c.sum_selector.forced || c.pool_selector.forced || c.transpose_selector.forced || c.dot_selector.forced || c.conv_selector.forced
+           || c.conv_multi_selector.forced || c.conv4_selector.forced || c.gemm_selector.forced || c.outer_selector.forced || c.bias_add_selector.forced
+           || c.fft_selector.forced;
 #else
     return false;
 #endif
@@ -190,7 +182,7 @@ struct serial_context {
      * This saves the previous serial value and sets serial to true
      */
     serial_context() {
-        old_serial = etl::local_context().serial;
+        old_serial                  = etl::local_context().serial;
         etl::local_context().serial = true;
     }
 
@@ -223,7 +215,7 @@ struct parallel_context {
      * This saves the previous parallel value and sets parallel to true
      */
     parallel_context() {
-        old_parallel = etl::local_context().parallel;
+        old_parallel                  = etl::local_context().parallel;
         etl::local_context().parallel = true;
     }
 
@@ -256,7 +248,7 @@ struct cpu_context {
      * This saves the previous cpu value and sets cpu to true
      */
     cpu_context() {
-        old_cpu = etl::local_context().cpu;
+        old_cpu                  = etl::local_context().cpu;
         etl::local_context().cpu = true;
     }
 

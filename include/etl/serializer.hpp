@@ -25,8 +25,7 @@ struct serializer {
      * \param args The arguments to forward to the stream constructor
      */
     template <typename... Args>
-    explicit serializer(Args&&... args)
-            : stream(std::forward<Args>(args)...) {}
+    explicit serializer(Args&&... args) : stream(std::forward<Args>(args)...) {}
 
     /*!
      * \brief Outputs the given value to the stream

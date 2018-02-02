@@ -22,7 +22,7 @@ namespace etl {
 template <typename A, typename B>
 struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
-    using this_type   = conv_1d_full_expr<A, B>;                 ///< The type of this expression
+    using this_type   = conv_1d_full_expr<A, B>;                  ///< The type of this expression
     using base_type   = base_temporary_expr_bin<this_type, A, B>; ///< The base type
     using left_traits = decay_traits<A>;                          ///< The traits of the sub type
 
@@ -48,7 +48,7 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
      * \brief Assert that the convolution is done on correct dimensions
      */
     template <typename I, typename K, typename C>
-    static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv){
+    static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) {
         static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_full");
         static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_full");
         static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_full");
@@ -66,11 +66,11 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
      * \brief Assign to a matrix of the same storage order
      * \param conv The expression to which assign
      */
-    template<typename C>
-    void assign_to(C&& conv)  const {
+    template <typename C>
+    void assign_to(C&& conv) const {
         static_assert(all_etl_expr<A, B, C>, "conv1_full only supported for ETL expressions");
 
-        auto& input_raw = this->a();
+        auto& input_raw  = this->a();
         auto& kernel_raw = this->b();
 
         check(input_raw, kernel_raw, conv);
@@ -86,35 +86,53 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
 
         bool parallel_dispatch = detail::select_parallel(input, kernel, conv);
 
-        if constexpr_select (impl == etl::conv_impl::VEC) {
-            engine_dispatch_1d([&](size_t first, size_t last) {
-                impl::vec::conv1_full(input, kernel, conv, first, last);
-            }, 0, etl::size(conv), parallel_dispatch);
-        } else if constexpr_select (impl == etl::conv_impl::STD) {
-            engine_dispatch_1d([&](size_t first, size_t last) {
-                impl::standard::conv1_full(input, kernel, conv, first, last);
-            }, 0, etl::size(conv), parallel_dispatch);
-        } else if constexpr_select (impl == etl::conv_impl::FFT_STD) {
-            impl::standard::conv1_full_fft(smart_forward(input_raw), smart_forward(kernel_raw), conv);
-        } else if constexpr_select (impl == etl::conv_impl::FFT_MKL) {
-            impl::blas::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv);
-        } else if constexpr_select (impl == etl::conv_impl::FFT_CUFFT) {
-            impl::cufft::conv1_full(smart_forward_gpu(input_raw), smart_forward_gpu(kernel_raw), conv);
-        } else {
+        if
+            constexpr_select(impl == etl::conv_impl::VEC) {
+                engine_dispatch_1d([&](size_t first, size_t last) { impl::vec::conv1_full(input, kernel, conv, first, last); }, 0, etl::size(conv),
+                                   parallel_dispatch);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::STD) {
+                engine_dispatch_1d([&](size_t first, size_t last) { impl::standard::conv1_full(input, kernel, conv, first, last); }, 0, etl::size(conv),
+                                   parallel_dispatch);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::FFT_STD) {
+                impl::standard::conv1_full_fft(smart_forward(input_raw), smart_forward(kernel_raw), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::FFT_MKL) {
+                impl::blas::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::FFT_CUFFT) {
+                impl::cufft::conv1_full(smart_forward_gpu(input_raw), smart_forward_gpu(kernel_raw), conv);
+            }
+        else {
             cpp_unreachable("Invalid conv implementation selection");
         }
 #else
-        if constexpr_select (impl == etl::conv_impl::VEC) {
-            impl::vec::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
-        } else if constexpr_select (impl == etl::conv_impl::STD) {
-            impl::standard::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
-        } else if constexpr_select (impl == etl::conv_impl::FFT_STD) {
-            impl::standard::conv1_full_fft(smart_forward(input_raw), smart_forward(kernel_raw), conv);
-        } else if constexpr_select (impl == etl::conv_impl::FFT_MKL) {
-            impl::blas::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv);
-        } else if constexpr_select (impl == etl::conv_impl::FFT_CUFFT) {
-            impl::cufft::conv1_full(smart_forward_gpu(input_raw), smart_forward_gpu(kernel_raw), conv);
-        } else {
+        if
+            constexpr_select(impl == etl::conv_impl::VEC) {
+                impl::vec::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::STD) {
+                impl::standard::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::FFT_STD) {
+                impl::standard::conv1_full_fft(smart_forward(input_raw), smart_forward(kernel_raw), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::FFT_MKL) {
+                impl::blas::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv);
+            }
+        else if
+            constexpr_select(impl == etl::conv_impl::FFT_CUFFT) {
+                impl::cufft::conv1_full(smart_forward_gpu(input_raw), smart_forward_gpu(kernel_raw), conv);
+            }
+        else {
             cpp_unreachable("Invalid conv implementation selection");
         }
 #endif
@@ -124,8 +142,8 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -133,8 +151,8 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -142,8 +160,8 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -151,8 +169,8 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -160,8 +178,8 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -183,27 +201,27 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
 template <typename A, typename B>
 struct etl_traits<etl::conv_1d_full_expr<A, B>> {
     using expr_t       = etl::conv_1d_full_expr<A, B>; ///< The expression type
-    using left_expr_t  = std::decay_t<A>;               ///< The left sub expression type
-    using right_expr_t = std::decay_t<B>;               ///< The right sub expression type
-    using left_traits  = etl_traits<left_expr_t>;       ///< The left sub traits
-    using right_traits = etl_traits<right_expr_t>;      ///< The right sub traits
-    using value_type   = value_t<A>;                    ///< The value type of the expression
+    using left_expr_t  = std::decay_t<A>;              ///< The left sub expression type
+    using right_expr_t = std::decay_t<B>;              ///< The right sub expression type
+    using left_traits  = etl_traits<left_expr_t>;      ///< The left sub traits
+    using right_traits = etl_traits<right_expr_t>;     ///< The right sub traits
+    using value_type   = value_t<A>;                   ///< The value type of the expression
 
-    static constexpr bool is_etl          = true;                       ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer  = false;                      ///< Indicates if the type is a transformer
-    static constexpr bool is_view         = false;                      ///< Indicates if the type is a view
-    static constexpr bool is_magic_view   = false;                      ///< Indicates if the type is a magic view
-    static constexpr bool is_fast         = all_fast<A, B>;      ///< Indicates if the expression is fast
-    static constexpr bool is_linear       = false;                       ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe  = true;                       ///< Indicates if the expression is thread safe
-    static constexpr bool is_value        = false;                      ///< Indicates if the expression is of value type
-    static constexpr bool is_direct       = true;                       ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator    = false;                      ///< Indicates if the expression is a generator
-    static constexpr bool is_padded       = false;                      ///< Indicates if the expression is padded
-    static constexpr bool is_aligned      = true;                       ///< Indicates if the expression is padded
-    static constexpr bool is_temporary = true;                       ///< Indicates if the expression needs a evaluator visitor
-    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
-    static constexpr order storage_order  = left_traits::storage_order; ///< The expression's storage order
+    static constexpr bool is_etl         = true;                                 ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                                ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = all_fast<A, B>;                       ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = true;                                 ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = true;                                 ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                                ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = true;                                 ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = true;                                 ///< Indicates if the expression needs a evaluator visitor
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled; ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order = left_traits::storage_order;           ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -281,7 +299,7 @@ conv_1d_full_expr<detail::build_type<A>, detail::build_type<B>> conv_1d_full(A&&
  * \return an expression representing the valid 1D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_1d_full(A&& a, B&& b, C&& c){
+auto conv_1d_full(A&& a, B&& b, C&& c) {
     static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_1d_full(a, b);

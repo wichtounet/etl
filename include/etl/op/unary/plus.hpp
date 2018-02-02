@@ -19,10 +19,10 @@ struct plus_unary_op {
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

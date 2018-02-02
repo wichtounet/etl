@@ -297,7 +297,7 @@ struct fft1_impl {
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    template<typename A>
+    template <typename A>
     static constexpr bool gpu_computable = cufft_enabled;
 
     /*!
@@ -309,13 +309,18 @@ struct fft1_impl {
     static void apply(A&& a, C&& c) {
         constexpr_select auto impl = select_fft1_impl();
 
-        if constexpr_select (impl == fft_impl::STD) {
-            etl::impl::standard::fft1(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::MKL) {
-            etl::impl::blas::fft1(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::fft1(smart_forward_gpu(a), c);
-        }
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                etl::impl::standard::fft1(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                etl::impl::blas::fft1(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                etl::impl::cufft::fft1(smart_forward_gpu(a), c);
+            }
     }
 };
 
@@ -327,7 +332,7 @@ struct ifft1_impl {
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    template<typename A>
+    template <typename A>
     static constexpr bool gpu_computable = cufft_enabled;
 
     /*!
@@ -339,13 +344,18 @@ struct ifft1_impl {
     static void apply(A&& a, C&& c) {
         constexpr_select auto impl = select_ifft1_impl();
 
-        if constexpr_select (impl == fft_impl::STD) {
-            etl::impl::standard::ifft1(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::MKL) {
-            etl::impl::blas::ifft1(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::ifft1(smart_forward_gpu(a), c);
-        }
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                etl::impl::standard::ifft1(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                etl::impl::blas::ifft1(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                etl::impl::cufft::ifft1(smart_forward_gpu(a), c);
+            }
     }
 };
 
@@ -357,7 +367,7 @@ struct ifft1_real_impl {
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    template<typename A>
+    template <typename A>
     static constexpr bool gpu_computable = cufft_enabled;
 
     /*!
@@ -369,13 +379,18 @@ struct ifft1_real_impl {
     static void apply(A&& a, C&& c) {
         constexpr_select auto impl = select_ifft1_impl();
 
-        if constexpr_select (impl == fft_impl::STD) {
-            etl::impl::standard::ifft1_real(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::MKL) {
-            etl::impl::blas::ifft1_real(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::ifft1_real(smart_forward_gpu(a), c);
-        }
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                etl::impl::standard::ifft1_real(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                etl::impl::blas::ifft1_real(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                etl::impl::cufft::ifft1_real(smart_forward_gpu(a), c);
+            }
     }
 };
 
@@ -387,7 +402,7 @@ struct fft2_impl {
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    template<typename A>
+    template <typename A>
     static constexpr bool gpu_computable = cufft_enabled;
 
     /*!
@@ -399,13 +414,18 @@ struct fft2_impl {
     static void apply(A&& a, C&& c) {
         constexpr_select auto impl = select_fft2_impl();
 
-        if constexpr_select (impl == fft_impl::STD) {
-            etl::impl::standard::fft2(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::MKL) {
-            etl::impl::blas::fft2(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::fft2(smart_forward_gpu(a), c);
-        }
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                etl::impl::standard::fft2(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                etl::impl::blas::fft2(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                etl::impl::cufft::fft2(smart_forward_gpu(a), c);
+            }
     }
 };
 
@@ -417,7 +437,7 @@ struct ifft2_impl {
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    template<typename A>
+    template <typename A>
     static constexpr bool gpu_computable = cufft_enabled;
 
     /*!
@@ -429,13 +449,18 @@ struct ifft2_impl {
     static void apply(A&& a, C&& c) {
         constexpr_select auto impl = select_fft2_impl();
 
-        if constexpr_select (impl == fft_impl::STD) {
-            etl::impl::standard::ifft2(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::MKL) {
-            etl::impl::blas::ifft2(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::ifft2(smart_forward_gpu(a), c);
-        }
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                etl::impl::standard::ifft2(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                etl::impl::blas::ifft2(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                etl::impl::cufft::ifft2(smart_forward_gpu(a), c);
+            }
     }
 };
 
@@ -447,7 +472,7 @@ struct ifft2_real_impl {
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    template<typename A>
+    template <typename A>
     static constexpr bool gpu_computable = cufft_enabled;
 
     /*!
@@ -459,13 +484,18 @@ struct ifft2_real_impl {
     static void apply(A&& a, C&& c) {
         constexpr_select auto impl = select_fft2_impl();
 
-        if constexpr_select (impl == fft_impl::STD) {
-            etl::impl::standard::ifft2_real(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::MKL) {
-            etl::impl::blas::ifft2_real(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::ifft2_real(smart_forward_gpu(a), c);
-        }
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                etl::impl::standard::ifft2_real(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                etl::impl::blas::ifft2_real(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                etl::impl::cufft::ifft2_real(smart_forward_gpu(a), c);
+            }
     }
 };
 
@@ -477,7 +507,7 @@ struct fft1_many_impl {
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    template<typename A>
+    template <typename A>
     static constexpr bool gpu_computable = cufft_enabled;
 
     /*!
@@ -489,13 +519,18 @@ struct fft1_many_impl {
     static void apply(A&& a, C&& c) {
         const auto impl = select_fft1_many_impl();
 
-        if constexpr_select (impl == fft_impl::STD) {
-            etl::impl::standard::fft1_many(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::MKL) {
-            etl::impl::blas::fft1_many(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::fft1_many(smart_forward_gpu(a), c);
-        }
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                etl::impl::standard::fft1_many(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                etl::impl::blas::fft1_many(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                etl::impl::cufft::fft1_many(smart_forward_gpu(a), c);
+            }
     }
 };
 
@@ -507,7 +542,7 @@ struct fft2_many_impl {
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    template<typename A>
+    template <typename A>
     static constexpr bool gpu_computable = cufft_enabled;
 
     /*!
@@ -519,13 +554,18 @@ struct fft2_many_impl {
     static void apply(A&& a, C&& c) {
         const auto impl = select_fft2_many_impl();
 
-        if constexpr_select (impl == fft_impl::STD) {
-            etl::impl::standard::fft2_many(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::MKL) {
-            etl::impl::blas::fft2_many(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::fft2_many(smart_forward_gpu(a), c);
-        }
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                etl::impl::standard::fft2_many(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                etl::impl::blas::fft2_many(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                etl::impl::cufft::fft2_many(smart_forward_gpu(a), c);
+            }
     }
 };
 
@@ -537,7 +577,7 @@ struct ifft1_many_impl {
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    template<typename A>
+    template <typename A>
     static constexpr bool gpu_computable = cufft_enabled;
 
     /*!
@@ -549,13 +589,18 @@ struct ifft1_many_impl {
     static void apply(A&& a, C&& c) {
         constexpr_select auto impl = select_fft1_many_impl();
 
-        if constexpr_select (impl == fft_impl::STD) {
-            etl::impl::standard::ifft1_many(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::MKL) {
-            etl::impl::blas::ifft1_many(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::ifft1_many(smart_forward_gpu(a), c);
-        }
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                etl::impl::standard::ifft1_many(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                etl::impl::blas::ifft1_many(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                etl::impl::cufft::ifft1_many(smart_forward_gpu(a), c);
+            }
     }
 };
 
@@ -567,7 +612,7 @@ struct ifft2_many_impl {
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    template<typename A>
+    template <typename A>
     static constexpr bool gpu_computable = cufft_enabled;
 
     /*!
@@ -579,13 +624,18 @@ struct ifft2_many_impl {
     static void apply(A&& a, C&& c) {
         constexpr_select auto impl = select_fft2_many_impl();
 
-        if constexpr_select (impl == fft_impl::STD) {
-            etl::impl::standard::ifft2_many(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::MKL) {
-            etl::impl::blas::ifft2_many(smart_forward(a), c);
-        } else if constexpr_select (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::ifft2_many(smart_forward_gpu(a), c);
-        }
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                etl::impl::standard::ifft2_many(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                etl::impl::blas::ifft2_many(smart_forward(a), c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                etl::impl::cufft::ifft2_many(smart_forward_gpu(a), c);
+            }
     }
 };
 

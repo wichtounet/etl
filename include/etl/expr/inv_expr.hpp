@@ -47,24 +47,22 @@ struct inv_expr : base_temporary_expr_un<inv_expr<A>, A> {
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template<typename C>
-    void assign_to(C&& c)  const {
+    template <typename C>
+    void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, C>, "max_pool_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
         auto& a = this->a();
 
-        detail::inv_impl::apply(
-            smart_forward(a),
-            c);
+        detail::inv_impl::apply(smart_forward(a), c);
     }
 
     /*!
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -72,8 +70,8 @@ struct inv_expr : base_temporary_expr_un<inv_expr<A>, A> {
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -81,8 +79,8 @@ struct inv_expr : base_temporary_expr_un<inv_expr<A>, A> {
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -90,8 +88,8 @@ struct inv_expr : base_temporary_expr_un<inv_expr<A>, A> {
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -99,8 +97,8 @@ struct inv_expr : base_temporary_expr_un<inv_expr<A>, A> {
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -128,21 +126,21 @@ struct etl_traits<etl::inv_expr<A>> {
 
     static constexpr size_t D = sub_traits::dimensions(); ///< The number of dimensions of this expressions
 
-    static constexpr bool is_etl                  = true;                      ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer          = false;                     ///< Indicates if the type is a transformer
-    static constexpr bool is_view                 = false;                     ///< Indicates if the type is a view
-    static constexpr bool is_magic_view           = false;                     ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = sub_traits::is_fast;       ///< Indicates if the expression is fast
-    static constexpr bool is_linear               = false;                      ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe          = true;                      ///< Indicates if the expression is thread safe
-    static constexpr bool is_value                = false;                     ///< Indicates if the expression is of value type
-    static constexpr bool is_direct               = true;                      ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator            = false;                     ///< Indicates if the expression is a generator
-    static constexpr bool is_padded               = false;                     ///< Indicates if the expression is padded
-    static constexpr bool is_aligned              = true;                      ///< Indicates if the expression is padded
-    static constexpr bool is_temporary = true;                      ///< Indicates if the expression needs a evaluator visitor
-    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
-    static constexpr order storage_order          = sub_traits::storage_order; ///< The expression's storage order
+    static constexpr bool is_etl         = true;                                 ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                                ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = sub_traits::is_fast;                  ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = true;                                 ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = true;                                 ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                                ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = true;                                 ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = true;                                 ///< Indicates if the expression needs a evaluator visitor
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled; ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order = sub_traits::storage_order;            ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

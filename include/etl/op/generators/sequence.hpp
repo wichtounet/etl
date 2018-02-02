@@ -30,8 +30,7 @@ struct sequence_generator_op {
      * \brief Construct a new generator with the given sequence start
      * \param start The beginning of the sequence
      */
-    explicit sequence_generator_op(value_type start = 0)
-            : start(start), current(start) {}
+    explicit sequence_generator_op(value_type start = 0) : start(start), current(start) {}
 
     /*!
      * \brief Generate a new value

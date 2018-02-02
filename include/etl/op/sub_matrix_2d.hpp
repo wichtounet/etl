@@ -30,12 +30,10 @@ struct sub_matrix_2d;
  * \tparam T The type of expression on which the view is made
  */
 template <typename T, bool Aligned>
-struct sub_matrix_2d <T, Aligned, std::enable_if_t<true>> final :
-    iterable<sub_matrix_2d<T, Aligned>, false>,
-    assignable<sub_matrix_2d<T, Aligned>, value_t<T>>,
-    value_testable<sub_matrix_2d<T, Aligned>>,
-    inplace_assignable<sub_matrix_2d<T, Aligned>>
-{
+struct sub_matrix_2d<T, Aligned, std::enable_if_t<true>> final : iterable<sub_matrix_2d<T, Aligned>, false>,
+                                                                 assignable<sub_matrix_2d<T, Aligned>, value_t<T>>,
+                                                                 value_testable<sub_matrix_2d<T, Aligned>>,
+                                                                 inplace_assignable<sub_matrix_2d<T, Aligned>> {
     static_assert(is_etl_expr<T>, "sub_matrix_2d<T> only works with ETL expressions");
 
     using this_type            = sub_matrix_2d<T, Aligned>;                                            ///< The type of this expression
@@ -53,8 +51,8 @@ struct sub_matrix_2d <T, Aligned, std::enable_if_t<true>> final :
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<value_type>;
+    template <typename V = default_vec>
+    using vec_type = typename V::template vec_type<value_type>;
 
     using assignable_base_type::operator=;
     using iterable_base_type::begin;
@@ -90,7 +88,7 @@ public:
     const_return_type operator[](size_t j) const {
         cpp_assert(j < m * n, "Invalid index inside sub_matrix_2d");
 
-        if constexpr (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor) {
             auto ii = base_i + j / n;
             auto jj = base_j + j % n;
 
@@ -111,7 +109,7 @@ public:
     return_type operator[](size_t j) {
         cpp_assert(j < m * n, "Invalid index inside sub_matrix_2d");
 
-        if constexpr (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor) {
             auto ii = base_i + j / n;
             auto jj = base_j + j % n;
 
@@ -133,7 +131,7 @@ public:
     value_type read_flat(size_t j) const noexcept(assert_nothrow) {
         cpp_assert(j < m * n, "Invalid index inside sub_matrix_2d");
 
-        if constexpr (storage_order == order::RowMajor){
+        if constexpr (storage_order == order::RowMajor) {
             auto ii = base_i + j / n;
             auto jj = base_j + j % n;
 
@@ -208,8 +206,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -217,8 +215,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -226,8 +224,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -235,8 +233,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -244,8 +242,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -253,8 +251,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -309,21 +307,21 @@ struct etl_traits<etl::sub_matrix_2d<T, Aligned>> {
     using sub_traits = etl_traits<sub_expr_t>;          ///< The sub traits
     using value_type = typename sub_traits::value_type; ///< The value type of the expression
 
-    static constexpr bool is_etl          = true;                        ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer  = false;                       ///< Indicates if the type is a transformer
-    static constexpr bool is_view         = true;                        ///< Indicates if the type is a view
-    static constexpr bool is_magic_view   = false;                       ///< Indicates if the type is a magic view
-    static constexpr bool is_fast         = false;                       ///< Indicates if the expression is fast
-    static constexpr bool is_linear       = sub_traits::is_linear;       ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe  = sub_traits::is_thread_safe;  ///< Indicates if the expression is thread safe
-    static constexpr bool is_value        = false;                       ///< Indicates if the expression is of value type
-    static constexpr bool is_direct       = false;                       ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator    = false;                       ///< Indicates if the expression is a generator
-    static constexpr bool is_padded       = false;                       ///< Indicates if the expression is padded
-    static constexpr bool is_aligned      = false;                       ///< Indicates if the expression is padded
-    static constexpr bool is_temporary    = sub_traits::is_temporary;    ///< Indicates if the exxpression needs a evaluator visitor
-    static constexpr bool gpu_computable  = false;                       ///< Indicates if the expression can be computed on GPU
-    static constexpr order storage_order  = sub_traits::storage_order;   ///< The expression's storage order
+    static constexpr bool is_etl         = true;                       ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                      ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = true;                       ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                      ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = false;                      ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = sub_traits::is_linear;      ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = sub_traits::is_thread_safe; ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                      ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = false;                      ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                      ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                      ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = false;                      ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = sub_traits::is_temporary;   ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr bool gpu_computable = false;                      ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order = sub_traits::storage_order;  ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -349,7 +347,7 @@ struct etl_traits<etl::sub_matrix_2d<T, Aligned>> {
      * \return The dth dimension of the given expression
      */
     static size_t dim(const expr_t& v, size_t d) noexcept {
-        if(d == 0){
+        if (d == 0) {
             return v.m;
         } else {
             return v.n;

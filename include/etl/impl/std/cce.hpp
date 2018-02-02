@@ -32,7 +32,6 @@ value_t<O> cce_loss(const O& output, const L& labels, value_t<O> scale) {
 template <typename O, typename L>
 value_t<O> cce_error(const O& output, const L& labels, value_t<O> scale) {
     return scale * sum(min(abs(argmax(labels) - argmax(output)), 1.0));
-
 }
 
 } //end of namespace etl::impl::standard

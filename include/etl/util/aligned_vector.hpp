@@ -37,11 +37,11 @@ struct simple_vector {
     }
 
     simple_vector(simple_vector&& rhs) : size(rhs.size) {
-        _data = rhs._data;
+        _data     = rhs._data;
         rhs._data = nullptr;
     }
 
-    simple_vector& operator=(const simple_vector& rhs){
+    simple_vector& operator=(const simple_vector& rhs) {
         if (this != &rhs) {
             resize_impl(rhs.size, false);
 
@@ -55,28 +55,28 @@ struct simple_vector {
         return *this;
     }
 
-    simple_vector& operator=(simple_vector&& rhs){
+    simple_vector& operator=(simple_vector&& rhs) {
         if (this != &rhs) {
             release();
 
             size = rhs.size;
 
-            _data      = rhs._data;
+            _data     = rhs._data;
             rhs._data = nullptr;
         }
 
         return *this;
     }
 
-    ~simple_vector(){
+    ~simple_vector() {
         release();
     }
 
-    void resize(size_t n){
+    void resize(size_t n) {
         resize_impl(n, true);
     }
 
-    T& operator[](size_t i){
+    T& operator[](size_t i) {
         return _data[i];
     }
 
@@ -85,8 +85,8 @@ struct simple_vector {
     }
 
 private:
-    void release(){
-        if(_data){
+    void release() {
+        if (_data) {
             //In case of non-trivial type, we need to call the destructors
             if constexpr (!std::is_trivial<T>::value) {
                 for (size_t i = 0; i < size; ++i) {
@@ -100,7 +100,7 @@ private:
         }
     }
 
-    void resize_impl(size_t n, bool copy = true){
+    void resize_impl(size_t n, bool copy = true) {
         auto* new_data = allocator.allocate(n);
 
         // Call all the constructors if necessary
@@ -122,10 +122,10 @@ private:
         release();
 
         _data = new_data;
-        size = n;
+        size  = n;
     }
 
-    T* _data = nullptr;
+    T* _data    = nullptr;
     size_t size = 0;
     Alloc allocator;
 };

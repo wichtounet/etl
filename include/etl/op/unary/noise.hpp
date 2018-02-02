@@ -15,8 +15,8 @@ namespace etl {
  */
 template <typename T>
 struct uniform_noise_unary_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -59,15 +59,13 @@ struct uniform_noise_unary_op {
  */
 template <typename G, typename T>
 struct uniform_noise_unary_g_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
 
 private:
-
     G& rand_engine; ///< The custom random engine
 
 public:
-
     /*!
      * \brief Construct a new uniform_noise_unary_g_op
      */
@@ -115,8 +113,8 @@ public:
  */
 template <typename T>
 struct normal_noise_unary_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -159,15 +157,13 @@ struct normal_noise_unary_op {
  */
 template <typename G, typename T>
 struct normal_noise_unary_g_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
 
 private:
-
     G& rand_engine; ///< The custom random engine
 
 public:
-
     /*!
      * \brief Construct a new normal_noise_unary_g_op
      */
@@ -215,8 +211,8 @@ public:
  */
 template <typename T>
 struct logistic_noise_unary_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -260,15 +256,13 @@ struct logistic_noise_unary_op {
  */
 template <typename G, typename T>
 struct logistic_noise_unary_g_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
 
 private:
-
     G& rand_engine; ///< The custom random engine
 
 public:
-
     /*!
      * \brief Construct a new logistic_noise_unary_g_op
      */

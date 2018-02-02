@@ -8,7 +8,7 @@
 /*!
  * \file
  * \brief Standard memory utilities
-*/
+ */
 
 #pragma once
 
@@ -21,11 +21,11 @@ namespace etl {
  * \param mat The ETL value class
  * \param value The value to set to each element of the matrix
  */
-template<typename E, typename V, cpp_enable_iff(is_single_precision<E> && egblas_enabled && impl::egblas::has_scalar_sset)>
-void direct_fill(E&& mat, V value){
+template <typename E, typename V, cpp_enable_iff(is_single_precision<E>&& egblas_enabled&& impl::egblas::has_scalar_sset)>
+void direct_fill(E&& mat, V value) {
     value_t<E> value_conv = value;
 
-    if(mat.gpu_memory()){
+    if (mat.gpu_memory()) {
         impl::egblas::scalar_set(mat.gpu_memory(), etl::size(mat), 1, value_conv);
 
         mat.validate_gpu();
@@ -41,11 +41,11 @@ void direct_fill(E&& mat, V value){
  * \param mat The ETL value class
  * \param value The value to set to each element of the matrix
  */
-template<typename E, typename V, cpp_enable_iff(is_double_precision<E> && egblas_enabled && impl::egblas::has_scalar_dset)>
-void direct_fill(E&& mat, V value){
+template <typename E, typename V, cpp_enable_iff(is_double_precision<E>&& egblas_enabled&& impl::egblas::has_scalar_dset)>
+void direct_fill(E&& mat, V value) {
     value_t<E> value_conv = value;
 
-    if(mat.gpu_memory()){
+    if (mat.gpu_memory()) {
         impl::egblas::scalar_set(mat.gpu_memory(), etl::size(mat), 1, value_conv);
 
         mat.validate_gpu();
@@ -61,13 +61,12 @@ void direct_fill(E&& mat, V value){
  * \param mat The ETL value class
  * \param value The value to set to each element of the matrix
  */
-template<typename E, typename V, cpp_disable_iff(is_floating<E> && egblas_enabled)>
-void direct_fill(E&& mat, V value){
+template <typename E, typename V, cpp_disable_iff(is_floating<E>&& egblas_enabled)>
+void direct_fill(E&& mat, V value) {
     std::fill(mat.memory_start(), mat.memory_end(), value);
 
     mat.validate_cpu();
     mat.invalidate_gpu();
 }
-
 
 } //end of namespace etl

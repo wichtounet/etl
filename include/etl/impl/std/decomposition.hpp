@@ -31,21 +31,21 @@ void lu(const AT& A, LT& L, UT& U, PT& P) {
 
     // 1. Create the pivot matrix
 
-    for(size_t i = 0; i < n; ++i){
+    for (size_t i = 0; i < n; ++i) {
         P(i, i) = 1;
     }
 
-    for(size_t i = 0; i < n; ++i){
+    for (size_t i = 0; i < n; ++i) {
         auto max_j = i;
 
-        for(size_t j = i; j < n; ++j){
-            if(std::abs(A(j, i)) > A(max_j, i)){
+        for (size_t j = i; j < n; ++j) {
+            if (std::abs(A(j, i)) > A(max_j, i)) {
                 max_j = j;
             }
         }
 
-        if(max_j != i){
-            for(size_t k = 0; k < n; ++k){
+        if (max_j != i) {
+            for (size_t k = 0; k < n; ++k) {
                 using std::swap;
                 swap(P(i, k), P(max_j, k));
             }
@@ -54,7 +54,7 @@ void lu(const AT& A, LT& L, UT& U, PT& P) {
 
     auto Ap = etl::force_temporary(P * A);
 
-    for(size_t i = 0; i < n; ++i){
+    for (size_t i = 0; i < n; ++i) {
         L(i, i) = 1;
     }
 
@@ -97,7 +97,7 @@ void householder(AT& A, QT& Q, RT& R) {
     std::vector<etl::dyn_matrix<T, 2>> q;
     q.reserve(m);
 
-    for(size_t i = 0; i < m; ++i){
+    for (size_t i = 0; i < m; ++i) {
         q.emplace_back(m, m);
     }
 
@@ -107,12 +107,12 @@ void householder(AT& A, QT& Q, RT& R) {
     for (size_t k = 0; k < n && k < m - 1; k++) {
         etl::dyn_matrix<T> zz(m, n, T(0));
 
-        for(size_t i = 0; i < k; ++i){
+        for (size_t i = 0; i < k; ++i) {
             zz(i, i) = 1;
         }
 
-        for(size_t i = k; i < m; ++i){
-            for(size_t j = k; j < n; ++j){
+        for (size_t i = k; i < m; ++i) {
+            for (size_t j = k; j < n; ++j) {
                 zz(i, j) = z(i, j);
             }
         }
@@ -122,7 +122,7 @@ void householder(AT& A, QT& Q, RT& R) {
         // x -> Take k-th column of z
         etl::dyn_vector<T> x(m);
 
-        for(size_t i = 0; i < m; ++i){
+        for (size_t i = 0; i < m; ++i) {
             x[i] = z(i, k);
         }
 
@@ -135,8 +135,8 @@ void householder(AT& A, QT& Q, RT& R) {
 
         x /= norm(x);
 
-        for(size_t i = 0; i < m; ++i){
-            for(size_t j = 0; j < m; ++j){
+        for (size_t i = 0; i < m; ++i) {
+            for (size_t j = 0; j < m; ++j) {
                 q[k](i, j) = T(-2) * x[i] * x[j];
             }
 

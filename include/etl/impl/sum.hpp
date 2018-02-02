@@ -43,7 +43,7 @@ constexpr etl::sum_impl select_default_sum_impl(bool no_gpu) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    if (cublas_enabled && is_dma<E> && is_floating<E> && !no_gpu){
+    if (cublas_enabled && is_dma<E> && is_floating<E> && !no_gpu) {
         return etl::sum_impl::CUBLAS;
     }
 
@@ -69,26 +69,26 @@ etl::sum_impl select_sum_impl() {
         switch (forced) {
             //VEC cannot always be used
             case sum_impl::VEC:
-                if (!vec_enabled || !decay_traits<E>::template vectorizable<vector_mode>) {                                //COVERAGE_EXCLUDE_LINE
+                if (!vec_enabled || !decay_traits<E>::template vectorizable<vector_mode>) {                                       //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_sum_impl<E>(local_context().cpu);                                                                          //COVERAGE_EXCLUDE_LINE
+                    return select_default_sum_impl<E>(local_context().cpu);                                                       //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
             case sum_impl::CUBLAS:
-                if (!cublas_enabled || !is_dma<E> || !is_floating<E> || local_context().cpu) {                                //COVERAGE_EXCLUDE_LINE
+                if (!cublas_enabled || !is_dma<E> || !is_floating<E> || local_context().cpu) {                                       //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUBLAS sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_sum_impl<E>(local_context().cpu);                                                                          //COVERAGE_EXCLUDE_LINE
-                }                                                                                                                 //COVERAGE_EXCLUDE_LINE
+                    return select_default_sum_impl<E>(local_context().cpu);                                                          //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                    //COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
             case sum_impl::BLAS:
-                if (!cblas_enabled || !is_dma<E> || !is_floating<E>) {                                //COVERAGE_EXCLUDE_LINE
+                if (!cblas_enabled || !is_dma<E> || !is_floating<E>) {                                                             //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_sum_impl<E>(local_context().cpu);                                                                          //COVERAGE_EXCLUDE_LINE
-                }                                                                                                                 //COVERAGE_EXCLUDE_LINE
+                    return select_default_sum_impl<E>(local_context().cpu);                                                        //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                  //COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
@@ -129,13 +129,19 @@ struct sum_impl {
     static value_t<E> apply(const E& e) {
         constexpr_select const auto impl = select_sum_impl<E>();
 
-        if constexpr_select (impl == etl::sum_impl::VEC) {
-            return impl::vec::sum(e);
-        } else if constexpr_select (impl == etl::sum_impl::BLAS) {
-            return impl::blas::sum(e);
-        } else if constexpr_select (impl == etl::sum_impl::CUBLAS) {
-            return impl::cublas::sum(e);
-        } else {
+        if
+            constexpr_select(impl == etl::sum_impl::VEC) {
+                return impl::vec::sum(e);
+            }
+        else if
+            constexpr_select(impl == etl::sum_impl::BLAS) {
+                return impl::blas::sum(e);
+            }
+        else if
+            constexpr_select(impl == etl::sum_impl::CUBLAS) {
+                return impl::cublas::sum(e);
+            }
+        else {
             return impl::standard::sum(e);
         }
     }
@@ -152,13 +158,19 @@ struct asum_impl {
     static value_t<E> apply(const E& e) {
         constexpr_select const auto impl = select_sum_impl<E>();
 
-        if constexpr_select (impl == etl::sum_impl::VEC) {
-            return impl::vec::asum(e);
-        } else if constexpr_select (impl == etl::sum_impl::BLAS) {
-            return impl::blas::asum(e);
-        } else if constexpr_select (impl == etl::sum_impl::CUBLAS) {
-            return impl::cublas::asum(e);
-        } else {
+        if
+            constexpr_select(impl == etl::sum_impl::VEC) {
+                return impl::vec::asum(e);
+            }
+        else if
+            constexpr_select(impl == etl::sum_impl::BLAS) {
+                return impl::blas::asum(e);
+            }
+        else if
+            constexpr_select(impl == etl::sum_impl::CUBLAS) {
+                return impl::cublas::asum(e);
+            }
+        else {
             return impl::standard::asum(e);
         }
     }

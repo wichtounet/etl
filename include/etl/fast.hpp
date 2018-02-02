@@ -13,7 +13,7 @@
 #pragma once
 
 #include "etl/fast_base.hpp"
-#include "etl/direct_fill.hpp"    //direct_fill with GPU support
+#include "etl/direct_fill.hpp" //direct_fill with GPU support
 
 namespace etl {
 
@@ -23,13 +23,12 @@ namespace etl {
  * The matrix support an arbitrary number of dimensions.
  */
 template <typename T, typename ST, order SO, size_t... Dims>
-struct fast_matrix_impl final :
-        fast_matrix_base<fast_matrix_impl<T, ST, SO, Dims...>, T, ST, SO, Dims...>,
-        inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>,
-        expression_able<fast_matrix_impl<T, ST, SO, Dims...>>,
-        value_testable<fast_matrix_impl<T, ST, SO, Dims...>>,
-        iterable<fast_matrix_impl<T, ST, SO, Dims...>, SO == order::RowMajor>,
-        dim_testable<fast_matrix_impl<T, ST, SO, Dims...>> {
+struct fast_matrix_impl final : fast_matrix_base<fast_matrix_impl<T, ST, SO, Dims...>, T, ST, SO, Dims...>,
+                                inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>,
+                                expression_able<fast_matrix_impl<T, ST, SO, Dims...>>,
+                                value_testable<fast_matrix_impl<T, ST, SO, Dims...>>,
+                                iterable<fast_matrix_impl<T, ST, SO, Dims...>, SO == order::RowMajor>,
+                                dim_testable<fast_matrix_impl<T, ST, SO, Dims...>> {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
@@ -48,17 +47,17 @@ public:
     using const_memory_type  = const value_type*;                               ///< The const memory type
 
     using base_type::dim;
+    using base_type::memory_end;
+    using base_type::memory_start;
     using base_type::size;
     using iterable_base_type::begin;
     using iterable_base_type::end;
-    using base_type::memory_start;
-    using base_type::memory_end;
 
     /*!
      * \brief The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
 private:
     using base_type::_data;
@@ -69,7 +68,7 @@ public:
     /*!
      * \brief Construct an empty fast matrix
      */
-    fast_matrix_impl() noexcept: base_type()  {
+    fast_matrix_impl() noexcept : base_type() {
         // Nothing else to init
     }
 
@@ -78,7 +77,7 @@ public:
      * \param value the value to fill the matrix with
      */
     template <typename VT, cpp_enable_iff(std::is_convertible<VT, value_type>::value || std::is_assignable<T&, VT>::value)>
-    explicit fast_matrix_impl(const VT& value) noexcept: base_type()  {
+    explicit fast_matrix_impl(const VT& value) noexcept : base_type() {
         // Fill the matrix
         std::fill(begin(), end(), value);
     }
@@ -87,7 +86,7 @@ public:
      * \brief Construct a fast matrix filled with the given values
      * \param l the list of values to fill the matrix with
      */
-    fast_matrix_impl(std::initializer_list<value_type> l): base_type()  {
+    fast_matrix_impl(std::initializer_list<value_type> l) : base_type() {
         cpp_assert(l.size() == size(), "Cannot copy from an initializer of different size");
 
         std::copy(l.begin(), l.end(), begin());
@@ -121,8 +120,9 @@ public:
      * \brief Construct a fast matrix from the given STL container
      * \param container The container to get values from
      */
-    template <typename Container, cpp_enable_iff(!is_complex_t<Container> && std::is_convertible<typename Container::value_type, value_type>::value && !is_etl_expr<Container>)>
-    explicit fast_matrix_impl(const Container& container): base_type()  {
+    template <typename Container,
+              cpp_enable_iff(!is_complex_t<Container> && std::is_convertible<typename Container::value_type, value_type>::value && !is_etl_expr<Container>)>
+    explicit fast_matrix_impl(const Container& container) : base_type() {
         validate_assign(*this, container);
         std::copy(container.begin(), container.end(), begin());
     }
@@ -141,7 +141,7 @@ public:
             this->_gpu = rhs._gpu;
 
             // If necessary, perform the actual copy to CPU
-            if(this->is_cpu_up_to_date()){
+            if (this->is_cpu_up_to_date()) {
                 _data = rhs._data;
             }
 
@@ -164,7 +164,7 @@ public:
             this->_gpu = std::move(rhs._gpu);
 
             // If necessary, perform the actual copy to CPU
-            if(this->is_cpu_up_to_date()){
+            if (this->is_cpu_up_to_date()) {
                 _data = std::move(rhs._data);
             }
         }
@@ -194,7 +194,9 @@ public:
      * \param container The STL container to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename Container, cpp_enable_iff(!std::is_same<Container, value_type>::value && std::is_convertible<typename Container::value_type, value_type>::value && !is_etl_expr<Container>)>
+    template <typename Container,
+              cpp_enable_iff(!std::is_same<Container, value_type>::value && std::is_convertible<typename Container::value_type, value_type>::value
+                             && !is_etl_expr<Container>)>
     fast_matrix_impl& operator=(const Container& container) noexcept {
         validate_assign(*this, container);
         std::copy(container.begin(), container.end(), begin());
@@ -210,7 +212,8 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_iff(is_etl_expr<E> && std::is_convertible<value_t<E>, value_type>::value && !std::is_same<std::decay_t<E>, this_type>::value)>
+    template <typename E,
+              cpp_enable_iff(is_etl_expr<E>&& std::is_convertible<value_t<E>, value_type>::value && !std::is_same<std::decay_t<E>, this_type>::value)>
     fast_matrix_impl& operator=(E&& e) {
         validate_assign(*this, e);
 
@@ -253,7 +256,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    auto& gpu_compute_hint(Y& y){
+    auto& gpu_compute_hint(Y& y) {
         cpp_unused(y);
         this->ensure_gpu_up_to_date();
         return *this;
@@ -342,8 +345,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -351,8 +354,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -360,8 +363,8 @@ public:
      * \brief Subtract from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -369,8 +372,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -378,8 +381,8 @@ public:
      * \brief Divide to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -387,8 +390,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 

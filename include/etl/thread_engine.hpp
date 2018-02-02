@@ -18,7 +18,7 @@ namespace etl {
  * This should only be used by ETL internals such as the evaluator
  * and the engine_dispatch functions.
  */
-template<typename Pool>
+template <typename Pool>
 struct conf_thread_engine {
     /*!
      * \brief Acquire the thread engine.
@@ -27,7 +27,7 @@ struct conf_thread_engine {
      * scheduled. It is mostly to ensure that selection is done
      * correctly and that the thread engine is used correclty.
      */
-    static void acquire(){
+    static void acquire() {
         cpp_assert(etl::parallel_support, "thread_engine can only be used if paralle support is enabled");
         cpp_assert(!local_context().serial, "thread_engine cannot be used in serial context");
         cpp_assert(etl::threads > 1, "thread_engine cannot be used with less than 2");
@@ -47,7 +47,7 @@ struct conf_thread_engine {
     /*!
      * \brief Wait for all the scheduled threads to finish their task
      */
-    static void wait(){
+    static void wait() {
         get_pool().wait();
     }
 
@@ -56,7 +56,7 @@ private:
      * \brief Returns a reference to the thread pool
      * \return The unique thread pool.
      */
-    static Pool& get_pool(){
+    static Pool& get_pool() {
         static Pool pool(etl::threads);
         return pool;
     }
@@ -80,7 +80,7 @@ struct thread_engine {
      * scheduled. It is mostly to ensure that selection is done
      * correctly and that the thread engine is used correclty.
      */
-    static void acquire(){
+    static void acquire() {
         cpp_unreachable("thread_engine can only be used if paralle support is enabled");
     }
 
@@ -97,7 +97,7 @@ struct thread_engine {
     /*!
      * \brief Wait for all the scheduled threads to finish their task
      */
-    static void wait(){
+    static void wait() {
         cpp_unreachable("thread_engine can only be used if paralle support is enabled");
     }
 };

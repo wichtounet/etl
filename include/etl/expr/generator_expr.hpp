@@ -12,7 +12,7 @@
  * A generator expression is an expression that yields any number of values, for instance random values. The indexes
  * are not taken into account, but rather the sequence in which the functions are called. This is mostly useful for
  * initializing matrices / vectors.
-*/
+ */
 
 #pragma once
 
@@ -36,17 +36,16 @@ public:
      * \param args The input arguments of the generator
      */
     template <typename... Args>
-    explicit generator_expr(Args&&... args)
-            : generator(std::forward<Args>(args)...) {}
+    explicit generator_expr(Args&&... args) : generator(std::forward<Args>(args)...) {}
 
-    generator_expr(const generator_expr& e) = default;
+    generator_expr(const generator_expr& e)     = default;
     generator_expr(generator_expr&& e) noexcept = default;
 
     /*!
      * \brief Copy constructor for non-const argument. This simply forwards to the
      * regular copy constructor to avoid the forwarding constructor to be used.
      */
-    generator_expr(generator_expr& e) : generator_expr(const_cast<const generator_expr&>(e)){
+    generator_expr(generator_expr& e) : generator_expr(const_cast<const generator_expr&>(e)) {
         // Nothing else to init
     }
 
@@ -81,7 +80,7 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    template<typename Y>
+    template <typename Y>
     decltype(auto) gpu_compute_hint(Y& y) const {
         return generator.gpu_compute_hint(y);
     }
@@ -90,7 +89,7 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    template<typename Y>
+    template <typename Y>
     decltype(auto) gpu_compute(Y& y) const {
         return generator.gpu_compute(y);
     }
@@ -127,8 +126,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -136,8 +135,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -145,8 +144,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -154,8 +153,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -163,8 +162,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -172,8 +171,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -183,7 +182,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
+    template <typename V>
     void visit(V&& visitor) const {
         cpp_unused(visitor);
     }

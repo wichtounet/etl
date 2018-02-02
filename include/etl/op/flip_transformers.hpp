@@ -34,7 +34,7 @@ public:
      * \param expr The sub expression
      */
     explicit one_if_max_sub_transformer(sub_type expr) : sub(expr), max_indices(etl::dim<0>(expr)) {
-        for(size_t i = 0; i < etl::dim<0>(expr); ++i){
+        for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
             max_indices[i] = max_index(sub(i));
         }
     }
@@ -88,7 +88,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
+    template <typename V>
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
     }
@@ -141,8 +141,7 @@ public:
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit hflip_transformer(sub_type expr)
-            : sub(expr) {}
+    explicit hflip_transformer(sub_type expr) : sub(expr) {}
 
     static constexpr bool matrix = is_2d<sub_type>; ///< INdicates if the sub type is a matrix or not
 
@@ -212,7 +211,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
+    template <typename V>
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
     }
@@ -265,8 +264,7 @@ public:
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit vflip_transformer(sub_type expr)
-            : sub(expr) {}
+    explicit vflip_transformer(sub_type expr) : sub(expr) {}
 
     static constexpr bool matrix = is_2d<sub_type>; ///< Indicates if the sub type is a 2D matrix or not
 
@@ -336,7 +334,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
+    template <typename V>
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
     }
@@ -389,8 +387,7 @@ public:
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit fflip_transformer(sub_type expr)
-            : sub(expr) {}
+    explicit fflip_transformer(sub_type expr) : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -454,7 +451,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
+    template <typename V>
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
     }
@@ -492,13 +489,13 @@ public:
  * \brief Specialization for forwarding everything to the sub expression
  */
 template <typename T>
-struct etl_traits<T, std::enable_if_t<
-                            cpp::is_specialization_of_v<etl::hflip_transformer, std::decay_t<T>>
-                         || cpp::is_specialization_of_v<etl::vflip_transformer, std::decay_t<T>>
-                         || cpp::is_specialization_of_v<etl::fflip_transformer, std::decay_t<T>>
-                         || cpp::is_specialization_of_v<etl::one_if_max_sub_transformer, std::decay_t<T>>
-                         >>
-                         {
+struct etl_traits<
+    T,
+    std::enable_if_t<
+        cpp::is_specialization_of_v<
+            etl::hflip_transformer,
+            std::decay_t<
+                T>> || cpp::is_specialization_of_v<etl::vflip_transformer, std::decay_t<T>> || cpp::is_specialization_of_v<etl::fflip_transformer, std::decay_t<T>> || cpp::is_specialization_of_v<etl::one_if_max_sub_transformer, std::decay_t<T>>>> {
     using expr_t     = T;                                  ///< The expression type
     using sub_expr_t = std::decay_t<typename T::sub_type>; ///< The sub expression type
     using value_type = value_t<sub_expr_t>;                ///< The value type

@@ -98,7 +98,7 @@ value_t<A> asum(const A& /*a*/) {
     return 0.0;
 }
 
-//COVERAGE_EXCLUDE_END
+    //COVERAGE_EXCLUDE_END
 
 #endif
 

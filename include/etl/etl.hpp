@@ -37,7 +37,7 @@
 #include "etl/util/counters.hpp"
 #include "etl/util/variadic.hpp"
 #include "etl/restrict.hpp"
-#include "etl/eval_visitors.hpp"  //Evaluation visitors
+#include "etl/eval_visitors.hpp" //Evaluation visitors
 
 //Forward declarations
 #include "etl/value_fwd.hpp"

@@ -46,13 +46,13 @@ using avx_simd_double = simd_pack<vector_mode_t::AVX, double, __m256d>;
 /*!
  * \brief AVX SIMD complex float type
  */
-template<typename T>
+template <typename T>
 using avx_simd_complex_float = simd_pack<vector_mode_t::AVX, T, __m256>;
 
 /*!
  * \brief AVX SIMD complex double type
  */
-template<typename T>
+template <typename T>
 using avx_simd_complex_double = simd_pack<vector_mode_t::AVX, T, __m256d>;
 
 /*!
@@ -80,9 +80,9 @@ using avx_simd_long = simd_pack<vector_mode_t::AVX, int64_t, __m256i>;
  */
 template <typename T>
 struct avx_intrinsic_traits {
-    static constexpr bool vectorizable     = false;      ///< Boolean flag indicating if the type is vectorizable or not
-    static constexpr size_t size      = 1;          ///< Numbers of elements done at once
-    static constexpr size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
+    static constexpr bool vectorizable = false;      ///< Boolean flag indicating if the type is vectorizable or not
+    static constexpr size_t size       = 1;          ///< Numbers of elements done at once
+    static constexpr size_t alignment  = alignof(T); ///< Necessary number of bytes of alignment for this type
 
     using intrinsic_type = T; ///< The vector type
 };
@@ -92,9 +92,9 @@ struct avx_intrinsic_traits {
  */
 template <>
 struct avx_intrinsic_traits<float> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 8; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 8;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 32;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_float; ///< The vector type
 };
@@ -104,9 +104,9 @@ struct avx_intrinsic_traits<float> {
  */
 template <>
 struct avx_intrinsic_traits<double> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 4; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 4;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 32;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_double; ///< The vector type
 };
@@ -116,9 +116,9 @@ struct avx_intrinsic_traits<double> {
  */
 template <>
 struct avx_intrinsic_traits<std::complex<float>> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 4; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 4;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 32;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_complex_float<std::complex<float>>; ///< The vector type
 };
@@ -128,9 +128,9 @@ struct avx_intrinsic_traits<std::complex<float>> {
  */
 template <>
 struct avx_intrinsic_traits<std::complex<double>> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 2; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 2;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 32;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_complex_double<std::complex<double>>; ///< The vector type
 };
@@ -140,9 +140,9 @@ struct avx_intrinsic_traits<std::complex<double>> {
  */
 template <>
 struct avx_intrinsic_traits<etl::complex<float>> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 4; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 4;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 32;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_complex_float<etl::complex<float>>; ///< The vector type
 };
@@ -152,9 +152,9 @@ struct avx_intrinsic_traits<etl::complex<float>> {
  */
 template <>
 struct avx_intrinsic_traits<etl::complex<double>> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 2; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 2;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 32;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_complex_double<etl::complex<double>>; ///< The vector type
 };
@@ -164,9 +164,9 @@ struct avx_intrinsic_traits<etl::complex<double>> {
  */
 template <>
 struct avx_intrinsic_traits<int8_t> {
-    static constexpr bool vectorizable     = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 32;            ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 32;           ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 32;           ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_byte; ///< The vector type
 };
@@ -176,9 +176,9 @@ struct avx_intrinsic_traits<int8_t> {
  */
 template <>
 struct avx_intrinsic_traits<int16_t> {
-    static constexpr bool vectorizable     = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 16;            ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 16;           ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 32;           ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_short; ///< The vector type
 };
@@ -188,9 +188,9 @@ struct avx_intrinsic_traits<int16_t> {
  */
 template <>
 struct avx_intrinsic_traits<int32_t> {
-    static constexpr bool vectorizable     = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 8;            ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 8;            ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 32;           ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_int; ///< The vector type
 };
@@ -200,9 +200,9 @@ struct avx_intrinsic_traits<int32_t> {
  */
 template <>
 struct avx_intrinsic_traits<int64_t> {
-    static constexpr bool vectorizable     = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 4;            ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 4;            ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 32;           ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_long; ///< The vector type
 };
@@ -233,8 +233,7 @@ struct avx_vec {
         union test {
             __m256d vec; // a data field, maybe a register, maybe not
             double array[4];
-            test(__m256d vec)
-                    : vec(vec) {}
+            test(__m256d vec) : vec(vec) {}
         };
 
         test u_value = value;
@@ -249,13 +248,12 @@ struct avx_vec {
         union test {
             __m256 vec; // a data field, maybe a register, maybe not
             float array[8];
-            test(__m256 vec)
-                    : vec(vec) {}
+            test(__m256 vec) : vec(vec) {}
         };
 
         test u_value = value;
-        std::cout << "[" << u_value.array[0] << "," << u_value.array[1] << "," << u_value.array[2] << "," << u_value.array[3]
-                  << "," << u_value.array[4] << "," << u_value.array[5] << "," << u_value.array[6] << "," << u_value.array[7] << "]" << std::endl;
+        std::cout << "[" << u_value.array[0] << "," << u_value.array[1] << "," << u_value.array[2] << "," << u_value.array[3] << "," << u_value.array[4] << ","
+                  << u_value.array[5] << "," << u_value.array[6] << "," << u_value.array[7] << "]" << std::endl;
     }
 
 #else
@@ -527,8 +525,9 @@ struct avx_vec {
     /*!
      * \brief Return a packed vector of zeroes of the given type
      */
-    template<typename T>
-    ETL_TMP_INLINE(typename avx_intrinsic_traits<T>::intrinsic_type) zero();
+    template <typename T>
+    ETL_TMP_INLINE(typename avx_intrinsic_traits<T>::intrinsic_type)
+    zero();
 
 #ifdef __AVX2__
     /*!
@@ -754,17 +753,17 @@ struct avx_vec {
      * \brief Round up each values of the vector and return them
      */
     ETL_STATIC_INLINE(avx_simd_float) round_up(avx_simd_float x) {
-        return _mm256_round_ps(x.value, (_MM_FROUND_TO_POS_INF |_MM_FROUND_NO_EXC));
+        return _mm256_round_ps(x.value, (_MM_FROUND_TO_POS_INF | _MM_FROUND_NO_EXC));
     }
 
     /*!
      * \brief Round up each values of the vector and return them
      */
     ETL_STATIC_INLINE(avx_simd_double) round_up(avx_simd_double x) {
-        return _mm256_round_pd(x.value, (_MM_FROUND_TO_POS_INF |_MM_FROUND_NO_EXC));
+        return _mm256_round_pd(x.value, (_MM_FROUND_TO_POS_INF | _MM_FROUND_NO_EXC));
     }
 
-    // Addition
+        // Addition
 
 #ifdef __AVX2__
     /*!
@@ -813,20 +812,22 @@ struct avx_vec {
     /*!
      * \brief Add the two given values and return the result.
      */
-    template<typename T>
-    ETL_STATIC_INLINE(avx_simd_complex_float<T>) add(avx_simd_complex_float<T> lhs, avx_simd_complex_float<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(avx_simd_complex_float<T>)
+    add(avx_simd_complex_float<T> lhs, avx_simd_complex_float<T> rhs) {
         return _mm256_add_ps(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Add the two given values and return the result.
      */
-    template<typename T>
-    ETL_STATIC_INLINE(avx_simd_complex_double<T>) add(avx_simd_complex_double<T> lhs, avx_simd_complex_double<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(avx_simd_complex_double<T>)
+    add(avx_simd_complex_double<T> lhs, avx_simd_complex_double<T> rhs) {
         return _mm256_add_pd(lhs.value, rhs.value);
     }
 
-    // Subtraction
+        // Subtraction
 
 #ifdef __AVX2__
     /*!
@@ -875,16 +876,18 @@ struct avx_vec {
     /*!
      * \brief Subtract the two given values and return the result.
      */
-    template<typename T>
-    ETL_STATIC_INLINE(avx_simd_complex_float<T>) sub(avx_simd_complex_float<T> lhs, avx_simd_complex_float<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(avx_simd_complex_float<T>)
+    sub(avx_simd_complex_float<T> lhs, avx_simd_complex_float<T> rhs) {
         return _mm256_sub_ps(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Subtract the two given values and return the result.
      */
-    template<typename T>
-    ETL_STATIC_INLINE(avx_simd_complex_double<T>) sub(avx_simd_complex_double<T> lhs, avx_simd_complex_double<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(avx_simd_complex_double<T>)
+    sub(avx_simd_complex_double<T> lhs, avx_simd_complex_double<T> rhs) {
         return _mm256_sub_pd(lhs.value, rhs.value);
     }
 
@@ -926,7 +929,7 @@ struct avx_vec {
         return _mm256_xor_pd(x.value, _mm256_set1_pd(-0.));
     }
 
-    // Multiplication
+        // Multiplication
 
 #ifdef __AVX2__
     /*!
@@ -986,8 +989,9 @@ struct avx_vec {
     /*!
      * \copydoc avx_vec::mul
      */
-    template<typename T>
-    ETL_STATIC_INLINE(avx_simd_complex_float<T>) mul(avx_simd_complex_float<T> lhs, avx_simd_complex_float<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(avx_simd_complex_float<T>)
+    mul(avx_simd_complex_float<T> lhs, avx_simd_complex_float<T> rhs) {
         //lhs = [x1.real, x1.img, x2.real, x2.img, ...]
         //rhs = [y1.real, y1.img, y2.real, y2.img, ...]
 
@@ -1003,7 +1007,7 @@ struct avx_vec {
         //ymm4 = ymm2 * ymm3
         __m256 ymm4 = _mm256_mul_ps(ymm2, ymm3);
 
-         //result = [(lhs * ymm1) -+ ymm4];
+        //result = [(lhs * ymm1) -+ ymm4];
 
 #ifdef __FMA__
         return _mm256_fmaddsub_ps(lhs.value, ymm1, ymm4);
@@ -1018,8 +1022,9 @@ struct avx_vec {
     /*!
      * \copydoc avx_vec::mul
      */
-    template<typename T>
-    ETL_STATIC_INLINE(avx_simd_complex_double<T>) mul(avx_simd_complex_double<T> lhs, avx_simd_complex_double<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(avx_simd_complex_double<T>)
+    mul(avx_simd_complex_double<T> lhs, avx_simd_complex_double<T> rhs) {
         //lhs = [x1.real, x1.img, x2.real, x2.img]
         //rhs = [y1.real, y1.img, y2.real, y2.img]
 
@@ -1047,34 +1052,34 @@ struct avx_vec {
 #endif
     }
 
-    // Fused Multiplay Add (FMA)
+        // Fused Multiplay Add (FMA)
 
 #ifdef __AVX2__
     /*!
      * \brief Fused-Multiply Add of the three given vector of bytes
      */
-    ETL_STATIC_INLINE(avx_simd_byte) fmadd(avx_simd_byte a, avx_simd_byte b, avx_simd_byte c){
+    ETL_STATIC_INLINE(avx_simd_byte) fmadd(avx_simd_byte a, avx_simd_byte b, avx_simd_byte c) {
         return add(mul(a, b), c);
     }
 
     /*!
      * \brief Fused-Multiply Add of the three given vector of short
      */
-    ETL_STATIC_INLINE(avx_simd_short) fmadd(avx_simd_short a, avx_simd_short b, avx_simd_short c){
+    ETL_STATIC_INLINE(avx_simd_short) fmadd(avx_simd_short a, avx_simd_short b, avx_simd_short c) {
         return add(mul(a, b), c);
     }
 
     /*!
      * \brief Fused-Multiply Add of the three given vector of int
      */
-    ETL_STATIC_INLINE(avx_simd_int) fmadd(avx_simd_int a, avx_simd_int b, avx_simd_int c){
+    ETL_STATIC_INLINE(avx_simd_int) fmadd(avx_simd_int a, avx_simd_int b, avx_simd_int c) {
         return add(mul(a, b), c);
     }
 
     /*!
      * \brief Fused-Multiply Add of the three given vector of longs
      */
-    ETL_STATIC_INLINE(avx_simd_long) fmadd(avx_simd_long a, avx_simd_long b, avx_simd_long c){
+    ETL_STATIC_INLINE(avx_simd_long) fmadd(avx_simd_long a, avx_simd_long b, avx_simd_long c) {
         return add(mul(a, b), c);
     }
 #endif
@@ -1104,16 +1109,18 @@ struct avx_vec {
     /*!
      * \copydoc avx_vec::fmadd
      */
-    template<typename T>
-    ETL_STATIC_INLINE(avx_simd_complex_float<T>) fmadd(avx_simd_complex_float<T> a, avx_simd_complex_float<T> b, avx_simd_complex_float<T> c) {
+    template <typename T>
+    ETL_STATIC_INLINE(avx_simd_complex_float<T>)
+    fmadd(avx_simd_complex_float<T> a, avx_simd_complex_float<T> b, avx_simd_complex_float<T> c) {
         return add(mul(a, b), c);
     }
 
     /*!
      * \copydoc avx_vec::fmadd
      */
-    template<typename T>
-    ETL_STATIC_INLINE(avx_simd_complex_double<T>) fmadd(avx_simd_complex_double<T> a, avx_simd_complex_double<T> b, avx_simd_complex_double<T> c) {
+    template <typename T>
+    ETL_STATIC_INLINE(avx_simd_complex_double<T>)
+    fmadd(avx_simd_complex_double<T> a, avx_simd_complex_double<T> b, avx_simd_complex_double<T> c) {
         return add(mul(a, b), c);
     }
 
@@ -1136,8 +1143,9 @@ struct avx_vec {
     /*!
      * \copydoc avx_vec::div
      */
-    template<typename T>
-    ETL_STATIC_INLINE(avx_simd_complex_float<T>) div(avx_simd_complex_float<T> lhs, avx_simd_complex_float<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(avx_simd_complex_float<T>)
+    div(avx_simd_complex_float<T> lhs, avx_simd_complex_float<T> rhs) {
         //lhs = [x1.real, x1.img, x2.real, x2.img ...]
         //rhs = [y1.real, y1.img, y2.real, y2.img ...]
 
@@ -1153,7 +1161,7 @@ struct avx_vec {
         //ymm4 = [x.img * y.img, x.real * y.img]
         __m256 ymm4 = _mm256_mul_ps(ymm2, ymm1);
 
-    //ymm5 = subadd((lhs * ymm0), ymm4)
+        //ymm5 = subadd((lhs * ymm0), ymm4)
 
 #ifdef __FMA__
         __m256 ymm5 = _mm256_fmsubadd_ps(lhs.value, ymm0, ymm4);
@@ -1182,8 +1190,9 @@ struct avx_vec {
     /*!
      * \copydoc avx_vec::div
      */
-    template<typename T>
-    ETL_STATIC_INLINE(avx_simd_complex_double<T>) div(avx_simd_complex_double<T> lhs, avx_simd_complex_double<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(avx_simd_complex_double<T>)
+    div(avx_simd_complex_double<T> lhs, avx_simd_complex_double<T> rhs) {
         //lhs = [x1.real, x1.img, x2.real, x2.img]
         //rhs = [y1.real, y1.img, y2.real, y2.img]
 
@@ -1212,7 +1221,7 @@ struct avx_vec {
         //ymm3 = [y.imag^2, y.imag^2]
         __m256d ymm3 = _mm256_mul_pd(ymm1, ymm1);
 
-    //ymm0 = (ymm0 * ymm0 + ymm3)
+        //ymm0 = (ymm0 * ymm0 + ymm3)
 
 #ifdef __FMA__
         ymm0 = _mm256_fmadd_pd(ymm0, ymm0, ymm3);
@@ -1367,10 +1376,8 @@ struct avx_vec {
      * \return the horizontal sum of the vector
      */
     ETL_STATIC_INLINE(int8_t) hadd(avx_simd_byte in) {
-        return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7]
-             + in[8] + in[9] + in[10] + in[11] + in[12] + in[13] + in[14] + in[15]
-             + in[16] + in[17] + in[18] + in[19] + in[20] + in[21] + in[22] + in[23]
-             + in[24] + in[25] + in[26] + in[27] + in[28] + in[29] + in[30] + in[31];
+        return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7] + in[8] + in[9] + in[10] + in[11] + in[12] + in[13] + in[14] + in[15] + in[16]
+               + in[17] + in[18] + in[19] + in[20] + in[21] + in[22] + in[23] + in[24] + in[25] + in[26] + in[27] + in[28] + in[29] + in[30] + in[31];
     }
 
     /*!
@@ -1379,8 +1386,7 @@ struct avx_vec {
      * \return the horizontal sum of the vector
      */
     ETL_STATIC_INLINE(int16_t) hadd(avx_simd_short in) {
-        return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7]
-             + in[8] + in[9] + in[10] + in[11] + in[12] + in[13] + in[14] + in[15];
+        return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7] + in[8] + in[9] + in[10] + in[11] + in[12] + in[13] + in[14] + in[15];
     }
 
     /*!
@@ -1406,8 +1412,9 @@ struct avx_vec {
      * \param in The input vector type
      * \return the horizontal sum of the vector
      */
-    template<typename T>
-    ETL_STATIC_INLINE(T) hadd(avx_simd_complex_float<T> in) {
+    template <typename T>
+    ETL_STATIC_INLINE(T)
+    hadd(avx_simd_complex_float<T> in) {
         return in[0] + in[1] + in[2] + in[3];
     }
 
@@ -1416,8 +1423,9 @@ struct avx_vec {
      * \param in The input vector type
      * \return the horizontal sum of the vector
      */
-    template<typename T>
-    ETL_STATIC_INLINE(T) hadd(avx_simd_complex_double<T> in) {
+    template <typename T>
+    ETL_STATIC_INLINE(T)
+    hadd(avx_simd_complex_double<T> in) {
         return in[0] + in[1];
     }
 };
@@ -1426,32 +1434,36 @@ struct avx_vec {
 /*!
  * \copydoc avx_vec::zero
  */
-template<>
-ETL_OUT_INLINE(avx_simd_byte) avx_vec::zero<int8_t>() {
+template <>
+ETL_OUT_INLINE(avx_simd_byte)
+avx_vec::zero<int8_t>() {
     return _mm256_setzero_si256();
 }
 
 /*!
  * \copydoc avx_vec::zero
  */
-template<>
-ETL_OUT_INLINE(avx_simd_short) avx_vec::zero<int16_t>() {
+template <>
+ETL_OUT_INLINE(avx_simd_short)
+avx_vec::zero<int16_t>() {
     return _mm256_setzero_si256();
 }
 
 /*!
  * \copydoc avx_vec::zero
  */
-template<>
-ETL_OUT_INLINE(avx_simd_int) avx_vec::zero<int32_t>() {
+template <>
+ETL_OUT_INLINE(avx_simd_int)
+avx_vec::zero<int32_t>() {
     return _mm256_setzero_si256();
 }
 
 /*!
  * \copydoc avx_vec::zero
  */
-template<>
-ETL_OUT_INLINE(avx_simd_long) avx_vec::zero<int64_t>() {
+template <>
+ETL_OUT_INLINE(avx_simd_long)
+avx_vec::zero<int64_t>() {
     return _mm256_setzero_si256();
 }
 #endif
@@ -1459,48 +1471,54 @@ ETL_OUT_INLINE(avx_simd_long) avx_vec::zero<int64_t>() {
 /*!
  * \copydoc avx_vec::zero
  */
-template<>
-ETL_OUT_INLINE(avx_simd_float) avx_vec::zero<float>() {
+template <>
+ETL_OUT_INLINE(avx_simd_float)
+avx_vec::zero<float>() {
     return _mm256_setzero_ps();
 }
 
 /*!
  * \copydoc avx_vec::zero
  */
-template<>
-ETL_OUT_INLINE(avx_simd_double) avx_vec::zero<double>() {
+template <>
+ETL_OUT_INLINE(avx_simd_double)
+avx_vec::zero<double>() {
     return _mm256_setzero_pd();
 }
 
 /*!
  * \copydoc avx_vec::zero
  */
-template<>
-ETL_OUT_INLINE(avx_simd_complex_float<etl::complex<float>>) avx_vec::zero<etl::complex<float>>() {
+template <>
+ETL_OUT_INLINE(avx_simd_complex_float<etl::complex<float>>)
+avx_vec::zero<etl::complex<float>>() {
     return _mm256_setzero_ps();
 }
 
 /*!
  * \copydoc avx_vec::zero
  */
-template<>
-ETL_OUT_INLINE(avx_simd_complex_double<etl::complex<double>>) avx_vec::zero<etl::complex<double>>() {
+template <>
+ETL_OUT_INLINE(avx_simd_complex_double<etl::complex<double>>)
+avx_vec::zero<etl::complex<double>>() {
     return _mm256_setzero_pd();
 }
 
 /*!
  * \copydoc avx_vec::zero
  */
-template<>
-ETL_OUT_INLINE(avx_simd_complex_float<std::complex<float>>) avx_vec::zero<std::complex<float>>() {
+template <>
+ETL_OUT_INLINE(avx_simd_complex_float<std::complex<float>>)
+avx_vec::zero<std::complex<float>>() {
     return _mm256_setzero_ps();
 }
 
 /*!
  * \copydoc avx_vec::zero
  */
-template<>
-ETL_OUT_INLINE(avx_simd_complex_double<std::complex<double>>) avx_vec::zero<std::complex<double>>() {
+template <>
+ETL_OUT_INLINE(avx_simd_complex_double<std::complex<double>>)
+avx_vec::zero<std::complex<double>>() {
     return _mm256_setzero_pd();
 }
 

@@ -23,7 +23,7 @@ namespace etl::impl {
  * \param in The input pointer
  * \return The casted pointer
  */
-inline float* safe_cast(float* in){
+inline float* safe_cast(float* in) {
     return in;
 }
 
@@ -32,7 +32,7 @@ inline float* safe_cast(float* in){
  * \param in The input pointer
  * \return The casted pointer
  */
-inline double* safe_cast(double* in){
+inline double* safe_cast(double* in) {
     return in;
 }
 
@@ -41,7 +41,7 @@ inline double* safe_cast(double* in){
  * \param in The input pointer
  * \return The casted pointer
  */
-inline std::complex<float>* safe_cast(std::complex<float>* in){
+inline std::complex<float>* safe_cast(std::complex<float>* in) {
     return in;
 }
 
@@ -50,7 +50,7 @@ inline std::complex<float>* safe_cast(std::complex<float>* in){
  * \param in The input pointer
  * \return The casted pointer
  */
-inline std::complex<double>* safe_cast(std::complex<double>* in){
+inline std::complex<double>* safe_cast(std::complex<double>* in) {
     return in;
 }
 
@@ -59,7 +59,7 @@ inline std::complex<double>* safe_cast(std::complex<double>* in){
  * \param in The input pointer
  * \return The casted pointer
  */
-inline std::complex<float>* safe_cast(etl::complex<float>* in){
+inline std::complex<float>* safe_cast(etl::complex<float>* in) {
     return reinterpret_cast<std::complex<float>*>(in);
 }
 
@@ -68,7 +68,7 @@ inline std::complex<float>* safe_cast(etl::complex<float>* in){
  * \param in The input pointer
  * \return The casted pointer
  */
-inline std::complex<double>* safe_cast(etl::complex<double>* in){
+inline std::complex<double>* safe_cast(etl::complex<double>* in) {
     return reinterpret_cast<std::complex<double>*>(in);
 }
 
@@ -77,7 +77,7 @@ inline std::complex<double>* safe_cast(etl::complex<double>* in){
  * \param in The input pointer
  * \return The casted pointer
  */
-inline const float* safe_cast(const float* in){
+inline const float* safe_cast(const float* in) {
     return in;
 }
 
@@ -86,7 +86,7 @@ inline const float* safe_cast(const float* in){
  * \param in The input pointer
  * \return The casted pointer
  */
-inline const double* safe_cast(const double* in){
+inline const double* safe_cast(const double* in) {
     return in;
 }
 
@@ -95,7 +95,7 @@ inline const double* safe_cast(const double* in){
  * \param in The input pointer
  * \return The casted pointer
  */
-inline const std::complex<float>* safe_cast(const std::complex<float>* in){
+inline const std::complex<float>* safe_cast(const std::complex<float>* in) {
     return in;
 }
 
@@ -104,7 +104,7 @@ inline const std::complex<float>* safe_cast(const std::complex<float>* in){
  * \param in The input pointer
  * \return The casted pointer
  */
-inline const std::complex<double>* safe_cast(const std::complex<double>* in){
+inline const std::complex<double>* safe_cast(const std::complex<double>* in) {
     return in;
 }
 
@@ -113,7 +113,7 @@ inline const std::complex<double>* safe_cast(const std::complex<double>* in){
  * \param in The input pointer
  * \return The casted pointer
  */
-inline const std::complex<float>* safe_cast(const etl::complex<float>* in){
+inline const std::complex<float>* safe_cast(const etl::complex<float>* in) {
     return reinterpret_cast<const std::complex<float>*>(in);
 }
 
@@ -122,7 +122,7 @@ inline const std::complex<float>* safe_cast(const etl::complex<float>* in){
  * \param in The input pointer
  * \return The casted pointer
  */
-inline const std::complex<double>* safe_cast(const etl::complex<double>* in){
+inline const std::complex<double>* safe_cast(const etl::complex<double>* in) {
     return reinterpret_cast<const std::complex<double>*>(in);
 }
 

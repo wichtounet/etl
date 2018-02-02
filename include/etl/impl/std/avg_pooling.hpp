@@ -34,7 +34,7 @@ struct avg_pool_2d {
 
         for (size_t jj = 0; jj < c1; ++jj) {
             for (size_t kk = 0; kk < c2; ++kk) {
-                if(s_j + jj >= p1 && (s_j + jj) - p1 < etl::dim<0>(sub) && s_k + kk >= p2 && (s_k + kk) - p2 < etl::dim<1>(sub)){
+                if (s_j + jj >= p1 && (s_j + jj) - p1 < etl::dim<0>(sub) && s_k + kk >= p2 && (s_k + kk) - p2 < etl::dim<1>(sub)) {
                     avg += sub(s_j + jj - p1, s_k + kk - p2);
                 }
             }
@@ -127,7 +127,7 @@ struct avg_pool_2d {
         const size_t o1 = (etl::dim<0>(sub) - C1 + 2 * P1) / S1 + 1;
         const size_t o2 = (etl::dim<1>(sub) - C2 + 2 * P2) / S2 + 1;
 
-        if(P1 || P2){
+        if (P1 || P2) {
             for (size_t i = 0; i < P1; ++i) {
                 for (size_t j = 0; j < o2; ++j) {
                     m(i, j) = pool_block_border(sub, i, j, C1, C2, S1, S2, P1, P2);
@@ -244,7 +244,7 @@ struct avg_pool_2d {
         const size_t o1 = (etl::dim<0>(sub) - c1 + 2 * p1) / s1 + 1;
         const size_t o2 = (etl::dim<1>(sub) - c2 + 2 * p2) / s2 + 1;
 
-        if(p1 || p2){
+        if (p1 || p2) {
             for (size_t i = 0; i < p1; ++i) {
                 for (size_t j = 0; j < o2; ++j) {
                     m(i, j) = pool_block_border(sub, i, j, c1, c2, s1, s2, p1, p2);
@@ -443,7 +443,7 @@ struct avg_pool_2d {
      */
     template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_iff(!is_2d<A> && !is_3d<A> && !is_4d<A>)>
     static void apply(const A& sub, M&& m) {
-        for(size_t i = 0; i < etl::dim<0>(sub); ++i){
+        for (size_t i = 0; i < etl::dim<0>(sub); ++i) {
             apply<C1, C2, S1, S2, P1, P2>(sub(i), m(i));
         }
     }
@@ -457,7 +457,7 @@ struct avg_pool_2d {
      */
     template <typename A, typename M, cpp_enable_iff(!is_2d<A> && !is_3d<A> && !is_4d<A>)>
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
-        for(size_t i = 0; i < etl::dim<0>(sub); ++i){
+        for (size_t i = 0; i < etl::dim<0>(sub); ++i) {
             apply(sub(i), m(i), c1, c2, s1, s2, p1, p2);
         }
     }
@@ -484,7 +484,8 @@ struct avg_pool_3d {
      * \param p3 The third dimension padding
      */
     template <typename A>
-    static auto pool_block_border(const A& sub, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
+    static auto pool_block_border(
+        const A& sub, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         auto avg = value_t<A>(0);
 
         const auto s_i = i * s1;
@@ -494,7 +495,8 @@ struct avg_pool_3d {
         for (size_t ii = 0; ii < c1; ++ii) {
             for (size_t jj = 0; jj < c2; ++jj) {
                 for (size_t kk = 0; kk < c3; ++kk) {
-                    if(s_i + ii >= p1 && (s_i + ii) - p1 < etl::dim<0>(sub) && s_j + jj >= p2 && (s_j + jj) - p2 < etl::dim<1>(sub) && s_k + kk >= p3 && (s_k + kk) - p3 < etl::dim<2>(sub)){
+                    if (s_i + ii >= p1 && (s_i + ii) - p1 < etl::dim<0>(sub) && s_j + jj >= p2 && (s_j + jj) - p2 < etl::dim<1>(sub) && s_k + kk >= p3
+                        && (s_k + kk) - p3 < etl::dim<2>(sub)) {
                         avg += sub(s_i + ii - p1, s_j + jj - p2, s_k + kk - p3);
                     }
                 }
@@ -514,7 +516,7 @@ struct avg_pool_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A>
+    template <size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A>
     static auto pool_block_3d(const A& sub, size_t i, size_t j, size_t k) {
         const auto s_i = i * S1 - P1;
         const auto s_j = j * S2 - P2;
@@ -543,7 +545,7 @@ struct avg_pool_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, typename A>
+    template <size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, typename A>
     static auto pool_block_4d(const A& sub, size_t n, size_t i, size_t j, size_t k) {
         const auto s_i = i * S1;
         const auto s_j = j * S2;
@@ -570,13 +572,24 @@ struct avg_pool_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A, typename M, cpp_enable_iff(is_3d<A>)>
+    template <size_t C1,
+              size_t C2,
+              size_t C3,
+              size_t S1,
+              size_t S2,
+              size_t S3,
+              size_t P1,
+              size_t P2,
+              size_t P3,
+              typename A,
+              typename M,
+              cpp_enable_iff(is_3d<A>)>
     static void apply(const A& sub, M&& m) {
         const size_t o1 = (etl::dim<0>(sub) - C1 + 2 * P1) / S1 + 1;
         const size_t o2 = (etl::dim<1>(sub) - C2 + 2 * P2) / S2 + 1;
         const size_t o3 = (etl::dim<2>(sub) - C3 + 2 * P3) / S3 + 1;
 
-        if(P1 || P2 || P3){
+        if (P1 || P2 || P3) {
             for (size_t i = 0; i < P1; ++i) {
                 for (size_t j = 0; j < o2; ++j) {
                     for (size_t k = 0; k < o3; ++k) {
@@ -646,7 +659,8 @@ struct avg_pool_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A>
-    static auto pool_block_3d(const A& sub, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
+    static auto pool_block_3d(
+        const A& sub, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         const auto s_i = i * s1 - p1;
         const auto s_j = j * s2 - p2;
         const auto s_k = k * s3 - p3;
@@ -707,7 +721,7 @@ struct avg_pool_3d {
         const size_t o2 = (etl::dim<1>(sub) - c2 + 2 * p2) / s2 + 1;
         const size_t o3 = (etl::dim<2>(sub) - c3 + 2 * p3) / s3 + 1;
 
-        if(p1 || p2 || p3){
+        if (p1 || p2 || p3) {
             for (size_t i = 0; i < p1; ++i) {
                 for (size_t j = 0; j < o2; ++j) {
                     for (size_t k = 0; k < o3; ++k) {
@@ -782,7 +796,18 @@ struct avg_pool_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A, typename M, cpp_enable_iff(is_4d<A>)>
+    template <size_t C1,
+              size_t C2,
+              size_t C3,
+              size_t S1,
+              size_t S2,
+              size_t S3,
+              size_t P1,
+              size_t P2,
+              size_t P3,
+              typename A,
+              typename M,
+              cpp_enable_iff(is_4d<A>)>
     static void apply(const A& sub, M&& m) {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
             if (last - first) {
@@ -855,9 +880,20 @@ struct avg_pool_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A, typename M, cpp_enable_iff(!is_3d<A> && !is_4d<A>)>
+    template <size_t C1,
+              size_t C2,
+              size_t C3,
+              size_t S1,
+              size_t S2,
+              size_t S3,
+              size_t P1,
+              size_t P2,
+              size_t P3,
+              typename A,
+              typename M,
+              cpp_enable_iff(!is_3d<A> && !is_4d<A>)>
     static void apply(const A& sub, M&& m) {
-        for(size_t i = 0; i < etl::dim<0>(sub); ++i){
+        for (size_t i = 0; i < etl::dim<0>(sub); ++i) {
             apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(sub(i), m(i));
         }
     }
@@ -872,7 +908,7 @@ struct avg_pool_3d {
      */
     template <typename A, typename M, cpp_enable_iff(!is_3d<A> && !is_4d<A>)>
     static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
-        for(size_t i = 0; i < etl::dim<0>(sub); ++i){
+        for (size_t i = 0; i < etl::dim<0>(sub); ++i) {
             apply(sub(i), m(i), c1, c2, c3, s1, s2, s3, p1, p2, p3);
         }
     }

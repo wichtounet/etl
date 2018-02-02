@@ -17,8 +17,8 @@ namespace etl {
  */
 template <typename T>
 struct sigmoid_unary_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -27,21 +27,19 @@ struct sigmoid_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable =
-            (V == vector_mode_t::SSE3 && !is_complex_t<T>)
-        ||  (V == vector_mode_t::AVX && !is_complex_t<T>)
-        ||  (intel_compiler && !is_complex_t<T>);
+        (V == vector_mode_t::SSE3 && !is_complex_t<T>) || (V == vector_mode_t::AVX && !is_complex_t<T>) || (intel_compiler && !is_complex_t<T>);
 
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = is_floating<E> && cudnn_enabled;
+    static constexpr bool gpu_computable = is_floating<E>&& cudnn_enabled;
 
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -113,8 +111,8 @@ struct sigmoid_unary_op {
  */
 template <typename T>
 struct fast_sigmoid_unary_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

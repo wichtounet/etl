@@ -159,7 +159,7 @@ constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexcept(ass
     cpp_assert(l < decay_traits<T>::template dim<3>(), "Out of bounds");
 
     return i * decay_traits<T>::template dim<1>() * decay_traits<T>::template dim<2>() * decay_traits<T>::template dim<3>()
-        + j * decay_traits<T>::template dim<2>() * decay_traits<T>::template dim<3>() + k * decay_traits<T>::template dim<3>() + l;
+           + j * decay_traits<T>::template dim<2>() * decay_traits<T>::template dim<3>() + k * decay_traits<T>::template dim<3>() + l;
 }
 
 /*!
@@ -225,9 +225,7 @@ size_t dyn_index(const T& expression, size_t i, size_t j, size_t k) noexcept(ass
     cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
     cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
 
-    return i * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2) +
-           j * decay_traits<T>::dim(expression, 2) +
-           k;
+    return i * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2) + j * decay_traits<T>::dim(expression, 2) + k;
 }
 
 /*!
@@ -248,10 +246,8 @@ size_t dyn_index(const T& expression, size_t i, size_t j, size_t k, size_t l) no
     cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
     cpp_assert(l < decay_traits<T>::dim(expression, 3), "Out of bounds");
 
-    return i * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2) * decay_traits<T>::dim(expression, 3) +
-           j * decay_traits<T>::dim(expression, 2) * decay_traits<T>::dim(expression, 3) +
-           k * decay_traits<T>::dim(expression, 3) +
-           l;
+    return i * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2) * decay_traits<T>::dim(expression, 3)
+           + j * decay_traits<T>::dim(expression, 2) * decay_traits<T>::dim(expression, 3) + k * decay_traits<T>::dim(expression, 3) + l;
 }
 
 /*!
@@ -347,7 +343,7 @@ constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexcept(ass
     cpp_assert(l < decay_traits<T>::template dim<3>(), "Out of bounds");
 
     return i + j * decay_traits<T>::template dim<0>() + k * decay_traits<T>::template dim<0>() * decay_traits<T>::template dim<1>()
-        + l * decay_traits<T>::template dim<0>() * decay_traits<T>::template dim<1>() * decay_traits<T>::template dim<2>();
+           + l * decay_traits<T>::template dim<0>() * decay_traits<T>::template dim<1>() * decay_traits<T>::template dim<2>();
 }
 
 /*!
@@ -434,10 +430,8 @@ size_t dyn_index(const T& expression, size_t i, size_t j, size_t k, size_t l) no
     cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
     cpp_assert(l < decay_traits<T>::dim(expression, 3), "Out of bounds");
 
-    return i +
-           j * decay_traits<T>::dim(expression, 0) +
-           k * decay_traits<T>::dim(expression, 0) * decay_traits<T>::dim(expression, 1) +
-           l * decay_traits<T>::dim(expression, 0) * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2);
+    return i + j * decay_traits<T>::dim(expression, 0) + k * decay_traits<T>::dim(expression, 0) * decay_traits<T>::dim(expression, 1)
+           + l * decay_traits<T>::dim(expression, 0) * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2);
 }
 
 /*!

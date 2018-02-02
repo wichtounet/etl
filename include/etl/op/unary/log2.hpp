@@ -27,25 +27,20 @@ struct log2_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable =
-                (V == vector_mode_t::SSE3 && is_single_precision_t<T>)
-            ||  (V == vector_mode_t::AVX && is_single_precision_t<T>)
-            ||  (intel_compiler && !is_complex_t<T>);
+        (V == vector_mode_t::SSE3 && is_single_precision_t<T>) || (V == vector_mode_t::AVX && is_single_precision_t<T>) || (intel_compiler && !is_complex_t<T>);
 
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_slog2)
-            || (is_double_precision_t<T> && impl::egblas::has_dlog2)
-            || (is_complex_single_t<T> && impl::egblas::has_clog2)
-            || (is_complex_double_t<T> && impl::egblas::has_zlog2);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_slog2) || (is_double_precision_t<T> && impl::egblas::has_dlog2)
+                                           || (is_complex_single_t<T> && impl::egblas::has_clog2) || (is_complex_double_t<T> && impl::egblas::has_zlog2);
 
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -118,7 +113,7 @@ struct log2_unary_op {
  * \copy log2_unary_op
  */
 template <typename TT>
-struct log2_unary_op <std::complex<TT>> {
+struct log2_unary_op<std::complex<TT>> {
     using T = std::complex<TT>; ///< The real type
 
     static constexpr bool linear      = true; ///< Indicates if the operator is linear
@@ -136,11 +131,8 @@ struct log2_unary_op <std::complex<TT>> {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_slog2)
-            || (is_double_precision_t<T> && impl::egblas::has_dlog2)
-            || (is_complex_single_t<T> && impl::egblas::has_clog2)
-            || (is_complex_double_t<T> && impl::egblas::has_zlog2);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_slog2) || (is_double_precision_t<T> && impl::egblas::has_dlog2)
+                                           || (is_complex_single_t<T> && impl::egblas::has_clog2) || (is_complex_double_t<T> && impl::egblas::has_zlog2);
 
     /*!
      * \brief Apply the unary operator on x
@@ -202,7 +194,7 @@ struct log2_unary_op <std::complex<TT>> {
  * \copy log2_unary_op
  */
 template <typename TT>
-struct log2_unary_op <etl::complex<TT>> {
+struct log2_unary_op<etl::complex<TT>> {
     using T = etl::complex<TT>; ///< The real type
 
     static constexpr bool linear      = true; ///< Indicates if the operator is linear
@@ -220,11 +212,8 @@ struct log2_unary_op <etl::complex<TT>> {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_slog2)
-            || (is_double_precision_t<T> && impl::egblas::has_dlog2)
-            || (is_complex_single_t<T> && impl::egblas::has_clog2)
-            || (is_complex_double_t<T> && impl::egblas::has_zlog2);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_slog2) || (is_double_precision_t<T> && impl::egblas::has_dlog2)
+                                           || (is_complex_single_t<T> && impl::egblas::has_clog2) || (is_complex_double_t<T> && impl::egblas::has_zlog2);
 
     /*!
      * \brief Apply the unary operator on x

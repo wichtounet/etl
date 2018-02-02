@@ -45,13 +45,13 @@ inline const char* cublas_str(cublasStatus_t code) {
     }
 }
 
-#define cublas_check(call)                                                                                       \
-    {                                                                                                            \
-        auto status = call;                                                                                      \
-        if (status != CUBLAS_STATUS_SUCCESS) {                                                                   \
+#define cublas_check(call)                                                                                         \
+    {                                                                                                              \
+        auto status = call;                                                                                        \
+        if (status != CUBLAS_STATUS_SUCCESS) {                                                                     \
             std::cerr << "CUDA error: " << etl::impl::cublas::cublas_str(status) << " from " << #call << std::endl \
-                      << "from " << __FILE__ << ":" << __LINE__ << std::endl;                                    \
-        }                                                                                                        \
+                      << "from " << __FILE__ << ":" << __LINE__ << std::endl;                                      \
+        }                                                                                                          \
     }
 
 /*!

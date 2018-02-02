@@ -35,21 +35,9 @@ void outer(const A& a, const B& b, C&& c) {
     c.ensure_cpu_up_to_date();
 
     if constexpr (all_single_precision<A, B, C>) {
-        cblas_sger(
-            CblasRowMajor,
-            etl::dim<0>(a), etl::dim<0>(b),
-            1.0,
-            a.memory_start(), 1,
-            b.memory_start(), 1,
-            c.memory_start(), etl::dim<0>(b));
+        cblas_sger(CblasRowMajor, etl::dim<0>(a), etl::dim<0>(b), 1.0, a.memory_start(), 1, b.memory_start(), 1, c.memory_start(), etl::dim<0>(b));
     } else {
-        cblas_dger(
-            CblasRowMajor,
-            etl::dim<0>(a), etl::dim<0>(b),
-            1.0,
-            a.memory_start(), 1,
-            b.memory_start(), 1,
-            c.memory_start(), etl::dim<0>(b));
+        cblas_dger(CblasRowMajor, etl::dim<0>(a), etl::dim<0>(b), 1.0, a.memory_start(), 1, b.memory_start(), 1, c.memory_start(), etl::dim<0>(b));
     }
 
     c.invalidate_gpu();
@@ -71,25 +59,9 @@ void batch_outer(const A& a, const B& b, C&& c) {
     b.ensure_cpu_up_to_date();
 
     if constexpr (all_single_precision<A, B, C>) {
-        cblas_sgemm(
-            CblasRowMajor,
-            CblasTrans, CblasNoTrans,
-            m, n, k,
-            1.0f,
-            a.memory_start(), m,
-            b.memory_start(), n,
-            0.0f,
-            c.memory_start(), n);
+        cblas_sgemm(CblasRowMajor, CblasTrans, CblasNoTrans, m, n, k, 1.0f, a.memory_start(), m, b.memory_start(), n, 0.0f, c.memory_start(), n);
     } else {
-        cblas_dgemm(
-            CblasRowMajor,
-            CblasTrans, CblasNoTrans,
-            m, n, k,
-            1.0,
-            a.memory_start(), m,
-            b.memory_start(), n,
-            0.0,
-            c.memory_start(), n);
+        cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, m, n, k, 1.0, a.memory_start(), m, b.memory_start(), n, 0.0, c.memory_start(), n);
     }
 
     c.invalidate_gpu();

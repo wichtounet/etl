@@ -67,7 +67,7 @@ struct inplace_assignable {
     derived_t& deep_fflip_inplace() {
         decltype(auto) mat = as_derived();
 
-        if constexpr (is_3d<D>){
+        if constexpr (is_3d<D>) {
             for (size_t i = 0; i < etl::dim<0>(mat); ++i) {
                 mat(i).fflip_inplace();
             }
@@ -145,7 +145,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        if constexpr (is_dyn_matrix<derived_t>){
+        if constexpr (is_dyn_matrix<derived_t>) {
             if (etl::dim<0>(mat) == etl::dim<1>(mat)) {
                 detail::inplace_square_transpose::apply(mat);
             } else {

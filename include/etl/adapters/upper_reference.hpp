@@ -29,10 +29,10 @@ struct upper_reference {
     using const_raw_reference_type = std::add_const_t<value_type>&;    ///< A raw reference type
     using expr_t                   = M;                                ///< The upper triangular matrix
 
-    matrix_type& matrix;   ///< Reference to the matrix
-    size_t i;         ///< The first index
-    size_t j;         ///< The second index
-    value_type& value;     ///< Reference to the value
+    matrix_type& matrix; ///< Reference to the matrix
+    size_t i;            ///< The first index
+    size_t j;            ///< The second index
+    value_type& value;   ///< Reference to the value
 
     /*!
      * \brief Constructs a new upper_reference
@@ -40,8 +40,7 @@ struct upper_reference {
      * \param i The index i of the first dimension
      * \param j The index j of the second dimension
      */
-    upper_reference(matrix_type& matrix, size_t i, size_t j)
-            : matrix(matrix), i(i), j(j), value(matrix(i, j)) {
+    upper_reference(matrix_type& matrix, size_t i, size_t j) : matrix(matrix), i(i), j(j), value(matrix(i, j)) {
         //Nothing else to init
     }
 
@@ -51,7 +50,7 @@ struct upper_reference {
      * \return a reference to the proxy reference
      */
     upper_reference& operator=(const value_type& rhs) {
-        if(i <= j || rhs == value_type(0)){
+        if (i <= j || rhs == value_type(0)) {
             value = rhs;
         } else {
             throw upper_exception();
@@ -66,7 +65,7 @@ struct upper_reference {
      * \return a reference to the proxy reference
      */
     upper_reference& operator+=(value_type rhs) {
-        if(i <= j || rhs == value_type(0)){
+        if (i <= j || rhs == value_type(0)) {
             value += rhs;
         } else {
             throw upper_exception();
@@ -81,7 +80,7 @@ struct upper_reference {
      * \return a reference to the proxy reference
      */
     upper_reference& operator-=(value_type rhs) {
-        if(i <= j || rhs == value_type(0)){
+        if (i <= j || rhs == value_type(0)) {
             value -= rhs;
         } else {
             throw upper_exception();
@@ -96,7 +95,7 @@ struct upper_reference {
      * \return a reference to the proxy reference
      */
     upper_reference& operator*=(value_type rhs) {
-        if(i <= j || rhs == value_type(1)){
+        if (i <= j || rhs == value_type(1)) {
             value *= rhs;
         } else {
             throw upper_exception();
@@ -111,7 +110,7 @@ struct upper_reference {
      * \return a reference to the proxy reference
      */
     upper_reference& operator/=(value_type rhs) {
-        if(i <= j || rhs == value_type(1)){
+        if (i <= j || rhs == value_type(1)) {
             value /= rhs;
         } else {
             throw upper_exception();
@@ -126,7 +125,7 @@ struct upper_reference {
      * \return a reference to the proxy reference
      */
     upper_reference& operator%=(value_type rhs) {
-        if(i <= j || (value % rhs) == value_type(0)){
+        if (i <= j || (value % rhs) == value_type(0)) {
             value %= rhs;
         } else {
             throw upper_exception();

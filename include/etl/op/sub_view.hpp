@@ -30,15 +30,13 @@ struct sub_view;
  * \tparam T The type of expression on which the view is made
  */
 template <typename T, bool Aligned>
-struct sub_view <T, Aligned, std::enable_if_t<!fast_sub_view_able<T>>> final :
-    iterable<sub_view<T, Aligned>, false>,
-    assignable<sub_view<T, Aligned>, value_t<T>>,
-    value_testable<sub_view<T, Aligned>>,
-    inplace_assignable<sub_view<T, Aligned>>
-{
+struct sub_view<T, Aligned, std::enable_if_t<!fast_sub_view_able<T>>> final : iterable<sub_view<T, Aligned>, false>,
+                                                                              assignable<sub_view<T, Aligned>, value_t<T>>,
+                                                                              value_testable<sub_view<T, Aligned>>,
+                                                                              inplace_assignable<sub_view<T, Aligned>> {
     static_assert(is_etl_expr<T>, "sub_view<T> only works with ETL expressions");
 
-    using this_type            = sub_view<T, Aligned>;                                                          ///< The type of this expression
+    using this_type            = sub_view<T, Aligned>;                                                 ///< The type of this expression
     using iterable_base_type   = iterable<this_type, false>;                                           ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The iterable base type
     using sub_type             = T;                                                                    ///< The sub type
@@ -53,15 +51,15 @@ struct sub_view <T, Aligned, std::enable_if_t<!fast_sub_view_able<T>>> final :
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<value_type>;
+    template <typename V = default_vec>
+    using vec_type = typename V::template vec_type<value_type>;
 
     using assignable_base_type::operator=;
     using iterable_base_type::begin;
     using iterable_base_type::end;
 
 private:
-    sub_type sub_expr;              ///< The Sub expression
+    sub_type sub_expr;       ///< The Sub expression
     const size_t i;          ///< The index
     const size_t sub_offset; ///< The sub size
 
@@ -75,8 +73,7 @@ public:
      * \param sub_expr The sub expression
      * \param i The sub index
      */
-    sub_view(sub_type sub_expr, size_t i)
-            : sub_expr(sub_expr), i(i), sub_offset(i * subsize(sub_expr)) {}
+    sub_view(sub_type sub_expr, size_t i) : sub_expr(sub_expr), i(i), sub_offset(i * subsize(sub_expr)) {}
 
     /*!
      * \brief Returns the element at the given index
@@ -84,9 +81,7 @@ public:
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](size_t j) const {
-        return storage_order == order::RowMajor
-                   ? sub_expr[sub_offset + j]
-                   : sub_expr[i + dim<0>(sub_expr) * j];
+        return storage_order == order::RowMajor ? sub_expr[sub_offset + j] : sub_expr[i + dim<0>(sub_expr) * j];
     }
 
     /*!
@@ -95,9 +90,7 @@ public:
      * \return a reference to the element at the given index.
      */
     return_type operator[](size_t j) {
-        return storage_order == order::RowMajor
-                   ? sub_expr[sub_offset + j]
-                   : sub_expr[i + dim<0>(sub_expr) * j];
+        return storage_order == order::RowMajor ? sub_expr[sub_offset + j] : sub_expr[i + dim<0>(sub_expr) * j];
     }
 
     /*!
@@ -107,9 +100,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(size_t j) const noexcept {
-        return storage_order == order::RowMajor
-                   ? sub_expr.read_flat(sub_offset + j)
-                   : sub_expr.read_flat(i + dim<0>(sub_expr) * j);
+        return storage_order == order::RowMajor ? sub_expr.read_flat(sub_offset + j) : sub_expr.read_flat(i + dim<0>(sub_expr) * j);
     }
 
     /*!
@@ -118,7 +109,8 @@ public:
      * \return a reference to the element at the given position.
      */
     template <typename... S, cpp_enable_iff(sizeof...(S) + 1 == decay_traits<sub_type>::dimensions())>
-    ETL_STRONG_INLINE(const_return_type) operator()(S... args) const {
+    ETL_STRONG_INLINE(const_return_type)
+    operator()(S... args) const {
         return sub_expr(i, static_cast<size_t>(args)...);
     }
 
@@ -128,7 +120,8 @@ public:
      * \return a reference to the element at the given position.
      */
     template <typename... S, cpp_enable_iff(sizeof...(S) + 1 == decay_traits<sub_type>::dimensions())>
-    ETL_STRONG_INLINE(return_type) operator()(S... args) {
+    ETL_STRONG_INLINE(return_type)
+    operator()(S... args) {
         return sub_expr(i, static_cast<size_t>(args)...);
     }
 
@@ -182,7 +175,8 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(vec_type<V>) load(size_t x) const noexcept {
+    ETL_STRONG_INLINE(vec_type<V>)
+    load(size_t x) const noexcept {
         return sub_expr.template loadu<V>(x + sub_offset);
     }
 
@@ -193,7 +187,8 @@ public:
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(vec_type<V>) loadu(size_t x) const noexcept {
+    ETL_STRONG_INLINE(vec_type<V>)
+    loadu(size_t x) const noexcept {
         return sub_expr.template loadu<V>(x + sub_offset);
     }
 
@@ -224,8 +219,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -233,8 +228,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -242,8 +237,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -251,8 +246,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -260,8 +255,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -269,8 +264,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -318,17 +313,15 @@ public:
  * \tparam T The type of expression on which the view is made
  */
 template <typename T, bool Aligned>
-struct sub_view <T, Aligned, std::enable_if_t<fast_sub_view_able<T>>> :
-    iterable<sub_view<T, Aligned>, true>,
-    assignable<sub_view<T, Aligned>, value_t<T>>,
-    value_testable<sub_view<T, Aligned>>,
-    inplace_assignable<sub_view<T, Aligned>>
-{
+struct sub_view<T, Aligned, std::enable_if_t<fast_sub_view_able<T>>> : iterable<sub_view<T, Aligned>, true>,
+                                                                       assignable<sub_view<T, Aligned>, value_t<T>>,
+                                                                       value_testable<sub_view<T, Aligned>>,
+                                                                       inplace_assignable<sub_view<T, Aligned>> {
     static_assert(is_etl_expr<T>, "sub_view<T> only works with ETL expressions");
     static_assert(decay_traits<T>::dimensions() > 1, "sub_view<T, true> should only be done with Matrices >1D");
     static_assert(decay_traits<T>::storage_order == order::RowMajor, "sub_view<T, true> should only be done with RowMajor");
 
-    using this_type            = sub_view<T, Aligned>;                                                          ///< The type of this expression
+    using this_type            = sub_view<T, Aligned>;                                                 ///< The type of this expression
     using iterable_base_type   = iterable<this_type, true>;                                            ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The iterable base type
     using sub_type             = T;                                                                    ///< The sub type
@@ -344,7 +337,7 @@ struct sub_view <T, Aligned, std::enable_if_t<fast_sub_view_able<T>>> :
      * \brief The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<value_type>;
+    using vec_type = typename V::template vec_type<value_type>;
 
     using iterable_base_type::begin;
     using iterable_base_type::end;
@@ -373,7 +366,7 @@ public:
      */
     sub_view(sub_type sub_expr, size_t i) : sub_expr(sub_expr), i(i), sub_size(subsize(sub_expr)) {
         // Accessing the memory through fast sub views means evaluation
-        if constexpr (decay_traits<sub_type>::is_temporary){
+        if constexpr (decay_traits<sub_type>::is_temporary) {
             standard_evaluator::pre_assign_rhs(*this);
         }
 
@@ -386,7 +379,7 @@ public:
         cpp_assert(this->memory, "Invalid memory");
     }
 
-    ~sub_view(){
+    ~sub_view() {
         if (this->memory) {
             // Propagate the status on the parent
             if (!this->cpu_up_to_date) {
@@ -447,7 +440,8 @@ public:
      * \return a reference to the element at the given position.
      */
     template <typename... S, cpp_enable_iff(sizeof...(S) == n_dimensions)>
-    ETL_STRONG_INLINE(const_return_type) operator()(S... args) const {
+    ETL_STRONG_INLINE(const_return_type)
+    operator()(S... args) const {
         ensure_cpu_up_to_date();
         return memory[dyn_index(*this, args...)];
     }
@@ -458,7 +452,8 @@ public:
      * \return a reference to the element at the given position.
      */
     template <typename... S, cpp_enable_iff(sizeof...(S) == n_dimensions)>
-    ETL_STRONG_INLINE(return_type) operator()(S... args) {
+    ETL_STRONG_INLINE(return_type)
+    operator()(S... args) {
         ensure_cpu_up_to_date();
         return memory[dyn_index(*this, args...)];
     }
@@ -590,7 +585,7 @@ public:
      * \brief Returns all the Ith... dimensions in array
      * \return an array containing the Ith... dimensions of the expression.
      */
-    template<size_t... I>
+    template <size_t... I>
     std::array<size_t, decay_traits<this_type>::dimensions()> dim_array(std::index_sequence<I...>) const {
         return {{decay_traits<this_type>::dim(*this, I)...}};
     }
@@ -601,8 +596,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -610,8 +605,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -619,8 +614,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -628,8 +623,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -637,8 +632,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -646,8 +641,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -656,7 +651,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    auto& gpu_compute_hint(Y& y){
+    auto& gpu_compute_hint(Y& y) {
         cpp_unused(y);
         this->ensure_gpu_up_to_date();
         return *this;
@@ -744,11 +739,9 @@ public:
         sub_expr.ensure_gpu_allocated();
 
 #ifdef ETL_CUDA
-        if(!this->gpu_up_to_date){
-            cuda_check_assert(cudaMemcpy(
-                const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
-                const_cast<std::remove_const_t<value_type>*>(memory_start()),
-                sub_size * sizeof(value_type), cudaMemcpyHostToDevice));
+        if (!this->gpu_up_to_date) {
+            cuda_check_assert(cudaMemcpy(const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
+                                         const_cast<std::remove_const_t<value_type>*>(memory_start()), sub_size * sizeof(value_type), cudaMemcpyHostToDevice));
 
             this->gpu_up_to_date = true;
 
@@ -764,10 +757,8 @@ public:
     void ensure_cpu_up_to_date() const {
 #ifdef ETL_CUDA
         if (!this->cpu_up_to_date) {
-            cuda_check_assert(cudaMemcpy(
-                const_cast<std::remove_const_t<value_type>*>(memory_start()),
-                const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
-                sub_size * sizeof(value_type), cudaMemcpyDeviceToHost));
+            cuda_check_assert(cudaMemcpy(const_cast<std::remove_const_t<value_type>*>(memory_start()),
+                                         const_cast<std::remove_const_t<value_type>*>(gpu_memory()), sub_size * sizeof(value_type), cudaMemcpyDeviceToHost));
 
             inc_counter("gpu:sub:gpu_to_cpu");
         }
@@ -784,10 +775,8 @@ public:
         cpp_assert(sub_expr.gpu_memory(), "GPU must be allocated before copy");
 
 #ifdef ETL_CUDA
-        cuda_check_assert(cudaMemcpy(
-            const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
-            const_cast<std::remove_const_t<value_type>*>(new_gpu_memory),
-            sub_size * sizeof(value_type), cudaMemcpyDeviceToDevice));
+        cuda_check_assert(cudaMemcpy(const_cast<std::remove_const_t<value_type>*>(gpu_memory()), const_cast<std::remove_const_t<value_type>*>(new_gpu_memory),
+                                     sub_size * sizeof(value_type), cudaMemcpyDeviceToDevice));
 #else
         cpp_unused(new_gpu_memory);
 #endif
@@ -828,26 +817,27 @@ public:
  */
 template <typename T, bool Aligned>
 struct etl_traits<etl::sub_view<T, Aligned>> {
-    using expr_t     = etl::sub_view<T, Aligned>;                ///< The expression type
+    using expr_t     = etl::sub_view<T, Aligned>;       ///< The expression type
     using sub_expr_t = std::decay_t<T>;                 ///< The sub expression type
     using sub_traits = etl_traits<sub_expr_t>;          ///< The sub traits
     using value_type = typename sub_traits::value_type; ///< The value type of the expression
 
-    static constexpr bool is_etl         = true;                                                                  ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer = false;                                                                 ///< Indicates if the type is a transformer
-    static constexpr bool is_view        = true;                                                                  ///< Indicates if the type is a view
-    static constexpr bool is_magic_view  = false;                                                                 ///< Indicates if the type is a magic view
-    static constexpr bool is_fast        = sub_traits::is_fast;                                                   ///< Indicates if the expression is fast
-    static constexpr bool is_linear      = sub_traits::is_linear;                                                 ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe = sub_traits::is_thread_safe;                                            ///< Indicates if the expression is thread safe
-    static constexpr bool is_value       = false;                                                                 ///< Indicates if the expression is of value type
-    static constexpr bool is_direct      = sub_traits::is_direct && sub_traits::storage_order == order::RowMajor; ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator   = false;                                                                 ///< Indicates if the expression is a generator
-    static constexpr bool is_padded      = false;                                                                 ///< Indicates if the expression is padded
-    static constexpr bool is_aligned     = false;                                                                 ///< Indicates if the expression is padded
-    static constexpr bool is_temporary   = sub_traits::is_temporary;                                              ///< Indicates if the exxpression needs a evaluator visitor
-    static constexpr bool gpu_computable = fast_sub_view_able<T>;                                                 ///< Indicates if the expression can be computed on GPU
-    static constexpr order storage_order = sub_traits::storage_order;                                             ///< The expression's storage order
+    static constexpr bool is_etl         = true;                       ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                      ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = true;                       ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                      ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = sub_traits::is_fast;        ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = sub_traits::is_linear;      ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = sub_traits::is_thread_safe; ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                      ///< Indicates if the expression is of value type
+    static constexpr bool is_direct =
+        sub_traits::is_direct && sub_traits::storage_order == order::RowMajor; ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                              ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                              ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = false;                              ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = sub_traits::is_temporary;           ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr bool gpu_computable = fast_sub_view_able<T>;              ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order = sub_traits::storage_order;          ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -855,7 +845,7 @@ struct etl_traits<etl::sub_view<T, Aligned>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable = sub_traits::template vectorizable<V> && storage_order == order::RowMajor;
+    static constexpr bool vectorizable = sub_traits::template vectorizable<V>&& storage_order == order::RowMajor;
 
     /*!
      * \brief Returns the size of the given expression

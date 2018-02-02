@@ -27,8 +27,7 @@ public:
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit rep_transformer(sub_type expr)
-            : sub(expr) {}
+    explicit rep_transformer(sub_type expr) : sub(expr) {}
 
     /*!
      * \brief Access to the value at the given (args...) position
@@ -56,7 +55,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
+    template <typename V>
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
     }
@@ -95,14 +94,13 @@ private:
  * \tparam D The new dimensions
  */
 template <typename T, size_t... D>
-struct rep_r_transformer : rep_transformer<T, rep_r_transformer<T,D...>> {
+struct rep_r_transformer : rep_transformer<T, rep_r_transformer<T, D...>> {
     using this_type  = rep_r_transformer<T, D...>;     ///< This type
     using base_type  = rep_transformer<T, this_type>;  ///< The base type
     using sub_type   = typename base_type::sub_type;   ///< The type on which the expression works
     using value_type = typename base_type::value_type; ///< The type of value
 
 private:
-
     static constexpr size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr size_t dimensions = sizeof...(D) + sub_d;                 ///< The number of dimensions of the transformer
     static constexpr size_t dim_start  = 0;                                    ///< First dimension to take into account
@@ -112,13 +110,11 @@ private:
     friend struct etl_traits<rep_r_transformer>;
 
 public:
-
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit rep_r_transformer(sub_type expr)
-            : base_type(expr) {}
+    explicit rep_r_transformer(sub_type expr) : base_type(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -164,14 +160,13 @@ public:
  * \tparam D The new dimensions
  */
 template <typename T, size_t... D>
-struct rep_l_transformer : rep_transformer<T, rep_l_transformer<T,D...>> {
+struct rep_l_transformer : rep_transformer<T, rep_l_transformer<T, D...>> {
     using this_type  = rep_l_transformer<T, D...>;     ///< This type
     using base_type  = rep_transformer<T, this_type>;  ///< The base type
     using sub_type   = typename base_type::sub_type;   ///< The type on which the expression works
     using value_type = typename base_type::value_type; ///< The type of value
 
 private:
-
     static constexpr size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr size_t dimensions = sizeof...(D) + sub_d;                 ///< The number of dimensions of the transformer
     static constexpr size_t dim_start  = sizeof...(D);                         ///< Last dimension to take into account
@@ -181,13 +176,11 @@ private:
     friend struct etl_traits<rep_l_transformer>;
 
 public:
-
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit rep_l_transformer(sub_type expr)
-            : base_type(expr) {}
+    explicit rep_l_transformer(sub_type expr) : base_type(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -240,7 +233,6 @@ struct dyn_rep_r_transformer : rep_transformer<T, dyn_rep_r_transformer<T, D>> {
     using value_type = typename base_type::value_type; ///< The type of value
 
 private:
-
     static constexpr size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr size_t dimensions = D + sub_d;                            ///< The number of dimensions of the transformer
     static constexpr size_t dim_start  = 0;                                    ///< First dimension to take into account
@@ -253,18 +245,13 @@ private:
     friend struct etl_traits<dyn_rep_r_transformer>;
 
 public:
-
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      * \param reps_a The repeated dimensions
      */
-    dyn_rep_r_transformer(sub_type expr, std::array<size_t, D> reps_a)
-            : base_type(expr), reps(reps_a) {
-        m = std::accumulate(reps.begin(), reps.end(), 1UL,
-                            [](size_t a, size_t b) {
-                                return a * b;
-                            });
+    dyn_rep_r_transformer(sub_type expr, std::array<size_t, D> reps_a) : base_type(expr), reps(reps_a) {
+        m = std::accumulate(reps.begin(), reps.end(), 1UL, [](size_t a, size_t b) { return a * b; });
     }
 
     /*!
@@ -308,7 +295,6 @@ struct dyn_rep_l_transformer : rep_transformer<T, dyn_rep_l_transformer<T, D>> {
     using value_type = typename base_type::value_type; ///< The type of value
 
 private:
-
     static constexpr size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr size_t dimensions = D + sub_d;                            ///< The number of dimensions of the transformer
     static constexpr size_t dim_start  = D;                                    ///< First dimension to take into account
@@ -321,18 +307,13 @@ private:
     friend struct etl_traits<dyn_rep_l_transformer>;
 
 public:
-
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      * \param reps_a The repeated dimensions
      */
-    dyn_rep_l_transformer(sub_type expr, std::array<size_t, D> reps_a)
-            : base_type(expr), reps(reps_a) {
-        m = std::accumulate(reps.begin(), reps.end(), 1UL,
-                            [](size_t a, size_t b) {
-                                return a * b;
-                            });
+    dyn_rep_l_transformer(sub_type expr, std::array<size_t, D> reps_a) : base_type(expr), reps(reps_a) {
+        m = std::accumulate(reps.begin(), reps.end(), 1UL, [](size_t a, size_t b) { return a * b; });
     }
 
     /*!
@@ -372,21 +353,21 @@ struct etl_traits<rep_r_transformer<T, D...>> {
     using sub_expr_t = std::decay_t<T>;                             ///< The sub expression type
     using value_type = typename etl_traits<sub_expr_t>::value_type; ///< The value type of this expression
 
-    static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer          = true;                                            ///< Indicates if the type is a transformer
-    static constexpr bool is_view                 = false;                                           ///< Indicates if the type is a view
-    static constexpr bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                 ///< Indicates if the expression is fast
-    static constexpr bool is_linear               = false;                                           ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe;          ///< Indicates if the expression is thread safe
-    static constexpr bool is_value                = false;                                           ///< Indicates if the expression is of value type
-    static constexpr bool is_direct               = false;                                           ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generated
-    static constexpr bool is_padded               = false;                                           ///< Indicates if the expression is padded
-    static constexpr bool is_aligned              = false;                                           ///< Indicates if the expression is padded
-    static constexpr bool is_temporary            = etl_traits<sub_expr_t>::is_temporary;            ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr bool gpu_computable          = false;                                           ///< Indicates if the expression can be computed on GPU
-    static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
+    static constexpr bool is_etl         = true;                                   ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = true;                                   ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                  ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                  ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = etl_traits<sub_expr_t>::is_fast;        ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                  ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = etl_traits<sub_expr_t>::is_thread_safe; ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                  ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = false;                                  ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                  ///< Indicates if the expression is a generated
+    static constexpr bool is_padded      = false;                                  ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = false;                                  ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = etl_traits<sub_expr_t>::is_temporary;   ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr bool gpu_computable = false;                                  ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order = etl_traits<sub_expr_t>::storage_order;  ///< The expression storage order
 
     static constexpr size_t sub_d = etl_traits<sub_expr_t>::dimensions(); ///< The number of dimensions of the sub type
 
@@ -414,7 +395,7 @@ struct etl_traits<rep_r_transformer<T, D...>> {
      * \return The dth dimension of the given expression
      */
     static size_t dim(const expr_t& v, size_t d) {
-        if(d < sub_d){
+        if (d < sub_d) {
             return etl_traits<sub_expr_t>::dim(v.sub, d);
         } else {
             return dyn_nth_size<D...>(d - sub_d);
@@ -499,7 +480,7 @@ struct etl_traits<rep_l_transformer<T, D...>> {
      * \return The dth dimension of the given expression
      */
     static size_t dim(const expr_t& v, size_t d) {
-        if(d >= sizeof...(D)){
+        if (d >= sizeof...(D)) {
             return etl_traits<sub_expr_t>::dim(v.sub, d - sizeof...(D));
         } else {
             return dyn_nth_size<D...>(d);

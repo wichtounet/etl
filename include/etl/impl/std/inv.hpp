@@ -27,7 +27,7 @@ namespace standard {
 template <typename A, typename C>
 void inv(A&& a, C&& c) {
     // The inverse of a permutation matrix is its transpose
-    if(is_permutation_matrix(a)){
+    if (is_permutation_matrix(a)) {
         c = transpose(a);
         return;
     }
@@ -35,7 +35,7 @@ void inv(A&& a, C&& c) {
     const auto n = etl::dim<0>(a);
 
     // Use forward propagation for lower triangular matrix
-    if(is_lower_triangular(a)){
+    if (is_lower_triangular(a)) {
         c = 0;
 
         // The column in c
@@ -63,7 +63,7 @@ void inv(A&& a, C&& c) {
     }
 
     // Use backward propagation for upper triangular matrix
-    if(is_upper_triangular(a)){
+    if (is_upper_triangular(a)) {
         c = 0;
 
         // The column in c

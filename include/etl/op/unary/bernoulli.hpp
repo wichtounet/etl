@@ -15,8 +15,8 @@ namespace etl {
  */
 template <typename T>
 struct bernoulli_unary_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -63,11 +63,9 @@ struct bernoulli_unary_g_op {
     static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
 
 private:
-
     G& rand_engine; ///< The custom random engine
 
 public:
-
     /*!
      * \brief Construct a new bernoulli_unary_g_op
      */
@@ -115,8 +113,8 @@ public:
  */
 template <typename T>
 struct reverse_bernoulli_unary_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -159,15 +157,13 @@ struct reverse_bernoulli_unary_op {
  */
 template <typename G, typename T>
 struct reverse_bernoulli_unary_g_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
 
 private:
-
     G& rand_engine; ///< The custom random engine
 
 public:
-
     /*!
      * \brief Construct a new reverse_bernoulli_unary_g_op
      */

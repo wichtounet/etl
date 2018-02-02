@@ -21,7 +21,7 @@ namespace etl {
 template <typename A, size_t C1, size_t C2>
 struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2>, A> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
-    using this_type  = upsample_2d_expr<A, C1, C2>;    ///< The type of this expression
+    using this_type  = upsample_2d_expr<A, C1, C2>;          ///< The type of this expression
     using base_type  = base_temporary_expr_un<this_type, A>; ///< The base type
     using sub_traits = decay_traits<A>;                      ///< The traits of the sub type
 
@@ -47,24 +47,22 @@ struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2>, A>
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template<typename C>
-    void assign_to(C&& c)  const {
+    template <typename C>
+    void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, C>, "upsample_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "upsample_2d must be applied on matrices of same dimensionality");
 
         auto& a = this->a();
 
-        impl::standard::upsample_2d::template apply<C1, C2>(
-            smart_forward(a),
-            c);
+        impl::standard::upsample_2d::template apply<C1, C2>(smart_forward(a), c);
     }
 
     /*!
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -72,8 +70,8 @@ struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2>, A>
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -81,8 +79,8 @@ struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2>, A>
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -90,8 +88,8 @@ struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2>, A>
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -99,8 +97,8 @@ struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2>, A>
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -159,8 +157,7 @@ struct etl_traits<etl::upsample_2d_expr<A, C1, C2>> {
     template <size_t DD>
     static constexpr size_t dim() {
         return DD == D - 2 ? decay_traits<A>::template dim<DD>() * C1
-             : DD == D - 1 ? decay_traits<A>::template dim<DD>() * C2
-                           : decay_traits<A>::template dim<DD>();
+                           : DD == D - 1 ? decay_traits<A>::template dim<DD>() * C2 : decay_traits<A>::template dim<DD>();
     }
 
     /*!
@@ -172,7 +169,7 @@ struct etl_traits<etl::upsample_2d_expr<A, C1, C2>> {
     static size_t dim(const expr_t& e, size_t d) {
         if (d == D - 2) {
             return etl::dim(e._a, d) * C1;
-        } else if (d == D - 1){
+        } else if (d == D - 1) {
             return etl::dim(e._a, d) * C2;
         } else {
             return etl::dim(e._a, d);

@@ -16,9 +16,9 @@ namespace etl {
  */
 template <typename T, typename E>
 struct max_binary_op {
-    static constexpr bool linear    = true; ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
-    static constexpr bool desc_func = true; ///< Indicates if the description must be printed as function
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
+    static constexpr bool desc_func   = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -31,18 +31,16 @@ struct max_binary_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    template<typename L, typename R>
-    static constexpr bool gpu_computable =
-               (all_single_precision<L,R> && impl::egblas::has_smax3)
-            || (all_double_precision<L,R> && impl::egblas::has_dmax3)
-            || (all_complex_single_precision<L,R> && impl::egblas::has_cmax3)
-            || (all_complex_double_precision<L,R> && impl::egblas::has_zmax3);
+    template <typename L, typename R>
+    static constexpr bool gpu_computable = (all_single_precision<L, R> && impl::egblas::has_smax3) || (all_double_precision<L, R> && impl::egblas::has_dmax3)
+                                           || (all_complex_single_precision<L, R> && impl::egblas::has_cmax3)
+                                           || (all_complex_double_precision<L, R> && impl::egblas::has_zmax3);
 
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -51,7 +49,7 @@ struct max_binary_op {
      * \return The result of applying the binary operator on lhs and rhs
      */
     static constexpr T apply(const T& x, E value) noexcept {
-        if(x > value){
+        if (x > value) {
             return x;
         } else {
             return value;

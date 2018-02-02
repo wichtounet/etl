@@ -128,7 +128,7 @@ struct max_pool_derivative_2d {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
 
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply<C1, C2, C3>(in(i), out(i), m(i));
         }
 
@@ -149,7 +149,7 @@ struct max_pool_derivative_2d {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
 
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply(in(i), out(i), m(i), c1, c2, c3);
         }
 
@@ -285,7 +285,7 @@ struct max_pool_derivative_3d {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
 
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply<C1, C2, C3>(in(i), out(i), m(i));
         }
 
@@ -306,7 +306,7 @@ struct max_pool_derivative_3d {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
 
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply(in(i), out(i), m(i), c1, c2, c3);
         }
 

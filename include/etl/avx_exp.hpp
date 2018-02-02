@@ -51,8 +51,7 @@ namespace etl {
 #define ALIGN32_BEG
 #define ALIGN32_END __attribute__((aligned(32)))
 
-#define ETL_PI32_AVX_CONST(Name, Val) \
-    static const ALIGN32_BEG int _pi32avx_##Name[4] ALIGN32_END = {Val, Val, Val, Val}
+#define ETL_PI32_AVX_CONST(Name, Val) static const ALIGN32_BEG int _pi32avx_##Name[4] ALIGN32_END = {Val, Val, Val, Val}
 
 ETL_PI32_AVX_CONST(1, 1);
 ETL_PI32_AVX_CONST(inv1, ~1);
@@ -60,12 +59,9 @@ ETL_PI32_AVX_CONST(2, 2);
 ETL_PI32_AVX_CONST(4, 4);
 
 /* declare some AVX constants -- why can't I figure a better way to do that? */
-#define ETL_PS_256_CONST(Name, Val) \
-    static const ALIGN32_BEG float _ps256_##Name[8] ALIGN32_END = {Val, Val, Val, Val, Val, Val, Val, Val}
-#define ETL_PI32_CONST256(Name, Val) \
-    static const ALIGN32_BEG int _pi32_256_##Name[8] ALIGN32_END = {Val, Val, Val, Val, Val, Val, Val, Val}
-#define ETL_PS_256_CONST_TYPE(Name, Type, Val) \
-    static const ALIGN32_BEG Type _ps256_##Name[8] ALIGN32_END = {Val, Val, Val, Val, Val, Val, Val, Val}
+#define ETL_PS_256_CONST(Name, Val) static const ALIGN32_BEG float _ps256_##Name[8] ALIGN32_END = {Val, Val, Val, Val, Val, Val, Val, Val}
+#define ETL_PI32_CONST256(Name, Val) static const ALIGN32_BEG int _pi32_256_##Name[8] ALIGN32_END = {Val, Val, Val, Val, Val, Val, Val, Val}
+#define ETL_PS_256_CONST_TYPE(Name, Type, Val) static const ALIGN32_BEG Type _ps256_##Name[8] ALIGN32_END = {Val, Val, Val, Val, Val, Val, Val, Val}
 
 ETL_PS_256_CONST(1, 1.0f);
 ETL_PS_256_CONST(0p5, 0.5f);
@@ -246,16 +242,16 @@ ETL_PS_256_CONST(cephes_exp_p5, 5.0000001201E-1);
  */
 ETL_INLINE_VEC_256D exp256_pd(__m256d x) {
     auto t1 = _mm256_mul_pd(x, _mm256_set1_pd(1.44269504088896340736));
-    auto r = _mm256_round_pd(t1, 8);
+    auto r  = _mm256_round_pd(t1, 8);
 
 #ifdef __FMA__
     x = _mm256_fnmadd_pd(r, _mm256_set1_pd(0.693145751953125), x);
     x = _mm256_fnmadd_pd(r, _mm256_set1_pd(1.42860682030941723212E-6), x);
 #else
-    auto t3 = _mm256_mul_pd(r, _mm256_set1_pd(0.693145751953125));
-    x = _mm256_sub_pd(x, t3);
-    auto t4 = _mm256_mul_pd(r, _mm256_set1_pd(1.42860682030941723212E-6));
-    x = _mm256_sub_pd(x, t4);
+    auto t3  = _mm256_mul_pd(r, _mm256_set1_pd(0.693145751953125));
+    x        = _mm256_sub_pd(x, t3);
+    auto t4  = _mm256_mul_pd(r, _mm256_set1_pd(1.42860682030941723212E-6));
+    x        = _mm256_sub_pd(x, t4);
 #endif
 
     auto x2 = _mm256_mul_pd(x, x);
@@ -263,31 +259,31 @@ ETL_INLINE_VEC_256D exp256_pd(__m256d x) {
     auto x8 = _mm256_mul_pd(x4, x4);
 
 #ifdef __FMA__
-    auto pt1 = _mm256_fmadd_pd(_mm256_set1_pd(1.0/6227020800.0), x, _mm256_set1_pd(1.0/479001600.0));
-    auto pt2 = _mm256_fmadd_pd(_mm256_set1_pd(1.0/39916800.0), x, _mm256_set1_pd(1.0/3628800.0));
-    auto pt3 = _mm256_fmadd_pd(_mm256_set1_pd(1.0/362880.0), x, _mm256_set1_pd(1.0/40320.0));
-    auto pt4 = _mm256_fmadd_pd(_mm256_set1_pd(1.0/5040.0), x, _mm256_set1_pd(1.0/720.0));
-    auto pt5 = _mm256_fmadd_pd(_mm256_set1_pd(1.0/120.0), x, _mm256_set1_pd(1.0/24.0));
-    auto pt6 = _mm256_fmadd_pd(_mm256_set1_pd(1.0/6.0), x, _mm256_set1_pd(1.0/2.0));
+    auto pt1 = _mm256_fmadd_pd(_mm256_set1_pd(1.0 / 6227020800.0), x, _mm256_set1_pd(1.0 / 479001600.0));
+    auto pt2 = _mm256_fmadd_pd(_mm256_set1_pd(1.0 / 39916800.0), x, _mm256_set1_pd(1.0 / 3628800.0));
+    auto pt3 = _mm256_fmadd_pd(_mm256_set1_pd(1.0 / 362880.0), x, _mm256_set1_pd(1.0 / 40320.0));
+    auto pt4 = _mm256_fmadd_pd(_mm256_set1_pd(1.0 / 5040.0), x, _mm256_set1_pd(1.0 / 720.0));
+    auto pt5 = _mm256_fmadd_pd(_mm256_set1_pd(1.0 / 120.0), x, _mm256_set1_pd(1.0 / 24.0));
+    auto pt6 = _mm256_fmadd_pd(_mm256_set1_pd(1.0 / 6.0), x, _mm256_set1_pd(1.0 / 2.0));
 
-    auto pt7 = _mm256_fmadd_pd(pt2, x2, pt3);
-    auto pt8 = _mm256_fmadd_pd(pt4, x2, pt5);
-    auto pt9 = _mm256_fmadd_pd(pt6, x2, x);
+    auto pt7  = _mm256_fmadd_pd(pt2, x2, pt3);
+    auto pt8  = _mm256_fmadd_pd(pt4, x2, pt5);
+    auto pt9  = _mm256_fmadd_pd(pt6, x2, x);
     auto pt10 = _mm256_fmadd_pd(pt1, x4, pt7);
     auto pt11 = _mm256_fmadd_pd(pt8, x4, pt9);
 
     auto z = _mm256_fmadd_pd(pt10, x8, pt11);
 #else
-    auto pt1 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/6227020800.0), x), _mm256_set1_pd(1.0/479001600.0));
-    auto pt2 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/39916800.0), x), _mm256_set1_pd(1.0/3628800.0));
-    auto pt3 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/362880.0), x), _mm256_set1_pd(1.0/40320.0));
-    auto pt4 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/5040.0), x), _mm256_set1_pd(1.0/720.0));
-    auto pt5 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/120.0), x), _mm256_set1_pd(1.0/24.0));
-    auto pt6 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/6.0), x), _mm256_set1_pd(1.0/2.0));
+    auto pt1 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0 / 6227020800.0), x), _mm256_set1_pd(1.0 / 479001600.0));
+    auto pt2 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0 / 39916800.0), x), _mm256_set1_pd(1.0 / 3628800.0));
+    auto pt3 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0 / 362880.0), x), _mm256_set1_pd(1.0 / 40320.0));
+    auto pt4 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0 / 5040.0), x), _mm256_set1_pd(1.0 / 720.0));
+    auto pt5 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0 / 120.0), x), _mm256_set1_pd(1.0 / 24.0));
+    auto pt6 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0 / 6.0), x), _mm256_set1_pd(1.0 / 2.0));
 
-    auto pt7 = _mm256_add_pd(_mm256_mul_pd(pt2, x2), pt3);
-    auto pt8 = _mm256_add_pd(_mm256_mul_pd(pt4, x2), pt5);
-    auto pt9 = _mm256_add_pd(_mm256_mul_pd(pt6, x2), x);
+    auto pt7  = _mm256_add_pd(_mm256_mul_pd(pt2, x2), pt3);
+    auto pt8  = _mm256_add_pd(_mm256_mul_pd(pt4, x2), pt5);
+    auto pt9  = _mm256_add_pd(_mm256_mul_pd(pt6, x2), x);
     auto pt10 = _mm256_add_pd(_mm256_mul_pd(pt1, x4), pt7);
     auto pt11 = _mm256_add_pd(_mm256_mul_pd(pt8, x4), pt9);
 
@@ -305,18 +301,18 @@ ETL_INLINE_VEC_256D exp256_pd(__m256d x) {
     auto a1 = _mm256_castsi256_si128(b);
     auto a2 = _mm256_extractf128_si256(b, 1);
 
-    auto s = _mm_set_epi32(0, 52, 0, 52);
-    auto b1 = _mm_sll_epi64( a1, s);
-    auto b2 = _mm_sll_epi64( a2, s);
+    auto s  = _mm_set_epi32(0, 52, 0, 52);
+    auto b1 = _mm_sll_epi64(a1, s);
+    auto b2 = _mm_sll_epi64(a2, s);
 
-    __m256i c  =  _mm256_castsi128_si256 ( b1 );
-    c =  _mm256_insertf128_si256 (  c, b2, 1 );
+    __m256i c = _mm256_castsi128_si256(b1);
+    c         = _mm256_insertf128_si256(c, b2, 1);
 #endif
 
     __m256d n2 = _mm256_castsi256_pd(c);
 
     auto t5 = _mm256_add_pd(z, _mm256_set1_pd(1.0));
-    z = _mm256_mul_pd(t5, n2);
+    z       = _mm256_mul_pd(t5, n2);
 
     return z;
 }
@@ -346,14 +342,14 @@ ETL_INLINE_VEC_256 exp256_ps(__m256 x) {
     fx          = _mm256_sub_ps(tmp, mask);
 
 #ifdef __FMA__
-    x        = _mm256_fnmadd_ps(fx, *(__m256*)_ps256_cephes_exp_C1, x);
-    x        = _mm256_fnmadd_ps(fx, *(__m256*)_ps256_cephes_exp_C2, x);
+    x = _mm256_fnmadd_ps(fx, *(__m256*)_ps256_cephes_exp_C1, x);
+    x = _mm256_fnmadd_ps(fx, *(__m256*)_ps256_cephes_exp_C2, x);
     __m256 z;
 #else
-    tmp      = _mm256_mul_ps(fx, *(__m256*)_ps256_cephes_exp_C1);
-    x        = _mm256_sub_ps(x, tmp);
-    __m256 z = _mm256_mul_ps(fx, *(__m256*)_ps256_cephes_exp_C2);
-    x        = _mm256_sub_ps(x, z);
+    tmp       = _mm256_mul_ps(fx, *(__m256*)_ps256_cephes_exp_C1);
+    x         = _mm256_sub_ps(x, tmp);
+    __m256 z  = _mm256_mul_ps(fx, *(__m256*)_ps256_cephes_exp_C2);
+    x         = _mm256_sub_ps(x, z);
 #endif
 
     z = _mm256_mul_ps(x, x);
@@ -361,28 +357,28 @@ ETL_INLINE_VEC_256 exp256_ps(__m256 x) {
     __m256 y = *(__m256*)_ps256_cephes_exp_p0;
 
 #ifdef __FMA__
-    y        = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p1);
-    y        = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p2);
-    y        = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p3);
-    y        = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p4);
-    y        = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p5);
-    y        = _mm256_fmadd_ps(y, z, x);
+    y = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p1);
+    y = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p2);
+    y = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p3);
+    y = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p4);
+    y = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p5);
+    y = _mm256_fmadd_ps(y, z, x);
 #else
-    y        = _mm256_mul_ps(y, x);
-    y        = _mm256_add_ps(y, *(__m256*)_ps256_cephes_exp_p1);
-    y        = _mm256_mul_ps(y, x);
-    y        = _mm256_add_ps(y, *(__m256*)_ps256_cephes_exp_p2);
-    y        = _mm256_mul_ps(y, x);
-    y        = _mm256_add_ps(y, *(__m256*)_ps256_cephes_exp_p3);
-    y        = _mm256_mul_ps(y, x);
-    y        = _mm256_add_ps(y, *(__m256*)_ps256_cephes_exp_p4);
-    y        = _mm256_mul_ps(y, x);
-    y        = _mm256_add_ps(y, *(__m256*)_ps256_cephes_exp_p5);
-    y        = _mm256_mul_ps(y, z);
-    y        = _mm256_add_ps(y, x);
+    y         = _mm256_mul_ps(y, x);
+    y         = _mm256_add_ps(y, *(__m256*)_ps256_cephes_exp_p1);
+    y         = _mm256_mul_ps(y, x);
+    y         = _mm256_add_ps(y, *(__m256*)_ps256_cephes_exp_p2);
+    y         = _mm256_mul_ps(y, x);
+    y         = _mm256_add_ps(y, *(__m256*)_ps256_cephes_exp_p3);
+    y         = _mm256_mul_ps(y, x);
+    y         = _mm256_add_ps(y, *(__m256*)_ps256_cephes_exp_p4);
+    y         = _mm256_mul_ps(y, x);
+    y         = _mm256_add_ps(y, *(__m256*)_ps256_cephes_exp_p5);
+    y         = _mm256_mul_ps(y, z);
+    y         = _mm256_add_ps(y, x);
 #endif
 
-    y        = _mm256_add_ps(y, one);
+    y = _mm256_add_ps(y, one);
 
     /* build 2^n */
     imm0 = _mm256_cvttps_epi32(fx);
@@ -441,11 +437,11 @@ ETL_INLINE_VEC_256 sin256_ps(__m256 x) { // any x
     /* scale by 4/Pi */
     y = _mm256_mul_ps(x, *(__m256*)_ps256_cephes_FOPI);
 
-/*
-    Here we start a series of integer operations, which are in the
-    realm of AVX2.
-    If we don't have AVX, let's perform them using SSE2 directives
-  */
+    /*
+        Here we start a series of integer operations, which are in the
+        realm of AVX2.
+        If we don't have AVX, let's perform them using SSE2 directives
+      */
 
 #ifdef __AVX2__
     /* store the integer part of y in mm0 */

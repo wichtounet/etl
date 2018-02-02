@@ -31,12 +31,11 @@ struct not_equal_binary_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    template<typename L, typename R>
-    static constexpr bool gpu_computable =
-               (all_single_precision<L,R> && impl::egblas::has_snot_equal)
-            || (all_double_precision<L,R> && impl::egblas::has_dnot_equal)
-            || (all_complex_single_precision<L,R> && impl::egblas::has_cnot_equal)
-            || (all_complex_double_precision<L,R> && impl::egblas::has_znot_equal);
+    template <typename L, typename R>
+    static constexpr bool gpu_computable = (all_single_precision<L, R> && impl::egblas::has_snot_equal)
+                                           || (all_double_precision<L, R> && impl::egblas::has_dnot_equal)
+                                           || (all_complex_single_precision<L, R> && impl::egblas::has_cnot_equal)
+                                           || (all_complex_double_precision<L, R> && impl::egblas::has_znot_equal);
 
     /*!
      * \brief Apply the unary operator on lhs and rhs

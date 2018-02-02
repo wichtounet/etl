@@ -30,7 +30,7 @@ struct adapter {
      * \brief The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<value_type>;
+    using vec_type = typename V::template vec_type<value_type>;
 
 protected:
     matrix_t value; ///< The adapted matrix
@@ -190,7 +190,7 @@ public:
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the matrix
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     vec_type<V> load(size_t i) const noexcept {
         return value.template load<V>(i);
     }
@@ -201,7 +201,7 @@ public:
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the matrix
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     vec_type<V> loadu(size_t i) const noexcept {
         return value.template loadu<V>(i);
     }
@@ -244,7 +244,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E>
+    template <typename E>
     bool alias(const E& rhs) const noexcept {
         return value.alias(rhs);
     }
@@ -277,8 +277,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(value, lhs);
     }
 
@@ -286,8 +286,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(value, lhs);
     }
 
@@ -295,8 +295,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(value, lhs);
     }
 
@@ -304,8 +304,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(value, lhs);
     }
 
@@ -313,8 +313,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(value, lhs);
     }
 
@@ -322,8 +322,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(value, lhs);
     }
 

@@ -34,7 +34,7 @@ struct ranged_noise_binary_g_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    template<typename L, typename R>
+    template <typename L, typename R>
     static constexpr bool gpu_computable = false;
 
     G& rand_engine; ///< The random engine
@@ -95,7 +95,7 @@ struct ranged_noise_binary_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    template<typename L, typename R>
+    template <typename L, typename R>
     static constexpr bool gpu_computable = false;
 
     /*!

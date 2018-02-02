@@ -52,7 +52,7 @@ struct expr_result<E, true> {
 template <bool Fast, typename E>
 using expr_result_t = typename expr_result<E, Fast && is_fast<E>>::type;
 
-} // end of temporary_detail
+} // namespace temporary_detail
 
 /*!
  * \brief A temporary expression base
@@ -103,7 +103,7 @@ public:
      * \brief The vectorization type for VV
      */
     template <typename VV = default_vec>
-    using vec_type        = typename VV::template vec_type<value_type>;
+    using vec_type = typename VV::template vec_type<value_type>;
 
 protected:
     /*!
@@ -175,7 +175,7 @@ protected:
      * \brief Allocate the temporary
      */
     result_type* allocate() const {
-        if constexpr (is_fast<derived_t>){
+        if constexpr (is_fast<derived_t>) {
             return new result_type;
         } else {
             return dyn_allocate(std::make_index_sequence<decay_traits<derived_t>::dimensions()>());
@@ -221,7 +221,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <typename DD = D, cpp_enable_iff(safe_dimensions<DD> > 1)>
+    template <typename DD = D, cpp_enable_iff(safe_dimensions<DD>> 1)>
     auto operator()(size_t i) const {
         return sub(as_derived(), i);
     }
@@ -273,7 +273,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    auto& gpu_compute_hint(Y& y){
+    auto& gpu_compute_hint(Y& y) {
         cpu_unused(y);
         this->ensure_gpu_up_to_date();
         return as_derived();
@@ -446,9 +446,9 @@ struct base_temporary_expr_un : base_temporary_expr<D, Fast> {
     static_assert(is_etl_expr<A>, "The argument must be an ETL expr");
 
     using this_type = base_temporary_expr_un<D, A>; ///< This type
-    using base_type = base_temporary_expr<D, Fast>;       ///< The base type
+    using base_type = base_temporary_expr<D, Fast>; ///< The base type
 
-    A _a;                       ///< The sub expression reference
+    A _a; ///< The sub expression reference
 
     using base_type::evaluated;
 
@@ -472,7 +472,7 @@ struct base_temporary_expr_un : base_temporary_expr<D, Fast> {
      * \brief Construct a new expression by move
      * \param e The expression to move
      */
-    base_temporary_expr_un(base_temporary_expr_un&& e) noexcept : base_type(std::move(e)), _a(e._a){
+    base_temporary_expr_un(base_temporary_expr_un&& e) noexcept : base_type(std::move(e)), _a(e._a) {
         //Nothing else to init
     }
 
@@ -511,7 +511,7 @@ struct base_temporary_expr_un : base_temporary_expr<D, Fast> {
     void visit(detail::evaluator_visitor& visitor) const {
         // If the expression is already evaluated, no need to
         // recurse through the tree
-        if(*evaluated){
+        if (*evaluated) {
             return;
         }
 
@@ -535,10 +535,10 @@ struct base_temporary_expr_bin : base_temporary_expr<D, Fast> {
     static_assert(is_etl_expr<B>, "The argument must be an ETL expr");
 
     using this_type = base_temporary_expr_bin<D, A, B>; ///< This type
-    using base_type = base_temporary_expr<D, Fast>;           ///< The base type
+    using base_type = base_temporary_expr<D, Fast>;     ///< The base type
 
-    A _a;                       ///< The sub expression reference
-    B _b;                       ///< The sub expression reference
+    A _a; ///< The sub expression reference
+    B _b; ///< The sub expression reference
 
     using base_type::evaluated;
 
@@ -618,7 +618,7 @@ struct base_temporary_expr_bin : base_temporary_expr<D, Fast> {
     void visit(detail::evaluator_visitor& visitor) const {
         // If the expression is already evaluated, no need to
         // recurse through the tree
-        if(*evaluated){
+        if (*evaluated) {
             return;
         }
 
@@ -646,14 +646,13 @@ struct base_temporary_expr_tern : base_temporary_expr<D, Fast> {
     using this_type = base_temporary_expr_tern<D, A, B, C>; ///< This type
     using base_type = base_temporary_expr<D, Fast>;         ///< The base type
 
-    A _a;                       ///< The first sub expression reference
-    B _b;                       ///< The second sub expression reference
-    C _c;                       ///< The third sub expression reference
+    A _a; ///< The first sub expression reference
+    B _b; ///< The second sub expression reference
+    C _c; ///< The third sub expression reference
 
     using base_type::evaluated;
 
 public:
-
     /*!
      * \brief Construct a new expression
      * \param a The first sub expression
@@ -691,7 +690,6 @@ public:
     }
 
 protected:
-
     /*!
      * \brief Returns the sub expression
      * \return a reference to the sub expression
@@ -741,7 +739,6 @@ protected:
     }
 
 public:
-
     // Internals
 
     /*!
@@ -751,7 +748,7 @@ public:
     void visit(detail::evaluator_visitor& visitor) const {
         // If the expression is already evaluated, no need to
         // recurse through the tree
-        if(*evaluated){
+        if (*evaluated) {
             return;
         }
 

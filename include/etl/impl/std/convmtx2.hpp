@@ -23,7 +23,7 @@ struct convmtx2_direct {
         const size_t i1 = etl::dim<0>(sub);
         const size_t i2 = etl::dim<1>(sub);
 
-        const size_t c_height          = etl::dim<0>(m);
+        const size_t c_height    = etl::dim<0>(m);
         constexpr size_t c_width = K1 * K2;
 
         cpp_assert(c_height == ((i1 + K1 - 1) * (i2 + K2 - 1)), "Invalid input height");

@@ -25,7 +25,7 @@ struct scalar {
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     const T value; ///< The scalar value
 
@@ -33,8 +33,7 @@ struct scalar {
      * \brief Builds a new scalar
      * \þaram v The scalar value
      */
-    explicit constexpr scalar(T v)
-            : value(v) {}
+    explicit constexpr scalar(T v) : value(v) {}
 
     /*!
      * \brief Returns the element at the given index
@@ -104,8 +103,8 @@ struct scalar {
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -113,8 +112,8 @@ struct scalar {
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -122,8 +121,8 @@ struct scalar {
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -131,8 +130,8 @@ struct scalar {
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -140,8 +139,8 @@ struct scalar {
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -149,8 +148,8 @@ struct scalar {
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -160,7 +159,7 @@ struct scalar {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
+    template <typename V>
     void visit(V&& visitor) const {
         cpp_unused(visitor);
     }
@@ -169,7 +168,7 @@ struct scalar {
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    template<typename Y>
+    template <typename Y>
     decltype(auto) gpu_compute_hint(Y& y) const {
         // TODO Maybe make a full vector with the hint
         cpp_unused(y);
@@ -190,7 +189,7 @@ struct scalar {
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    template<typename Y>
+    template <typename Y>
     decltype(auto) gpu_compute(Y& y) const {
         y.ensure_gpu_allocated();
 

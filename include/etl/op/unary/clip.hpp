@@ -22,7 +22,7 @@ struct clip_scalar_op {
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr bool linear      = true; ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
@@ -39,11 +39,10 @@ struct clip_scalar_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_sclip_value)
-            || (is_double_precision_t<T> && impl::egblas::has_dclip_value)
-            || (is_complex_single_t<T> && impl::egblas::has_cclip_value)
-            || (is_complex_double_t<T> && impl::egblas::has_zclip_value);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_sclip_value)
+                                           || (is_double_precision_t<T> && impl::egblas::has_dclip_value)
+                                           || (is_complex_single_t<T> && impl::egblas::has_cclip_value)
+                                           || (is_complex_double_t<T> && impl::egblas::has_zclip_value);
 
     S min; ///< The minimum for clipping
     S max; ///< The maximum for clipping
@@ -53,8 +52,7 @@ struct clip_scalar_op {
      * \param min The minimum for clipping
      * \param max The maximum for clipping
      */
-    clip_scalar_op(S min, S max)
-            : min(min), max(max) {}
+    clip_scalar_op(S min, S max) : min(min), max(max) {}
 
     /*!
      * \brief Apply the unary operator on x

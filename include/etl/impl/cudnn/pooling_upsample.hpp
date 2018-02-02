@@ -39,7 +39,7 @@ void unpool_2d(cudnnPoolingMode_t mode, A&& in, B&& out, C&& errors, M& m, size_
     auto m_tensor      = create_tensor_wrapper(m);
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     // Allocate GPU memory, if necessary
 
@@ -50,11 +50,8 @@ void unpool_2d(cudnnPoolingMode_t mode, A&& in, B&& out, C&& errors, M& m, size_
 
     // Perform pooling
 
-    cudnn_check(cudnnPoolingBackward(handle.get(), *pooling_desc, alpha,
-        *out_tensor, out.gpu_memory(),
-        *errors_tensor, errors.gpu_memory(),
-        *in_tensor, in.gpu_memory(),
-        beta, *m_tensor, m.gpu_memory()));
+    cudnn_check(cudnnPoolingBackward(handle.get(), *pooling_desc, alpha, *out_tensor, out.gpu_memory(), *errors_tensor, errors.gpu_memory(), *in_tensor,
+                                     in.gpu_memory(), beta, *m_tensor, m.gpu_memory()));
 
     m.validate_gpu();
     m.invalidate_cpu();
@@ -81,7 +78,7 @@ void unpool_3d(cudnnPoolingMode_t mode, A&& in, B&& out, C&& errors, M& m, size_
     auto m_tensor      = create_tensor_wrapper_5d(m);
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     // Allocate GPU memory, if necessary
 
@@ -92,11 +89,8 @@ void unpool_3d(cudnnPoolingMode_t mode, A&& in, B&& out, C&& errors, M& m, size_
 
     // Perform pooling
 
-    cudnn_check(cudnnPoolingBackward(handle.get(), *pooling_desc, alpha,
-        *out_tensor, out.gpu_memory(),
-        *errors_tensor, errors.gpu_memory(),
-        *in_tensor, in.gpu_memory(),
-        beta, *m_tensor, m.gpu_memory()));
+    cudnn_check(cudnnPoolingBackward(handle.get(), *pooling_desc, alpha, *out_tensor, out.gpu_memory(), *errors_tensor, errors.gpu_memory(), *in_tensor,
+                                     in.gpu_memory(), beta, *m_tensor, m.gpu_memory()));
 
     m.validate_gpu();
     m.invalidate_cpu();
@@ -129,7 +123,7 @@ struct max_pool_upsample_2d {
      */
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(decay_traits<A>::dimensions > 4)>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply(in(i), out(i), errors(i), m(i), c1, c2);
         }
     }
@@ -162,7 +156,7 @@ struct max_pool_upsample_3d {
      */
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(decay_traits<A>::dimensions > 4)>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t c3) {
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply(in(i), out(i), errors(i), m(i), c1, c2, c3);
         }
     }
@@ -195,7 +189,7 @@ struct avg_pool_upsample_2d {
      */
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(decay_traits<A>::dimensions > 4)>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply(in(i), out(i), errors(i), m(i), c1, c2);
         }
     }
@@ -228,7 +222,7 @@ struct avg_pool_upsample_3d {
      */
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(decay_traits<A>::dimensions > 4)>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t c3) {
-        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+        for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply(in(i), out(i), errors(i), m(i), c1, c2, c3);
         }
     }

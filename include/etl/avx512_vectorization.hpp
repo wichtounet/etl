@@ -37,9 +37,9 @@ namespace etl {
  */
 template <typename T>
 struct avx512_intrinsic_traits {
-    static constexpr bool vectorizable     = false;      ///< Boolean flag indicating if the type is vectorizable or not
-    static constexpr size_t size      = 1;          ///< Numbers of elements done at once
-    static constexpr size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
+    static constexpr bool vectorizable = false;      ///< Boolean flag indicating if the type is vectorizable or not
+    static constexpr size_t size       = 1;          ///< Numbers of elements done at once
+    static constexpr size_t alignment  = alignof(T); ///< Necessary number of bytes of alignment for this type
 
     using intrinsic_type = T; ///< The vector type
 };
@@ -49,9 +49,9 @@ struct avx512_intrinsic_traits {
  */
 template <>
 struct avx512_intrinsic_traits<float> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 16; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 64;///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 16;   ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 64;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = __m512; ///< The vector type
 };
@@ -61,9 +61,9 @@ struct avx512_intrinsic_traits<float> {
  */
 template <>
 struct avx512_intrinsic_traits<double> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 8; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 64;///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 8;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 64;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = __m512d; ///< The vector type
 };
@@ -73,9 +73,9 @@ struct avx512_intrinsic_traits<double> {
  */
 template <>
 struct avx512_intrinsic_traits<std::complex<float>> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 8; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 64;///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 8;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 64;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = __m512; ///< The vector type
 };
@@ -85,9 +85,9 @@ struct avx512_intrinsic_traits<std::complex<float>> {
  */
 template <>
 struct avx512_intrinsic_traits<std::complex<double>> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 4; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 64;///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 4;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 64;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = __m512d; ///< The vector type
 };
@@ -97,9 +97,9 @@ struct avx512_intrinsic_traits<std::complex<double>> {
  */
 template <>
 struct avx512_intrinsic_traits<etl::complex<float>> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 8; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 64;///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 8;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 64;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = __m512; ///< The vector type
 };
@@ -109,9 +109,9 @@ struct avx512_intrinsic_traits<etl::complex<float>> {
  */
 template <>
 struct avx512_intrinsic_traits<etl::complex<double>> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 4; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 64;///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 4;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 64;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = __m512d; ///< The vector type
 };
@@ -142,15 +142,12 @@ struct avx512_vec {
         union test {
             __m512d vec;
             double array[8];
-            test(__m512d vec)
-                    : vec(vec) {}
+            test(__m512d vec) : vec(vec) {}
         };
 
         test u_value = value;
-        std::cout << "["
-                  << u_value.array[0] << "," << u_value.array[1] << "," << u_value.array[2] << "," << u_value.array[3]
-                  << "," << u_value.array[4] << "," << u_value.array[5] << "," << u_value.array[6] << "," << u_value.array[7]
-                  << "]" << std::endl;
+        std::cout << "[" << u_value.array[0] << "," << u_value.array[1] << "," << u_value.array[2] << "," << u_value.array[3] << "," << u_value.array[4] << ","
+                  << u_value.array[5] << "," << u_value.array[6] << "," << u_value.array[7] << "]" << std::endl;
     }
 
     /*!
@@ -161,17 +158,14 @@ struct avx512_vec {
         union test {
             __m512 vec;
             float array[16];
-            test(__m512 vec)
-                    : vec(vec) {}
+            test(__m512 vec) : vec(vec) {}
         };
 
         test u_value = value;
-        std::cout << "["
-                  << u_value.array[0] << "," << u_value.array[1] << "," << u_value.array[2] << "," << u_value.array[3]
-                  << "," << u_value.array[4] << "," << u_value.array[5] << "," << u_value.array[6] << "," << u_value.array[7]
-                  << "," << u_value.array[8] << "," << u_value.array[9] << "," << u_value.array[10] << "," << u_value.array[11]
-                  << "," << u_value.array[12] << "," << u_value.array[13] << "," << u_value.array[14] << "," << u_value.array[15]
-                  << "]" << std::endl;
+        std::cout << "[" << u_value.array[0] << "," << u_value.array[1] << "," << u_value.array[2] << "," << u_value.array[3] << "," << u_value.array[4] << ","
+                  << u_value.array[5] << "," << u_value.array[6] << "," << u_value.array[7] << "," << u_value.array[8] << "," << u_value.array[9] << ","
+                  << u_value.array[10] << "," << u_value.array[11] << "," << u_value.array[12] << "," << u_value.array[13] << "," << u_value.array[14] << ","
+                  << u_value.array[15] << "]" << std::endl;
     }
 
 #else

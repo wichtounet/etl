@@ -21,10 +21,10 @@ struct minus_unary_op {
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -38,11 +38,8 @@ struct minus_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_sminus)
-            || (is_double_precision_t<T> && impl::egblas::has_dminus)
-            || (is_complex_single_t<T> && impl::egblas::has_cminus)
-            || (is_complex_double_t<T> && impl::egblas::has_zminus);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_sminus) || (is_double_precision_t<T> && impl::egblas::has_dminus)
+                                           || (is_complex_single_t<T> && impl::egblas::has_cminus) || (is_complex_double_t<T> && impl::egblas::has_zminus);
 
     /*!
      * \brief Apply the unary operator on x

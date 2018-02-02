@@ -32,11 +32,8 @@ struct floor_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_sfloor)
-            || (is_double_precision_t<T> && impl::egblas::has_dfloor)
-            || (is_complex_single_t<T> && impl::egblas::has_cfloor)
-            || (is_complex_double_t<T> && impl::egblas::has_zfloor);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_sfloor) || (is_double_precision_t<T> && impl::egblas::has_dfloor)
+                                           || (is_complex_single_t<T> && impl::egblas::has_cfloor) || (is_complex_double_t<T> && impl::egblas::has_zfloor);
 
     /*!
      * \brief Apply the unary operator on x

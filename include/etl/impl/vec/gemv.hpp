@@ -29,7 +29,7 @@ void gemv_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
     static constexpr bool remainder = !advanced_padding || !Padded;
-    const size_t last = remainder ? (n & size_t(-vec_size)) : n;
+    const size_t last               = remainder ? (n & size_t(-vec_size)) : n;
 
     size_t i = 0;
 
@@ -129,7 +129,7 @@ void gemv_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
         for (; k < last; k += vec_size) {
             auto b1 = vec_type::loadu(bb + k);
             auto a1 = vec_type::loadu(aa + (i + 0) * n + k);
-            r1 = vec_type::fmadd(a1, b1, r1);
+            r1      = vec_type::fmadd(a1, b1, r1);
         }
 
         auto result = vec_type::hadd(r1);
@@ -156,7 +156,7 @@ void gemv_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
     static constexpr bool remainder = !advanced_padding || !Padded;
-    const size_t last = remainder ? (n & size_t(-vec_size)) : n;
+    const size_t last               = remainder ? (n & size_t(-vec_size)) : n;
 
     size_t i = 0;
 
@@ -363,7 +363,7 @@ void gemv_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
         // Vectorized inner loop
         for (; k < last; k += vec_size) {
             auto b1 = vec_type::loadu(bb + k);
-            r1 = vec_type::fmadd(vec_type::loadu(aa + (i + 0) * n + k), b1, r1);
+            r1      = vec_type::fmadd(vec_type::loadu(aa + (i + 0) * n + k), b1, r1);
         }
 
         auto result = vec_type::hadd(r1);
@@ -390,7 +390,7 @@ void gemv_small_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
     static constexpr bool remainder = !advanced_padding || !Padded;
-    const size_t last = remainder ? (m & size_t(-vec_size)) : m;
+    const size_t last               = remainder ? (m & size_t(-vec_size)) : m;
 
     size_t i = 0;
 
@@ -525,7 +525,7 @@ void gemv_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
                 for (size_t j = block_j; j < n_end; ++j) {
                     auto b1 = vec_type::set(bb[j]);
 
-                    r1 = vec_type::fmadd(vec_type::loadu(aa + i + 0 * vec_size+  j * m), b1, r1);
+                    r1 = vec_type::fmadd(vec_type::loadu(aa + i + 0 * vec_size + j * m), b1, r1);
                     r2 = vec_type::fmadd(vec_type::loadu(aa + i + 1 * vec_size + j * m), b1, r2);
                     r3 = vec_type::fmadd(vec_type::loadu(aa + i + 2 * vec_size + j * m), b1, r3);
                     r4 = vec_type::fmadd(vec_type::loadu(aa + i + 3 * vec_size + j * m), b1, r4);
@@ -546,7 +546,7 @@ void gemv_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
                 for (size_t j = block_j; j < n_end; ++j) {
                     auto b1 = vec_type::set(bb[j]);
 
-                    r1 = vec_type::fmadd(vec_type::loadu(aa + i + 0 * vec_size+  j * m), b1, r1);
+                    r1 = vec_type::fmadd(vec_type::loadu(aa + i + 0 * vec_size + j * m), b1, r1);
                     r2 = vec_type::fmadd(vec_type::loadu(aa + i + 1 * vec_size + j * m), b1, r2);
                 }
 
@@ -560,7 +560,7 @@ void gemv_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
 
                 for (size_t j = block_j; j < n_end; ++j) {
                     auto b1 = vec_type::set(bb[j]);
-                    r1 = vec_type::fmadd(vec_type::loadu(aa + i + j * m), b1, r1);
+                    r1      = vec_type::fmadd(vec_type::loadu(aa + i + j * m), b1, r1);
                 }
 
                 vec_type::storeu(cc + i, vec_type::add(vec_type::loadu(cc + i), r1));

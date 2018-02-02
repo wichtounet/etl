@@ -25,10 +25,10 @@ struct slice_view;
  * \brief Specialization of slice_view for non-DMA types
  */
 template <typename T>
-struct slice_view  <T, std::enable_if_t<!fast_slice_view_able<T>>>
-: assignable<slice_view<T>, value_t<T>>, value_testable<slice_view<T>>, iterable<slice_view<T>, fast_slice_view_able<T>> {
+struct slice_view<T, std::enable_if_t<!fast_slice_view_able<T>>>
+        : assignable<slice_view<T>, value_t<T>>, value_testable<slice_view<T>>, iterable<slice_view<T>, fast_slice_view_able<T>> {
     using this_type            = slice_view<T>;                                                        ///< The type of this expression
-    using iterable_base_type   = iterable<this_type, fast_slice_view_able<T>>;                  ///< The iterable base type
+    using iterable_base_type   = iterable<this_type, fast_slice_view_able<T>>;                         ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The assignable base type
     using sub_type             = T;                                                                    ///< The sub type
     using value_type           = value_t<sub_type>;                                                    ///< The value contained in the expression
@@ -44,22 +44,20 @@ struct slice_view  <T, std::enable_if_t<!fast_slice_view_able<T>>>
     using iterable_base_type::end;
 
 private:
-    T sub;                   ///< The Sub expression
+    T sub;              ///< The Sub expression
     const size_t first; ///< The index
     const size_t last;  ///< The last index
 
     friend struct etl_traits<slice_view>;
 
 public:
-
     /*!
      * \brief Construct a new slice_view over the given sub expression
      * \param sub The sub expression
      * \param first The first index
      * \param last The last index
      */
-    slice_view(sub_type sub, size_t first, size_t last)
-            : sub(sub), first(first), last(last) {}
+    slice_view(sub_type sub, size_t first, size_t last) : sub(sub), first(first), last(last) {}
 
     /*!
      * \brief Returns the element at the given index
@@ -175,8 +173,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -184,8 +182,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -193,8 +191,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -202,8 +200,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -211,8 +209,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -220,8 +218,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -258,8 +256,8 @@ public:
  * \brief Specialization of slice_view for DMA types
  */
 template <typename T>
-struct slice_view  <T, std::enable_if_t<fast_slice_view_able<T>>>
-: assignable<slice_view<T>, value_t<T>>, value_testable<slice_view<T>>, iterable<slice_view<T>, true> {
+struct slice_view<T, std::enable_if_t<fast_slice_view_able<T>>>
+        : assignable<slice_view<T>, value_t<T>>, value_testable<slice_view<T>>, iterable<slice_view<T>, true> {
     using this_type            = slice_view<T>;                                                        ///< The type of this expression
     using iterable_base_type   = iterable<this_type, true>;                                            ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The assignable base type
@@ -276,17 +274,17 @@ struct slice_view  <T, std::enable_if_t<fast_slice_view_able<T>>>
      * \brief The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<value_type>;
+    using vec_type = typename V::template vec_type<value_type>;
 
     using assignable_base_type::operator=;
     using iterable_base_type::begin;
     using iterable_base_type::end;
 
 private:
-    T sub;                   ///< The Sub expression
-    const size_t first;      ///< The index
-    const size_t last;       ///< The last index
-    const size_t sub_size;   ///< The sub size
+    T sub;                 ///< The Sub expression
+    const size_t first;    ///< The index
+    const size_t last;     ///< The last index
+    const size_t sub_size; ///< The sub size
 
     mutable memory_type memory; ///< Pointer to the CPU memory
 
@@ -296,17 +294,15 @@ private:
     friend struct etl_traits<slice_view>;
 
 public:
-
     /*!
      * \brief Construct a new slice_view over the given sub expression
      * \param sub The sub expression
      * \param first The first index
      * \param last The last index
      */
-    slice_view(sub_type sub, size_t first, size_t last)
-            : sub(sub), first(first), last(last), sub_size((etl::size(sub) / etl::dim<0>(sub)) * (last - first)) {
+    slice_view(sub_type sub, size_t first, size_t last) : sub(sub), first(first), last(last), sub_size((etl::size(sub) / etl::dim<0>(sub)) * (last - first)) {
         // Accessing the memory through fast sub views means evaluation
-        if constexpr (decay_traits<sub_type>::is_temporary){
+        if constexpr (decay_traits<sub_type>::is_temporary) {
             standard_evaluator::pre_assign_rhs(*this);
         }
 
@@ -322,7 +318,7 @@ public:
     /*!
      * \brief Destructs the slice view
      */
-    ~slice_view(){
+    ~slice_view() {
         if (this->memory) {
             // Propagate the status on the parent
             if (!this->cpu_up_to_date) {
@@ -485,7 +481,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    auto& gpu_compute_hint(Y& y){
+    auto& gpu_compute_hint(Y& y) {
         cpp_unused(y);
         this->ensure_gpu_up_to_date();
         return *this;
@@ -540,8 +536,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -549,8 +545,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -558,8 +554,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -567,8 +563,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -576,8 +572,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -585,8 +581,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -661,11 +657,9 @@ public:
         sub.ensure_gpu_allocated();
 
 #ifdef ETL_CUDA
-        if(!this->gpu_up_to_date){
-            cuda_check_assert(cudaMemcpy(
-                const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
-                const_cast<std::remove_const_t<value_type>*>(memory_start()),
-                sub_size * sizeof(value_type), cudaMemcpyHostToDevice));
+        if (!this->gpu_up_to_date) {
+            cuda_check_assert(cudaMemcpy(const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
+                                         const_cast<std::remove_const_t<value_type>*>(memory_start()), sub_size * sizeof(value_type), cudaMemcpyHostToDevice));
 
             this->gpu_up_to_date = true;
 
@@ -681,10 +675,8 @@ public:
     void ensure_cpu_up_to_date() const {
 #ifdef ETL_CUDA
         if (!this->cpu_up_to_date) {
-            cuda_check_assert(cudaMemcpy(
-                const_cast<std::remove_const_t<value_type>*>(memory_start()),
-                const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
-                sub_size * sizeof(value_type), cudaMemcpyDeviceToHost));
+            cuda_check_assert(cudaMemcpy(const_cast<std::remove_const_t<value_type>*>(memory_start()),
+                                         const_cast<std::remove_const_t<value_type>*>(gpu_memory()), sub_size * sizeof(value_type), cudaMemcpyDeviceToHost));
 
             inc_counter("gpu:slice:gpu_to_cpu");
         }
@@ -701,10 +693,8 @@ public:
         cpp_assert(sub.gpu_memory(), "GPU must be allocated before copy");
 
 #ifdef ETL_CUDA
-        cuda_check_assert(cudaMemcpy(
-            const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
-            const_cast<std::remove_const_t<value_type>*>(new_gpu_memory),
-            sub_size * sizeof(value_type), cudaMemcpyDeviceToDevice));
+        cuda_check_assert(cudaMemcpy(const_cast<std::remove_const_t<value_type>*>(gpu_memory()), const_cast<std::remove_const_t<value_type>*>(new_gpu_memory),
+                                     sub_size * sizeof(value_type), cudaMemcpyDeviceToDevice));
 #else
         cpp_unused(new_gpu_memory);
 #endif
@@ -735,9 +725,9 @@ public:
  */
 template <typename T>
 struct etl_traits<etl::slice_view<T>> {
-    using expr_t     = etl::slice_view<T>; ///< The expression type
-    using sub_expr_t = std::decay_t<T>;    ///< The sub expression type
-    using sub_traits = etl_traits<sub_expr_t>; ///< The traits of the sub expression
+    using expr_t     = etl::slice_view<T>;                          ///< The expression type
+    using sub_expr_t = std::decay_t<T>;                             ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;                      ///< The traits of the sub expression
     using value_type = typename etl_traits<sub_expr_t>::value_type; ///< The value type
 
     static constexpr bool is_etl         = true;                       ///< Indicates if the type is an ETL expression
@@ -762,7 +752,7 @@ struct etl_traits<etl::slice_view<T>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable = sub_traits::template vectorizable<V> && storage_order == order::RowMajor;
+    static constexpr bool vectorizable = sub_traits::template vectorizable<V>&& storage_order == order::RowMajor;
 
     /*!
      * \brief Returns the size of the given expression

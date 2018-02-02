@@ -37,7 +37,7 @@ static constexpr bool has_saxmy = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axmy(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
+inline void axmy(size_t n, float alpha, float* A, size_t lda, float* B, size_t ldb) {
 #ifdef EGBLAS_HAS_SAXMY
     inc_counter("egblas");
     egblas_saxmy(n, alpha, A, lda, B, ldb);
@@ -68,7 +68,7 @@ static constexpr bool has_daxmy = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axmy(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
+inline void axmy(size_t n, double alpha, double* A, size_t lda, double* B, size_t ldb) {
 #ifdef EGBLAS_HAS_DAXMY
     inc_counter("egblas");
     egblas_daxmy(n, alpha, A, lda, B, ldb);
@@ -99,7 +99,7 @@ static constexpr bool has_caxmy = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axmy(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+inline void axmy(size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CAXMY
     inc_counter("egblas");
     egblas_caxmy(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
@@ -124,7 +124,7 @@ inline void axmy(size_t n, std::complex<float> alpha, std::complex<float>* A , s
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axmy(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+inline void axmy(size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CAXMY
     inc_counter("egblas");
     egblas_caxmy(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
@@ -139,7 +139,6 @@ inline void axmy(size_t n, etl::complex<float> alpha, etl::complex<float>* A , s
     cpp_unreachable("Invalid call to egblas::axmy");
 #endif
 }
-
 
 #ifdef EGBLAS_HAS_ZAXMY
 static constexpr bool has_zaxmy = true;
@@ -156,7 +155,7 @@ static constexpr bool has_zaxmy = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axmy(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+inline void axmy(size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZAXMY
     inc_counter("egblas");
     egblas_zaxmy(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
@@ -181,7 +180,7 @@ inline void axmy(size_t n, std::complex<double> alpha, std::complex<double>* A ,
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void axmy(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+inline void axmy(size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZAXMY
     inc_counter("egblas");
     egblas_zaxmy(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);

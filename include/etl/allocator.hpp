@@ -23,20 +23,16 @@ namespace etl {
  * \brief Use of this type in the parameter with the size of
  * a vector type fakes mangling
  */
-template<size_t T>
+template <size_t T>
 struct mangling_faker {};
 
 /*!
  * \brief Test if the given type can be mangled correctly
  *
  */
-template<typename T>
-constexpr bool is_mangle_able =
-       std::is_same<std::decay_t<T>, float>::value
-    || std::is_same<std::decay_t<T>, double>::value
-    || cpp::is_specialization_of_v<std::complex, std::decay_t<T>>
-    || cpp::is_specialization_of_v<etl::complex, std::decay_t<T>>
-    ;
+template <typename T>
+constexpr bool is_mangle_able = std::is_same<std::decay_t<T>, float>::value || std::is_same<std::decay_t<T>, double>::value
+                                || cpp::is_specialization_of_v<std::complex, std::decay_t<T>> || cpp::is_specialization_of_v<etl::complex, std::decay_t<T>>;
 
 /*!
  * \brief Allocated for aligned memory
@@ -60,7 +56,7 @@ struct aligned_allocator {
         }
 
         auto aligned = reinterpret_cast<void**>((reinterpret_cast<size_t>(orig) + offset) & ~(A - 1));
-        aligned[-1] = orig;
+        aligned[-1]  = orig;
         return reinterpret_cast<T*>(aligned);
     }
 
@@ -115,8 +111,7 @@ struct aligned_ptr {
     /*!
      * \brief Build an aligned_ptr managing the given pointer
      */
-    explicit aligned_ptr(T* ptr)
-            : ptr(ptr) {}
+    explicit aligned_ptr(T* ptr) : ptr(ptr) {}
 
     aligned_ptr(const aligned_ptr& rhs) = delete;
     aligned_ptr& operator=(const aligned_ptr& rhs) = delete;

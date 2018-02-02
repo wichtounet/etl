@@ -81,7 +81,7 @@ struct cuda_memory {
      */
     cuda_memory(cuda_memory&& rhs) noexcept : memory(rhs.memory), size(rhs.size) {
         rhs.memory = nullptr;
-        rhs.size = 0;
+        rhs.size   = 0;
     }
 
     /*!

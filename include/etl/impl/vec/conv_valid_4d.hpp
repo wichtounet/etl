@@ -106,10 +106,12 @@ void conv4_valid([[maybe_unused]] const I& input,
                                     const size_t i = nk / K;
                                     const size_t k = nk % K;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2,
+                                                                                                   p1, p2, T(0));
 
                                     for (size_t c = 1; c < C; ++c) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, p1, p2, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1,
+                                                                                                       s2, p1, p2, T(1));
                                     }
                                 }
                             };
@@ -121,10 +123,12 @@ void conv4_valid([[maybe_unused]] const I& input,
                                     const size_t i = nk / K;
                                     const size_t k = nk % K;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2,
+                                                                                                   p1, p2, T(0));
 
                                     for (size_t c = 1; c < C; ++c) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, p1, p2, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1,
+                                                                                                       s2, p1, p2, T(1));
                                     }
                                 }
                             };
@@ -141,10 +145,12 @@ void conv4_valid([[maybe_unused]] const I& input,
                                     const size_t i = nk / K;
                                     const size_t k = nk % K;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2,
+                                                                                                   0, 0, T(0));
 
                                     for (size_t c = 1; c < C; ++c) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1,
+                                                                                                       s2, 0, 0, T(1));
                                     }
                                 }
                             };
@@ -156,10 +162,12 @@ void conv4_valid([[maybe_unused]] const I& input,
                                     const size_t i = nk / K;
                                     const size_t k = nk % K;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2,
+                                                                                                   0, 0, T(0));
 
                                     for (size_t c = 1; c < C; ++c) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1,
+                                                                                                       s2, 0, 0, T(1));
                                     }
                                 }
                             };
@@ -177,10 +185,12 @@ void conv4_valid([[maybe_unused]] const I& input,
                                     const size_t i = nk / K;
                                     const size_t k = nk % K;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), kernel(k)(0), conv(i)(k), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), kernel(k)(0), conv(i)(k), s1, s2, 0, 0,
+                                                                                                   T(0));
 
                                     for (size_t c = 1; c < C; ++c) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), kernel(k)(c), conv(i)(k), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), kernel(k)(c), conv(i)(k), s1, s2, 0,
+                                                                                                       0, T(1));
                                     }
                                 }
                             };
@@ -192,10 +202,12 @@ void conv4_valid([[maybe_unused]] const I& input,
                                     const size_t i = nk / K;
                                     const size_t k = nk % K;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), kernel(k)(0), conv(i)(k), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), kernel(k)(0), conv(i)(k), s1, s2, 0, 0,
+                                                                                                   T(0));
 
                                     for (size_t c = 1; c < C; ++c) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), kernel(k)(c), conv(i)(k), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), kernel(k)(c), conv(i)(k), s1, s2, 0,
+                                                                                                       0, T(1));
                                     }
                                 }
                             };
@@ -297,10 +309,12 @@ void conv4_valid_flipped([[maybe_unused]] const I& input,
                                     const size_t i = nk / K;
                                     const size_t k = nk % K;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2,
+                                                                                                   p1, p2, T(0));
 
                                     for (size_t c = 1; c < C; ++c) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, p1, p2, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1,
+                                                                                                       s2, p1, p2, T(1));
                                     }
                                 }
                             };
@@ -312,10 +326,12 @@ void conv4_valid_flipped([[maybe_unused]] const I& input,
                                     const size_t i = nk / K;
                                     const size_t k = nk % K;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, p1, p2, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2,
+                                                                                                   p1, p2, T(0));
 
                                     for (size_t c = 1; c < C; ++c) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, p1, p2, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1,
+                                                                                                       s2, p1, p2, T(1));
                                     }
                                 }
                             };
@@ -332,10 +348,12 @@ void conv4_valid_flipped([[maybe_unused]] const I& input,
                                     const size_t i = nk / K;
                                     const size_t k = nk % K;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2,
+                                                                                                   0, 0, T(0));
 
                                     for (size_t c = 1; c < C; ++c) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1,
+                                                                                                       s2, 0, 0, T(1));
                                     }
                                 }
                             };
@@ -347,10 +365,12 @@ void conv4_valid_flipped([[maybe_unused]] const I& input,
                                     const size_t i = nk / K;
                                     const size_t k = nk % K;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(k)(0), conv(i)(k), s1, s2,
+                                                                                                   0, 0, T(0));
 
                                     for (size_t c = 1; c < C; ++c) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(k)(c), conv(i)(k), s1,
+                                                                                                       s2, 0, 0, T(1));
                                     }
                                 }
                             };
@@ -368,10 +388,12 @@ void conv4_valid_flipped([[maybe_unused]] const I& input,
                                     const size_t i = nk / K;
                                     const size_t k = nk % K;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), kernel(k)(0), conv(i)(k), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), kernel(k)(0), conv(i)(k), s1, s2, 0, 0,
+                                                                                                   T(0));
 
                                     for (size_t c = 1; c < C; ++c) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), kernel(k)(c), conv(i)(k), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), kernel(k)(c), conv(i)(k), s1, s2, 0,
+                                                                                                       0, T(1));
                                     }
                                 }
                             };
@@ -383,10 +405,12 @@ void conv4_valid_flipped([[maybe_unused]] const I& input,
                                     const size_t i = nk / K;
                                     const size_t k = nk % K;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), kernel(k)(0), conv(i)(k), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), kernel(k)(0), conv(i)(k), s1, s2, 0, 0,
+                                                                                                   T(0));
 
                                     for (size_t c = 1; c < C; ++c) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), kernel(k)(c), conv(i)(k), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), kernel(k)(c), conv(i)(k), s1, s2, 0,
+                                                                                                       0, T(1));
                                     }
                                 }
                             };
@@ -487,10 +511,12 @@ void conv4_valid_back([[maybe_unused]] const I& input,
                                     const size_t i = nk / C;
                                     const size_t c = nk % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2,
+                                                                                                   p1, p2, T(0));
 
                                     for (size_t k = 1; k < K; ++k) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1,
+                                                                                                       s2, p1, p2, T(1));
                                     }
                                 }
                             };
@@ -502,10 +528,12 @@ void conv4_valid_back([[maybe_unused]] const I& input,
                                     const size_t i = nk / C;
                                     const size_t c = nk % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2,
+                                                                                                   p1, p2, T(0));
 
                                     for (size_t k = 1; k < K; ++k) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1,
+                                                                                                       s2, p1, p2, T(1));
                                     }
                                 }
                             };
@@ -522,10 +550,12 @@ void conv4_valid_back([[maybe_unused]] const I& input,
                                     const size_t i = nk / C;
                                     const size_t c = nk % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2,
+                                                                                                   0, 0, T(0));
 
                                     for (size_t k = 1; k < K; ++k) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1,
+                                                                                                       s2, 0, 0, T(1));
                                     }
                                 }
                             };
@@ -537,10 +567,12 @@ void conv4_valid_back([[maybe_unused]] const I& input,
                                     const size_t i = nk / C;
                                     const size_t c = nk % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2,
+                                                                                                   0, 0, T(0));
 
                                     for (size_t k = 1; k < K; ++k) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1,
+                                                                                                       s2, 0, 0, T(1));
                                     }
                                 }
                             };
@@ -558,10 +590,12 @@ void conv4_valid_back([[maybe_unused]] const I& input,
                                     const size_t i = nk / C;
                                     const size_t c = nk % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), kernel(0)(c), conv(i)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), kernel(0)(c), conv(i)(c), s1, s2, 0, 0,
+                                                                                                   T(0));
 
                                     for (size_t k = 1; k < K; ++k) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), kernel(k)(c), conv(i)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), kernel(k)(c), conv(i)(c), s1, s2, 0,
+                                                                                                       0, T(1));
                                     }
                                 }
                             };
@@ -573,10 +607,12 @@ void conv4_valid_back([[maybe_unused]] const I& input,
                                     const size_t i = nk / C;
                                     const size_t c = nk % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), kernel(0)(c), conv(i)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), kernel(0)(c), conv(i)(c), s1, s2, 0, 0,
+                                                                                                   T(0));
 
                                     for (size_t k = 1; k < K; ++k) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), kernel(k)(c), conv(i)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), kernel(k)(c), conv(i)(c), s1, s2, 0,
+                                                                                                       0, T(1));
                                     }
                                 }
                             };
@@ -678,10 +714,12 @@ void conv4_valid_back_flipped([[maybe_unused]] const I& input,
                                     const size_t i = nk / C;
                                     const size_t c = nk % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2,
+                                                                                                   p1, p2, T(0));
 
                                     for (size_t k = 1; k < K; ++k) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1,
+                                                                                                       s2, p1, p2, T(1));
                                     }
                                 }
                             };
@@ -693,10 +731,12 @@ void conv4_valid_back_flipped([[maybe_unused]] const I& input,
                                     const size_t i = nk / C;
                                     const size_t c = nk % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, p1, p2, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2,
+                                                                                                   p1, p2, T(0));
 
                                     for (size_t k = 1; k < K; ++k) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, p1, p2, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1,
+                                                                                                       s2, p1, p2, T(1));
                                     }
                                 }
                             };
@@ -713,10 +753,12 @@ void conv4_valid_back_flipped([[maybe_unused]] const I& input,
                                     const size_t i = nk / C;
                                     const size_t c = nk % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2,
+                                                                                                   0, 0, T(0));
 
                                     for (size_t k = 1; k < K; ++k) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1,
+                                                                                                       s2, 0, 0, T(1));
                                     }
                                 }
                             };
@@ -728,10 +770,12 @@ void conv4_valid_back_flipped([[maybe_unused]] const I& input,
                                     const size_t i = nk / C;
                                     const size_t c = nk % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), padded_kernel(0)(c), conv(i)(c), s1, s2,
+                                                                                                   0, 0, T(0));
 
                                     for (size_t k = 1; k < K; ++k) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), padded_kernel(k)(c), conv(i)(c), s1,
+                                                                                                       s2, 0, 0, T(1));
                                     }
                                 }
                             };
@@ -749,10 +793,12 @@ void conv4_valid_back_flipped([[maybe_unused]] const I& input,
                                     const size_t i = nk / C;
                                     const size_t c = nk % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), kernel(0)(c), conv(i)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(0), kernel(0)(c), conv(i)(c), s1, s2, 0, 0,
+                                                                                                   T(0));
 
                                     for (size_t k = 1; k < K; ++k) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), kernel(k)(c), conv(i)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(k), kernel(k)(c), conv(i)(c), s1, s2, 0,
+                                                                                                       0, T(1));
                                     }
                                 }
                             };
@@ -764,10 +810,12 @@ void conv4_valid_back_flipped([[maybe_unused]] const I& input,
                                     const size_t i = nk / C;
                                     const size_t c = nk % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), kernel(0)(c), conv(i)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(0), kernel(0)(c), conv(i)(c), s1, s2, 0, 0,
+                                                                                                   T(0));
 
                                     for (size_t k = 1; k < K; ++k) {
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), kernel(k)(c), conv(i)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(k), kernel(k)(c), conv(i)(c), s1, s2, 0,
+                                                                                                       0, T(1));
                                     }
                                 }
                             };
@@ -868,7 +916,8 @@ void conv4_valid_filter([[maybe_unused]] const I& input,
                                     const size_t k = kc / C;
                                     const size_t c = kc % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2,
+                                                                                                   p1, p2, T(0));
                                 }
 
                                 for (size_t i = 1; i < N; ++i) {
@@ -876,7 +925,8 @@ void conv4_valid_filter([[maybe_unused]] const I& input,
                                         const size_t k = kc / C;
                                         const size_t c = kc % C;
 
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1,
+                                                                                                       s2, p1, p2, T(1));
                                     }
                                 }
                             };
@@ -889,7 +939,8 @@ void conv4_valid_filter([[maybe_unused]] const I& input,
                                     const size_t k = kc / C;
                                     const size_t c = kc % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2,
+                                                                                                   p1, p2, T(0));
                                 }
 
                                 for (size_t i = 1; i < N; ++i) {
@@ -897,7 +948,8 @@ void conv4_valid_filter([[maybe_unused]] const I& input,
                                         const size_t k = kc / C;
                                         const size_t c = kc % C;
 
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1,
+                                                                                                       s2, p1, p2, T(1));
                                     }
                                 }
                             };
@@ -915,7 +967,8 @@ void conv4_valid_filter([[maybe_unused]] const I& input,
                                     const size_t k = kc / C;
                                     const size_t c = kc % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2,
+                                                                                                   0, 0, T(0));
                                 }
 
                                 for (size_t i = 1; i < N; ++i) {
@@ -923,7 +976,8 @@ void conv4_valid_filter([[maybe_unused]] const I& input,
                                         const size_t k = kc / C;
                                         const size_t c = kc % C;
 
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1,
+                                                                                                       s2, 0, 0, T(1));
                                     }
                                 }
                             };
@@ -936,7 +990,8 @@ void conv4_valid_filter([[maybe_unused]] const I& input,
                                     const size_t k = kc / C;
                                     const size_t c = kc % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2,
+                                                                                                   0, 0, T(0));
                                 }
 
                                 for (size_t i = 1; i < N; ++i) {
@@ -944,7 +999,8 @@ void conv4_valid_filter([[maybe_unused]] const I& input,
                                         const size_t k = kc / C;
                                         const size_t c = kc % C;
 
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1,
+                                                                                                       s2, 0, 0, T(1));
                                     }
                                 }
                             };
@@ -963,7 +1019,8 @@ void conv4_valid_filter([[maybe_unused]] const I& input,
                                     const size_t k = kc / C;
                                     const size_t c = kc % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, 0, 0,
+                                                                                                   T(0));
                                 }
 
                                 for (size_t i = 1; i < N; ++i) {
@@ -971,7 +1028,8 @@ void conv4_valid_filter([[maybe_unused]] const I& input,
                                         const size_t k = kc / C;
                                         const size_t c = kc % C;
 
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, 0,
+                                                                                                       0, T(1));
                                     }
                                 }
                             };
@@ -984,7 +1042,8 @@ void conv4_valid_filter([[maybe_unused]] const I& input,
                                     const size_t k = kc / C;
                                     const size_t c = kc % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, 0, 0,
+                                                                                                   T(0));
                                 }
 
                                 for (size_t i = 1; i < N; ++i) {
@@ -992,7 +1051,8 @@ void conv4_valid_filter([[maybe_unused]] const I& input,
                                         const size_t k = kc / C;
                                         const size_t c = kc % C;
 
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, 0,
+                                                                                                       0, T(1));
                                     }
                                 }
                             };
@@ -1106,7 +1166,8 @@ void conv4_valid_filter_flipped([[maybe_unused]] const I& input,
                                     const size_t k = kc / C;
                                     const size_t c = kc % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2,
+                                                                                                   p1, p2, T(0));
                                 }
 
                                 for (size_t i = 1; i < N; ++i) {
@@ -1114,7 +1175,8 @@ void conv4_valid_filter_flipped([[maybe_unused]] const I& input,
                                         const size_t k = kc / C;
                                         const size_t c = kc % C;
 
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1,
+                                                                                                       s2, p1, p2, T(1));
                                     }
                                 }
                             };
@@ -1127,7 +1189,8 @@ void conv4_valid_filter_flipped([[maybe_unused]] const I& input,
                                     const size_t k = kc / C;
                                     const size_t c = kc % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2,
+                                                                                                   p1, p2, T(0));
                                 }
 
                                 for (size_t i = 1; i < N; ++i) {
@@ -1135,7 +1198,8 @@ void conv4_valid_filter_flipped([[maybe_unused]] const I& input,
                                         const size_t k = kc / C;
                                         const size_t c = kc % C;
 
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1,
+                                                                                                       s2, p1, p2, T(1));
                                     }
                                 }
                             };
@@ -1153,7 +1217,8 @@ void conv4_valid_filter_flipped([[maybe_unused]] const I& input,
                                     const size_t k = kc / C;
                                     const size_t c = kc % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2,
+                                                                                                   0, 0, T(0));
                                 }
 
                                 for (size_t i = 1; i < N; ++i) {
@@ -1161,7 +1226,8 @@ void conv4_valid_filter_flipped([[maybe_unused]] const I& input,
                                         const size_t k = kc / C;
                                         const size_t c = kc % C;
 
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1,
+                                                                                                       s2, 0, 0, T(1));
                                     }
                                 }
                             };
@@ -1174,7 +1240,8 @@ void conv4_valid_filter_flipped([[maybe_unused]] const I& input,
                                     const size_t k = kc / C;
                                     const size_t c = kc % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2,
+                                                                                                   0, 0, T(0));
                                 }
 
                                 for (size_t i = 1; i < N; ++i) {
@@ -1182,7 +1249,8 @@ void conv4_valid_filter_flipped([[maybe_unused]] const I& input,
                                         const size_t k = kc / C;
                                         const size_t c = kc % C;
 
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1,
+                                                                                                       s2, 0, 0, T(1));
                                     }
                                 }
                             };
@@ -1201,7 +1269,8 @@ void conv4_valid_filter_flipped([[maybe_unused]] const I& input,
                                     const size_t k = kc / C;
                                     const size_t c = kc % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, 0, 0,
+                                                                                                   T(0));
                                 }
 
                                 for (size_t i = 1; i < N; ++i) {
@@ -1209,7 +1278,8 @@ void conv4_valid_filter_flipped([[maybe_unused]] const I& input,
                                         const size_t k = kc / C;
                                         const size_t c = kc % C;
 
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, 0,
+                                                                                                       0, T(1));
                                     }
                                 }
                             };
@@ -1222,7 +1292,8 @@ void conv4_valid_filter_flipped([[maybe_unused]] const I& input,
                                     const size_t k = kc / C;
                                     const size_t c = kc % C;
 
-                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, 0, 0, T(0));
+                                    detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, 0, 0,
+                                                                                                   T(0));
                                 }
 
                                 for (size_t i = 1; i < N; ++i) {
@@ -1230,7 +1301,8 @@ void conv4_valid_filter_flipped([[maybe_unused]] const I& input,
                                         const size_t k = kc / C;
                                         const size_t c = kc % C;
 
-                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, 0, 0, T(1));
+                                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, 0,
+                                                                                                       0, T(1));
                                     }
                                 }
                             };

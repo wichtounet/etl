@@ -37,8 +37,8 @@ namespace etl {
 template <typename T>
 static constexpr size_t alloc_size_vec(size_t size) {
     return padding
-        ? size + (size % default_intrinsic_traits<T>::size == 0 ? 0 : (default_intrinsic_traits<T>::size - (size % default_intrinsic_traits<T>::size)))
-        : size;
+               ? size + (size % default_intrinsic_traits<T>::size == 0 ? 0 : (default_intrinsic_traits<T>::size - (size % default_intrinsic_traits<T>::size)))
+               : size;
 }
 
 #ifdef ETL_ADVANCED_PADDING
@@ -52,10 +52,13 @@ static constexpr size_t alloc_size_vec(size_t size) {
  */
 template <typename T>
 static constexpr size_t alloc_size_mat(size_t size, size_t last) {
-    return size == 0 ? 0 :
-        (padding
-        ? (size / last) * (last + (last % default_intrinsic_traits<T>::size == 0 ? 0 : (default_intrinsic_traits<T>::size - last % default_intrinsic_traits<T>::size)))
-        : size);
+    return size == 0 ? 0
+                     : (padding ? (size / last)
+                                      * (last
+                                         + (last % default_intrinsic_traits<T>::size == 0
+                                                ? 0
+                                                : (default_intrinsic_traits<T>::size - last % default_intrinsic_traits<T>::size)))
+                                : size);
 }
 
 #else
@@ -69,7 +72,7 @@ static constexpr size_t alloc_size_mat(size_t size, size_t last) {
  */
 template <typename T>
 static constexpr size_t alloc_size_mat(size_t size, size_t last) {
-    return (void) last, (size == 0 ? 0 : alloc_size_vec<T>(size));
+    return (void)last, (size == 0 ? 0 : alloc_size_vec<T>(size));
 }
 
 #endif
@@ -270,13 +273,13 @@ using gpu_dyn_matrix = gpu_dyn_matrix_impl<T, order::RowMajor, D>;
  * \brief A dynamic matrix, in row-major order, of D dimensions
  */
 template <typename T, size_t D = 2>
-using custom_dyn_matrix                    = custom_dyn_matrix_impl<T, order::RowMajor, D>;
+using custom_dyn_matrix = custom_dyn_matrix_impl<T, order::RowMajor, D>;
 
 /*!
  * \brief A dynamic matrix, in column-major order, of D dimensions
  */
 template <typename T, size_t D = 2>
-using custom_dyn_matrix_cm                 = custom_dyn_matrix_impl<T, order::ColumnMajor, D>;
+using custom_dyn_matrix_cm = custom_dyn_matrix_impl<T, order::ColumnMajor, D>;
 
 /*!
  * \brief A dynamic vector, in row-major order
@@ -300,6 +303,6 @@ using custom_fast_matrix = custom_fast_matrix_impl<T, cpp::array_wrapper<T>, ord
  * \brief A sparse matrix, of D dimensions
  */
 template <typename T, size_t D = 2>
-using sparse_matrix                 = sparse_matrix_impl<T, sparse_storage::COO, D>;
+using sparse_matrix = sparse_matrix_impl<T, sparse_storage::COO, D>;
 
 } //end of namespace etl

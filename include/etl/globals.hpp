@@ -8,7 +8,7 @@
 /*!
  * \file
  * \brief Contains some global functions.
-*/
+ */
 
 #pragma once
 
@@ -369,8 +369,8 @@ bool is_uniform(E&& expr) {
  * \return true if the given expression is an hermitian matrix, false otherwise.
  */
 template <typename E>
-bool is_permutation_matrix(E&& expr){
-    if(!is_square(expr)){
+bool is_permutation_matrix(E&& expr) {
+    if (!is_square(expr)) {
         return false;
     }
 
@@ -382,14 +382,14 @@ bool is_permutation_matrix(E&& expr){
     for (size_t i = 0; i < etl::dim<0>(expr); ++i) {
         auto sum = value_t<E>(0);
         for (size_t j = 0; j < etl::dim<0>(expr); ++j) {
-            if(expr(i, j) != value_t<E>(0) && expr(i, j) != value_t<E>(1)){
+            if (expr(i, j) != value_t<E>(0) && expr(i, j) != value_t<E>(1)) {
                 return false;
             }
 
             sum += expr(i, j);
         }
 
-        if(sum != value_t<E>(1)){
+        if (sum != value_t<E>(1)) {
             return false;
         }
     }
@@ -400,7 +400,7 @@ bool is_permutation_matrix(E&& expr){
             sum += expr(i, j);
         }
 
-        if(sum != value_t<E>(1)){
+        if (sum != value_t<E>(1)) {
             return false;
         }
     }
@@ -414,7 +414,7 @@ bool is_permutation_matrix(E&& expr){
  * \return true if the given expression is an hermitian matrix, false otherwise.
  */
 template <typename E>
-bool is_hermitian(E&& expr){
+bool is_hermitian(E&& expr) {
     if constexpr (is_complex<E>) {
         // hermitian_matrix<E> is already enforced to be hermitian
         if constexpr (is_hermitian_matrix<E>) {
@@ -445,15 +445,15 @@ bool is_hermitian(E&& expr){
  * \return true if the expressions contains the same sequence of values, false othwerise.
  */
 template <typename L, typename R, cpp_enable_iff(all_etl_expr<L, R>)>
-bool operator==(L&& lhs, R&& rhs){
+bool operator==(L&& lhs, R&& rhs) {
     // Both expressions must have the same number of dimensions
     if (etl::dimensions(lhs) != etl::dimensions(rhs)) {
         return false;
     }
 
     // The dimensions must be the same
-    for(size_t i = 0; i < etl::dimensions(rhs); ++i){
-        if(etl::dim(lhs, i) != etl::dim(rhs, i)){
+    for (size_t i = 0; i < etl::dimensions(rhs); ++i) {
+        if (etl::dim(lhs, i) != etl::dim(rhs, i)) {
             return false;
         }
     }
@@ -465,8 +465,8 @@ bool operator==(L&& lhs, R&& rhs){
     // Note: Ideally, we should use std::equal, but this is significantly
     // faster to compile
 
-    for(size_t i = 0; i < etl::size(lhs); ++i){
-        if(lhs[i] != rhs[i]){
+    for (size_t i = 0; i < etl::size(lhs); ++i) {
+        if (lhs[i] != rhs[i]) {
             return false;
         }
     }
@@ -480,7 +480,7 @@ bool operator==(L&& lhs, R&& rhs){
  * \return false if the expressions contains the same sequence of values, true othwerise.
  */
 template <typename L, typename R, cpp_enable_iff(all_etl_expr<L, R>)>
-bool operator!=(L&& lhs, R&& rhs){
+bool operator!=(L&& lhs, R&& rhs) {
     return !(lhs == rhs);
 }
 
@@ -525,7 +525,7 @@ inline bool approx_equals_float(T a, T b, TE epsilon) {
  * \return true if the two expression are aproximately equals, false othwerise
  */
 template <typename L, typename E>
-bool approx_equals(L&& lhs, E&& rhs, value_t<L> eps){
+bool approx_equals(L&& lhs, E&& rhs, value_t<L> eps) {
     // Both expressions must have the same number of dimensions
     if constexpr (etl::dimensions<L>() != etl::dimensions<E>()) {
         return false;
@@ -646,11 +646,11 @@ bool qr(AT& A, QT& Q, RT& R) {
  * \param vector The vector to shuffle
  * \param g The generator to use for random number generation
  */
-template<typename T, typename G>
-void shuffle_flat(T& vector, G&& g){
+template <typename T, typename G>
+void shuffle_flat(T& vector, G&& g) {
     const auto n = etl::size(vector);
 
-    if(n < 2){
+    if (n < 2) {
         return;
     }
 
@@ -686,8 +686,8 @@ void shuffle_flat(T& vector, G&& g){
  *
  * \param vector The vector to shuffle
  */
-template<typename T>
-void shuffle_flat(T& vector){
+template <typename T>
+void shuffle_flat(T& vector) {
     static std::random_device rd;
     static etl::random_engine g(rd());
 
@@ -706,11 +706,11 @@ void shuffle_flat(T& vector){
  * \param matrix The matrix to shuffle
  * \param g The generator to use for random number generation
  */
-template<typename T, typename G>
-void shuffle_first(T& matrix, G&& g){
+template <typename T, typename G>
+void shuffle_first(T& matrix, G&& g) {
     const auto n = etl::dim<0>(matrix);
 
-    if(n < 2){
+    if (n < 2) {
         return;
     }
 
@@ -751,8 +751,8 @@ void shuffle_first(T& matrix, G&& g){
  *
  * \param matrix The matrix to shuffle
  */
-template<typename T>
-void shuffle_first(T& matrix){
+template <typename T>
+void shuffle_first(T& matrix) {
     static std::random_device rd;
     static etl::random_engine g(rd());
 
@@ -767,8 +767,8 @@ void shuffle_first(T& matrix){
  *
  * \param vector The vector to shuffle
  */
-template<typename T, cpp_enable_iff(is_1d<T>)>
-void shuffle(T& vector){
+template <typename T, cpp_enable_iff(is_1d<T>)>
+void shuffle(T& vector) {
     shuffle_flat(vector);
 }
 
@@ -781,8 +781,8 @@ void shuffle(T& vector){
  * \param vector The vector to shuffle
  * \param g The generator to use for random number generation
  */
-template<typename T, typename G, cpp_enable_iff(is_1d<T>)>
-void shuffle(T& vector, G&& g){
+template <typename T, typename G, cpp_enable_iff(is_1d<T>)>
+void shuffle(T& vector, G&& g) {
     shuffle_flat(vector, g);
 }
 
@@ -798,8 +798,8 @@ void shuffle(T& vector, G&& g){
  *
  * \param matrix The matrix to shuffle
  */
-template<typename T, cpp_enable_iff(decay_traits<T>::dimensions() > 1)>
-void shuffle(T& matrix){
+template <typename T, cpp_enable_iff(decay_traits<T>::dimensions() > 1)>
+void shuffle(T& matrix) {
     shuffle_first(matrix);
 }
 
@@ -816,8 +816,8 @@ void shuffle(T& matrix){
  * \param matrix The matrix to shuffle
  * \param g The generator to use for random number generation
  */
-template<typename T, typename G, cpp_enable_iff(decay_traits<T>::dimensions() > 1)>
-void shuffle(T& matrix, G&& g){
+template <typename T, typename G, cpp_enable_iff(decay_traits<T>::dimensions() > 1)>
+void shuffle(T& matrix, G&& g) {
     shuffle_first(matrix, g);
 }
 
@@ -830,15 +830,15 @@ void shuffle(T& matrix, G&& g){
  * \param v1 The first vector to shuffle
  * \param v2 The second vector to shuffle
  */
-template<typename T1, typename T2, typename G>
-void parallel_shuffle_flat(T1& v1, T2& v2, G&& g){
+template <typename T1, typename T2, typename G>
+void parallel_shuffle_flat(T1& v1, T2& v2, G&& g) {
     static_assert(decay_traits<T1>::dimensions() == decay_traits<T2>::dimensions(), "Impossible to shuffle vector of different dimensions");
 
     cpp_assert(etl::size(v1) == etl::size(v2), "Impossible to shuffle vector of different dimensions");
 
     const auto n = etl::size(v1);
 
-    if(n < 2){
+    if (n < 2) {
         return;
     }
 
@@ -848,10 +848,7 @@ void parallel_shuffle_flat(T1& v1, T2& v2, G&& g){
         v1.ensure_gpu_up_to_date();
         v2.ensure_gpu_up_to_date();
 
-        impl::egblas::par_shuffle_seed(n,
-            v1.gpu_memory(), sizeof(etl::value_t<T1>),
-            v2.gpu_memory(), sizeof(etl::value_t<T2>),
-            seed_dist(g));
+        impl::egblas::par_shuffle_seed(n, v1.gpu_memory(), sizeof(etl::value_t<T1>), v2.gpu_memory(), sizeof(etl::value_t<T2>), seed_dist(g));
 
         v1.invalidate_cpu();
         v2.invalidate_cpu();
@@ -880,8 +877,8 @@ void parallel_shuffle_flat(T1& v1, T2& v2, G&& g){
  * \param v1 The first vector to shuffle
  * \param v2 The second vector to shuffle
  */
-template<typename T1, typename T2>
-void parallel_shuffle_flat(T1& v1, T2& v2){
+template <typename T1, typename T2>
+void parallel_shuffle_flat(T1& v1, T2& v2) {
     static std::random_device rd;
     static etl::random_engine g(rd());
 
@@ -900,13 +897,13 @@ void parallel_shuffle_flat(T1& v1, T2& v2){
  * \param m1 The first matrix to shuffle
  * \param m2 The first matrix to shuffle
  */
-template<typename T1, typename T2, typename G>
-void parallel_shuffle_first(T1& m1, T2& m2, G&& g){
+template <typename T1, typename T2, typename G>
+void parallel_shuffle_first(T1& m1, T2& m2, G&& g) {
     cpp_assert(etl::dim<0>(m1) == etl::dim<0>(m2), "Impossible to shuffle together matrices of different first dimension");
 
     const auto n = etl::dim<0>(m1);
 
-    if(n < 2){
+    if (n < 2) {
         return;
     }
 
@@ -916,10 +913,8 @@ void parallel_shuffle_first(T1& m1, T2& m2, G&& g){
         m1.ensure_gpu_up_to_date();
         m2.ensure_gpu_up_to_date();
 
-        impl::egblas::par_shuffle_seed(n,
-            m1.gpu_memory(), sizeof(etl::value_t<T1>) * (etl::size(m1) / n),
-            m2.gpu_memory(), sizeof(etl::value_t<T2>) * (etl::size(m2) / n),
-            seed_dist(g));
+        impl::egblas::par_shuffle_seed(n, m1.gpu_memory(), sizeof(etl::value_t<T1>) * (etl::size(m1) / n), m2.gpu_memory(),
+                                       sizeof(etl::value_t<T2>) * (etl::size(m2) / n), seed_dist(g));
 
         m1.invalidate_cpu();
         m2.invalidate_cpu();
@@ -958,8 +953,8 @@ void parallel_shuffle_first(T1& m1, T2& m2, G&& g){
  * \param m1 The first matrix to shuffle
  * \param m2 The first matrix to shuffle
  */
-template<typename T1, typename T2>
-void parallel_shuffle_first(T1& m1, T2& m2){
+template <typename T1, typename T2>
+void parallel_shuffle_first(T1& m1, T2& m2) {
     static std::random_device rd;
     static etl::random_engine g(rd());
 
@@ -975,25 +970,25 @@ void parallel_shuffle_first(T1& m1, T2& m2){
  * \param v1 The first vector or matrix to shuffle
  * \param v2 The second vector or matrix to shuffle
  */
-template<typename T1, typename T2>
-void parallel_shuffle(T1& v1, T2& v2){
+template <typename T1, typename T2>
+void parallel_shuffle(T1& v1, T2& v2) {
     static std::random_device rd;
     static etl::random_engine g(rd());
 
     parallel_shuffle(v1, v2, g);
 }
 
-template<typename T, cpp_enable_if(is_1d<T>)>
-void shuffle_swap(T& v1, size_t i, size_t new_i){
-    auto t = v1(i);
-    v1(i) = v1(new_i);
+template <typename T, cpp_enable_if(is_1d<T>)>
+void shuffle_swap(T& v1, size_t i, size_t new_i) {
+    auto t    = v1(i);
+    v1(i)     = v1(new_i);
     v1(new_i) = t;
 }
 
-template<typename T, cpp_disable_if(is_1d<T>)>
-void shuffle_swap(T& v1, size_t i, size_t new_i){
-    auto t = etl::force_temporary(v1(i));
-    v1(i) = v1(new_i);
+template <typename T, cpp_disable_if(is_1d<T>)>
+void shuffle_swap(T& v1, size_t i, size_t new_i) {
+    auto t    = etl::force_temporary(v1(i));
+    v1(i)     = v1(new_i);
     v1(new_i) = t;
 }
 
@@ -1006,13 +1001,13 @@ void shuffle_swap(T& v1, size_t i, size_t new_i){
  * \param v1 The first vector or matrix to shuffle
  * \param v2 The second vector or matrix to shuffle
  */
-template<typename T1, typename T2, typename G>
-void parallel_shuffle(T1& v1, T2& v2, G&& g){
+template <typename T1, typename T2, typename G>
+void parallel_shuffle(T1& v1, T2& v2, G&& g) {
     cpp_assert(etl::dim<0>(v1) == etl::dim<0>(v2), "Impossible to shuffle together matrices of different first dimension");
 
     const auto n = etl::dim<0>(v1);
 
-    if(n < 2){
+    if (n < 2) {
         return;
     }
 
@@ -1022,10 +1017,8 @@ void parallel_shuffle(T1& v1, T2& v2, G&& g){
         v1.ensure_gpu_up_to_date();
         v2.ensure_gpu_up_to_date();
 
-        impl::egblas::par_shuffle_seed(n,
-            v1.gpu_memory(), sizeof(etl::value_t<T1>) * (etl::size(v1) / n),
-            v2.gpu_memory(), sizeof(etl::value_t<T2>) * (etl::size(v2) / n),
-            seed_dist(g));
+        impl::egblas::par_shuffle_seed(n, v1.gpu_memory(), sizeof(etl::value_t<T1>) * (etl::size(v1) / n), v2.gpu_memory(),
+                                       sizeof(etl::value_t<T2>) * (etl::size(v2) / n), seed_dist(g));
 
         v1.invalidate_cpu();
         v2.invalidate_cpu();
@@ -1053,8 +1046,8 @@ void parallel_shuffle(T1& v1, T2& v2, G&& g){
  *
  * \return merged
  */
-template<typename M, typename N>
-M& merge(M& merged, const N& sub, size_t index){
+template <typename M, typename N>
+M& merge(M& merged, const N& sub, size_t index) {
     const size_t s = etl::size(sub);
     const size_t n = index * s;
 
@@ -1072,12 +1065,12 @@ M& merge(M& merged, const N& sub, size_t index){
  *
  * \return merged
  */
-template<typename M, typename N>
-M& batch_merge(M& merged, const N& sub, size_t index){
+template <typename M, typename N>
+M& batch_merge(M& merged, const N& sub, size_t index) {
     const size_t s = etl::size(sub(0));
     const size_t n = index * s;
 
-    for(size_t b = 0; b < etl::dim<0>(merged); ++b){
+    for (size_t b = 0; b < etl::dim<0>(merged); ++b) {
         memory_slice(merged(b), n, n + s) = sub(b);
     }
 
@@ -1093,8 +1086,8 @@ M& batch_merge(M& merged, const N& sub, size_t index){
  *
  * \return dispatched
  */
-template<typename M, typename N>
-M& dispatch(M& dispatched, const N& merged, size_t index){
+template <typename M, typename N>
+M& dispatch(M& dispatched, const N& merged, size_t index) {
     const size_t s = etl::size(dispatched);
     const size_t n = index * s;
 
@@ -1112,12 +1105,12 @@ M& dispatch(M& dispatched, const N& merged, size_t index){
  *
  * \return dispatched
  */
-template<typename M, typename N>
-M& batch_dispatch(M& dispatched, const N& merged, size_t index){
+template <typename M, typename N>
+M& batch_dispatch(M& dispatched, const N& merged, size_t index) {
     const size_t s = etl::size(dispatched(0));
     const size_t n = index * s;
 
-    for(size_t b = 0; b < etl::dim<0>(merged); ++b){
+    for (size_t b = 0; b < etl::dim<0>(merged); ++b) {
         dispatched(b) = memory_slice(merged(b), n, n + s);
     }
 
@@ -1129,11 +1122,11 @@ M& batch_dispatch(M& dispatched, const N& merged, size_t index){
  * \param matrix The container binarize
  * \param b The binarization threshold.
  */
-template<typename M, typename T>
-void binarize(M& matrix, T b){
+template <typename M, typename T>
+void binarize(M& matrix, T b) {
     using VT = value_t<M>;
 
-    for(auto& value : matrix){
+    for (auto& value : matrix) {
         value = value > b ? VT(1) : VT(0);
     }
 }
@@ -1142,8 +1135,8 @@ void binarize(M& matrix, T b){
  * \brief Normalize the given ETL contrainer to zero-mean and unit-variance.
  * \param matrix The container to normalize
  */
-template<typename M>
-void normalize_flat(M& matrix){
+template <typename M>
+void normalize_flat(M& matrix) {
     using VT = value_t<M>;
 
     auto m = mean(matrix);
@@ -1163,8 +1156,8 @@ void normalize_flat(M& matrix){
  *
  * \param matrix The container to normalize
  */
-template<typename M>
-void normalize_sub(M& matrix){
+template <typename M>
+void normalize_sub(M& matrix) {
     using VT = value_t<M>;
 
 #ifdef ETL_CUDA
@@ -1180,7 +1173,7 @@ void normalize_sub(M& matrix){
     for (size_t i = 0; i < n; ++i) {
         VT m(0);
 
-        for(size_t j = 0; j < sub_n; ++j){
+        for (size_t j = 0; j < sub_n; ++j) {
             m += mm[i * sub_n + j];
         }
 
@@ -1188,13 +1181,13 @@ void normalize_sub(M& matrix){
 
         VT s(0);
 
-        for(size_t j = 0; j < sub_n; ++j){
+        for (size_t j = 0; j < sub_n; ++j) {
             s += (mm[i * sub_n + j] - m) * (mm[i * sub_n + j] - m);
         }
 
         s = std::sqrt(s / VT(sub_n));
 
-        for(size_t j = 0; j < sub_n; ++j){
+        for (size_t j = 0; j < sub_n; ++j) {
             mm[i * sub_n + j] = (mm[i * sub_n + j] - m) / s;
         }
     }

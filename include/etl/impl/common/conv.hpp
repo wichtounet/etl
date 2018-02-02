@@ -222,7 +222,7 @@ void right_full_kernel(const I_T* in, const size_t n, const K_T* kernel, size_t 
  * \return a new matrix containing the result
  */
 template <typename I>
-etl::dyn_matrix<value_t<I>, 2> pad_right(const I& input, size_t pad){
+etl::dyn_matrix<value_t<I>, 2> pad_right(const I& input, size_t pad) {
     using T = value_t<I>;
 
     input.ensure_cpu_up_to_date();
@@ -231,7 +231,7 @@ etl::dyn_matrix<value_t<I>, 2> pad_right(const I& input, size_t pad){
 
     padded_input = 0;
 
-    for(size_t i = 0; i < etl::dim<0>(input); ++i){
+    for (size_t i = 0; i < etl::dim<0>(input); ++i) {
         direct_copy_n(input.memory_start() + i * etl::dim<1>(input), padded_input.memory_start() + i * etl::dim<1>(padded_input), etl::dim<1>(input));
     }
 
@@ -245,7 +245,7 @@ etl::dyn_matrix<value_t<I>, 2> pad_right(const I& input, size_t pad){
  * \return a new matrix containing the result
  */
 template <typename I>
-etl::dyn_matrix<value_t<I>, 2> pad_right_flip(const I& input, size_t pad){
+etl::dyn_matrix<value_t<I>, 2> pad_right_flip(const I& input, size_t pad) {
     using T = value_t<I>;
 
     input.ensure_cpu_up_to_date();
@@ -258,7 +258,7 @@ etl::dyn_matrix<value_t<I>, 2> pad_right_flip(const I& input, size_t pad){
 
     padded_input = 0;
 
-    for(size_t i = 0; i < etl::dim<0>(flipped); ++i){
+    for (size_t i = 0; i < etl::dim<0>(flipped); ++i) {
         direct_copy_n(flipped.memory_start() + i * etl::dim<1>(flipped), padded_input.memory_start() + i * etl::dim<1>(padded_input), etl::dim<1>(flipped));
     }
 
@@ -272,7 +272,7 @@ etl::dyn_matrix<value_t<I>, 2> pad_right_flip(const I& input, size_t pad){
  * \return a new matrix containing the result
  */
 template <typename I, cpp_enable_iff(is_3d<I>)>
-etl::dyn_matrix<value_t<I>, 3> pad_right_multi(const I& input, size_t pad){
+etl::dyn_matrix<value_t<I>, 3> pad_right_multi(const I& input, size_t pad) {
     using T = value_t<I>;
 
     input.ensure_cpu_up_to_date();
@@ -281,12 +281,12 @@ etl::dyn_matrix<value_t<I>, 3> pad_right_multi(const I& input, size_t pad){
 
     padded_input = 0;
 
-    for(size_t i = 0; i < etl::dim<0>(input); ++i){
-        for(size_t j = 0; j < etl::dim<1>(input); ++j){
-            direct_copy_n(
-                input.memory_start() + i * etl::dim<1>(input) * etl::dim<2>(input) + j * etl::dim<2>(input),
-                padded_input.memory_start() + i * etl::dim<1>(padded_input) * etl::dim<2>(padded_input) + j * etl::dim<2>(padded_input),
-                etl::dim<2>(input)); }
+    for (size_t i = 0; i < etl::dim<0>(input); ++i) {
+        for (size_t j = 0; j < etl::dim<1>(input); ++j) {
+            direct_copy_n(input.memory_start() + i * etl::dim<1>(input) * etl::dim<2>(input) + j * etl::dim<2>(input),
+                          padded_input.memory_start() + i * etl::dim<1>(padded_input) * etl::dim<2>(padded_input) + j * etl::dim<2>(padded_input),
+                          etl::dim<2>(input));
+        }
     }
 
     return padded_input;
@@ -299,7 +299,7 @@ etl::dyn_matrix<value_t<I>, 3> pad_right_multi(const I& input, size_t pad){
  * \return a new matrix containing the result
  */
 template <typename I, cpp_enable_iff(is_4d<I>)>
-etl::dyn_matrix<value_t<I>, 4> pad_right_multi(const I& input, size_t pad){
+etl::dyn_matrix<value_t<I>, 4> pad_right_multi(const I& input, size_t pad) {
     using T = value_t<I>;
 
     input.ensure_cpu_up_to_date();
@@ -316,13 +316,10 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_multi(const I& input, size_t pad){
     const auto PC2 = etl::dim<2>(input) * (etl::dim<3>(input) + pad);
     const auto PC3 = (etl::dim<3>(input) + pad);
 
-    for(size_t i = 0; i < etl::dim<0>(input); ++i){
-        for(size_t j = 0; j < etl::dim<1>(input); ++j){
-            for(size_t k = 0; k < etl::dim<2>(input); ++k){
-                direct_copy_n(
-                    input.memory_start() + i * C1 + j * C2 + k * C3,
-                    padded_input.memory_start() + i * PC1 + j * PC2 + k * PC3,
-                    etl::dim<3>(input));
+    for (size_t i = 0; i < etl::dim<0>(input); ++i) {
+        for (size_t j = 0; j < etl::dim<1>(input); ++j) {
+            for (size_t k = 0; k < etl::dim<2>(input); ++k) {
+                direct_copy_n(input.memory_start() + i * C1 + j * C2 + k * C3, padded_input.memory_start() + i * PC1 + j * PC2 + k * PC3, etl::dim<3>(input));
             }
         }
     }
@@ -341,7 +338,7 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_multi(const I& input, size_t pad){
  * \return a new matrix containing the result
  */
 template <typename I, cpp_enable_iff(is_4d<I>)>
-etl::dyn_matrix<value_t<I>, 4> pad_right_multi_double(const I& input, size_t pad, size_t p1, size_t p2){
+etl::dyn_matrix<value_t<I>, 4> pad_right_multi_double(const I& input, size_t pad, size_t p1, size_t p2) {
     using T = value_t<I>;
 
     input.ensure_cpu_up_to_date();
@@ -358,13 +355,11 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_multi_double(const I& input, size_t pad
     const auto PC2 = etl::dim<2>(padded_input) * etl::dim<3>(padded_input);
     const auto PC3 = etl::dim<3>(padded_input);
 
-    for(size_t i = 0; i < etl::dim<0>(input); ++i){
-        for(size_t j = 0; j < etl::dim<1>(input); ++j){
-            for(size_t k = 0; k < etl::dim<2>(input); ++k){
-                direct_copy_n(
-                    input.memory_start() + i * C1 + j * C2 + k * C3,
-                    padded_input.memory_start() + i * PC1 + j * PC2 + (p1 + k) * PC3 + p2,
-                    etl::dim<3>(input));
+    for (size_t i = 0; i < etl::dim<0>(input); ++i) {
+        for (size_t j = 0; j < etl::dim<1>(input); ++j) {
+            for (size_t k = 0; k < etl::dim<2>(input); ++k) {
+                direct_copy_n(input.memory_start() + i * C1 + j * C2 + k * C3, padded_input.memory_start() + i * PC1 + j * PC2 + (p1 + k) * PC3 + p2,
+                              etl::dim<3>(input));
             }
         }
     }
@@ -379,30 +374,28 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_multi_double(const I& input, size_t pad
  * \return a new matrix containing the result
  */
 template <typename I, cpp_enable_iff(is_3d<I>)>
-etl::dyn_matrix<value_t<I>, 3> pad_right_flip_multi(const I& input, size_t pad){
+etl::dyn_matrix<value_t<I>, 3> pad_right_flip_multi(const I& input, size_t pad) {
     using T = value_t<I>;
 
     input.ensure_cpu_up_to_date();
 
     etl::dyn_matrix<T, 3> flipped(etl::dim<0>(input), etl::dim<1>(input), etl::dim<2>(input));
 
-    for(size_t i = 0; i < etl::dim<0>(input); ++i){
-        std::reverse_copy(
-            input.memory_start() + i * etl::dim<1>(input) * etl::dim<2>(input),
-            input.memory_start() + (i+1) * etl::dim<1>(input) * etl::dim<2>(input),
-            flipped.memory_start() + i * etl::dim<1>(input) * etl::dim<2>(input));
+    for (size_t i = 0; i < etl::dim<0>(input); ++i) {
+        std::reverse_copy(input.memory_start() + i * etl::dim<1>(input) * etl::dim<2>(input),
+                          input.memory_start() + (i + 1) * etl::dim<1>(input) * etl::dim<2>(input),
+                          flipped.memory_start() + i * etl::dim<1>(input) * etl::dim<2>(input));
     }
 
     etl::dyn_matrix<T, 3> padded_input(etl::dim<0>(input), etl::dim<1>(input), etl::dim<2>(input) + pad);
 
     padded_input = 0;
 
-    for(size_t i = 0; i < etl::dim<0>(input); ++i){
-        for(size_t j = 0; j < etl::dim<1>(input); ++j){
-            direct_copy_n(
-                flipped.memory_start() + i * etl::dim<1>(flipped) * etl::dim<2>(flipped) + j * etl::dim<2>(flipped),
-                padded_input.memory_start() + i * etl::dim<1>(padded_input) * etl::dim<2>(padded_input) + j * etl::dim<2>(padded_input),
-                etl::dim<2>(input));
+    for (size_t i = 0; i < etl::dim<0>(input); ++i) {
+        for (size_t j = 0; j < etl::dim<1>(input); ++j) {
+            direct_copy_n(flipped.memory_start() + i * etl::dim<1>(flipped) * etl::dim<2>(flipped) + j * etl::dim<2>(flipped),
+                          padded_input.memory_start() + i * etl::dim<1>(padded_input) * etl::dim<2>(padded_input) + j * etl::dim<2>(padded_input),
+                          etl::dim<2>(input));
         }
     }
 
@@ -416,7 +409,7 @@ etl::dyn_matrix<value_t<I>, 3> pad_right_flip_multi(const I& input, size_t pad){
  * \return a new matrix containing the result
  */
 template <typename I, cpp_enable_iff(is_4d<I>)>
-etl::dyn_matrix<value_t<I>, 4> pad_right_flip_multi(const I& input, size_t pad){
+etl::dyn_matrix<value_t<I>, 4> pad_right_flip_multi(const I& input, size_t pad) {
     using T = value_t<I>;
 
     input.ensure_cpu_up_to_date();
@@ -431,12 +424,9 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_flip_multi(const I& input, size_t pad){
     const auto PC2 = etl::dim<2>(input) * (etl::dim<3>(input) + pad);
     const auto PC3 = (etl::dim<3>(input) + pad);
 
-    for(size_t i = 0; i < etl::dim<0>(input); ++i){
-        for(size_t j = 0; j < etl::dim<1>(input); ++j){
-            std::reverse_copy(
-                input.memory_start() + i * C1 + j * C2,
-                input.memory_start() + i * C1 + (j+1) * C2,
-                flipped.memory_start() + i * C1 + j * C2);
+    for (size_t i = 0; i < etl::dim<0>(input); ++i) {
+        for (size_t j = 0; j < etl::dim<1>(input); ++j) {
+            std::reverse_copy(input.memory_start() + i * C1 + j * C2, input.memory_start() + i * C1 + (j + 1) * C2, flipped.memory_start() + i * C1 + j * C2);
         }
     }
 
@@ -444,13 +434,10 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_flip_multi(const I& input, size_t pad){
 
     padded_input = 0;
 
-    for(size_t i = 0; i < etl::dim<0>(input); ++i){
-        for(size_t j = 0; j < etl::dim<1>(input); ++j){
-            for(size_t k = 0; k < etl::dim<2>(input); ++k){
-                direct_copy_n(
-                    flipped.memory_start() + i * C1 + j * C2 + k * C3,
-                    padded_input.memory_start() + i * PC1 + j * PC2 + k * PC3,
-                    etl::dim<3>(input));
+    for (size_t i = 0; i < etl::dim<0>(input); ++i) {
+        for (size_t j = 0; j < etl::dim<1>(input); ++j) {
+            for (size_t k = 0; k < etl::dim<2>(input); ++k) {
+                direct_copy_n(flipped.memory_start() + i * C1 + j * C2 + k * C3, padded_input.memory_start() + i * PC1 + j * PC2 + k * PC3, etl::dim<3>(input));
             }
         }
     }

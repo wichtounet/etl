@@ -25,14 +25,12 @@ value_t<E> sum(const E& input) {
 
     T acc(0);
 
-    auto acc_functor = [&acc](T value) {
-        acc += value;
-    };
+    auto acc_functor = [&acc](T value) { acc += value; };
 
-    auto batch_fun = [](auto& sub){
+    auto batch_fun = [](auto& sub) {
         T acc(0);
 
-        for(size_t i = 0; i < etl::size(sub); ++i){
+        for (size_t i = 0; i < etl::size(sub); ++i) {
             acc += sub[i];
         }
 
@@ -55,14 +53,12 @@ value_t<E> asum(const E& input) {
 
     T acc(0);
 
-    auto acc_functor = [&acc](T value) {
-        acc += value;
-    };
+    auto acc_functor = [&acc](T value) { acc += value; };
 
-    auto batch_fun = [](auto& sub){
+    auto batch_fun = [](auto& sub) {
         T acc(0);
 
-        for(size_t i = 0; i < etl::size(sub); ++i){
+        for (size_t i = 0; i < etl::size(sub); ++i) {
             using std::abs;
             acc += abs(sub[i]);
         }

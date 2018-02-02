@@ -42,8 +42,7 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    pool_upsample_3d_expr(A a, B b, C c)
-            : base_type(a, b, c) {
+    pool_upsample_3d_expr(A a, B b, C c) : base_type(a, b, c) {
         //Nothing else to init
     }
 
@@ -112,9 +111,9 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
             switch (forced) {
                 // CUDNN cannot always be used
                 case pool_impl::CUDNN:
-                    if (!cudnn_enabled || !all_floating<A, B, C, R> || local_context().cpu) {                                                            //COVERAGE_EXCLUDE_LINE
+                    if (!cudnn_enabled || !all_floating<A, B, C, R> || local_context().cpu) {                                            //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to CUDNN pool implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_impl<R>(local_context().cpu);                                                                                 //COVERAGE_EXCLUDE_LINE
+                        return select_default_impl<R>(local_context().cpu);                                                              //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                    //COVERAGE_EXCLUDE_LINE
 
                     return forced;
@@ -159,37 +158,27 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
         constexpr_select auto impl = select_impl<R>();
 
         if constexpr (Max) {
-            if constexpr_select (impl == pool_impl::STD) {
-                impl::standard::max_pool_upsample_3d::apply<C1, C2, C3>(
-                    smart_forward(a),
-                    smart_forward(b),
-                    smart_forward(c),
-                    result);
-            } else if constexpr_select (impl == pool_impl::CUDNN) {
-                impl::cudnn::max_pool_upsample_3d::apply(
-                    smart_forward_gpu(a),
-                    smart_forward_gpu(b),
-                    smart_forward_gpu(c),
-                    result,
-                    C1, C2, C3);
-            } else {
+            if
+                constexpr_select(impl == pool_impl::STD) {
+                    impl::standard::max_pool_upsample_3d::apply<C1, C2, C3>(smart_forward(a), smart_forward(b), smart_forward(c), result);
+                }
+            else if
+                constexpr_select(impl == pool_impl::CUDNN) {
+                    impl::cudnn::max_pool_upsample_3d::apply(smart_forward_gpu(a), smart_forward_gpu(b), smart_forward_gpu(c), result, C1, C2, C3);
+                }
+            else {
                 cpp_unreachable("Invalid pool implementation");
             }
         } else {
-            if constexpr_select (impl == pool_impl::STD) {
-                impl::standard::avg_pool_upsample_3d::apply<C1, C2, C3>(
-                    smart_forward(a),
-                    smart_forward(b),
-                    smart_forward(c),
-                    result);
-            } else if constexpr_select (impl == pool_impl::CUDNN) {
-                impl::cudnn::avg_pool_upsample_3d::apply(
-                    smart_forward_gpu(a),
-                    smart_forward_gpu(b),
-                    smart_forward_gpu(c),
-                    result,
-                    C1, C2, C3);
-            } else {
+            if
+                constexpr_select(impl == pool_impl::STD) {
+                    impl::standard::avg_pool_upsample_3d::apply<C1, C2, C3>(smart_forward(a), smart_forward(b), smart_forward(c), result);
+                }
+            else if
+                constexpr_select(impl == pool_impl::CUDNN) {
+                    impl::cudnn::avg_pool_upsample_3d::apply(smart_forward_gpu(a), smart_forward_gpu(b), smart_forward_gpu(c), result, C1, C2, C3);
+                }
+            else {
                 cpp_unreachable("Invalid pool implementation");
             }
         }
@@ -341,8 +330,9 @@ struct etl_traits<etl::pool_upsample_3d_expr<A, B, C, C1, C2, C3, Max>> {
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C>
-pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3, true>
-max_pool_upsample_3d(A&& input, B&& output, C&& errors) {
+pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3, true> max_pool_upsample_3d(A&& input,
+                                                                                                                                  B&& output,
+                                                                                                                                  C&& errors) {
     return {input, output, errors};
 }
 
@@ -356,8 +346,9 @@ max_pool_upsample_3d(A&& input, B&& output, C&& errors) {
  * \return A expression representing the Derivative of 3D Average Pooling of the input expression.
  */
 template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C>
-pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3, false>
-avg_pool_upsample_3d(A&& input, B&& output, C&& errors) {
+pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3, false> avg_pool_upsample_3d(A&& input,
+                                                                                                                                   B&& output,
+                                                                                                                                   C&& errors) {
     return {input, output, errors};
 }
 

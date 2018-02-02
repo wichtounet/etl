@@ -273,7 +273,7 @@ void gevm_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, C&& cc) 
                 for (size_t k = block_k; k < m_end; ++k) {
                     auto a1 = vec_type::set(aa[k]);
                     auto b1 = vec_type::loadu(bb + k * n + j + 0 * vec_size);
-                    r1 = vec_type::fmadd(a1, b1, r1);
+                    r1      = vec_type::fmadd(a1, b1, r1);
                 }
 
                 cc.template store<V>(vec_type::add(r1, cc.template load<V>(j + 0 * vec_size)), j + 0 * vec_size);
@@ -307,7 +307,7 @@ void gevm_small_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
 
     size_t j = 0;
 
-    for(; j + 7 < n; j += 8){
+    for (; j + 7 < n; j += 8) {
         auto r1 = vec_type::template zero<T>();
         auto r2 = vec_type::template zero<T>();
         auto r3 = vec_type::template zero<T>();
@@ -353,7 +353,7 @@ void gevm_small_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
         }
     }
 
-    for(; j + 3 < n; j += 4){
+    for (; j + 3 < n; j += 4) {
         auto r1 = vec_type::template zero<T>();
         auto r2 = vec_type::template zero<T>();
         auto r3 = vec_type::template zero<T>();
@@ -383,7 +383,7 @@ void gevm_small_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
         }
     }
 
-    for(; j + 1 < n; j += 2){
+    for (; j + 1 < n; j += 2) {
         auto r1 = vec_type::template zero<T>();
         auto r2 = vec_type::template zero<T>();
 
@@ -405,7 +405,7 @@ void gevm_small_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
         }
     }
 
-    for(; j < n; ++j){
+    for (; j < n; ++j) {
         auto r1 = vec_type::template zero<T>();
 
         size_t i = 0;
@@ -449,25 +449,25 @@ void gevm_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
             auto x3 = vec_type::loadu(aa + i + vec_size * 2);
             auto x4 = vec_type::loadu(aa + i + vec_size * 3);
 
-            auto r11 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 0) * m));
-            auto r12 =  vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 0) * m));
-            auto r13 =  vec_type::mul(x3, vec_type::loadu(bb + i + vec_size * 2 + (j + 0) * m));
-            auto r14 =  vec_type::mul(x4, vec_type::loadu(bb + i + vec_size * 3 + (j + 0) * m));
+            auto r11 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 0) * m));
+            auto r12 = vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 0) * m));
+            auto r13 = vec_type::mul(x3, vec_type::loadu(bb + i + vec_size * 2 + (j + 0) * m));
+            auto r14 = vec_type::mul(x4, vec_type::loadu(bb + i + vec_size * 3 + (j + 0) * m));
 
-            auto r21 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 1) * m));
-            auto r22 =  vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 1) * m));
-            auto r23 =  vec_type::mul(x3, vec_type::loadu(bb + i + vec_size * 2 + (j + 1) * m));
-            auto r24 =  vec_type::mul(x4, vec_type::loadu(bb + i + vec_size * 3 + (j + 1) * m));
+            auto r21 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 1) * m));
+            auto r22 = vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 1) * m));
+            auto r23 = vec_type::mul(x3, vec_type::loadu(bb + i + vec_size * 2 + (j + 1) * m));
+            auto r24 = vec_type::mul(x4, vec_type::loadu(bb + i + vec_size * 3 + (j + 1) * m));
 
-            auto r31 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 2) * m));
-            auto r32 =  vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 2) * m));
-            auto r33 =  vec_type::mul(x3, vec_type::loadu(bb + i + vec_size * 2 + (j + 2) * m));
-            auto r34 =  vec_type::mul(x4, vec_type::loadu(bb + i + vec_size * 3 + (j + 2) * m));
+            auto r31 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 2) * m));
+            auto r32 = vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 2) * m));
+            auto r33 = vec_type::mul(x3, vec_type::loadu(bb + i + vec_size * 2 + (j + 2) * m));
+            auto r34 = vec_type::mul(x4, vec_type::loadu(bb + i + vec_size * 3 + (j + 2) * m));
 
-            auto r41 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 3) * m));
-            auto r42 =  vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 3) * m));
-            auto r43 =  vec_type::mul(x3, vec_type::loadu(bb + i + vec_size * 2 + (j + 3) * m));
-            auto r44 =  vec_type::mul(x4, vec_type::loadu(bb + i + vec_size * 3 + (j + 3) * m));
+            auto r41 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 3) * m));
+            auto r42 = vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 3) * m));
+            auto r43 = vec_type::mul(x3, vec_type::loadu(bb + i + vec_size * 2 + (j + 3) * m));
+            auto r44 = vec_type::mul(x4, vec_type::loadu(bb + i + vec_size * 3 + (j + 3) * m));
 
             auto t11 = vec_type::add(r11, r12);
             auto t12 = vec_type::add(r13, r14);
@@ -481,10 +481,10 @@ void gevm_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
             auto t41 = vec_type::add(r41, r42);
             auto t42 = vec_type::add(r43, r44);
 
-            auto r1  = vec_type::add(t11, t12);
-            auto r2  = vec_type::add(t21, t22);
-            auto r3  = vec_type::add(t31, t32);
-            auto r4  = vec_type::add(t41, t42);
+            auto r1 = vec_type::add(t11, t12);
+            auto r2 = vec_type::add(t21, t22);
+            auto r3 = vec_type::add(t31, t32);
+            auto r4 = vec_type::add(t41, t42);
 
             cc[j + 0] += vec_type::hadd(r1);
             cc[j + 1] += vec_type::hadd(r2);
@@ -496,17 +496,17 @@ void gevm_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
             auto x1 = vec_type::loadu(aa + i + vec_size * 0);
             auto x2 = vec_type::loadu(aa + i + vec_size * 1);
 
-            auto r11 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 0) * m));
-            auto r12 =  vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 0) * m));
+            auto r11 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 0) * m));
+            auto r12 = vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 0) * m));
 
-            auto r21 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 1) * m));
-            auto r22 =  vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 1) * m));
+            auto r21 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 1) * m));
+            auto r22 = vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 1) * m));
 
-            auto r31 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 2) * m));
-            auto r32 =  vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 2) * m));
+            auto r31 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 2) * m));
+            auto r32 = vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 2) * m));
 
-            auto r41 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 3) * m));
-            auto r42 =  vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 3) * m));
+            auto r41 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 3) * m));
+            auto r42 = vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 3) * m));
 
             auto t1 = vec_type::add(r11, r12);
             auto t2 = vec_type::add(r21, r22);
@@ -522,10 +522,10 @@ void gevm_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
         for (; i + vec_size - 1 < m; i += vec_size) {
             auto x1 = vec_type::loadu(aa + i + vec_size * 0);
 
-            auto r11 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 0) * m));
-            auto r21 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 1) * m));
-            auto r31 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 2) * m));
-            auto r41 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 3) * m));
+            auto r11 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 0) * m));
+            auto r21 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 1) * m));
+            auto r31 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 2) * m));
+            auto r41 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 3) * m));
 
             cc[j + 0] += vec_type::hadd(r11);
             cc[j + 1] += vec_type::hadd(r21);
@@ -550,15 +550,15 @@ void gevm_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
             auto x3 = vec_type::loadu(aa + i + vec_size * 2);
             auto x4 = vec_type::loadu(aa + i + vec_size * 3);
 
-            auto r11 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 0) * m));
-            auto r12 =  vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 0) * m));
-            auto r13 =  vec_type::mul(x3, vec_type::loadu(bb + i + vec_size * 2 + (j + 0) * m));
-            auto r14 =  vec_type::mul(x4, vec_type::loadu(bb + i + vec_size * 3 + (j + 0) * m));
+            auto r11 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 0) * m));
+            auto r12 = vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 0) * m));
+            auto r13 = vec_type::mul(x3, vec_type::loadu(bb + i + vec_size * 2 + (j + 0) * m));
+            auto r14 = vec_type::mul(x4, vec_type::loadu(bb + i + vec_size * 3 + (j + 0) * m));
 
-            auto r21 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 1) * m));
-            auto r22 =  vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 1) * m));
-            auto r23 =  vec_type::mul(x3, vec_type::loadu(bb + i + vec_size * 2 + (j + 1) * m));
-            auto r24 =  vec_type::mul(x4, vec_type::loadu(bb + i + vec_size * 3 + (j + 1) * m));
+            auto r21 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 1) * m));
+            auto r22 = vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 1) * m));
+            auto r23 = vec_type::mul(x3, vec_type::loadu(bb + i + vec_size * 2 + (j + 1) * m));
+            auto r24 = vec_type::mul(x4, vec_type::loadu(bb + i + vec_size * 3 + (j + 1) * m));
 
             auto t11 = vec_type::add(r11, r12);
             auto t12 = vec_type::add(r13, r14);
@@ -566,8 +566,8 @@ void gevm_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
             auto t21 = vec_type::add(r21, r22);
             auto t22 = vec_type::add(r23, r24);
 
-            auto r1  = vec_type::add(t11, t12);
-            auto r2  = vec_type::add(t21, t22);
+            auto r1 = vec_type::add(t11, t12);
+            auto r2 = vec_type::add(t21, t22);
 
             cc[j + 0] += vec_type::hadd(r1);
             cc[j + 1] += vec_type::hadd(r2);
@@ -577,11 +577,11 @@ void gevm_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
             auto x1 = vec_type::loadu(aa + i + vec_size * 0);
             auto x2 = vec_type::loadu(aa + i + vec_size * 1);
 
-            auto r11 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 0) * m));
-            auto r12 =  vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 0) * m));
+            auto r11 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 0) * m));
+            auto r12 = vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 0) * m));
 
-            auto r21 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 1) * m));
-            auto r22 =  vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 1) * m));
+            auto r21 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 1) * m));
+            auto r22 = vec_type::mul(x2, vec_type::loadu(bb + i + vec_size * 1 + (j + 1) * m));
 
             auto t1 = vec_type::add(r11, r12);
             auto t2 = vec_type::add(r21, r22);
@@ -593,9 +593,9 @@ void gevm_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
         for (; i + vec_size - 1 < m; i += vec_size) {
             auto x1 = vec_type::loadu(aa + i + vec_size * 0);
 
-            auto r11 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 0) * m));
+            auto r11 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 0) * m));
 
-            auto r21 =  vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 1) * m));
+            auto r21 = vec_type::mul(x1, vec_type::loadu(bb + i + vec_size * 0 + (j + 1) * m));
 
             cc[j + 0] += vec_type::hadd(r11);
             cc[j + 1] += vec_type::hadd(r21);

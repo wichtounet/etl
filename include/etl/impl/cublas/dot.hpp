@@ -29,7 +29,7 @@ namespace etl::impl::cublas {
  * \param b The rhs expression
  * \param c The output expression
  */
-template <typename A, typename B, cpp_enable_iff(all_dma<A, B> && all_single_precision<A, B>)>
+template <typename A, typename B, cpp_enable_iff(all_dma<A, B>&& all_single_precision<A, B>)>
 float dot(const A& a, const B& b) {
     decltype(auto) handle = start_cublas();
 
@@ -44,7 +44,7 @@ float dot(const A& a, const B& b) {
 /*!
  * \copydoc batch_outer
  */
-template <typename A, typename B, cpp_enable_iff(all_dma<A, B> && all_double_precision<A, B>)>
+template <typename A, typename B, cpp_enable_iff(all_dma<A, B>&& all_double_precision<A, B>)>
 double dot(const A& a, const B& b) {
     decltype(auto) handle = start_cublas();
 

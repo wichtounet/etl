@@ -13,7 +13,7 @@
 #pragma once
 
 #include "etl/dyn_base.hpp"    //The base class and utilities
-#include "etl/direct_fill.hpp"    //direct_fill with GPU support
+#include "etl/direct_fill.hpp" //direct_fill with GPU support
 
 namespace etl {
 
@@ -30,14 +30,14 @@ struct custom_dyn_matrix_impl final : dense_dyn_base<custom_dyn_matrix_impl<T, S
                                       iterable<custom_dyn_matrix_impl<T, SO, D>, SO == order::RowMajor>,
                                       dim_testable<custom_dyn_matrix_impl<T, SO, D>> {
     static constexpr size_t n_dimensions = D;  ///< The number of dimensions
-    static constexpr order storage_order      = SO; ///< The storage order
+    static constexpr order storage_order = SO; ///< The storage order
     static constexpr size_t alignment    = 1;  ///< The memory alignment
 
     using this_type              = custom_dyn_matrix_impl<T, SO, D>;                           ///< The type of this expression
     using iterable_base_type     = iterable<this_type, SO == order::RowMajor>;                 ///< The iterable base type
     using base_type              = dense_dyn_base<custom_dyn_matrix_impl<T, SO, D>, T, SO, D>; ///< The base type
     using value_type             = T;                                                          ///< The value type
-    using dimension_storage_impl = std::array<size_t, n_dimensions>;                      ///< The type used to store the dimensions
+    using dimension_storage_impl = std::array<size_t, n_dimensions>;                           ///< The type used to store the dimensions
     using memory_type            = value_type*;                                                ///< The memory type
     using const_memory_type      = const value_type*;                                          ///< The const memory type
 
@@ -47,22 +47,22 @@ struct custom_dyn_matrix_impl final : dense_dyn_base<custom_dyn_matrix_impl<T, S
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
 private:
-    using base_type::_size;
     using base_type::_dimensions;
     using base_type::_memory;
+    using base_type::_size;
 
-    using base_type::release;
     using base_type::allocate;
     using base_type::check_invariants;
+    using base_type::release;
 
 public:
     using base_type::dim;
-    using base_type::memory_start;
     using base_type::memory_end;
+    using base_type::memory_start;
     using iterable_base_type::begin;
     using iterable_base_type::end;
 
@@ -81,7 +81,7 @@ public:
      * \param rhs The matrix to move
      */
     custom_dyn_matrix_impl(custom_dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)) {
-        _memory = rhs._memory;
+        _memory     = rhs._memory;
         rhs._memory = nullptr;
     }
 
@@ -97,8 +97,7 @@ public:
      * released once the matrix is destructed.
      */
     template <typename... S, cpp_enable_iff(sizeof...(S) == D)>
-    explicit custom_dyn_matrix_impl(value_type* memory, S... sizes) noexcept : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}})
-                                                    {
+    explicit custom_dyn_matrix_impl(value_type* memory, S... sizes) noexcept : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}}) {
         _memory = memory;
         //Nothing else to init
     }
@@ -130,9 +129,9 @@ public:
      */
     custom_dyn_matrix_impl& operator=(custom_dyn_matrix_impl&& rhs) noexcept {
         if (this != &rhs) {
-            _size               = rhs._size;
-            _dimensions         = std::move(rhs._dimensions);
-            _memory             = rhs._memory;
+            _size       = rhs._size;
+            _dimensions = std::move(rhs._dimensions);
+            _memory     = rhs._memory;
 
             rhs._size   = 0;
             rhs._memory = nullptr;
@@ -148,7 +147,9 @@ public:
      * \param e The expression containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename E, cpp_enable_iff(!std::is_same<std::decay_t<E>, custom_dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
+    template <typename E,
+              cpp_enable_iff(!std::is_same<std::decay_t<E>, custom_dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value
+                             && is_etl_expr<E>)>
     custom_dyn_matrix_impl& operator=(E&& e) noexcept {
         validate_assign(*this, e);
 
@@ -220,7 +221,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    auto& gpu_compute_hint(Y& y){
+    auto& gpu_compute_hint(Y& y) {
         cpp_unused(y);
         this->ensure_gpu_up_to_date();
         return *this;
@@ -293,7 +294,7 @@ public:
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the matrix
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     vec_type<V> load(size_t i) const noexcept {
         return V::loadu(_memory + i);
     }
@@ -304,7 +305,7 @@ public:
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the matrix
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     vec_type<V> loadu(size_t i) const noexcept {
         return V::loadu(_memory + i);
     }
@@ -315,8 +316,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -324,8 +325,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -333,8 +334,8 @@ public:
      * \brief Subtract from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -342,8 +343,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -351,8 +352,8 @@ public:
      * \brief Divide to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -360,8 +361,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 

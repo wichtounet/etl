@@ -20,7 +20,7 @@ namespace etl {
  * \brief A simple type to use as init flag to constructor
  */
 enum class init_flag_t {
-    DUMMY  ///< Dummy value for the flag
+    DUMMY ///< Dummy value for the flag
 };
 
 /*!
@@ -38,8 +38,7 @@ struct values_t {
     /*!
      * \brief Construct a new sequence of values.
      */
-    explicit values_t(V... v)
-            : values(v...){};
+    explicit values_t(V... v) : values(v...){};
 
     /*!
      * \brief Returns the sequence of values as a std::vector
@@ -124,7 +123,7 @@ protected:
     using derived_t              = Derived;                          ///< The derived (CRTP) type
     using this_type              = dyn_base<Derived, T, D>;          ///< The type of this class
 
-    size_t _size;                  ///< The size of the matrix
+    size_t _size;                       ///< The size of the matrix
     dimension_storage_impl _dimensions; ///< The dimensions of the matrix
 
     /*!
@@ -162,7 +161,7 @@ protected:
             new (memory) M[n]();
         }
 
-        if constexpr (padding){
+        if constexpr (padding) {
             std::fill_n(memory, n, M());
         }
 
@@ -294,7 +293,7 @@ public:
 template <typename Derived, typename T, order SO, size_t D>
 struct dense_dyn_base : dyn_base<Derived, T, D> {
     using value_type        = T;                                 ///< The type of the contained values
-    using base_type         = dyn_base<Derived, T, D>;                    ///< The base type
+    using base_type         = dyn_base<Derived, T, D>;           ///< The base type
     using this_type         = dense_dyn_base<Derived, T, SO, D>; ///< The type of this class
     using derived_t         = Derived;                           ///< The derived type
     using memory_type       = value_type*;                       ///< The memory type
@@ -305,7 +304,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
     using dimension_storage_impl = typename base_type::dimension_storage_impl; ///< The storage type used to store the dimensions
 
     static constexpr size_t n_dimensions = D;  ///< The number of dimensions
-    static constexpr order storage_order      = SO; ///< The storage order
+    static constexpr order storage_order = SO; ///< The storage order
 
     using base_type::_size;
     using base_type::dim;
@@ -432,10 +431,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param sizes The indices
      * \return The value at the position (sizes...)
      */
-    template <typename... S, cpp_enable_iff(
-                                 (n_dimensions > 1) &&
-                                 (sizeof...(S) == n_dimensions) &&
-                                 cpp::all_convertible_to_v<size_t, S...>)>
+    template <typename... S, cpp_enable_iff((n_dimensions > 1) && (sizeof...(S) == n_dimensions) && cpp::all_convertible_to_v<size_t, S...>)>
     const value_type& operator()(S... sizes) const noexcept(assert_nothrow) {
         ensure_cpu_up_to_date();
         return _memory[etl::dyn_index(as_derived(), sizes...)];
@@ -446,10 +442,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param sizes The indices
      * \return The value at the position (sizes...)
      */
-    template <typename... S, cpp_enable_iff(
-                                 (n_dimensions > 1) &&
-                                 (sizeof...(S) == n_dimensions) &&
-                                 cpp::all_convertible_to_v<size_t, S...>)>
+    template <typename... S, cpp_enable_iff((n_dimensions > 1) && (sizeof...(S) == n_dimensions) && cpp::all_convertible_to_v<size_t, S...>)>
     value_type& operator()(S... sizes) noexcept(assert_nothrow) {
         ensure_cpu_up_to_date();
         invalidate_gpu();
@@ -502,7 +495,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E>
+    template <typename E>
     bool alias(const E& rhs) const noexcept {
         if constexpr (is_dma<E>) {
             return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());

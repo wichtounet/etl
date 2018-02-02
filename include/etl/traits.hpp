@@ -149,26 +149,28 @@ constexpr bool is_base_of_template_tb = decltype(is_base_of_template_tb_impl<C>(
 /*!
  * \brief Helper traits to test if E is a non-GPU temporary expression.
  */
-template<typename E, typename Enable = void>
+template <typename E, typename Enable = void>
 struct is_nongpu_temporary_impl : std::false_type {};
 
 /*!
  * \brief Helper traits to test if E is a non-GPU temporary expression.
  */
-template<typename E>
-struct is_nongpu_temporary_impl <E, std::enable_if_t<is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr> && !std::decay_t<E>::gpu_computable>> : std::true_type {};
+template <typename E>
+struct is_nongpu_temporary_impl<E, std::enable_if_t<is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr> && !std::decay_t<E>::gpu_computable>>
+        : std::true_type {};
 
 /*!
  * \brief Helper traits to test if E is a GPU temporary expression.
  */
-template<typename E, typename Enable = void>
+template <typename E, typename Enable = void>
 struct is_gpu_temporary_impl : std::false_type {};
 
 /*!
  * \brief Helper traits to test if E is a GPU temporary expression.
  */
-template<typename E>
-struct is_gpu_temporary_impl <E, std::enable_if_t<is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr> && std::decay_t<E>::gpu_computable>> : std::true_type {};
+template <typename E>
+struct is_gpu_temporary_impl<E, std::enable_if_t<is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr> && std::decay_t<E>::gpu_computable>>
+        : std::true_type {};
 
 } // end of namespace traits_detail
 
@@ -437,12 +439,7 @@ constexpr bool is_etl_value = decay_traits<T>::is_value;
  */
 template <typename T>
 constexpr bool is_etl_value_class =
-            is_fast_matrix<T>
-        ||  is_custom_fast_matrix<T>
-        ||  is_dyn_matrix<T>
-        ||  is_custom_dyn_matrix<T>
-        ||  is_sparse_matrix<T>
-        ||  is_gpu_dyn_matrix<T>;
+    is_fast_matrix<T> || is_custom_fast_matrix<T> || is_dyn_matrix<T> || is_custom_dyn_matrix<T> || is_sparse_matrix<T> || is_gpu_dyn_matrix<T>;
 
 /*!
  * \brief Traits indicating if the given ETL type can be left hand side type
@@ -548,27 +545,21 @@ constexpr bool all_floating_t = (is_floating_t<E> && ...);
  * \tparam T The type to test.
  */
 template <typename T>
-constexpr bool is_complex_t =
-            cpp::is_specialization_of_v<std::complex, std::decay_t<T>>
-        ||  cpp::is_specialization_of_v<etl::complex, std::decay_t<T>>;
+constexpr bool is_complex_t = cpp::is_specialization_of_v<std::complex, std::decay_t<T>> || cpp::is_specialization_of_v<etl::complex, std::decay_t<T>>;
 
 /*!
  * \brief Traits to test if a type is a single precision complex number type
  * \tparam T The type to test.
  */
 template <typename T>
-constexpr bool is_complex_single_t =
-            std::is_same<T, std::complex<float>>::value
-        ||  std::is_same<T, etl::complex<float>>::value;
+constexpr bool is_complex_single_t = std::is_same<T, std::complex<float>>::value || std::is_same<T, etl::complex<float>>::value;
 
 /*!
  * \brief Traits to test if a type is a double precision complex number type
  * \tparam T The type to test.
  */
 template <typename T>
-constexpr bool is_complex_double_t =
-            std::is_same<T, std::complex<double>>::value
-        ||  std::is_same<T, etl::complex<double>>::value;
+constexpr bool is_complex_double_t = std::is_same<T, std::complex<double>>::value || std::is_same<T, etl::complex<double>>::value;
 
 /*!
  * \brief Traits to test if the given ETL expresion type contains single precision complex numbers.
@@ -849,7 +840,7 @@ constexpr bool all_homogeneous = cpp::is_homogeneous_v<value_t<E>...>;
  * of this type.
  */
 template <typename T>
-constexpr bool fast_sub_view_able = is_dma<T> && decay_traits<T>::storage_order == order::RowMajor;
+constexpr bool fast_sub_view_able = is_dma<T>&& decay_traits<T>::storage_order == order::RowMajor;
 
 /*!
  * \brief Simple utility traits indicating if a light sub_matrix can be created out
@@ -965,7 +956,7 @@ struct is_square_matrix_impl {
  * \copydoc is_square_matrix_impl
  */
 template <typename Matrix>
-struct is_square_matrix_impl <Matrix, std::enable_if_t<is_fast<Matrix> && is_2d<Matrix>>> {
+struct is_square_matrix_impl<Matrix, std::enable_if_t<is_fast<Matrix> && is_2d<Matrix>>> {
     /*!
      * \brief The value of the traits. True if the matrix is square, false otherwise
      */
@@ -976,7 +967,7 @@ struct is_square_matrix_impl <Matrix, std::enable_if_t<is_fast<Matrix> && is_2d<
  * \copydoc is_square_matrix_impl
  */
 template <typename Matrix>
-struct is_square_matrix_impl <Matrix, std::enable_if_t<!is_fast<Matrix> && is_2d<Matrix>>> {
+struct is_square_matrix_impl<Matrix, std::enable_if_t<!is_fast<Matrix> && is_2d<Matrix>>> {
     /*!
      * \brief The value of the traits. True if the matrix is square, false otherwise
      */
@@ -1012,46 +1003,37 @@ constexpr bool is_square_matrix = traits_detail::is_square_matrix_impl<Matrix>::
  * \brief Traits to test if an expression is a temporary expression with non-GPU
  * capabilities
  */
-template<typename E>
+template <typename E>
 constexpr bool is_nongpu_temporary = traits_detail::is_nongpu_temporary_impl<E>::value;
 
 /*!
  * \brief Traits to test if an expression is a temporary expression with GPU
  * capabilities
  */
-template<typename E>
+template <typename E>
 constexpr bool is_gpu_temporary = traits_detail::is_gpu_temporary_impl<E>::value;
 
 /*!
  * \brief Traits indicating if it's more efficient to use smart_gpu_compute(x)
  * instead of smart_gpu_compute(x, y) for an expression of type E.
  */
-template<typename E>
+template <typename E>
 constexpr bool should_gpu_compute_direct = is_etl_value<E> || is_nongpu_temporary<E> || (is_dma<E> && !is_gpu_temporary<E>);
 
 /*!
  * Builder to construct the type returned by a view.
  */
 template <typename T, typename S>
-using return_helper =
-    std::conditional_t<
-        std::is_const<std::remove_reference_t<S>>::value,
-        const value_t<T>&,
-        std::conditional_t<
-            cpp::and_u<
-                std::is_lvalue_reference<S>::value,
-                cpp::not_u<std::is_const<T>::value>::value>::value,
-            value_t<T>&,
-            value_t<T>>>;
+using return_helper = std::conditional_t<
+    std::is_const<std::remove_reference_t<S>>::value,
+    const value_t<T>&,
+    std::conditional_t<cpp::and_u<std::is_lvalue_reference<S>::value, cpp::not_u<std::is_const<T>::value>::value>::value, value_t<T>&, value_t<T>>>;
 
 /*!
  * Builder to construct the const type returned by a view.
  */
 template <typename T, typename S>
-using const_return_helper = std::conditional_t<
-    std::is_lvalue_reference<S>::value,
-    const value_t<T>&,
-    value_t<T>>;
+using const_return_helper = std::conditional_t<std::is_lvalue_reference<S>::value, const value_t<T>&, value_t<T>>;
 
 /*!
  * \brief Specialization for value structures
@@ -1074,7 +1056,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>>> {
     static constexpr bool is_padded      = is_padded_value<T>;                            ///< Indicates if the expression is padded
     static constexpr bool is_aligned     = is_aligned_value<T>;                           ///< Indicates if the expression is aligned
     static constexpr order storage_order = T::storage_order;                              ///< The expression storage order
-    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;                                  ///< Indicates if the expression can be computed on GPU
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;          ///< Indicates if the expression can be computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -1082,11 +1064,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable =
-            get_intrinsic_traits<V>::template type<value_type>::vectorizable
-        &&  !is_sparse_matrix<T>
-        &&  !is_gpu_dyn_matrix<T>
-        ;
+    static constexpr bool vectorizable = get_intrinsic_traits<V>::template type<value_type>::vectorizable && !is_sparse_matrix<T> && !is_gpu_dyn_matrix<T>;
 
     /*!
      * \brief Return the size of the given epxression
@@ -1317,9 +1295,8 @@ constexpr size_t safe_dimensions = safe_dimensions_impl<E>::value;
  */
 template <typename E>
 constexpr std::pair<size_t, size_t> index_to_2d(E&& sub, size_t i) {
-    return decay_traits<E>::storage_order == order::RowMajor
-               ? std::make_pair(i / dim<1>(sub), i % dim<1>(sub))
-               : std::make_pair(i % dim<0>(sub), i / dim<0>(sub));
+    return decay_traits<E>::storage_order == order::RowMajor ? std::make_pair(i / dim<1>(sub), i % dim<1>(sub))
+                                                             : std::make_pair(i % dim<0>(sub), i / dim<0>(sub));
 }
 
 /*!
@@ -1330,9 +1307,7 @@ constexpr std::pair<size_t, size_t> index_to_2d(E&& sub, size_t i) {
 template <typename E>
 size_t row_stride(E&& expr) {
     static_assert(is_2d<E>, "row_stride() only makes sense on 2D matrices");
-    return decay_traits<E>::storage_order == order::RowMajor
-               ? etl::dim<1>(expr)
-               : 1;
+    return decay_traits<E>::storage_order == order::RowMajor ? etl::dim<1>(expr) : 1;
 }
 
 /*!
@@ -1343,9 +1318,7 @@ size_t row_stride(E&& expr) {
 template <typename E>
 size_t col_stride(E&& expr) {
     static_assert(is_2d<E>, "col_stride() only makes sense on 2D matrices");
-    return decay_traits<E>::storage_order == order::RowMajor
-               ? 1
-               : etl::dim<0>(expr);
+    return decay_traits<E>::storage_order == order::RowMajor ? 1 : etl::dim<0>(expr);
 }
 
 /*!
@@ -1356,9 +1329,7 @@ size_t col_stride(E&& expr) {
 template <typename E>
 size_t minor_stride(E&& expr) {
     static_assert(is_2d<E>, "minor_stride() only makes sense on 2D matrices");
-    return decay_traits<E>::storage_order == order::RowMajor
-               ? etl::dim<0>(expr)
-               : etl::dim<1>(expr);
+    return decay_traits<E>::storage_order == order::RowMajor ? etl::dim<0>(expr) : etl::dim<1>(expr);
 }
 
 /*!
@@ -1369,9 +1340,7 @@ size_t minor_stride(E&& expr) {
 template <typename E>
 size_t major_stride(E&& expr) {
     static_assert(is_2d<E>, "major_stride() only makes sense on 2D matrices");
-    return decay_traits<E>::storage_order == order::RowMajor
-               ? etl::dim<1>(expr)
-               : etl::dim<0>(expr);
+    return decay_traits<E>::storage_order == order::RowMajor ? etl::dim<1>(expr) : etl::dim<0>(expr);
 }
 
 /*!
@@ -1390,7 +1359,8 @@ bool memory_alias(const P1* a_begin, const P1* a_end, const P2* b_begin, const P
     cpp_assert(a_begin <= a_end, "memory_alias works on ordered ranges");
     cpp_assert(b_begin <= b_end, "memory_alias works on ordered ranges");
 
-    return reinterpret_cast<uintptr_t>(a_begin) < reinterpret_cast<uintptr_t>(b_end) && reinterpret_cast<uintptr_t>(a_end) > reinterpret_cast<uintptr_t>(b_begin);
+    return reinterpret_cast<uintptr_t>(a_begin) < reinterpret_cast<uintptr_t>(b_end)
+           && reinterpret_cast<uintptr_t>(a_end) > reinterpret_cast<uintptr_t>(b_begin);
 }
 
 /*!
@@ -1399,7 +1369,7 @@ bool memory_alias(const P1* a_begin, const P1* a_end, const P2* b_begin, const P
  * \param expr The expression
  */
 template <typename E>
-void safe_ensure_cpu_up_to_date(E&& expr){
+void safe_ensure_cpu_up_to_date(E&& expr) {
     expr.ensure_cpu_up_to_date();
 }
 
@@ -1410,8 +1380,8 @@ void safe_ensure_cpu_up_to_date(E&& expr){
  * \param expr The expression
  */
 template <typename E>
-bool safe_is_cpu_up_to_date(E&& expr){
-    if constexpr (is_dma<E>){
+bool safe_is_cpu_up_to_date(E&& expr) {
+    if constexpr (is_dma<E>) {
         return expr.is_cpu_up_to_date();
     } else {
         return true;
@@ -1425,8 +1395,8 @@ bool safe_is_cpu_up_to_date(E&& expr){
  * \param expr The expression
  */
 template <typename E>
-bool safe_is_gpu_up_to_date(E&& expr){
-    if constexpr (is_dma<E>){
+bool safe_is_gpu_up_to_date(E&& expr) {
+    if constexpr (is_dma<E>) {
         return expr.is_gpu_up_to_date();
     } else {
         return false;
@@ -1445,7 +1415,7 @@ bool safe_is_gpu_up_to_date(E&& expr){
  */
 template <typename E>
 decltype(auto) smart_forward(E& expr) {
-    if constexpr (is_temporary_expr<E>){
+    if constexpr (is_temporary_expr<E>) {
         return force_temporary(expr);
     } else {
         return make_temporary(expr);
@@ -1490,7 +1460,7 @@ decltype(auto) smart_forward_gpu(E& expr) {
  */
 template <typename E, typename Y>
 decltype(auto) smart_gpu_compute_hint(E& expr, Y& y) {
-    if constexpr (is_temporary_expr<E>){
+    if constexpr (is_temporary_expr<E>) {
         if constexpr (E::gpu_computable) {
             return force_temporary_gpu(expr);
         } else {
@@ -1568,7 +1538,7 @@ decltype(auto) select_smart_gpu_compute(X& x, Y& y) {
  *
  * This is 1 for every type but for scalar which are 0.
  */
-template<typename T>
+template <typename T>
 constexpr size_t gpu_inc = is_scalar<T> ? 0 : 1;
 
 } //end of namespace etl

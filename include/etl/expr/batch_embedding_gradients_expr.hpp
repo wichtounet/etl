@@ -77,7 +77,7 @@ struct batch_embedding_gradients_expr : base_temporary_expr_tern<batch_embedding
         check(a, b, c, lhs);
 
         const auto BB = etl::dim<0>(a);
-        const auto I = etl::dim<1>(a);
+        const auto I  = etl::dim<1>(a);
 
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
@@ -237,7 +237,9 @@ struct etl_traits<etl::batch_embedding_gradients_expr<A, B, C>> {
  * \return The embeeddings of the given sequence.
  */
 template <typename I, typename E, typename W>
-batch_embedding_gradients_expr<detail::build_type<I>, detail::build_type<E>, detail::build_type<W>> batch_embedding_gradients(const I& value, const E& errors, const W& vocab) {
+batch_embedding_gradients_expr<detail::build_type<I>, detail::build_type<E>, detail::build_type<W>> batch_embedding_gradients(const I& value,
+                                                                                                                              const E& errors,
+                                                                                                                              const W& vocab) {
     static_assert(all_etl_expr<I, E, W>, "etl::batch_embedding_gradients can only be used on ETL expressions");
     static_assert(is_2d<I>, "etl::batch_embedding_gradients is only defined for 1d input");
     static_assert(is_3d<E>, "etl::batch_embedding_gradients is only defined for 2d vocabulary");

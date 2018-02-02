@@ -27,7 +27,7 @@ struct vectorized_base {
      * \param i The index where to start loading from
      * \return a vector from lhs starting at position i
      */
-    template<typename T>
+    template <typename T>
     static inline auto load(T&& x, size_t i) {
         return x.template load<vect_impl>(i);
     }
@@ -64,7 +64,7 @@ struct VectorizedAssign : vectorized_base<V> {
 
         // 0. If possible and interesting, use streaming stores
 
-        if constexpr (streaming){
+        if constexpr (streaming) {
             if (N > stream_threshold / (sizeof(value_t<L_Expr>) * 3) && !rhs.alias(lhs)) {
                 for (; i < last; i += IT::size) {
                     lhs.template stream<vect_impl>(load(rhs, i), i);
@@ -102,7 +102,7 @@ struct VectorizedAssign : vectorized_base<V> {
  */
 template <vector_mode_t V>
 struct VectorizedAssignAdd : vectorized_base<V> {
-    using base_t    = vectorized_base<V>; ///< The base type
+    using base_t = vectorized_base<V>; ///< The base type
     using base_t::load;
     using vect_impl = typename base_t::vect_impl; ///< The vectorization type
 
@@ -145,7 +145,7 @@ struct VectorizedAssignAdd : vectorized_base<V> {
  */
 template <vector_mode_t V>
 struct VectorizedAssignSub : vectorized_base<V> {
-    using base_t    = vectorized_base<V>; ///< The base type
+    using base_t = vectorized_base<V>; ///< The base type
     using base_t::load;
     using vect_impl = typename base_t::vect_impl; ///< The vectorization type
 
@@ -188,7 +188,7 @@ struct VectorizedAssignSub : vectorized_base<V> {
  */
 template <vector_mode_t V>
 struct VectorizedAssignMul : vectorized_base<V> {
-    using base_t    = vectorized_base<V>; ///< The base type
+    using base_t = vectorized_base<V>; ///< The base type
     using base_t::load;
     using vect_impl = typename base_t::vect_impl; ///< The vectorization type
 
@@ -231,7 +231,7 @@ struct VectorizedAssignMul : vectorized_base<V> {
  */
 template <vector_mode_t V>
 struct VectorizedAssignDiv : vectorized_base<V> {
-    using base_t    = vectorized_base<V>; ///< The base type
+    using base_t = vectorized_base<V>; ///< The base type
     using base_t::load;
     using vect_impl = typename base_t::vect_impl; ///< The vectorization type
 

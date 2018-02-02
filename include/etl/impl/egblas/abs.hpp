@@ -40,7 +40,7 @@ static constexpr bool has_sabs = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void abs(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
+inline void abs(size_t n, float alpha, float* A, size_t lda, float* B, size_t ldb) {
 #ifdef EGBLAS_HAS_SABS
     inc_counter("egblas");
     egblas_sabs(n, alpha, A, lda, B, ldb);
@@ -74,7 +74,7 @@ static constexpr bool has_dabs = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void abs(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
+inline void abs(size_t n, double alpha, double* A, size_t lda, double* B, size_t ldb) {
 #ifdef EGBLAS_HAS_DABS
     inc_counter("egblas");
     egblas_dabs(n, alpha, A, lda, B, ldb);
@@ -108,7 +108,7 @@ static constexpr bool has_cabs = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void abs(size_t n, float alpha, std::complex<float>* A , size_t lda, float* B , size_t ldb){
+inline void abs(size_t n, float alpha, std::complex<float>* A, size_t lda, float* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CABS
     inc_counter("egblas");
     egblas_cabs(n, alpha, reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
@@ -133,7 +133,7 @@ inline void abs(size_t n, float alpha, std::complex<float>* A , size_t lda, floa
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void abs(size_t n, float alpha, etl::complex<float>* A , size_t lda, float* B , size_t ldb){
+inline void abs(size_t n, float alpha, etl::complex<float>* A, size_t lda, float* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CABS
     inc_counter("egblas");
     egblas_cabs(n, alpha, reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
@@ -167,7 +167,7 @@ static constexpr bool has_zabs = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void abs(size_t n, double alpha, std::complex<double>* A , size_t lda, double* B , size_t ldb){
+inline void abs(size_t n, double alpha, std::complex<double>* A, size_t lda, double* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZABS
     inc_counter("egblas");
     egblas_zabs(n, alpha, reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);
@@ -192,7 +192,7 @@ inline void abs(size_t n, double alpha, std::complex<double>* A , size_t lda, do
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void abs(size_t n, double alpha, etl::complex<double>* A , size_t lda, double* B , size_t ldb){
+inline void abs(size_t n, double alpha, etl::complex<double>* A, size_t lda, double* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZABS
     inc_counter("egblas");
     egblas_zabs(n, alpha, reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);

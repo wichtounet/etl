@@ -40,7 +40,7 @@ static constexpr bool has_scosh = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cosh(size_t n, float alpha, float* A , size_t lda, float* B , size_t ldb){
+inline void cosh(size_t n, float alpha, float* A, size_t lda, float* B, size_t ldb) {
 #ifdef EGBLAS_HAS_SCOSH
     inc_counter("egblas");
     egblas_scosh(n, alpha, A, lda, B, ldb);
@@ -74,7 +74,7 @@ static constexpr bool has_dcosh = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cosh(size_t n, double alpha, double* A , size_t lda, double* B , size_t ldb){
+inline void cosh(size_t n, double alpha, double* A, size_t lda, double* B, size_t ldb) {
 #ifdef EGBLAS_HAS_DCOSH
     inc_counter("egblas");
     egblas_dcosh(n, alpha, A, lda, B, ldb);
@@ -108,7 +108,7 @@ static constexpr bool has_ccosh = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cosh(size_t n, std::complex<float> alpha, std::complex<float>* A , size_t lda, std::complex<float>* B , size_t ldb){
+inline void cosh(size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CCOSH
     inc_counter("egblas");
     egblas_ccosh(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
@@ -133,7 +133,7 @@ inline void cosh(size_t n, std::complex<float> alpha, std::complex<float>* A , s
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cosh(size_t n, etl::complex<float> alpha, etl::complex<float>* A , size_t lda, etl::complex<float>* B , size_t ldb){
+inline void cosh(size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_CCOSH
     inc_counter("egblas");
     egblas_ccosh(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
@@ -167,7 +167,7 @@ static constexpr bool has_zcosh = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cosh(size_t n, std::complex<double> alpha, std::complex<double>* A , size_t lda, std::complex<double>* B , size_t ldb){
+inline void cosh(size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZCOSH
     inc_counter("egblas");
     egblas_zcosh(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
@@ -192,7 +192,7 @@ inline void cosh(size_t n, std::complex<double> alpha, std::complex<double>* A ,
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void cosh(size_t n, etl::complex<double> alpha, etl::complex<double>* A , size_t lda, etl::complex<double>* B , size_t ldb){
+inline void cosh(size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb) {
 #ifdef EGBLAS_HAS_ZCOSH
     inc_counter("egblas");
     egblas_zcosh(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);

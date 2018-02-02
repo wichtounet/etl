@@ -69,7 +69,7 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
      * \brief Assert that the convolution is done on correct dimensions
      */
     template <typename I, typename K, typename C>
-    static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv){
+    static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) {
         static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_backward");
         static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_backward");
         static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_backward");
@@ -87,11 +87,11 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
      * \brief Assign to a matrix
      * \param conv The expression to which assign
      */
-    template<typename C>
-    void assign_to(C&& conv)  const {
+    template <typename C>
+    void assign_to(C&& conv) const {
         static_assert(all_etl_expr<A, B, C>, "conv2_backward only supported for ETL expressions");
 
-        auto& input = this->a();
+        auto& input  = this->a();
         auto& kernel = this->b();
 
         check(input, kernel, conv);
@@ -155,8 +155,8 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -164,8 +164,8 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -173,8 +173,8 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -182,8 +182,8 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -191,8 +191,8 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -220,21 +220,21 @@ struct etl_traits<etl::conv_2d_backward_expr<A, B, S1, S2, P1, P2, Flipped>> {
     using right_traits = etl_traits<right_expr_t>;                                  ///< The right sub traits
     using value_type   = value_t<A>;                                                ///< The value type of the expression
 
-    static constexpr bool is_etl          = true;                       ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer  = false;                      ///< Indicates if the type is a transformer
-    static constexpr bool is_view         = false;                      ///< Indicates if the type is a view
-    static constexpr bool is_magic_view   = false;                      ///< Indicates if the type is a magic view
-    static constexpr bool is_fast         = all_fast<A, B>;      ///< Indicates if the expression is fast
-    static constexpr bool is_linear       = false;                       ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe  = true;                       ///< Indicates if the expression is thread safe
-    static constexpr bool is_value        = false;                      ///< Indicates if the expression is of value type
-    static constexpr bool is_direct       = true;                       ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator    = false;                      ///< Indicates if the expression is a generator
-    static constexpr bool is_padded       = false;                      ///< Indicates if the expression is padded
-    static constexpr bool is_aligned      = true;                       ///< Indicates if the expression is padded
-    static constexpr bool is_temporary = true;                       ///< Indicates if the expression needs a evaluator visitor
-    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
-    static constexpr order storage_order  = left_traits::storage_order; ///< The expression's storage order
+    static constexpr bool is_etl         = true;                                 ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                                ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = all_fast<A, B>;                       ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = true;                                 ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = true;                                 ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                                ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = true;                                 ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = true;                                 ///< Indicates if the expression needs a evaluator visitor
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled; ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order = left_traits::storage_order;           ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -250,8 +250,7 @@ struct etl_traits<etl::conv_2d_backward_expr<A, B, S1, S2, P1, P2, Flipped>> {
      */
     template <size_t DD>
     static constexpr size_t dim() {
-        return DD == 0 ? (S1 * (etl::dim<0, A>() - 1) + etl::dim<0, B>() - 2 * P1)
-                       : (S2 * (etl::dim<1, A>() - 1) + etl::dim<1, B>() - 2 * P2);
+        return DD == 0 ? (S1 * (etl::dim<0, A>() - 1) + etl::dim<0, B>() - 2 * P1) : (S2 * (etl::dim<1, A>() - 1) + etl::dim<1, B>() - 2 * P2);
     }
 
     /*!
@@ -261,7 +260,7 @@ struct etl_traits<etl::conv_2d_backward_expr<A, B, S1, S2, P1, P2, Flipped>> {
      * \return the dth dimension of the expression
      */
     static size_t dim(const expr_t& e, size_t d) {
-        if (d == 0){
+        if (d == 0) {
             return S1 * (etl::dim(e._a, 0) - 1) + etl::dim(e._b, 0) - 2 * P1;
         } else {
             return S2 * (etl::dim(e._a, 1) - 1) + etl::dim(e._b, 1) - 2 * P2;
@@ -274,8 +273,7 @@ struct etl_traits<etl::conv_2d_backward_expr<A, B, S1, S2, P1, P2, Flipped>> {
      * \return the size of the expression
      */
     static size_t size(const expr_t& e) {
-        return (S1 * (etl::dim(e._a, 0) - 1) + etl::dim(e._b, 0) - 2 * P1) *
-               (S2 * (etl::dim(e._a, 1) - 1) + etl::dim(e._b, 1) - 2 * P2);
+        return (S1 * (etl::dim(e._a, 0) - 1) + etl::dim(e._b, 0) - 2 * P1) * (S2 * (etl::dim(e._a, 1) - 1) + etl::dim(e._b, 1) - 2 * P2);
     }
 
     /*!
@@ -283,8 +281,7 @@ struct etl_traits<etl::conv_2d_backward_expr<A, B, S1, S2, P1, P2, Flipped>> {
      * \return the size of the expression
      */
     static constexpr size_t size() {
-        return   (S1 * (etl::dim<0, A>() - 1) + etl::dim<0, B>() - 2 * P1)
-               * (S2 * (etl::dim<1, A>() - 1) + etl::dim<1, B>() - 2 * P2);
+        return (S1 * (etl::dim<0, A>() - 1) + etl::dim<0, B>() - 2 * P1) * (S2 * (etl::dim<1, A>() - 1) + etl::dim<1, B>() - 2 * P2);
     }
 
     /*!
@@ -338,7 +335,7 @@ conv_2d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, 
  * \return c
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
-auto conv_2d_backward(A&& a, B&& b, C&& c){
+auto conv_2d_backward(A&& a, B&& b, C&& c) {
     static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_2d_backward<S1, S2, P1, P2>(a, b);
@@ -388,7 +385,7 @@ conv_2d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, 
  * \return c
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
-auto conv_2d_backward_flipped(A&& a, B&& b, C&& c){
+auto conv_2d_backward_flipped(A&& a, B&& b, C&& c) {
     static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_2d_backward_flipped<S1, S2, P1, P2>(a, b);

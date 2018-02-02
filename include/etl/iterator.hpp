@@ -23,8 +23,8 @@ namespace etl {
 template <typename Expr>
 struct iterator : public std::iterator<std::random_access_iterator_tag, value_t<Expr>> {
 private:
-    Expr* expr;    ///< Pointer to the expression
-    size_t i; ///< Current index
+    Expr* expr; ///< Pointer to the expression
+    size_t i;   ///< Current index
 
 public:
     using base_iterator_t = std::iterator<std::random_access_iterator_tag, value_t<Expr>>; ///< The base iterator type
@@ -38,8 +38,7 @@ public:
      * \param expr The expr to iterate over.
      * \param i The starting position
      */
-    iterator(Expr& expr, size_t i)
-            : expr(&expr), i(i) {}
+    iterator(Expr& expr, size_t i) : expr(&expr), i(i) {}
 
     /*!
      * \brief Dereference the iterator to get the current value
@@ -62,7 +61,7 @@ public:
      * \brief Dereference the iterator to get the current value
      * \return a pointer to the current element
      */
-    auto operator->() {
+    auto operator-> () {
         return &(*expr)[i];
     }
 

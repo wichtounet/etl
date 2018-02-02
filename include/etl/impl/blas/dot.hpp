@@ -56,7 +56,7 @@ value_t<A> dot(const A& /*a*/, const B& /*b*/) {
     return 0.0;
 }
 
-//COVERAGE_EXCLUDE_END
+    //COVERAGE_EXCLUDE_END
 
 #endif
 

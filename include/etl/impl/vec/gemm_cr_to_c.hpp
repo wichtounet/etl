@@ -33,7 +33,7 @@ void gemm_small_kernel_cr_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
 
     size_t i = 0;
 
-    for( ; i + 3 * vec_size < i_end; i += 4 * vec_size){
+    for (; i + 3 * vec_size < i_end; i += 4 * vec_size) {
         size_t j = 0;
 
         for (; j + 1 < N; j += 2) {
@@ -105,7 +105,7 @@ void gemm_small_kernel_cr_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
         }
     }
 
-    for( ; i + 1 * vec_size < i_end; i += 2 * vec_size){
+    for (; i + 1 * vec_size < i_end; i += 2 * vec_size) {
         size_t j = 0;
 
         for (; j + 1 < N; j += 2) {
@@ -155,7 +155,7 @@ void gemm_small_kernel_cr_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
         }
     }
 
-    for( ; i < i_end; i += vec_size){
+    for (; i < i_end; i += vec_size) {
         size_t j = 0;
 
         for (; j + 1 < N; j += 2) {
@@ -191,7 +191,7 @@ void gemm_small_kernel_cr_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
         }
     }
 
-    for( ; i < M; ++i){
+    for (; i < M; ++i) {
         size_t j = 0;
 
         for (; j + 1 < N; j += 2) {

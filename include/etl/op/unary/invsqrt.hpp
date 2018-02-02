@@ -32,11 +32,8 @@ struct invsqrt_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_sinvsqrt)
-            || (is_double_precision_t<T> && impl::egblas::has_dinvsqrt)
-            || (is_complex_single_t<T> && impl::egblas::has_cinvsqrt)
-            || (is_complex_double_t<T> && impl::egblas::has_zinvsqrt);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_sinvsqrt) || (is_double_precision_t<T> && impl::egblas::has_dinvsqrt)
+                                           || (is_complex_single_t<T> && impl::egblas::has_cinvsqrt) || (is_complex_double_t<T> && impl::egblas::has_zinvsqrt);
 
     /*!
      * \brief Apply the unary operator on x
@@ -115,11 +112,8 @@ struct invsqrt_unary_op<etl::complex<TT>> {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_sinvsqrt)
-            || (is_double_precision_t<T> && impl::egblas::has_dinvsqrt)
-            || (is_complex_single_t<T> && impl::egblas::has_cinvsqrt)
-            || (is_complex_double_t<T> && impl::egblas::has_zinvsqrt);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_sinvsqrt) || (is_double_precision_t<T> && impl::egblas::has_dinvsqrt)
+                                           || (is_complex_single_t<T> && impl::egblas::has_cinvsqrt) || (is_complex_double_t<T> && impl::egblas::has_zinvsqrt);
 
     /*!
      * \brief Apply the unary operator on x

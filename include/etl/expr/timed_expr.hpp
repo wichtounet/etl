@@ -8,7 +8,7 @@
 /*!
  * \file
  * \brief Contains a timed expression implementation.
-*/
+ */
 
 #pragma once
 
@@ -28,13 +28,11 @@ struct timed_expr final {
     using value_type       = value_t<Expr>; ///< The value type
 
 private:
-
     Expr value;
 
     friend struct wrapper_traits<timed_expr>;
 
 public:
-
     //Cannot be constructed with no args
     timed_expr() = delete;
 
@@ -47,7 +45,7 @@ public:
     }
 
     //Expresison can be copied and moved
-    timed_expr(const timed_expr& e) = default;
+    timed_expr(const timed_expr& e)     = default;
     timed_expr(timed_expr&& e) noexcept = default;
 
     //Expressions are invariant
@@ -70,8 +68,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         auto start_time = etl::timer_clock::now();
 
         value.assign_to(lhs);
@@ -86,8 +84,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         auto start_time = etl::timer_clock::now();
 
         value.assign_add_to(lhs);
@@ -102,8 +100,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         auto start_time = etl::timer_clock::now();
 
         value.assign_sub_to(lhs);
@@ -118,8 +116,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         auto start_time = etl::timer_clock::now();
 
         value.assign_mul_to(lhs);
@@ -134,8 +132,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         auto start_time = etl::timer_clock::now();
 
         value.assign_div_to(lhs);
@@ -150,8 +148,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         auto start_time = etl::timer_clock::now();
 
         value.assign_mod_to(lhs);

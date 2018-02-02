@@ -25,8 +25,7 @@ struct deserializer {
      * \param args The arguments to forward to the stream constructor
      */
     template <typename... Args>
-    explicit deserializer(Args&&... args)
-            : stream(std::forward<Args>(args)...) {}
+    explicit deserializer(Args&&... args) : stream(std::forward<Args>(args)...) {}
 
     /*!
      * \brief Reads a value of the given type from the stream

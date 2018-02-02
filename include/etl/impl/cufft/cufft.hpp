@@ -20,7 +20,7 @@ struct cufft_handle {
     /*!
      * \brief Create a new cufft_handle.
      */
-    cufft_handle(){
+    cufft_handle() {
         cufftCreate(&handle);
     }
 

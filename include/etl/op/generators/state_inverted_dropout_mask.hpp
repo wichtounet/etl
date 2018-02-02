@@ -25,7 +25,7 @@ template <typename T = double>
 struct state_inverted_dropout_mask_generator_op {
     using value_type = T; ///< The value type
 
-    const T probability;                           ///< The dropout probability
+    const T probability; ///< The dropout probability
     std::shared_ptr<void*> states;
     random_engine rand_engine;                     ///< The random engine
     dropout_distribution<value_type> distribution; ///< The used distribution
@@ -34,16 +34,15 @@ struct state_inverted_dropout_mask_generator_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     static constexpr bool gpu_computable =
-            impl::egblas::has_dropout_prepare && impl::egblas::has_dropout_release &&
-               ((is_single_precision_t<T> && impl::egblas::has_sdropout_states)
-            || (is_double_precision_t<T> && impl::egblas::has_ddropout_states));
+        impl::egblas::has_dropout_prepare && impl::egblas::has_dropout_release
+        && ((is_single_precision_t<T> && impl::egblas::has_sdropout_states) || (is_double_precision_t<T> && impl::egblas::has_ddropout_states));
 
     /*!
      * \brief Construct a new generator with the given start and end of the range
      */
     state_inverted_dropout_mask_generator_op(T probability) : probability(probability), rand_engine(std::time(nullptr)), distribution(T(0), T(1)) {
         if constexpr (impl::egblas::has_dropout_prepare) {
-            states = std::make_shared<void*>();
+            states  = std::make_shared<void*>();
             *states = impl::egblas::dropout_prepare();
         }
     }
@@ -53,7 +52,7 @@ struct state_inverted_dropout_mask_generator_op {
      * \return the newly generated value
      */
     value_type operator()() {
-        if(distribution(rand_engine) < probability){
+        if (distribution(rand_engine) < probability) {
             return T(0);
         } else {
             return T(1) / (T(1) - probability);
@@ -109,8 +108,8 @@ template <typename G, typename T = double>
 struct state_inverted_dropout_mask_generator_g_op {
     using value_type = T; ///< The value type
 
-    const T probability;                           ///< The dropout probability
-    G& rand_engine;                                ///< The random engine
+    const T probability; ///< The dropout probability
+    G& rand_engine;      ///< The random engine
     std::shared_ptr<void*> states;
     dropout_distribution<value_type> distribution; ///< The used distribution
 
@@ -118,9 +117,8 @@ struct state_inverted_dropout_mask_generator_g_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     static constexpr bool gpu_computable =
-            impl::egblas::has_dropout_prepare_seed && impl::egblas::has_dropout_release &&
-               ((is_single_precision_t<T> && impl::egblas::has_sdropout_states)
-            || (is_double_precision_t<T> && impl::egblas::has_ddropout_states));
+        impl::egblas::has_dropout_prepare_seed && impl::egblas::has_dropout_release
+        && ((is_single_precision_t<T> && impl::egblas::has_sdropout_states) || (is_double_precision_t<T> && impl::egblas::has_ddropout_states));
 
     /*!
      * \brief Construct a new generator with the given start and end of the range
@@ -140,7 +138,7 @@ struct state_inverted_dropout_mask_generator_g_op {
      * \return the newly generated value
      */
     value_type operator()() {
-        if(distribution(rand_engine) < probability){
+        if (distribution(rand_engine) < probability) {
             return T(0);
         } else {
             return T(1) / (T(1) - probability);

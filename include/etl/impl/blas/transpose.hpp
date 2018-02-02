@@ -81,7 +81,7 @@ void mkl_itrans(C&& c) {
  */
 template <typename C>
 void inplace_square_transpose(C&& c) {
-    if constexpr (is_dma<C> && is_floating<C>){
+    if constexpr (is_dma<C> && is_floating<C>) {
         mkl_itrans(c);
     } else {
         cpp_unreachable("Invalid call to blas:inplace_square_transpose");
@@ -94,7 +94,7 @@ void inplace_square_transpose(C&& c) {
  */
 template <typename C>
 void inplace_rectangular_transpose(C&& c) {
-    if constexpr (is_dma<C> && is_floating<C>){
+    if constexpr (is_dma<C> && is_floating<C>) {
         mkl_otrans(force_temporary(c), c);
     } else {
         cpp_unreachable("Invalid call to blas:inplace_rectangular_transpose");
@@ -163,7 +163,7 @@ void transpose(A&& a, C&& c) {
     cpp_unreachable("MKL not enabled/available");
 }
 
-//COVERAGE_EXCLUDE_END
+    //COVERAGE_EXCLUDE_END
 
 #endif
 

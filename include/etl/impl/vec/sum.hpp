@@ -129,7 +129,7 @@ value_t<L> asum_impl(const L& lhs) {
     for (; i + vec_size - 1 < n; i += vec_size) {
         auto v1 = lhs.template load<vec_type>(i + 0 * vec_size);
         auto x1 = vec_type::max(v1, vec_type::sub(vec_type::template zero<T>(), v1));
-        r1 = vec_type::add(x1, r1);
+        r1      = vec_type::add(x1, r1);
     }
 
     auto p1 = vec_type::hadd(r1) + vec_type::hadd(r2) + vec_type::hadd(r3) + vec_type::hadd(r4);

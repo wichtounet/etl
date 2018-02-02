@@ -35,7 +35,7 @@ void activation(I&& x, C&& y, cudnnActivationMode_t mode) {
     using type = std::remove_const_t<value_t<I>>;
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     decltype(auto) handle = start_cudnn();
 
@@ -54,10 +54,7 @@ void activation(I&& x, C&& y, cudnnActivationMode_t mode) {
 
     // y = activation(x)
 
-    cudnn_check(cudnnActivationForward(handle.get(),
-        func_tensor,
-        alpha, *x_tensor, x.gpu_memory(),
-        beta, *y_tensor, y.gpu_memory()));
+    cudnn_check(cudnnActivationForward(handle.get(), func_tensor, alpha, *x_tensor, x.gpu_memory(), beta, *y_tensor, y.gpu_memory()));
 
     y.validate_gpu();
     y.invalidate_cpu();
@@ -77,7 +74,7 @@ void backward_activation(Y&& y, DY&& dy, DX&& dx, cudnnActivationMode_t mode) {
     using type = std::remove_const_t<value_t<Y>>;
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     decltype(auto) handle = start_cudnn();
 
@@ -98,14 +95,8 @@ void backward_activation(Y&& y, DY&& dy, DX&& dx, cudnnActivationMode_t mode) {
 
     // y = activation(x)
 
-    cudnn_check(cudnnActivationBackward(handle.get(),
-        func_tensor,
-        alpha,
-        *y_tensor, y.gpu_memory(),
-        *dy_tensor, dy.gpu_memory(),
-        *y_tensor, y.gpu_memory(),
-        beta,
-        *dx_tensor, dx.gpu_memory()));
+    cudnn_check(cudnnActivationBackward(handle.get(), func_tensor, alpha, *y_tensor, y.gpu_memory(), *dy_tensor, dy.gpu_memory(), *y_tensor, y.gpu_memory(),
+                                        beta, *dx_tensor, dx.gpu_memory()));
 
     dx.validate_gpu();
     dx.invalidate_cpu();
@@ -167,7 +158,7 @@ void softmax_activation(I&& x, C&& y, cudnnSoftmaxAlgorithm_t mode) {
     using type = std::remove_const_t<value_t<I>>;
 
     type alpha[] = {1.0f};
-    type beta[] = {0.0f};
+    type beta[]  = {0.0f};
 
     decltype(auto) handle = start_cudnn();
 
@@ -182,10 +173,7 @@ void softmax_activation(I&& x, C&& y, cudnnSoftmaxAlgorithm_t mode) {
 
     // y = activation(x)
 
-    cudnn_check(cudnnSoftmaxForward(handle.get(),
-        mode, CUDNN_SOFTMAX_MODE_INSTANCE,
-        alpha, *x_tensor, x.gpu_memory(),
-        beta, *y_tensor, y.gpu_memory()));
+    cudnn_check(cudnnSoftmaxForward(handle.get(), mode, CUDNN_SOFTMAX_MODE_INSTANCE, alpha, *x_tensor, x.gpu_memory(), beta, *y_tensor, y.gpu_memory()));
 
     y.validate_gpu();
     y.invalidate_cpu();
@@ -291,7 +279,7 @@ void stable_softmax(I&& x, C&& y) {
     cpp_unreachable("CUDNN not available/enabled");
 }
 
-//COVERAGE_EXCLUDE_END
+    //COVERAGE_EXCLUDE_END
 
 #endif
 

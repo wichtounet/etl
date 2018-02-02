@@ -28,11 +28,9 @@ struct dyn_matrix_view;
  * \tparam T The type of expression on which the view is made
  */
 template <typename T, size_t D>
-struct dyn_matrix_view <T, D, std::enable_if_t<!is_dma<T>>> final :
-    iterable<dyn_matrix_view<T, D>, false>,
-    value_testable<dyn_matrix_view<T, D>>,
-    assignable<dyn_matrix_view<T, D>, value_t<T>>
-{
+struct dyn_matrix_view<T, D, std::enable_if_t<!is_dma<T>>> final : iterable<dyn_matrix_view<T, D>, false>,
+                                                                   value_testable<dyn_matrix_view<T, D>>,
+                                                                   assignable<dyn_matrix_view<T, D>, value_t<T>> {
     static_assert(is_etl_expr<T>, "dyn_matrix_view only works with ETL expressions");
 
     using this_type            = dyn_matrix_view<T, D>;                                                ///< The type of this expression
@@ -50,17 +48,17 @@ struct dyn_matrix_view <T, D, std::enable_if_t<!is_dma<T>>> final :
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<value_type>;
+    template <typename V = default_vec>
+    using vec_type = typename V::template vec_type<value_type>;
 
     using assignable_base_type::operator=;
     using iterable_base_type::begin;
     using iterable_base_type::end;
 
 private:
-    T sub;                                 ///< The sub expression
+    T sub;                            ///< The sub expression
     std::array<size_t, D> dimensions; ///< The dimensions of the view
-    size_t _size;                          ///< The size of the view
+    size_t _size;                     ///< The size of the view
 
     static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The matrix storage order
 
@@ -71,9 +69,8 @@ public:
      * \brief Construct a new dyn_matrix_view over the given sub expression
      * \param dims The dimensions
      */
-    template<typename... S>
-    explicit dyn_matrix_view(sub_type sub, S... dims)
-            : sub(sub), dimensions{{dims...}}, _size(etl::size(sub)) {}
+    template <typename... S>
+    explicit dyn_matrix_view(sub_type sub, S... dims) : sub(sub), dimensions{{dims...}}, _size(etl::size(sub)) {}
 
     /*!
      * \brief Returns the element at the given index
@@ -109,7 +106,7 @@ public:
      * \param sizes The following indices
      * \return a reference to the element at the given position.
      */
-    template<typename... S>
+    template <typename... S>
     const_return_type operator()(size_t f1, size_t f2, S... sizes) const {
         return sub[etl::dyn_index(*this, f1, f2, sizes...)];
     }
@@ -140,7 +137,7 @@ public:
      * \param sizes The following indices
      * \return a reference to the element at the given position.
      */
-    template<typename... S>
+    template <typename... S>
     return_type operator()(size_t f1, size_t f2, S... sizes) {
         return sub[etl::dyn_index(*this, f1, f2, sizes...)];
     }
@@ -216,8 +213,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -225,8 +222,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -234,8 +231,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -243,8 +240,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -252,8 +249,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -261,8 +258,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -310,11 +307,9 @@ public:
  * \tparam T The type of expression on which the view is made
  */
 template <typename T, size_t D>
-struct dyn_matrix_view <T, D, std::enable_if_t<is_dma<T>>> final :
-    iterable<dyn_matrix_view<T, D>, true>,
-    value_testable<dyn_matrix_view<T, D>>,
-    assignable<dyn_matrix_view<T, D>, value_t<T>>
-{
+struct dyn_matrix_view<T, D, std::enable_if_t<is_dma<T>>> final : iterable<dyn_matrix_view<T, D>, true>,
+                                                                  value_testable<dyn_matrix_view<T, D>>,
+                                                                  assignable<dyn_matrix_view<T, D>, value_t<T>> {
     static_assert(is_etl_expr<T>, "dyn_matrix_view only works with ETL expressions");
 
     using this_type            = dyn_matrix_view<T, D>;                                                ///< The type of this expression
@@ -332,17 +327,17 @@ struct dyn_matrix_view <T, D, std::enable_if_t<is_dma<T>>> final :
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<value_type>;
+    template <typename V = default_vec>
+    using vec_type = typename V::template vec_type<value_type>;
 
     using assignable_base_type::operator=;
     using iterable_base_type::begin;
     using iterable_base_type::end;
 
 private:
-    T sub;                                 ///< The sub expression
+    T sub;                            ///< The sub expression
     std::array<size_t, D> dimensions; ///< The dimensions of the view
-    size_t _size;                          ///< The size of the view
+    size_t _size;                     ///< The size of the view
 
     mutable memory_type memory; ///< Pointer to the memory of expression
 
@@ -355,10 +350,10 @@ public:
      * \brief Construct a new dyn_matrix_view over the given sub expression
      * \param dims The dimensions
      */
-    template<typename... S>
+    template <typename... S>
     explicit dyn_matrix_view(sub_type sub, S... dims) : sub(sub), dimensions{{dims...}}, _size(etl::size(sub)) {
         // Accessing the memory through fast sub views means evaluation
-        if constexpr (decay_traits<sub_type>::is_temporary){
+        if constexpr (decay_traits<sub_type>::is_temporary) {
             standard_evaluator::pre_assign_rhs(*this);
         }
 
@@ -393,7 +388,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given position.
      */
-    template<bool B = (D == 1), cpp_enable_iff(B)>
+    template <bool B = (D == 1), cpp_enable_iff(B)>
     const_return_type operator()(size_t j) const {
         ensure_cpu_up_to_date();
         return memory[j];
@@ -404,7 +399,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given position.
      */
-    template<bool B = (D == 1), cpp_enable_iff(B)>
+    template <bool B = (D == 1), cpp_enable_iff(B)>
     return_type operator()(size_t j) {
         ensure_cpu_up_to_date();
         invalidate_gpu();
@@ -429,7 +424,7 @@ public:
      * \param sizes The following indices
      * \return a reference to the element at the given position.
      */
-    template<typename... S>
+    template <typename... S>
     const_return_type operator()(size_t f1, size_t f2, S... sizes) const {
         ensure_cpu_up_to_date();
         return memory[etl::dyn_index(*this, f1, f2, sizes...)];
@@ -442,7 +437,7 @@ public:
      * \param sizes The following indices
      * \return a reference to the element at the given position.
      */
-    template<typename... S>
+    template <typename... S>
     return_type operator()(size_t f1, size_t f2, S... sizes) {
         ensure_cpu_up_to_date();
         invalidate_gpu();
@@ -572,8 +567,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -581,8 +576,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -590,8 +585,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -599,8 +594,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -608,8 +603,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -617,8 +612,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 

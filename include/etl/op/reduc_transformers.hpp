@@ -29,8 +29,7 @@ public:
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit argmax_transformer(sub_type expr)
-            : sub(expr) {}
+    explicit argmax_transformer(sub_type expr) : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -75,7 +74,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
+    template <typename V>
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
     }
@@ -129,8 +128,7 @@ public:
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit argmin_transformer(sub_type expr)
-            : sub(expr) {}
+    explicit argmin_transformer(sub_type expr) : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -175,7 +173,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
+    template <typename V>
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
     }
@@ -228,8 +226,7 @@ public:
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit sum_r_transformer(sub_type expr)
-            : sub(expr) {}
+    explicit sum_r_transformer(sub_type expr) : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -274,7 +271,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
+    template <typename V>
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
     }
@@ -327,8 +324,7 @@ public:
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit mean_r_transformer(sub_type expr)
-            : sub(expr) {}
+    explicit mean_r_transformer(sub_type expr) : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -373,7 +369,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
+    template <typename V>
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
     }
@@ -426,8 +422,7 @@ public:
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit sum_l_transformer(sub_type expr)
-            : sub(expr) {}
+    explicit sum_l_transformer(sub_type expr) : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -493,7 +488,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
+    template <typename V>
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
     }
@@ -546,8 +541,7 @@ public:
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit mean_l_transformer(sub_type expr)
-            : sub(expr) {}
+    explicit mean_l_transformer(sub_type expr) : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -613,7 +607,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
+    template <typename V>
     void visit(V&& visitor) const {
         sub.visit(std::forward<V>(visitor));
     }
@@ -651,12 +645,13 @@ public:
  * \brief Specialization for (sum-mean)_r_transformer
  */
 template <typename T>
-struct etl_traits<T, std::enable_if_t<
-                            cpp::is_specialization_of_v<etl::argmax_transformer, std::decay_t<T>>
-                         || cpp::is_specialization_of_v<etl::argmin_transformer, std::decay_t<T>>
-                         || cpp::is_specialization_of_v<etl::sum_r_transformer, std::decay_t<T>>
-                         || cpp::is_specialization_of_v<etl::mean_r_transformer, std::decay_t<T>>
-                         >> {
+struct etl_traits<
+    T,
+    std::enable_if_t<
+        cpp::is_specialization_of_v<
+            etl::argmax_transformer,
+            std::decay_t<
+                T>> || cpp::is_specialization_of_v<etl::argmin_transformer, std::decay_t<T>> || cpp::is_specialization_of_v<etl::sum_r_transformer, std::decay_t<T>> || cpp::is_specialization_of_v<etl::mean_r_transformer, std::decay_t<T>>>> {
     using expr_t     = T;                                                ///< The expression type
     using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>; ///< The sub expression type
     using value_type = value_t<sub_expr_t>;                              ///< The value type of the expression
@@ -736,9 +731,9 @@ struct etl_traits<T, std::enable_if_t<
  * \brief Specialization for (sum-mean)_r_transformer
  */
 template <typename T>
-struct etl_traits<T, std::enable_if_t<
-                            cpp::is_specialization_of_v<etl::sum_l_transformer, std::decay_t<T>>
-                         || cpp::is_specialization_of_v<etl::mean_l_transformer, std::decay_t<T>>>> {
+struct etl_traits<T,
+                  std::enable_if_t<cpp::is_specialization_of_v<etl::sum_l_transformer,
+                                                               std::decay_t<T>> || cpp::is_specialization_of_v<etl::mean_l_transformer, std::decay_t<T>>>> {
     using expr_t     = T;                                                ///< The expression type
     using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>; ///< The sub expression type
     using value_type = value_t<sub_expr_t>;                              ///< The value type of the expression

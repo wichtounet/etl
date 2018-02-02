@@ -35,17 +35,14 @@ struct normal_generator_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && curand_enabled)
-            || (is_double_precision_t<T> && curand_enabled);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && curand_enabled) || (is_double_precision_t<T> && curand_enabled);
 
     /*!
      * \brief Construct a new generator with the given mean and standard deviation
      * \param mean The mean
      * \param stddev The standard deviation
      */
-    normal_generator_op(T mean, T stddev)
-            : mean(mean), stddev(stddev), rand_engine(std::time(nullptr)), distribution(mean, stddev) {}
+    normal_generator_op(T mean, T stddev) : mean(mean), stddev(stddev), rand_engine(std::time(nullptr)), distribution(mean, stddev) {}
 
     /*!
      * \brief Generate a new value
@@ -145,17 +142,14 @@ struct normal_generator_g_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && curand_enabled)
-            || (is_double_precision_t<T> && curand_enabled);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && curand_enabled) || (is_double_precision_t<T> && curand_enabled);
 
     /*!
      * \brief Construct a new generator with the given mean and standard deviation
      * \param mean The mean
      * \param stddev The standard deviation
      */
-    normal_generator_g_op(G& g, T mean, T stddev)
-            : mean(mean), stddev(stddev), rand_engine(g), distribution(mean, stddev) {}
+    normal_generator_g_op(G& g, T mean, T stddev) : mean(mean), stddev(stddev), rand_engine(g), distribution(mean, stddev) {}
 
     /*!
      * \brief Generate a new value

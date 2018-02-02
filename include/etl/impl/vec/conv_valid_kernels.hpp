@@ -45,7 +45,8 @@ namespace etl::impl::vec::detail {
  * \param beta The multiplicative for the previous values of out
  */
 template <typename I, typename K, typename C>
-inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv, size_t i, size_t j, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
+inline void conv2_valid_flipped_border(
+    const I& input, const K& kernel, C&& conv, size_t i, size_t j, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
     using T = value_t<I>;
 
     const size_t n1 = etl::dim<0>(input);
@@ -95,7 +96,8 @@ inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv
  * \param beta The multiplicative for the previous values of out
  */
 template <typename V, typename T>
-void conv2_valid_flipped_inner_kernel(const T* in, size_t n1, size_t n2, const T* kkk, size_t m1, size_t m2, T* out, size_t s1, size_t s2, size_t p1, size_t p2, T beta) {
+void conv2_valid_flipped_inner_kernel(
+    const T* in, size_t n1, size_t n2, const T* kkk, size_t m1, size_t m2, T* out, size_t s1, size_t s2, size_t p1, size_t p2, T beta) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -343,7 +345,7 @@ void conv2_valid_flipped_inner_kernel(const T* in, size_t n1, size_t n2, const T
  */
 template <typename V, typename I, typename K, typename C>
 void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
-    using T        = value_t<I>;
+    using T = value_t<I>;
 
     const size_t n1 = etl::dim<0>(input);
     const size_t n2 = etl::dim<1>(input);

@@ -32,12 +32,8 @@ struct sign_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_ssign)
-            || (is_double_precision_t<T> && impl::egblas::has_dsign)
-            || (is_complex_single_t<T> && impl::egblas::has_csign)
-            || (is_complex_double_t<T> && impl::egblas::has_zsign);
-
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_ssign) || (is_double_precision_t<T> && impl::egblas::has_dsign)
+                                           || (is_complex_single_t<T> && impl::egblas::has_csign) || (is_complex_double_t<T> && impl::egblas::has_zsign);
 
     /*!
      * \brief Apply the unary operator on x

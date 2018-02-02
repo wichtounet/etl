@@ -47,7 +47,7 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
      * \brief Assert that the convolution is done on correct dimensions
      */
     template <typename I, typename K, typename C>
-    static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv){
+    static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) {
         static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_full");
         static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_full");
         static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_full");
@@ -73,8 +73,8 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
      * \brief Assign to a matrix of the full storage order
      * \param c The expression to which assign
      */
-    template<typename C>
-    void assign_to(C&& c)  const {
+    template <typename C>
+    void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, B, C>, "conv4_full only supported for ETL expressions");
 
         auto& a = this->a();
@@ -82,7 +82,7 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
 
         check(a, b, c);
 
-        if constexpr (Flipped){
+        if constexpr (Flipped) {
             detail::conv4_full_flipped_impl::apply(a, b, c);
         } else {
             detail::conv4_full_impl::apply(a, b, c);
@@ -93,8 +93,8 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -102,8 +102,8 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -111,8 +111,8 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -120,8 +120,8 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -129,8 +129,8 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -158,21 +158,21 @@ struct etl_traits<etl::conv_4d_full_expr<A, B, Flipped>> {
     using right_traits = etl_traits<right_expr_t>;              ///< The right sub traits
     using value_type   = value_t<A>;                            ///< The value type of the expression
 
-    static constexpr bool is_etl          = true;                       ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer  = false;                      ///< Indicates if the type is a transformer
-    static constexpr bool is_view         = false;                      ///< Indicates if the type is a view
-    static constexpr bool is_magic_view   = false;                      ///< Indicates if the type is a magic view
-    static constexpr bool is_fast         = all_fast<A, B>;      ///< Indicates if the expression is fast
-    static constexpr bool is_linear       = false;                       ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe  = true;                       ///< Indicates if the expression is thread safe
-    static constexpr bool is_value        = false;                      ///< Indicates if the expression is of value type
-    static constexpr bool is_direct       = true;                       ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator    = false;                      ///< Indicates if the expression is a generator
-    static constexpr bool is_padded       = false;                      ///< Indicates if the expression is padded
-    static constexpr bool is_aligned      = true;                       ///< Indicates if the expression is padded
-    static constexpr bool is_temporary = true;                       ///< Indicates if the expression needs a evaluator visitor
-    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
-    static constexpr order storage_order  = left_traits::storage_order; ///< The expression's storage order
+    static constexpr bool is_etl         = true;                                 ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                                ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = all_fast<A, B>;                       ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = true;                                 ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = true;                                 ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                                ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = true;                                 ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = true;                                 ///< Indicates if the expression needs a evaluator visitor
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled; ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order = left_traits::storage_order;           ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -188,9 +188,7 @@ struct etl_traits<etl::conv_4d_full_expr<A, B, Flipped>> {
      */
     template <size_t DD>
     static constexpr size_t dim() {
-        return DD == 0 ? etl::dim<DD, A>()
-            :  DD == 1 ? etl::dim<DD, B>()
-                       : etl::dim<DD, A>() + etl::dim<DD, B>() - 1;
+        return DD == 0 ? etl::dim<DD, A>() : DD == 1 ? etl::dim<DD, B>() : etl::dim<DD, A>() + etl::dim<DD, B>() - 1;
     }
 
     /*!
@@ -202,7 +200,7 @@ struct etl_traits<etl::conv_4d_full_expr<A, B, Flipped>> {
     static size_t dim(const expr_t& e, size_t d) {
         if (d == 0) {
             return etl::dim(e._a, 0);
-        } else if(d == 1){
+        } else if (d == 1) {
             return etl::dim(e._b, 1);
         } else {
             return etl::dim(e._a, d) + etl::dim(e._b, d) - 1;
@@ -266,7 +264,7 @@ conv_4d_full_expr<detail::build_type<A>, detail::build_type<B>, false> conv_4d_f
  * \return an expression representing the 'full' 1D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_4d_full(A&& a, B&& b, C&& c){
+auto conv_4d_full(A&& a, B&& b, C&& c) {
     static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_4d_full(a, b);
@@ -305,7 +303,7 @@ conv_4d_full_expr<detail::build_type<A>, detail::build_type<B>, true> conv_4d_fu
  * \return an expression representing the 'full' 1D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_4d_full_flipped(A&& a, B&& b, C&& c){
+auto conv_4d_full_flipped(A&& a, B&& b, C&& c) {
     static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_4d_full_flipped(a, b);

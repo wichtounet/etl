@@ -45,13 +45,13 @@ using sse_simd_double = simd_pack<vector_mode_t::SSE3, double, __m128d>;
 /*!
  * \brief SSE SIMD complex float type
  */
-template<typename T>
+template <typename T>
 using sse_simd_complex_float = simd_pack<vector_mode_t::SSE3, T, __m128>;
 
 /*!
  * \brief SSE SIMD complex double type
  */
-template<typename T>
+template <typename T>
 using sse_simd_complex_double = simd_pack<vector_mode_t::SSE3, T, __m128d>;
 
 /*!
@@ -79,9 +79,9 @@ using sse_simd_long = simd_pack<vector_mode_t::SSE3, int64_t, __m128i>;
  */
 template <typename T>
 struct sse_intrinsic_traits {
-    static constexpr bool vectorizable     = false;      ///< Boolean flag indicating if the type is vectorizable or not
-    static constexpr size_t size      = 1;          ///< Numbers of elements done at once
-    static constexpr size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
+    static constexpr bool vectorizable = false;      ///< Boolean flag indicating if the type is vectorizable or not
+    static constexpr size_t size       = 1;          ///< Numbers of elements done at once
+    static constexpr size_t alignment  = alignof(T); ///< Necessary number of bytes of alignment for this type
 
     using intrinsic_type = T; ///< The vector type
 };
@@ -91,9 +91,9 @@ struct sse_intrinsic_traits {
  */
 template <>
 struct sse_intrinsic_traits<float> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 4; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 16; ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 4;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 16;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = sse_simd_float; ///< The vector type
 };
@@ -103,9 +103,9 @@ struct sse_intrinsic_traits<float> {
  */
 template <>
 struct sse_intrinsic_traits<double> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 2; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 16; ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 2;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 16;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = sse_simd_double; ///< The vector type
 };
@@ -115,9 +115,9 @@ struct sse_intrinsic_traits<double> {
  */
 template <>
 struct sse_intrinsic_traits<std::complex<float>> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 2; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 16;///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 2;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 16;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = sse_simd_complex_float<std::complex<float>>; ///< The vector type
 };
@@ -127,9 +127,9 @@ struct sse_intrinsic_traits<std::complex<float>> {
  */
 template <>
 struct sse_intrinsic_traits<std::complex<double>> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 1; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 16;///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 1;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 16;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = sse_simd_complex_double<std::complex<double>>; ///< The vector type
 };
@@ -139,9 +139,9 @@ struct sse_intrinsic_traits<std::complex<double>> {
  */
 template <>
 struct sse_intrinsic_traits<etl::complex<float>> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 2; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 16;///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 2;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 16;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = sse_simd_complex_float<etl::complex<float>>; ///< The vector type
 };
@@ -151,9 +151,9 @@ struct sse_intrinsic_traits<etl::complex<float>> {
  */
 template <>
 struct sse_intrinsic_traits<etl::complex<double>> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 1; ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 16;///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 1;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 16;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = sse_simd_complex_double<etl::complex<double>>; ///< The vector type
 };
@@ -163,9 +163,9 @@ struct sse_intrinsic_traits<etl::complex<double>> {
  */
 template <>
 struct sse_intrinsic_traits<int8_t> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 16;    ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 16;   ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 16;   ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 16;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = sse_simd_byte; ///< The vector type
 };
@@ -175,9 +175,9 @@ struct sse_intrinsic_traits<int8_t> {
  */
 template <>
 struct sse_intrinsic_traits<int16_t> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 8;    ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 16;   ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 8;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 16;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = sse_simd_short; ///< The vector type
 };
@@ -187,9 +187,9 @@ struct sse_intrinsic_traits<int16_t> {
  */
 template <>
 struct sse_intrinsic_traits<int32_t> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 4;    ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 16;   ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 4;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 16;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = sse_simd_int; ///< The vector type
 };
@@ -199,9 +199,9 @@ struct sse_intrinsic_traits<int32_t> {
  */
 template <>
 struct sse_intrinsic_traits<int64_t> {
-    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
-    static constexpr size_t size      = 2;    ///< Numbers of elements in a vector
-    static constexpr size_t alignment = 16;   ///< Necessary alignment, in bytes, for this type
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 2;    ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 16;   ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = sse_simd_long; ///< The vector type
 };
@@ -232,8 +232,7 @@ struct sse_vec {
         union test {
             __m128d vec; // a data field, maybe a register, maybe not
             double array[2];
-            test(__m128d vec)
-                    : vec(vec) {}
+            test(__m128d vec) : vec(vec) {}
         };
 
         test u_value = value;
@@ -248,8 +247,7 @@ struct sse_vec {
         union test {
             __m128 vec; // a data field, maybe a register, maybe not
             float array[4];
-            test(__m128 vec)
-                    : vec(vec) {}
+            test(__m128 vec) : vec(vec) {}
         };
 
         test u_value = value;
@@ -519,8 +517,9 @@ struct sse_vec {
     /*!
      * \brief Create a vector filled of zero for the given type
      */
-    template<typename T>
-    ETL_TMP_INLINE(typename sse_intrinsic_traits<T>::intrinsic_type) zero();
+    template <typename T>
+    ETL_TMP_INLINE(typename sse_intrinsic_traits<T>::intrinsic_type)
+    zero();
 
     /*!
      * \brief Load a packed vector from the given aligned memory location
@@ -708,14 +707,14 @@ struct sse_vec {
      * \brief Round up each values of the vector and return them
      */
     ETL_STATIC_INLINE(sse_simd_float) round_up(sse_simd_float x) {
-        return _mm_round_ps(x.value, (_MM_FROUND_TO_POS_INF |_MM_FROUND_NO_EXC));
+        return _mm_round_ps(x.value, (_MM_FROUND_TO_POS_INF | _MM_FROUND_NO_EXC));
     }
 
     /*!
      * \brief Round up each values of the vector and return them
      */
     ETL_STATIC_INLINE(sse_simd_double) round_up(sse_simd_double x) {
-        return _mm_round_pd(x.value, (_MM_FROUND_TO_POS_INF |_MM_FROUND_NO_EXC));
+        return _mm_round_pd(x.value, (_MM_FROUND_TO_POS_INF | _MM_FROUND_NO_EXC));
     }
 
     /*!
@@ -797,16 +796,18 @@ struct sse_vec {
     /*!
      * \brief Add the two given values and return the result.
      */
-    template<typename T>
-    ETL_STATIC_INLINE(sse_simd_complex_float<T>) add(sse_simd_complex_float<T> lhs, sse_simd_complex_float<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_float<T>)
+    add(sse_simd_complex_float<T> lhs, sse_simd_complex_float<T> rhs) {
         return _mm_add_ps(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Add the two given values and return the result.
      */
-    template<typename T>
-    ETL_STATIC_INLINE(sse_simd_complex_double<T>) add(sse_simd_complex_double<T> lhs, sse_simd_complex_double<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_double<T>)
+    add(sse_simd_complex_double<T> lhs, sse_simd_complex_double<T> rhs) {
         return _mm_add_pd(lhs.value, rhs.value);
     }
 
@@ -857,16 +858,18 @@ struct sse_vec {
     /*!
      * \brief Subtract the two given values and return the result.
      */
-    template<typename T>
-    ETL_STATIC_INLINE(sse_simd_complex_float<T>) sub(sse_simd_complex_float<T> lhs, sse_simd_complex_float<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_float<T>)
+    sub(sse_simd_complex_float<T> lhs, sse_simd_complex_float<T> rhs) {
         return _mm_sub_ps(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Subtract the two given values and return the result.
      */
-    template<typename T>
-    ETL_STATIC_INLINE(sse_simd_complex_double<T>) sub(sse_simd_complex_double<T> lhs, sse_simd_complex_double<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_double<T>)
+    sub(sse_simd_complex_double<T> lhs, sse_simd_complex_double<T> rhs) {
         return _mm_sub_pd(lhs.value, rhs.value);
     }
 
@@ -915,8 +918,8 @@ struct sse_vec {
      */
     ETL_STATIC_INLINE(sse_simd_byte) mul(sse_simd_byte lhs, sse_simd_byte rhs) {
         __m128i even = _mm_mullo_epi16(lhs.value, rhs.value);
-        __m128i odd = _mm_mullo_epi16(_mm_srli_epi16(lhs.value, 8),_mm_srli_epi16(rhs.value, 8));
-        return _mm_or_si128(_mm_slli_epi16(odd, 8), _mm_srli_epi16(_mm_slli_epi16(even,8), 8));
+        __m128i odd  = _mm_mullo_epi16(_mm_srli_epi16(lhs.value, 8), _mm_srli_epi16(rhs.value, 8));
+        return _mm_or_si128(_mm_slli_epi16(odd, 8), _mm_srli_epi16(_mm_slli_epi16(even, 8), 8));
     }
 
     /*!
@@ -960,8 +963,9 @@ struct sse_vec {
     /*!
      * \copydoc sse_vec::mul
      */
-    template<typename T>
-    ETL_STATIC_INLINE(sse_simd_complex_float<T>) mul(sse_simd_complex_float<T> lhs, sse_simd_complex_float<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_float<T>)
+    mul(sse_simd_complex_float<T> lhs, sse_simd_complex_float<T> rhs) {
         //lhs = [x1.real, x1.img, x2.real, x2.img]
         //rhs = [y1.real, y1.img, y2.real, y2.img]
 
@@ -987,8 +991,9 @@ struct sse_vec {
     /*!
      * \copydoc sse_vec::mul
      */
-    template<typename T>
-    ETL_STATIC_INLINE(sse_simd_complex_double<T>) mul(sse_simd_complex_double<T> lhs, sse_simd_complex_double<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_double<T>)
+    mul(sse_simd_complex_double<T> lhs, sse_simd_complex_double<T> rhs) {
         //lhs = [x.real, x.img]
         //rhs = [y.real, y.img]
 
@@ -1016,28 +1021,28 @@ struct sse_vec {
     /*!
      * \brief Fused-Multiply Add of the three given vector of bytes
      */
-    ETL_STATIC_INLINE(sse_simd_byte) fmadd(sse_simd_byte a, sse_simd_byte b, sse_simd_byte c){
+    ETL_STATIC_INLINE(sse_simd_byte) fmadd(sse_simd_byte a, sse_simd_byte b, sse_simd_byte c) {
         return add(mul(a, b), c);
     }
 
     /*!
      * \brief Fused-Multiply Add of the three given vector of short
      */
-    ETL_STATIC_INLINE(sse_simd_short) fmadd(sse_simd_short a, sse_simd_short b, sse_simd_short c){
+    ETL_STATIC_INLINE(sse_simd_short) fmadd(sse_simd_short a, sse_simd_short b, sse_simd_short c) {
         return add(mul(a, b), c);
     }
 
     /*!
      * \brief Fused-Multiply Add of the three given vector of int
      */
-    ETL_STATIC_INLINE(sse_simd_int) fmadd(sse_simd_int a, sse_simd_int b, sse_simd_int c){
+    ETL_STATIC_INLINE(sse_simd_int) fmadd(sse_simd_int a, sse_simd_int b, sse_simd_int c) {
         return add(mul(a, b), c);
     }
 
     /*!
      * \brief Fused-Multiply Add of the three given vector of long
      */
-    ETL_STATIC_INLINE(sse_simd_long) fmadd(sse_simd_long a, sse_simd_long b, sse_simd_long c){
+    ETL_STATIC_INLINE(sse_simd_long) fmadd(sse_simd_long a, sse_simd_long b, sse_simd_long c) {
         return add(mul(a, b), c);
     }
 
@@ -1066,16 +1071,18 @@ struct sse_vec {
     /*!
      * \copydoc sse_vec::fmadd
      */
-    template<typename T>
-    ETL_STATIC_INLINE(sse_simd_complex_float<T>) fmadd(sse_simd_complex_float<T> a, sse_simd_complex_float<T> b, sse_simd_complex_float<T> c) {
+    template <typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_float<T>)
+    fmadd(sse_simd_complex_float<T> a, sse_simd_complex_float<T> b, sse_simd_complex_float<T> c) {
         return add(mul(a, b), c);
     }
 
     /*!
      * \copydoc sse_vec::fmadd
      */
-    template<typename T>
-    ETL_STATIC_INLINE(sse_simd_complex_double<T>) fmadd(sse_simd_complex_double<T> a, sse_simd_complex_double<T> b, sse_simd_complex_double<T> c) {
+    template <typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_double<T>)
+    fmadd(sse_simd_complex_double<T> a, sse_simd_complex_double<T> b, sse_simd_complex_double<T> c) {
         return add(mul(a, b), c);
     }
 
@@ -1098,8 +1105,9 @@ struct sse_vec {
     /*!
      * \copydoc sse_vec::div
      */
-    template<typename T>
-    ETL_STATIC_INLINE(sse_simd_complex_float<T>) div(sse_simd_complex_float<T> lhs, sse_simd_complex_float<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_float<T>)
+    div(sse_simd_complex_float<T> lhs, sse_simd_complex_float<T> rhs) {
         //lhs = [x1.real, x1.img, x2.real, x2.img]
         //rhs = [y1.real, y1.img, y2.real, y2.img]
 
@@ -1138,8 +1146,9 @@ struct sse_vec {
     /*!
      * \copydoc sse_vec::div
      */
-    template<typename T>
-    ETL_STATIC_INLINE(sse_simd_complex_double<T>) div(sse_simd_complex_double<T> lhs, sse_simd_complex_double<T> rhs) {
+    template <typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_double<T>)
+    div(sse_simd_complex_double<T> lhs, sse_simd_complex_double<T> rhs) {
         //lhs = [x.real, x.img]
         //rhs = [y.real, y.img]
 
@@ -1193,8 +1202,8 @@ struct sse_vec {
         return etl::sin_ps(x.value);
     }
 
-//The Intel C++ Compiler (icc) has more intrinsics.
-//ETL uses them when compiled with icc
+        //The Intel C++ Compiler (icc) has more intrinsics.
+        //ETL uses them when compiled with icc
 
 #ifndef __INTEL_COMPILER
 
@@ -1296,7 +1305,7 @@ struct sse_vec {
         __m128 shuf = _mm_movehdup_ps(in.value);
         __m128 sums = _mm_add_ps(in.value, shuf);
         shuf        = _mm_movehl_ps(shuf, sums);
-        sums = _mm_add_ss(sums, shuf);
+        sums        = _mm_add_ss(sums, shuf);
         return _mm_cvtss_f32(sums);
     }
 
@@ -1308,7 +1317,7 @@ struct sse_vec {
     ETL_STATIC_INLINE(double) hadd(sse_simd_double in) {
         __m128 undef   = _mm_undefined_ps();
         __m128 shuftmp = _mm_movehl_ps(undef, _mm_castpd_ps(in.value));
-        __m128d shuf = _mm_castps_pd(shuftmp);
+        __m128d shuf   = _mm_castps_pd(shuftmp);
         return _mm_cvtsd_f64(_mm_add_sd(in.value, shuf));
     }
 
@@ -1320,8 +1329,7 @@ struct sse_vec {
      * \return the horizontal sum of the vector
      */
     ETL_STATIC_INLINE(int8_t) hadd(sse_simd_byte in) {
-        return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7]
-             + in[8] + in[9] + in[10] + in[11] + in[12] + in[13] + in[14] + in[15];
+        return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7] + in[8] + in[9] + in[10] + in[11] + in[12] + in[13] + in[14] + in[15];
     }
 
     /*!
@@ -1356,8 +1364,9 @@ struct sse_vec {
      * \param in The input vector type
      * \return the horizontal sum of the vector
      */
-    template<typename T>
-    ETL_STATIC_INLINE(T) hadd(sse_simd_complex_float<T> in) {
+    template <typename T>
+    ETL_STATIC_INLINE(T)
+    hadd(sse_simd_complex_float<T> in) {
         return in[0] + in[1];
     }
 
@@ -1366,8 +1375,9 @@ struct sse_vec {
      * \param in The input vector type
      * \return the horizontal sum of the vector
      */
-    template<typename T>
-    ETL_STATIC_INLINE(T) hadd(sse_simd_complex_double<T> in) {
+    template <typename T>
+    ETL_STATIC_INLINE(T)
+    hadd(sse_simd_complex_double<T> in) {
         return in[0];
     }
 };
@@ -1375,80 +1385,90 @@ struct sse_vec {
 /*!
  * \copydoc sse_vec::zero
  */
-template<>
-ETL_OUT_INLINE(sse_simd_byte) sse_vec::zero<int8_t>() {
+template <>
+ETL_OUT_INLINE(sse_simd_byte)
+sse_vec::zero<int8_t>() {
     return _mm_setzero_si128();
 }
 
 /*!
  * \copydoc sse_vec::zero
  */
-template<>
-ETL_OUT_INLINE(sse_simd_short) sse_vec::zero<int16_t>() {
+template <>
+ETL_OUT_INLINE(sse_simd_short)
+sse_vec::zero<int16_t>() {
     return _mm_setzero_si128();
 }
 
 /*!
  * \copydoc sse_vec::zero
  */
-template<>
-ETL_OUT_INLINE(sse_simd_int) sse_vec::zero<int32_t>() {
+template <>
+ETL_OUT_INLINE(sse_simd_int)
+sse_vec::zero<int32_t>() {
     return _mm_setzero_si128();
 }
 
 /*!
  * \copydoc sse_vec::zero
  */
-template<>
-ETL_OUT_INLINE(sse_simd_long) sse_vec::zero<int64_t>() {
+template <>
+ETL_OUT_INLINE(sse_simd_long)
+sse_vec::zero<int64_t>() {
     return _mm_setzero_si128();
 }
 
 /*!
  * \copydoc sse_vec::zero
  */
-template<>
-ETL_OUT_INLINE(sse_simd_float) sse_vec::zero<float>() {
+template <>
+ETL_OUT_INLINE(sse_simd_float)
+sse_vec::zero<float>() {
     return _mm_setzero_ps();
 }
 
 /*!
  * \copydoc sse_vec::zero
  */
-template<>
-ETL_OUT_INLINE(sse_simd_double) sse_vec::zero<double>() {
+template <>
+ETL_OUT_INLINE(sse_simd_double)
+sse_vec::zero<double>() {
     return _mm_setzero_pd();
 }
 
 /*!
  * \copydoc sse_vec::zero
  */
-template<>
-ETL_OUT_INLINE(sse_simd_complex_float<etl::complex<float>>) sse_vec::zero<etl::complex<float>>() {
+template <>
+ETL_OUT_INLINE(sse_simd_complex_float<etl::complex<float>>)
+sse_vec::zero<etl::complex<float>>() {
     return _mm_setzero_ps();
 }
 
 /*!
  * \copydoc sse_vec::zero
  */
-template<>
-ETL_OUT_INLINE(sse_simd_complex_double<etl::complex<double>>) sse_vec::zero<etl::complex<double>>() {
+template <>
+ETL_OUT_INLINE(sse_simd_complex_double<etl::complex<double>>)
+sse_vec::zero<etl::complex<double>>() {
     return _mm_setzero_pd();
 }
 
 /*!
  * \copydoc sse_vec::zero
  */
-template<>
-ETL_OUT_INLINE(sse_simd_complex_float<std::complex<float>>) sse_vec::zero<std::complex<float>>() {
+template <>
+ETL_OUT_INLINE(sse_simd_complex_float<std::complex<float>>)
+sse_vec::zero<std::complex<float>>() {
     return _mm_setzero_ps();
 }
 
 /*!
  * \copydoc sse_vec::zero
  */
-template<>
-ETL_OUT_INLINE(sse_simd_complex_double<std::complex<double>>) sse_vec::zero<std::complex<double>>() {
+template <>
+ETL_OUT_INLINE(sse_simd_complex_double<std::complex<double>>)
+sse_vec::zero<std::complex<double>>() {
     return _mm_setzero_pd();
 }
 

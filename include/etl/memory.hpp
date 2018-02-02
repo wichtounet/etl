@@ -8,7 +8,7 @@
 /*!
  * \file
  * \brief Standard memory utilities
-*/
+ */
 
 #pragma once
 

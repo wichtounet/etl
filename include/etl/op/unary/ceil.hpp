@@ -32,11 +32,8 @@ struct ceil_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_sceil)
-            || (is_double_precision_t<T> && impl::egblas::has_dceil)
-            || (is_complex_single_t<T> && impl::egblas::has_cceil)
-            || (is_complex_double_t<T> && impl::egblas::has_zceil);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_sceil) || (is_double_precision_t<T> && impl::egblas::has_dceil)
+                                           || (is_complex_single_t<T> && impl::egblas::has_cceil) || (is_complex_double_t<T> && impl::egblas::has_zceil);
 
     /*!
      * \brief Apply the unary operator on x

@@ -8,7 +8,7 @@
 /*!
  * \file
  * \brief Contains an expression whose implementation is selected
-*/
+ */
 
 #pragma once
 
@@ -31,7 +31,6 @@ struct selected_expr final {
     static constexpr selector_t selector_value = V; ///< The enum selector value
 
 private:
-
     Expr value;
 
     friend struct wrapper_traits<selected_expr>;
@@ -44,13 +43,12 @@ public:
      * \brief Construt a new optimized expression around the given ETL expression
      * \param l The ETL expression
      */
-    explicit selected_expr(Expr l)
-            : value(std::forward<Expr>(l)) {
+    explicit selected_expr(Expr l) : value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
     //Expresison can be copied and moved
-    selected_expr(const selected_expr& e) = default;
+    selected_expr(const selected_expr& e)     = default;
     selected_expr(selected_expr&& e) noexcept = default;
 
     //Expressions are invariant
@@ -73,13 +71,13 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         decltype(auto) forced = detail::get_forced_impl<selector_t>();
 
         auto old_forced = forced;
 
-        forced.impl = selector_value;
+        forced.impl   = selector_value;
         forced.forced = true;
 
         value.assign_to(lhs);
@@ -91,13 +89,13 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         decltype(auto) forced = detail::get_forced_impl<selector_t>();
 
         auto old_forced = forced;
 
-        forced.impl = selector_value;
+        forced.impl   = selector_value;
         forced.forced = true;
 
         value.assign_add_to(lhs);
@@ -109,13 +107,13 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         decltype(auto) forced = detail::get_forced_impl<selector_t>();
 
         auto old_forced = forced;
 
-        forced.impl = selector_value;
+        forced.impl   = selector_value;
         forced.forced = true;
 
         value.assign_sub_to(lhs);
@@ -127,13 +125,13 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         decltype(auto) forced = detail::get_forced_impl<selector_t>();
 
         auto old_forced = forced;
 
-        forced.impl = selector_value;
+        forced.impl   = selector_value;
         forced.forced = true;
 
         value.assign_mul_to(lhs);
@@ -145,13 +143,13 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         decltype(auto) forced = detail::get_forced_impl<selector_t>();
 
         auto old_forced = forced;
 
-        forced.impl = selector_value;
+        forced.impl   = selector_value;
         forced.forced = true;
 
         value.assign_div_to(lhs);
@@ -163,13 +161,13 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         decltype(auto) forced = detail::get_forced_impl<selector_t>();
 
         auto old_forced = forced;
 
-        forced.impl = selector_value;
+        forced.impl   = selector_value;
         forced.forced = true;
 
         value.assign_mod_to(lhs);

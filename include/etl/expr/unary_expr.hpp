@@ -44,8 +44,8 @@ struct identity_op {
  * Such an unary expr does not apply the operator but delegates to its sub expression.
  */
 struct transform_op {
-    static constexpr bool linear = false; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe
+    static constexpr bool linear      = false; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -97,15 +97,9 @@ struct stateful_op {
  * This expression applies an unary operator on each element of a sub expression
  */
 template <typename T, typename Expr, typename UnaryOp>
-struct unary_expr final :
-        value_testable<unary_expr<T, Expr, UnaryOp>>,
-        dim_testable<unary_expr<T, Expr, UnaryOp>>,
-        iterable<unary_expr<T, Expr, UnaryOp>>
-{
+struct unary_expr final : value_testable<unary_expr<T, Expr, UnaryOp>>, dim_testable<unary_expr<T, Expr, UnaryOp>>, iterable<unary_expr<T, Expr, UnaryOp>> {
 private:
-    static_assert(
-        is_etl_expr<Expr> || std::is_same<Expr, etl::scalar<T>>::value,
-        "Only ETL expressions can be used in unary_expr");
+    static_assert(is_etl_expr<Expr> || std::is_same<Expr, etl::scalar<T>>::value, "Only ETL expressions can be used in unary_expr");
 
     using this_type = unary_expr<T, Expr, UnaryOp>; ///< The type of this expression
 
@@ -128,18 +122,17 @@ public:
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Construct a new unary_expr with the given sub expression
      * \param l The sub expression
      */
-    explicit unary_expr(Expr l)
-            : value(std::forward<Expr>(l)) {
+    explicit unary_expr(Expr l) : value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
-    unary_expr(const unary_expr& rhs) = default;
+    unary_expr(const unary_expr& rhs)     = default;
     unary_expr(unary_expr&& rhs) noexcept = default;
 
     //Expression are invariant
@@ -213,7 +206,7 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    template<typename Y>
+    template <typename Y>
     decltype(auto) gpu_compute_hint(Y& y) const {
         return UnaryOp::gpu_compute_hint(value, y);
     }
@@ -222,7 +215,7 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    template<typename Y>
+    template <typename Y>
     decltype(auto) gpu_compute(Y& y) const {
         return UnaryOp::gpu_compute(value, y);
     }
@@ -233,8 +226,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -242,8 +235,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -251,8 +244,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -260,8 +253,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -269,8 +262,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -278,8 +271,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -328,17 +321,15 @@ public:
  * This unary expression keeps access to data (can be edited)
  */
 template <typename T, typename Expr>
-struct unary_expr<T, Expr, identity_op> :
-        inplace_assignable<unary_expr<T, Expr, identity_op>>,
-        assignable<unary_expr<T, Expr, identity_op>, T>,
-        value_testable<unary_expr<T, Expr, identity_op>>,
-        dim_testable<unary_expr<T, Expr, identity_op>>,
-        iterable<unary_expr<T, Expr, identity_op>, is_dma<Expr>>
-{
+struct unary_expr<T, Expr, identity_op> : inplace_assignable<unary_expr<T, Expr, identity_op>>,
+                                          assignable<unary_expr<T, Expr, identity_op>, T>,
+                                          value_testable<unary_expr<T, Expr, identity_op>>,
+                                          dim_testable<unary_expr<T, Expr, identity_op>>,
+                                          iterable<unary_expr<T, Expr, identity_op>, is_dma<Expr>> {
 private:
     static_assert(is_etl_expr<Expr>, "Only ETL expressions can be used in unary_expr");
 
-    Expr value;                ///< The sub expression
+    Expr value;                 ///< The sub expression
     gpu_memory_handler<T> _gpu; ///< The GPU memory handler
 
     static constexpr bool dma = is_dma<Expr>; ///< Indicates if the unary expression has direct memory access
@@ -347,15 +338,12 @@ private:
      * \brief Indicates if the non-const functions returns a reference
      */
     static constexpr bool non_const_return_ref =
-        cpp::and_c<
-            std::is_lvalue_reference<decltype(value[0])>,
-            cpp::not_c<std::is_const<std::remove_reference_t<decltype(value[0])>>>>::value;
+        cpp::and_c<std::is_lvalue_reference<decltype(value[0])>, cpp::not_c<std::is_const<std::remove_reference_t<decltype(value[0])>>>>::value;
 
     /*!
      * \brief Indicates if the const functions returns a reference
      */
-    static constexpr bool const_return_ref =
-        std::is_lvalue_reference<decltype(value[0])>::value; ///< Indicates if the const functions returns a reference
+    static constexpr bool const_return_ref = std::is_lvalue_reference<decltype(value[0])>::value; ///< Indicates if the const functions returns a reference
 
     friend struct etl_traits<unary_expr>;
     friend struct optimizer<unary_expr>;
@@ -378,7 +366,7 @@ public:
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<value_type>;
+    using vec_type = typename V::template vec_type<value_type>;
 
     using assignable_base_type::operator=;
 
@@ -468,7 +456,8 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(vec_type<V>) load(size_t i) const noexcept {
+    ETL_STRONG_INLINE(vec_type<V>)
+    load(size_t i) const noexcept {
         return value.template load<V>(i);
     }
 
@@ -479,7 +468,8 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    ETL_STRONG_INLINE(vec_type<V>) loadu(size_t i) const noexcept {
+    ETL_STRONG_INLINE(vec_type<V>)
+    loadu(size_t i) const noexcept {
         return value.template loadu<V>(i);
     }
 
@@ -499,7 +489,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (safe_dimensions<this_type> > 1), cpp_enable_iff(B)>
+    template <bool B = (safe_dimensions<this_type>> 1), cpp_enable_iff(B)>
     auto operator()(size_t i) {
         return sub(*this, i);
     }
@@ -509,7 +499,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (safe_dimensions<this_type> > 1), cpp_enable_iff(B)>
+    template <bool B = (safe_dimensions<this_type>> 1), cpp_enable_iff(B)>
     auto operator()(size_t i) const {
         return sub(*this, i);
     }
@@ -540,7 +530,8 @@ public:
      * \return The computed value at the position (args...)
      */
     template <typename... S, cpp_enable_iff(sizeof...(S) == safe_dimensions<this_type>)>
-    ETL_STRONG_INLINE(return_type) operator()(S... args) noexcept(noexcept(value(args...))) {
+    ETL_STRONG_INLINE(return_type)
+    operator()(S... args) noexcept(noexcept(value(args...))) {
         static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return value(args...);
@@ -552,7 +543,8 @@ public:
      * \return The computed value at the position (args...)
      */
     template <typename... S, cpp_enable_iff(sizeof...(S) == safe_dimensions<this_type>)>
-    ETL_STRONG_INLINE(const_return_type) operator()(S... args) const noexcept(noexcept(value(args...))) {
+    ETL_STRONG_INLINE(const_return_type)
+    operator()(S... args) const noexcept(noexcept(value(args...))) {
         static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return value(args...);
@@ -630,7 +622,7 @@ public:
      * \brief Returns all the Ith... dimensions in array
      * \return an array containing the Ith... dimensions of the expression.
      */
-    template<size_t... I>
+    template <size_t... I>
     std::array<size_t, decay_traits<this_type>::dimensions()> dim_array(std::index_sequence<I...>) const {
         return {{this->template dim<I>()...}};
     }
@@ -641,8 +633,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -650,8 +642,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -659,8 +651,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -668,8 +660,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -677,8 +669,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -686,8 +678,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -839,11 +831,8 @@ private:
  * \brief Specialization of unary expression for transform op.
  */
 template <typename T, typename Expr>
-struct unary_expr<T, Expr, transform_op> :
-        value_testable<unary_expr<T, Expr, transform_op>>,
-        dim_testable<unary_expr<T, Expr, transform_op>>,
-        iterable<unary_expr<T, Expr, transform_op>>
-{
+struct unary_expr<T, Expr, transform_op>
+        : value_testable<unary_expr<T, Expr, transform_op>>, dim_testable<unary_expr<T, Expr, transform_op>>, iterable<unary_expr<T, Expr, transform_op>> {
 private:
     using this_type = unary_expr<T, Expr, transform_op>; ///< The type of this expression
 
@@ -866,12 +855,11 @@ public:
      * \brief Construct a new unary_expr from the given sub-expression
      * \param l The sub expression
      */
-    explicit unary_expr(Expr l)
-            : value(std::forward<Expr>(l)) {
+    explicit unary_expr(Expr l) : value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
-    unary_expr(const unary_expr& rhs) = default;
+    unary_expr(const unary_expr& rhs)     = default;
     unary_expr(unary_expr&& rhs) noexcept = default;
 
     //Expression are invariant
@@ -902,7 +890,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (safe_dimensions<this_type> > 1), cpp_enable_iff(B)>
+    template <bool B = (safe_dimensions<this_type>> 1), cpp_enable_iff(B)>
     auto operator()(size_t i) const {
         return sub(*this, i);
     }
@@ -935,8 +923,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -944,8 +932,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -953,8 +941,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -962,8 +950,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -971,8 +959,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -980,8 +968,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -1030,16 +1018,14 @@ public:
  * This operator has some state and is constructed directly inside the expression
  */
 template <typename T, typename Expr, typename Op>
-struct unary_expr<T, Expr, stateful_op<Op>> :
-        value_testable<unary_expr<T, Expr, stateful_op<Op>>>,
-        dim_testable<unary_expr<T, Expr, stateful_op<Op>>>,
-        iterable<unary_expr<T, Expr, stateful_op<Op>>>
-{
+struct unary_expr<T, Expr, stateful_op<Op>> : value_testable<unary_expr<T, Expr, stateful_op<Op>>>,
+                                              dim_testable<unary_expr<T, Expr, stateful_op<Op>>>,
+                                              iterable<unary_expr<T, Expr, stateful_op<Op>>> {
 private:
     using this_type = unary_expr<T, Expr, stateful_op<Op>>; ///< The type of this expression
 
     Expr value; ///< The sub expression
-    Op op;       ///< The operator state
+    Op op;      ///< The operator state
 
     friend struct etl_traits<unary_expr>;
     friend struct optimizer<unary_expr>;
@@ -1058,7 +1044,7 @@ public:
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Construct a new unary_expr from the given sub-expression and construct the op by forwarding it the given arguments
@@ -1066,12 +1052,11 @@ public:
      * \param args The arguments to forward to the op constructor
      */
     template <typename... Args>
-    explicit unary_expr(Expr l, Args&&... args)
-            : value(std::forward<Expr>(l)), op(std::forward<Args>(args)...) {
+    explicit unary_expr(Expr l, Args&&... args) : value(std::forward<Expr>(l)), op(std::forward<Args>(args)...) {
         //Nothing else to init
     }
 
-    unary_expr(const unary_expr& rhs) = default;
+    unary_expr(const unary_expr& rhs)     = default;
     unary_expr(unary_expr&& rhs) noexcept = default;
 
     //Expression are invariant
@@ -1123,7 +1108,7 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    template<typename Y>
+    template <typename Y>
     decltype(auto) gpu_compute_hint(Y& y) const {
         return op.gpu_compute_hint(value, y);
     }
@@ -1132,7 +1117,7 @@ public:
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
-    template<typename Y>
+    template <typename Y>
     decltype(auto) gpu_compute(Y& y) const {
         return op.gpu_compute(value, y);
     }
@@ -1165,8 +1150,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -1174,8 +1159,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -1183,8 +1168,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -1192,8 +1177,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -1201,8 +1186,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -1210,8 +1195,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -1264,20 +1249,21 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     using sub_traits = etl_traits<sub_expr_t>;            ///< The traits of the sub expression
     using value_type = T;                                 ///< The value type
 
-    static constexpr bool is_etl         = true;                                                               ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer = false;                                                              ///< Indicates if the type is a transformer
-    static constexpr bool is_view        = false;                                                              ///< Indicates if the type is a view
-    static constexpr bool is_magic_view  = false;                                                              ///< Indicates if the type is a magic view
-    static constexpr bool is_fast        = sub_traits::is_fast;                                                ///< Indicates if the expression is fast
-    static constexpr bool is_value       = false;                                                              ///< Indicates if the expression is of value type
-    static constexpr bool is_direct      = std::is_same<UnaryOp, identity_op>::value && sub_traits::is_direct; ///< Indicates if the expression has direct memory access
-    static constexpr bool is_linear      = sub_traits::is_linear && UnaryOp::linear;                           ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe = sub_traits::is_thread_safe && UnaryOp::thread_safe;                 ///< Indicates if the expression is linear
-    static constexpr bool is_generator   = sub_traits::is_generator;                                           ///< Indicates if the expression is a generator expression
-    static constexpr bool is_temporary   = sub_traits::is_temporary;                                           ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr bool is_padded      = is_linear && sub_traits::is_padded;                                 ///< Indicates if the expression is padded
-    static constexpr bool is_aligned     = is_linear && sub_traits::is_aligned;                                ///< Indicates if the expression is padded
-    static constexpr order storage_order = sub_traits::storage_order;                                          ///< The expression storage order
+    static constexpr bool is_etl         = true;                ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;               ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;               ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;               ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = sub_traits::is_fast; ///< Indicates if the expression is fast
+    static constexpr bool is_value       = false;               ///< Indicates if the expression is of value type
+    static constexpr bool is_direct =
+        std::is_same<UnaryOp, identity_op>::value && sub_traits::is_direct;                    ///< Indicates if the expression has direct memory access
+    static constexpr bool is_linear      = sub_traits::is_linear && UnaryOp::linear;           ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = sub_traits::is_thread_safe && UnaryOp::thread_safe; ///< Indicates if the expression is linear
+    static constexpr bool is_generator   = sub_traits::is_generator;                           ///< Indicates if the expression is a generator expression
+    static constexpr bool is_temporary   = sub_traits::is_temporary;                           ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr bool is_padded      = is_linear && sub_traits::is_padded;                 ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = is_linear && sub_traits::is_aligned;                ///< Indicates if the expression is padded
+    static constexpr order storage_order = sub_traits::storage_order;                          ///< The expression storage order
 
     /*!
      * \brief Indicates if the expression can be computed on GPU
@@ -1290,7 +1276,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    static constexpr bool vectorizable = sub_traits::template vectorizable<V> && UnaryOp::template vectorizable<V>;
+    static constexpr bool vectorizable = sub_traits::template vectorizable<V>&& UnaryOp::template vectorizable<V>;
 
     /*!
      * \brief Returns the size of the given expression

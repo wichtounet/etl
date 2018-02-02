@@ -31,21 +31,18 @@ struct dim_view {
     using const_return_type = const_return_helper<sub_type, decltype(std::declval<sub_type>()(0, 0))>; ///< The const type return by the view
 
 private:
-
-    T sub;               ///< The Sub expression
+    T sub;          ///< The Sub expression
     const size_t i; ///< The index
 
     friend struct etl_traits<dim_view>;
 
 public:
-
     /*!
      * \brief Construct a new dim_view over the given sub expression
      * \param sub The sub expression
      * \param i The sub index
      */
-    dim_view(sub_type sub, size_t i)
-            : sub(sub), i(i) {}
+    dim_view(sub_type sub, size_t i) : sub(sub), i(i) {}
 
     /*!
      * \brief Returns the element at the given index
@@ -165,8 +162,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -174,8 +171,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -183,8 +180,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -192,8 +189,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -201,8 +198,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -210,8 +207,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -259,8 +256,8 @@ public:
  */
 template <typename T, size_t D>
 struct etl_traits<etl::dim_view<T, D>> {
-    using expr_t     = etl::dim_view<T, D>; ///< The expression type
-    using sub_expr_t = std::decay_t<T>;     ///< The sub expression type
+    using expr_t     = etl::dim_view<T, D>;                         ///< The expression type
+    using sub_expr_t = std::decay_t<T>;                             ///< The sub expression type
     using value_type = typename etl_traits<sub_expr_t>::value_type; ///< The value type
 
     static constexpr bool is_etl         = true;                                        ///< Indicates if the type is an ETL expression

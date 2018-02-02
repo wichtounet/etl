@@ -31,12 +31,11 @@ struct greater_equal_binary_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    template<typename L, typename R>
-    static constexpr bool gpu_computable =
-               (all_single_precision<L,R> && impl::egblas::has_sgreater_equal)
-            || (all_double_precision<L,R> && impl::egblas::has_dgreater_equal)
-            || (all_complex_single_precision<L,R> && impl::egblas::has_cgreater_equal)
-            || (all_complex_double_precision<L,R> && impl::egblas::has_zgreater_equal);
+    template <typename L, typename R>
+    static constexpr bool gpu_computable = (all_single_precision<L, R> && impl::egblas::has_sgreater_equal)
+                                           || (all_double_precision<L, R> && impl::egblas::has_dgreater_equal)
+                                           || (all_complex_single_precision<L, R> && impl::egblas::has_cgreater_equal)
+                                           || (all_complex_double_precision<L, R> && impl::egblas::has_zgreater_equal);
 
     /*!
      * \brief Apply the unary operator on lhs and rhs

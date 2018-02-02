@@ -36,7 +36,7 @@ namespace etl::impl::cublas {
  * \brief Compute the sum of a
  * \param a The lhs expression
  */
-template <typename A, cpp_enable_iff(is_dma<A> && is_single_precision<A>)>
+template <typename A, cpp_enable_iff(is_dma<A>&& is_single_precision<A>)>
 float sum(const A& a) {
 #ifdef EGBLAS_HAS_SSUM
     a.ensure_gpu_up_to_date();
@@ -51,7 +51,7 @@ float sum(const A& a) {
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 
     // Set a vector of float one... :(
-    float alpha = 1.0;
+    float alpha        = 1.0;
     int32_t alpha_bits = *reinterpret_cast<int32_t*>(&alpha);
     cuMemsetD32(CUdeviceptr(ones.get()), alpha_bits, etl::size(a));
 
@@ -68,7 +68,7 @@ float sum(const A& a) {
 /*!
  * \copydoc sum
  */
-template <typename A, cpp_enable_iff(is_dma<A> && is_double_precision<A>)>
+template <typename A, cpp_enable_iff(is_dma<A>&& is_double_precision<A>)>
 double sum(const A& a) {
 #ifdef EGBLAS_HAS_DSUM
     a.ensure_gpu_up_to_date();
@@ -101,7 +101,7 @@ value_t<A> sum(const A& /*a*/) {
  * \brief Compute the sum of a
  * \param a The lhs expression
  */
-template <typename A, cpp_enable_iff(is_dma<A> && is_single_precision<A>)>
+template <typename A, cpp_enable_iff(is_dma<A>&& is_single_precision<A>)>
 float asum(const A& a) {
     decltype(auto) handle = start_cublas();
 
@@ -115,7 +115,7 @@ float asum(const A& a) {
 /*!
  * \copydoc sum
  */
-template <typename A, cpp_enable_iff(is_dma<A> && is_double_precision<A>)>
+template <typename A, cpp_enable_iff(is_dma<A>&& is_double_precision<A>)>
 double asum(const A& a) {
     decltype(auto) handle = start_cublas();
 

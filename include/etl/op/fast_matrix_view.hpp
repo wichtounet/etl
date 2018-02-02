@@ -25,11 +25,9 @@ struct fast_matrix_view;
  * \tparam Dims The dimensios of the view
  */
 template <typename T, size_t... Dims>
-struct fast_matrix_view <T, false, Dims...> final :
-    iterable<fast_matrix_view<T, false, Dims...>, false>,
-    value_testable<fast_matrix_view<T, false, Dims...>>,
-    assignable<fast_matrix_view<T, false, Dims...>, value_t<T>>
-{
+struct fast_matrix_view<T, false, Dims...> final : iterable<fast_matrix_view<T, false, Dims...>, false>,
+                                                   value_testable<fast_matrix_view<T, false, Dims...>>,
+                                                   assignable<fast_matrix_view<T, false, Dims...>, value_t<T>> {
     using sub_type             = T;                                                                    ///< The sub type
     using this_type            = fast_matrix<T, false, Dims...>;                                       ///< The type of this expression
     using value_type           = value_t<sub_type>;                                                    ///< The value contained in the expression
@@ -43,8 +41,8 @@ struct fast_matrix_view <T, false, Dims...> final :
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<value_type>;
+    template <typename V = default_vec>
+    using vec_type = typename V::template vec_type<value_type>;
 
     using assignable_base_type::operator=;
     using iterable_base_type::begin;
@@ -62,8 +60,7 @@ public:
      * \brief Construct a new fast_matrix_view over the given sub expression
      * \param sub The sub expression
      */
-    explicit fast_matrix_view(sub_type sub)
-            : sub(sub) {}
+    explicit fast_matrix_view(sub_type sub) : sub(sub) {}
 
     /*!
      * \brief Returns the element at the given index
@@ -208,8 +205,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -217,8 +214,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -226,8 +223,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -235,8 +232,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -244,8 +241,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -253,8 +250,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -303,15 +300,13 @@ public:
  * \tparam Dims The dimensios of the view
  */
 template <typename T, size_t... Dims>
-struct fast_matrix_view <T, true, Dims...> final :
-    iterable<fast_matrix_view<T, true, Dims...>, true>,
-    value_testable<fast_matrix_view<T, true, Dims...>>,
-    assignable<fast_matrix_view<T, true, Dims...>, value_t<T>>
-{
+struct fast_matrix_view<T, true, Dims...> final : iterable<fast_matrix_view<T, true, Dims...>, true>,
+                                                  value_testable<fast_matrix_view<T, true, Dims...>>,
+                                                  assignable<fast_matrix_view<T, true, Dims...>, value_t<T>> {
     using this_type            = fast_matrix_view<T, true, Dims...>;                                   ///< The type of this expression
     using sub_type             = T;                                                                    ///< The sub type
     using value_type           = value_t<sub_type>;                                                    ///< The value contained in the expression
-    using iterable_base_type   = iterable<this_type, true>;                                           ///< The iterable base type
+    using iterable_base_type   = iterable<this_type, true>;                                            ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_type>;                                    ///< The assignable base type
     using memory_type          = memory_t<sub_type>;                                                   ///< The memory acess type
     using const_memory_type    = const_memory_t<sub_type>;                                             ///< The const memory access type
@@ -321,8 +316,8 @@ struct fast_matrix_view <T, true, Dims...> final :
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<value_type>;
+    template <typename V = default_vec>
+    using vec_type = typename V::template vec_type<value_type>;
 
     using assignable_base_type::operator=;
     using iterable_base_type::begin;
@@ -338,14 +333,13 @@ private:
     friend struct etl_traits<fast_matrix_view>;
 
 public:
-
     /*!
      * \brief Construct a new fast_matrix_view over the given sub expression
      * \param sub The sub expression
      */
-    explicit fast_matrix_view(sub_type sub): sub(sub) {
+    explicit fast_matrix_view(sub_type sub) : sub(sub) {
         // Accessing the memory through fast sub views means evaluation
-        if constexpr (decay_traits<sub_type>::is_temporary){
+        if constexpr (decay_traits<sub_type>::is_temporary) {
             standard_evaluator::pre_assign_rhs(*this);
         }
 
@@ -539,8 +533,8 @@ public:
      * \brief Assign to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_to(L&& lhs)  const {
+    template <typename L>
+    void assign_to(L&& lhs) const {
         std_assign_evaluate(*this, lhs);
     }
 
@@ -548,8 +542,8 @@ public:
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -557,8 +551,8 @@ public:
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -566,8 +560,8 @@ public:
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -575,8 +569,8 @@ public:
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -584,8 +578,8 @@ public:
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 

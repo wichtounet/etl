@@ -23,10 +23,7 @@ namespace etl {
  * \tparam T The type of return of the distribution
  */
 template <typename T>
-using dropout_distribution = std::conditional_t<
-    std::is_floating_point<T>::value,
-    std::uniform_real_distribution<T>,
-    std::uniform_int_distribution<T>>;
+using dropout_distribution = std::conditional_t<std::is_floating_point<T>::value, std::uniform_real_distribution<T>, std::uniform_int_distribution<T>>;
 
 /*!
  * \brief Generator from an uniform distribution
@@ -43,21 +40,19 @@ struct dropout_mask_generator_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_sdropout_seed)
-            || (is_double_precision_t<T> && impl::egblas::has_ddropout_seed);
+        (is_single_precision_t<T> && impl::egblas::has_sdropout_seed) || (is_double_precision_t<T> && impl::egblas::has_ddropout_seed);
 
     /*!
      * \brief Construct a new generator with the given start and end of the range
      */
-    dropout_mask_generator_op(T probability)
-            : probability(probability), rand_engine(std::time(nullptr)), distribution(T(0), T(1)) {}
+    dropout_mask_generator_op(T probability) : probability(probability), rand_engine(std::time(nullptr)), distribution(T(0), T(1)) {}
 
     /*!
      * \brief Generate a new value
      * \return the newly generated value
      */
     value_type operator()() {
-        if(distribution(rand_engine) < probability){
+        if (distribution(rand_engine) < probability) {
             return T(0);
         } else {
             return T(1);
@@ -127,23 +122,21 @@ struct dropout_mask_generator_g_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_sdropout_seed)
-            || (is_double_precision_t<T> && impl::egblas::has_ddropout_seed);
+        (is_single_precision_t<T> && impl::egblas::has_sdropout_seed) || (is_double_precision_t<T> && impl::egblas::has_ddropout_seed);
 
     /*!
      * \brief Construct a new generator with the given start and end of the range
      * \param start The beginning of the range
      * \param end The end of the range
      */
-    dropout_mask_generator_g_op(G& g, T probability)
-            : probability(probability), rand_engine(g), distribution(T(0), T(1)) {}
+    dropout_mask_generator_g_op(G& g, T probability) : probability(probability), rand_engine(g), distribution(T(0), T(1)) {}
 
     /*!
      * \brief Generate a new value
      * \return the newly generated value
      */
     value_type operator()() {
-        if(distribution(rand_engine) < probability){
+        if (distribution(rand_engine) < probability) {
             return T(0);
         } else {
             return T(1);

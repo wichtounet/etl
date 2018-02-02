@@ -16,13 +16,12 @@
 
 namespace etl::impl::curand {
 
-#define curand_call(call)                                                             \
-    {                                                                                 \
-        auto status = call;                                                           \
-        if (status != CURAND_STATUS_SUCCESS) {                                        \
-            std::cerr << "CURAND error: " << status << " from " << #call << std::endl \
-                      << "from " << __FILE__ << ":" << __LINE__ << std::endl;         \
-        }                                                                             \
+#define curand_call(call)                                                                                                                     \
+    {                                                                                                                                         \
+        auto status = call;                                                                                                                   \
+        if (status != CURAND_STATUS_SUCCESS) {                                                                                                \
+            std::cerr << "CURAND error: " << status << " from " << #call << std::endl << "from " << __FILE__ << ":" << __LINE__ << std::endl; \
+        }                                                                                                                                     \
     }
 
 /*!
@@ -35,10 +34,10 @@ namespace etl::impl::curand {
  * \param mean The mean of the distribution to generate.
  * \param stddev The standard deviation of the distribution to generate.
  */
-inline void generate_normal(curandGenerator_t generator, float* gpu_memory, size_t n, float mean, float stddev){
+inline void generate_normal(curandGenerator_t generator, float* gpu_memory, size_t n, float mean, float stddev) {
     // Note: CURAND is dumb, cannot generate odd sequences...
 
-    if(n % 2 == 0){
+    if (n % 2 == 0) {
         curand_call(curandGenerateNormal(generator, gpu_memory, n, mean, stddev));
     } else {
         // Generate the first n - 1 numbers
@@ -59,10 +58,10 @@ inline void generate_normal(curandGenerator_t generator, float* gpu_memory, size
  * \param mean The mean of the distribution to generate.
  * \param stddev The standard deviation of the distribution to generate.
  */
-inline void generate_normal(curandGenerator_t generator, double* gpu_memory, size_t n, double mean, double stddev){
+inline void generate_normal(curandGenerator_t generator, double* gpu_memory, size_t n, double mean, double stddev) {
     // Note: CURAND is dumb, cannot generate odd sequences...
 
-    if(n % 2 == 0){
+    if (n % 2 == 0) {
         curand_call(curandGenerateNormalDouble(generator, gpu_memory, n, mean, stddev));
     } else {
         // Generate the first n - 1 numbers
@@ -81,7 +80,7 @@ inline void generate_normal(curandGenerator_t generator, double* gpu_memory, siz
  * \param gpu_memory Pointer to the GPU memory to fill
  * \param n The number of elements to set
  */
-inline void generate_uniform(curandGenerator_t generator, float* gpu_memory, size_t n){
+inline void generate_uniform(curandGenerator_t generator, float* gpu_memory, size_t n) {
     curand_call(curandGenerateUniform(generator, gpu_memory, n));
 }
 
@@ -93,7 +92,7 @@ inline void generate_uniform(curandGenerator_t generator, float* gpu_memory, siz
  * \param gpu_memory Pointer to the GPU memory to fill
  * \param n The number of elements to set
  */
-inline void generate_uniform(curandGenerator_t generator, double* gpu_memory, size_t n){
+inline void generate_uniform(curandGenerator_t generator, double* gpu_memory, size_t n) {
     curand_call(curandGenerateUniformDouble(generator, gpu_memory, n));
 }
 

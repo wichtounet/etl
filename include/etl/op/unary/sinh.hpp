@@ -17,8 +17,8 @@ namespace etl {
  */
 template <typename T>
 struct sinh_unary_op {
-    static constexpr bool linear = true; ///< Indicates if the operator is linear
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -27,25 +27,20 @@ struct sinh_unary_op {
      */
     template <vector_mode_t V>
     static constexpr bool vectorizable =
-            (V == vector_mode_t::SSE3 && !is_complex_t<T>)
-        ||  (V == vector_mode_t::AVX && !is_complex_t<T>)
-        ||  (intel_compiler && !is_complex_t<T>);
+        (V == vector_mode_t::SSE3 && !is_complex_t<T>) || (V == vector_mode_t::AVX && !is_complex_t<T>) || (intel_compiler && !is_complex_t<T>);
 
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_ssinh)
-            || (is_double_precision_t<T> && impl::egblas::has_dsinh)
-            || (is_complex_single_t<T> && impl::egblas::has_csinh)
-            || (is_complex_double_t<T> && impl::egblas::has_zsinh);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_ssinh) || (is_double_precision_t<T> && impl::egblas::has_dsinh)
+                                           || (is_complex_single_t<T> && impl::egblas::has_csinh) || (is_complex_double_t<T> && impl::egblas::has_zsinh);
 
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<T>;
+    using vec_type = typename V::template vec_type<T>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -119,7 +114,7 @@ struct sinh_unary_op {
  * \tparam T The type of value
  */
 template <typename TT>
-struct sinh_unary_op <etl::complex<TT>> {
+struct sinh_unary_op<etl::complex<TT>> {
     using T = etl::complex<TT>; ///< The real type
 
     static constexpr bool linear      = true; ///< Indicates if the operator is linear
@@ -137,11 +132,8 @@ struct sinh_unary_op <etl::complex<TT>> {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable =
-               (is_single_precision_t<T> && impl::egblas::has_ssinh)
-            || (is_double_precision_t<T> && impl::egblas::has_dsinh)
-            || (is_complex_single_t<T> && impl::egblas::has_csinh)
-            || (is_complex_double_t<T> && impl::egblas::has_zsinh);
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_ssinh) || (is_double_precision_t<T> && impl::egblas::has_dsinh)
+                                           || (is_complex_single_t<T> && impl::egblas::has_csinh) || (is_complex_double_t<T> && impl::egblas::has_zsinh);
 
     /*!
      * \brief Apply the unary operator on x

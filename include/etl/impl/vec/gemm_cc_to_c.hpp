@@ -330,7 +330,6 @@ void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
 
                 // 2x unrolled vectorized inner loop
                 for (; i + 2 * vec_size - 1 < i_end; i += 2 * vec_size) {
-
                     size_t j = block_j;
 
                     for (; j + 3 < j_end; j += 4) {
@@ -445,11 +444,11 @@ void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 }
 
                 // Remainder inner loop
-                for(; i < i_end; ++i){
-                    for(size_t j = block_j; j < j_end; ++j){
+                for (; i < i_end; ++i) {
+                    for (size_t j = block_j; j < j_end; ++j) {
                         auto x = c[i + j * M];
 
-                        for(size_t k = block_k; k < k_end; ++k){
+                        for (size_t k = block_k; k < k_end; ++k) {
                             x += a[i + k * M] * b[k + j * K];
                         }
 
@@ -479,7 +478,7 @@ void gemm_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
 
     // Dispatch to the best kernel
 
-    if(M * N <= gemm_cc_small_threshold){
+    if (M * N <= gemm_cc_small_threshold) {
         gemm_small_kernel_cc_to_c<default_vec>(a, b, c, M, N, K);
     } else {
         gemm_large_kernel_cc_to_c<default_vec>(a, b, c, M, N, K);

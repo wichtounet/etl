@@ -25,7 +25,7 @@ template <typename A, typename B, typename C, size_t C1, size_t C2, bool Max>
 struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A, B, C, C1, C2, Max>, A, B, C> {
     using value_type = value_t<A>;                                   ///< The type of value of the expression
     using sub_traits = etl::decay_traits<A>;                         ///< The traits of the first sub type
-    using this_type  = pool_upsample_2d_expr<A, B, C, C1, C2, Max>;       ///< The type of this expression
+    using this_type  = pool_upsample_2d_expr<A, B, C, C1, C2, Max>;  ///< The type of this expression
     using base_type  = base_temporary_expr_tern<this_type, A, B, C>; ///< The base type
 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
@@ -42,8 +42,7 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    pool_upsample_2d_expr(A a, B b, C c)
-            : base_type(a, b, c) {
+    pool_upsample_2d_expr(A a, B b, C c) : base_type(a, b, c) {
         //Nothing else to init
     }
 
@@ -107,9 +106,9 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
             switch (forced) {
                 // CUDNN cannot always be used
                 case pool_impl::CUDNN:
-                    if (!cudnn_enabled || !all_floating<A, B, C, R> || local_context().cpu) {                                                            //COVERAGE_EXCLUDE_LINE
+                    if (!cudnn_enabled || !all_floating<A, B, C, R> || local_context().cpu) {                                            //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to CUDNN pool implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_impl<R>(local_context().cpu);                                                                                 //COVERAGE_EXCLUDE_LINE
+                        return select_default_impl<R>(local_context().cpu);                                                              //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                    //COVERAGE_EXCLUDE_LINE
 
                     return forced;
@@ -156,37 +155,27 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
         constexpr_select auto impl = select_impl<R>();
 
         if constexpr (Max) {
-            if constexpr_select (impl == pool_impl::STD) {
-                impl::standard::max_pool_upsample_2d::apply<C1, C2>(
-                    smart_forward(a),
-                    smart_forward(b),
-                    smart_forward(c),
-                    result);
-            } else if constexpr_select (impl == pool_impl::CUDNN) {
-                impl::cudnn::max_pool_upsample_2d::apply(
-                    smart_forward_gpu(a),
-                    smart_forward_gpu(b),
-                    smart_forward_gpu(c),
-                    result,
-                    C1, C2);
-            } else {
+            if
+                constexpr_select(impl == pool_impl::STD) {
+                    impl::standard::max_pool_upsample_2d::apply<C1, C2>(smart_forward(a), smart_forward(b), smart_forward(c), result);
+                }
+            else if
+                constexpr_select(impl == pool_impl::CUDNN) {
+                    impl::cudnn::max_pool_upsample_2d::apply(smart_forward_gpu(a), smart_forward_gpu(b), smart_forward_gpu(c), result, C1, C2);
+                }
+            else {
                 cpp_unreachable("Invalid pool implementation");
             }
         } else {
-            if constexpr_select (impl == pool_impl::STD) {
-                impl::standard::avg_pool_upsample_2d::apply<C1, C2>(
-                    smart_forward(a),
-                    smart_forward(b),
-                    smart_forward(c),
-                    result);
-            } else if constexpr_select (impl == pool_impl::CUDNN) {
-                impl::cudnn::avg_pool_upsample_2d::apply(
-                    smart_forward_gpu(a),
-                    smart_forward_gpu(b),
-                    smart_forward_gpu(c),
-                    result,
-                    C1, C2);
-            } else {
+            if
+                constexpr_select(impl == pool_impl::STD) {
+                    impl::standard::avg_pool_upsample_2d::apply<C1, C2>(smart_forward(a), smart_forward(b), smart_forward(c), result);
+                }
+            else if
+                constexpr_select(impl == pool_impl::CUDNN) {
+                    impl::cudnn::avg_pool_upsample_2d::apply(smart_forward_gpu(a), smart_forward_gpu(b), smart_forward_gpu(c), result, C1, C2);
+                }
+            else {
                 cpp_unreachable("Invalid pool implementation");
             }
         }
@@ -255,25 +244,25 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
 template <typename A, typename B, typename C, size_t C1, size_t C2, bool Max>
 struct etl_traits<etl::pool_upsample_2d_expr<A, B, C, C1, C2, Max>> {
     using expr_t     = etl::pool_upsample_2d_expr<A, B, C, C1, C2, Max>; ///< The expression type
-    using sub_expr_t = std::decay_t<A>;                             ///< The sub expression type
-    using sub_traits = etl_traits<sub_expr_t>;                      ///< The sub traits
-    using value_type = value_t<A>;                                  ///< The value type of the expression
+    using sub_expr_t = std::decay_t<A>;                                  ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;                           ///< The sub traits
+    using value_type = value_t<A>;                                       ///< The value type of the expression
 
-    static constexpr bool is_etl         = true;                      ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer = false;                     ///< Indicates if the type is a transformer
-    static constexpr bool is_view        = false;                     ///< Indicates if the type is a view
-    static constexpr bool is_magic_view  = false;                     ///< Indicates if the type is a magic view
-    static constexpr bool is_fast        = sub_traits::is_fast;       ///< Indicates if the expression is fast
-    static constexpr bool is_linear      = false;                      ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe = true;                      ///< Indicates if the expression is thread safe
-    static constexpr bool is_value       = false;                     ///< Indicates if the expression is of value type
-    static constexpr bool is_direct      = true;                      ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator   = false;                     ///< Indicates if the expression is a generator
-    static constexpr bool is_padded      = false;                     ///< Indicates if the expression is padded
-    static constexpr bool is_aligned     = true;                      ///< Indicates if the expression is padded
-    static constexpr bool is_temporary   = true;                      ///< Indicates if the expression needs a evaluator visitor
-    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
-    static constexpr order storage_order = sub_traits::storage_order; ///< The expression's storage order
+    static constexpr bool is_etl         = true;                                 ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                                ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = sub_traits::is_fast;                  ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = true;                                 ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = true;                                 ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                                ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = true;                                 ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = true;                                 ///< Indicates if the expression needs a evaluator visitor
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled; ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order = sub_traits::storage_order;            ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -337,8 +326,9 @@ struct etl_traits<etl::pool_upsample_2d_expr<A, B, C, C1, C2, Max>> {
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, typename A, typename B, typename C>
-pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, true>
-max_pool_upsample_2d(A&& input, B&& output, C&& errors) {
+pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, true> max_pool_upsample_2d(A&& input,
+                                                                                                                              B&& output,
+                                                                                                                              C&& errors) {
     return {input, output, errors};
 }
 
@@ -351,8 +341,9 @@ max_pool_upsample_2d(A&& input, B&& output, C&& errors) {
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, typename A, typename B, typename C>
-pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, false>
-avg_pool_upsample_2d(A&& input, B&& output, C&& errors) {
+pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, false> avg_pool_upsample_2d(A&& input,
+                                                                                                                               B&& output,
+                                                                                                                               C&& errors) {
     return {input, output, errors};
 }
 

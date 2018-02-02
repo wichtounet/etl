@@ -24,10 +24,10 @@ namespace etl {
  */
 template <typename A, typename B, size_t S1, size_t S2, size_t P1, size_t P2, bool Flipped>
 struct conv_2d_valid_multi_multi_expr : base_temporary_expr_bin<conv_2d_valid_multi_multi_expr<A, B, S1, S2, P1, P2, Flipped>, A, B> {
-    using value_type  = value_t<A>;                                              ///< The type of value of the expression
+    using value_type  = value_t<A>;                                                    ///< The type of value of the expression
     using this_type   = conv_2d_valid_multi_multi_expr<A, B, S1, S2, P1, P2, Flipped>; ///< The type of this expression
-    using base_type   = base_temporary_expr_bin<this_type, A, B>;                ///< The base type
-    using left_traits = decay_traits<A>;                                         ///< The traits of the sub type
+    using base_type   = base_temporary_expr_bin<this_type, A, B>;                      ///< The base type
+    using left_traits = decay_traits<A>;                                               ///< The traits of the sub type
 
     static constexpr auto storage_order = left_traits::storage_order; ///< The sub storage order
 
@@ -74,8 +74,8 @@ struct conv_2d_valid_multi_multi_expr : base_temporary_expr_bin<conv_2d_valid_mu
      *
      * \param c The expression to which assign
      */
-    template<typename C>
-    void assign_to(C&& c)  const {
+    template <typename C>
+    void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, B, C>, "conv2_valid only supported for ETL expressions");
 
         auto& a = this->a();
@@ -83,7 +83,7 @@ struct conv_2d_valid_multi_multi_expr : base_temporary_expr_bin<conv_2d_valid_mu
 
         check(a, b, c);
 
-        if constexpr (Flipped){
+        if constexpr (Flipped) {
             detail::conv2_valid_multi_multi_flipped_impl<S1, S2, P1, P2>::apply(a, b, c);
         } else {
             detail::conv2_valid_multi_multi_impl<S1, S2, P1, P2>::apply(a, b, c);
@@ -94,8 +94,8 @@ struct conv_2d_valid_multi_multi_expr : base_temporary_expr_bin<conv_2d_valid_mu
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -103,8 +103,8 @@ struct conv_2d_valid_multi_multi_expr : base_temporary_expr_bin<conv_2d_valid_mu
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -112,8 +112,8 @@ struct conv_2d_valid_multi_multi_expr : base_temporary_expr_bin<conv_2d_valid_mu
      * \brief multi_multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -121,8 +121,8 @@ struct conv_2d_valid_multi_multi_expr : base_temporary_expr_bin<conv_2d_valid_mu
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -130,8 +130,8 @@ struct conv_2d_valid_multi_multi_expr : base_temporary_expr_bin<conv_2d_valid_mu
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -153,27 +153,27 @@ struct conv_2d_valid_multi_multi_expr : base_temporary_expr_bin<conv_2d_valid_mu
 template <typename A, typename B, size_t S1, size_t S2, size_t P1, size_t P2, bool Flipped>
 struct etl_traits<etl::conv_2d_valid_multi_multi_expr<A, B, S1, S2, P1, P2, Flipped>> {
     using expr_t       = etl::conv_2d_valid_multi_multi_expr<A, B, S1, S2, P1, P2, Flipped>; ///< The expression type
-    using left_expr_t  = std::decay_t<A>;                                       ///< The left sub expression type
-    using right_expr_t = std::decay_t<B>;                                       ///< The right sub expression type
-    using left_traits  = etl_traits<left_expr_t>;                               ///< The left sub traits
-    using right_traits = etl_traits<right_expr_t>;                              ///< The right sub traits
-    using value_type   = value_t<A>;                                            ///< The value type of the expression
+    using left_expr_t  = std::decay_t<A>;                                                    ///< The left sub expression type
+    using right_expr_t = std::decay_t<B>;                                                    ///< The right sub expression type
+    using left_traits  = etl_traits<left_expr_t>;                                            ///< The left sub traits
+    using right_traits = etl_traits<right_expr_t>;                                           ///< The right sub traits
+    using value_type   = value_t<A>;                                                         ///< The value type of the expression
 
-    static constexpr bool is_etl          = true;                       ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer  = false;                      ///< Indicates if the type is a transformer
-    static constexpr bool is_view         = false;                      ///< Indicates if the type is a view
-    static constexpr bool is_magic_view   = false;                      ///< Indicates if the type is a magic view
-    static constexpr bool is_fast         = all_fast<A, B>;      ///< Indicates if the expression is fast
-    static constexpr bool is_linear       = false;                       ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe  = true;                       ///< Indicates if the expression is thread safe
-    static constexpr bool is_value        = false;                      ///< Indicates if the expression is of value type
-    static constexpr bool is_direct       = true;                       ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator    = false;                      ///< Indicates if the expression is a generator
-    static constexpr bool is_padded       = false;                      ///< Indicates if the expression is padded
-    static constexpr bool is_aligned      = true;                       ///< Indicates if the expression is padded
-    static constexpr bool is_temporary = true;                       ///< Indicates if the expression needs a evaluator visitor
-    static constexpr order storage_order  = left_traits::storage_order; ///< The expression's storage order
-    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled;                                         ///< Indicates if the expression can be computed on GPU
+    static constexpr bool is_etl         = true;                                 ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer = false;                                ///< Indicates if the type is a transformer
+    static constexpr bool is_view        = false;                                ///< Indicates if the type is a view
+    static constexpr bool is_magic_view  = false;                                ///< Indicates if the type is a magic view
+    static constexpr bool is_fast        = all_fast<A, B>;                       ///< Indicates if the expression is fast
+    static constexpr bool is_linear      = false;                                ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe = true;                                 ///< Indicates if the expression is thread safe
+    static constexpr bool is_value       = false;                                ///< Indicates if the expression is of value type
+    static constexpr bool is_direct      = true;                                 ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator   = false;                                ///< Indicates if the expression is a generator
+    static constexpr bool is_padded      = false;                                ///< Indicates if the expression is padded
+    static constexpr bool is_aligned     = true;                                 ///< Indicates if the expression is padded
+    static constexpr bool is_temporary   = true;                                 ///< Indicates if the expression needs a evaluator visitor
+    static constexpr order storage_order = left_traits::storage_order;           ///< The expression's storage order
+    static constexpr bool gpu_computable = is_gpu_t<value_type> && cuda_enabled; ///< Indicates if the expression can be computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -190,9 +190,8 @@ struct etl_traits<etl::conv_2d_valid_multi_multi_expr<A, B, S1, S2, P1, P2, Flip
     template <size_t DD>
     static constexpr size_t dim() {
         return DD == 0 ? etl::dim<0, B>()
-             : DD == 1 ? etl::dim<0, A>()
-             : DD == 2 ? (etl::dim<1, A>() - etl::dim<1, B>() + 2 * P1) / S1 + 1
-                       : (etl::dim<2, A>() - etl::dim<2, B>() + 2 * P2) / S2 + 1;
+                       : DD == 1 ? etl::dim<0, A>()
+                                 : DD == 2 ? (etl::dim<1, A>() - etl::dim<1, B>() + 2 * P1) / S1 + 1 : (etl::dim<2, A>() - etl::dim<2, B>() + 2 * P2) / S2 + 1;
     }
 
     /*!
@@ -202,11 +201,11 @@ struct etl_traits<etl::conv_2d_valid_multi_multi_expr<A, B, S1, S2, P1, P2, Flip
      * \return the dth dimension of the expression
      */
     static size_t dim(const expr_t& e, size_t d) {
-        if (d == 0){
+        if (d == 0) {
             return etl::dim(e._b, 0);
-        } else if (d == 1){
+        } else if (d == 1) {
             return etl::dim(e._a, 0);
-        } else if (d == 2){
+        } else if (d == 2) {
             return (etl::dim(e._a, 1) - etl::dim(e._b, 1) + 2 * P1) / S1 + 1;
         } else {
             return (etl::dim(e._a, 2) - etl::dim(e._b, 2) + 2 * P2) / S2 + 1;
@@ -219,10 +218,8 @@ struct etl_traits<etl::conv_2d_valid_multi_multi_expr<A, B, S1, S2, P1, P2, Flip
      * \return the size of the expression
      */
     static size_t size(const expr_t& e) {
-        return (etl::dim(e._b, 0))
-            *  (etl::dim(e._a, 1))
-            *  ((etl::dim(e._a, 1) - etl::dim(e._b, 1) + 2 * P1) / S1 + 1)
-            *  ((etl::dim(e._a, 2) - etl::dim(e._b, 2) + 2 * P2) / S2 + 1);
+        return (etl::dim(e._b, 0)) * (etl::dim(e._a, 1)) * ((etl::dim(e._a, 1) - etl::dim(e._b, 1) + 2 * P1) / S1 + 1)
+               * ((etl::dim(e._a, 2) - etl::dim(e._b, 2) + 2 * P2) / S2 + 1);
     }
 
     /*!
@@ -230,10 +227,8 @@ struct etl_traits<etl::conv_2d_valid_multi_multi_expr<A, B, S1, S2, P1, P2, Flip
      * \return the size of the expression
      */
     static constexpr size_t size() {
-        return  (etl::dim<0, B>())
-              * (etl::dim<0, A>())
-              * ((etl::dim<1, A>() - etl::dim<1, B>() + 2 * P1) / S1 + 1)
-              * ((etl::dim<2, A>() - etl::dim<2, B>() + 2 * P2) / S2 + 1);
+        return (etl::dim<0, B>()) * (etl::dim<0, A>()) * ((etl::dim<1, A>() - etl::dim<1, B>() + 2 * P1) / S1 + 1)
+               * ((etl::dim<2, A>() - etl::dim<2, B>() + 2 * P2) / S2 + 1);
     }
 
     /*!
@@ -270,7 +265,7 @@ conv_2d_valid_multi_multi_expr<detail::build_type<A>, detail::build_type<B>, S1,
  * \return an expression representing the 'valid' 2D convolution of a and b
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
-auto conv_2d_valid_multi_multi(A&& a, B&& b, C&& c){
+auto conv_2d_valid_multi_multi(A&& a, B&& b, C&& c) {
     static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_multi<S1, S2, P1, P2>(a, b);
@@ -303,7 +298,7 @@ conv_2d_valid_multi_multi_expr<detail::build_type<A>, detail::build_type<B>, S1,
  * \return an expression representing the 'valid' 2D convolution of a and b
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
-auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b, C&& c){
+auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b, C&& c) {
     static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_multi_flipped<S1, S2, P1, P2>(a, b);

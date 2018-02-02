@@ -35,9 +35,9 @@ namespace etl::detail {
  *
  * \return The best default transpose implementation to use
  */
-template<typename A, typename C>
-constexpr transpose_impl select_default_transpose_impl(bool no_gpu){
-    if(cublas_enabled && all_dma<A, C> && all_floating<A, C> && !no_gpu){
+template <typename A, typename C>
+constexpr transpose_impl select_default_transpose_impl(bool no_gpu) {
+    if (cublas_enabled && all_dma<A, C> && all_floating<A, C> && !no_gpu) {
         return transpose_impl::CUBLAS;
     }
 
@@ -67,9 +67,9 @@ constexpr transpose_impl select_default_transpose_impl(bool no_gpu){
  *
  * \return The best default transpose implementation to use
  */
-template<typename A, typename C>
-constexpr transpose_impl select_default_in_square_transpose_impl(bool no_gpu){
-    if(cublas_enabled && all_dma<A, C> && all_floating<A, C> && !no_gpu){
+template <typename A, typename C>
+constexpr transpose_impl select_default_in_square_transpose_impl(bool no_gpu) {
+    if (cublas_enabled && all_dma<A, C> && all_floating<A, C> && !no_gpu) {
         return transpose_impl::CUBLAS;
     }
 
@@ -194,13 +194,19 @@ struct inplace_square_transpose {
     static void apply(C&& c) {
         constexpr_select const auto impl = select_in_square_transpose_impl<C>();
 
-        if constexpr_select (impl == transpose_impl::MKL) {
-            etl::impl::blas::inplace_square_transpose(c);
-        } else if constexpr_select (impl == transpose_impl::CUBLAS) {
-            etl::impl::cublas::inplace_square_transpose(c);
-        } else if constexpr_select (impl == transpose_impl::STD) {
-            etl::impl::standard::inplace_square_transpose(c);
-        } else {
+        if
+            constexpr_select(impl == transpose_impl::MKL) {
+                etl::impl::blas::inplace_square_transpose(c);
+            }
+        else if
+            constexpr_select(impl == transpose_impl::CUBLAS) {
+                etl::impl::cublas::inplace_square_transpose(c);
+            }
+        else if
+            constexpr_select(impl == transpose_impl::STD) {
+                etl::impl::standard::inplace_square_transpose(c);
+            }
+        else {
             cpp_unreachable("Invalid transpose_impl selection");
         }
     }
@@ -218,13 +224,19 @@ struct inplace_rectangular_transpose {
     static void apply(C&& c) {
         constexpr_select const auto impl = select_normal_transpose_impl<C, C>();
 
-        if constexpr_select (impl == transpose_impl::MKL) {
-            etl::impl::blas::inplace_rectangular_transpose(c);
-        } else if constexpr_select (impl == transpose_impl::CUBLAS) {
-            etl::impl::cublas::inplace_rectangular_transpose(c);
-        } else if constexpr_select (impl == transpose_impl::STD) {
-            etl::impl::standard::inplace_rectangular_transpose(c);
-        } else {
+        if
+            constexpr_select(impl == transpose_impl::MKL) {
+                etl::impl::blas::inplace_rectangular_transpose(c);
+            }
+        else if
+            constexpr_select(impl == transpose_impl::CUBLAS) {
+                etl::impl::cublas::inplace_rectangular_transpose(c);
+            }
+        else if
+            constexpr_select(impl == transpose_impl::STD) {
+                etl::impl::standard::inplace_rectangular_transpose(c);
+            }
+        else {
             cpp_unreachable("Invalid transpose_impl selection");
         }
     }
@@ -243,29 +255,31 @@ struct transpose {
     static void apply(A&& a, C&& c) {
         constexpr_select const auto impl = select_normal_transpose_impl<A, C>();
 
-        if constexpr_select (impl == transpose_impl::CUBLAS) {
-            c.ensure_gpu_allocated();
+        if
+            constexpr_select(impl == transpose_impl::CUBLAS) {
+                c.ensure_gpu_allocated();
 
-            decltype(auto) aa = smart_forward_gpu(a);
+                decltype(auto) aa = smart_forward_gpu(a);
 
-            // Detect inplace (some implementations do not support inplace if not told explicitely)
-            if(aa.gpu_memory() && aa.gpu_memory() == c.gpu_memory()){
-                if(is_square(c)){
-                    inplace_square_transpose::apply(c);
-                } else {
-                    inplace_rectangular_transpose::apply(c);
+                // Detect inplace (some implementations do not support inplace if not told explicitely)
+                if (aa.gpu_memory() && aa.gpu_memory() == c.gpu_memory()) {
+                    if (is_square(c)) {
+                        inplace_square_transpose::apply(c);
+                    } else {
+                        inplace_rectangular_transpose::apply(c);
+                    }
+
+                    return;
                 }
 
-                return;
+                etl::impl::cublas::transpose(aa, c);
             }
-
-            etl::impl::cublas::transpose(aa, c);
-        } else {
+        else {
             decltype(auto) aa = smart_forward(a);
 
             // Detect inplace (some implementations do not support inplace if not told explicitely)
-            if(aa.memory_start() == c.memory_start()){
-                if(is_square(c)){
+            if (aa.memory_start() == c.memory_start()) {
+                if (is_square(c)) {
                     inplace_square_transpose::apply(c);
                 } else {
                     inplace_rectangular_transpose::apply(c);
@@ -274,11 +288,15 @@ struct transpose {
                 return;
             }
 
-            if constexpr_select (impl == transpose_impl::MKL) {
-                etl::impl::blas::transpose(aa, c);
-            } else if constexpr_select (impl == transpose_impl::STD) {
-                etl::impl::standard::transpose(aa, c);
-            } else {
+            if
+                constexpr_select(impl == transpose_impl::MKL) {
+                    etl::impl::blas::transpose(aa, c);
+                }
+            else if
+                constexpr_select(impl == transpose_impl::STD) {
+                    etl::impl::standard::transpose(aa, c);
+                }
+            else {
                 cpp_unreachable("Invalid transpose_impl selection");
             }
         }

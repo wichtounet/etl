@@ -109,9 +109,7 @@ value_t<L> dot_impl(const L& lhs, const R& rhs) {
         r1 = vec_type::fmadd(a1, b1, r1);
     }
 
-    auto rsum = vec_type::add(
-        vec_type::add(vec_type::add(r1, r2), vec_type::add(r3, r4)),
-        vec_type::add(vec_type::add(r5, r6), vec_type::add(r7, r8)));
+    auto rsum = vec_type::add(vec_type::add(vec_type::add(r1, r2), vec_type::add(r3, r4)), vec_type::add(vec_type::add(r5, r6), vec_type::add(r7, r8)));
 
     auto p1 = vec_type::hadd(rsum);
     auto p2 = T();

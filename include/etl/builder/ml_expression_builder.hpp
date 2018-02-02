@@ -11,7 +11,7 @@
  *
  * This is mostly a simpler set of names and functions to achieve
  * machine learning features.
-*/
+ */
 
 #pragma once
 
@@ -42,8 +42,7 @@ namespace etl::ml {
  * \return an expression representing the result of the forward convolution
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
-conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>
-convolution_forward(A&& a, B&& b) {
+conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true> convolution_forward(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{a, b};
@@ -70,8 +69,8 @@ convolution_forward(A&& a, B&& b) {
  * \return an expression representing the result of the forward convolution
  */
 template <typename A, typename B>
-dyn_conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, true>
-convolution_forward(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
+dyn_conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, true> convolution_forward(
+    A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
     static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return dyn_conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
@@ -98,8 +97,7 @@ convolution_forward(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2
  * \return an expression representing the result of the forward convolution
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
-conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>
-convolution_backward(A&& a, B&& b) {
+conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true> convolution_backward(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{a, b};
@@ -126,8 +124,8 @@ convolution_backward(A&& a, B&& b) {
  * \return an expression representing the result of the forward convolution
  */
 template <typename A, typename B>
-dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true>
-convolution_backward(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
+dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true> convolution_backward(
+    A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
     static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
@@ -154,8 +152,7 @@ convolution_backward(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p
  * \return an expression representing the result of the forward convolution
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
-conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>
-convolution_backward_filter(A&& a, B&& b) {
+conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true> convolution_backward_filter(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{a, b};
@@ -182,8 +179,8 @@ convolution_backward_filter(A&& a, B&& b) {
  * \return an expression representing the result of the forward convolution
  */
 template <typename A, typename B>
-dyn_conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, true>
-convolution_backward_filter(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
+dyn_conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, true> convolution_backward_filter(
+    A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
     static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
     return dyn_conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
@@ -300,8 +297,7 @@ dyn_pool_3d_expr<detail::build_type<E>, impl::avg_pool_3d> avg_pool_3d_forward(E
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, typename A, typename B, typename C>
-pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, true>
-max_pool_backward(A&& input, B&& output, C&& errors) {
+pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, true> max_pool_backward(A&& input, B&& output, C&& errors) {
     return {input, output, errors};
 }
 
@@ -314,8 +310,8 @@ max_pool_backward(A&& input, B&& output, C&& errors) {
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <typename A, typename B, typename C>
-dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, true>
-max_pool_backward(A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
+dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, true> max_pool_backward(
+    A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
     return {input, output, errors, c1, c2};
 }
 
@@ -328,8 +324,9 @@ max_pool_backward(A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C>
-pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3, true>
-max_pool_3d_backward(A&& input, B&& output, C&& errors) {
+pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3, true> max_pool_3d_backward(A&& input,
+                                                                                                                                  B&& output,
+                                                                                                                                  C&& errors) {
     return {input, output, errors};
 }
 
@@ -342,8 +339,8 @@ max_pool_3d_backward(A&& input, B&& output, C&& errors) {
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <typename A, typename B, typename C>
-dyn_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, true>
-max_pool_3d_backward(A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t c3) {
+dyn_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, true> max_pool_3d_backward(
+    A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t c3) {
     return {input, output, errors, c1, c2, c3};
 }
 
@@ -356,8 +353,7 @@ max_pool_3d_backward(A&& input, B&& output, C&& errors, size_t c1, size_t c2, si
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, typename A, typename B, typename C>
-pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, false>
-avg_pool_backward(A&& input, B&& output, C&& errors) {
+pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, false> avg_pool_backward(A&& input, B&& output, C&& errors) {
     return {input, output, errors};
 }
 
@@ -370,8 +366,8 @@ avg_pool_backward(A&& input, B&& output, C&& errors) {
  * \return A expression representing the Derivative of 3D Average Pooling of the input expression.
  */
 template <typename A, typename B, typename C>
-dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, false>
-avg_pool_backward(A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
+dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, false> avg_pool_backward(
+    A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
     return {input, output, errors, c1, c2};
 }
 
@@ -384,8 +380,9 @@ avg_pool_backward(A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C>
-pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3, false>
-avg_pool_3d_backward(A&& input, B&& output, C&& errors) {
+pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3, false> avg_pool_3d_backward(A&& input,
+                                                                                                                                   B&& output,
+                                                                                                                                   C&& errors) {
     return {input, output, errors};
 }
 
@@ -398,8 +395,8 @@ avg_pool_3d_backward(A&& input, B&& output, C&& errors) {
  * \return A expression representing the Derivative of 3D Average Pooling of the input expression.
  */
 template <typename A, typename B, typename C>
-dyn_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, false>
-avg_pool_3d_backward(A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t c3) {
+dyn_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, false> avg_pool_3d_backward(
+    A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t c3) {
     return {input, output, errors, c1, c2, c3};
 }
 
@@ -519,7 +516,7 @@ decltype(auto) softmax_backward(O&& output, E&& errors) {
  * \return the backward activation of the activation function
  */
 template <typename O, typename E>
-auto tanh_backward(O&& output, E&& errors){
+auto tanh_backward(O&& output, E&& errors) {
     static_assert(is_etl_expr<E>, "etl::tanh_derivative can only be used on ETL expressions");
     return (1.0 - (output >> output)) >> errors;
 }

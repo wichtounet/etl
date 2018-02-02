@@ -113,10 +113,7 @@ static constexpr bool has_cclip_value = false;
 inline void clip_value(size_t n, const std::complex<float> alpha, std::complex<float> A, std::complex<float> B, std::complex<float>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_CCLIP_VALUE
     inc_counter("egblas");
-    egblas_cclip_value(n,
-        complex_cast(alpha), complex_cast(A),
-        complex_cast(B),
-        reinterpret_cast<cuComplex*>(C), ldc);
+    egblas_cclip_value(n, complex_cast(alpha), complex_cast(A), complex_cast(B), reinterpret_cast<cuComplex*>(C), ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -141,10 +138,7 @@ inline void clip_value(size_t n, const std::complex<float> alpha, std::complex<f
 inline void clip_value(size_t n, const etl::complex<float> alpha, etl::complex<float> A, etl::complex<float> B, etl::complex<float>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_CCLIP_VALUE
     inc_counter("egblas");
-    egblas_cclip_value(n,
-        complex_cast(alpha), complex_cast(A),
-        complex_cast(B),
-        reinterpret_cast<cuComplex*>(C), ldc);
+    egblas_cclip_value(n, complex_cast(alpha), complex_cast(A), complex_cast(B), reinterpret_cast<cuComplex*>(C), ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -178,10 +172,7 @@ static constexpr bool has_zclip_value = false;
 inline void clip_value(size_t n, const std::complex<double> alpha, std::complex<double> A, std::complex<double> B, std::complex<double>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_ZCLIP_VALUE
     inc_counter("egblas");
-    egblas_zclip_value(n,
-        complex_cast(alpha), complex_cast(A),
-        complex_cast(B),
-        reinterpret_cast<cuDoubleComplex*>(C), ldc);
+    egblas_zclip_value(n, complex_cast(alpha), complex_cast(A), complex_cast(B), reinterpret_cast<cuDoubleComplex*>(C), ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);
@@ -206,10 +197,7 @@ inline void clip_value(size_t n, const std::complex<double> alpha, std::complex<
 inline void clip_value(size_t n, const etl::complex<double> alpha, etl::complex<double> A, etl::complex<double> B, etl::complex<double>* C, size_t ldc) {
 #ifdef EGBLAS_HAS_ZCLIP_VALUE
     inc_counter("egblas");
-    egblas_zclip_value(n,
-        complex_cast(alpha), complex_cast(A),
-        complex_cast(B),
-        reinterpret_cast<cuDoubleComplex*>(C), ldc);
+    egblas_zclip_value(n, complex_cast(alpha), complex_cast(A), complex_cast(B), reinterpret_cast<cuDoubleComplex*>(C), ldc);
 #else
     cpp_unused(n);
     cpp_unused(alpha);

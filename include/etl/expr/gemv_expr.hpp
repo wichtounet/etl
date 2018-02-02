@@ -24,10 +24,10 @@ namespace etl {
  */
 template <typename A, typename B>
 struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
-    using value_type  = value_t<A>;                              ///< The type of value of the expression
-    using this_type   = gemv_expr<A, B>;                   ///< The type of this expression
+    using value_type  = value_t<A>;                               ///< The type of value of the expression
+    using this_type   = gemv_expr<A, B>;                          ///< The type of this expression
     using base_type   = base_temporary_expr_bin<this_type, A, B>; ///< The base type
-    using left_traits = decay_traits<A>;                         ///< The traits of the sub type
+    using left_traits = decay_traits<A>;                          ///< The traits of the sub type
 
     static constexpr auto storage_order = left_traits::storage_order; ///< The sub storage order
 
@@ -54,17 +54,15 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
     template <typename C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c) {
         if constexpr (all_fast<A, B, C>) {
-            static_assert(
-                dim<1, A>() == dim<0, B>()        //interior dimensions
-                    && dim<0, A>() == dim<0, C>() //exterior dimension 1
-                ,
-                "Invalid sizes for multiplication");
+            static_assert(dim<1, A>() == dim<0, B>()        //interior dimensions
+                              && dim<0, A>() == dim<0, C>() //exterior dimension 1
+                          ,
+                          "Invalid sizes for multiplication");
         } else {
-            cpp_assert(
-                dim<1>(a) == dim<0>(b)        //interior dimensions
-                    && dim<0>(a) == dim<0>(c) //exterior dimension 1
-                ,
-                "Invalid sizes for multiplication");
+            cpp_assert(dim<1>(a) == dim<0>(b)        //interior dimensions
+                           && dim<0>(a) == dim<0>(c) //exterior dimension 1
+                       ,
+                       "Invalid sizes for multiplication");
         }
     }
 
@@ -82,11 +80,11 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
             return gemm_impl::CUBLAS;
         }
 
-        if(all_vectorizable_t<vector_mode, A, B, C> && vec_enabled && vectorize_impl && homo){
+        if (all_vectorizable_t<vector_mode, A, B, C> && vec_enabled && vectorize_impl && homo) {
             return gemm_impl::VEC;
         }
 
-        if(cblas_enabled && homo){
+        if (cblas_enabled && homo) {
             return gemm_impl::BLAS;
         }
 
@@ -107,28 +105,29 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
             switch (forced) {
                 //CUBLAS cannot always be used
                 case gemm_impl::CUBLAS:
-                    if (!cublas_enabled || !all_homogeneous<A, B, C> || local_context().cpu) {                                                                                     //COVERAGE_EXCLUDE_LINE
-                        std::cerr << "Forced selection to CUBLAS gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_gemv_impl<C>(local_context().cpu);                                                                  //COVERAGE_EXCLUDE_LINE
-                    }                                                                                                                     //COVERAGE_EXCLUDE_LINE
+                    if (!cublas_enabled || !all_homogeneous<A, B, C> || local_context().cpu) { //COVERAGE_EXCLUDE_LINE
+                        std::cerr << "Forced selection to CUBLAS gemv implementation, but not possible for this expression"
+                                  << std::endl;                                  //COVERAGE_EXCLUDE_LINE
+                        return select_default_gemv_impl<C>(local_context().cpu); //COVERAGE_EXCLUDE_LINE
+                    }                                                            //COVERAGE_EXCLUDE_LINE
 
                     return forced;
 
                 //BLAS cannot always be used
                 case gemm_impl::BLAS:
-                    if (!cblas_enabled || !all_homogeneous<A, B, C>) {                                                                                    //COVERAGE_EXCLUDE_LINE
+                    if (!cblas_enabled || !all_homogeneous<A, B, C>) {                                                                  //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to BLAS gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_gemv_impl<C>(local_context().cpu);                                                                //COVERAGE_EXCLUDE_LINE
+                        return select_default_gemv_impl<C>(local_context().cpu);                                                        //COVERAGE_EXCLUDE_LINE
                     }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
                     return forced;
 
                 //VEC cannot always be used
                 case gemm_impl::VEC:
-                    if (!vec_enabled || !all_vectorizable<vector_mode, A, B, C> || !all_homogeneous<A, B, C>) {                                               //COVERAGE_EXCLUDE_LINE
+                    if (!vec_enabled || !all_vectorizable<vector_mode, A, B, C> || !all_homogeneous<A, B, C>) {                        //COVERAGE_EXCLUDE_LINE
                         std::cerr << "Forced selection to VEC gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                        return select_default_gemv_impl<C>(local_context().cpu);                                                                //COVERAGE_EXCLUDE_LINE
-                    }                                                                                                                   //COVERAGE_EXCLUDE_LINE
+                        return select_default_gemv_impl<C>(local_context().cpu);                                                       //COVERAGE_EXCLUDE_LINE
+                    }                                                                                                                  //COVERAGE_EXCLUDE_LINE
 
                     return forced;
 
@@ -165,15 +164,23 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gemv_impl<C>();
 
-        if constexpr_select (impl == gemm_impl::STD) {
-            etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::BLAS) {
-            etl::impl::blas::gemv_t(smart_forward(a.a()), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::VEC) {
-            etl::impl::vec::gemv_t(smart_forward(a.a()), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::CUBLAS) {
-            etl::impl::cublas::gemv_t(smart_forward_gpu(a.a()), smart_forward_gpu(b), c);
-        } else {
+        if
+            constexpr_select(impl == gemm_impl::STD) {
+                etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::BLAS) {
+                etl::impl::blas::gemv_t(smart_forward(a.a()), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::VEC) {
+                etl::impl::vec::gemv_t(smart_forward(a.a()), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::CUBLAS) {
+                etl::impl::cublas::gemv_t(smart_forward_gpu(a.a()), smart_forward_gpu(b), c);
+            }
+        else {
             cpp_unreachable("Invalid selection for gevm");
         }
     }
@@ -188,15 +195,23 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gemv_impl<C>();
 
-        if constexpr_select (impl == gemm_impl::STD) {
-            etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::BLAS) {
-            etl::impl::blas::gemv(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::VEC) {
-            etl::impl::vec::gemv(smart_forward(a), smart_forward(b), c);
-        } else if constexpr_select (impl == gemm_impl::CUBLAS) {
-            etl::impl::cublas::gemv(smart_forward_gpu(a), smart_forward_gpu(b), c);
-        } else {
+        if
+            constexpr_select(impl == gemm_impl::STD) {
+                etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::BLAS) {
+                etl::impl::blas::gemv(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::VEC) {
+                etl::impl::vec::gemv(smart_forward(a), smart_forward(b), c);
+            }
+        else if
+            constexpr_select(impl == gemm_impl::CUBLAS) {
+                etl::impl::cublas::gemv(smart_forward_gpu(a), smart_forward_gpu(b), c);
+            }
+        else {
             cpp_unreachable("Invalid selection for gevm");
         }
     }
@@ -205,8 +220,8 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template<typename C>
-    void assign_to(C&& c)  const {
+    template <typename C>
+    void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, B, C>, "gemm only supported for ETL expressions");
 
         check(this->a(), this->b(), c);
@@ -218,8 +233,8 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_add_to(L&& lhs)  const {
+    template <typename L>
+    void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
 
@@ -227,8 +242,8 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_sub_to(L&& lhs)  const {
+    template <typename L>
+    void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
 
@@ -236,8 +251,8 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mul_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
 
@@ -245,8 +260,8 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_div_to(L&& lhs)  const {
+    template <typename L>
+    void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
 
@@ -254,8 +269,8 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template<typename L>
-    void assign_mod_to(L&& lhs)  const {
+    template <typename L>
+    void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
 
@@ -276,12 +291,12 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
  */
 template <typename A, typename B>
 struct etl_traits<etl::gemv_expr<A, B>> {
-    using expr_t       = etl::gemv_expr<A, B>; ///< The expression type
-    using left_expr_t  = std::decay_t<A>;            ///< The left sub expression type
-    using right_expr_t = std::decay_t<B>;            ///< The right sub expression type
-    using left_traits  = etl_traits<left_expr_t>;    ///< The left sub traits
-    using right_traits = etl_traits<right_expr_t>;   ///< The right sub traits
-    using value_type   = value_t<A>;                 ///< The value type of the expression
+    using expr_t       = etl::gemv_expr<A, B>;     ///< The expression type
+    using left_expr_t  = std::decay_t<A>;          ///< The left sub expression type
+    using right_expr_t = std::decay_t<B>;          ///< The right sub expression type
+    using left_traits  = etl_traits<left_expr_t>;  ///< The left sub traits
+    using right_traits = etl_traits<right_expr_t>; ///< The right sub traits
+    using value_type   = value_t<A>;               ///< The value type of the expression
 
     static constexpr bool is_etl         = true;                                          ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer = false;                                         ///< Indicates if the type is a transformer
@@ -358,7 +373,7 @@ struct etl_traits<etl::gemv_expr<A, B>> {
  * \param b The right hand side vector
  * \return An expression representing the matrix-vector multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_iff(is_2d<A> && is_1d<B>)>
+template <typename A, typename B, cpp_enable_iff(is_2d<A>&& is_1d<B>)>
 gemv_expr<detail::build_type<A>, detail::build_type<B>> operator*(A&& a, B&& b) {
     return gemv_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
@@ -369,8 +384,8 @@ gemv_expr<detail::build_type<A>, detail::build_type<B>> operator*(A&& a, B&& b) 
  * \param b The right hand side vector
  * \return An expression representing the matrix-vector multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_iff(is_2d<A> && is_1d<B>)>
-gemv_expr<detail::build_type<A>, detail::build_type<B>> mul(A&& a, B&& b){
+template <typename A, typename B, cpp_enable_iff(is_2d<A>&& is_1d<B>)>
+gemv_expr<detail::build_type<A>, detail::build_type<B>> mul(A&& a, B&& b) {
     return gemv_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
 
@@ -381,7 +396,7 @@ gemv_expr<detail::build_type<A>, detail::build_type<B>> mul(A&& a, B&& b){
  * \param c The expression used to store the result
  * \return An expression representing the matrix-vector multiplication of a and b
  */
-template <typename A, typename B, typename C, cpp_enable_iff(is_2d<A> && is_1d<B>)>
+template <typename A, typename B, typename C, cpp_enable_iff(is_2d<A>&& is_1d<B>)>
 auto mul(A&& a, B&& b, C&& c) {
     c = mul(a, b);
     return c;

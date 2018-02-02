@@ -33,7 +33,7 @@ static constexpr bool has_scalar_smul = true;
  * \param s The stride of the vector
  * \param beta The scalar to mul
  */
-inline void scalar_mul(float* x, size_t n, size_t s, const float beta){
+inline void scalar_mul(float* x, size_t n, size_t s, const float beta) {
     inc_counter("egblas");
     egblas_scalar_smul(x, n, s, beta);
 }
@@ -55,7 +55,7 @@ static constexpr bool has_scalar_dmul = true;
  * \param s The stride of the vector
  * \param beta The scalar to mul
  */
-inline void scalar_mul(double* x, size_t n, size_t s, const double beta){
+inline void scalar_mul(double* x, size_t n, size_t s, const double beta) {
     inc_counter("egblas");
     egblas_scalar_dmul(x, n, s, beta);
 }
@@ -77,7 +77,7 @@ static constexpr bool has_scalar_cmul = true;
  * \param s The stride of the vector
  * \param beta The scalar to mul
  */
-inline void scalar_mul(etl::complex<float>* x, size_t n, size_t s, const etl::complex<float> beta){
+inline void scalar_mul(etl::complex<float>* x, size_t n, size_t s, const etl::complex<float> beta) {
     inc_counter("egblas");
     egblas_scalar_cmul(reinterpret_cast<cuComplex*>(x), n, s, complex_cast(beta));
 }
@@ -89,7 +89,7 @@ inline void scalar_mul(etl::complex<float>* x, size_t n, size_t s, const etl::co
  * \param s The stride of the vector
  * \param beta The scalar to mul
  */
-inline void scalar_mul(std::complex<float>* x, size_t n, size_t s, const std::complex<float> beta){
+inline void scalar_mul(std::complex<float>* x, size_t n, size_t s, const std::complex<float> beta) {
     inc_counter("egblas");
     egblas_scalar_cmul(reinterpret_cast<cuComplex*>(x), n, s, complex_cast(beta));
 }
@@ -111,7 +111,7 @@ static constexpr bool has_scalar_zmul = true;
  * \param s The stride of the vector
  * \param beta The scalar to mul
  */
-inline void scalar_mul(etl::complex<double>* x, size_t n, size_t s, const etl::complex<double> beta){
+inline void scalar_mul(etl::complex<double>* x, size_t n, size_t s, const etl::complex<double> beta) {
     inc_counter("egblas");
     egblas_scalar_zmul(reinterpret_cast<cuDoubleComplex*>(x), n, s, complex_cast(beta));
 }
@@ -123,7 +123,7 @@ inline void scalar_mul(etl::complex<double>* x, size_t n, size_t s, const etl::c
  * \param s The stride of the vector
  * \param beta The scalar to mul
  */
-inline void scalar_mul(std::complex<double>* x, size_t n, size_t s, const std::complex<double> beta){
+inline void scalar_mul(std::complex<double>* x, size_t n, size_t s, const std::complex<double> beta) {
     inc_counter("egblas");
     egblas_scalar_zmul(reinterpret_cast<cuDoubleComplex*>(x), n, s, complex_cast(beta));
 }
@@ -143,8 +143,8 @@ static constexpr bool has_scalar_zmul = false;
  * \param s The stride of the vector
  * \param beta The scalar to mul
  */
-template<typename T>
-inline void scalar_mul(T* x, size_t n, size_t s, const T beta){
+template <typename T>
+inline void scalar_mul(T* x, size_t n, size_t s, const T beta) {
     cpp_unused(x);
     cpp_unused(n);
     cpp_unused(s);

@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include "etl/adapters/adapter.hpp"            // The adapter base class
-#include "etl/adapters/uni_lower_exception.hpp"    // The exception
-#include "etl/adapters/uni_lower_reference.hpp"    // The reference proxy
+#include "etl/adapters/adapter.hpp"             // The adapter base class
+#include "etl/adapters/uni_lower_exception.hpp" // The exception
+#include "etl/adapters/uni_lower_reference.hpp" // The reference proxy
 
 namespace etl {
 
@@ -34,12 +34,12 @@ struct uni_lower_matrix final : adapter<Matrix>, iterable<const uni_lower_matrix
     static_assert(is_square_matrix<matrix_t>, "Uni Lower triangular matrix must be square");
 
     static constexpr size_t n_dimensions = etl_traits<matrix_t>::dimensions();  ///< The number of dimensions
-    static constexpr order storage_order      = etl_traits<matrix_t>::storage_order; ///< The storage order
+    static constexpr order storage_order = etl_traits<matrix_t>::storage_order; ///< The storage order
     static constexpr size_t alignment    = matrix_t::alignment;                 ///< The memory alignment
 
-    using value_type        = value_t<matrix_t>;                 ///< The value type
-    using memory_type       = value_type*;                       ///< The memory type
-    using const_memory_type = const value_type*;                 ///< The const memory type
+    using value_type        = value_t<matrix_t>; ///< The value type
+    using memory_type       = value_type*;       ///< The memory type
+    using const_memory_type = const value_type*; ///< The const memory type
 
     using iterator       = typename matrix_t::const_iterator; ///< The type of const iterator
     using const_iterator = typename matrix_t::const_iterator; ///< The type of const iterator
@@ -50,7 +50,7 @@ struct uni_lower_matrix final : adapter<Matrix>, iterable<const uni_lower_matrix
      * \brief The vectorization type for V
      */
     template <typename V = default_vec>
-    using vec_type       = typename V::template vec_type<value_type>;
+    using vec_type = typename V::template vec_type<value_type>;
 
     using base_type::value;
 
@@ -62,8 +62,8 @@ public:
      */
     uni_lower_matrix() noexcept : base_type() {
         // Fill the diagonal
-        for(size_t i = 0; i < etl::dim<0>(value); ++i){
-            value(i,i) = value_type(1);
+        for (size_t i = 0; i < etl::dim<0>(value); ++i) {
+            value(i, i) = value_type(1);
         }
     }
 
@@ -73,8 +73,8 @@ public:
      */
     explicit uni_lower_matrix(size_t dim) noexcept : base_type(dim) {
         // Fill the diagonal
-        for(size_t i = 0; i < etl::dim<0>(value); ++i){
-            value(i,i) = value_type(1);
+        for (size_t i = 0; i < etl::dim<0>(value); ++i) {
+            value(i, i) = value_type(1);
         }
     }
 
@@ -109,10 +109,10 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_iff(std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>)>
+    template <typename E, cpp_enable_iff(std::is_convertible<value_t<E>, value_type>::value&& is_etl_expr<E>)>
     uni_lower_matrix& operator=(E&& e) noexcept(false) {
         // Make sure the other matrix is uni lower triangular
-        if(!is_uni_lower_triangular(e)){
+        if (!is_uni_lower_triangular(e)) {
             throw uni_lower_exception();
         }
 
@@ -147,12 +147,12 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R>
-    uni_lower_matrix& operator+=(R&& rhs){
+    template <typename R>
+    uni_lower_matrix& operator+=(R&& rhs) {
         static_assert(is_etl_expr<R>, "Can only add ETL expression to uni lower triangular matrix");
 
         // Make sure the other matrix is uni lower triangular
-        if(!is_uni_lower_triangular(rhs)){
+        if (!is_uni_lower_triangular(rhs)) {
             throw uni_lower_exception();
         }
 
@@ -166,12 +166,12 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R>
-    uni_lower_matrix& operator-=(R&& rhs){
+    template <typename R>
+    uni_lower_matrix& operator-=(R&& rhs) {
         static_assert(is_etl_expr<R>, "Can only add ETL expression to uni lower triangular matrix");
 
         // Make sure the other matrix is uni lower triangular
-        if(!is_uni_lower_triangular(rhs)){
+        if (!is_uni_lower_triangular(rhs)) {
             throw uni_lower_exception();
         }
 
@@ -185,12 +185,12 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R>
+    template <typename R>
     uni_lower_matrix& operator*=(R&& rhs) {
         static_assert(is_etl_expr<R>, "Can only scale uni lower triangular matrix by an ETL expression");
 
         // Make sure the other matrix is uni lower triangular
-        if(!is_uni_lower_triangular(rhs)){
+        if (!is_uni_lower_triangular(rhs)) {
             throw uni_lower_exception();
         }
 
@@ -204,12 +204,12 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R>
+    template <typename R>
     uni_lower_matrix& operator>>=(R&& rhs) {
         static_assert(is_etl_expr<R>, "Can only scale uni lower triangular matrix by an ETL expression");
 
         // Make sure the other matrix is uni lower triangular
-        if(!is_uni_lower_triangular(rhs)){
+        if (!is_uni_lower_triangular(rhs)) {
             throw uni_lower_exception();
         }
 
@@ -223,12 +223,12 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template<typename R>
+    template <typename R>
     uni_lower_matrix& operator/=(R&& rhs) {
         static_assert(is_etl_expr<R>, "Can only scale uni lower triangular matrix by an ETL expression");
 
         // Make sure the other matrix is uni lower triangular
-        if(!is_uni_lower_triangular(rhs)){
+        if (!is_uni_lower_triangular(rhs)) {
             throw uni_lower_exception();
         }
 

@@ -36,8 +36,7 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    explicit bias_batch_var_2d_expr(A a, B b)
-            : base_type(a, b) {
+    explicit bias_batch_var_2d_expr(A a, B b) : base_type(a, b) {
         //Nothing else to init
     }
 
