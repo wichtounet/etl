@@ -9,6 +9,9 @@ ColumnLimit: 160
 Language: Cpp
 Standard: Cpp11
 
+# Don't fuck with my includes
+SortIncludes: false
+
 # Tune some indentations
 AccessModifierOffset: -4
 ConstructorInitializerIndentWidth: 8
