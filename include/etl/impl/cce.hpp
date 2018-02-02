@@ -19,9 +19,7 @@
 #include "etl/impl/std/cce.hpp"
 #include "etl/impl/egblas/cce.hpp"
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 /*!
  * \brief Select the CCE implementation for an expression of type E
@@ -119,6 +117,4 @@ struct cce_error_impl {
     }
 };
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

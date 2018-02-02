@@ -12,9 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 /*!
  * \brief The functor impl for 2D+ conv.
@@ -204,6 +202,4 @@ struct conv2_full_flipped_deep_impl {
     }
 };
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

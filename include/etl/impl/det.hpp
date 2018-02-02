@@ -15,9 +15,7 @@
 //Include the implementations
 #include "etl/impl/std/det.hpp"
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 /*!
  * \brief Functor for determinant
@@ -34,6 +32,4 @@ struct det_impl {
     }
 };
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

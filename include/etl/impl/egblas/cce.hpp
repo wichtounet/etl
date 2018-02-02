@@ -20,11 +20,7 @@
 
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace egblas {
+namespace etl::impl::egblas {
 
 /*!
  * \brief Indicates if EGBLAS has single-precision CCE loss
@@ -168,6 +164,4 @@ inline double cce_error(size_t n, size_t m, double alpha, double* A , double* B)
 #endif
 }
 
-} //end of namespace egblas
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::egblas

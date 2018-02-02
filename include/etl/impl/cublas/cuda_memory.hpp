@@ -33,11 +33,7 @@
 
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace cuda {
+namespace etl::impl::cuda {
 
 #ifdef ETL_CUDA
 
@@ -241,8 +237,4 @@ struct cuda_memory {
 
 #endif
 
-} //end of namespace cuda
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::cuda

@@ -7,11 +7,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace standard {
+namespace etl::impl::standard {
 
 /*!
  * \brief Functor for 2D Max Pooling
@@ -889,8 +885,4 @@ struct max_pool_3d {
     }
 };
 
-} //end of namespace standard
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::standard

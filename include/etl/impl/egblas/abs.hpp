@@ -20,11 +20,7 @@
 
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace egblas {
+namespace etl::impl::egblas {
 
 /*!
  * \brief Indicates if EGBLAS has single-precision absarithm.
@@ -212,6 +208,4 @@ inline void abs(size_t n, double alpha, etl::complex<double>* A , size_t lda, do
 #endif
 }
 
-} //end of namespace egblas
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::egblas

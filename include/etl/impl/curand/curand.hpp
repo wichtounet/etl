@@ -14,11 +14,7 @@
 
 #include "curand.h"
 
-namespace etl {
-
-namespace impl {
-
-namespace curand {
+namespace etl::impl::curand {
 
 #define curand_call(call)                                                             \
     {                                                                                 \
@@ -101,8 +97,4 @@ inline void generate_uniform(curandGenerator_t generator, double* gpu_memory, si
     curand_call(curandGenerateUniformDouble(generator, gpu_memory, n));
 }
 
-} //end of namespace curand
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::curand

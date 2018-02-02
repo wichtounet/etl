@@ -12,9 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail{
 
 /*!
  * \brief Helper to build the type for a sub expression
@@ -203,6 +201,4 @@ auto make_stateful_unary_expr(Args&&... args) {
     return unary_expr<value_t<E>, build_type<E>, stateful_op<OP>>(std::forward<Args>(args)...);
 }
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

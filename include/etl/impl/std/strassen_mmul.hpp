@@ -7,11 +7,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace standard {
+namespace etl::impl::standard {
 
 /*!
  * \brief Strassen multiplication step
@@ -242,8 +238,4 @@ void strassen_mm_mul(const A& a, const B& b, C& c) {
     }
 }
 
-} //end of namespace standard
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::standard

@@ -12,11 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace standard {
+namespace etl::impl::standard {
 
 /*!
  * \brief Compute the sum of the input in the given expression
@@ -79,6 +75,4 @@ value_t<E> asum(const E& input) {
     return acc;
 }
 
-} //end of namespace standard
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::standard

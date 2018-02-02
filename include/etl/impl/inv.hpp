@@ -9,9 +9,7 @@
 
 #include "etl/impl/std/inv.hpp"
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 /*!
  * \brief Functor for Inverse
@@ -28,6 +26,4 @@ struct inv_impl {
     }
 };
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

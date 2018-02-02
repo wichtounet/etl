@@ -7,11 +7,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace standard {
+namespace etl::impl::standard {
 
 /*!
  * \brief Functor for the derivative of 2D Max Pooling
@@ -1155,8 +1151,4 @@ struct avg_pool_upsample_3d {
     }
 };
 
-} //end of namespace standard
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::standard

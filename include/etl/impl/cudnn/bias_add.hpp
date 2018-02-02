@@ -21,11 +21,7 @@
 
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace cudnn {
+namespace etl::impl::cudnn {
 
 #ifdef ETL_CUDNN_MODE
 
@@ -174,8 +170,4 @@ void bias_add_2d(I&& x, K&& b, C&& y) {
 
 #endif
 
-} //end of namespace cudnn
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::cudnn

@@ -10,9 +10,7 @@
  * \brief Contains descriptors for 4D convolution operations
  */
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 /*!
  * \brief The functor impl for 4D valid conv
@@ -476,6 +474,4 @@ struct conv4_full_flipped_impl {
     }
 };
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

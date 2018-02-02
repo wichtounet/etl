@@ -18,9 +18,7 @@
 #include "etl/impl/cublas/dot.hpp"
 #include "etl/impl/vec/dot.hpp"
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 /*!
  * \brief Select the dot implementation for an expression of type A and B
@@ -135,6 +133,4 @@ struct dot_impl {
     }
 };
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

@@ -23,11 +23,7 @@
         }                                                                                                 \
     }
 
-namespace etl {
-
-namespace impl {
-
-namespace cudnn {
+namespace etl::impl::cudnn {
 
 /*!
  * \brief RTTI helper to manage CUDNN handle
@@ -503,8 +499,4 @@ inline cudnn_wrapper<cudnnPoolingDescriptor_t> create_pooling_desc_wrapper(cudnn
     return cudnn_wrapper<cudnnPoolingDescriptor_t>{create_pooling_desc(mode, c1, c2, c3, s1, s2, s3, p1, p2, p3)};
 }
 
-} //end of namespace cudnn
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::cudnn

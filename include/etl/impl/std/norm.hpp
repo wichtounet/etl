@@ -12,11 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace standard {
+namespace etl::impl::standard {
 
 /*!
  * \brief Compute the euclidean norm of a
@@ -28,6 +24,4 @@ value_t<A> norm(const A& a) {
     return std::sqrt(sum(scale(a, a)));
 }
 
-} //end of namespace standard
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::standard

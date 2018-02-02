@@ -12,9 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 /*!
  * \brief Select the implementation of the conv of I and K in C
@@ -344,5 +342,4 @@ constexpr etl::conv_impl select_conv_impl() {
 
 #endif
 
-} //end of namespace detail
-} //end of namespace etl
+} //end of namespace etl::detail

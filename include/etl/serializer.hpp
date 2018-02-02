@@ -33,20 +33,14 @@ struct serializer {
      * \param value The value to write to the stream
      * \return the serializer
      */
-    template <typename T, cpp_enable_iff(std::is_arithmetic<T>::value)>
+    template <typename T>
     serializer& operator<<(const T& value) {
-        stream.write(reinterpret_cast<const char_t*>(&value), sizeof(T));
-        return *this;
-    }
+        if constexpr (std::is_arithmetic<T>::value) {
+            stream.write(reinterpret_cast<const char_t*>(&value), sizeof(T));
+        } else {
+            serialize(*this, value);
+        }
 
-    /*!
-     * \brief Outputs the given ETL expression to the stream
-     * \param value The ETL expression to write to the stream
-     * \return the serializer
-     */
-    template <typename T, cpp_disable_iff(std::is_arithmetic<T>::value)>
-    serializer& operator<<(const T& value) {
-        serialize(*this, value);
         return *this;
     }
 };

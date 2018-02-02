@@ -20,11 +20,7 @@
 
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace egblas {
+namespace etl::impl::egblas {
 
 /*!
  * \brief Indicates if EGBLAS has single-precision greater_equal.
@@ -224,6 +220,4 @@ inline void greater_equal(size_t n, const etl::complex<double>* A, size_t lda, c
 #endif
 }
 
-} //end of namespace egblas
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::egblas

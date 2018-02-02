@@ -17,9 +17,7 @@
 #include "etl/impl/std/avg_pooling.hpp"
 #include "etl/impl/cudnn/max_pooling.hpp"
 
-namespace etl {
-
-namespace impl {
+namespace etl::impl {
 
 /*!
  * \brief Select the pool implementation for an expression of type X/Y
@@ -363,6 +361,4 @@ struct avg_pool_3d {
     }
 };
 
-} // end of namespace impl
-
-} // end of namespace etl
+} //end of namespace etl::impl

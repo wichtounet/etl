@@ -20,11 +20,7 @@
 
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace egblas {
+namespace etl::impl::egblas {
 
 /*!
  * \brief Indicates if EGBLAS has shuffle
@@ -150,6 +146,4 @@ inline void par_shuffle_seed(size_t n, void* x, size_t incx, void* y, size_t inc
 #endif
 }
 
-} //end of namespace egblas
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::egblas

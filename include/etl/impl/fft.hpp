@@ -11,9 +11,7 @@
 #include "etl/impl/blas/fft.hpp"
 #include "etl/impl/cufft/fft.hpp"
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 /*!
  * \brief The precision of the operation
@@ -591,6 +589,4 @@ struct ifft2_many_impl {
     }
 };
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

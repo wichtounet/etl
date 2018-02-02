@@ -15,11 +15,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace common {
+namespace etl::impl::common {
 
 /*!
  * \brief Pad the input matrix in the output matrix for convolution as multiplication
@@ -526,6 +522,4 @@ etl::dyn_matrix<value_t<I>, 4> inner_pad(const I& in, size_t s1, size_t s2) {
     return result;
 }
 
-} //end of namespace common
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::common

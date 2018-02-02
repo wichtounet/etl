@@ -19,11 +19,7 @@
 
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace cublas {
+namespace etl::impl::cublas {
 
 #ifdef ETL_CUBLAS_MODE
 
@@ -119,6 +115,4 @@ inline void cublas_axpy(cublasHandle_t handle, size_t n, const etl::complex<doub
 
 #endif
 
-} //end of namespace cublas
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::cublas

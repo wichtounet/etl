@@ -12,11 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace standard {
+namespace etl::impl::standard {
 
 /*!
  * \brief Compute the Categorical Cross Entropy loss of the input in the given expression
@@ -39,6 +35,4 @@ value_t<O> cce_error(const O& output, const L& labels, value_t<O> scale) {
 
 }
 
-} //end of namespace standard
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::standard

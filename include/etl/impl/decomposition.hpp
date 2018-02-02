@@ -15,9 +15,7 @@
 //Include the implementations
 #include "etl/impl/std/decomposition.hpp"
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 /*!
  * \brief Functor for euclidean norm
@@ -52,6 +50,4 @@ struct qr_impl {
     }
 };
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

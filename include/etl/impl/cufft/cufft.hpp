@@ -9,11 +9,7 @@
 
 #include "cufft.h"
 
-namespace etl {
-
-namespace impl {
-
-namespace cufft {
+namespace etl::impl::cufft {
 
 /*!
  * \brief RAII wrapper for CUFFT context
@@ -94,8 +90,4 @@ inline cufftDoubleComplex* complex_cast(std::complex<double>* ptr) {
     return reinterpret_cast<cufftDoubleComplex*>(ptr);
 }
 
-} //end of namespace cufft
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::cufft

@@ -14,11 +14,7 @@
 
 #include "etl/temporary.hpp"
 
-namespace etl {
-
-namespace impl {
-
-namespace standard {
+namespace etl::impl::standard {
 
 /*!
  * \brief Inplace transposition of the square matrix c
@@ -169,6 +165,4 @@ void transpose(A&& a, C&& c) {
     }
 }
 
-} //end of namespace standard
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::standard

@@ -28,9 +28,7 @@
 #include "etl/impl/blas/sum.hpp"
 #include "etl/impl/cublas/sum.hpp"
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 /*!
  * \brief Select the sum implementation for an expression of type E
@@ -166,6 +164,4 @@ struct asum_impl {
     }
 };
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

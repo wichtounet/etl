@@ -12,11 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace standard {
+namespace etl::impl::standard {
 
 /*!
  * \brief Performs the PA=LU decomposition of the matrix A
@@ -172,6 +168,4 @@ void qr(AT& A, QT& Q, RT& R) {
     householder(A, Q, R);
 }
 
-} //end of namespace standard
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::standard

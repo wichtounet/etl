@@ -7,11 +7,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace standard {
+namespace etl::impl::standard {
 
 /*!
  * \brief Direct evaluation of conmtx2
@@ -56,8 +52,4 @@ struct convmtx2_direct {
     }
 };
 
-} //end of namespace standard
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::standard

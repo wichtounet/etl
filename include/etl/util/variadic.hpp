@@ -16,9 +16,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace util {
+namespace etl::util {
 
 /*!
  * \brief Returns the size of a matrix given its dimensions
@@ -43,6 +41,4 @@ inline size_t size(const std::index_sequence<I...>& /*i*/, const T&... args) {
     return size((cpp::nth_value<I>(args...))...);
 }
 
-} //end of namespace util
-
-} //end of namespace etl
+} //end of namespace etl::util

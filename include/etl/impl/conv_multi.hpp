@@ -12,9 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 /*!
  * \brief The functor impl for 2D valid conv, with multiple kernels
@@ -268,6 +266,4 @@ struct dyn_conv2_valid_multi_multi_flipped_impl {
     }
 };
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

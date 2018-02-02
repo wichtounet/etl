@@ -13,9 +13,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 // Utilities
 
@@ -215,6 +213,4 @@ constexpr bool direct_compound_div_no_gpu = !vectorized_compound_div_no_gpu<E, R
 template <typename E, typename R>
 constexpr bool standard_compound_div_no_gpu = !vectorized_compound_div_no_gpu<E, R> && !direct_compound_div_no_gpu<E, R>;
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

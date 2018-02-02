@@ -15,9 +15,7 @@
 //Include the implementations
 #include "etl/impl/std/norm.hpp"
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 /*!
  * \brief Functor for euclidean norm
@@ -34,6 +32,4 @@ struct norm_impl {
     }
 };
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

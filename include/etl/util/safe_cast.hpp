@@ -16,9 +16,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
+namespace etl::impl {
 
 /*!
  * \brief Cast any complex pointer to etl::complex pointer
@@ -128,6 +126,4 @@ inline const std::complex<double>* safe_cast(const etl::complex<double>* in){
     return reinterpret_cast<const std::complex<double>*>(in);
 }
 
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl

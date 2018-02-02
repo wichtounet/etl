@@ -12,11 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace standard {
+namespace etl::impl::standard {
 
 /*!
  * \brief Compute the dot product of a and b
@@ -29,6 +25,4 @@ value_t<A> dot(const A& a, const B& b) {
     return sum(scale(a, b));
 }
 
-} //end of namespace standard
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::standard

@@ -17,9 +17,7 @@
 
 #include "etl/impl/cce.hpp"
 
-namespace etl {
-
-namespace ml {
+namespace etl::ml {
 
 // Convolution wrappers
 
@@ -550,5 +548,4 @@ value_t<O> cce_error(O&& output, L&& labels, value_t<O> scale) {
     return detail::cce_error_impl::apply(output, labels, scale);
 }
 
-} //end of namespace ml
-} //end of namespace etl
+} //end of namespace etl::ml

@@ -14,11 +14,7 @@
 
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace cublas {
+namespace etl::impl::cublas {
 
 #ifdef ETL_CUBLAS_MODE
 
@@ -281,8 +277,4 @@ void transpose(A&& a, C&& c) {
 
 #endif
 
-} //end of namespace cublas
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::cublas

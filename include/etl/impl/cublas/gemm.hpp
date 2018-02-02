@@ -15,11 +15,7 @@
 
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace cublas {
+namespace etl::impl::cublas {
 
 #ifdef ETL_CUBLAS_MODE
 
@@ -1019,8 +1015,4 @@ void gevm_t(A&& a, B&& b, C&& c) {
 
 #endif
 
-} //end of namespace cublas
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::cublas

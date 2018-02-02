@@ -20,11 +20,7 @@
 
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace egblas {
+namespace etl::impl::egblas {
 
 #ifdef EGBLAS_HAS_SAXMY
 static constexpr bool has_saxmy = true;
@@ -201,6 +197,4 @@ inline void axmy(size_t n, etl::complex<double> alpha, etl::complex<double>* A ,
 #endif
 }
 
-} //end of namespace egblas
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::egblas

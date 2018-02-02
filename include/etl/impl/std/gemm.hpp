@@ -7,11 +7,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace standard {
+namespace etl::impl::standard {
 
 /*!
  * \brief Standard implementation of a matrix-matrix multiplication
@@ -154,8 +150,4 @@ static void mv_mul(A&& a, B&& b, C&& c) {
     }
 }
 
-} //end of namespace standard
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::standard

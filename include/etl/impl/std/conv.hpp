@@ -7,11 +7,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace standard {
+namespace etl::impl::standard {
 
 /*!
  * \brief Standard implementation of a 1D 'full' convolution C = I * K
@@ -800,6 +796,4 @@ void conv2_same_multi_flipped(const I& input, const K_T& kernels, C&& conv) {
     engine_dispatch_1d(fun_k, 0, K, 2UL);
 }
 
-} //end of namespace standard
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::standard

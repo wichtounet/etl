@@ -21,9 +21,7 @@
 #define SLOW_MKL
 #endif
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 //TODO We should take into account parallel blas when selecting MKL transpose
 
@@ -287,6 +285,4 @@ struct transpose {
     }
 };
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

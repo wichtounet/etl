@@ -9,9 +9,7 @@
 
 #include <cmath>
 
-namespace etl {
-
-namespace math {
+namespace etl::math {
 
 /*!
  * \brief Return the logistic sigmoid of x
@@ -68,6 +66,4 @@ constexpr bool is_power_of_two(int64_t n) {
     return (n & (n - 1)) == 0;
 }
 
-} //end of namespace math
-
-} //end of namespace etl
+} //end of namespace etl::math

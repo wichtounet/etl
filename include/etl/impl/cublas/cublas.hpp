@@ -14,11 +14,7 @@
 
 #include "cublas_v2.h"
 
-namespace etl {
-
-namespace impl {
-
-namespace cublas {
+namespace etl::impl::cublas {
 
 /*!
  * \brief Returns the string representation of the given
@@ -122,8 +118,4 @@ inline cublas_handle start_cublas() {
 
 #endif
 
-} //end of namespace cublas
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::cublas

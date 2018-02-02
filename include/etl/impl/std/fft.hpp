@@ -7,11 +7,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace standard {
+namespace etl::impl::standard {
 
 namespace detail {
 
@@ -1415,8 +1411,4 @@ void conv4_full_fft_flipped(II&& input, KK&& kernel, CC&& conv) {
     }
 }
 
-} //end of namespace standard
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::standard

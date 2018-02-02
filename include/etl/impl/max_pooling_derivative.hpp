@@ -7,9 +7,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
+namespace etl::impl {
 
 // TODO Optimize max pool derivative like max pooling upsampling was optimized
 
@@ -317,6 +315,4 @@ struct max_pool_derivative_3d {
     }
 };
 
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl

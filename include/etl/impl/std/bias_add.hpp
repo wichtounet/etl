@@ -12,11 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace impl {
-
-namespace standard {
+namespace etl::impl::standard {
 
 /*!
  * \brief Compute the bias addition of a and b and store the result in c
@@ -52,6 +48,4 @@ void bias_add_2d(const A& lhs, const B& rhs, C&& c) {
     }
 }
 
-} //end of namespace standard
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::standard

@@ -21,11 +21,7 @@
 
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace egblas {
+namespace etl::impl::egblas {
 
 /*!
  * \brief Indicates if EGBLAS has single-precision absarithm.
@@ -183,6 +179,4 @@ inline void bias_add_4d(size_t m, size_t n, size_t o, size_t p, const double* x,
 #endif
 }
 
-} //end of namespace egblas
-} //end of namespace impl
-} //end of namespace etl
+} //end of namespace etl::impl::egblas

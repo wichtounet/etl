@@ -12,9 +12,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 /*!
  * \brief Select the implementation of the 4D conv of I and K in C
@@ -467,5 +465,4 @@ constexpr etl::conv4_impl select_conv4_full_impl(size_t k1, size_t k2) {
 
 #endif
 
-} //end of namespace detail
-} //end of namespace etl
+} //end of namespace etl::detail

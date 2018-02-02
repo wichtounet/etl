@@ -13,9 +13,7 @@
 
 #pragma once
 
-namespace etl {
-
-namespace detail {
+namespace etl::detail {
 
 /*!
  * \brief Common base for vectorized functors
@@ -271,6 +269,4 @@ struct VectorizedAssignDiv : vectorized_base<V> {
     }
 };
 
-} //end of namespace detail
-
-} //end of namespace etl
+} //end of namespace etl::detail

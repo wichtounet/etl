@@ -14,11 +14,7 @@
 
 #endif
 
-namespace etl {
-
-namespace impl {
-
-namespace cudnn {
+namespace etl::impl::cudnn {
 
 #ifdef ETL_CUDNN_MODE
 
@@ -344,8 +340,4 @@ struct avg_pool_upsample_3d {
 
 #endif
 
-} //end of namespace cudnn
-
-} //end of namespace impl
-
-} //end of namespace etl
+} //end of namespace etl::impl::cudnn
