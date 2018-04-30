@@ -81,6 +81,14 @@ constexpr bool cblas_enabled = ETL_BLAS_MODE_BOOL;
 constexpr bool is_blas_parallel = ETL_BLAS_THREADS_BOOL;
 
 /*!
+ * \brief Indicates if the BLAS library is parallel and we are able to disable
+ * the parallel.
+ *
+ * Currently, this only works for MKL
+ */
+constexpr bool is_blas_parallel_config = is_blas_parallel && mkl_enabled;
+
+/*!
  * \brief Indicates if CUDA is available.
  */
 constexpr bool cuda_enabled = ETL_CUDA_BOOL;
