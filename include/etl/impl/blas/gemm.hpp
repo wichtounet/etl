@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "blas.hpp"
+
 #ifdef ETL_BLAS_MODE
 
 #include "etl/impl/common/conv.hpp"
@@ -948,14 +950,12 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
     };
 
     if constexpr (is_parallel) {
-        if constexpr (is_blas_parallel) {
-            auto mkl_threads = mkl_get_max_threads();
-
-            mkl_set_num_threads(1);
+        if constexpr (is_blas_parallel_config) {
+            disable_blas_threads();
 
             engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
 
-            mkl_set_num_threads(mkl_threads);
+            restore_blas_threads();
         } else {
             engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
         }
@@ -1246,14 +1246,12 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
     };
 
     if constexpr (is_parallel) {
-        if constexpr (is_blas_parallel) {
-            auto mkl_threads = mkl_get_max_threads();
-
-            mkl_set_num_threads(1);
+        if constexpr (is_blas_parallel_config) {
+            disable_blas_threads();
 
             engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
 
-            mkl_set_num_threads(mkl_threads);
+            restore_blas_threads();
         } else {
             engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
         }

@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "blas.hpp"
+
 #ifdef ETL_MKL_MODE
 #include "mkl_dfti.h"
 #include "etl/util/safe_cast.hpp"
@@ -1219,13 +1221,12 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
             };
 
             if constexpr (is_parallel) {
-                if constexpr (is_blas_parallel) {
-                    auto mkl_threads = mkl_get_max_threads();
-                    mkl_set_num_threads(1);
+                if constexpr (is_blas_parallel_config) {
+                    disable_blas_threads();
 
                     engine_dispatch_1d_serial_cpu(batch_fun_k, 0, KK, 2UL);
 
-                    mkl_set_num_threads(mkl_threads);
+                    restore_blas_threads();
                 } else {
                     engine_dispatch_1d_serial_cpu(batch_fun_k, 0, KK, 2UL);
                 }
@@ -1365,15 +1366,14 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
                 }
             };
 
-            if constexpr (etl::is_parallel) {
-                if constexpr (is_blas_parallel) {
-                    auto mkl_threads = mkl_get_max_threads();
-                    mkl_set_num_threads(1);
+            if constexpr (is_parallel) {
+                if constexpr (is_blas_parallel_config) {
+                    disable_blas_threads();
 
                     engine_dispatch_1d_serial(batch_fun_kc, 0, K * C, 2UL);
                     engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
 
-                    mkl_set_num_threads(mkl_threads);
+                    restore_blas_threads();
                 } else {
                     engine_dispatch_1d_serial(batch_fun_kc, 0, K * C, 2UL);
                     engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
@@ -1526,15 +1526,14 @@ void conv4_full_flipped(II&& input, KK&& kernel, CC&& conv) {
                 }
             };
 
-            if constexpr (etl::is_parallel) {
-                if constexpr (is_blas_parallel) {
-                    auto mkl_threads = mkl_get_max_threads();
-                    mkl_set_num_threads(1);
+            if constexpr (is_parallel) {
+                if constexpr (is_blas_parallel_config) {
+                    disable_blas_threads();
 
                     engine_dispatch_1d_serial(batch_fun_kc, 0, K * C, 2UL);
                     engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
 
-                    mkl_set_num_threads(mkl_threads);
+                    restore_blas_threads();
                 } else {
                     engine_dispatch_1d_serial(batch_fun_kc, 0, K * C, 2UL);
                     engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
