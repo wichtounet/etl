@@ -57,7 +57,7 @@ constexpr bool blas_conv2_possible = cblas_enabled&& all_homogeneous<I, K, C>&& 
  * \param C The C matrix
  * \param ldc The leading dimension of C
  */
-inline void cblas_gemm(CBLAS_LAYOUT Layout,
+inline void cblas_gemm(CBLAS_ORDER Layout,
                        CBLAS_TRANSPOSE TransA,
                        CBLAS_TRANSPOSE TransB,
                        size_t M,
@@ -77,7 +77,7 @@ inline void cblas_gemm(CBLAS_LAYOUT Layout,
 /*!
  * \copydoc cblas_gemm
  */
-inline void cblas_gemm(CBLAS_LAYOUT Layout,
+inline void cblas_gemm(CBLAS_ORDER Layout,
                        CBLAS_TRANSPOSE TransA,
                        CBLAS_TRANSPOSE TransB,
                        size_t M,
@@ -97,7 +97,7 @@ inline void cblas_gemm(CBLAS_LAYOUT Layout,
 /*!
  * \copydoc cblas_gemm
  */
-inline void cblas_gemm(CBLAS_LAYOUT Layout,
+inline void cblas_gemm(CBLAS_ORDER Layout,
                        CBLAS_TRANSPOSE TransA,
                        CBLAS_TRANSPOSE TransB,
                        size_t M,
@@ -117,7 +117,7 @@ inline void cblas_gemm(CBLAS_LAYOUT Layout,
 /*!
  * \copydoc cblas_gemm
  */
-inline void cblas_gemm(CBLAS_LAYOUT Layout,
+inline void cblas_gemm(CBLAS_ORDER Layout,
                        CBLAS_TRANSPOSE TransA,
                        CBLAS_TRANSPOSE TransB,
                        size_t M,
@@ -137,7 +137,7 @@ inline void cblas_gemm(CBLAS_LAYOUT Layout,
 /*!
  * \copydoc cblas_gemm
  */
-inline void cblas_gemm(CBLAS_LAYOUT Layout,
+inline void cblas_gemm(CBLAS_ORDER Layout,
                        CBLAS_TRANSPOSE TransA,
                        CBLAS_TRANSPOSE TransB,
                        size_t M,
@@ -157,7 +157,7 @@ inline void cblas_gemm(CBLAS_LAYOUT Layout,
 /*!
  * \copydoc cblas_gemm
  */
-inline void cblas_gemm(CBLAS_LAYOUT Layout,
+inline void cblas_gemm(CBLAS_ORDER Layout,
                        CBLAS_TRANSPOSE TransA,
                        CBLAS_TRANSPOSE TransB,
                        size_t M,
@@ -191,7 +191,7 @@ inline void cblas_gemm(CBLAS_LAYOUT Layout,
  * \param Y The Y vector
  * \param incY The stride of Y
  */
-inline void cblas_gemv(const CBLAS_LAYOUT Layout,
+inline void cblas_gemv(const CBLAS_ORDER Layout,
                        const CBLAS_TRANSPOSE TransA,
                        size_t M,
                        size_t N,
@@ -209,7 +209,7 @@ inline void cblas_gemv(const CBLAS_LAYOUT Layout,
 /*!
  * \copydoc cblas_gemv
  */
-inline void cblas_gemv(const CBLAS_LAYOUT Layout,
+inline void cblas_gemv(const CBLAS_ORDER Layout,
                        const CBLAS_TRANSPOSE TransA,
                        size_t M,
                        size_t N,
@@ -227,7 +227,7 @@ inline void cblas_gemv(const CBLAS_LAYOUT Layout,
 /*!
  * \copydoc cblas_gemv
  */
-inline void cblas_gemv(const CBLAS_LAYOUT Layout,
+inline void cblas_gemv(const CBLAS_ORDER Layout,
                        const CBLAS_TRANSPOSE TransA,
                        size_t M,
                        size_t N,
@@ -245,7 +245,7 @@ inline void cblas_gemv(const CBLAS_LAYOUT Layout,
 /*!
  * \copydoc cblas_gemv
  */
-inline void cblas_gemv(const CBLAS_LAYOUT Layout,
+inline void cblas_gemv(const CBLAS_ORDER Layout,
                        const CBLAS_TRANSPOSE TransA,
                        size_t M,
                        size_t N,
@@ -263,7 +263,7 @@ inline void cblas_gemv(const CBLAS_LAYOUT Layout,
 /*!
  * \copydoc cblas_gemv
  */
-inline void cblas_gemv(const CBLAS_LAYOUT Layout,
+inline void cblas_gemv(const CBLAS_ORDER Layout,
                        const CBLAS_TRANSPOSE TransA,
                        size_t M,
                        size_t N,
@@ -281,7 +281,7 @@ inline void cblas_gemv(const CBLAS_LAYOUT Layout,
 /*!
  * \copydoc cblas_gemv
  */
-inline void cblas_gemv(const CBLAS_LAYOUT Layout,
+inline void cblas_gemv(const CBLAS_ORDER Layout,
                        const CBLAS_TRANSPOSE TransA,
                        size_t M,
                        size_t N,
