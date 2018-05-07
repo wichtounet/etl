@@ -180,7 +180,7 @@ please open an issue on Github and I'll do my best to fix the issue.
 
 The library has never been tested on Windows.
 
-The folder **include** must be included with the **-I** option.
+The folders **include** and **lib/include** must be included with the **-I** option.
 
 There are no link-time dependencies.
 
