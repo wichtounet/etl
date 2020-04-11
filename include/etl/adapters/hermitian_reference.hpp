@@ -127,7 +127,7 @@ struct hermitian_reference {
      * \param rhs The right hand side of the comparison
      * \return true if the two values are equals, false otherwise
      */
-    bool operator==(const hermitian_reference& rhs) {
+    bool operator==(const hermitian_reference& rhs) const {
         return value == rhs.value;
     }
 
@@ -136,7 +136,7 @@ struct hermitian_reference {
      * \param rhs The right hand side of the comparison
      * \return true if the two values are not equals, false otherwise
      */
-    bool operator!=(const hermitian_reference& rhs) {
+    bool operator!=(const hermitian_reference& rhs) const {
         return value != rhs.value;
     }
 
@@ -145,7 +145,7 @@ struct hermitian_reference {
      * \param rhs The right hand side of the comparison
      * \return true if the two values are equals, false otherwise
      */
-    bool operator==(const value_type& rhs) {
+    bool operator==(const value_type& rhs) const {
         return value == rhs;
     }
 
@@ -154,7 +154,7 @@ struct hermitian_reference {
      * \param rhs The right hand side of the comparison
      * \return true if the two values are not equals, false otherwise
      */
-    bool operator!=(const value_type& rhs) {
+    bool operator!=(const value_type& rhs) const {
         return value != rhs;
     }
 
