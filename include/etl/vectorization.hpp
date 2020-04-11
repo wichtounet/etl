@@ -55,11 +55,19 @@ struct simd_pack {
 
 } // end of namespace etl
 
+#if defined __GNUC__ && __GNUC__>=6
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+#endif
+
 //Include al the vector implementation
 #include "etl/avx512_vectorization.hpp"
 #include "etl/avx_vectorization.hpp"
 #include "etl/sse_vectorization.hpp"
 #include "etl/no_vectorization.hpp"
+
+#if defined __GNUC__ && __GNUC__>=6
+#pragma GCC diagnostic pop
+#endif
 
 namespace etl {
 
