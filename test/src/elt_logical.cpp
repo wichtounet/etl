@@ -9,7 +9,7 @@
 
 #include <cmath>
 
-TEST_CASE("elt_logical/and/1", "[compare]") {
+ETL_TEST_CASE("elt_logical/and/1", "[compare]") {
     etl::fast_matrix<bool, 2, 2> a{false, false, true, true};
     etl::fast_matrix<bool, 2, 2> b{false, true, true, false};
     etl::fast_matrix<bool, 2, 2> c;
@@ -22,7 +22,7 @@ TEST_CASE("elt_logical/and/1", "[compare]") {
     REQUIRE_EQUALS(c(1, 1), false);
 }
 
-TEST_CASE("elt_logical/or/1", "[compare]") {
+ETL_TEST_CASE("elt_logical/or/1", "[compare]") {
     etl::fast_matrix<bool, 2, 2> a{false, false, true, true};
     etl::fast_matrix<bool, 2, 2> b{false, true, true, false};
     etl::fast_matrix<bool, 2, 2> c;
@@ -35,7 +35,7 @@ TEST_CASE("elt_logical/or/1", "[compare]") {
     REQUIRE_EQUALS(c(1, 1), true);
 }
 
-TEST_CASE("elt_logical/xor/1", "[compare]") {
+ETL_TEST_CASE("elt_logical/xor/1", "[compare]") {
     etl::fast_dyn_matrix<bool, 2, 2> a{false, false, true, true};
     etl::fast_dyn_matrix<bool, 2, 2> b{false, true, true, false};
     etl::fast_dyn_matrix<bool, 2, 2> c;

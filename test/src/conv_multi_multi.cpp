@@ -160,7 +160,7 @@ CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE("conv_2d/valid/multi_multi_flipped/3",
 
 /* Mixed tests */
 
-TEST_CASE("conv2/valid/multi_multi/mixed/0", "[conv][conv2][conv_multi_multi]") {
+ETL_TEST_CASE("conv2/valid/multi_multi/mixed/0", "[conv][conv2][conv_multi_multi]") {
     etl::fast_matrix<float, 5, 7, 7> I;
     etl::fast_matrix<double, 3, 5, 3> K;
 
@@ -185,7 +185,7 @@ TEST_CASE("conv2/valid/multi_multi/mixed/0", "[conv][conv2][conv_multi_multi]") 
     }
 }
 
-TEST_CASE("conv2/valid/multi_multi/mixed/1", "[conv][conv2][conv_multi_multi]") {
+ETL_TEST_CASE("conv2/valid/multi_multi/mixed/1", "[conv][conv2][conv_multi_multi]") {
     etl::fast_matrix<float, 5, 7, 7> I;
     etl::fast_matrix_cm<float, 3, 5, 3> K;
 

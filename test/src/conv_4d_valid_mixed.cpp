@@ -8,7 +8,7 @@
 #include "test.hpp"
 #include "conv_test.hpp"
 
-TEST_CASE("conv4/valid/mixed/0", "[conv][conv4][valid]") {
+ETL_TEST_CASE("conv4/valid/mixed/0", "[conv][conv4][valid]") {
     etl::fast_matrix<float, 6, 2, 17, 17> I;
     etl::fast_matrix<double, 7, 2, 3, 3> K;
 
@@ -36,7 +36,7 @@ TEST_CASE("conv4/valid/mixed/0", "[conv][conv4][valid]") {
     }
 }
 
-TEST_CASE("conv4/valid/mixed/1", "[conv][conv4][valid]") {
+ETL_TEST_CASE("conv4/valid/mixed/1", "[conv][conv4][valid]") {
     etl::fast_matrix<float, 6, 2, 17, 17> I;
     etl::fast_matrix_cm<float, 7, 2, 3, 3> K;
 

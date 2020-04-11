@@ -280,7 +280,7 @@ CONV2_SAME_TEST_CASE("convolution_2d/sub_2", "convolution_2d_same") {
 
 // Mixed tests
 
-TEST_CASE("conv2/same/mixed/0", "convolution_2d_same") {
+ETL_TEST_CASE("conv2/same/mixed/0", "convolution_2d_same") {
     etl::fast_matrix<float, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
     etl::fast_matrix<double, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<float, 3, 3> c;
@@ -300,7 +300,7 @@ TEST_CASE("conv2/same/mixed/0", "convolution_2d_same") {
     REQUIRE_EQUALS(c(2, 2), 0.5);
 }
 
-TEST_CASE("conv2/same/mixed/1", "convolution_2d_same") {
+ETL_TEST_CASE("conv2/same/mixed/1", "convolution_2d_same") {
     etl::fast_matrix<float, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
     etl::fast_matrix_cm<float, 2, 2> b = {2.0, 0.5, 0.0, 0.5};
     etl::fast_matrix<float, 3, 3> c;

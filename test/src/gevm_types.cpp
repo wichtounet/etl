@@ -14,7 +14,7 @@
 
 // GEVM
 
-TEST_CASE("gevm/types/0", "[gevm]") {
+ETL_TEST_CASE("gevm/types/0", "[gevm]") {
     etl::fast_matrix<float, 3, 2> a = {1, 2, 3, 4, 5, 6};
     etl::fast_vector<double, 3> b    = {7, 8, 9};
     etl::fast_matrix<float, 2> c;
@@ -25,7 +25,7 @@ TEST_CASE("gevm/types/0", "[gevm]") {
     REQUIRE_EQUALS(c(1), float(100));
 }
 
-TEST_CASE("gevm/types/1", "[gevm]") {
+ETL_TEST_CASE("gevm/types/1", "[gevm]") {
     etl::fast_matrix<double, 3, 2> a = {1, 2, 3, 4, 5, 6};
     etl::fast_vector<double, 3> b    = {7, 8, 9};
     etl::fast_matrix<float, 2> c;
@@ -36,7 +36,7 @@ TEST_CASE("gevm/types/1", "[gevm]") {
     REQUIRE_EQUALS(c(1), float(100));
 }
 
-TEST_CASE("gevm/types/2", "[gevm]") {
+ETL_TEST_CASE("gevm/types/2", "[gevm]") {
     etl::fast_matrix<float, 3, 2> a = {1, 2, 3, 4, 5, 6};
     etl::fast_vector<float, 3> b    = {7, 8, 9};
     etl::fast_matrix<double, 2> c;
@@ -49,7 +49,7 @@ TEST_CASE("gevm/types/2", "[gevm]") {
 
 // GEVM_T
 
-TEST_CASE("gevm_t/types/0", "[gevm]") {
+ETL_TEST_CASE("gevm_t/types/0", "[gevm]") {
     etl::fast_matrix<float, 2, 3> a = {1, 3, 5, 2, 4, 6};
     etl::fast_vector<double, 3> b    = {7, 8, 9};
     etl::fast_matrix<float, 2> c;
@@ -60,7 +60,7 @@ TEST_CASE("gevm_t/types/0", "[gevm]") {
     REQUIRE_EQUALS(c(1), float(100));
 }
 
-TEST_CASE("gevm_t/types/1", "[gevm]") {
+ETL_TEST_CASE("gevm_t/types/1", "[gevm]") {
     etl::fast_matrix<double, 2, 3> a = {1, 3, 5, 2, 4, 6};
     etl::fast_vector<double, 3> b    = {7, 8, 9};
     etl::fast_matrix<float, 2> c;
@@ -71,7 +71,7 @@ TEST_CASE("gevm_t/types/1", "[gevm]") {
     REQUIRE_EQUALS(c(1), float(100));
 }
 
-TEST_CASE("gevm_t/types/2", "[gevm]") {
+ETL_TEST_CASE("gevm_t/types/2", "[gevm]") {
     etl::fast_matrix<float, 2, 3> a = {1, 3, 5, 2, 4, 6};
     etl::fast_vector<float, 3> b    = {7, 8, 9};
     etl::fast_matrix<double, 2> c;

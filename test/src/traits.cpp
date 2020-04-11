@@ -550,7 +550,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/selected_expr", "[traits]", Z, float, double) {
     REQUIRE_DIRECT(etl::is_wrapper_expr<const selected_type_2&>);
 }
 
-TEST_CASE("etl_traits/vectorizable_bool", "[traits]") {
+ETL_TEST_CASE("etl_traits/vectorizable_bool", "[traits]") {
     using mat_type_1 = etl::fast_matrix<bool, 3, 3>;
     mat_type_1 a;
 
@@ -572,7 +572,7 @@ TEST_CASE("etl_traits/vectorizable_bool", "[traits]") {
     }
 }
 
-TEST_CASE("etl_traits/vectorizable_short", "[traits]") {
+ETL_TEST_CASE("etl_traits/vectorizable_short", "[traits]") {
     using mat_type_1 = etl::fast_matrix<int16_t, 3, 3>;
     mat_type_1 a;
 
@@ -598,7 +598,7 @@ TEST_CASE("etl_traits/vectorizable_short", "[traits]") {
     }
 }
 
-TEST_CASE("etl_traits/vectorizable_integer", "[traits]") {
+ETL_TEST_CASE("etl_traits/vectorizable_integer", "[traits]") {
     using mat_type_1 = etl::fast_matrix<int, 3, 3>;
     mat_type_1 a;
 
@@ -624,7 +624,7 @@ TEST_CASE("etl_traits/vectorizable_integer", "[traits]") {
     }
 }
 
-TEST_CASE("etl_traits/vectorizable_long", "[traits]") {
+ETL_TEST_CASE("etl_traits/vectorizable_long", "[traits]") {
     using mat_type_1 = etl::fast_matrix<long, 3, 3>;
     mat_type_1 a;
 
@@ -650,7 +650,7 @@ TEST_CASE("etl_traits/vectorizable_long", "[traits]") {
     }
 }
 
-TEST_CASE("etl_traits/vectorize/expr/1", "[traits]") {
+ETL_TEST_CASE("etl_traits/vectorize/expr/1", "[traits]") {
     etl::fast_matrix<float, 3, 3> A;
     etl::fast_matrix<float, 3, 3> B;
     etl::fast_matrix<float, 3, 3> C;
@@ -676,7 +676,7 @@ TEST_CASE("etl_traits/vectorize/expr/1", "[traits]") {
     }
 }
 
-TEST_CASE("etl_traits/vectorize/expr/2", "[traits]") {
+ETL_TEST_CASE("etl_traits/vectorize/expr/2", "[traits]") {
     etl::dyn_matrix<float, 2> A(3, 3);
     etl::dyn_matrix<float, 2> B(3, 3);
     etl::dyn_matrix<float, 2> C(3, 3);
@@ -702,7 +702,7 @@ TEST_CASE("etl_traits/vectorize/expr/2", "[traits]") {
     }
 }
 
-TEST_CASE("etl_traits/is_temporary_expr", "[traits]") {
+ETL_TEST_CASE("etl_traits/is_temporary_expr", "[traits]") {
     etl::dyn_matrix<float, 2> A(3, 3);
 
     REQUIRE_DIRECT(!etl::is_temporary_expr<decltype(A)>);

@@ -606,7 +606,7 @@ CONV2_SAME_MULTI_FLIPPED_TEST_CASE("conv_2d/same/multi_flipped/2", "[conv][conv2
 
 /*  Mixed Tests */
 
-TEST_CASE("conv2/valid/multi/mixed/0", "[conv][conv2][conv_multi]") {
+ETL_TEST_CASE("conv2/valid/multi/mixed/0", "[conv][conv2][conv_multi]") {
     etl::fast_matrix<float, 3, 3> I = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
     etl::fast_matrix<double, 2, 2, 2> K = {2.0, 0.0, 0.5, 0.5, 2.0, 0.0, 0.5, 0.5};
 
@@ -625,7 +625,7 @@ TEST_CASE("conv2/valid/multi/mixed/0", "[conv][conv2][conv_multi]") {
     }
 }
 
-TEST_CASE("conv2/valid/multi/mixed/1", "[conv][conv2][conv_multi]") {
+ETL_TEST_CASE("conv2/valid/multi/mixed/1", "[conv][conv2][conv_multi]") {
     etl::fast_matrix<float, 3, 3> I = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
     etl::fast_matrix_cm<float, 2, 2, 2> K = {2.0, 0.5, 0.0, 0.5, 2.0, 0.5, 0.0, 0.5};
 
@@ -644,7 +644,7 @@ TEST_CASE("conv2/valid/multi/mixed/1", "[conv][conv2][conv_multi]") {
     }
 }
 
-TEST_CASE("conv2/same/multi/mixed/0", "[conv][conv2][conv_multi]") {
+ETL_TEST_CASE("conv2/same/multi/mixed/0", "[conv][conv2][conv_multi]") {
     etl::fast_matrix<float, 2, 2> I = {1.0, 2.0, 3.0, 4.0};
     etl::fast_matrix<double, 2, 2, 2> K = {2.0, 0.0, 0.5, 0.5, 1.0, 0.5, 0.7, 0.1};
 
@@ -663,7 +663,7 @@ TEST_CASE("conv2/same/multi/mixed/0", "[conv][conv2][conv_multi]") {
     }
 }
 
-TEST_CASE("conv2/same/multi/mixed/1", "[conv][conv2][conv_multi]") {
+ETL_TEST_CASE("conv2/same/multi/mixed/1", "[conv][conv2][conv_multi]") {
     etl::fast_matrix<float, 2, 2> I = {1.0, 2.0, 3.0, 4.0};
     etl::fast_matrix_cm<float, 2, 2, 2> K = {2.0, 0.5, 0.0, 0.5, 1.0, 0.7, 0.5, 0.1};
 
@@ -682,7 +682,7 @@ TEST_CASE("conv2/same/multi/mixed/1", "[conv][conv2][conv_multi]") {
     }
 }
 
-TEST_CASE("conv2/full/multi/mixed/0", "[conv][conv2][conv_multi]") {
+ETL_TEST_CASE("conv2/full/multi/mixed/0", "[conv][conv2][conv_multi]") {
     etl::fast_matrix<float, 9, 7> I;
     etl::fast_matrix<double, 3, 5, 5> K;
 
@@ -708,7 +708,7 @@ TEST_CASE("conv2/full/multi/mixed/0", "[conv][conv2][conv_multi]") {
     }
 }
 
-TEST_CASE("conv2/full/multi/mixed/1", "[conv][conv2][conv_multi]") {
+ETL_TEST_CASE("conv2/full/multi/mixed/1", "[conv][conv2][conv_multi]") {
     etl::fast_matrix<float, 9, 7> I;
     etl::fast_matrix_cm<float, 3, 5, 5> K;
 
