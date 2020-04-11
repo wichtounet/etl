@@ -31,7 +31,7 @@ endif
 CXX_FLAGS += -pedantic -Werror -Winvalid-pch -Wno-uninitialized
 
 # Add includes
-CXX_FLAGS += -Ilib/include -Idoctest -ICatch/include -Itest/include
+CXX_FLAGS += -Ilib/include -Idoctest -Itest/include
 
 # Support for extra flags
 CXX_FLAGS += $(EXTRA_CXX_FLAGS)
@@ -148,11 +148,6 @@ LD_FLAGS += $(shell pkg-config --libs egblas)
 endif
 
 LD_FLAGS += -pthread
-
-# Enable very fast test if asked
-ifneq (,$(ETL_FAST_TEST))
-CXX_FLAGS += -DETL_VERY_FAST_CATCH
-endif
 
 # Enable coverage if not disabled by the user
 ifneq (,$(ETL_COVERAGE))

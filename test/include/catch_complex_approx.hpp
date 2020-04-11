@@ -94,27 +94,3 @@ private:
     double eps;            ///< The epsilon for comparison
     std::complex<T> value; ///< The expected value
 };
-
-#ifndef ETL_DOCTEST
-
-namespace Catch {
-
-/*!
- * \brief Overload of Catch::toString for ComplexApprox<float>
- */
-template <>
-inline std::string toString<ComplexApprox<float>>(const ComplexApprox<float>& value) {
-    return value.toString();
-}
-
-/*!
- * \brief Overload of Catch::toString for ComplexApprox<float>
- */
-template <>
-inline std::string toString<ComplexApprox<double>>(const ComplexApprox<double>& value) {
-    return value.toString();
-}
-
-} // end of namespace Catch
-
-#endif
