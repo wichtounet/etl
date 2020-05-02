@@ -61,6 +61,8 @@ void conv2_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
     type alpha[] = {1.0f};
     type beta[]  = {0.0f};
 
+    auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
@@ -71,7 +73,7 @@ void conv2_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, mode));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, mode, data_type));
 
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
@@ -170,6 +172,8 @@ void conv4_forward_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
     type alpha[] = {1.0f};
     type beta[]  = {0.0f};
 
+    auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
@@ -180,7 +184,7 @@ void conv4_forward_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, mode));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, mode, data_type));
 
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
@@ -272,6 +276,8 @@ void conv4_backward_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_
     type alpha[] = {1.0f};
     type beta[]  = {0.0f};
 
+    auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
@@ -282,7 +288,7 @@ void conv4_backward_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, mode));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, mode, data_type));
 
     // Find the algorithm to use
     cudnnConvolutionBwdFilterAlgo_t conv_algo;
@@ -376,6 +382,8 @@ void conv2_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
     type alpha[] = {1.0f};
     type beta[]  = {0.0f};
 
+    auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
@@ -386,7 +394,7 @@ void conv2_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, 0, 0, 1, 1, 1, 1, mode));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, 0, 0, 1, 1, 1, 1, mode, data_type));
 
     // Find the algorithm to use
     cudnnConvolutionBwdDataAlgo_t conv_algo;
@@ -486,7 +494,7 @@ void conv2_valid_multi_set(I& input, K&& kernel, C&& conv, size_t s1, size_t s2,
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, mode));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, mode, data_type));
 
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
@@ -579,6 +587,8 @@ void conv4_backward_data_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMo
     type alpha[] = {1.0f};
     type beta[]  = {0.0f};
 
+    auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+
     decltype(auto) handle = start_cudnn();
 
     // Prepare the tensors
@@ -589,7 +599,7 @@ void conv4_backward_data_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMo
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, mode));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, mode, data_type));
 
     // Find the algorithm to use
     cudnnConvolutionBwdDataAlgo_t conv_algo;
