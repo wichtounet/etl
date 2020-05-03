@@ -18,7 +18,7 @@
 #include <arm_neon.h>
 #else
 #include <immintrin.h>
-#endif
+#endif 
 
 
 #include "etl/inline.hpp"
