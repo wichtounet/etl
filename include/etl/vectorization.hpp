@@ -14,7 +14,12 @@
 
 #pragma once
 
+#ifdef __ARM_ARCH
+#include <arm_neon.h>
+#else
 #include <immintrin.h>
+#endif
+
 
 #include "etl/inline.hpp"
 
