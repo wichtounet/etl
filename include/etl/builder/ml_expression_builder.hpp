@@ -547,4 +547,30 @@ value_t<O> cce_error(O&& output, L&& labels, value_t<O> scale) {
     return detail::cce_error_impl::apply(output, labels, scale);
 }
 
+/*!
+ * \brief Returns the Binary Cross Entropy Loss
+ * \param output The outputs
+ * \param labels The labels
+ * \return The BCE Loss of the output and labels
+ */
+template <typename O, typename L>
+value_t<O> bce_loss(O&& output, L&& labels, value_t<O> scale) {
+    static_assert(all_etl_expr<O, L>, "etl::bce_loss can only be used on ETL expressions");
+
+    return scale * sum((labels >> log(output)) + ((1.0 - labels) >> log(1.0 - output)));
+}
+
+/*!
+ * \brief Returns the Binary Cross Entropy Error
+ * \param output The outputs
+ * \param labels The labels
+ * \return The BCE Error of the output and labels
+ */
+template <typename O, typename L>
+value_t<O> bce_error(O&& output, L&& labels, value_t<O> scale) {
+    static_assert(all_etl_expr<O, L>, "etl::bce_error can only be used on ETL expressions");
+
+    return scale * asum(labels - output);
+}
+
 } //end of namespace etl::ml

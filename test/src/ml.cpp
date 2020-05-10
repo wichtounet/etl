@@ -80,3 +80,45 @@ TEMPLATE_TEST_CASE_2("ml/cce/error/2", "[ml]", Z, double, float) {
 
     REQUIRE_EQUALS_APPROX(error, Z(0.71875));
 }
+
+TEMPLATE_TEST_CASE_2("ml/bce/loss/1", "[ml]", Z, double, float) {
+    etl::dyn_vector<Z> o(137);
+    etl::dyn_vector<Z> l(137);
+
+    for (size_t i = 0; i < 137; ++i) {
+        o[i] = 0.9 / (i + 1);
+        l[i] = (i + 1);
+    }
+
+    auto loss = etl::ml::bce_loss(o, l, Z(1.1));
+
+    REQUIRE_EQUALS_APPROX(loss, Z(-46962.205));
+}
+
+TEMPLATE_TEST_CASE_2("ml/bce/error/1", "[ml]", Z, double, float) {
+    etl::dyn_matrix<Z> o(137, 8);
+    etl::dyn_matrix<Z> l(137, 8);
+
+    for (size_t i = 0; i < 137 * 8; ++i) {
+        o[i] = (i + 1);
+        l[i] = ((i + 1) % 9);
+    }
+
+    auto error = etl::ml::bce_error(o, l, Z(1.0 / 137));
+
+    REQUIRE_EQUALS_APPROX(error, Z(4356.0f));
+}
+
+TEMPLATE_TEST_CASE_2("ml/bce/error/2", "[ml]", Z, double, float) {
+    etl::dyn_matrix<Z> o(128, 9);
+    etl::dyn_matrix<Z> l(128, 9);
+
+    for (size_t i = 0; i < 128 * 9; ++i) {
+        o[i] = (i + 1);
+        l[i] = ((i + 1) % 11);
+    }
+
+    auto error = etl::ml::bce_error(o, l, Z(1.0 / 128));
+
+    REQUIRE_EQUALS_APPROX(error, Z(5143.532));
+}
