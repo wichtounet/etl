@@ -523,8 +523,9 @@ auto tanh_backward(O&& output, E&& errors) {
 
 /*!
  * \brief Returns the Categorical Cross Entropy Loss
- * \param values The expression to reduce
- * \return The sum of the values of the expression
+ * \param output The outputs
+ * \param labels The labels
+ * \return The CCE Loss of the output and labels
  */
 template <typename O, typename L>
 value_t<O> cce_loss(O&& output, L&& labels, value_t<O> scale) {
@@ -535,8 +536,9 @@ value_t<O> cce_loss(O&& output, L&& labels, value_t<O> scale) {
 
 /*!
  * \brief Returns the Categorical Cross Entropy Error
- * \param values The expression to reduce
- * \return The sum of the values of the expression
+ * \param output The outputs
+ * \param labels The labels
+ * \return The CCE Error of the output and labels
  */
 template <typename O, typename L>
 value_t<O> cce_error(O&& output, L&& labels, value_t<O> scale) {
