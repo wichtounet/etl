@@ -16,6 +16,7 @@
 #pragma once
 
 #include "etl/impl/cce.hpp"
+#include "etl/impl/bce.hpp"
 
 namespace etl::ml {
 
@@ -557,7 +558,7 @@ template <typename O, typename L>
 value_t<O> bce_loss(O&& output, L&& labels, value_t<O> scale) {
     static_assert(all_etl_expr<O, L>, "etl::bce_loss can only be used on ETL expressions");
 
-    return scale * sum((labels >> log(output)) + ((1.0 - labels) >> log(1.0 - output)));
+    return detail::bce_loss_impl::apply(output, labels, scale);
 }
 
 /*!
@@ -570,7 +571,7 @@ template <typename O, typename L>
 value_t<O> bce_error(O&& output, L&& labels, value_t<O> scale) {
     static_assert(all_etl_expr<O, L>, "etl::bce_error can only be used on ETL expressions");
 
-    return scale * asum(labels - output);
+    return detail::bce_error_impl::apply(output, labels, scale);
 }
 
 } //end of namespace etl::ml
