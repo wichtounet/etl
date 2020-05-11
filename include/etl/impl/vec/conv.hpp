@@ -50,7 +50,7 @@ namespace detail {
  */
 template <typename T>
 constexpr bool prefer_sse(const size_t n) {
-    return !avx_enabled || (sse3_enabled && (std::is_same<T, float>::value ? (n % 4 < n % 8) : (n % 2 < n % 4)));
+    return !avx_enabled || (sse3_enabled && (std::is_same_v<T, float> ? (n % 4 < n % 8) : (n % 2 < n % 4)));
 }
 
 /*!

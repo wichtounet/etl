@@ -195,7 +195,7 @@ public:
      * \return a reference to the fast matrix
      */
     template <typename Container,
-              cpp_enable_iff(!std::is_same<Container, value_type>::value && std::is_convertible<typename Container::value_type, value_type>::value
+              cpp_enable_iff(!std::is_same_v<Container, value_type> && std::is_convertible_v<typename Container::value_type, value_type>
                              && !is_etl_expr<Container>)>
     fast_matrix_impl& operator=(const Container& container) noexcept {
         validate_assign(*this, container);
@@ -213,7 +213,7 @@ public:
      * \return a reference to the fast matrix
      */
     template <typename E,
-              cpp_enable_iff(is_etl_expr<E>&& std::is_convertible<value_t<E>, value_type>::value && !std::is_same<std::decay_t<E>, this_type>::value)>
+              cpp_enable_iff(is_etl_expr<E> && std::is_convertible_v<value_t<E>, value_type> && !std::is_same_v<std::decay_t<E>, this_type>)>
     fast_matrix_impl& operator=(E&& e) {
         validate_assign(*this, e);
 

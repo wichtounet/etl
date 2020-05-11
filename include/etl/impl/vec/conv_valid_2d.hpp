@@ -77,7 +77,7 @@ void conv2_valid_flipped([[maybe_unused]] const I& input,
         }
 
         if constexpr (padding_impl) {
-            constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+            constexpr size_t AS = std::is_same_v<T, float> ? 8 : 4;
             constexpr size_t SS = AS / 2;
 
             if (k2 < SS || k2 % AS > 0) {
@@ -171,7 +171,7 @@ void conv2_valid([[maybe_unused]] const I& input,
         }
 
         if constexpr (padding_impl) {
-            constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+            constexpr size_t AS = std::is_same_v<T, float> ? 8 : 4;
             constexpr size_t SS = AS / 2;
 
             if (k2 < SS || k2 % AS > 0) {
@@ -231,7 +231,7 @@ void conv2_valid_multi([[maybe_unused]] const I& input,
         kernel.ensure_cpu_up_to_date();
 
         if constexpr (padding_impl) {
-            static constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+            static constexpr size_t AS = std::is_same_v<T, float> ? 8 : 4;
             static constexpr size_t SS = AS / 2;
 
             if (k2 < SS || k2 % AS > 0) {
@@ -320,7 +320,7 @@ void conv2_valid_multi_flipped([[maybe_unused]] const I& input,
         kernel.ensure_cpu_up_to_date();
 
         if constexpr (padding_impl) {
-            constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+            constexpr size_t AS = std::is_same_v<T, float> ? 8 : 4;
             constexpr size_t SS = AS / 2;
 
             if (k2 < SS || k2 % AS > 0) {
@@ -411,7 +411,7 @@ void conv2_valid_multi_multi([[maybe_unused]] const I& input,
         kernel.ensure_cpu_up_to_date();
 
         if constexpr (padding_impl) {
-            static constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+            static constexpr size_t AS = std::is_same_v<T, float> ? 8 : 4;
             static constexpr size_t SS = AS / 2;
 
             if (k2 < SS || k2 % AS > 0) {
@@ -511,7 +511,7 @@ void conv2_valid_multi_multi_flipped([[maybe_unused]] const I& input,
         kernel.ensure_cpu_up_to_date();
 
         if constexpr (padding_impl) {
-            constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+            constexpr size_t AS = std::is_same_v<T, float> ? 8 : 4;
             constexpr size_t SS = AS / 2;
 
             if (k2 < SS || k2 % AS > 0) {

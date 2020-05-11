@@ -339,7 +339,7 @@ bool conv4_full_flipped_small(const I& input, const KK& kernel, CC&& conv) {
     const size_t full_pad = pad * 2;
 
     if constexpr (padding_impl) {
-        constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+        constexpr size_t AS = std::is_same_v<T, float> ? 8 : 4;
         constexpr size_t SS = AS / 2;
 
         if (k2 < SS || k2 % AS > 0) {
@@ -483,7 +483,7 @@ bool conv4_full_flipped_padding(const I& input, const KK& kernel, CC&& conv) {
 
     // Disabled for now because slower in fact than non-padded
     if constexpr (padding_impl && false) {
-        constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+        constexpr size_t AS = std::is_same_v<T, float> ? 8 : 4;
         constexpr size_t SS = AS / 2;
 
         if (k2 < SS || k2 % AS > 0) {

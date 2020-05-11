@@ -99,7 +99,7 @@ struct stateful_op {
 template <typename T, typename Expr, typename UnaryOp>
 struct unary_expr final : value_testable<unary_expr<T, Expr, UnaryOp>>, dim_testable<unary_expr<T, Expr, UnaryOp>>, iterable<unary_expr<T, Expr, UnaryOp>> {
 private:
-    static_assert(is_etl_expr<Expr> || std::is_same<Expr, etl::scalar<T>>::value, "Only ETL expressions can be used in unary_expr");
+    static_assert(is_etl_expr<Expr> || std::is_same_v<Expr, etl::scalar<T>>, "Only ETL expressions can be used in unary_expr");
 
     using this_type = unary_expr<T, Expr, UnaryOp>; ///< The type of this expression
 
@@ -1256,7 +1256,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     static constexpr bool is_fast        = sub_traits::is_fast; ///< Indicates if the expression is fast
     static constexpr bool is_value       = false;               ///< Indicates if the expression is of value type
     static constexpr bool is_direct =
-        std::is_same<UnaryOp, identity_op>::value && sub_traits::is_direct;                    ///< Indicates if the expression has direct memory access
+        std::is_same_v<UnaryOp, identity_op> && sub_traits::is_direct;                    ///< Indicates if the expression has direct memory access
     static constexpr bool is_linear      = sub_traits::is_linear && UnaryOp::linear;           ///< Indicates if the expression is linear
     static constexpr bool is_thread_safe = sub_traits::is_thread_safe && UnaryOp::thread_safe; ///< Indicates if the expression is linear
     static constexpr bool is_generator   = sub_traits::is_generator;                           ///< Indicates if the expression is a generator expression

@@ -173,7 +173,7 @@ template <typename I, cpp_enable_iff(is_1d<I>)>
 cudnnTensorDescriptor_t create_tensor(I&& input) {
     using T = value_t<I>;
 
-    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<std::remove_const_t<T>, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     cudnnTensorDescriptor_t tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&tensor));
@@ -191,7 +191,7 @@ template <typename I, cpp_enable_iff(is_2d<I>)>
 cudnnTensorDescriptor_t create_tensor(I&& input) {
     using T = value_t<I>;
 
-    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<std::remove_const_t<T>, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     cudnnTensorDescriptor_t tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&tensor));
@@ -209,7 +209,7 @@ template <typename I, cpp_enable_iff(is_3d<I>)>
 cudnnTensorDescriptor_t create_tensor(I&& input) {
     using T = value_t<I>;
 
-    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<std::remove_const_t<T>, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     cudnnTensorDescriptor_t tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&tensor));
@@ -227,7 +227,7 @@ template <typename I, cpp_enable_iff(is_4d<I>)>
 cudnnTensorDescriptor_t create_tensor(I&& input) {
     using T = value_t<I>;
 
-    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<std::remove_const_t<T>, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     cudnnTensorDescriptor_t tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&tensor));
@@ -256,7 +256,7 @@ template <typename I, cpp_enable_iff(is_3d<I>)>
 cudnnTensorDescriptor_t create_tensor_5d(I&& input) {
     using T = value_t<I>;
 
-    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<std::remove_const_t<T>, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     const int D1 = etl::dim<0>(input);
     const int D2 = etl::dim<1>(input);
@@ -281,7 +281,7 @@ template <typename I, cpp_enable_iff(is_4d<I>)>
 cudnnTensorDescriptor_t create_tensor_5d(I&& input) {
     using T = value_t<I>;
 
-    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<std::remove_const_t<T>, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     const int D1 = etl::dim<0>(input);
     const int D2 = etl::dim<1>(input);
@@ -317,7 +317,7 @@ template <typename I>
 cudnnTensorDescriptor_t create_tensor_flat(I&& input) {
     using T = value_t<I>;
 
-    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<std::remove_const_t<T>, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     cudnnTensorDescriptor_t tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&tensor));
@@ -345,7 +345,7 @@ template <typename I, cpp_enable_iff(is_1d<I>)>
 cudnnTensorDescriptor_t create_tensor_front(I&& input) {
     using T = value_t<I>;
 
-    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<std::remove_const_t<T>, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     cudnnTensorDescriptor_t tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&tensor));
@@ -363,7 +363,7 @@ template <typename I, cpp_enable_iff(is_2d<I>)>
 cudnnTensorDescriptor_t create_tensor_front(I&& input) {
     using T = value_t<I>;
 
-    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<std::remove_const_t<T>, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     cudnnTensorDescriptor_t tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&tensor));
@@ -381,7 +381,7 @@ template <typename I, cpp_enable_iff(is_4d<I>)>
 cudnnTensorDescriptor_t create_tensor_front(I&& input) {
     using T = value_t<I>;
 
-    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<std::remove_const_t<T>, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     cudnnTensorDescriptor_t tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&tensor));
@@ -410,7 +410,7 @@ template <typename I, cpp_enable_iff(is_2d<I>)>
 cudnnFilterDescriptor_t create_filter(I&& kernel) {
     using T = value_t<I>;
 
-    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<std::remove_const_t<T>, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     cudnnFilterDescriptor_t filter;
     cudnn_check(cudnnCreateFilterDescriptor(&filter));
@@ -428,7 +428,7 @@ template <typename I, cpp_enable_iff(is_4d<I>)>
 cudnnFilterDescriptor_t create_filter(I&& kernel) {
     using T = value_t<I>;
 
-    auto data_type = std::is_same<std::remove_const_t<T>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<std::remove_const_t<T>, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     cudnnFilterDescriptor_t filter;
     cudnn_check(cudnnCreateFilterDescriptor(&filter));

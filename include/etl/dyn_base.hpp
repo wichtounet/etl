@@ -219,7 +219,7 @@ protected:
      * \brief Move construct a dyn_base
      * \param rhs The dyn_base to move from
      */
-    template <typename E, cpp_enable_iff(!std::is_same<std::decay_t<E>, derived_t>::value)>
+    template <typename E, cpp_enable_iff(!std::is_same_v<std::decay_t<E>, derived_t>)>
     explicit dyn_base(E&& rhs) : _size(etl::size(rhs)) {
         for (size_t d = 0; d < etl::dimensions(rhs); ++d) {
             _dimensions[d] = etl::dim(rhs, d);
@@ -372,7 +372,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \brief Move construct a dense_dyn_base
      * \param rhs The dense_dyn_base to move from
      */
-    template <typename E, cpp_enable_iff(!std::is_same<std::decay_t<E>, derived_t>::value)>
+    template <typename E, cpp_enable_iff(!std::is_same_v<std::decay_t<E>, derived_t>)>
     explicit dense_dyn_base(E&& rhs) : base_type(std::move(rhs)) {
         //Nothing else to init
     }

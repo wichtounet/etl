@@ -61,7 +61,7 @@ void conv2_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
     type alpha[] = {1.0f};
     type beta[]  = {0.0f};
 
-    auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<type, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     decltype(auto) handle = start_cudnn();
 
@@ -172,7 +172,7 @@ void conv4_forward_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
     type alpha[] = {1.0f};
     type beta[]  = {0.0f};
 
-    auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<type, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     decltype(auto) handle = start_cudnn();
 
@@ -276,7 +276,7 @@ void conv4_backward_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_
     type alpha[] = {1.0f};
     type beta[]  = {0.0f};
 
-    auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<type, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     decltype(auto) handle = start_cudnn();
 
@@ -382,7 +382,7 @@ void conv2_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
     type alpha[] = {1.0f};
     type beta[]  = {0.0f};
 
-    auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<type, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     decltype(auto) handle = start_cudnn();
 
@@ -469,7 +469,7 @@ template <typename I, typename K, typename C>
 void conv2_valid_multi_set(I& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, cudnnConvolutionMode_t mode) {
     using type = std::remove_const_t<value_t<I>>;
 
-    auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<type, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     type alpha[] = {1.0f};
     type beta[]  = {0.0f};
@@ -587,7 +587,7 @@ void conv4_backward_data_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMo
     type alpha[] = {1.0f};
     type beta[]  = {0.0f};
 
-    auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<type, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     decltype(auto) handle = start_cudnn();
 

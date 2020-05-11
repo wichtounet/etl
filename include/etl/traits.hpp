@@ -468,7 +468,7 @@ constexpr bool is_scalar = cpp::is_specialization_of_v<etl::scalar, std::decay_t
  * \tparam T The type
  */
 template <typename T>
-constexpr bool is_single_precision_t = std::is_same<T, float>::value;
+constexpr bool is_single_precision_t = std::is_same_v<T, float>;
 
 /*!
  * \brief Traits to test if the given ETL expresion contains single precision numbers.
@@ -489,14 +489,14 @@ constexpr bool all_single_precision = (is_single_precision<E> && ...);
  * \tparam T The type
  */
 template <typename T>
-constexpr bool is_double_precision_t = std::is_same<T, double>::value;
+constexpr bool is_double_precision_t = std::is_same_v<T, double>;
 
 /*!
  * \brief Traits to test if the type is boolean.
  * \tparam T The type.
  */
 template <typename T>
-constexpr bool is_bool_t = std::is_same<T, bool>::value;
+constexpr bool is_bool_t = std::is_same_v<T, bool>;
 
 /*!
  * \brief Traits to test if the given ETL expresion contains double precision numbers.
@@ -552,14 +552,14 @@ constexpr bool is_complex_t = cpp::is_specialization_of_v<std::complex, std::dec
  * \tparam T The type to test.
  */
 template <typename T>
-constexpr bool is_complex_single_t = std::is_same<T, std::complex<float>>::value || std::is_same<T, etl::complex<float>>::value;
+constexpr bool is_complex_single_t = std::is_same_v<T, std::complex<float>> || std::is_same_v<T, etl::complex<float>>;
 
 /*!
  * \brief Traits to test if a type is a double precision complex number type
  * \tparam T The type to test.
  */
 template <typename T>
-constexpr bool is_complex_double_t = std::is_same<T, std::complex<double>>::value || std::is_same<T, etl::complex<double>>::value;
+constexpr bool is_complex_double_t = std::is_same_v<T, std::complex<double>> || std::is_same_v<T, etl::complex<double>>;
 
 /*!
  * \brief Traits to test if the given ETL expresion type contains single precision complex numbers.

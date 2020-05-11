@@ -155,7 +155,7 @@ void gemm_pico_kernel(size_t kc, const T* ETL_RESTRICT A, const T* ETL_RESTRICT 
     static constexpr const size_t MR = gemm_config<T>::MR;
     static constexpr const size_t NR = gemm_config<T>::NR;
 
-    if constexpr (std::is_same<float, T>::value && vector_mode == vector_mode_t::AVX) {
+    if constexpr (std::is_same_v<float, T> && vector_mode == vector_mode_t::AVX) {
         using vec_type = V;
 
         static constexpr size_t vec_size = vec_type::template traits<T>::size;

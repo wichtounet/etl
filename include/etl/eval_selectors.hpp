@@ -31,9 +31,9 @@ constexpr bool are_vectorizable_select = vectorize_expr                         
                                          == decay_traits<R>::storage_order                                          // Both expressions must have the same order
                                                 && get_intrinsic_traits<V>::template type<value_t<R>>::vectorizable // The LHS type must be vectorizable
                                                     && get_intrinsic_traits<V>::template type<value_t<E>>::vectorizable // The RHS type must be vectorizable
-                                                        && std::is_same<                                                /// Both vector types must be the same
+                                                        && std::is_same_v<                                                /// Both vector types must be the same
                                                             typename get_intrinsic_traits<V>::template type<value_t<R>>::intrinsic_type,
-                                                            typename get_intrinsic_traits<V>::template type<value_t<E>>::intrinsic_type>::value;
+                                                            typename get_intrinsic_traits<V>::template type<value_t<E>>::intrinsic_type>;
 
 /*!
  * \brief Integral constant indicating if vectorization is possible

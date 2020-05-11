@@ -31,7 +31,7 @@ struct mangling_faker {};
  *
  */
 template <typename T>
-constexpr bool is_mangle_able = std::is_same<std::decay_t<T>, float>::value || std::is_same<std::decay_t<T>, double>::value
+constexpr bool is_mangle_able = std::is_same_v<std::decay_t<T>, float> || std::is_same_v<std::decay_t<T>, double>
                                 || cpp::is_specialization_of_v<std::complex, std::decay_t<T>> || cpp::is_specialization_of_v<etl::complex, std::decay_t<T>>;
 
 /*!

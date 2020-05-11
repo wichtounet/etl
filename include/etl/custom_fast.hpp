@@ -133,7 +133,7 @@ public:
      * \param container The STL container to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename C, cpp_enable_iff(!std::is_same<C, value_type>::value && std::is_convertible<value_t<C>, value_type>::value)>
+    template <typename C, cpp_enable_iff(!std::is_same_v<C, value_type> && std::is_convertible_v<value_t<C>, value_type>)>
     custom_fast_matrix_impl& operator=(const C& container) noexcept {
         validate_assign(*this, container);
         std::copy(container.begin(), container.end(), begin());
@@ -149,7 +149,7 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_iff(std::is_convertible<value_t<E>, value_type>::value&& is_etl_expr<E>)>
+    template <typename E, cpp_enable_iff(std::is_convertible_v<value_t<E>, value_type> && is_etl_expr<E>)>
     custom_fast_matrix_impl& operator=(E&& e) {
         validate_assign(*this, e);
 

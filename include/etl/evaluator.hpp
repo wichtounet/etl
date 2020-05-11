@@ -282,9 +282,9 @@ template <typename E, typename R>
 void assign_evaluate_impl_no_gpu(E&& expr, R&& result) {
     if constexpr (detail::standard_assign_no_gpu<E, R>) {
         standard_assign_impl(expr, result);
-    } else if constexpr (std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign_no_gpu<E, R>) {
+    } else if constexpr (std::is_same_v<value_t<E>, value_t<R>> && detail::fast_assign_no_gpu<E, R>) {
         fast_assign_impl_full(expr, result);
-    } else if constexpr (!std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign_no_gpu<E, R>) {
+    } else if constexpr (!std::is_same_v<value_t<E>, value_t<R>> && detail::fast_assign_no_gpu<E, R>) {
         fast_assign_impl(expr, result);
     } else if constexpr (detail::direct_assign_no_gpu<E, R>) {
         direct_assign_impl(expr, result);
@@ -297,9 +297,9 @@ template <typename E, typename R>
 void assign_evaluate_impl(E&& expr, R&& result) {
     if constexpr (detail::standard_assign<E, R>) {
         standard_assign_impl(expr, result);
-    } else if constexpr (std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign<E, R>) {
+    } else if constexpr (std::is_same_v<value_t<E>, value_t<R>> && detail::fast_assign<E, R>) {
         fast_assign_impl_full(expr, result);
-    } else if constexpr (!std::is_same<value_t<E>, value_t<R>>::value && detail::fast_assign<E, R>) {
+    } else if constexpr (!std::is_same_v<value_t<E>, value_t<R>> && detail::fast_assign<E, R>) {
         fast_assign_impl(expr, result);
     } else if constexpr (detail::gpu_assign<E, R>) {
         if (local_context().cpu || is_something_forced()) {

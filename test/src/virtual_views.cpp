@@ -15,12 +15,12 @@ TEMPLATE_TEST_CASE_2("magic/dyn_matrix_1", "magic(1)", Z, float, double) {
 
     REQUIRE_DIRECT(!etl::decay_traits<decltype(m)>::is_fast);
     REQUIRE_EQUALS(etl::decay_traits<decltype(m)>::size(m), 1UL);
-    REQUIRE_DIRECT((std::is_same<typename decltype(m)::value_type, Z>::value));
+    REQUIRE_DIRECT((std::is_same_v<typename decltype(m)::value_type, Z>));
     REQUIRE_DIRECT(etl::is_etl_expr<decltype(m)>);
 
     REQUIRE_DIRECT(!etl::decay_traits<decltype(etl::magic<Z>(1))>::is_fast);
     REQUIRE_EQUALS(etl::decay_traits<decltype(etl::magic<Z>(1))>::size(etl::magic<Z>(1)), 1UL);
-    REQUIRE_DIRECT((std::is_same<typename decltype(etl::magic<Z>(1))::value_type, Z>::value));
+    REQUIRE_DIRECT((std::is_same_v<typename decltype(etl::magic<Z>(1))::value_type, Z>));
     REQUIRE_DIRECT(etl::is_etl_expr<decltype(etl::magic<Z>(1))>);
 
     REQUIRE_EQUALS(etl::size(m), 1UL);
@@ -86,12 +86,12 @@ TEMPLATE_TEST_CASE_2("fast_magic/dyn_matrix_1", "fast_magic(1)", Z, float, doubl
 
     REQUIRE_DIRECT(etl::decay_traits<decltype(m)>::is_fast);
     REQUIRE_EQUALS(etl::decay_traits<decltype(m)>::size(m), 1UL);
-    REQUIRE_DIRECT((std::is_same<typename decltype(m)::value_type, Z>::value));
+    REQUIRE_DIRECT((std::is_same_v<typename decltype(m)::value_type, Z>));
     REQUIRE_DIRECT(etl::is_etl_expr<decltype(m)>);
 
     REQUIRE_DIRECT(!etl::decay_traits<decltype(etl::magic<Z>(1))>::is_fast);
     REQUIRE_EQUALS(etl::decay_traits<decltype(etl::magic<Z>(1))>::size(etl::magic<Z>(1)), 1UL);
-    REQUIRE_DIRECT((std::is_same<typename decltype(etl::magic<Z>(1))::value_type, Z>::value));
+    REQUIRE_DIRECT((std::is_same_v<typename decltype(etl::magic<Z>(1))::value_type, Z>));
     REQUIRE_DIRECT(etl::is_etl_expr<decltype(etl::magic<Z>(1))>);
 
     REQUIRE_EQUALS(etl::size(m), 1UL);

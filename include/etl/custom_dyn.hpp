@@ -148,7 +148,7 @@ public:
      * \return A reference to the matrix
      */
     template <typename E,
-              cpp_enable_iff(!std::is_same<std::decay_t<E>, custom_dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value
+              cpp_enable_iff(!std::is_same_v<std::decay_t<E>, custom_dyn_matrix_impl<T, SO, D>> && std::is_convertible_v<value_t<E>, value_type>
                              && is_etl_expr<E>)>
     custom_dyn_matrix_impl& operator=(E&& e) noexcept {
         validate_assign(*this, e);

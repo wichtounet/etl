@@ -35,7 +35,7 @@ template <typename I, typename K, typename C>
 void bias_add_4d(I&& x, K&& b, C&& y) {
     using type = std::remove_const_t<value_t<I>>;
 
-    auto data_type = std::is_same<std::remove_const_t<type>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<type, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     type alpha[] = {1.0f};
     type beta[]  = {0.0f};
@@ -81,7 +81,7 @@ template <typename I, typename K, typename C>
 void bias_add_2d(I&& x, K&& b, C&& y) {
     using type = std::remove_const_t<value_t<I>>;
 
-    auto data_type = std::is_same<std::remove_const_t<type>, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+    auto data_type = std::is_same_v<type, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
     type alpha[] = {1.0f};
     type beta[]  = {0.0f};

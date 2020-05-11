@@ -423,9 +423,9 @@ TEMPLATE_TEST_CASE_2("etl_traits/vectorizable", "vectorizable", Z, float, double
 
 template <typename Z, typename E>
 bool correct_type(E&& /*e*/) {
-    if (std::is_same<Z, double>::value) {
+    if (std::is_same_v<Z, double>) {
         return etl::is_double_precision<E>;
-    } else { //if(std::is_same<Z, float>::value){
+    } else { //if(std::is_same_v<Z, float>){
         return etl::is_single_precision<E>;
     }
 }
@@ -475,18 +475,18 @@ TEMPLATE_TEST_CASE_2("etl_traits/temporary", "make_temporary", Z, float, double)
     using mat_type_2 = etl::dyn_matrix<Z, 4>;
     mat_type_2 b(3, 2, 4, 5);
 
-    REQUIRE_DIRECT((std::is_same<mat_type_1, std::decay_t<decltype(make_temporary(a))>>::value));
-    REQUIRE_DIRECT((std::is_same<mat_type_2, std::decay_t<decltype(make_temporary(b))>>::value));
+    REQUIRE_DIRECT((std::is_same_v<mat_type_1, std::decay_t<decltype(make_temporary(a))>>));
+    REQUIRE_DIRECT((std::is_same_v<mat_type_2, std::decay_t<decltype(make_temporary(b))>>));
 
-    REQUIRE_DIRECT((std::is_same<decltype(a(0)), std::decay_t<decltype(make_temporary(a(1)))>>::value));
-    REQUIRE_DIRECT((std::is_same<decltype(b(1)), std::decay_t<decltype(make_temporary(b(0)))>>::value));
+    REQUIRE_DIRECT((std::is_same_v<decltype(a(0)), std::decay_t<decltype(make_temporary(a(1)))>>));
+    REQUIRE_DIRECT((std::is_same_v<decltype(b(1)), std::decay_t<decltype(make_temporary(b(0)))>>));
 
-    REQUIRE_DIRECT((std::is_same<decltype(a(1)(0)), std::decay_t<decltype(make_temporary(a(1)(1)))>>::value));
-    REQUIRE_DIRECT((std::is_same<decltype(b(1)(1)), std::decay_t<decltype(make_temporary(b(0)(1)))>>::value));
+    REQUIRE_DIRECT((std::is_same_v<decltype(a(1)(0)), std::decay_t<decltype(make_temporary(a(1)(1)))>>));
+    REQUIRE_DIRECT((std::is_same_v<decltype(b(1)(1)), std::decay_t<decltype(make_temporary(b(0)(1)))>>));
 
-    REQUIRE_DIRECT((!std::is_same<decltype(a + a), std::decay_t<decltype(make_temporary(a + a))>>::value));
-    REQUIRE_DIRECT((!std::is_same<decltype(b + b), std::decay_t<decltype(make_temporary(b + b))>>::value));
-    REQUIRE_DIRECT((!std::is_same<decltype(a + b), std::decay_t<decltype(make_temporary(a + b))>>::value));
+    REQUIRE_DIRECT((!std::is_same_v<decltype(a + a), std::decay_t<decltype(make_temporary(a + a))>>));
+    REQUIRE_DIRECT((!std::is_same_v<decltype(b + b), std::decay_t<decltype(make_temporary(b + b))>>));
+    REQUIRE_DIRECT((!std::is_same_v<decltype(a + b), std::decay_t<decltype(make_temporary(a + b))>>));
 
     //make_temporary should not affect an ETL value
     REQUIRE_EQUALS(a.memory_start(), make_temporary(a).memory_start());

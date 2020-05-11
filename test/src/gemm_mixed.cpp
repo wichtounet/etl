@@ -35,7 +35,7 @@ GEMM_TEST_CASE("gemm/mixed/1", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 GEMM_TEST_CASE("gemm/mixed/2", "[gemm]") {
@@ -59,7 +59,7 @@ GEMM_TEST_CASE("gemm/mixed/2", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 GEMM_TEST_CASE_FAST("gemm/mixed/3", "[gemm]") {
@@ -83,7 +83,7 @@ GEMM_TEST_CASE_FAST("gemm/mixed/3", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 // RM = CM * RM
@@ -109,7 +109,7 @@ GEMM_TEST_CASE("gemm/mixed/4", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 GEMM_TEST_CASE("gemm/mixed/5", "[gemm]") {
@@ -133,7 +133,7 @@ GEMM_TEST_CASE("gemm/mixed/5", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 GEMM_TEST_CASE_FAST("gemm/mixed/6", "[gemm]") {
@@ -157,7 +157,7 @@ GEMM_TEST_CASE_FAST("gemm/mixed/6", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 // RM = CM * CM
@@ -183,7 +183,7 @@ GEMM_TEST_CASE("gemm/mixed/7", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 GEMM_TEST_CASE("gemm/mixed/8", "[gemm]") {
@@ -207,7 +207,7 @@ GEMM_TEST_CASE("gemm/mixed/8", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 GEMM_TEST_CASE_FAST("gemm/mixed/9", "[gemm]") {
@@ -231,7 +231,7 @@ GEMM_TEST_CASE_FAST("gemm/mixed/9", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 // CM = RM * CM
@@ -257,7 +257,7 @@ GEMM_TEST_CASE("gemm/mixed/10", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 GEMM_TEST_CASE("gemm/mixed/11", "[gemm]") {
@@ -281,7 +281,7 @@ GEMM_TEST_CASE("gemm/mixed/11", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 GEMM_TEST_CASE_FAST("gemm/mixed/12", "[gemm]") {
@@ -305,7 +305,7 @@ GEMM_TEST_CASE_FAST("gemm/mixed/12", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 // CM = CM * RM
@@ -331,7 +331,7 @@ GEMM_TEST_CASE("gemm/mixed/13", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 GEMM_TEST_CASE("gemm/mixed/14", "[gemm]") {
@@ -355,7 +355,7 @@ GEMM_TEST_CASE("gemm/mixed/14", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 GEMM_TEST_CASE_FAST("gemm/mixed/15", "[gemm]") {
@@ -379,7 +379,7 @@ GEMM_TEST_CASE_FAST("gemm/mixed/15", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 // CM = RM * RM
@@ -405,7 +405,7 @@ GEMM_TEST_CASE("gemm/mixed/16", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 GEMM_TEST_CASE("gemm/mixed/17", "[gemm]") {
@@ -429,7 +429,7 @@ GEMM_TEST_CASE("gemm/mixed/17", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }
 
 GEMM_TEST_CASE_FAST("gemm/mixed/18", "[gemm]") {
@@ -453,5 +453,5 @@ GEMM_TEST_CASE_FAST("gemm/mixed/18", "[gemm]") {
         }
     }
 
-    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same<Impl, strassen_gemm>::value ? 10 * base_eps_etl_large : base_eps_etl_large));
+    REQUIRE_DIRECT(etl::approx_equals(c, r, std::is_same_v<Impl, strassen_gemm> ? 10 * base_eps_etl_large : base_eps_etl_large));
 }

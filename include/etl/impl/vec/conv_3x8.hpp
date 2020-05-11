@@ -39,7 +39,7 @@ void conv2_valid_flipped_micro_kernel_3x8([[maybe_unused]] const T* in,
                                           [[maybe_unused]] const T* kkk,
                                           [[maybe_unused]] T* out,
                                           [[maybe_unused]] T beta) {
-    if constexpr (std::is_same<V, etl::avx_vec>::value && std::is_same<T, float>::value) {
+    if constexpr (std::is_same_v<V, etl::avx_vec> && std::is_same_v<T, float>) {
         using vec_type = V;
 
         const size_t m1 = 3;
