@@ -256,7 +256,7 @@ struct forward_op {
 
 template <typename T>
 using remove_const_deep = std::
-    conditional_t<std::is_lvalue_reference<T>::value, std::add_lvalue_reference_t<std::remove_const_t<std::remove_reference_t<T>>>, std::remove_const_t<T>>;
+    conditional_t<std::is_lvalue_reference<T>::value, std::add_lvalue_reference_t<std::remove_cvref_t<T>>, std::remove_const_t<T>>;
 
 /*!
  * \brief Functor that forwards a value and removes the constness of
