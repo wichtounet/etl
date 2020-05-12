@@ -7,8 +7,8 @@ default: release
 include make-utils/flags.mk
 include make-utils/cpp-utils.mk
 
-# Use C++17
-$(eval $(call use_cpp17))
+# Use C++20
+$(eval $(call use_cpp20))
 
 # Configure the BLAS package to use
 ifneq (,$(ETL_BLAS_PKG))
