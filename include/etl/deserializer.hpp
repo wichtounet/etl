@@ -34,7 +34,7 @@ struct deserializer {
      */
     template <typename T>
     deserializer& operator>>(T& value) {
-        if constexpr (std::is_arithmetic<T>::value) {
+        if constexpr (std::is_arithmetic_v<T>) {
             stream.read(reinterpret_cast<char_t*>(&value), sizeof(T));
         } else {
             deserialize(*this, value);

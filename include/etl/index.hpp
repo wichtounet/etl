@@ -33,6 +33,9 @@ struct matrix_subsize : std::integral_constant<size_t, decay_traits<M>::template
 template <typename M, size_t I>
 struct matrix_subsize<M, I, std::enable_if_t<I == decay_traits<M>::dimensions() - 1>> : std::integral_constant<size_t, 1> {};
 
+template <typename M, size_t I>
+inline constexpr size_t matrix_subsize_v = matrix_subsize<M, I>::value;
+
 /*!
  * \brief Traits to compute the leading sze from index I for a matrix.
  *
@@ -50,6 +53,9 @@ struct matrix_leadingsize : std::integral_constant<size_t, decay_traits<M>::temp
 template <typename M>
 struct matrix_leadingsize<M, 0> : std::integral_constant<size_t, 1> {};
 
+template <typename M, size_t I>
+inline constexpr size_t matrix_leadingsize_v = matrix_leadingsize<M, I>::value;
+
 /*!
  * \brief Compute the index inside the row major matrix
  */
@@ -65,7 +71,7 @@ constexpr size_t rm_compute_index(size_t first) noexcept(assert_nothrow) {
 template <typename M, size_t I, typename... S>
 constexpr size_t rm_compute_index(size_t first, size_t second, S... args) noexcept(assert_nothrow) {
     cpp_assert(first < decay_traits<M>::template dim<I>(), "Out of bounds");
-    return matrix_subsize<M, I>::value * first + rm_compute_index<M, I + 1>(second, args...);
+    return matrix_subsize_v<M, I> * first + rm_compute_index<M, I + 1>(second, args...);
 }
 
 /*!
@@ -74,7 +80,7 @@ constexpr size_t rm_compute_index(size_t first, size_t second, S... args) noexce
 template <typename M, size_t I>
 constexpr size_t cm_compute_index(size_t first) noexcept(assert_nothrow) {
     cpp_assert(first < M::template dim<I>(), "Out of bounds");
-    return matrix_leadingsize<M, I>::value * first;
+    return matrix_leadingsize_v<M, I> * first;
 }
 
 /*!
@@ -83,7 +89,7 @@ constexpr size_t cm_compute_index(size_t first) noexcept(assert_nothrow) {
 template <typename M, size_t I, typename... S>
 constexpr size_t cm_compute_index(size_t first, size_t second, S... args) noexcept(assert_nothrow) {
     cpp_assert(first < M::template dim<I>(), "Out of bounds");
-    return matrix_leadingsize<M, I>::value * first + cm_compute_index<M, I + 1>(second, args...);
+    return matrix_leadingsize_v<M, I> * first + cm_compute_index<M, I + 1>(second, args...);
 }
 
 } // end of namespace detail

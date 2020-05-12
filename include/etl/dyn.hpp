@@ -178,7 +178,7 @@ public:
      *
      * Only possible for 1D matrices
      */
-    template <typename Container, cpp_enable_iff(std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_iff(std::is_convertible_v<typename Container::value_type, value_type>)>
     explicit dyn_matrix_impl(const Container& container) : base_type(container.size(), {{container.size()}}) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
@@ -345,7 +345,7 @@ public:
      * \param vec The container containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename Container, cpp_enable_iff(!is_etl_expr<Container> && std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_iff(!is_etl_expr<Container> && std::is_convertible_v<typename Container::value_type, value_type>)>
     dyn_matrix_impl& operator=(const Container& vec) {
         // Inherit from the dimensions if possible
         if (!_memory && D == 1) {

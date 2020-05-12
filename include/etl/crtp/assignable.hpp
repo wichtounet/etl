@@ -66,7 +66,7 @@ struct assignable {
      * \param vec The container to get the values from
      * \return the unary expression
      */
-    template <typename Container, cpp_enable_iff(!is_etl_expr<Container> && std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_iff(!is_etl_expr<Container> && std::is_convertible_v<typename Container::value_type, value_type>)>
     derived_t& operator=(const Container& vec) {
         validate_assign(as_derived(), vec);
 

@@ -76,7 +76,7 @@ public:
      * \brief Construct a fast matrix filled with the same value
      * \param value the value to fill the matrix with
      */
-    template <typename VT, cpp_enable_iff(std::is_convertible<VT, value_type>::value || std::is_assignable<T&, VT>::value)>
+    template <typename VT, cpp_enable_iff(std::is_convertible_v<VT, value_type> || std::is_assignable_v<T&, VT>)>
     explicit fast_matrix_impl(const VT& value) noexcept : base_type() {
         // Fill the matrix
         std::fill(begin(), end(), value);
@@ -121,7 +121,7 @@ public:
      * \param container The container to get values from
      */
     template <typename Container,
-              cpp_enable_iff(!is_complex_t<Container> && std::is_convertible<typename Container::value_type, value_type>::value && !is_etl_expr<Container>)>
+              cpp_enable_iff(!is_complex_t<Container> && std::is_convertible_v<typename Container::value_type, value_type> && !is_etl_expr<Container>)>
     explicit fast_matrix_impl(const Container& container) : base_type() {
         validate_assign(*this, container);
         std::copy(container.begin(), container.end(), begin());
@@ -244,7 +244,7 @@ public:
      * \param value The value to assign to each element
      * \return a reference to the fast matrix
      */
-    template <typename VT, cpp_enable_iff(std::is_convertible<VT, value_type>::value || std::is_assignable<T&, VT>::value)>
+    template <typename VT, cpp_enable_iff(std::is_convertible_v<VT, value_type> || std::is_assignable_v<T&, VT>)>
     fast_matrix_impl& operator=(const VT& value) noexcept {
         direct_fill(*this, value);
 

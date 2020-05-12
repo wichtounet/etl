@@ -28,7 +28,7 @@ namespace etl {
  * \tparam T The type of return of the distribution
  */
 template <typename T>
-using uniform_distribution = std::conditional_t<std::is_floating_point<T>::value, std::uniform_real_distribution<T>, std::uniform_int_distribution<T>>;
+using uniform_distribution = std::conditional_t<std::is_floating_point_v<T>, std::uniform_real_distribution<T>, std::uniform_int_distribution<T>>;
 
 /*!
  * \brief Generator from an uniform distribution

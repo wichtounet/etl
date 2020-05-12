@@ -182,7 +182,7 @@ public:
      * \param vec The container containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename Container, cpp_enable_iff(!is_etl_expr<Container> && std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_iff(!is_etl_expr<Container> && std::is_convertible_v<typename Container::value_type, value_type>)>
     custom_dyn_matrix_impl& operator=(const Container& vec) {
         validate_assign(*this, vec);
 
@@ -397,9 +397,9 @@ public:
     }
 };
 
-static_assert(std::is_nothrow_move_constructible<dyn_vector<double>>::value, "dyn_vector should be nothrow move constructible");
-static_assert(std::is_nothrow_move_assignable<dyn_vector<double>>::value, "dyn_vector should be nothrow move assignable");
-static_assert(std::is_nothrow_destructible<dyn_vector<double>>::value, "dyn_vector should be nothrow destructible");
+static_assert(std::is_nothrow_move_constructible_v<dyn_vector<double>>, "dyn_vector should be nothrow move constructible");
+static_assert(std::is_nothrow_move_assignable_v<dyn_vector<double>>, "dyn_vector should be nothrow move assignable");
+static_assert(std::is_nothrow_destructible_v<dyn_vector<double>>, "dyn_vector should be nothrow destructible");
 
 /*!
  * \brief Swap two dyn matrix

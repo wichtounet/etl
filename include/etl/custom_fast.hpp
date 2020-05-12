@@ -180,7 +180,7 @@ public:
      * \param value The value to assign to each element
      * \return a reference to the fast matrix
      */
-    template <typename VT, cpp_enable_iff(std::is_convertible<VT, value_type>::value || std::is_assignable<T&, VT>::value)>
+    template <typename VT, cpp_enable_iff(std::is_convertible_v<VT, value_type> || std::is_assignable_v<T&, VT>)>
     custom_fast_matrix_impl& operator=(const VT& value) noexcept {
         direct_fill(*this, value);
 
@@ -361,12 +361,12 @@ public:
 };
 
 #ifndef CPP_UTILS_ASSERT_EXCEPTION
-static_assert(std::is_nothrow_default_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow default constructible");
-static_assert(std::is_nothrow_copy_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow copy constructible");
-static_assert(std::is_nothrow_move_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow move constructible");
-static_assert(std::is_nothrow_copy_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow copy assignable");
-static_assert(std::is_nothrow_move_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow move assignable");
-static_assert(std::is_nothrow_destructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow destructible");
+static_assert(std::is_nothrow_default_constructible_v<fast_vector<double, 2>>, "fast_vector should be nothrow default constructible");
+static_assert(std::is_nothrow_copy_constructible_v<fast_vector<double, 2>>, "fast_vector should be nothrow copy constructible");
+static_assert(std::is_nothrow_move_constructible_v<fast_vector<double, 2>>, "fast_vector should be nothrow move constructible");
+static_assert(std::is_nothrow_copy_assignable_v<fast_vector<double, 2>>, "fast_vector should be nothrow copy assignable");
+static_assert(std::is_nothrow_move_assignable_v<fast_vector<double, 2>>, "fast_vector should be nothrow move assignable");
+static_assert(std::is_nothrow_destructible_v<fast_vector<double, 2>>, "fast_vector should be nothrow destructible");
 #endif
 
 /*!

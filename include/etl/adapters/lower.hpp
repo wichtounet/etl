@@ -114,7 +114,7 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_iff(std::is_convertible<value_t<E>, value_type>::value&& is_etl_expr<E>)>
+    template <typename E, cpp_enable_iff(std::is_convertible_v<value_t<E>, value_type> && is_etl_expr<E>)>
     lower_matrix& operator=(E&& e) noexcept(false) {
         // Make sure the other matrix is lower triangular
         if (!is_lower_triangular(e)) {

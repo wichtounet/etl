@@ -112,7 +112,7 @@ auto ceil(E&& value) {
 template <typename E, typename T>
 auto clip(E&& value, T min, T max) {
     static_assert(is_etl_expr<E>, "etl::clip can only be used on ETL expressions");
-    static_assert(std::is_arithmetic<T>::value, "etl::clip can only be used with arithmetic values");
+    static_assert(std::is_arithmetic_v<T>, "etl::clip can only be used with arithmetic values");
     return detail::make_stateful_unary_expr<E, clip_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(min), value_t<E>(max));
 }
 
@@ -131,7 +131,7 @@ auto clip(E&& value, T min, T max) {
 template <typename E, typename T>
 auto pow(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, pow_binary_op<value_t<E>, value_t<E>>> {
     static_assert(is_etl_expr<E>, "etl::pow can only be used on ETL expressions");
-    static_assert(std::is_arithmetic<T>::value, "etl::pow can only be used with arithmetic values");
+    static_assert(std::is_arithmetic_v<T>, "etl::pow can only be used with arithmetic values");
     return {value, scalar<value_t<E>>(v)};
 }
 
@@ -162,7 +162,7 @@ auto pow_int(E&& value, size_t v) -> detail::left_binary_helper_op<E, scalar<siz
 template <typename E, typename T>
 auto pow_precise(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, precise_pow_binary_op<value_t<E>, value_t<E>>> {
     static_assert(is_etl_expr<E>, "etl::pow_precise can only be used on ETL expressions");
-    static_assert(std::is_arithmetic<T>::value, "etl::pow_precise can only be used with arithmetic values");
+    static_assert(std::is_arithmetic_v<T>, "etl::pow_precise can only be used with arithmetic values");
     return {value, scalar<value_t<E>>(v)};
 }
 
@@ -175,7 +175,7 @@ auto pow_precise(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<valu
 template <typename E, typename T>
 auto one_if(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, one_if_binary_op<value_t<E>, value_t<E>>> {
     static_assert(is_etl_expr<E>, "etl::one_if can only be used on ETL expressions");
-    static_assert(std::is_arithmetic<T>::value, "etl::one_if can only be used with arithmetic values");
+    static_assert(std::is_arithmetic_v<T>, "etl::one_if can only be used with arithmetic values");
     return {value, scalar<value_t<E>>(v)};
 }
 
@@ -299,7 +299,7 @@ auto logistic_noise(G& g, E&& value) {
 template <typename E, typename T>
 auto ranged_noise(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, ranged_noise_binary_op<value_t<E>, value_t<E>>> {
     static_assert(is_etl_expr<E>, "etl::ranged_noise can only be used on ETL expressions");
-    static_assert(std::is_arithmetic<T>::value, "etl::ranged_noise can only be used with arithmetic values");
+    static_assert(std::is_arithmetic_v<T>, "etl::ranged_noise can only be used with arithmetic values");
     return {value, scalar<value_t<E>>(v)};
 }
 
@@ -739,8 +739,8 @@ namespace detail {
 template <typename E>
 using value_return_t =
     std::conditional_t<decay_traits<E>::is_value,
-                       std::conditional_t<std::is_lvalue_reference<E>::value,
-                                          std::conditional_t<std::is_const<std::remove_reference_t<E>>::value, const value_t<E>&, value_t<E>&>,
+                       std::conditional_t<std::is_lvalue_reference_v<E>,
+                                          std::conditional_t<std::is_const_v<std::remove_reference_t<E>>, const value_t<E>&, value_t<E>&>,
                                           value_t<E>>,
                        value_t<E>>;
 

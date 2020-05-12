@@ -34,7 +34,7 @@ struct serializer {
      */
     template <typename T>
     serializer& operator<<(const T& value) {
-        if constexpr (std::is_arithmetic<T>::value) {
+        if constexpr (std::is_arithmetic_v<T>) {
             stream.write(reinterpret_cast<const char_t*>(&value), sizeof(T));
         } else {
             serialize(*this, value);

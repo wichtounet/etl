@@ -1025,9 +1025,9 @@ constexpr bool should_gpu_compute_direct = is_etl_value<E> || is_nongpu_temporar
  */
 template <typename T, typename S>
 using return_helper = std::conditional_t<
-    std::is_const<std::remove_reference_t<S>>::value,
+    std::is_const_v<std::remove_reference_t<S>>,
     const value_t<T>&,
-    std::conditional_t<cpp::and_u<std::is_lvalue_reference<S>::value, cpp::not_u<std::is_const<T>::value>::value>::value, value_t<T>&, value_t<T>>>;
+    std::conditional_t<cpp::and_u<std::is_lvalue_reference_v<S>, cpp::not_u<std::is_const_v<T>>::value>::value, value_t<T>&, value_t<T>>>;
 
 /*!
  * Builder to construct the const type returned by a view.
