@@ -168,7 +168,7 @@ public:
                         dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
-        intel_decltype_auto value = cpp::last_value(s1, sizes...);
+        decltype(auto) value = cpp::last_value(s1, sizes...);
         std::fill(begin(), end(), value);
     }
 
