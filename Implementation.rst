@@ -1,27 +1,15 @@
 Implementation notes
 ====================
 
-Code use C++14 extensively.
+Code use C++17 extensively.
 
 For now code is made to be compiled with:
 
- * >=clang 3.4
- * >=g++-4.9.1
- * icc 15.0.2 and greater
+ * >=g++-9.3.0
 
-Due to the limitations in g++ and icc, these features cannot be used:
-
- * Relaxed constexpr functions
- * Variable templates
-
-Due to a bug in CLang, what I call "universal enable_if" cannot be used and
-the dummy value must be used instead.
-
-Once we migrate to g++-5.0 and if we drop support for icc, the following changes could be made:
-
-* Don't use cpp14_constexpr
-* Use variable templates for several of the traits
-* Use variable templates for vectorizable inside traits
+Normally, everything should work fine with recent versions of clang. Due to
+modern features that are being used, it is unlikely that everything works on
+Windows and icc.
 
 Compile-Time
 ------------
