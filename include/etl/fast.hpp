@@ -423,12 +423,12 @@ public:
 };
 
 #ifndef CPP_UTILS_ASSERT_EXCEPTION
-static_assert(std::is_nothrow_default_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow default constructible");
-static_assert(std::is_nothrow_copy_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow copy constructible");
-static_assert(std::is_nothrow_move_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow move constructible");
-static_assert(std::is_nothrow_copy_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow copy assignable");
-static_assert(std::is_nothrow_move_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow move assignable");
-static_assert(std::is_nothrow_destructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow destructible");
+static_assert(std::is_nothrow_default_constructible_v<fast_vector<double, 2>>, "fast_vector should be nothrow default constructible");
+static_assert(std::is_nothrow_copy_constructible_v<fast_vector<double, 2>>, "fast_vector should be nothrow copy constructible");
+static_assert(std::is_nothrow_move_constructible_v<fast_vector<double, 2>>, "fast_vector should be nothrow move constructible");
+static_assert(std::is_nothrow_copy_assignable_v<fast_vector<double, 2>>, "fast_vector should be nothrow copy assignable");
+static_assert(std::is_nothrow_move_assignable_v<fast_vector<double, 2>>, "fast_vector should be nothrow move assignable");
+static_assert(std::is_nothrow_destructible_v<fast_vector<double, 2>>, "fast_vector should be nothrow destructible");
 #endif
 
 /*!

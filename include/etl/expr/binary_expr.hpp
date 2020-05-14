@@ -329,7 +329,7 @@ struct etl_traits<etl::binary_expr<T, LE, BinaryOp, RE>> {
     using value_type   = T;                                     ///< The value type
 
     static constexpr bool left_directed =
-        cpp::not_u<etl_traits<left_expr_t>::is_generator>::value; ///< True if directed by the left expression, false otherwise
+        !etl_traits<left_expr_t>::is_generator; ///< True if directed by the left expression, false otherwise
 
     using sub_expr_t = std::conditional_t<left_directed, left_expr_t, right_expr_t>; ///< The type of sub expression
 

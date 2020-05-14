@@ -85,7 +85,7 @@ using value_t = typename decay_traits<E>::value_type;
  */
 template <typename S>
 using memory_t =
-    std::conditional_t<std::is_const<std::remove_reference_t<S>>::value, typename std::decay_t<S>::const_memory_type, typename std::decay_t<S>::memory_type>;
+    std::conditional_t<std::is_const_v<std::remove_reference_t<S>>, typename std::decay_t<S>::const_memory_type, typename std::decay_t<S>::memory_type>;
 
 /*!
  * \brief Traits to extract the direct const memory type out of an ETL type
@@ -256,7 +256,7 @@ struct forward_op {
 
 template <typename T>
 using remove_const_deep = std::
-    conditional_t<std::is_lvalue_reference<T>::value, std::add_lvalue_reference_t<std::remove_cvref_t<T>>, std::remove_const_t<T>>;
+    conditional_t<std::is_lvalue_reference_v<T>, std::add_lvalue_reference_t<std::remove_cvref_t<T>>, std::remove_const_t<T>>;
 
 /*!
  * \brief Functor that forwards a value and removes the constness of

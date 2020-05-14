@@ -338,12 +338,12 @@ public:
 };
 
 #ifndef CPP_UTILS_ASSERT_EXCEPTION
-static_assert(std::is_nothrow_default_constructible<gpu_dyn_matrix<double>>::value, "dyn_vector should be nothrow default constructible");
-static_assert(std::is_nothrow_copy_constructible<gpu_dyn_matrix<double>>::value, "dyn_vector should be nothrow copy constructible");
-static_assert(std::is_nothrow_move_constructible<gpu_dyn_matrix<double>>::value, "dyn_vector should be nothrow move constructible");
-static_assert(std::is_nothrow_copy_assignable<gpu_dyn_matrix<double>>::value, "dyn_vector should be nothrow copy assignable");
-static_assert(std::is_nothrow_move_assignable<gpu_dyn_matrix<double>>::value, "dyn_vector should be nothrow move assignable");
-static_assert(std::is_nothrow_destructible<gpu_dyn_matrix<double>>::value, "dyn_vector should be nothrow destructible");
+static_assert(std::is_nothrow_default_constructible_v<gpu_dyn_matrix<double>>, "dyn_vector should be nothrow default constructible");
+static_assert(std::is_nothrow_copy_constructible_v<gpu_dyn_matrix<double>>, "dyn_vector should be nothrow copy constructible");
+static_assert(std::is_nothrow_move_constructible_v<gpu_dyn_matrix<double>>, "dyn_vector should be nothrow move constructible");
+static_assert(std::is_nothrow_copy_assignable_v<gpu_dyn_matrix<double>>, "dyn_vector should be nothrow copy assignable");
+static_assert(std::is_nothrow_move_assignable_v<gpu_dyn_matrix<double>>, "dyn_vector should be nothrow move assignable");
+static_assert(std::is_nothrow_destructible_v<gpu_dyn_matrix<double>>, "dyn_vector should be nothrow destructible");
 #endif
 
 } //end of namespace etl

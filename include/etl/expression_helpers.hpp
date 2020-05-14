@@ -31,7 +31,7 @@ using build_type = std::conditional_t<is_etl_value<T>, const std::decay_t<T>&, s
  */
 template <typename T>
 using build_identity_type = std::conditional_t<is_etl_value<T>,
-                                               std::conditional_t<std::is_const<std::remove_reference_t<T>>::value, const std::decay_t<T>&, std::decay_t<T>&>,
+                                               std::conditional_t<std::is_const_v<std::remove_reference_t<T>>, const std::decay_t<T>&, std::decay_t<T>&>,
                                                std::decay_t<T>>;
 
 /*!

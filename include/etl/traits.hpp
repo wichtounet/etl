@@ -1027,13 +1027,13 @@ template <typename T, typename S>
 using return_helper = std::conditional_t<
     std::is_const_v<std::remove_reference_t<S>>,
     const value_t<T>&,
-    std::conditional_t<cpp::and_u<std::is_lvalue_reference_v<S>, cpp::not_u<std::is_const_v<T>>::value>::value, value_t<T>&, value_t<T>>>;
+    std::conditional_t<std::is_lvalue_reference_v<S> && !std::is_const_v<T>, value_t<T>&, value_t<T>>>;
 
 /*!
  * Builder to construct the const type returned by a view.
  */
 template <typename T, typename S>
-using const_return_helper = std::conditional_t<std::is_lvalue_reference<S>::value, const value_t<T>&, value_t<T>>;
+using const_return_helper = std::conditional_t<std::is_lvalue_reference_v<S>, const value_t<T>&, value_t<T>>;
 
 /*!
  * \brief Specialization for value structures

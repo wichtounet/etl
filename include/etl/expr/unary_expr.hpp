@@ -338,12 +338,12 @@ private:
      * \brief Indicates if the non-const functions returns a reference
      */
     static constexpr bool non_const_return_ref =
-        cpp::and_c<std::is_lvalue_reference<decltype(value[0])>, cpp::not_c<std::is_const<std::remove_reference_t<decltype(value[0])>>>>::value;
+        std::is_lvalue_reference_v<decltype(value[0])> && !std::is_const_v<std::remove_reference_t<decltype(value[0])>>;
 
     /*!
      * \brief Indicates if the const functions returns a reference
      */
-    static constexpr bool const_return_ref = std::is_lvalue_reference<decltype(value[0])>::value; ///< Indicates if the const functions returns a reference
+    static constexpr bool const_return_ref = std::is_lvalue_reference_v<decltype(value[0])>;
 
     friend struct etl_traits<unary_expr>;
     friend struct optimizer<unary_expr>;
