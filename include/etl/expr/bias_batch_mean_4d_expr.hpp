@@ -160,7 +160,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
         a.ensure_cpu_up_to_date();
         a.ensure_gpu_up_to_date();
 
-        const auto N = etl::size(a) / etl::size(lhs);
+        [[maybe_unused]] const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);
 
         using T = value_t<A>;
@@ -201,7 +201,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
         a.ensure_cpu_up_to_date();
         a.ensure_gpu_up_to_date();
 
-        const auto N = etl::size(a) / etl::size(lhs);
+        [[maybe_unused]] const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);
 
         using T = value_t<A>;
@@ -242,7 +242,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
         a.ensure_cpu_up_to_date();
         a.ensure_gpu_up_to_date();
 
-        const auto N = etl::size(a) / etl::size(lhs);
+        [[maybe_unused]] const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);
 
         using T = value_t<A>;
@@ -283,7 +283,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
         a.ensure_cpu_up_to_date();
         a.ensure_gpu_up_to_date();
 
-        const auto N = etl::size(a) / etl::size(lhs);
+        [[maybe_unused]] const auto N = etl::size(a) / etl::size(lhs);
         const auto K = etl::size(lhs);
 
         using T = value_t<A>;
