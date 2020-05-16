@@ -733,8 +733,7 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static constexpr size_t size(const expr_t& v) {
-        cpp_unused(v);
+    static constexpr size_t size([[maybe_unused]] const expr_t& v) {
         return (Dims * ...);
     }
 
@@ -744,8 +743,7 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static size_t dim(const expr_t& v, size_t d) {
-        cpp_unused(v);
+    static size_t dim([[maybe_unused]] const expr_t& v, size_t d) {
         return dyn_nth_size<Dims...>(d);
     }
 

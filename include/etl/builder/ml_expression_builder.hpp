@@ -409,8 +409,7 @@ dyn_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::
  * \return 1.0
  */
 template <typename E>
-auto identity_derivative_out(E&& value) {
-    cpp_unused(value);
+auto identity_derivative_out([[maybe_unused]] E&& value) {
     return 1.0;
 }
 
@@ -433,8 +432,7 @@ auto sigmoid_derivative_out(E&& value) -> decltype(value >> (1.0 - value)) {
  * \return An ETL expression representing the derivative of the softmax function of the input.
  */
 template <typename E>
-auto softmax_derivative_out(E&& e) {
-    cpp_unused(e);
+auto softmax_derivative_out([[maybe_unused]] E&& e) {
     return 1.0;
 }
 
@@ -471,8 +469,7 @@ auto relu_derivative_out(const E& value) -> detail::unary_helper<E, relu_derivat
  * \return the backward activation of the activation function
  */
 template <typename O, typename E>
-decltype(auto) identity_backward(O&& output, E&& errors) {
-    cpp_unused(output);
+decltype(auto) identity_backward([[maybe_unused]] O&& output, E&& errors) {
     return std::forward<E>(errors);
 }
 
@@ -505,8 +502,7 @@ auto relu_backward(O&& output, E&& errors) -> detail::left_binary_helper<O, E, r
  * \return the backward activation of the activation function
  */
 template <typename O, typename E>
-decltype(auto) softmax_backward(O&& output, E&& errors) {
-    cpp_unused(output);
+decltype(auto) softmax_backward([[maybe_unused]] O&& output, E&& errors) {
     return std::forward<E>(errors);
 }
 

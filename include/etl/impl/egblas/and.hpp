@@ -41,19 +41,17 @@ static constexpr bool has_band = false;
  * \param C The memory of the vector c
  * \param ldc The leading dimension of c
  */
-inline void logical_and(size_t n, const bool* A, size_t lda, const bool* B, size_t ldb, bool* C, size_t ldc) {
+inline void logical_and([[maybe_unused]] size_t n,
+                        [[maybe_unused]] const bool* A,
+                        [[maybe_unused]] size_t lda,
+                        [[maybe_unused]] const bool* B,
+                        [[maybe_unused]] size_t ldb,
+                        [[maybe_unused]] bool* C,
+                        [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_BAND
     inc_counter("egblas");
     egblas_band(n, A, lda, B, ldb, C, ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::logical_and");
 #endif
 }

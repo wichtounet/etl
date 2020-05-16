@@ -37,8 +37,7 @@ bool is_square(E&& expr) {
  * \return true if the given expression is a real matrix, false otherwise.
  */
 template <typename E>
-bool is_real_matrix(E&& expr) {
-    cpp_unused(expr);
+bool is_real_matrix([[maybe_unused]] E&& expr) {
     return !is_complex<E>;
 }
 
@@ -48,8 +47,7 @@ bool is_real_matrix(E&& expr) {
  * \return true if the given expression is a complex matrix, false otherwise.
  */
 template <typename E>
-bool is_complex_matrix(E&& expr) {
-    cpp_unused(expr);
+bool is_complex_matrix([[maybe_unused]] E&& expr) {
     return is_complex<E>;
 }
 

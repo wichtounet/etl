@@ -183,9 +183,8 @@ public:
      * \brief Assign a value to all elements of the matrix
      * \param v The vlaue to assign to all elements
      */
-    gpu_dyn_matrix_impl& operator=(value_type v) noexcept {
+    gpu_dyn_matrix_impl& operator=([[maybe_unused]] value_type v) noexcept {
         cpp_unreachable("Invalid call to operator=(value_type) for GPU dyn matrix");
-        cpp_unused(v);
 
         return *this;
     }
@@ -202,8 +201,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    auto& gpu_compute_hint(Y& y) {
-        cpp_unused(y);
+    auto& gpu_compute_hint([[maybe_unused]] Y& y) {
         this->ensure_gpu_up_to_date();
         return *this;
     }
@@ -213,8 +211,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    const auto& gpu_compute_hint(Y& y) const {
-        cpp_unused(y);
+    const auto& gpu_compute_hint([[maybe_unused]] Y& y) const {
         this->ensure_gpu_up_to_date();
         return *this;
     }
@@ -281,9 +278,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::evaluator_visitor& visitor) const {
-        cpp_unused(visitor);
-    }
+    void visit([[maybe_unused]] const detail::evaluator_visitor& visitor) const {}
 
     /*!
      * \brief Inherit the dimensions of an ETL expressions.

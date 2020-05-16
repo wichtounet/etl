@@ -254,8 +254,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    auto& gpu_compute_hint(Y& y) {
-        cpp_unused(y);
+    auto& gpu_compute_hint([[maybe_unused]] Y& y) {
         value.ensure_gpu_up_to_date();
         return value;
     }
@@ -265,8 +264,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    const auto& gpu_compute_hint(Y& y) const {
-        cpp_unused(y);
+    const auto& gpu_compute_hint([[maybe_unused]] Y& y) const {
         value.ensure_gpu_up_to_date();
         return value;
     }
@@ -333,9 +331,7 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::evaluator_visitor& visitor) const {
-        cpp_unused(visitor);
-    }
+    void visit([[maybe_unused]] const detail::evaluator_visitor& visitor) const {}
 
     /*!
      * \brief Return GPU memory of this expression, if any.

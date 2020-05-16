@@ -135,9 +135,8 @@ constexpr size_t nth_size = nth_size_impl<S, I, F, Dims...>::value;
  * \param d The index of the dimension to get
  */
 template <size_t... D, cpp_enable_iff(sizeof...(D) == 0)>
-size_t dyn_nth_size(size_t d) {
-    cpp_unused(d);
-    cpp_assert(false, "Should never be called");
+size_t dyn_nth_size([[maybe_unused]] size_t d) {
+    cpp_unreachable("Should never be called");
     return 0;
 }
 

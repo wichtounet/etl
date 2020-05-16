@@ -23,8 +23,7 @@ struct optimizable {
      * \param expr The expression to test
      * \return true if the expression is optimizable, false otherwise
      */
-    static bool is(const Expr& expr) {
-        cpp_unused(expr);
+    static bool is([[maybe_unused]] const Expr& expr) {
         return false;
     }
 
@@ -33,8 +32,7 @@ struct optimizable {
      * \param expr The expression to test
      * \return true if the expression or one of its sub expressions is optimizable, false otherwise
      */
-    static bool is_deep(const Expr& expr) {
-        cpp_unused(expr);
+    static bool is_deep([[maybe_unused]] const Expr& expr) {
         return false;
     }
 };
@@ -212,11 +210,8 @@ struct transformer {
      * \param expr The expression to transform
      */
     template <typename Builder>
-    static void transform(Builder builder, const Expr& expr) {
+    static void transform([[maybe_unused]] Builder builder, [[maybe_unused]] const Expr& expr) {
         std::cout << "Arrived in parent, should not happen" << std::endl;
-
-        cpp_unused(builder);
-        cpp_unused(expr);
     }
 };
 
@@ -233,12 +228,9 @@ struct transformer<etl::unary_expr<T, Expr, UnaryOp>> {
      * \param expr The expression to transform
      */
     template <typename Builder>
-    static void transform(Builder parent_builder, const etl::unary_expr<T, Expr, UnaryOp>& expr) {
+    static void transform([[maybe_unused]] Builder parent_builder, [[maybe_unused]] const etl::unary_expr<T, Expr, UnaryOp>& expr) {
         if constexpr (std::is_same_v<UnaryOp, plus_unary_op<T>>) {
             parent_builder(expr.value);
-        } else {
-            cpp_unused(parent_builder);
-            cpp_unused(expr);
         }
     }
 };
@@ -256,7 +248,7 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>
      * \param expr The expression to transform
      */
     template <typename Builder>
-    static void transform(Builder parent_builder, const etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>& expr) {
+    static void transform([[maybe_unused]] Builder parent_builder, [[maybe_unused]] const etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>& expr) {
         if constexpr (std::is_same_v<BinaryOp, mul_binary_op<T>>) {
             parent_builder(etl::scalar<T>(expr.lhs.value * expr.rhs.value));
         } else if constexpr (std::is_same_v<BinaryOp, plus_binary_op<T>>) {
@@ -265,9 +257,6 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>
             parent_builder(etl::scalar<T>(expr.lhs.value - expr.rhs.value));
         } else if constexpr (std::is_same_v<BinaryOp, div_binary_op<T>>) {
             parent_builder(etl::scalar<T>(expr.lhs.value / expr.rhs.value));
-        } else {
-            cpp_unused(parent_builder);
-            cpp_unused(expr);
         }
     }
 };
@@ -285,7 +274,7 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>> {
      * \param expr The expression to transform
      */
     template <typename Builder>
-    static void transform(Builder parent_builder, const etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>& expr) {
+    static void transform([[maybe_unused]] Builder parent_builder, [[maybe_unused]] const etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>& expr) {
         if constexpr (std::is_same_v<BinaryOp, mul_binary_op<T>>) {
             if (expr.lhs.value == 1.0) {
                 parent_builder(expr.rhs);
@@ -300,9 +289,6 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>> {
             if (expr.lhs.value == 0.0) {
                 parent_builder(expr.lhs);
             }
-        } else {
-            cpp_unused(parent_builder);
-            cpp_unused(expr);
         }
     }
 };
@@ -320,7 +306,7 @@ struct transformer<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
      * \param expr The expression to transform
      */
     template <typename Builder>
-    static void transform(Builder parent_builder, const etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>& expr) {
+    static void transform([[maybe_unused]] Builder parent_builder, [[maybe_unused]] const etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>& expr) {
         if constexpr (std::is_same_v<BinaryOp, mul_binary_op<T>>) {
             if (expr.rhs.value == 1.0) {
                 parent_builder(expr.lhs);
@@ -339,9 +325,6 @@ struct transformer<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
             if (expr.rhs.value == 1.0) {
                 parent_builder(expr.lhs);
             }
-        } else {
-            cpp_unused(parent_builder);
-            cpp_unused(expr);
         }
     }
 };
@@ -367,11 +350,8 @@ struct optimizer {
      * \param expr The expression to optimize
      */
     template <typename Builder>
-    static void apply(Builder parent_builder, const Expr& expr) {
+    static void apply([[maybe_unused]] Builder parent_builder, [[maybe_unused]] const Expr& expr) {
         std::cout << "Leaf node" << std::endl;
-
-        cpp_unused(parent_builder);
-        cpp_unused(expr);
     }
 };
 

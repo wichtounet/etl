@@ -40,18 +40,16 @@ static constexpr bool has_cconj = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void conj(size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb) {
+inline void conj([[maybe_unused]] size_t n,
+                 [[maybe_unused]] std::complex<float> alpha,
+                 [[maybe_unused]] std::complex<float>* A,
+                 [[maybe_unused]] size_t lda,
+                 [[maybe_unused]] std::complex<float>* B,
+                 [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_CCONJ
     inc_counter("egblas");
     egblas_cconj(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::conj");
 #endif
 }
@@ -65,18 +63,16 @@ inline void conj(size_t n, std::complex<float> alpha, std::complex<float>* A, si
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void conj(size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb) {
+inline void conj([[maybe_unused]] size_t n,
+                 [[maybe_unused]] etl::complex<float> alpha,
+                 [[maybe_unused]] etl::complex<float>* A,
+                 [[maybe_unused]] size_t lda,
+                 [[maybe_unused]] etl::complex<float>* B,
+                 [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_CCONJ
     inc_counter("egblas");
     egblas_cconj(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::conj");
 #endif
 }
@@ -99,18 +95,16 @@ static constexpr bool has_zconj = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void conj(size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb) {
+inline void conj([[maybe_unused]] size_t n,
+                 [[maybe_unused]] std::complex<double> alpha,
+                 [[maybe_unused]] std::complex<double>* A,
+                 [[maybe_unused]] size_t lda,
+                 [[maybe_unused]] std::complex<double>* B,
+                 [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_Zconj
     inc_counter("egblas");
     egblas_zconj(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::conj");
 #endif
 }
@@ -124,18 +118,16 @@ inline void conj(size_t n, std::complex<double> alpha, std::complex<double>* A, 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void conj(size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb) {
+inline void conj([[maybe_unused]] size_t n,
+                 [[maybe_unused]] etl::complex<double> alpha,
+                 [[maybe_unused]] etl::complex<double>* A,
+                 [[maybe_unused]] size_t lda,
+                 [[maybe_unused]] etl::complex<double>* B,
+                 [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_Zconj
     inc_counter("egblas");
     egblas_zconj(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::conj");
 #endif
 }

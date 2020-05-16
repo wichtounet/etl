@@ -76,12 +76,7 @@ static constexpr bool has_scalar_dset = false;
  * \param beta The scalar to set
  */
 template <typename T>
-inline void scalar_set(T* x, size_t n, size_t s, const T beta) {
-    cpp_unused(x);
-    cpp_unused(n);
-    cpp_unused(s);
-    cpp_unused(beta);
-
+inline void scalar_set([[maybe_unused]] T* x, [[maybe_unused]] size_t n, [[maybe_unused]] size_t s, [[maybe_unused]] const T beta) {
     cpp_unreachable("Invalid call to egblas::scalar_set");
 }
 

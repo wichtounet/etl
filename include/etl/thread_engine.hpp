@@ -89,9 +89,8 @@ struct thread_engine {
      * \param fun The functor to execute
      */
     template <typename Functor, typename... Args>
-    static void schedule(Functor&& fun, Args&&... /*args*/) {
+    static void schedule([[maybe_unused]] Functor&& fun, [[maybe_unused]] Args&&... args) {
         cpp_unreachable("thread_engine can only be used if paralle support is enabled");
-        cpp_unused(fun);
     }
 
     /*!

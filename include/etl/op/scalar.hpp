@@ -160,18 +160,15 @@ struct scalar {
      * \param visitor The visitor to apply
      */
     template <typename V>
-    void visit(V&& visitor) const {
-        cpp_unused(visitor);
-    }
+    void visit([[maybe_unused]] V&& visitor) const {}
 
     /*!
      * \brief Return a GPU computed version of this expression
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    decltype(auto) gpu_compute_hint(Y& y) const {
+    decltype(auto) gpu_compute_hint([[maybe_unused]] Y& y) const {
         // TODO Maybe make a full vector with the hint
-        cpp_unused(y);
 
         gpu_dyn_matrix_impl<T, order::RowMajor, 1> t1;
 

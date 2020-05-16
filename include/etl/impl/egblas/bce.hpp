@@ -40,18 +40,16 @@ static constexpr bool has_bce_sloss = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline float bce_loss(size_t n, float alpha, const float* A, size_t lda, const float* B, size_t ldb) {
+inline float bce_loss([[maybe_unused]] size_t n,
+                      [[maybe_unused]] float alpha,
+                      [[maybe_unused]] const float* A,
+                      [[maybe_unused]] size_t lda,
+                      [[maybe_unused]] const float* B,
+                      [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_BCE_SLOSS
     inc_counter("egblas");
     return egblas_bce_sloss(n, alpha, A, lda, B, ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::bce_loss");
 
     return 0.0;
@@ -76,18 +74,16 @@ static constexpr bool has_bce_dloss = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline double bce_loss(size_t n, double alpha, const double* A, size_t lda, const double* B, size_t ldb) {
+inline double bce_loss([[maybe_unused]] size_t n,
+                       [[maybe_unused]] double alpha,
+                       [[maybe_unused]] const double* A,
+                       [[maybe_unused]] size_t lda,
+                       [[maybe_unused]] const double* B,
+                       [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_BCE_DLOSS
     inc_counter("egblas");
     return egblas_bce_dloss(n, alpha, A, lda, B, ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::bce_loss");
 
     return 0.0;
@@ -112,18 +108,16 @@ static constexpr bool has_bce_serror = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline float bce_error(size_t n, float alpha, const float* A, size_t lda, const float* B, size_t ldb) {
+inline float bce_error([[maybe_unused]] size_t n,
+                       [[maybe_unused]] float alpha,
+                       [[maybe_unused]] const float* A,
+                       [[maybe_unused]] size_t lda,
+                       [[maybe_unused]] const float* B,
+                       [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_BCE_SERROR
     inc_counter("egblas");
     return egblas_bce_serror(n, alpha, A, lda, B, ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::bce_error");
 
     return 0.0;
@@ -148,18 +142,16 @@ static constexpr bool has_bce_derror = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline double bce_error(size_t n, double alpha, const double* A, size_t lda, const double* B, size_t ldb) {
+inline double bce_error([[maybe_unused]] size_t n,
+                        [[maybe_unused]] double alpha,
+                        [[maybe_unused]] const double* A,
+                        [[maybe_unused]] size_t lda,
+                        [[maybe_unused]] const double* B,
+                        [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_BCE_DERROR
     inc_counter("egblas");
     return egblas_bce_derror(n, alpha, A, lda, B, ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::bce_error");
 
     return 0.0;

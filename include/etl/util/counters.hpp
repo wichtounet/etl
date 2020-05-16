@@ -22,9 +22,7 @@ inline void dump_counters() {
  * \brief Increase the given counter
  * \param name The name of the counter to increase
  */
-inline void inc_counter(const char* name) {
-    cpp_unused(name);
-}
+inline void inc_counter([[maybe_unused]] const char* name) {}
 
 } //end of namespace etl
 

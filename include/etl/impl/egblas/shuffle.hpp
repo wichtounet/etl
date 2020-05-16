@@ -37,15 +37,11 @@ static constexpr bool has_shuffle = false;
  * \param x The vector to shuffle (GPU memory)
  * \param incx The size of each element of the vector
  */
-inline void shuffle(size_t n, void* x, size_t incx) {
+inline void shuffle([[maybe_unused]] size_t n, [[maybe_unused]] void* x, [[maybe_unused]] size_t incx) {
 #ifdef EGBLAS_HAS_SHUFFLE
     inc_counter("egblas");
     egblas_shuffle(n, x, incx);
 #else
-    cpp_unused(n);
-    cpp_unused(x);
-    cpp_unused(incx);
-
     cpp_unreachable("Invalid call to egblas::shuffle");
 #endif
 }
@@ -66,16 +62,11 @@ static constexpr bool has_shuffle_seed = false;
  * \param incx The size of each element of the vector
  * \param seed The seed to initialize the random generator with
  */
-inline void shuffle_seed(size_t n, void* x, size_t incx, size_t seed) {
+inline void shuffle_seed([[maybe_unused]] size_t n, [[maybe_unused]] void* x, [[maybe_unused]] size_t incx, [[maybe_unused]] size_t seed) {
 #ifdef EGBLAS_HAS_SHUFFLE_SEED
     inc_counter("egblas");
     egblas_shuffle_seed(n, x, incx, seed);
 #else
-    cpp_unused(n);
-    cpp_unused(x);
-    cpp_unused(incx);
-    cpp_unused(seed);
-
     cpp_unreachable("Invalid call to egblas::shuffle_seed");
 #endif
 }
@@ -97,17 +88,12 @@ static constexpr bool has_par_shuffle = false;
  * \param y The second vector to shuffle (GPU memory)
  * \param incy The size of each element of the second vector
  */
-inline void par_shuffle(size_t n, void* x, size_t incx, void* y, size_t incy) {
+inline void par_shuffle(
+    [[maybe_unused]] size_t n, [[maybe_unused]] void* x, [[maybe_unused]] size_t incx, [[maybe_unused]] void* y, [[maybe_unused]] size_t incy) {
 #ifdef EGBLAS_HAS_PAR_SHUFFLE
     inc_counter("egblas");
     egblas_par_shuffle(n, x, incx, y, incy);
 #else
-    cpp_unused(n);
-    cpp_unused(x);
-    cpp_unused(incx);
-    cpp_unused(y);
-    cpp_unused(incy);
-
     cpp_unreachable("Invalid call to egblas::par_shuffle");
 #endif
 }
@@ -130,18 +116,16 @@ static constexpr bool has_par_shuffle_seed = false;
  * \param incy The size of each element of the second vector
  * \param seed The seed to initialize the random generator with
  */
-inline void par_shuffle_seed(size_t n, void* x, size_t incx, void* y, size_t incy, size_t seed) {
+inline void par_shuffle_seed([[maybe_unused]] size_t n,
+                             [[maybe_unused]] void* x,
+                             [[maybe_unused]] size_t incx,
+                             [[maybe_unused]] void* y,
+                             [[maybe_unused]] size_t incy,
+                             [[maybe_unused]] size_t seed) {
 #ifdef EGBLAS_HAS_PAR_SHUFFLE_SEED
     inc_counter("egblas");
     egblas_par_shuffle_seed(n, x, incx, y, incy, seed);
 #else
-    cpp_unused(n);
-    cpp_unused(x);
-    cpp_unused(incx);
-    cpp_unused(y);
-    cpp_unused(incy);
-    cpp_unused(seed);
-
     cpp_unreachable("Invalid call to egblas::par_shuffle");
 #endif
 }

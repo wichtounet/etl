@@ -196,8 +196,7 @@ decltype(auto) identity(E&& value) {
  * \return 1.0
  */
 template <typename E>
-auto identity_derivative(E&& value) {
-    cpp_unused(value);
+auto identity_derivative([[maybe_unused]] E&& value) {
     return 1.0;
 }
 
@@ -318,8 +317,7 @@ auto stable_softmax(E&& e) {
  * \return An ETL expression representing the derivative of the softmax function of the input.
  */
 template <typename E>
-auto softmax_derivative(E&& e) {
-    cpp_unused(e);
+auto softmax_derivative([[maybe_unused]] E&& e) {
     return 1.0;
 }
 

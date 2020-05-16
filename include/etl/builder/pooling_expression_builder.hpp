@@ -25,9 +25,7 @@ namespace etl {
  * \return A expression representing the Derivative of 2D Average Pooling of the input expression.
  */
 template <size_t C1, size_t C2, typename E, typename F>
-auto avg_pool_derivative_2d(E&& input, F&& output) {
-    cpp_unused(input);
-    cpp_unused(output);
+auto avg_pool_derivative_2d([[maybe_unused]] E&& input, [[maybe_unused]] F&& output) {
     return 1.0 / (C1 * C2);
 }
 
@@ -40,9 +38,7 @@ auto avg_pool_derivative_2d(E&& input, F&& output) {
  * \return A expression representing the Derivative of 2D Average Pooling of the input expression.
  */
 template <typename E, typename F>
-auto avg_pool_derivative_2d(E&& input, F&& output, size_t c1, size_t c2) {
-    cpp_unused(input);
-    cpp_unused(output);
+auto avg_pool_derivative_2d([[maybe_unused]] E&& input, [[maybe_unused]] F&& output, size_t c1, size_t c2) {
     return 1.0 / (c1 * c2);
 }
 
@@ -58,9 +54,7 @@ auto avg_pool_derivative_2d(E&& input, F&& output, size_t c1, size_t c2) {
  * \return A expression representing the Derivative of 3D Average Pooling of the input expression.
  */
 template <size_t C1, size_t C2, size_t C3, typename E, typename F>
-auto avg_pool_derivative_3d(E&& input, F&& output) {
-    cpp_unused(input);
-    cpp_unused(output);
+auto avg_pool_derivative_3d([[maybe_unused]] E&& input, [[maybe_unused]] F&& output) {
     return 1.0 / (C1 * C2 * C3);
 }
 
@@ -74,9 +68,7 @@ auto avg_pool_derivative_3d(E&& input, F&& output) {
  * \return A expression representing the Derivative of 3D Average Pooling of the input expression.
  */
 template <typename E, typename F>
-auto avg_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t c3) {
-    cpp_unused(input);
-    cpp_unused(output);
+auto avg_pool_derivative_3d([[maybe_unused]] E&& input, [[maybe_unused]] F&& output, size_t c1, size_t c2, size_t c3) {
     return 1.0 / (c1 * c2 * c3);
 }
 

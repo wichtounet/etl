@@ -143,8 +143,7 @@ struct uniform_generator_op {
      * \param s The generator
      * \return the output stream
      */
-    friend std::ostream& operator<<(std::ostream& os, const uniform_generator_op& s) {
-        cpp_unused(s);
+    friend std::ostream& operator<<(std::ostream& os, [[maybe_unused]] const uniform_generator_op& s) {
         return os << "U(0,1)";
     }
 };
@@ -262,8 +261,7 @@ struct uniform_generator_g_op {
      * \param s The generator
      * \return the output stream
      */
-    friend std::ostream& operator<<(std::ostream& os, const uniform_generator_g_op& s) {
-        cpp_unused(s);
+    friend std::ostream& operator<<(std::ostream& os, [[maybe_unused]] const uniform_generator_g_op& s) {
         return os << "U(0,1)";
     }
 };

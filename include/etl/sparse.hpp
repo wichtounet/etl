@@ -472,9 +472,8 @@ private:
      * \param e The expression to get the dimensions from.
      */
     template <typename E, cpp_enable_iff(etl::decay_traits<E>::is_generator)>
-    void inherit(const E& e) {
-        cpp_assert(false, "Impossible to inherit dimensions from generators");
-        cpp_unused(e);
+    void inherit([[maybe_unused]] const E& e) {
+        cpp_unreachable("Impossible to inherit dimensions from generators");
     }
 
     /*!
@@ -781,9 +780,7 @@ public:
      * \param visitor The visitor to apply
      */
     template <typename V>
-    void visit(V&& visitor) const {
-        cpp_unused(visitor);
-    }
+    void visit([[maybe_unused]] V&& visitor) const {}
 
     /*!
      * \brief Destructs the matrix and releases all its memory

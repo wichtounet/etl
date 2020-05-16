@@ -76,7 +76,7 @@ struct pow_binary_op {
      * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
     template <typename X, typename Y, typename YY>
-    static auto gpu_compute_hint(const X& x, const Y& y, YY& yy) noexcept {
+    static auto gpu_compute_hint([[maybe_unused]] const X& x, const Y& y, YY& yy) noexcept {
         decltype(auto) t1 = smart_gpu_compute_hint(x, yy);
 
         auto t2 = force_temporary_gpu(t1);
@@ -88,8 +88,6 @@ struct pow_binary_op {
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(yy), alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
-#else
-        cpp_unused(y);
 #endif
 
         return t2;
@@ -102,7 +100,7 @@ struct pow_binary_op {
      * \param y The expression into which to store the reuslt
      */
     template <typename X, typename Y, typename YY>
-    static YY& gpu_compute(const X& x, const Y& y, YY& yy) noexcept {
+    static YY& gpu_compute(const X& x, [[maybe_unused]] const Y& y, YY& yy) noexcept {
         smart_gpu_compute(x, yy);
 
 #ifdef ETL_CUDA
@@ -112,8 +110,6 @@ struct pow_binary_op {
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(yy), alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
-#else
-        cpp_unused(y);
 #endif
 
         yy.validate_gpu();
@@ -221,7 +217,7 @@ struct integer_pow_binary_op {
      * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
     template <typename X, typename Y, typename YY>
-    static auto gpu_compute_hint(const X& x, const Y& y, YY& yy) noexcept {
+    static auto gpu_compute_hint(const X& x, [[maybe_unused]] const Y& y, YY& yy) noexcept {
         decltype(auto) t1 = smart_gpu_compute_hint(x, yy);
 
         auto t2 = force_temporary_gpu(t1);
@@ -233,8 +229,6 @@ struct integer_pow_binary_op {
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(yy), alpha, power_gpu.get(), 0, t2.gpu_memory(), 1);
-#else
-        cpp_unused(y);
 #endif
 
         return t2;
@@ -247,7 +241,7 @@ struct integer_pow_binary_op {
      * \param y The expression into which to store the reuslt
      */
     template <typename X, typename Y, typename YY>
-    static YY& gpu_compute(const X& x, const Y& y, YY& yy) noexcept {
+    static YY& gpu_compute(const X& x, [[maybe_unused]] const Y& y, YY& yy) noexcept {
         smart_gpu_compute(x, yy);
 
 #ifdef ETL_CUDA
@@ -257,8 +251,6 @@ struct integer_pow_binary_op {
 
         T alpha(1.0);
         impl::egblas::pow_yx(etl::size(yy), alpha, power_gpu.get(), 0, yy.gpu_memory(), 1);
-#else
-        cpp_unused(y);
 #endif
 
         yy.validate_gpu();

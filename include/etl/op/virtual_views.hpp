@@ -114,9 +114,7 @@ struct magic_view {
      * \param visitor The visitor to apply
      */
     template <typename Visitor>
-    void visit(Visitor&& visitor) const {
-        cpp_unused(visitor);
-    }
+    void visit([[maybe_unused]] Visitor&& visitor) const {}
 
     /*!
      * \brief Ensures that the GPU memory is allocated and that the GPU memory
@@ -207,9 +205,7 @@ struct fast_magic_view {
      * \param visitor The visitor to apply
      */
     template <typename Visitor>
-    void visit(Visitor&& visitor) const {
-        cpp_unused(visitor);
-    }
+    void visit([[maybe_unused]] Visitor&& visitor) const {}
 
     /*!
      * \brief Ensures that the GPU memory is allocated and that the GPU memory
@@ -275,8 +271,7 @@ struct etl_traits<etl::magic_view<V>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static size_t dim(const expr_t& v, size_t d) {
-        cpp_unused(d);
+    static size_t dim(const expr_t& v, [[maybe_unused]] size_t d) {
         return v.n;
     }
 

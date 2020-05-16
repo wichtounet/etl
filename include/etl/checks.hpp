@@ -27,10 +27,8 @@ namespace etl {
  * \param rhs The right hand side expression
  */
 template <typename LE, typename RE, cpp_enable_iff(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator)>
-void validate_expression_impl(const LE& lhs, const RE& rhs) noexcept {
+void validate_expression_impl([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) noexcept {
     //Nothing to test, generators are of infinite size
-    cpp_unused(lhs);
-    cpp_unused(rhs);
 }
 
 /*!
@@ -45,10 +43,8 @@ void validate_expression_impl(const LE& lhs, const RE& rhs) noexcept {
 template <typename LE,
           typename RE,
           cpp_enable_iff(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator) && all_etl_expr<LE, RE> && !all_fast<LE, RE>)>
-void validate_expression_impl(const LE& lhs, const RE& rhs) {
+void validate_expression_impl([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
     cpp_assert(etl::size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
-    cpp_unused(lhs);
-    cpp_unused(rhs);
 }
 
 /*!
@@ -61,10 +57,8 @@ void validate_expression_impl(const LE& lhs, const RE& rhs) {
  * \param rhs The right hand side expression
  */
 template <typename LE, typename RE, cpp_enable_iff(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator) && all_etl_expr<LE, RE> && all_fast<LE, RE>)>
-void validate_expression_impl(const LE& lhs, const RE& rhs) {
+void validate_expression_impl([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
-    cpp_unused(lhs);
-    cpp_unused(rhs);
 }
 
 #define validate_expression(lhs, rhs)                                                                              \
@@ -81,11 +75,9 @@ void validate_expression_impl(const LE& lhs, const RE& rhs) {
  * \param rhs The right hand side expression
  */
 template <typename LE, typename RE, cpp_enable_iff(etl_traits<RE>::is_generator)>
-void validate_assign(const LE& lhs, const RE& rhs) noexcept {
+void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) noexcept {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     //Nothing to test, generators are of infinite size
-    cpp_unused(lhs);
-    cpp_unused(rhs);
 }
 
 /*!
@@ -98,11 +90,9 @@ void validate_assign(const LE& lhs, const RE& rhs) noexcept {
  * \param rhs The right hand side expression
  */
 template <typename LE, typename RE, cpp_enable_iff(!etl_traits<RE>::is_generator && is_etl_expr<RE> && !all_fast<LE, RE> && !is_wrapper_expr<RE>)>
-void validate_assign(const LE& lhs, const RE& rhs) {
+void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(etl::size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
-    cpp_unused(lhs);
-    cpp_unused(rhs);
 }
 
 /*!
@@ -115,11 +105,9 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  * \param rhs The right hand side expression
  */
 template <typename LE, typename RE, cpp_enable_iff(!etl_traits<RE>::is_generator && is_etl_expr<RE> && all_fast<LE, RE> && !is_wrapper_expr<RE>)>
-void validate_assign(const LE& lhs, const RE& rhs) {
+void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
-    cpp_unused(lhs);
-    cpp_unused(rhs);
 }
 
 /*!
@@ -132,11 +120,9 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  * \param rhs The right hand side expression
  */
 template <typename LE, typename RE, cpp_enable_iff(!is_etl_expr<RE> && !is_wrapper_expr<RE>)>
-void validate_assign(const LE& lhs, const RE& rhs) {
+void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(etl::size(lhs) == rhs.size(), "Cannot perform element-wise operations on collections of different size");
-    cpp_unused(lhs);
-    cpp_unused(rhs);
 }
 
 /*!
@@ -149,11 +135,9 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  * \param rhs The right hand side expression
  */
 template <typename LE, typename RE, cpp_enable_iff(is_wrapper_expr<RE>)>
-void validate_assign(const LE& lhs, const RE& rhs) {
+void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
     static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(etl::size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
-    cpp_unused(lhs);
-    cpp_unused(rhs);
 }
 
 /*!
@@ -188,27 +172,24 @@ namespace detail {
  * \param e The expression to assert
  */
 template <size_t C1, size_t C2, typename E, cpp_enable_iff(is_2d<E> && !etl_traits<E>::is_fast)>
-void validate_pmax_pooling_impl(const E& e) {
+void validate_pmax_pooling_impl([[maybe_unused]] const E& e) {
     cpp_assert(etl::template dim<0>(e) % C1 == 0 && etl::template dim<1>(e) % C2 == 0, "Dimensions not divisible by the pooling ratio");
-    cpp_unused(e);
 }
 
 /*!
  * \copydoc validate_pmax_pooling_impl
  */
 template <size_t C1, size_t C2, typename E, cpp_enable_iff(is_3d<E> && !etl_traits<E>::is_fast)>
-void validate_pmax_pooling_impl(const E& e) {
+void validate_pmax_pooling_impl([[maybe_unused]] const E& e) {
     cpp_assert(etl::template dim<1>(e) % C1 == 0 && etl::template dim<2>(e) % C2 == 0, "Dimensions not divisible by the pooling ratio");
-    cpp_unused(e);
 }
 
 /*!
  * \copydoc validate_pmax_pooling_impl
  */
 template <size_t C1, size_t C2, typename E, cpp_enable_iff(is_4d<E> && !etl_traits<E>::is_fast)>
-void validate_pmax_pooling_impl(const E& e) {
+void validate_pmax_pooling_impl([[maybe_unused]] const E& e) {
     cpp_assert(etl::template dim<2>(e) % C1 == 0 && etl::template dim<3>(e) % C2 == 0, "Dimensions not divisible by the pooling ratio");
-    cpp_unused(e);
 }
 
 /*!
@@ -246,33 +227,24 @@ void validate_pmax_pooling_impl(const E& /*unused*/) {
  * \param e The expression to assert
  */
 template <typename E, cpp_enable_iff(is_2d<E>)>
-void validate_pmax_pooling_impl(const E& e, size_t c1, size_t c2) {
+void validate_pmax_pooling_impl([[maybe_unused]] const E& e, [[maybe_unused]] size_t c1, [[maybe_unused]] size_t c2) {
     cpp_assert(etl::template dim<0>(e) % c1 == 0 && etl::template dim<1>(e) % c2 == 0, "Dimensions not divisible by the pooling ratio");
-    cpp_unused(e);
-    cpp_unused(c1);
-    cpp_unused(c2);
 }
 
 /*!
  * \copydoc validate_pmax_pooling_impl
  */
 template <typename E, cpp_enable_iff(is_3d<E>)>
-void validate_pmax_pooling_impl(const E& e, size_t c1, size_t c2) {
+void validate_pmax_pooling_impl([[maybe_unused]] const E& e, [[maybe_unused]] size_t c1, [[maybe_unused]] size_t c2) {
     cpp_assert(etl::template dim<1>(e) % c1 == 0 && etl::template dim<2>(e) % c2 == 0, "Dimensions not divisible by the pooling ratio");
-    cpp_unused(e);
-    cpp_unused(c1);
-    cpp_unused(c2);
 }
 
 /*!
  * \copydoc validate_pmax_pooling_impl
  */
 template <typename E, cpp_enable_iff(is_4d<E>)>
-void validate_pmax_pooling_impl(const E& e, size_t c1, size_t c2) {
+void validate_pmax_pooling_impl([[maybe_unused]] const E& e, [[maybe_unused]] size_t c1, [[maybe_unused]] size_t c2) {
     cpp_assert(etl::template dim<2>(e) % c1 == 0 && etl::template dim<3>(e) % c2 == 0, "Dimensions not divisible by the pooling ratio");
-    cpp_unused(e);
-    cpp_unused(c1);
-    cpp_unused(c2);
 }
 
 } //end of namespace detail

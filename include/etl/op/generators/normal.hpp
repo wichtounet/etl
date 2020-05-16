@@ -121,8 +121,7 @@ struct normal_generator_op {
      * \param s The generator
      * \return the output stream
      */
-    friend std::ostream& operator<<(std::ostream& os, const normal_generator_op& s) {
-        cpp_unused(s);
+    friend std::ostream& operator<<(std::ostream& os, [[maybe_unused]] const normal_generator_op& s) {
         return os << "N(0,1)";
     }
 };
@@ -222,8 +221,7 @@ struct normal_generator_g_op {
      * \param s The generator
      * \return the output stream
      */
-    friend std::ostream& operator<<(std::ostream& os, const normal_generator_g_op& s) {
-        cpp_unused(s);
+    friend std::ostream& operator<<(std::ostream& os, [[maybe_unused]] const normal_generator_g_op& s) {
         return os << "N(0,1)";
     }
 };

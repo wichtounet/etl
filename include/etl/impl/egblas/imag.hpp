@@ -40,18 +40,16 @@ static constexpr bool has_cimag = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void imag(size_t n, float alpha, std::complex<float>* A, size_t lda, float* B, size_t ldb) {
+inline void imag([[maybe_unused]] size_t n,
+                 [[maybe_unused]] float alpha,
+                 [[maybe_unused]] std::complex<float>* A,
+                 [[maybe_unused]] size_t lda,
+                 [[maybe_unused]] float* B,
+                 [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_Cimag
     inc_counter("egblas");
     egblas_cimag(n, alpha, reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::imag");
 #endif
 }
@@ -65,18 +63,16 @@ inline void imag(size_t n, float alpha, std::complex<float>* A, size_t lda, floa
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void imag(size_t n, float alpha, etl::complex<float>* A, size_t lda, float* B, size_t ldb) {
+inline void imag([[maybe_unused]] size_t n,
+                 [[maybe_unused]] float alpha,
+                 [[maybe_unused]] etl::complex<float>* A,
+                 [[maybe_unused]] size_t lda,
+                 [[maybe_unused]] float* B,
+                 [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_Cimag
     inc_counter("egblas");
     egblas_cimag(n, alpha, reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::imag");
 #endif
 }
@@ -99,18 +95,16 @@ static constexpr bool has_zimag = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void imag(size_t n, double alpha, std::complex<double>* A, size_t lda, double* B, size_t ldb) {
+inline void imag([[maybe_unused]] size_t n,
+                 [[maybe_unused]] double alpha,
+                 [[maybe_unused]] std::complex<double>* A,
+                 [[maybe_unused]] size_t lda,
+                 [[maybe_unused]] double* B,
+                 [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_Zimag
     inc_counter("egblas");
     egblas_zimag(n, alpha, reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::imag");
 #endif
 }
@@ -124,18 +118,16 @@ inline void imag(size_t n, double alpha, std::complex<double>* A, size_t lda, do
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void imag(size_t n, double alpha, etl::complex<double>* A, size_t lda, double* B, size_t ldb) {
+inline void imag([[maybe_unused]] size_t n,
+                 [[maybe_unused]] double alpha,
+                 [[maybe_unused]] etl::complex<double>* A,
+                 [[maybe_unused]] size_t lda,
+                 [[maybe_unused]] double* B,
+                 [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_Zimag
     inc_counter("egblas");
     egblas_zimag(n, alpha, reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::imag");
 #endif
 }

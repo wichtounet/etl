@@ -45,10 +45,7 @@ struct no_vec {
      * \param value The value to store
      */
     template <typename F, typename M>
-    static inline void storeu(F* memory, M value) {
-        cpp_unused(memory);
-        cpp_unused(value);
-    }
+    static inline void storeu([[maybe_unused]] F* memory, [[maybe_unused]] M value) {}
 
     /*!
      * \brief Aligned store value to memory
@@ -56,10 +53,7 @@ struct no_vec {
      * \param value The value to store
      */
     template <typename F, typename M>
-    static inline void store(F* memory, M value) {
-        cpp_unused(memory);
-        cpp_unused(value);
-    }
+    static inline void store([[maybe_unused]] F* memory, [[maybe_unused]] M value) {}
 
     /*!
      * \brief Aligned load a vector from memory
@@ -67,8 +61,7 @@ struct no_vec {
      * \return Vector of values from memory
      */
     template <typename F>
-    static F load(const F* memory) {
-        cpp_unused(memory);
+    static F load([[maybe_unused]] const F* memory) {
         return F();
     }
 
@@ -78,8 +71,7 @@ struct no_vec {
      * \return Vector of values from memory
      */
     template <typename F>
-    static F loadu(const F* memory) {
-        cpp_unused(memory);
+    static F loadu([[maybe_unused]] const F* memory) {
         return F();
     }
 
@@ -89,8 +81,7 @@ struct no_vec {
      * \return Vector of value
      */
     template <typename F>
-    static F set(F value) {
-        cpp_unused(value);
+    static F set([[maybe_unused]] F value) {
         return F();
     }
 
@@ -100,8 +91,7 @@ struct no_vec {
      * \return Vector of value
      */
     template <typename F>
-    static F round_up(F x) {
-        cpp_unused(x);
+    static F round_up([[maybe_unused]] F x) {
         return F();
     }
 
@@ -112,9 +102,7 @@ struct no_vec {
      * \return Vector of the results
      */
     template <typename M>
-    static M add(M lhs, M rhs) {
-        cpp_unused(lhs);
-        cpp_unused(rhs);
+    static M add([[maybe_unused]] M lhs, [[maybe_unused]] M rhs) {
         return M();
     }
 
@@ -125,9 +113,7 @@ struct no_vec {
      * \return Vector of the results
      */
     template <typename M>
-    static M sub(M lhs, M rhs) {
-        cpp_unused(lhs);
-        cpp_unused(rhs);
+    static M sub([[maybe_unused]] M lhs, [[maybe_unused]] M rhs) {
         return M();
     }
 
@@ -139,10 +125,7 @@ struct no_vec {
      * \return Vector of the results
      */
     template <typename M>
-    static M fmadd(M a, M b, M c) {
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
+    static M fmadd([[maybe_unused]] M a, [[maybe_unused]] M b, [[maybe_unused]] M c) {
         return M();
     }
 
@@ -153,9 +136,7 @@ struct no_vec {
      * \return Vector of the results
      */
     template <typename M>
-    static M mul(M lhs, M rhs) {
-        cpp_unused(lhs);
-        cpp_unused(rhs);
+    static M mul([[maybe_unused]] M lhs, [[maybe_unused]] M rhs) {
         return M();
     }
 
@@ -166,9 +147,7 @@ struct no_vec {
      * \return Vector of the results
      */
     template <typename M>
-    static M div(M lhs, M rhs) {
-        cpp_unused(lhs);
-        cpp_unused(rhs);
+    static M div([[maybe_unused]] M lhs, [[maybe_unused]] M rhs) {
         return M();
     }
 
@@ -179,9 +158,7 @@ struct no_vec {
      * \return Vector of the results
      */
     template <typename M>
-    static M max(M lhs, M rhs) {
-        cpp_unused(lhs);
-        cpp_unused(rhs);
+    static M max([[maybe_unused]] M lhs, [[maybe_unused]] M rhs) {
         return M();
     }
 
@@ -192,9 +169,7 @@ struct no_vec {
      * \return Vector of the results
      */
     template <typename M>
-    static M min(M lhs, M rhs) {
-        cpp_unused(lhs);
-        cpp_unused(rhs);
+    static M min([[maybe_unused]] M lhs, [[maybe_unused]] M rhs) {
         return M();
     }
 
@@ -204,8 +179,7 @@ struct no_vec {
      * \return The square root of the input values
      */
     template <typename M>
-    static M sqrt(M value) {
-        cpp_unused(value);
+    static M sqrt([[maybe_unused]] M value) {
         return M();
     }
 
@@ -215,8 +189,7 @@ struct no_vec {
      * \return The negative values of the input values
      */
     template <typename M>
-    static M minus(M value) {
-        cpp_unused(value);
+    static M minus([[maybe_unused]] M value) {
         return M();
     }
 
@@ -224,8 +197,7 @@ struct no_vec {
      * \brief Perform an horizontal sum of the given vector
      */
     template <typename M>
-    static M hadd(M value) {
-        cpp_unused(value);
+    static M hadd([[maybe_unused]] M value) {
         return M();
     }
 

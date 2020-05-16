@@ -303,9 +303,8 @@ struct etl_traits<etl::dim_view<T, D>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static size_t dim(const expr_t& v, size_t d) {
+    static size_t dim(const expr_t& v, [[maybe_unused]] size_t d) {
         cpp_assert(d == 0, "Invalid dimension");
-        cpp_unused(d);
 
         return size(v);
     }

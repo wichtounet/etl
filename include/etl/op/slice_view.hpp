@@ -481,8 +481,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    auto& gpu_compute_hint(Y& y) {
-        cpp_unused(y);
+    auto& gpu_compute_hint([[maybe_unused]] Y& y) {
         this->ensure_gpu_up_to_date();
         return *this;
     }
@@ -492,8 +491,7 @@ public:
      * \return a GPU-computed ETL expression for this expression
      */
     template <typename Y>
-    const auto& gpu_compute_hint(Y& y) const {
-        cpp_unused(y);
+    const auto& gpu_compute_hint([[maybe_unused]] Y& y) const {
         this->ensure_gpu_up_to_date();
         return *this;
     }
@@ -689,14 +687,12 @@ public:
      * \brief Copy from GPU to GPU
      * \param new_gpu_memory Pointer to CPU memory from which to copy
      */
-    void gpu_copy_from(const value_type* new_gpu_memory) const {
+    void gpu_copy_from([[maybe_unused]] const value_type* new_gpu_memory) const {
         cpp_assert(sub.gpu_memory(), "GPU must be allocated before copy");
 
 #ifdef ETL_CUDA
         cuda_check_assert(cudaMemcpy(const_cast<std::remove_const_t<value_type>*>(gpu_memory()), const_cast<std::remove_const_t<value_type>*>(new_gpu_memory),
                                      sub_size * sizeof(value_type), cudaMemcpyDeviceToDevice));
-#else
-        cpp_unused(new_gpu_memory);
 #endif
 
         gpu_up_to_date = true;

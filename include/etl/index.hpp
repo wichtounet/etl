@@ -189,11 +189,10 @@ constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) {
  * \return The flat position of (i)
  */
 template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::RowMajor)>
-size_t dyn_index(const T& expression, size_t i) noexcept(assert_nothrow) {
+size_t dyn_index([[maybe_unused]] const T& expression, size_t i) noexcept(assert_nothrow) {
     static_assert(is_1d<T>, "Invalid number of dimensions for dyn_index");
 
     cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
-    cpp_unused(expression);
 
     return i;
 }
@@ -373,11 +372,10 @@ constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) {
  * \return The flat position of (i)
  */
 template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::ColumnMajor)>
-size_t dyn_index(const T& expression, size_t i) noexcept(assert_nothrow) {
+size_t dyn_index([[maybe_unused]] const T& expression, size_t i) noexcept(assert_nothrow) {
     static_assert(is_1d<T>, "Invalid number of dimensions for dyn_index");
 
     cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
-    cpp_unused(expression);
 
     return i;
 }

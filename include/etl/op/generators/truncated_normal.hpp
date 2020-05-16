@@ -55,8 +55,7 @@ struct truncated_normal_generator_op {
      * \param s The generator
      * \return the output stream
      */
-    friend std::ostream& operator<<(std::ostream& os, const truncated_normal_generator_op& s) {
-        cpp_unused(s);
+    friend std::ostream& operator<<(std::ostream& os, [[maybe_unused]] const truncated_normal_generator_op& s) {
         return os << "TN(0,1)";
     }
 };
@@ -100,8 +99,7 @@ struct truncated_normal_generator_g_op {
      * \param s The generator
      * \return the output stream
      */
-    friend std::ostream& operator<<(std::ostream& os, const truncated_normal_generator_g_op& s) {
-        cpp_unused(s);
+    friend std::ostream& operator<<(std::ostream& os, [[maybe_unused]] const truncated_normal_generator_g_op& s) {
         return os << "TN(0,1)";
     }
 };
