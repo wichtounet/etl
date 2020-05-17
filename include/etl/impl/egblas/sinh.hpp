@@ -40,18 +40,16 @@ static constexpr bool has_ssinh = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void sinh(size_t n, float alpha, float* A, size_t lda, float* B, size_t ldb) {
+inline void sinh([[maybe_unused]] size_t n,
+                 [[maybe_unused]] float alpha,
+                 [[maybe_unused]] float* A,
+                 [[maybe_unused]] size_t lda,
+                 [[maybe_unused]] float* B,
+                 [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_SSINH
     inc_counter("egblas");
     egblas_ssinh(n, alpha, A, lda, B, ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::sinh");
 #endif
 }
@@ -74,18 +72,16 @@ static constexpr bool has_dsinh = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void sinh(size_t n, double alpha, double* A, size_t lda, double* B, size_t ldb) {
+inline void sinh([[maybe_unused]] size_t n,
+                 [[maybe_unused]] double alpha,
+                 [[maybe_unused]] double* A,
+                 [[maybe_unused]] size_t lda,
+                 [[maybe_unused]] double* B,
+                 [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_DSINH
     inc_counter("egblas");
     egblas_dsinh(n, alpha, A, lda, B, ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::sinh");
 #endif
 }
@@ -108,18 +104,16 @@ static constexpr bool has_csinh = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void sinh(size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb) {
+inline void sinh([[maybe_unused]] size_t n,
+                 [[maybe_unused]] std::complex<float> alpha,
+                 [[maybe_unused]] std::complex<float>* A,
+                 [[maybe_unused]] size_t lda,
+                 [[maybe_unused]] std::complex<float>* B,
+                 [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_CSINH
     inc_counter("egblas");
     egblas_csinh(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::sinh");
 #endif
 }
@@ -133,18 +127,16 @@ inline void sinh(size_t n, std::complex<float> alpha, std::complex<float>* A, si
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void sinh(size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb) {
+inline void sinh([[maybe_unused]] size_t n,
+                 [[maybe_unused]] etl::complex<float> alpha,
+                 [[maybe_unused]] etl::complex<float>* A,
+                 [[maybe_unused]] size_t lda,
+                 [[maybe_unused]] etl::complex<float>* B,
+                 [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_CSINH
     inc_counter("egblas");
     egblas_csinh(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::sinh");
 #endif
 }
@@ -167,18 +159,16 @@ static constexpr bool has_zsinh = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void sinh(size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb) {
+inline void sinh([[maybe_unused]] size_t n,
+                 [[maybe_unused]] std::complex<double> alpha,
+                 [[maybe_unused]] std::complex<double>* A,
+                 [[maybe_unused]] size_t lda,
+                 [[maybe_unused]] std::complex<double>* B,
+                 [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_ZSINH
     inc_counter("egblas");
     egblas_zsinh(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::sinh");
 #endif
 }
@@ -192,18 +182,16 @@ inline void sinh(size_t n, std::complex<double> alpha, std::complex<double>* A, 
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void sinh(size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb) {
+inline void sinh([[maybe_unused]] size_t n,
+                 [[maybe_unused]] etl::complex<double> alpha,
+                 [[maybe_unused]] etl::complex<double>* A,
+                 [[maybe_unused]] size_t lda,
+                 [[maybe_unused]] etl::complex<double>* B,
+                 [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_ZSINH
     inc_counter("egblas");
     egblas_zsinh(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::sinh");
 #endif
 }

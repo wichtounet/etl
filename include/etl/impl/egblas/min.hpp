@@ -40,18 +40,16 @@ static constexpr bool has_smin = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, float alpha, float* A, size_t lda, float* B, size_t ldb) {
+inline void min([[maybe_unused]] size_t n,
+                [[maybe_unused]] float alpha,
+                [[maybe_unused]] float* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] float* B,
+                [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_SMIN
     inc_counter("egblas");
     egblas_smin(n, alpha, A, lda, B, ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::min");
 #endif
 }
@@ -74,18 +72,16 @@ static constexpr bool has_dmin = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, double alpha, double* A, size_t lda, double* B, size_t ldb) {
+inline void min([[maybe_unused]] size_t n,
+                [[maybe_unused]] double alpha,
+                [[maybe_unused]] double* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] double* B,
+                [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_DMIN
     inc_counter("egblas");
     egblas_dmin(n, alpha, A, lda, B, ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::min");
 #endif
 }
@@ -108,18 +104,16 @@ static constexpr bool has_cmin = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb) {
+inline void min([[maybe_unused]] size_t n,
+                [[maybe_unused]] std::complex<float> alpha,
+                [[maybe_unused]] std::complex<float>* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] std::complex<float>* B,
+                [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_CMIN
     inc_counter("egblas");
     egblas_cmin(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::min");
 #endif
 }
@@ -133,18 +127,16 @@ inline void min(size_t n, std::complex<float> alpha, std::complex<float>* A, siz
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb) {
+inline void min([[maybe_unused]] size_t n,
+                [[maybe_unused]] etl::complex<float> alpha,
+                [[maybe_unused]] etl::complex<float>* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] etl::complex<float>* B,
+                [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_CMIN
     inc_counter("egblas");
     egblas_cmin(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::min");
 #endif
 }
@@ -167,18 +159,16 @@ static constexpr bool has_zmin = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb) {
+inline void min([[maybe_unused]] size_t n,
+                [[maybe_unused]] std::complex<double> alpha,
+                [[maybe_unused]] std::complex<double>* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] std::complex<double>* B,
+                [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_ZMIN
     inc_counter("egblas");
     egblas_zmin(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::min");
 #endif
 }
@@ -192,18 +182,16 @@ inline void min(size_t n, std::complex<double> alpha, std::complex<double>* A, s
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb) {
+inline void min([[maybe_unused]] size_t n,
+                [[maybe_unused]] etl::complex<double> alpha,
+                [[maybe_unused]] etl::complex<double>* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] etl::complex<double>* B,
+                [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_ZMIN
     inc_counter("egblas");
     egblas_zmin(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::min");
 #endif
 }
@@ -226,20 +214,18 @@ static constexpr bool has_smin3 = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, float alpha, float* A, size_t lda, float* B, size_t ldb, float* C, size_t ldc) {
+inline void min([[maybe_unused]] size_t n,
+                [[maybe_unused]] float alpha,
+                [[maybe_unused]] float* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] float* B,
+                [[maybe_unused]] size_t ldb,
+                [[maybe_unused]] float* C,
+                [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_SMIN3
     inc_counter("egblas");
     egblas_smin(n, alpha, A, lda, B, ldb, C, ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::min");
 #endif
 }
@@ -262,20 +248,18 @@ static constexpr bool has_dmin3 = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(size_t n, double alpha, double* A, size_t lda, double* B, size_t ldb, double* C, size_t ldc) {
+inline void min([[maybe_unused]] size_t n,
+                [[maybe_unused]] double alpha,
+                [[maybe_unused]] double* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] double* B,
+                [[maybe_unused]] size_t ldb,
+                [[maybe_unused]] double* C,
+                [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_DMIN3
     inc_counter("egblas");
     egblas_dmin(n, alpha, A, lda, B, ldb, C, ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::min");
 #endif
 }
@@ -298,21 +282,18 @@ static constexpr bool has_cmin3 = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(
-    size_t n, std::complex<float> alpha, std::complex<float>* A, size_t lda, std::complex<float>* B, size_t ldb, std::complex<float>* C, size_t ldc) {
+inline void min([[maybe_unused]] size_t n,
+                [[maybe_unused]] std::complex<float> alpha,
+                [[maybe_unused]] std::complex<float>* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] std::complex<float>* B,
+                [[maybe_unused]] size_t ldb,
+                [[maybe_unused]] std::complex<float>* C,
+                [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_CMIN3
     inc_counter("egblas");
     egblas_cmin(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::min");
 #endif
 }
@@ -326,21 +307,18 @@ inline void min(
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(
-    size_t n, etl::complex<float> alpha, etl::complex<float>* A, size_t lda, etl::complex<float>* B, size_t ldb, etl::complex<float>* C, size_t ldc) {
+inline void min([[maybe_unused]] size_t n,
+                [[maybe_unused]] etl::complex<float> alpha,
+                [[maybe_unused]] etl::complex<float>* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] etl::complex<float>* B,
+                [[maybe_unused]] size_t ldb,
+                [[maybe_unused]] etl::complex<float>* C,
+                [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_CMIN3
     inc_counter("egblas");
     egblas_cmin(n, complex_cast(alpha), reinterpret_cast<cuComplex*>(A), lda, reinterpret_cast<cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::min");
 #endif
 }
@@ -363,22 +341,19 @@ static constexpr bool has_zmin3 = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(
-    size_t n, std::complex<double> alpha, std::complex<double>* A, size_t lda, std::complex<double>* B, size_t ldb, std::complex<double>* C, size_t ldc) {
+inline void min([[maybe_unused]] size_t n,
+                [[maybe_unused]] std::complex<double> alpha,
+                [[maybe_unused]] std::complex<double>* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] std::complex<double>* B,
+                [[maybe_unused]] size_t ldb,
+                [[maybe_unused]] std::complex<double>* C,
+                [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_ZMIN3
     inc_counter("egblas");
     egblas_zmin(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb,
                 reinterpret_cast<cuDoubleComplex*>(C), ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::min");
 #endif
 }
@@ -392,22 +367,19 @@ inline void min(
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void min(
-    size_t n, etl::complex<double> alpha, etl::complex<double>* A, size_t lda, etl::complex<double>* B, size_t ldb, etl::complex<double>* C, size_t ldc) {
+inline void min([[maybe_unused]] size_t n,
+                [[maybe_unused]] etl::complex<double> alpha,
+                [[maybe_unused]] etl::complex<double>* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] etl::complex<double>* B,
+                [[maybe_unused]] size_t ldb,
+                [[maybe_unused]] etl::complex<double>* C,
+                [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_ZMIN3
     inc_counter("egblas");
     egblas_zmin(n, complex_cast(alpha), reinterpret_cast<cuDoubleComplex*>(A), lda, reinterpret_cast<cuDoubleComplex*>(B), ldb,
                 reinterpret_cast<cuDoubleComplex*>(C), ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::min");
 #endif
 }
