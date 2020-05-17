@@ -61,13 +61,11 @@ static constexpr bool has_dropout_prepare_seed = false;
  * \param seed The seed
  * \return random states for dropout
  */
-inline void* dropout_prepare_seed(size_t seed) {
+inline void* dropout_prepare_seed([[maybe_unused]] size_t seed) {
 #ifdef EGBLAS_HAS_DROPOUT_PREPARE_SEED
     inc_counter("egblas");
     return egblas_dropout_prepare_seed(seed);
 #else
-    cpp_unused(seed);
-
     cpp_unreachable("Invalid call to egblas::dropout_prepare_seed");
     return nullptr;
 #endif
@@ -87,13 +85,11 @@ static constexpr bool has_dropout_release = false;
  * \param seed The seed
  * \return random states for dropout
  */
-inline void dropout_release(void* state) {
+inline void dropout_release([[maybe_unused]] void* state) {
 #ifdef EGBLAS_HAS_DROPOUT_RELEASE
     inc_counter("egblas");
     egblas_dropout_release(state);
 #else
-    cpp_unused(state);
-
     cpp_unreachable("Invalid call to egblas::dropout_release");
 #endif
 }
@@ -117,17 +113,11 @@ static constexpr bool has_sdropout = false;
  * \param A The memory of the vector a
  * \param lda The leading dimension of a
  */
-inline void dropout(size_t n, float p, float alpha, float* A, size_t lda) {
+inline void dropout([[maybe_unused]] size_t n, [[maybe_unused]] float p, [[maybe_unused]] float alpha, [[maybe_unused]] float* A, [[maybe_unused]] size_t lda) {
 #ifdef EGBLAS_HAS_SDROPOUT
     inc_counter("egblas");
     egblas_sdropout(n, p, alpha, A, lda);
 #else
-    cpp_unused(n);
-    cpp_unused(p);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-
     cpp_unreachable("Invalid call to egblas::dropout");
 #endif
 }
@@ -149,17 +139,12 @@ static constexpr bool has_ddropout = false;
  * \param A The memory of the vector a
  * \param lda The leading dimension of a
  */
-inline void dropout(size_t n, double p, double alpha, double* A, size_t lda) {
+inline void dropout(
+    [[maybe_unused]] size_t n, [[maybe_unused]] double p, [[maybe_unused]] double alpha, [[maybe_unused]] double* A, [[maybe_unused]] size_t lda) {
 #ifdef EGBLAS_HAS_DDROPOUT
     inc_counter("egblas");
     egblas_ddropout(n, p, alpha, A, lda);
 #else
-    cpp_unused(n);
-    cpp_unused(p);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-
     cpp_unreachable("Invalid call to egblas::dropout");
 #endif
 }
@@ -183,18 +168,16 @@ static constexpr bool has_sdropout_seed = false;
  * \param A The memory of the vector a
  * \param lda The leading dimension of a
  */
-inline void dropout_seed(size_t n, float p, float alpha, float* A, size_t lda, size_t seed) {
+inline void dropout_seed([[maybe_unused]] size_t n,
+                         [[maybe_unused]] float p,
+                         [[maybe_unused]] float alpha,
+                         [[maybe_unused]] float* A,
+                         [[maybe_unused]] size_t lda,
+                         [[maybe_unused]] size_t seed) {
 #ifdef EGBLAS_HAS_SDROPOUT_SEED
     inc_counter("egblas");
     egblas_sdropout_seed(n, p, alpha, A, lda, seed);
 #else
-    cpp_unused(n);
-    cpp_unused(p);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(seed);
-
     cpp_unreachable("Invalid call to egblas::dropout");
 #endif
 }
@@ -216,18 +199,16 @@ static constexpr bool has_ddropout_seed = false;
  * \param A The memory of the vector a
  * \param lda The leading dimension of a
  */
-inline void dropout_seed(size_t n, double p, double alpha, double* A, size_t lda, size_t seed) {
+inline void dropout_seed([[maybe_unused]] size_t n,
+                         [[maybe_unused]] double p,
+                         [[maybe_unused]] double alpha,
+                         [[maybe_unused]] double* A,
+                         [[maybe_unused]] size_t lda,
+                         [[maybe_unused]] size_t seed) {
 #ifdef EGBLAS_HAS_DDROPOUT_SEED
     inc_counter("egblas");
     egblas_ddropout_seed(n, p, alpha, A, lda, seed);
 #else
-    cpp_unused(n);
-    cpp_unused(p);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(seed);
-
     cpp_unreachable("Invalid call to egblas::dropout");
 #endif
 }
@@ -251,18 +232,16 @@ static constexpr bool has_sdropout_states = false;
  * \param A The memory of the vector a
  * \param lda The leading dimension of a
  */
-inline void dropout_states(size_t n, float p, float alpha, float* A, size_t lda, void* states) {
+inline void dropout_states([[maybe_unused]] size_t n,
+                           [[maybe_unused]] float p,
+                           [[maybe_unused]] float alpha,
+                           [[maybe_unused]] float* A,
+                           [[maybe_unused]] size_t lda,
+                           [[maybe_unused]] void* states) {
 #ifdef EGBLAS_HAS_SDROPOUT_STATES
     inc_counter("egblas");
     egblas_sdropout_states(n, p, alpha, A, lda, states);
 #else
-    cpp_unused(n);
-    cpp_unused(p);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(states);
-
     cpp_unreachable("Invalid call to egblas::dropout_states");
 #endif
 }
@@ -284,18 +263,16 @@ static constexpr bool has_ddropout_states = false;
  * \param A The memory of the vector a
  * \param lda The leading dimension of a
  */
-inline void dropout_states(size_t n, double p, double alpha, double* A, size_t lda, void* states) {
+inline void dropout_states([[maybe_unused]] size_t n,
+                           [[maybe_unused]] double p,
+                           [[maybe_unused]] double alpha,
+                           [[maybe_unused]] double* A,
+                           [[maybe_unused]] size_t lda,
+                           [[maybe_unused]] void* states) {
 #ifdef EGBLAS_HAS_DDROPOUT_STATES
     inc_counter("egblas");
     egblas_ddropout_states(n, p, alpha, A, lda, states);
 #else
-    cpp_unused(n);
-    cpp_unused(p);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(states);
-
     cpp_unreachable("Invalid call to egblas::dropout_states");
 #endif
 }
@@ -319,18 +296,12 @@ static constexpr bool has_sinv_dropout = false;
  * \param A The memory of the vector a
  * \param lda The leading dimension of a
  */
-inline void inv_dropout(size_t n, float p, float alpha, float* A, size_t lda) {
+inline void inv_dropout(
+    [[maybe_unused]] size_t n, [[maybe_unused]] float p, [[maybe_unused]] float alpha, [[maybe_unused]] float* A, [[maybe_unused]] size_t lda) {
 #ifdef EGBLAS_HAS_SINV_DROPOUT
     inc_counter("egblas");
     egblas_sinv_dropout(n, p, alpha, A, lda);
 #else
-    cpp_unused(n);
-    cpp_unused(p);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-
-    cpp_unreachable("Invalid call to egblas::inv_dropout");
 #endif
 }
 
@@ -351,18 +322,12 @@ static constexpr bool has_dinv_dropout = false;
  * \param A The memory of the vector a
  * \param lda The leading dimension of a
  */
-inline void inv_dropout(size_t n, double p, double alpha, double* A, size_t lda) {
+inline void inv_dropout(
+    [[maybe_unused]] size_t n, [[maybe_unused]] double p, [[maybe_unused]] double alpha, [[maybe_unused]] double* A, [[maybe_unused]] size_t lda) {
 #ifdef EGBLAS_HAS_DINV_DROPOUT
     inc_counter("egblas");
     egblas_dinv_dropout(n, p, alpha, A, lda);
 #else
-    cpp_unused(n);
-    cpp_unused(p);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-
-    cpp_unreachable("Invalid call to egblas::inv_dropout");
 #endif
 }
 
@@ -385,18 +350,16 @@ static constexpr bool has_sinv_dropout_seed = false;
  * \param A The memory of the vector a
  * \param lda The leading dimension of a
  */
-inline void inv_dropout_seed(size_t n, float p, float alpha, float* A, size_t lda, size_t seed) {
+inline void inv_dropout_seed([[maybe_unused]] size_t n,
+                             [[maybe_unused]] float p,
+                             [[maybe_unused]] float alpha,
+                             [[maybe_unused]] float* A,
+                             [[maybe_unused]] size_t lda,
+                             [[maybe_unused]] size_t seed) {
 #ifdef EGBLAS_HAS_SINV_DROPOUT_SEED
     inc_counter("egblas");
     egblas_sinv_dropout_seed(n, p, alpha, A, lda, seed);
 #else
-    cpp_unused(n);
-    cpp_unused(p);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(seed);
-
     cpp_unreachable("Invalid call to egblas::inv_dropout");
 #endif
 }
@@ -418,18 +381,16 @@ static constexpr bool has_dinv_dropout_seed = false;
  * \param A The memory of the vector a
  * \param lda The leading dimension of a
  */
-inline void inv_dropout_seed(size_t n, double p, double alpha, double* A, size_t lda, size_t seed) {
+inline void inv_dropout_seed([[maybe_unused]] size_t n,
+                             [[maybe_unused]] double p,
+                             [[maybe_unused]] double alpha,
+                             [[maybe_unused]] double* A,
+                             [[maybe_unused]] size_t lda,
+                             [[maybe_unused]] size_t seed) {
 #ifdef EGBLAS_HAS_DINV_DROPOUT_SEED
     inc_counter("egblas");
     egblas_dinv_dropout_seed(n, p, alpha, A, lda, seed);
 #else
-    cpp_unused(n);
-    cpp_unused(p);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(seed);
-
     cpp_unreachable("Invalid call to egblas::inv_dropout");
 #endif
 }
@@ -453,18 +414,16 @@ static constexpr bool has_sinv_dropout_states = false;
  * \param A The memory of the vector a
  * \param lda The leading dimension of a
  */
-inline void inv_dropout_states(size_t n, float p, float alpha, float* A, size_t lda, void* states) {
+inline void inv_dropout_states([[maybe_unused]] size_t n,
+                               [[maybe_unused]] float p,
+                               [[maybe_unused]] float alpha,
+                               [[maybe_unused]] float* A,
+                               [[maybe_unused]] size_t lda,
+                               [[maybe_unused]] void* states) {
 #ifdef EGBLAS_HAS_SINV_DROPOUT_STATES
     inc_counter("egblas");
     egblas_sinv_dropout_states(n, p, alpha, A, lda, states);
 #else
-    cpp_unused(n);
-    cpp_unused(p);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(states);
-
     cpp_unreachable("Invalid call to egblas::inv_dropout_states");
 #endif
 }
@@ -486,18 +445,16 @@ static constexpr bool has_dinv_dropout_states = false;
  * \param A The memory of the vector a
  * \param lda The leading dimension of a
  */
-inline void inv_dropout_states(size_t n, double p, double alpha, double* A, size_t lda, void* states) {
+inline void inv_dropout_states([[maybe_unused]] size_t n,
+                               [[maybe_unused]] double p,
+                               [[maybe_unused]] double alpha,
+                               [[maybe_unused]] double* A,
+                               [[maybe_unused]] size_t lda,
+                               [[maybe_unused]] void* states) {
 #ifdef EGBLAS_HAS_DINV_DROPOUT_STATES
     inc_counter("egblas");
     egblas_dinv_dropout_states(n, p, alpha, A, lda, states);
 #else
-    cpp_unused(n);
-    cpp_unused(p);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(states);
-
     cpp_unreachable("Invalid call to egblas::inv_dropout_states");
 #endif
 }

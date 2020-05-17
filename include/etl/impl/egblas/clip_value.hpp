@@ -42,18 +42,16 @@ static constexpr bool has_sclip_value = false;
  * \param C The memory of the vector c
  * \param ldc The leading dimension of c
  */
-inline void clip_value(size_t n, const float alpha, float A, float B, float* C, size_t ldc) {
+inline void clip_value([[maybe_unused]] size_t n,
+                       [[maybe_unused]] const float alpha,
+                       [[maybe_unused]] float A,
+                       [[maybe_unused]] float B,
+                       [[maybe_unused]] float* C,
+                       [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_SCLIP_VALUE
     inc_counter("egblas");
     egblas_sclip_value(n, alpha, A, B, C, ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(B);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::clip_value");
 #endif
 }
@@ -76,18 +74,16 @@ static constexpr bool has_dclip_value = false;
  * \param C The memory of the vector c
  * \param ldc The leading dimension of c
  */
-inline void clip_value(size_t n, double alpha, double A, double B, double* C, size_t ldc) {
+inline void clip_value([[maybe_unused]] size_t n,
+                       [[maybe_unused]] double alpha,
+                       [[maybe_unused]] double A,
+                       [[maybe_unused]] double B,
+                       [[maybe_unused]] double* C,
+                       [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_DCLIP_VALUE
     inc_counter("egblas");
     egblas_dclip_value(n, alpha, A, B, C, ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(B);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::clip_value");
 #endif
 }
@@ -110,18 +106,16 @@ static constexpr bool has_cclip_value = false;
  * \param C The memory of the vector c
  * \param ldc The leading dimension of c
  */
-inline void clip_value(size_t n, const std::complex<float> alpha, std::complex<float> A, std::complex<float> B, std::complex<float>* C, size_t ldc) {
+inline void clip_value([[maybe_unused]] size_t n,
+                       [[maybe_unused]] const std::complex<float> alpha,
+                       [[maybe_unused]] std::complex<float> A,
+                       [[maybe_unused]] std::complex<float> B,
+                       [[maybe_unused]] std::complex<float>* C,
+                       [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_CCLIP_VALUE
     inc_counter("egblas");
     egblas_cclip_value(n, complex_cast(alpha), complex_cast(A), complex_cast(B), reinterpret_cast<cuComplex*>(C), ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(B);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::clip_value");
 #endif
 }
@@ -135,18 +129,16 @@ inline void clip_value(size_t n, const std::complex<float> alpha, std::complex<f
  * \param C The memory of the vector c
  * \param ldc The leading dimension of c
  */
-inline void clip_value(size_t n, const etl::complex<float> alpha, etl::complex<float> A, etl::complex<float> B, etl::complex<float>* C, size_t ldc) {
+inline void clip_value([[maybe_unused]] size_t n,
+                       [[maybe_unused]] const etl::complex<float> alpha,
+                       [[maybe_unused]] etl::complex<float> A,
+                       [[maybe_unused]] etl::complex<float> B,
+                       [[maybe_unused]] etl::complex<float>* C,
+                       [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_CCLIP_VALUE
     inc_counter("egblas");
     egblas_cclip_value(n, complex_cast(alpha), complex_cast(A), complex_cast(B), reinterpret_cast<cuComplex*>(C), ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(B);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::clip_value");
 #endif
 }
@@ -169,18 +161,16 @@ static constexpr bool has_zclip_value = false;
  * \param C The memory of the vector c
  * \param ldc The leading dimension of c
  */
-inline void clip_value(size_t n, const std::complex<double> alpha, std::complex<double> A, std::complex<double> B, std::complex<double>* C, size_t ldc) {
+inline void clip_value([[maybe_unused]] size_t n,
+                       [[maybe_unused]] const std::complex<double> alpha,
+                       [[maybe_unused]] std::complex<double> A,
+                       [[maybe_unused]] std::complex<double> B,
+                       [[maybe_unused]] std::complex<double>* C,
+                       [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_ZCLIP_VALUE
     inc_counter("egblas");
     egblas_zclip_value(n, complex_cast(alpha), complex_cast(A), complex_cast(B), reinterpret_cast<cuDoubleComplex*>(C), ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(B);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::clip_value");
 #endif
 }
@@ -194,18 +184,16 @@ inline void clip_value(size_t n, const std::complex<double> alpha, std::complex<
  * \param C The memory of the vector c
  * \param ldc The leading dimension of c
  */
-inline void clip_value(size_t n, const etl::complex<double> alpha, etl::complex<double> A, etl::complex<double> B, etl::complex<double>* C, size_t ldc) {
+inline void clip_value([[maybe_unused]] size_t n,
+                       [[maybe_unused]] const etl::complex<double> alpha,
+                       [[maybe_unused]] etl::complex<double> A,
+                       [[maybe_unused]] etl::complex<double> B,
+                       [[maybe_unused]] etl::complex<double>* C,
+                       [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_ZCLIP_VALUE
     inc_counter("egblas");
     egblas_zclip_value(n, complex_cast(alpha), complex_cast(A), complex_cast(B), reinterpret_cast<cuDoubleComplex*>(C), ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(B);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::clip_value");
 #endif
 }
