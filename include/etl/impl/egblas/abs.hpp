@@ -40,18 +40,16 @@ static constexpr bool has_sabs = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void abs(size_t n, float alpha, float* A, size_t lda, float* B, size_t ldb) {
+inline void abs([[maybe_unused]] size_t n,
+                [[maybe_unused]] float alpha,
+                [[maybe_unused]] float* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] float* B,
+                [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_SABS
     inc_counter("egblas");
     egblas_sabs(n, alpha, A, lda, B, ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::abs");
 #endif
 }
@@ -74,18 +72,16 @@ static constexpr bool has_dabs = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void abs(size_t n, double alpha, double* A, size_t lda, double* B, size_t ldb) {
+inline void abs([[maybe_unused]] size_t n,
+                [[maybe_unused]] double alpha,
+                [[maybe_unused]] double* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] double* B,
+                [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_DABS
     inc_counter("egblas");
     egblas_dabs(n, alpha, A, lda, B, ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::abs");
 #endif
 }
@@ -108,18 +104,16 @@ static constexpr bool has_cabs = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void abs(size_t n, float alpha, std::complex<float>* A, size_t lda, float* B, size_t ldb) {
+inline void abs([[maybe_unused]] size_t n,
+                [[maybe_unused]] float alpha,
+                [[maybe_unused]] std::complex<float>* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] float* B,
+                [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_CABS
     inc_counter("egblas");
     egblas_cabs(n, alpha, reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::abs");
 #endif
 }
@@ -133,18 +127,16 @@ inline void abs(size_t n, float alpha, std::complex<float>* A, size_t lda, float
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void abs(size_t n, float alpha, etl::complex<float>* A, size_t lda, float* B, size_t ldb) {
+inline void abs([[maybe_unused]] size_t n,
+                [[maybe_unused]] float alpha,
+                [[maybe_unused]] etl::complex<float>* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] float* B,
+                [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_CABS
     inc_counter("egblas");
     egblas_cabs(n, alpha, reinterpret_cast<cuComplex*>(A), lda, (B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::abs");
 #endif
 }
@@ -167,18 +159,16 @@ static constexpr bool has_zabs = false;
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void abs(size_t n, double alpha, std::complex<double>* A, size_t lda, double* B, size_t ldb) {
+inline void abs([[maybe_unused]] size_t n,
+                [[maybe_unused]] double alpha,
+                [[maybe_unused]] std::complex<double>* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] double* B,
+                [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_ZABS
     inc_counter("egblas");
     egblas_zabs(n, alpha, reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::abs");
 #endif
 }
@@ -192,18 +182,16 @@ inline void abs(size_t n, double alpha, std::complex<double>* A, size_t lda, dou
  * \param B The memory of the vector b
  * \param ldb The leading dimension of b
  */
-inline void abs(size_t n, double alpha, etl::complex<double>* A, size_t lda, double* B, size_t ldb) {
+inline void abs([[maybe_unused]] size_t n,
+                [[maybe_unused]] double alpha,
+                [[maybe_unused]] etl::complex<double>* A,
+                [[maybe_unused]] size_t lda,
+                [[maybe_unused]] double* B,
+                [[maybe_unused]] size_t ldb) {
 #ifdef EGBLAS_HAS_ZABS
     inc_counter("egblas");
     egblas_zabs(n, alpha, reinterpret_cast<cuDoubleComplex*>(A), lda, (B), ldb);
 #else
-    cpp_unused(n);
-    cpp_unused(alpha);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-
     cpp_unreachable("Invalid call to egblas::abs");
 #endif
 }

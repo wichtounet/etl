@@ -729,15 +729,12 @@ struct avg_pool_upsample_2d {
      * \tparam C2 The second dimension pooling ratio
      */
     template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_iff(is_2d<A>)>
-    static void apply(A&& in, B&& out, C&& errors, M&& m) {
+    static void apply([[maybe_unused]] A&& in, [[maybe_unused]] B&& out, C&& errors, M&& m) {
         for (size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (size_t j = 0; j < etl::dim<1>(out); ++j) {
                 pool_block_2d<C1, C2>(errors, m, i, j);
             }
         }
-
-        cpp_unused(in);
-        cpp_unused(out);
     }
 
     /*!
@@ -748,15 +745,12 @@ struct avg_pool_upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(is_2d<A>)>
-    static void apply(A&& in, B&& out, C&& errors, M&& m, size_t c1, size_t c2) {
+    static void apply([[maybe_unused]] A&& in, [[maybe_unused]] B&& out, C&& errors, M&& m, size_t c1, size_t c2) {
         for (size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (size_t j = 0; j < etl::dim<1>(out); ++j) {
                 pool_block_2d(errors, m, i, j, c1, c2);
             }
         }
-
-        cpp_unused(in);
-        cpp_unused(out);
     }
 
     // 3D Handling
@@ -769,7 +763,7 @@ struct avg_pool_upsample_2d {
      * \tparam C2 The second dimension pooling ratio
      */
     template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_iff(is_3d<A>)>
-    static void apply(A&& in, B&& out, C&& errors, M&& m) {
+    static void apply([[maybe_unused]] A&& in, [[maybe_unused]] B&& out, C&& errors, M&& m) {
         auto batch_fun = [&](const size_t first, const size_t last) {
             for (size_t q = first; q < last; ++q) {
                 for (size_t i = 0; i < etl::dim<1>(out); ++i) {
@@ -783,9 +777,6 @@ struct avg_pool_upsample_2d {
         const size_t N = etl::dim<0>(out);
 
         engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
-
-        cpp_unused(in);
-        cpp_unused(out);
     }
 
     /*!
@@ -796,7 +787,7 @@ struct avg_pool_upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(is_3d<A>)>
-    static void apply(A&& in, B&& out, C&& errors, M&& m, size_t c1, size_t c2) {
+    static void apply([[maybe_unused]] A&& in, [[maybe_unused]] B&& out, C&& errors, M&& m, size_t c1, size_t c2) {
         auto batch_fun = [&](const size_t first, const size_t last) {
             for (size_t q = first; q < last; ++q) {
                 for (size_t i = 0; i < etl::dim<1>(out); ++i) {
@@ -810,9 +801,6 @@ struct avg_pool_upsample_2d {
         const size_t N = etl::dim<0>(out);
 
         engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
-
-        cpp_unused(in);
-        cpp_unused(out);
     }
 
     // 4D Handling
@@ -825,7 +813,7 @@ struct avg_pool_upsample_2d {
      * \tparam C2 The second dimension pooling ratio
      */
     template <size_t C1, size_t C2, typename A, typename B, typename C, typename M, cpp_enable_iff(is_4d<A>)>
-    static void apply(A&& in, B&& out, C&& errors, M&& m) {
+    static void apply([[maybe_unused]] A&& in, [[maybe_unused]] B&& out, C&& errors, M&& m) {
         auto batch_fun = [&](const size_t first, const size_t last) {
             for (size_t p = first; p < last; ++p) {
                 for (size_t q = 0; q < etl::dim<1>(out); ++q) {
@@ -841,9 +829,6 @@ struct avg_pool_upsample_2d {
         const size_t N = etl::dim<0>(out);
 
         engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
-
-        cpp_unused(in);
-        cpp_unused(out);
     }
 
     /*!
@@ -854,7 +839,7 @@ struct avg_pool_upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(is_4d<A>)>
-    static void apply(A&& in, B&& out, C&& errors, M&& m, size_t c1, size_t c2) {
+    static void apply([[maybe_unused]] A&& in, [[maybe_unused]] B&& out, C&& errors, M&& m, size_t c1, size_t c2) {
         auto batch_fun = [&](const size_t first, const size_t last) {
             for (size_t p = first; p < last; ++p) {
                 for (size_t q = 0; q < etl::dim<1>(out); ++q) {
@@ -870,9 +855,6 @@ struct avg_pool_upsample_2d {
         const size_t N = etl::dim<0>(out);
 
         engine_dispatch_1d_serial(batch_fun, 0, N, 2UL);
-
-        cpp_unused(in);
-        cpp_unused(out);
     }
 
     // Deep handling
@@ -1015,7 +997,7 @@ struct avg_pool_upsample_3d {
      * \tparam C3 The third dimension pooling ratio
      */
     template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C, typename M, cpp_enable_iff(is_3d<A>)>
-    static void apply(A&& in, B&& out, C&& errors, M&& m) {
+    static void apply([[maybe_unused]] A&& in, [[maybe_unused]] B&& out, C&& errors, M&& m) {
         for (size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (size_t j = 0; j < etl::dim<1>(out); ++j) {
                 for (size_t k = 0; k < etl::dim<2>(out); ++k) {
@@ -1023,9 +1005,6 @@ struct avg_pool_upsample_3d {
                 }
             }
         }
-
-        cpp_unused(in);
-        cpp_unused(out);
     }
 
     /*!
@@ -1037,7 +1016,7 @@ struct avg_pool_upsample_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(is_3d<A>)>
-    static void apply(A&& in, B&& out, C&& errors, M&& m, size_t c1, size_t c2, size_t c3) {
+    static void apply([[maybe_unused]] A&& in, [[maybe_unused]] B&& out, C&& errors, M&& m, size_t c1, size_t c2, size_t c3) {
         for (size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (size_t j = 0; j < etl::dim<1>(out); ++j) {
                 for (size_t k = 0; k < etl::dim<2>(out); ++k) {
@@ -1045,9 +1024,6 @@ struct avg_pool_upsample_3d {
                 }
             }
         }
-
-        cpp_unused(in);
-        cpp_unused(out);
     }
 
     /*
@@ -1067,7 +1043,7 @@ struct avg_pool_upsample_3d {
      * \tparam C3 The third dimension pooling ratio
      */
     template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C, typename M, cpp_enable_iff(is_4d<A>)>
-    static void apply(A&& in, B&& out, C&& errors, M& m) {
+    static void apply([[maybe_unused]] A&& in, [[maybe_unused]] B&& out, C&& errors, M& m) {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
             for (size_t n = first; n < last; ++n) {
                 for (size_t i = 0; i < etl::dim<1>(out); ++i) {
@@ -1083,9 +1059,6 @@ struct avg_pool_upsample_3d {
         const size_t N = etl::dim<0>(out);
 
         engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
-
-        cpp_unused(in);
-        cpp_unused(out);
     }
 
     /*!
@@ -1097,7 +1070,7 @@ struct avg_pool_upsample_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(is_4d<A>)>
-    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t c3) {
+    static void apply([[maybe_unused]] A&& in, [[maybe_unused]] B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t c3) {
         auto batch_fun_n = [&](const size_t first, const size_t last) {
             for (size_t n = first; n < last; ++n) {
                 for (size_t i = 0; i < etl::dim<1>(out); ++i) {
@@ -1113,9 +1086,6 @@ struct avg_pool_upsample_3d {
         const size_t N = etl::dim<0>(out);
 
         engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
-
-        cpp_unused(in);
-        cpp_unused(out);
     }
 
     // Deep handling

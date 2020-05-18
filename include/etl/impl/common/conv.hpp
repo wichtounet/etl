@@ -110,9 +110,7 @@ void pad_3d_input(const F1& in, F2&& out, size_t p1, size_t p2) {
  * \param last The end of the range of the input to consider
  */
 template <typename I_T, typename K_T, typename C_T>
-void left_same_kernel(const I_T* in, const size_t n, const K_T* kernel, size_t m, C_T* out, size_t first, size_t last) {
-    cpp_unused(n);
-
+void left_same_kernel(const I_T* in, [[maybe_unused]] const size_t n, const K_T* kernel, size_t m, C_T* out, size_t first, size_t last) {
     size_t left  = (m - 1) / 2;
     size_t right = m / 2;
 

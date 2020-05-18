@@ -139,10 +139,7 @@ void bias_add_2d(I&& x, K&& b, C&& y) {
  * \param y The c expression
  */
 template <typename I, typename K, typename C>
-void bias_add_4d(I&& x, K&& b, C&& y) {
-    cpp_unused(x);
-    cpp_unused(b);
-    cpp_unused(y);
+void bias_add_4d([[maybe_unused]] I&& x, [[maybe_unused]] K&& b, [[maybe_unused]] C&& y) {
     cpp_unreachable("CUDNN not available/enabled");
 }
 
@@ -153,10 +150,7 @@ void bias_add_4d(I&& x, K&& b, C&& y) {
  * \param y The c expression
  */
 template <typename I, typename K, typename C>
-void bias_add_2d(I&& x, K&& b, C&& y) {
-    cpp_unused(x);
-    cpp_unused(b);
-    cpp_unused(y);
+void bias_add_2d([[maybe_unused]] I&& x, [[maybe_unused]] K&& b, [[maybe_unused]] C&& y) {
     cpp_unreachable("CUDNN not available/enabled");
 }
 

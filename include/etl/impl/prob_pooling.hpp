@@ -249,16 +249,11 @@ struct dyn_pmp_h_impl {
      * \param c The output sub expression
      */
     template <typename A, typename C, cpp_enable_iff(etl::is_2d<A>)>
-    static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+    static void apply(A&& a, C&& c, size_t c1, size_t c2, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
         cpp_assert(p1 == 0, "pmp_p does not support pooling");
         cpp_assert(p2 == 0, "pmp_p does not support pooling");
-
-        cpp_unused(s1);
-        cpp_unused(s2);
-        cpp_unused(p1);
-        cpp_unused(p2);
 
         using T = value_t<A>;
 
@@ -287,16 +282,11 @@ struct dyn_pmp_h_impl {
      * \param c The output sub expression
      */
     template <typename A, typename C, cpp_enable_iff(etl::is_3d<A>)>
-    static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+    static void apply(A&& a, C&& c, size_t c1, size_t c2, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
         cpp_assert(p1 == 0, "pmp_p does not support pooling");
         cpp_assert(p2 == 0, "pmp_p does not support pooling");
-
-        cpp_unused(s1);
-        cpp_unused(s2);
-        cpp_unused(p1);
-        cpp_unused(p2);
 
         using T = value_t<A>;
 
@@ -334,16 +324,11 @@ struct dyn_pmp_h_impl {
      * \param c The output sub expression
      */
     template <typename A, typename C, cpp_enable_iff(etl::is_4d<A>)>
-    static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+    static void apply(A&& a, C&& c, size_t c1, size_t c2, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
         cpp_assert(p1 == 0, "pmp_p does not support pooling");
         cpp_assert(p2 == 0, "pmp_p does not support pooling");
-
-        cpp_unused(s1);
-        cpp_unused(s2);
-        cpp_unused(p1);
-        cpp_unused(p2);
 
         using T = value_t<A>;
 
@@ -615,16 +600,11 @@ struct dyn_pmp_p_impl {
      * \param c The output sub expression
      */
     template <typename A, typename C, cpp_enable_iff(etl::is_2d<A>)>
-    static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+    static void apply(A&& a, C&& c, size_t c1, size_t c2, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
         cpp_assert(p1 == 0, "pmp_p does not support pooling");
         cpp_assert(p2 == 0, "pmp_p does not support pooling");
-
-        cpp_unused(s1);
-        cpp_unused(s2);
-        cpp_unused(p1);
-        cpp_unused(p2);
 
         using T = value_t<A>;
 
@@ -651,16 +631,11 @@ struct dyn_pmp_p_impl {
      * \param c The output sub expression
      */
     template <typename A, typename C, cpp_enable_iff(etl::is_3d<A>)>
-    static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+    static void apply(A&& a, C&& c, size_t c1, size_t c2, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
         cpp_assert(p1 == 0, "pmp_p does not support pooling");
         cpp_assert(p2 == 0, "pmp_p does not support pooling");
-
-        cpp_unused(s1);
-        cpp_unused(s2);
-        cpp_unused(p1);
-        cpp_unused(p2);
 
         using T = value_t<A>;
 
@@ -696,16 +671,11 @@ struct dyn_pmp_p_impl {
      * \param c The output sub expression
      */
     template <typename A, typename C, cpp_enable_iff(etl::is_4d<A>)>
-    static void apply(A&& a, C&& c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+    static void apply(A&& a, C&& c, size_t c1, size_t c2, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
         cpp_assert(p1 == 0, "pmp_p does not support pooling");
         cpp_assert(p2 == 0, "pmp_p does not support pooling");
-
-        cpp_unused(s1);
-        cpp_unused(s2);
-        cpp_unused(p1);
-        cpp_unused(p2);
 
         using T = value_t<A>;
 

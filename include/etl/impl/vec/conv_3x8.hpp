@@ -471,13 +471,12 @@ void conv2_valid_flipped_micro_kernel_3x8([[maybe_unused]] const T* in,
  * \copydoc conv2_valid_flipped_micro_kernel_3x8
  */
 template <typename V, typename T>
-void conv2_valid_flipped_micro_kernel_3x8(const T* in, size_t n1, size_t n2, const T* kkk, T* out, T beta) {
-    cpp_unused(in);
-    cpp_unused(n1);
-    cpp_unused(n2);
-    cpp_unused(kkk);
-    cpp_unused(out);
-    cpp_unused(beta);
+void conv2_valid_flipped_micro_kernel_3x8([[maybe_unused]] const T* in,
+                                          [[maybe_unused]] size_t n1,
+                                          [[maybe_unused]] size_t n2,
+                                          [[maybe_unused]] const T* kkk,
+                                          [[maybe_unused]] T* out,
+                                          [[maybe_unused]] T beta) {
     cpp_unreachable("Should never get called");
 }
 

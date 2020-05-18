@@ -70,17 +70,13 @@ struct dyn_conv_2d_backward_expr : base_temporary_expr_bin<dyn_conv_2d_backward_
      * \brief Assert that the convolution is done on correct dimensions
      */
     template <typename I, typename K, typename C>
-    void check(const I& input, const K& kernel, const C& conv) const {
+    void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) const {
         static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_backward");
         static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_backward");
         static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_backward");
 
         cpp_assert(etl::dim(conv, 0) == s1 * (etl::dim(input, 0) - 1) + etl::dim(kernel, 0) - 2 * p1, "Invalid dimensions for conv2_backward");
         cpp_assert(etl::dim(conv, 1) == s2 * (etl::dim(input, 1) - 1) + etl::dim(kernel, 1) - 2 * p2, "Invalid dimensions for conv2_backward");
-
-        cpp_unused(input);
-        cpp_unused(kernel);
-        cpp_unused(conv);
     }
 
     /*!

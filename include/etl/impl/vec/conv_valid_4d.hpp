@@ -22,12 +22,10 @@ namespace etl::impl::vec {
  * \return true if padding is to be used, false otherwise.
  */
 template <typename T>
-constexpr bool need_padding(size_t k1, size_t k2, size_t p1, size_t p2) {
+constexpr bool need_padding([[maybe_unused]] size_t k1, size_t k2, size_t p1, size_t p2) {
     constexpr bool single = std::is_same_v<T, float>;
     constexpr size_t AS   = single ? 8 : 4;
     constexpr size_t SS   = AS / 2;
-
-    cpp_unused(k1);
 
     return k2 < SS || k2 % AS > 0 || p1 || p2;
 }

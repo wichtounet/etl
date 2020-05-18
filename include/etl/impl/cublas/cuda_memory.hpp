@@ -58,8 +58,7 @@ struct cuda_memory {
     /*!
      * \brief Copy construct a new cuda_memory
      */
-    cuda_memory(const cuda_memory& rhs) noexcept : memory(nullptr), size(0) {
-        cpp_unused(rhs);
+    cuda_memory([[maybe_unused]] const cuda_memory& rhs) noexcept : memory(nullptr), size(0) {
         cpp_assert(!rhs.is_set(), "copy of cuda_memory is only possible when not allocated");
     }
 

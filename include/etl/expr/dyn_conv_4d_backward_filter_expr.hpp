@@ -70,7 +70,7 @@ struct dyn_conv_4d_backward_filter_expr : base_temporary_expr_bin<dyn_conv_4d_ba
      * \brief Assert that the convolution is done on correct dimensions
      */
     template <typename I, typename K, typename C>
-    void check(const I& input, const K& kernel, const C& conv) const {
+    void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) const {
         static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_backward_filter");
         static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_backward_filter");
         static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_backward_filter");
@@ -81,10 +81,6 @@ struct dyn_conv_4d_backward_filter_expr : base_temporary_expr_bin<dyn_conv_4d_ba
 
         cpp_assert(etl::dim(conv, 2) == etl::dim(input, 2) - (s1 * (etl::dim(kernel, 2) - 1) + 1) + 2 * p1 + 1, "Invalid dimensions for conv2_backward");
         cpp_assert(etl::dim(conv, 3) == etl::dim(input, 3) - (s2 * (etl::dim(kernel, 3) - 1) + 1) + 2 * p2 + 1, "Invalid dimensions for conv2_backward");
-
-        cpp_unused(input);
-        cpp_unused(kernel);
-        cpp_unused(conv);
     }
 
     /*!

@@ -73,10 +73,8 @@ public:
      * \param gpu_memory The GPU memory allocated
      * \param size The size of the allocated GPU memory
      */
-    static void release(const void* gpu_memory, size_t size) {
+    static void release(const void* gpu_memory, [[maybe_unused]] size_t size) {
         base_release(gpu_memory);
-
-        cpp_unused(size);
     }
 
     /*!
@@ -603,19 +601,14 @@ struct gpu_memory_handler {
      * is up to date (to undefined value).
      * \param etl_size The size of the memory
      */
-    void ensure_gpu_allocated(size_t etl_size) const {
-        cpp_unused(etl_size);
-    }
+    void ensure_gpu_allocated([[maybe_unused]] size_t etl_size) const {}
 
     /*!
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
      * \param cpu_memory Pointer to CPU memory
      * \param etl_size The size of the memory
      */
-    void ensure_gpu_up_to_date(const T* cpu_memory, size_t etl_size) const {
-        cpp_unused(cpu_memory);
-        cpp_unused(etl_size);
-    }
+    void ensure_gpu_up_to_date([[maybe_unused]] const T* cpu_memory, [[maybe_unused]] size_t etl_size) const {}
 
     /*!
      * \brief Copy back from the GPU to the expression memory if
@@ -623,20 +616,14 @@ struct gpu_memory_handler {
      * \param cpu_memory Pointer to CPU memory
      * \param etl_size The size of the memory
      */
-    void ensure_cpu_up_to_date(const T* cpu_memory, size_t etl_size) const {
-        cpp_unused(cpu_memory);
-        cpp_unused(etl_size);
-    }
+    void ensure_cpu_up_to_date([[maybe_unused]] const T* cpu_memory, [[maybe_unused]] size_t etl_size) const {}
 
     /*!
      * \brief Copy from GPU to GPU
      * \param gpu_memory Pointer to CPU memory
      * \param etl_size The size of the memory
      */
-    void gpu_copy_from(const T* gpu_memory, size_t etl_size) const {
-        cpp_unused(gpu_memory);
-        cpp_unused(etl_size);
-    }
+    void gpu_copy_from([[maybe_unused]] const T* gpu_memory, [[maybe_unused]] size_t etl_size) const {}
 };
 #endif
 

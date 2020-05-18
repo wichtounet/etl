@@ -243,8 +243,7 @@ void transpose(A&& a, C&& c) {
  * \param c The matrix to transpose
  */
 template <typename C>
-void inplace_square_transpose(C&& c) {
-    cpp_unused(c);
+void inplace_square_transpose([[maybe_unused]] C&& c) {
     cpp_unreachable("CUBLAS not enabled/available");
 }
 
@@ -253,8 +252,7 @@ void inplace_square_transpose(C&& c) {
  * \param c The matrix to transpose
  */
 template <typename C>
-void inplace_rectangular_transpose(C&& c) {
-    cpp_unused(c);
+void inplace_rectangular_transpose([[maybe_unused]] C&& c) {
     cpp_unreachable("CUBLAS not enabled/available");
 }
 
@@ -264,9 +262,7 @@ void inplace_rectangular_transpose(C&& c) {
  * \param c The target matrix
  */
 template <typename A, typename C>
-void transpose(A&& a, C&& c) {
-    cpp_unused(a);
-    cpp_unused(c);
+void transpose([[maybe_unused]] A&& a, [[maybe_unused]] C&& c) {
     cpp_unreachable("CUBLAS not enabled/available");
 }
 

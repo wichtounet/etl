@@ -703,11 +703,7 @@ void gevm_t(A&& a, B&& b, C&& c) {
  * \param c The result matrix
  */
 template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
+void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Invalid operation called cublas::gemm with heterogeneous types");
 }
 
@@ -719,11 +715,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * \param c The result matrix (row major)
  */
 template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemm_nt(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
+void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Invalid operation called cublas::gemm_nt with heterogeneous types");
 }
 
@@ -735,11 +727,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
  * \param c The result matrix (row major)
  */
 template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemm_tn(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
+void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Invalid operation called cublas::gemm_tn with heterogeneous types");
 }
 
@@ -751,11 +739,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
  * \param c The result matrix (row major)
  */
 template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemm_tt(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
+void gemm_tt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Invalid operation called cublas::gemm_tt with heterogeneous types");
 }
 
@@ -767,11 +751,7 @@ void gemm_tt(A&& a, B&& b, C&& c) {
  * \param c The result vector
  */
 template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemv(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
+void gemv([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Invalid operation called blas::gemv with heterogeneous types");
 }
 
@@ -784,10 +764,6 @@ void gemv(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
 void gemv_t(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
     cpp_unreachable("Invalid operation called blas::gemv_t with heterogeneous types");
 }
 
@@ -800,10 +776,6 @@ void gemv_t(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
 void gevm(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
     cpp_unreachable("Invalid operation called blas::gevm with heterogeneous types");
 }
 
@@ -816,10 +788,6 @@ void gevm(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
 void gevm_t(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-
     cpp_unreachable("Invalid operation called blas::gevm_t with heterogeneous types");
 }
 
@@ -834,10 +802,7 @@ void gevm_t(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemm(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: cublas gemm");
 }
 
@@ -848,10 +813,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemm_nt(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: cublas gemm");
 }
 
@@ -862,10 +824,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemm_tn(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: cublas gemm");
 }
 
@@ -876,10 +835,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemm_tt(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gemm_tt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: cublas gemm");
 }
 
@@ -890,10 +846,7 @@ void gemm_tt(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemv(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gemv([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: cublas gemm");
 }
 
@@ -904,10 +857,7 @@ void gemv(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemv_t(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gemv_t([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: cublas gemm");
 }
 
@@ -918,10 +868,7 @@ void gemv_t(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gevm(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gevm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: cublas gemm");
 }
 
@@ -932,10 +879,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gevm_t(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gevm_t([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: cublas gemm");
 }
 

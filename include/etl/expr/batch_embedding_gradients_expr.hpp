@@ -198,9 +198,9 @@ struct etl_traits<etl::batch_embedding_gradients_expr<A, B, C>> {
      * \param d The dimension to get
      * \return the dth dimension of the expression
      */
-    static size_t dim(const expr_t& e, size_t d) {
+    static size_t dim(const expr_t& e, [[maybe_unused]] size_t d) {
         cpp_assert(d < 2, "Invalid dimensions access");
-        cpp_unused(d);
+
         return d == 0 ? etl::dim<0>(e._c) : etl::dim<2>(e._b);
     }
 

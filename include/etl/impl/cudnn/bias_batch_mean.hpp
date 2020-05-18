@@ -95,10 +95,7 @@ void bias_batch_mean_2d(X&& x, Y&& y) {
  * \param y The output tensor
  */
 template <typename X, typename Y>
-void bias_batch_mean_4d(X&& x, Y&& y) {
-    cpp_unused(x);
-    cpp_unused(y);
-}
+void bias_batch_mean_4d([[maybe_unused]] X&& x, [[maybe_unused]] Y&& y) {}
 
 /*!
  * \brief CUDNN Implementation of the bias_batch_mean operation
@@ -106,12 +103,9 @@ void bias_batch_mean_4d(X&& x, Y&& y) {
  * \param y The output tensor
  */
 template <typename X, typename Y>
-void bias_batch_mean_2d(X&& x, Y&& y) {
-    cpp_unused(x);
-    cpp_unused(y);
-}
+void bias_batch_mean_2d([[maybe_unused]] X&& x, [[maybe_unused]] Y&& y) {}
 
-    //COVERAGE_EXCLUDE_END
+//COVERAGE_EXCLUDE_END
 
 #endif
 

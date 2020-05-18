@@ -1733,9 +1733,7 @@ void fft_conv2_valid_multi_multi_flipped(I&& input, K_T&& kernels, C&& conv, siz
  * \param c The output expression
  */
 template <typename A, typename C>
-void fft1(A&& a, C&& c) {
-    cpp_unused(a);
-    cpp_unused(c);
+void fft1([[maybe_unused]] A&& a, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1745,9 +1743,7 @@ void fft1(A&& a, C&& c) {
  * \param c The output expression
  */
 template <typename A, typename C>
-void ifft1(A&& a, C&& c) {
-    cpp_unused(a);
-    cpp_unused(c);
+void ifft1([[maybe_unused]] A&& a, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1757,9 +1753,7 @@ void ifft1(A&& a, C&& c) {
  * \param c The output expression
  */
 template <typename A, typename C>
-void ifft1_real(A&& a, C&& c) {
-    cpp_unused(a);
-    cpp_unused(c);
+void ifft1_real([[maybe_unused]] A&& a, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1771,9 +1765,7 @@ void ifft1_real(A&& a, C&& c) {
  * The first dimension of a and c are considered batch dimensions
  */
 template <typename A, typename C>
-void fft1_many(A&& a, C&& c) {
-    cpp_unused(a);
-    cpp_unused(c);
+void fft1_many([[maybe_unused]] A&& a, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1785,9 +1777,7 @@ void fft1_many(A&& a, C&& c) {
  * The first dimension of a and c are considered batch dimensions
  */
 template <typename A, typename C>
-void ifft1_many(A&& a, C&& c) {
-    cpp_unused(a);
-    cpp_unused(c);
+void ifft1_many([[maybe_unused]] A&& a, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1797,9 +1787,7 @@ void ifft1_many(A&& a, C&& c) {
  * \param c The output expression
  */
 template <typename A, typename C>
-void fft2(A&& a, C&& c) {
-    cpp_unused(a);
-    cpp_unused(c);
+void fft2([[maybe_unused]] A&& a, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1809,9 +1797,7 @@ void fft2(A&& a, C&& c) {
  * \param c The output expression
  */
 template <typename A, typename C>
-void ifft2(A&& a, C&& c) {
-    cpp_unused(a);
-    cpp_unused(c);
+void ifft2([[maybe_unused]] A&& a, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1821,9 +1807,7 @@ void ifft2(A&& a, C&& c) {
  * \param c The output expression
  */
 template <typename A, typename C>
-void ifft2_real(A&& a, C&& c) {
-    cpp_unused(a);
-    cpp_unused(c);
+void ifft2_real([[maybe_unused]] A&& a, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1835,9 +1819,7 @@ void ifft2_real(A&& a, C&& c) {
  * The first dimension of a and c are considered batch dimensions
  */
 template <typename A, typename C>
-void fft2_many(A&& a, C&& c) {
-    cpp_unused(a);
-    cpp_unused(c);
+void fft2_many([[maybe_unused]] A&& a, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1849,9 +1831,7 @@ void fft2_many(A&& a, C&& c) {
  * The first dimension of a and c are considered batch dimensions
  */
 template <typename A, typename C>
-void ifft2_many(A&& a, C&& c) {
-    cpp_unused(a);
-    cpp_unused(c);
+void ifft2_many([[maybe_unused]] A&& a, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1862,10 +1842,7 @@ void ifft2_many(A&& a, C&& c) {
  * \param c The output matrix
  */
 template <typename A, typename B, typename C>
-void conv1_full(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void conv1_full([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1876,10 +1853,7 @@ void conv1_full(A&& a, B&& b, C&& c) {
  * \param c The output matrix
  */
 template <typename A, typename B, typename C>
-void conv2_full(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void conv2_full([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1890,10 +1864,7 @@ void conv2_full(A&& a, B&& b, C&& c) {
  * \param c The output matrix
  */
 template <typename A, typename B, typename C>
-void conv2_full_multi(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void conv2_full_multi([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1904,10 +1875,7 @@ void conv2_full_multi(A&& a, B&& b, C&& c) {
  * \param c The output matrix
  */
 template <typename A, typename B, typename C>
-void conv2_full_multi_flipped(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void conv2_full_multi_flipped([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1920,10 +1888,7 @@ void conv2_full_multi_flipped(A&& a, B&& b, C&& c) {
  * \param c The output matrix
  */
 template <typename A, typename B, typename C>
-void conv2_full_flipped(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void conv2_full_flipped([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1934,10 +1899,7 @@ void conv2_full_flipped(A&& a, B&& b, C&& c) {
  * \param c The output matrix
  */
 template <typename A, typename B, typename C>
-void conv4_full(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void conv4_full([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1948,10 +1910,7 @@ void conv4_full(A&& a, B&& b, C&& c) {
  * \param c The output matrix
  */
 template <typename A, typename B, typename C>
-void conv4_full_flipped(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void conv4_full_flipped([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1966,14 +1925,7 @@ void conv4_full_flipped(A&& a, B&& b, C&& c) {
  * \param c The output matrix
  */
 template <typename I, typename K_T, typename C>
-void fft_conv2_valid_multi(const I& a, const K_T& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void fft_conv2_valid_multi([[maybe_unused]] const I& a, [[maybe_unused]] const K_T& b, [[maybe_unused]] C&& c, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -1984,14 +1936,7 @@ void fft_conv2_valid_multi(const I& a, const K_T& b, C&& c, size_t s1, size_t s2
  * \param c The output matrix
  */
 template <typename I, typename K_T, typename C>
-void fft_conv2_valid_multi_flipped(I&& a, K_T&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void fft_conv2_valid_multi_flipped([[maybe_unused]] I&& a, [[maybe_unused]] K_T&& b, [[maybe_unused]] C&& c, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -2006,14 +1951,7 @@ void fft_conv2_valid_multi_flipped(I&& a, K_T&& b, C&& c, size_t s1, size_t s2, 
  * \param c The output matrix
  */
 template <typename I, typename K_T, typename C>
-void fft_conv2_valid_multi_multi(const I& a, const K_T& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void fft_conv2_valid_multi_multi([[maybe_unused]] const I& a, [[maybe_unused]] const K_T& b, [[maybe_unused]] C&& c, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
@@ -2024,14 +1962,7 @@ void fft_conv2_valid_multi_multi(const I& a, const K_T& b, C&& c, size_t s1, siz
  * \param c The output matrix
  */
 template <typename I, typename K_T, typename C>
-void fft_conv2_valid_multi_multi_flipped(I&& a, K_T&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void fft_conv2_valid_multi_multi_flipped([[maybe_unused]] I&& a, [[maybe_unused]] K_T&& b, [[maybe_unused]] C&& c, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 

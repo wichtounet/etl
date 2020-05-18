@@ -209,9 +209,7 @@ void stable_softmax(I&& x, C&& y) {
  * \param y The c expression
  */
 template <typename I, typename C>
-void sigmoid(I&& x, C&& y) {
-    cpp_unused(x);
-    cpp_unused(y);
+void sigmoid([[maybe_unused]] I&& x, [[maybe_unused]] C&& y) {
     cpp_unreachable("CUDNN not available/enabled");
 }
 
@@ -221,9 +219,7 @@ void sigmoid(I&& x, C&& y) {
  * \param y The c expression
  */
 template <typename I, typename C>
-void relu(I&& x, C&& y) {
-    cpp_unused(x);
-    cpp_unused(y);
+void relu([[maybe_unused]] I&& x, [[maybe_unused]] C&& y) {
     cpp_unreachable("CUDNN not available/enabled");
 }
 
@@ -234,10 +230,7 @@ void relu(I&& x, C&& y) {
  * \param y The c expression
  */
 template <typename O, typename E, typename C>
-void sigmoid_backward(O&& o, E&& e, C&& y) {
-    cpp_unused(o);
-    cpp_unused(e);
-    cpp_unused(y);
+void sigmoid_backward([[maybe_unused]] O&& o, [[maybe_unused]] E&& e, [[maybe_unused]] C&& y) {
     cpp_unreachable("CUDNN not available/enabled");
 }
 
@@ -248,10 +241,7 @@ void sigmoid_backward(O&& o, E&& e, C&& y) {
  * \param y The c expression
  */
 template <typename O, typename E, typename C>
-void relu_backward(O&& o, E&& e, C&& y) {
-    cpp_unused(o);
-    cpp_unused(e);
-    cpp_unused(y);
+void relu_backward([[maybe_unused]] O&& o, [[maybe_unused]] E&& e, [[maybe_unused]] C&& y) {
     cpp_unreachable("CUDNN not available/enabled");
 }
 
@@ -261,9 +251,7 @@ void relu_backward(O&& o, E&& e, C&& y) {
  * \param y The c expression
  */
 template <typename I, typename C>
-void softmax(I&& x, C&& y) {
-    cpp_unused(x);
-    cpp_unused(y);
+void softmax([[maybe_unused]] I&& x, [[maybe_unused]] C&& y) {
     cpp_unreachable("CUDNN not available/enabled");
 }
 
@@ -273,9 +261,7 @@ void softmax(I&& x, C&& y) {
  * \param y The c expression
  */
 template <typename I, typename C>
-void stable_softmax(I&& x, C&& y) {
-    cpp_unused(x);
-    cpp_unused(y);
+void stable_softmax([[maybe_unused]] I&& x, [[maybe_unused]] C&& y) {
     cpp_unreachable("CUDNN not available/enabled");
 }
 

@@ -260,9 +260,9 @@ struct etl_traits<etl::embedding_lookup_expr<A, B>> {
      * \param d The dimension to get
      * \return the dth dimension of the expression
      */
-    static size_t dim(const expr_t& e, size_t d) {
+    static size_t dim(const expr_t& e, [[maybe_unused]] size_t d) {
         cpp_assert(d < 2, "Invalid dimensions access");
-        cpp_unused(d);
+
         return d == 0 ? etl::dim<0>(e._a) : etl::dim<1>(e._b);
     }
 

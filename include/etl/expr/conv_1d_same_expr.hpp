@@ -222,9 +222,7 @@ struct etl_traits<etl::conv_1d_same_expr<A, B>> {
      * \param d The dimension to get
      * \return the dth dimension of the expression
      */
-    static size_t dim(const expr_t& e, size_t d) {
-        cpp_unused(d);
-
+    static size_t dim(const expr_t& e, [[maybe_unused]] size_t d) {
         return etl::dim(e._a, 0);
     }
 

@@ -97,11 +97,9 @@ struct max_pool_derivative_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename M, cpp_enable_iff(is_2d<A>)>
-    static void apply(A&& in, B&& out, M&& m, size_t c1, size_t c2, size_t c3) {
+    static void apply(A&& in, B&& out, M&& m, size_t c1, size_t c2, [[maybe_unused]] size_t c3) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
-
-        cpp_unused(c3);
 
         for (size_t j = 0; j < etl::dim<0>(out); ++j) {
             for (size_t k = 0; k < etl::dim<1>(out); ++k) {

@@ -648,9 +648,7 @@ inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor
  * \param threshold The parallel threshold
  * \return true if the evaluation should be done in paralle, false otherwise
  */
-inline bool engine_select_parallel(size_t n, size_t threshold = parallel_threshold) {
-    cpp_unused(n);
-    cpp_unused(threshold);
+inline bool engine_select_parallel([[maybe_unused]] size_t n, [[maybe_unused]] size_t threshold = parallel_threshold) {
     return false;
 }
 
@@ -659,8 +657,7 @@ inline bool engine_select_parallel(size_t n, size_t threshold = parallel_thresho
  * \param select The secondary parallel selection
  * \return true if the evaluation should be done in paralle, false otherwise
  */
-inline bool engine_select_parallel(bool select) {
-    cpp_unused(select);
+inline bool engine_select_parallel([[maybe_unused]] bool select) {
     return false;
 }
 
@@ -680,10 +677,8 @@ inline bool engine_select_parallel(bool select) {
  * \param threshold The threshold for parallelization
  */
 template <typename Functor>
-inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, size_t threshold) {
+inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, [[maybe_unused]] size_t threshold) {
     cpp_assert(last >= first, "Range must be valid");
-
-    cpp_unused(threshold);
 
     const size_t n = last - first;
 
@@ -767,10 +762,8 @@ inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last,
  * \param last The end of the range. Must be bigger or equal to first.
  */
 template <typename Functor>
-inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, bool select) {
+inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, [[maybe_unused]] bool select) {
     cpp_assert(last >= first, "Range must be valid");
-
-    cpp_unused(select);
 
     const size_t n = last - first;
 
@@ -845,10 +838,8 @@ inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last,
  * \param threshold The threshold for paralellization
  */
 template <typename T, typename Functor, typename AccFunctor>
-inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, size_t first, size_t last, size_t threshold) {
+inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, size_t first, size_t last, [[maybe_unused]] size_t threshold) {
     cpp_assert(last >= first, "Range must be valid");
-
-    cpp_unused(threshold);
 
     const size_t n = last - first;
 
@@ -868,9 +859,7 @@ inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, 
  * \param threshold The threshold for paralellization
  */
 template <typename E, typename Functor, typename AccFunctor>
-inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor&& acc_functor, size_t threshold) {
-    cpp_unused(threshold);
-
+inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor&& acc_functor, [[maybe_unused]] size_t threshold) {
     acc_functor(functor(expr));
 }
 

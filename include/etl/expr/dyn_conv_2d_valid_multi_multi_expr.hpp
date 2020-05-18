@@ -56,7 +56,7 @@ struct dyn_conv_2d_valid_multi_multi_expr : base_temporary_expr_bin<dyn_conv_2d_
      * \brief Assert that the convolution is done on correct dimensions
      */
     template <typename I, typename K, typename C>
-    void check(const I& input, const K& kernel, const C& conv) const {
+    void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) const {
         static_assert(etl::dimensions<I>() == 3, "Invalid number of dimensions for input of conv_2d_valid_multi_multi");
         static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv_2d_valid_multi_multi");
         static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv_2d_valid_multi_multi");
@@ -65,10 +65,6 @@ struct dyn_conv_2d_valid_multi_multi_expr : base_temporary_expr_bin<dyn_conv_2d_
         cpp_assert(etl::dim(conv, 1) == etl::dim(input, 0), "Invalid dimensions for conv_2d_valid_multi_multi");
         cpp_assert(etl::dim(conv, 2) == (etl::dim(input, 1) - etl::dim(kernel, 1) + 2 * p1) / s1 + 1, "Invalid dimensions for conv_2d_valid_multi_multi");
         cpp_assert(etl::dim(conv, 3) == (etl::dim(input, 2) - etl::dim(kernel, 2) + 2 * p2) / s2 + 1, "Invalid dimensions for conv_2d_valid_multi_multi");
-
-        cpp_unused(input);
-        cpp_unused(kernel);
-        cpp_unused(conv);
     }
 
     /*!

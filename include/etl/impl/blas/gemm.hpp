@@ -1308,10 +1308,7 @@ void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemm(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1322,10 +1319,7 @@ void gemm(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemm_nt(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: blas gemm_nt");
 }
 
@@ -1336,10 +1330,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemm_tn(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: blas gemm_tn");
 }
 
@@ -1350,10 +1341,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemm_tt(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gemm_tt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1364,10 +1352,7 @@ void gemm_tt(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemv(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gemv([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1378,10 +1363,7 @@ void gemv(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemv_t(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gemv_t([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1392,10 +1374,7 @@ void gemv_t(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gevm(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gevm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1407,10 +1386,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gevm_t(A&& a, B&& b, C&& c) {
-    cpp_unused(a);
-    cpp_unused(b);
-    cpp_unused(c);
+void gevm_t([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1421,14 +1397,13 @@ void gevm_t(A&& a, B&& b, C&& c) {
  * \param conv The output matrix
  */
 template <typename I, typename K_T, typename C>
-void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernels);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void blas_conv2_valid_multi([[maybe_unused]] const I& input,
+                            [[maybe_unused]] const K_T& kernels,
+                            [[maybe_unused]] C&& conv,
+                            [[maybe_unused]] size_t s1,
+                            [[maybe_unused]] size_t s2,
+                            [[maybe_unused]] size_t p1,
+                            [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1439,14 +1414,13 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
  * \param conv The output matrix
  */
 template <typename I, typename K_T, typename C>
-void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernels);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void blas_conv2_valid_multi_flipped([[maybe_unused]] const I& input,
+                                    [[maybe_unused]] const K_T& kernels,
+                                    [[maybe_unused]] C&& conv,
+                                    [[maybe_unused]] size_t s1,
+                                    [[maybe_unused]] size_t s2,
+                                    [[maybe_unused]] size_t p1,
+                                    [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1457,14 +1431,13 @@ void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv
  * \param conv The output matrix
  */
 template <typename I, typename K_T, typename C>
-void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernels);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void blas_conv2_valid_multi_multi([[maybe_unused]] const I& input,
+                                  [[maybe_unused]] const K_T& kernels,
+                                  [[maybe_unused]] C&& conv,
+                                  [[maybe_unused]] size_t s1,
+                                  [[maybe_unused]] size_t s2,
+                                  [[maybe_unused]] size_t p1,
+                                  [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1475,14 +1448,13 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
  * \param conv The output matrix
  */
 template <typename I, typename K_T, typename C>
-void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernels);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void blas_conv2_valid_multi_multi_flipped([[maybe_unused]] const I& input,
+                                          [[maybe_unused]] const K_T& kernels,
+                                          [[maybe_unused]] C&& conv,
+                                          [[maybe_unused]] size_t s1,
+                                          [[maybe_unused]] size_t s2,
+                                          [[maybe_unused]] size_t p1,
+                                          [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1497,14 +1469,13 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void blas_conv4_valid([[maybe_unused]] I_T&& input,
+                      [[maybe_unused]] K_T&& kernel,
+                      [[maybe_unused]] C_T&& conv,
+                      [[maybe_unused]] size_t s1,
+                      [[maybe_unused]] size_t s2,
+                      [[maybe_unused]] size_t p1,
+                      [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1519,14 +1490,13 @@ void blas_conv4_valid(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void blas_conv4_valid_flipped([[maybe_unused]] I_T&& input,
+                              [[maybe_unused]] K_T&& kernel,
+                              [[maybe_unused]] C_T&& conv,
+                              [[maybe_unused]] size_t s1,
+                              [[maybe_unused]] size_t s2,
+                              [[maybe_unused]] size_t p1,
+                              [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1541,14 +1511,13 @@ void blas_conv4_valid_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, 
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_filter(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void blas_conv4_valid_filter([[maybe_unused]] I_T&& input,
+                             [[maybe_unused]] K_T&& kernel,
+                             [[maybe_unused]] C_T&& conv,
+                             [[maybe_unused]] size_t s1,
+                             [[maybe_unused]] size_t s2,
+                             [[maybe_unused]] size_t p1,
+                             [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1563,14 +1532,13 @@ void blas_conv4_valid_filter(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, s
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_filter_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void blas_conv4_valid_filter_flipped([[maybe_unused]] I_T&& input,
+                                     [[maybe_unused]] K_T&& kernel,
+                                     [[maybe_unused]] C_T&& conv,
+                                     [[maybe_unused]] size_t s1,
+                                     [[maybe_unused]] size_t s2,
+                                     [[maybe_unused]] size_t p1,
+                                     [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1585,14 +1553,13 @@ void blas_conv4_valid_filter_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void blas_conv4_valid_back([[maybe_unused]] I_T&& input,
+                           [[maybe_unused]] K_T&& kernel,
+                           [[maybe_unused]] C_T&& conv,
+                           [[maybe_unused]] size_t s1,
+                           [[maybe_unused]] size_t s2,
+                           [[maybe_unused]] size_t p1,
+                           [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1607,14 +1574,13 @@ void blas_conv4_valid_back(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, siz
  * \param p2 The padding of the second dimension
  */
 template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void blas_conv4_valid_back_flipped([[maybe_unused]] I_T&& input,
+                                   [[maybe_unused]] K_T&& kernel,
+                                   [[maybe_unused]] C_T&& conv,
+                                   [[maybe_unused]] size_t s1,
+                                   [[maybe_unused]] size_t s2,
+                                   [[maybe_unused]] size_t p1,
+                                   [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 

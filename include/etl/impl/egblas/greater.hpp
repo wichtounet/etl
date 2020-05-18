@@ -41,19 +41,17 @@ static constexpr bool has_sgreater = false;
  * \param C The memory of the vector c
  * \param ldc The leading dimension of c
  */
-inline void greater(size_t n, const float* A, size_t lda, const float* B, size_t ldb, bool* C, size_t ldc) {
+inline void greater([[maybe_unused]] size_t n,
+                    [[maybe_unused]] const float* A,
+                    [[maybe_unused]] size_t lda,
+                    [[maybe_unused]] const float* B,
+                    [[maybe_unused]] size_t ldb,
+                    [[maybe_unused]] bool* C,
+                    [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_SGREATER
     inc_counter("egblas");
     egblas_sgreater(n, A, lda, B, ldb, C, ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::greater");
 #endif
 }
@@ -77,19 +75,17 @@ static constexpr bool has_dgreater = false;
  * \param C The memory of the vector c
  * \param ldc The leading dimension of c
  */
-inline void greater(size_t n, const double* A, size_t lda, const double* B, size_t ldb, bool* C, size_t ldc) {
+inline void greater([[maybe_unused]] size_t n,
+                    [[maybe_unused]] const double* A,
+                    [[maybe_unused]] size_t lda,
+                    [[maybe_unused]] const double* B,
+                    [[maybe_unused]] size_t ldb,
+                    [[maybe_unused]] bool* C,
+                    [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_DGREATER
     inc_counter("egblas");
     egblas_dgreater(n, A, lda, B, ldb, C, ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::greater");
 #endif
 }
@@ -113,19 +109,17 @@ static constexpr bool has_cgreater = false;
  * \param C The memory of the vector c
  * \param ldc The leading dimension of c
  */
-inline void greater(size_t n, const std::complex<float>* A, size_t lda, const std::complex<float>* B, size_t ldb, bool* C, size_t ldc) {
+inline void greater([[maybe_unused]] size_t n,
+                    [[maybe_unused]] const std::complex<float>* A,
+                    [[maybe_unused]] size_t lda,
+                    [[maybe_unused]] const std::complex<float>* B,
+                    [[maybe_unused]] size_t ldb,
+                    [[maybe_unused]] bool* C,
+                    [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_CGREATER
     inc_counter("egblas");
     egblas_cgreater(n, reinterpret_cast<const cuComplex*>(A), lda, reinterpret_cast<const cuComplex*>(B), ldb, C, ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::greater");
 #endif
 }
@@ -140,19 +134,17 @@ inline void greater(size_t n, const std::complex<float>* A, size_t lda, const st
  * \param C The memory of the vector c
  * \param ldc The leading dimension of c
  */
-inline void greater(size_t n, const etl::complex<float>* A, size_t lda, const etl::complex<float>* B, size_t ldb, bool* C, size_t ldc) {
+inline void greater([[maybe_unused]] size_t n,
+                    [[maybe_unused]] const etl::complex<float>* A,
+                    [[maybe_unused]] size_t lda,
+                    [[maybe_unused]] const etl::complex<float>* B,
+                    [[maybe_unused]] size_t ldb,
+                    [[maybe_unused]] bool* C,
+                    [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_CGREATER
     inc_counter("egblas");
     egblas_cgreater(n, reinterpret_cast<const cuComplex*>(A), lda, reinterpret_cast<const cuComplex*>(B), ldb, C, ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::greater");
 #endif
 }
@@ -176,19 +168,17 @@ static constexpr bool has_zgreater = false;
  * \param C The memory of the vector c
  * \param ldc The leading dimension of c
  */
-inline void greater(size_t n, const std::complex<double>* A, size_t lda, const std::complex<double>* B, size_t ldb, bool* C, size_t ldc) {
+inline void greater([[maybe_unused]] size_t n,
+                    [[maybe_unused]] const std::complex<double>* A,
+                    [[maybe_unused]] size_t lda,
+                    [[maybe_unused]] const std::complex<double>* B,
+                    [[maybe_unused]] size_t ldb,
+                    [[maybe_unused]] bool* C,
+                    [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_ZGREATER
     inc_counter("egblas");
     egblas_zgreater(n, reinterpret_cast<const cuDoubleComplex*>(A), lda, reinterpret_cast<const cuDoubleComplex*>(B), ldb, C, ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::greater");
 #endif
 }
@@ -203,19 +193,17 @@ inline void greater(size_t n, const std::complex<double>* A, size_t lda, const s
  * \param C The memory of the vector c
  * \param ldc The leading dimension of c
  */
-inline void greater(size_t n, const etl::complex<double>* A, size_t lda, const etl::complex<double>* B, size_t ldb, bool* C, size_t ldc) {
+inline void greater([[maybe_unused]] size_t n,
+                    [[maybe_unused]] const etl::complex<double>* A,
+                    [[maybe_unused]] size_t lda,
+                    [[maybe_unused]] const etl::complex<double>* B,
+                    [[maybe_unused]] size_t ldb,
+                    [[maybe_unused]] bool* C,
+                    [[maybe_unused]] size_t ldc) {
 #ifdef EGBLAS_HAS_ZGREATER
     inc_counter("egblas");
     egblas_zgreater(n, reinterpret_cast<const cuDoubleComplex*>(A), lda, reinterpret_cast<const cuDoubleComplex*>(B), ldb, C, ldc);
 #else
-    cpp_unused(n);
-    cpp_unused(A);
-    cpp_unused(lda);
-    cpp_unused(B);
-    cpp_unused(ldb);
-    cpp_unused(C);
-    cpp_unused(ldc);
-
     cpp_unreachable("Invalid call to egblas::greater");
 #endif
 }

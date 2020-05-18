@@ -287,9 +287,9 @@ struct etl_traits<etl::batch_embedding_lookup_expr<A, B>> {
      * \param d The dimension to get
      * \return the dth dimension of the expression
      */
-    static size_t dim(const expr_t& e, size_t d) {
+    static size_t dim(const expr_t& e, [[maybe_unused]] size_t d) {
         cpp_assert(d < 3, "Invalid dimensions access");
-        cpp_unused(d);
+
         if (d == 0) {
             return etl::dim<0>(e._a);
         } else if (d == 1) {

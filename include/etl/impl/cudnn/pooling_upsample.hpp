@@ -244,14 +244,12 @@ struct max_pool_upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M>
-    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
-        cpp_unused(in);
-        cpp_unused(out);
-        cpp_unused(errors);
-        cpp_unused(m);
-        cpp_unused(c1);
-        cpp_unused(c2);
-
+    static void apply([[maybe_unused]] A&& in,
+                      [[maybe_unused]] B&& out,
+                      [[maybe_unused]] C&& errors,
+                      [[maybe_unused]] M& m,
+                      [[maybe_unused]] size_t c1,
+                      [[maybe_unused]] size_t c2) {
         cpp_unreachable("Unsupported feature called: cudnn pool");
     }
 };
@@ -268,15 +266,13 @@ struct max_pool_upsample_3d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M>
-    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t c3) {
-        cpp_unused(in);
-        cpp_unused(out);
-        cpp_unused(errors);
-        cpp_unused(m);
-        cpp_unused(c1);
-        cpp_unused(c2);
-        cpp_unused(c3);
-
+    static void apply([[maybe_unused]] A&& in,
+                      [[maybe_unused]] B&& out,
+                      [[maybe_unused]] C&& errors,
+                      [[maybe_unused]] M& m,
+                      [[maybe_unused]] size_t c1,
+                      [[maybe_unused]] size_t c2,
+                      [[maybe_unused]] size_t c3) {
         cpp_unreachable("Unsupported feature called: cudnn pool");
     }
 };
@@ -293,14 +289,12 @@ struct avg_pool_upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M>
-    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
-        cpp_unused(in);
-        cpp_unused(out);
-        cpp_unused(errors);
-        cpp_unused(m);
-        cpp_unused(c1);
-        cpp_unused(c2);
-
+    static void apply([[maybe_unused]] A&& in,
+                      [[maybe_unused]] B&& out,
+                      [[maybe_unused]] C&& errors,
+                      [[maybe_unused]] M& m,
+                      [[maybe_unused]] size_t c1,
+                      [[maybe_unused]] size_t c2) {
         cpp_unreachable("Unsupported feature called: cudnn pool");
     }
 };
@@ -317,15 +311,13 @@ struct avg_pool_upsample_3d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M>
-    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t c3) {
-        cpp_unused(in);
-        cpp_unused(out);
-        cpp_unused(errors);
-        cpp_unused(m);
-        cpp_unused(c1);
-        cpp_unused(c2);
-        cpp_unused(c3);
-
+    static void apply([[maybe_unused]] A&& in,
+                      [[maybe_unused]] B&& out,
+                      [[maybe_unused]] C&& errors,
+                      [[maybe_unused]] M& m,
+                      [[maybe_unused]] size_t c1,
+                      [[maybe_unused]] size_t c2,
+                      [[maybe_unused]] size_t c3) {
         cpp_unreachable("Unsupported feature called: cudnn pool");
     }
 };

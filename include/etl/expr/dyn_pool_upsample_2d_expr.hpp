@@ -57,12 +57,7 @@ public:
      * \þaram c The output matrix
      */
     template <typename R>
-    void check(const A& a, const B& b, const C& c, const R& result) const {
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
-        cpp_unused(result);
-
+    void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c, [[maybe_unused]] const R& result) const {
         static constexpr size_t D = etl::decay_traits<A>::dimensions();
 
         static_assert(etl::decay_traits<B>::dimensions() == D, "Invalid dimensions in max_pool_upsample_3d");

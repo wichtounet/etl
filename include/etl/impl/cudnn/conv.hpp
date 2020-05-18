@@ -721,14 +721,13 @@ void conv4_backward_data_full_flipped([[maybe_unused]] I&& input, [[maybe_unused
  * \param p2 The second dimension padding (top and bottom)
  */
 template <typename I, typename K, typename C>
-void conv2_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void conv2_valid([[maybe_unused]] I&& input,
+                 [[maybe_unused]] K&& kernel,
+                 [[maybe_unused]] C&& conv,
+                 [[maybe_unused]] size_t s1,
+                 [[maybe_unused]] size_t s2,
+                 [[maybe_unused]] size_t p1,
+                 [[maybe_unused]] size_t p2) {
     cpp_unreachable("CUDNN not available/enabled");
 }
 
@@ -743,14 +742,13 @@ void conv2_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p
  * \param p2 The second dimension padding (top and bottom)
  */
 template <typename I, typename K, typename C>
-void conv2_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void conv2_valid_flipped([[maybe_unused]] I&& input,
+                         [[maybe_unused]] K&& kernel,
+                         [[maybe_unused]] C&& conv,
+                         [[maybe_unused]] size_t s1,
+                         [[maybe_unused]] size_t s2,
+                         [[maybe_unused]] size_t p1,
+                         [[maybe_unused]] size_t p2) {
     cpp_unreachable("CUDNN not available/enabled");
 }
 
@@ -761,14 +759,13 @@ void conv2_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_forward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void conv4_forward([[maybe_unused]] I&& input,
+                   [[maybe_unused]] K&& kernel,
+                   [[maybe_unused]] C&& conv,
+                   [[maybe_unused]] size_t s1,
+                   [[maybe_unused]] size_t s2,
+                   [[maybe_unused]] size_t p1,
+                   [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: cudnn conv4_valid");
 }
 
@@ -779,14 +776,13 @@ void conv4_forward(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_forward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void conv4_forward_flipped([[maybe_unused]] I&& input,
+                           [[maybe_unused]] K&& kernel,
+                           [[maybe_unused]] C&& conv,
+                           [[maybe_unused]] size_t s1,
+                           [[maybe_unused]] size_t s2,
+                           [[maybe_unused]] size_t p1,
+                           [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: cudnn conv4_valid_flipped");
 }
 
@@ -799,14 +795,13 @@ void conv4_forward_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_backward_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void conv4_backward_filter([[maybe_unused]] I&& input,
+                           [[maybe_unused]] K&& kernel,
+                           [[maybe_unused]] C&& conv,
+                           [[maybe_unused]] size_t s1,
+                           [[maybe_unused]] size_t s2,
+                           [[maybe_unused]] size_t p1,
+                           [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: cudnn conv4_valid_filter");
 }
 
@@ -819,14 +814,13 @@ void conv4_backward_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_backward_filter_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void conv4_backward_filter_flipped([[maybe_unused]] I&& input,
+                                   [[maybe_unused]] K&& kernel,
+                                   [[maybe_unused]] C&& conv,
+                                   [[maybe_unused]] size_t s1,
+                                   [[maybe_unused]] size_t s2,
+                                   [[maybe_unused]] size_t p1,
+                                   [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: cudnn conv4_backward_filter_flipped");
 }
 
@@ -837,10 +831,7 @@ void conv4_backward_filter_flipped(I&& input, K&& kernel, C&& conv, size_t s1, s
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_full(I&& input, K&& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
+void conv2_full([[maybe_unused]] I&& input, [[maybe_unused]] K&& kernel, [[maybe_unused]] C&& conv) {
     cpp_unreachable("Unsupported feature called: cudnn conv2_full");
 }
 
@@ -851,10 +842,7 @@ void conv2_full(I&& input, K&& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_full_flipped(I&& input, K&& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
+void conv2_full_flipped([[maybe_unused]] I&& input, [[maybe_unused]] K&& kernel, [[maybe_unused]] C&& conv) {
     cpp_unreachable("Unsupported feature called: cudnn conv2_full_flipped");
 }
 
@@ -865,10 +853,7 @@ void conv2_full_flipped(I&& input, K&& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_backward_data_full(I&& input, K&& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
+void conv4_backward_data_full([[maybe_unused]] I&& input, [[maybe_unused]] K&& kernel, [[maybe_unused]] C&& conv) {
     cpp_unreachable("Unsupported feature called: cudnn conv4_full");
 }
 
@@ -879,10 +864,7 @@ void conv4_backward_data_full(I&& input, K&& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_backward_data_full_flipped(I&& input, K&& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
+void conv4_backward_data_full_flipped([[maybe_unused]] I&& input, [[maybe_unused]] K&& kernel, [[maybe_unused]] C&& conv) {
     cpp_unreachable("Unsupported feature called: cudnn conv4_ful_flippedl");
 }
 
@@ -893,14 +875,13 @@ void conv4_backward_data_full_flipped(I&& input, K&& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_valid_multi(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void conv2_valid_multi([[maybe_unused]] I&& input,
+                       [[maybe_unused]] K&& kernel,
+                       [[maybe_unused]] C&& conv,
+                       [[maybe_unused]] size_t s1,
+                       [[maybe_unused]] size_t s2,
+                       [[maybe_unused]] size_t p1,
+                       [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: cudnn conv2_valid_multi");
 }
 
@@ -911,14 +892,13 @@ void conv2_valid_multi(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void conv2_valid_multi_flipped([[maybe_unused]] I&& input,
+                               [[maybe_unused]] K&& kernel,
+                               [[maybe_unused]] C&& conv,
+                               [[maybe_unused]] size_t s1,
+                               [[maybe_unused]] size_t s2,
+                               [[maybe_unused]] size_t p1,
+                               [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: cudnn conv2_valid_multi_flipped");
 }
 
@@ -929,14 +909,13 @@ void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_backward_data(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void conv4_backward_data([[maybe_unused]] I&& input,
+                         [[maybe_unused]] K&& kernel,
+                         [[maybe_unused]] C&& conv,
+                         [[maybe_unused]] size_t s1,
+                         [[maybe_unused]] size_t s2,
+                         [[maybe_unused]] size_t p1,
+                         [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: cudnn conv4_backward_data");
 }
 
@@ -947,14 +926,13 @@ void conv4_backward_data(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_backward_data_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+void conv4_backward_data_flipped([[maybe_unused]] I&& input,
+                                 [[maybe_unused]] K&& kernel,
+                                 [[maybe_unused]] C&& conv,
+                                 [[maybe_unused]] size_t s1,
+                                 [[maybe_unused]] size_t s2,
+                                 [[maybe_unused]] size_t p1,
+                                 [[maybe_unused]] size_t p2) {
     cpp_unreachable("Unsupported feature called: cudnn conv4_backward_data_flipped");
 }
 
