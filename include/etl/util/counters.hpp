@@ -111,6 +111,67 @@ inline void dump_counters() {
 }
 
 /*!
+ * \brief Dump all counters values to the console.
+ */
+inline void dump_counters_pretty() {
+    decltype(auto) counters = get_counters().counters;
+
+    if(counters.empty()){
+        std::cout << "No counters have been recorded!" << std::endl;
+        return;
+    }
+
+    std::cout << std::endl;
+
+    //Sort the counters by count (DESC)
+    std::sort(counters.begin(), counters.end(), [](auto& left, auto& right) { return left.count > right.count; });
+
+    constexpr size_t columns = 2;
+
+    std::string column_name[columns];
+    column_name[0] = "Counter";
+    column_name[1] = "Count";
+
+    size_t column_length[columns];
+    column_length[0] = column_name[0].size();
+    column_length[1] = column_name[1].size();
+
+    // Compute the width of each column
+    for (decltype(auto) counter : counters) {
+        if (counter.name) {
+            column_length[0] = std::max(column_length[0], std::string(counter.name).size());
+            column_length[1] = std::max(column_length[1], std::to_string(counter.count).size());
+        }
+    }
+
+    const size_t line_length = (columns + 1) * 1 + 2 + (columns - 1) * 2 + std::accumulate(column_length, column_length + columns, 0);
+
+    std::cout << " " << std::string(line_length, '-') << '\n';
+
+    printf(" | %-*s | %-*s |\n",
+        int(column_length[0]), column_name[0].c_str(),
+        int(column_length[1]), column_name[1].c_str());
+
+    // Print all the used counters
+    for (decltype(auto) counter : counters) {
+        if (counter.name) {
+            printf(" | %-*s | %-*s |\n",
+                int(column_length[0]), counter.name,
+                int(column_length[1]), std::to_string(counter.count).c_str());
+        }
+    }
+
+    std::cout << " " << std::string(line_length, '-') << '\n';
+
+    // Print all the used counters
+    for (decltype(auto) counter : counters) {
+        if (counter.name) {
+            std::cout << counter.name << ": " << counter.count << std::endl;
+        }
+    }
+}
+
+/*!
  * \brief Increase the given counter
  * \param name The name of the counter to increase
  */
