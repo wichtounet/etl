@@ -1036,7 +1036,7 @@ struct div_binary_op {
 
         smart_gpu_compute(lhs, y);
 
-        impl::egblas::scalar_mul(etl::size(y), s, y.gpu_memory(), 1);
+        impl::egblas::scalar_mul(y.gpu_memory(), etl::size(y), 1, s);
 
         y.validate_gpu();
         y.invalidate_cpu();
