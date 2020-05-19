@@ -78,6 +78,8 @@ void par_exec(E&& expr, R&& result) {
  */
 template <typename E, typename R>
 void standard_assign_impl(E& expr, R& result) {
+    inc_counter("std:assign");
+
     for (size_t i = 0; i < etl::size(result); ++i) {
         result[i] = expr.read_flat(i);
     }
@@ -98,12 +100,16 @@ void fast_assign_impl_full(E& expr, R& result) {
         cpp_assert(expr.is_cpu_up_to_date() || expr.is_gpu_up_to_date(), "expr must be in valid state");
 
         if (expr.is_cpu_up_to_date()) {
+            inc_counter("fast:copy");
+
             direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
 
             result.validate_cpu();
         }
 
         if (expr.is_gpu_up_to_date()) {
+            inc_counter("gpu:copy");
+
             bool cpu_status = expr.is_cpu_up_to_date();
 
             result.ensure_gpu_allocated();
@@ -147,6 +153,8 @@ void fast_assign_impl_full([[maybe_unused]] E& expr, [[maybe_unused]] R& result)
     if constexpr (cuda_enabled) {
         cpp_assert(expr.is_gpu_up_to_date(), "expr must be in valid state");
 
+        inc_counter("gpu:copy");
+
         result.ensure_gpu_allocated();
         result.gpu_copy_from(expr.gpu_memory());
 
@@ -174,6 +182,8 @@ void fast_assign_impl_full([[maybe_unused]] E& expr, [[maybe_unused]] R& result)
 template <typename E, typename R>
 void fast_assign_impl(E& expr, R& result) {
     static_assert(!is_gpu_dyn_matrix<R>, "gpu_dyn_matrix should not be used here");
+
+    inc_counter("fast:copy");
 
     expr.ensure_cpu_up_to_date();
 
@@ -234,11 +244,14 @@ void direct_assign_impl(E& expr, R& result) {
 
     if constexpr (is_thread_safe<E>) {
         if (engine_select_parallel(etl::size(result))) {
+            inc_counter("par:assign");
             par_exec<detail::Assign>(expr, result);
         } else {
+            inc_counter("mem:assign");
             detail::Assign::apply(result, expr);
         }
     } else {
+        inc_counter("mem:assign");
         detail::Assign::apply(result, expr);
     }
 
@@ -264,11 +277,14 @@ void vectorized_assign_impl(E& expr, R& result) {
 
     if constexpr (is_thread_safe<E>) {
         if (engine_select_parallel(etl::size(result))) {
+            inc_counter("par_vec:assign");
             par_exec<detail::VectorizedAssign<V>>(expr, result);
         } else {
+            inc_counter("vec:assign");
             detail::VectorizedAssign<V>::apply(result, expr);
         }
     } else {
+        inc_counter("vec:assign");
         detail::VectorizedAssign<V>::apply(result, expr);
     }
 
@@ -326,6 +342,8 @@ void assign_evaluate_impl(E&& expr, R&& result) {
  */
 template <typename E, typename R>
 void standard_compound_add_impl(E& expr, R& result) {
+    inc_counter("std:assign");
+
     pre_assign_rhs(expr);
 
     for (size_t i = 0; i < etl::size(result); ++i) {
@@ -354,11 +372,14 @@ void direct_compound_add_impl(E& expr, R& result) {
 
     if constexpr (is_thread_safe<E>) {
         if (engine_select_parallel(etl::size(result))) {
+            inc_counter("par:assign");
             par_exec<detail::AssignAdd>(expr, result);
         } else {
+            inc_counter("mem:assign");
             detail::AssignAdd::apply(result, expr);
         }
     } else {
+        inc_counter("mem:assign");
         detail::AssignAdd::apply(result, expr);
     }
 
@@ -386,11 +407,14 @@ void vectorized_compound_add_impl(E& expr, R& result) {
 
     if constexpr (is_thread_safe<E>) {
         if (engine_select_parallel(etl::size(result))) {
+            inc_counter("par_vec:assign");
             par_exec<detail::VectorizedAssignAdd<V>>(expr, result);
         } else {
+            inc_counter("vec:assign");
             detail::VectorizedAssignAdd<V>::apply(result, expr);
         }
     } else {
+        inc_counter("vec:assign");
         detail::VectorizedAssignAdd<V>::apply(result, expr);
     }
 
@@ -516,6 +540,8 @@ void add_evaluate(E&& expr, R&& result) {
  */
 template <typename E, typename R>
 void standard_compound_sub_impl(E& expr, R& result) {
+    inc_counter("std:assign");
+
     pre_assign_rhs(expr);
 
     safe_ensure_cpu_up_to_date(expr);
@@ -548,11 +574,14 @@ void direct_compound_sub_impl(E& expr, R& result) {
     if constexpr (is_thread_safe<E>) {
         if (engine_select_parallel(etl::size(result))) {
             par_exec<detail::AssignSub>(expr, result);
+            inc_counter("par:assign");
         } else {
             detail::AssignSub::apply(result, expr);
+            inc_counter("mem:assign");
         }
     } else {
         detail::AssignSub::apply(result, expr);
+        inc_counter("mem:assign");
     }
 
     result.validate_cpu();
@@ -579,11 +608,14 @@ void vectorized_compound_sub_impl(E& expr, R& result) {
 
     if constexpr (is_thread_safe<E>) {
         if (engine_select_parallel(etl::size(result))) {
+            inc_counter("par_vec:assign");
             par_exec<detail::VectorizedAssignSub<V>>(expr, result);
         } else {
+            inc_counter("vec:assign");
             detail::VectorizedAssignSub<V>::apply(result, expr);
         }
     } else {
+        inc_counter("vec:assign");
         detail::VectorizedAssignSub<V>::apply(result, expr);
     }
 
@@ -704,6 +736,8 @@ void sub_evaluate(E&& expr, R&& result) {
  */
 template <typename E, typename R>
 void standard_compound_mul_impl(E& expr, R& result) {
+    inc_counter("std:assign");
+
     pre_assign_rhs(expr);
 
     safe_ensure_cpu_up_to_date(expr);
@@ -735,11 +769,14 @@ void direct_compound_mul_impl(E& expr, R& result) {
 
     if constexpr (is_thread_safe<E>) {
         if (engine_select_parallel(etl::size(result))) {
+            inc_counter("par:assign");
             par_exec<detail::AssignMul>(expr, result);
         } else {
+            inc_counter("mem:assign");
             detail::AssignMul::apply(result, expr);
         }
     } else {
+        inc_counter("mem:assign");
         detail::AssignMul::apply(result, expr);
     }
 
@@ -767,11 +804,14 @@ void vectorized_compound_mul_impl(E& expr, R& result) {
 
     if constexpr (is_thread_safe<E>) {
         if (engine_select_parallel(etl::size(result))) {
+            inc_counter("par_vec:assign");
             par_exec<detail::VectorizedAssignMul<V>>(expr, result);
         } else {
+            inc_counter("vec:assign");
             detail::VectorizedAssignMul<V>::apply(result, expr);
         }
     } else {
+        inc_counter("vec:assign");
         detail::VectorizedAssignMul<V>::apply(result, expr);
     }
 
@@ -891,6 +931,8 @@ void mul_evaluate(E&& expr, R&& result) {
  */
 template <typename E, typename R>
 void standard_compound_div_impl(E& expr, R& result) {
+    inc_counter("std:assign");
+
     pre_assign_rhs(expr);
 
     safe_ensure_cpu_up_to_date(expr);
@@ -922,11 +964,14 @@ void direct_compound_div_impl(E& expr, R& result) {
 
     if constexpr (is_thread_safe<E>) {
         if (engine_select_parallel(etl::size(result))) {
+            inc_counter("par:assign");
             par_exec<detail::AssignDiv>(expr, result);
         } else {
+            inc_counter("mem:assign");
             detail::AssignDiv::apply(result, expr);
         }
     } else {
+        inc_counter("mem:assign");
         detail::AssignDiv::apply(result, expr);
     }
 
@@ -954,11 +999,14 @@ void vectorized_compound_div_impl(E& expr, R& result) {
 
     if constexpr (is_thread_safe<E>) {
         if (engine_select_parallel(etl::size(result))) {
+            inc_counter("par_vec:assign");
             par_exec<detail::VectorizedAssignDiv<V>>(expr, result);
         } else {
+            inc_counter("vec:assign");
             detail::VectorizedAssignDiv<V>::apply(result, expr);
         }
     } else {
+        inc_counter("vec:assign");
         detail::VectorizedAssignDiv<V>::apply(result, expr);
     }
 
@@ -1072,6 +1120,8 @@ void div_evaluate(E&& expr, R&& result) {
  */
 template <typename E, typename R>
 void mod_evaluate(E&& expr, R&& result) {
+    inc_counter("std:assign");
+
     pre_assign_rhs(expr);
 
     safe_ensure_cpu_up_to_date(expr);
@@ -1127,6 +1177,7 @@ void std_assign_evaluate(Expr&& expr, Result&& result) {
     if constexpr (direct_assign_compatible<Expr, Result>) {
         standard_evaluator::assign_evaluate(expr, result);
     } else {
+        inc_counter("eval:transpose");
         standard_evaluator::assign_evaluate(transpose(expr), result);
     }
 }
@@ -1141,6 +1192,7 @@ void std_add_evaluate(Expr&& expr, Result&& result) {
     if constexpr (direct_assign_compatible<Expr, Result>) {
         standard_evaluator::add_evaluate(expr, result);
     } else {
+        inc_counter("eval:transpose");
         standard_evaluator::add_evaluate(transpose(expr), result);
     }
 }
@@ -1155,6 +1207,7 @@ void std_sub_evaluate(Expr&& expr, Result&& result) {
     if constexpr (direct_assign_compatible<Expr, Result>) {
         standard_evaluator::sub_evaluate(expr, result);
     } else {
+        inc_counter("eval:transpose");
         standard_evaluator::sub_evaluate(transpose(expr), result);
     }
 }
@@ -1169,6 +1222,7 @@ void std_mul_evaluate(Expr&& expr, Result&& result) {
     if constexpr (direct_assign_compatible<Expr, Result>) {
         standard_evaluator::mul_evaluate(expr, result);
     } else {
+        inc_counter("eval:transpose");
         standard_evaluator::mul_evaluate(transpose(expr), result);
     }
 }
@@ -1183,6 +1237,7 @@ void std_div_evaluate(Expr&& expr, Result&& result) {
     if constexpr (direct_assign_compatible<Expr, Result>) {
         standard_evaluator::div_evaluate(expr, result);
     } else {
+        inc_counter("eval:transpose");
         standard_evaluator::div_evaluate(transpose(expr), result);
     }
 }
@@ -1197,6 +1252,7 @@ void std_mod_evaluate(Expr&& expr, Result&& result) {
     if constexpr (direct_assign_compatible<Expr, Result>) {
         standard_evaluator::mod_evaluate(expr, result);
     } else {
+        inc_counter("eval:transpose");
         standard_evaluator::mod_evaluate(transpose(expr), result);
     }
 }
