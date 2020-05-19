@@ -1174,6 +1174,10 @@ constexpr bool direct_assign_compatible = decay_traits<Expr>::is_generator // No
  */
 template <typename Expr, typename Result>
 void std_assign_evaluate(Expr&& expr, Result&& result) {
+#ifdef DEBUG_EVALUATOR
+    std::cout << result << "=" << expr << std::endl;
+#endif
+
     if constexpr (direct_assign_compatible<Expr, Result>) {
         standard_evaluator::assign_evaluate(expr, result);
     } else {
@@ -1189,6 +1193,10 @@ void std_assign_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result>
 void std_add_evaluate(Expr&& expr, Result&& result) {
+#ifdef DEBUG_EVALUATOR
+    std::cout << result << "+=" << expr << std::endl;
+#endif
+
     if constexpr (direct_assign_compatible<Expr, Result>) {
         standard_evaluator::add_evaluate(expr, result);
     } else {
@@ -1204,6 +1212,10 @@ void std_add_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result>
 void std_sub_evaluate(Expr&& expr, Result&& result) {
+#ifdef DEBUG_EVALUATOR
+    std::cout << result << "-=" << expr << std::endl;
+#endif
+
     if constexpr (direct_assign_compatible<Expr, Result>) {
         standard_evaluator::sub_evaluate(expr, result);
     } else {
@@ -1219,6 +1231,10 @@ void std_sub_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result>
 void std_mul_evaluate(Expr&& expr, Result&& result) {
+#ifdef DEBUG_EVALUATOR
+    std::cout << result << "*=" << expr << std::endl;
+#endif
+
     if constexpr (direct_assign_compatible<Expr, Result>) {
         standard_evaluator::mul_evaluate(expr, result);
     } else {
@@ -1234,6 +1250,10 @@ void std_mul_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result>
 void std_div_evaluate(Expr&& expr, Result&& result) {
+#ifdef DEBUG_EVALUATOR
+    std::cout << result << "/=" << expr << std::endl;
+#endif
+
     if constexpr (direct_assign_compatible<Expr, Result>) {
         standard_evaluator::div_evaluate(expr, result);
     } else {
@@ -1249,6 +1269,10 @@ void std_div_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result>
 void std_mod_evaluate(Expr&& expr, Result&& result) {
+#ifdef DEBUG_EVALUATOR
+    std::cout << result << "%=" << expr << std::endl;
+#endif
+
     if constexpr (direct_assign_compatible<Expr, Result>) {
         standard_evaluator::mod_evaluate(expr, result);
     } else {
