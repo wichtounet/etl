@@ -29,6 +29,36 @@ typedef std::chrono::milliseconds milliseconds;
 
 float fake = 0;
 
+// Basically here to test countesr
+void fast() {
+    std::cout << "\nFast\n" << std::endl;
+
+#ifdef ETL_CUDA
+    etl::gpu_memory_allocator::clear();
+#endif
+
+    etl::reset_counters();
+
+    {
+        etl::dyn_matrix<float, 2> A(4096, 4096);
+        etl::dyn_matrix<float, 2> B(4096, 4096);
+        etl::dyn_matrix<float, 2> C(4096, 4096);
+
+        A = 1e-4 >> etl::sequence_generator<float>(1.0);
+        B = 1e-4 >> etl::sequence_generator<float>(1.0);
+        C = 1e-4 >> etl::sequence_generator<float>(1.0);
+
+        C = A >> B;
+        fake += etl::mean(C);
+
+        std::cout << "   Result: " << fake << std::endl;
+        std::cout << "Should be: 938252" << std::endl;
+        fake = 0;
+    }
+
+    etl::dump_counters_pretty();
+}
+
 /*
  *
  * Current values are (alloc/release/gpu_to_cpu/cpu_to_gpu):
@@ -51,7 +81,7 @@ float fake = 0;
  */
 
 void simple() {
-    std::cout << "Simple" << std::endl;
+    std::cout << "\nSimple\n" << std::endl;
 
 #ifdef ETL_CUDA
     etl::gpu_memory_allocator::clear();
@@ -78,11 +108,11 @@ void simple() {
         std::cout << "Should be: 2.8826e+10" << std::endl;
     }
 
-    etl::dump_counters();
+    etl::dump_counters_pretty();
 }
 
 void basic() {
-    std::cout << "Basic" << std::endl;
+    std::cout << "\nBasic\n" << std::endl;
 
 #ifdef ETL_CUDA
     etl::gpu_memory_allocator::clear();
@@ -123,11 +153,11 @@ void basic() {
         std::cout << "Should be: 3.36933e+23" << std::endl;
     }
 
-    etl::dump_counters();
+    etl::dump_counters_pretty();
 }
 
 void expr() {
-    std::cout << "Expr" << std::endl;
+    std::cout << "\nExpr\n" << std::endl;
 
 #ifdef ETL_CUDA
     etl::gpu_memory_allocator::clear();
@@ -158,11 +188,11 @@ void expr() {
         }
     }
 
-    etl::dump_counters();
+    etl::dump_counters_pretty();
 }
 
 void direct() {
-    std::cout << "Direct" << std::endl;
+    std::cout << "\nDirect\n" << std::endl;
 
 #ifdef ETL_CUDA
     etl::gpu_memory_allocator::clear();
@@ -204,11 +234,11 @@ void direct() {
         }
     }
 
-    etl::dump_counters();
+    etl::dump_counters_pretty();
 }
 
 void sub() {
-    std::cout << "Sub" << std::endl;
+    std::cout << "\nSub\n" << std::endl;
 
 #ifdef ETL_CUDA
     etl::gpu_memory_allocator::clear();
@@ -236,11 +266,11 @@ void sub() {
         }
     }
 
-    etl::dump_counters();
+    etl::dump_counters_pretty();
 }
 
 void sub_ro() {
-    std::cout << "Sub Read-Only" << std::endl;
+    std::cout << "\nSub Read-Only\n" << std::endl;
 
 #ifdef ETL_CUDA
     etl::gpu_memory_allocator::clear();
@@ -270,12 +300,12 @@ void sub_ro() {
         }
     }
 
-    etl::dump_counters();
+    etl::dump_counters_pretty();
 }
 
 // Simulate forward propagation in a neural network (with same ops as DLL)
 void ml() {
-    std::cout << "ML" << std::endl;
+    std::cout << "\nML\n" << std::endl;
 
 #ifdef ETL_CUDA
     etl::gpu_memory_allocator::clear();
@@ -377,12 +407,12 @@ void ml() {
         }
     }
 
-    etl::dump_counters();
+    etl::dump_counters_pretty();
 }
 
 // Make sure some expression are fully optimized
 void opt() {
-    std::cout << "Opt" << std::endl;
+    std::cout << "\nOpt\n";
 
 #ifdef ETL_CUDA
     etl::gpu_memory_allocator::clear();
@@ -554,11 +584,11 @@ void opt() {
         }
     }
 
-    etl::dump_counters();
+    etl::dump_counters_pretty();
 }
 
 void random_test() {
-    std::cout << "Random" << std::endl;
+    std::cout << "\nRandom\n" << std::endl;
 
 #ifdef ETL_CUDA
     etl::gpu_memory_allocator::clear();
@@ -576,7 +606,7 @@ void random_test() {
         L = etl::uniform_generator<T>(10, 20);
     }
 
-    etl::dump_counters();
+    etl::dump_counters_pretty();
 }
 
 } // end of anonymous namespace
