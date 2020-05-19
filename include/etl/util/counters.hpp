@@ -152,6 +152,8 @@ inline void dump_counters_pretty() {
         int(column_length[0]), column_name[0].c_str(),
         int(column_length[1]), column_name[1].c_str());
 
+    std::cout << " " << std::string(line_length, '-') << '\n';
+
     // Print all the used counters
     for (decltype(auto) counter : counters) {
         if (counter.name) {
