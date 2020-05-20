@@ -163,22 +163,27 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
         if constexpr (Flipped) {
             if
                 constexpr_select(impl == etl::conv_multi_impl::VEC) {
+                    inc_counter("impl:vec");
                     impl::vec::conv2_full_multi_flipped(smart_forward(input), smart_forward(kernel), conv);
                 }
             else if
                 constexpr_select(impl == etl::conv_multi_impl::STD) {
+                    inc_counter("impl:std");
                     impl::standard::conv2_full_multi_flipped(smart_forward(input), smart_forward(kernel), conv);
                 }
             else if
                 constexpr_select(impl == etl::conv_multi_impl::FFT_STD) {
+                    inc_counter("impl:fft_std");
                     impl::standard::conv2_full_multi_flipped_fft(smart_forward(input), smart_forward(kernel), conv);
                 }
             else if
                 constexpr_select(impl == etl::conv_multi_impl::FFT_MKL) {
+                    inc_counter("impl:fft_mkl");
                     impl::blas::conv2_full_multi_flipped(smart_forward(input), smart_forward(kernel), conv);
                 }
             else if
                 constexpr_select(impl == etl::conv_multi_impl::FFT_CUFFT) {
+                    inc_counter("impl:fft_cufft");
                     impl::cufft::conv2_full_multi_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
                 }
             else {
@@ -187,22 +192,27 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
         } else {
             if
                 constexpr_select(impl == etl::conv_multi_impl::VEC) {
+                    inc_counter("impl:vec");
                     impl::vec::conv2_full_multi(smart_forward(input), smart_forward(kernel), conv);
                 }
             else if
                 constexpr_select(impl == etl::conv_multi_impl::STD) {
+                    inc_counter("impl:std");
                     impl::standard::conv2_full_multi(smart_forward(input), smart_forward(kernel), conv);
                 }
             else if
                 constexpr_select(impl == etl::conv_multi_impl::FFT_STD) {
+                    inc_counter("impl:fft_std");
                     impl::standard::conv2_full_multi_fft(smart_forward(input), smart_forward(kernel), conv);
                 }
             else if
                 constexpr_select(impl == etl::conv_multi_impl::FFT_MKL) {
+                    inc_counter("impl:fft_mkl");
                     impl::blas::conv2_full_multi(smart_forward(input), smart_forward(kernel), conv);
                 }
             else if
                 constexpr_select(impl == etl::conv_multi_impl::FFT_CUFFT) {
+                    inc_counter("impl:fft_cufft");
                     impl::cufft::conv2_full_multi(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
                 }
             else {

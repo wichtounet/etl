@@ -131,17 +131,21 @@ struct sum_impl {
 
         if
             constexpr_select(impl == etl::sum_impl::VEC) {
+                inc_counter("impl:vec");
                 return impl::vec::sum(e);
             }
         else if
             constexpr_select(impl == etl::sum_impl::BLAS) {
+                inc_counter("impl:blas");
                 return impl::blas::sum(e);
             }
         else if
             constexpr_select(impl == etl::sum_impl::CUBLAS) {
+                inc_counter("impl:cublas");
                 return impl::cublas::sum(e);
             }
         else {
+            inc_counter("impl:std");
             return impl::standard::sum(e);
         }
     }
@@ -160,17 +164,21 @@ struct asum_impl {
 
         if
             constexpr_select(impl == etl::sum_impl::VEC) {
+                inc_counter("impl:vec");
                 return impl::vec::asum(e);
             }
         else if
             constexpr_select(impl == etl::sum_impl::BLAS) {
+                inc_counter("impl:blas");
                 return impl::blas::asum(e);
             }
         else if
             constexpr_select(impl == etl::sum_impl::CUBLAS) {
+                inc_counter("impl:cublas");
                 return impl::cublas::asum(e);
             }
         else {
+            inc_counter("impl:std");
             return impl::standard::asum(e);
         }
     }

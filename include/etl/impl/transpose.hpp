@@ -196,14 +196,17 @@ struct inplace_square_transpose {
 
         if
             constexpr_select(impl == transpose_impl::MKL) {
+                inc_counter("impl:mkl");
                 etl::impl::blas::inplace_square_transpose(c);
             }
         else if
             constexpr_select(impl == transpose_impl::CUBLAS) {
+                inc_counter("impl:cublas");
                 etl::impl::cublas::inplace_square_transpose(c);
             }
         else if
             constexpr_select(impl == transpose_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::inplace_square_transpose(c);
             }
         else {
@@ -226,14 +229,17 @@ struct inplace_rectangular_transpose {
 
         if
             constexpr_select(impl == transpose_impl::MKL) {
+                inc_counter("impl:mkl");
                 etl::impl::blas::inplace_rectangular_transpose(c);
             }
         else if
             constexpr_select(impl == transpose_impl::CUBLAS) {
+                inc_counter("impl:cublas");
                 etl::impl::cublas::inplace_rectangular_transpose(c);
             }
         else if
             constexpr_select(impl == transpose_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::inplace_rectangular_transpose(c);
             }
         else {
@@ -272,6 +278,7 @@ struct transpose {
                     return;
                 }
 
+                inc_counter("impl:cublas");
                 etl::impl::cublas::transpose(aa, c);
             }
         else {
@@ -290,10 +297,12 @@ struct transpose {
 
             if
                 constexpr_select(impl == transpose_impl::MKL) {
+                    inc_counter("impl:mkl");
                     etl::impl::blas::transpose(aa, c);
                 }
             else if
                 constexpr_select(impl == transpose_impl::STD) {
+                    inc_counter("impl:std");
                     etl::impl::standard::transpose(aa, c);
                 }
             else {

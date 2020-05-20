@@ -124,9 +124,11 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
 
         if
             constexpr_select(impl == etl::outer_impl::BLAS) {
+                inc_counter("impl:blas");
                 etl::impl::blas::outer(smart_forward(a), smart_forward(b), c);
             }
         else {
+            inc_counter("impl:std");
             etl::impl::standard::outer(smart_forward(a), smart_forward(b), c);
         }
     }

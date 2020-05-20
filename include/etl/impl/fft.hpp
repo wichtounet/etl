@@ -311,14 +311,17 @@ struct fft1_impl {
 
         if
             constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::fft1(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
                 etl::impl::blas::fft1(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
                 etl::impl::cufft::fft1(smart_forward_gpu(a), c);
             }
     }
@@ -346,14 +349,17 @@ struct ifft1_impl {
 
         if
             constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::ifft1(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
                 etl::impl::blas::ifft1(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
                 etl::impl::cufft::ifft1(smart_forward_gpu(a), c);
             }
     }
@@ -381,14 +387,17 @@ struct ifft1_real_impl {
 
         if
             constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::ifft1_real(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
                 etl::impl::blas::ifft1_real(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
                 etl::impl::cufft::ifft1_real(smart_forward_gpu(a), c);
             }
     }
@@ -416,14 +425,17 @@ struct fft2_impl {
 
         if
             constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::fft2(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
                 etl::impl::blas::fft2(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
                 etl::impl::cufft::fft2(smart_forward_gpu(a), c);
             }
     }
@@ -451,14 +463,17 @@ struct ifft2_impl {
 
         if
             constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::ifft2(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
                 etl::impl::blas::ifft2(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
                 etl::impl::cufft::ifft2(smart_forward_gpu(a), c);
             }
     }
@@ -486,14 +501,17 @@ struct ifft2_real_impl {
 
         if
             constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::ifft2_real(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
                 etl::impl::blas::ifft2_real(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
                 etl::impl::cufft::ifft2_real(smart_forward_gpu(a), c);
             }
     }
@@ -521,14 +539,17 @@ struct fft1_many_impl {
 
         if
             constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::fft1_many(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
                 etl::impl::blas::fft1_many(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
                 etl::impl::cufft::fft1_many(smart_forward_gpu(a), c);
             }
     }
@@ -556,14 +577,17 @@ struct fft2_many_impl {
 
         if
             constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::fft2_many(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
                 etl::impl::blas::fft2_many(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
                 etl::impl::cufft::fft2_many(smart_forward_gpu(a), c);
             }
     }
@@ -591,14 +615,17 @@ struct ifft1_many_impl {
 
         if
             constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::ifft1_many(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
                 etl::impl::blas::ifft1_many(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
                 etl::impl::cufft::ifft1_many(smart_forward_gpu(a), c);
             }
     }
@@ -626,14 +653,17 @@ struct ifft2_many_impl {
 
         if
             constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::ifft2_many(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
                 etl::impl::blas::ifft2_many(smart_forward(a), c);
             }
         else if
             constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
                 etl::impl::cufft::ifft2_many(smart_forward_gpu(a), c);
             }
     }

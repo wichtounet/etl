@@ -50,7 +50,6 @@ inline void cublas_geam(cublasHandle_t handle,
                         size_t ldb,
                         float* C,
                         size_t ldc) {
-    inc_counter("cublas");
     cublas_check(cublasSgeam(handle, transa, transb, m, n, alpha, A, lda, beta, B, ldb, C, ldc));
 }
 
@@ -83,7 +82,6 @@ inline void cublas_geam(cublasHandle_t handle,
                         size_t ldb,
                         double* C,
                         size_t ldc) {
-    inc_counter("cublas");
     cublas_check(cublasDgeam(handle, transa, transb, m, n, alpha, A, lda, beta, B, ldb, C, ldc));
 }
 
@@ -116,7 +114,6 @@ inline void cublas_geam(cublasHandle_t handle,
                         size_t ldb,
                         cfloat* C,
                         size_t ldc) {
-    inc_counter("cublas");
     cublas_check(cublasCgeam(handle, transa, transb, m, n, reinterpret_cast<const cuComplex*>(alpha), reinterpret_cast<const cuComplex*>(A), lda,
                              reinterpret_cast<const cuComplex*>(beta), reinterpret_cast<const cuComplex*>(B), ldb, reinterpret_cast<cuComplex*>(C), ldc));
 }
@@ -150,7 +147,6 @@ inline void cublas_geam(cublasHandle_t handle,
                         size_t ldb,
                         cdouble* C,
                         size_t ldc) {
-    inc_counter("cublas");
     cublas_check(cublasZgeam(handle, transa, transb, m, n, reinterpret_cast<const cuDoubleComplex*>(alpha), reinterpret_cast<const cuDoubleComplex*>(A), lda,
                              reinterpret_cast<const cuDoubleComplex*>(beta), reinterpret_cast<const cuDoubleComplex*>(B), ldb,
                              reinterpret_cast<cuDoubleComplex*>(C), ldc));

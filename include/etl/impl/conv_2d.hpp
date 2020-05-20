@@ -30,26 +30,32 @@ struct conv2_full_impl {
 
         if
             constexpr_select(impl == etl::conv_impl::VEC) {
+                inc_counter("impl:vec");
                 impl::vec::conv2_full(smart_forward(input), smart_forward(kernel), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::CUDNN) {
+                inc_counter("impl:cudnn");
                 impl::cudnn::conv2_full(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::STD) {
+                inc_counter("impl:std");
                 impl::standard::conv2_full(smart_forward(input), smart_forward(kernel), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::FFT_STD) {
+                inc_counter("impl:fft_std");
                 impl::standard::conv2_full_fft(smart_forward(input), smart_forward(kernel), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::FFT_MKL) {
+                inc_counter("impl:fft_mkl");
                 impl::blas::conv2_full(smart_forward(input), smart_forward(kernel), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::FFT_CUFFT) {
+                inc_counter("impl:fft_cufft");
                 impl::cufft::conv2_full(smart_forward(input), smart_forward(kernel), conv);
             }
         else {
@@ -74,26 +80,32 @@ struct conv2_full_flipped_impl {
 
         if
             constexpr_select(impl == etl::conv_impl::VEC) {
+                inc_counter("impl:vec");
                 impl::vec::conv2_full_flipped(smart_forward(input), smart_forward(kernel), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::CUDNN) {
+                inc_counter("impl:cudnn");
                 impl::cudnn::conv2_full_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::STD) {
+                inc_counter("impl:std");
                 impl::standard::conv2_full_flipped(smart_forward(input), smart_forward(kernel), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::FFT_STD) {
+                inc_counter("impl:fft_std");
                 impl::standard::conv2_full_fft_flipped(smart_forward(input), smart_forward(kernel), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::FFT_MKL) {
+                inc_counter("impl:fft_mkl");
                 impl::blas::conv2_full_flipped(smart_forward(input), smart_forward(kernel), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::FFT_CUFFT) {
+                inc_counter("impl:fft_cufft");
                 impl::cufft::conv2_full_flipped(smart_forward(input), smart_forward(kernel), conv);
             }
         else {
@@ -118,10 +130,12 @@ struct conv2_same_impl {
 
         if
             constexpr_select(impl == etl::conv_impl::VEC) {
+                inc_counter("impl:vec");
                 impl::vec::conv2_same(smart_forward(input), smart_forward(kernel), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::STD) {
+                inc_counter("impl:std");
                 impl::standard::conv2_same(smart_forward(input), smart_forward(kernel), conv);
             }
         else {
@@ -146,10 +160,12 @@ struct conv2_same_flipped_impl {
 
         if
             constexpr_select(impl == etl::conv_impl::VEC) {
+                inc_counter("impl:vec");
                 impl::vec::conv2_same_flipped(smart_forward(input), smart_forward(kernel), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::STD) {
+                inc_counter("impl:std");
                 impl::standard::conv2_same_flipped(smart_forward(input), smart_forward(kernel), conv);
             }
         else {
@@ -174,13 +190,16 @@ struct conv2_valid_impl {
         constexpr_select auto impl = select_conv_impl<conv_type::VALID, I, K, C>();
 
         if /*constepxr_select*/ (impl == etl::conv_impl::VEC) {
+            inc_counter("impl:vec");
             impl::vec::conv2_valid(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
         } else if
             constexpr_select(impl == etl::conv_impl::CUDNN) {
+                inc_counter("impl:cudnn");
                 impl::cudnn::conv2_valid(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
             }
         else if
             constexpr_select(impl == etl::conv_impl::STD) {
+                inc_counter("impl:std");
                 impl::standard::conv2_valid(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
             }
         else {
@@ -205,13 +224,16 @@ struct conv2_valid_flipped_impl {
         constexpr_select auto impl = select_conv_impl<conv_type::VALID, I, K, C>();
 
         if /*constepxr_select*/ (impl == etl::conv_impl::VEC) {
+                inc_counter("impl:vec");
             impl::vec::conv2_valid_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
         } else if
             constexpr_select(impl == etl::conv_impl::CUDNN) {
+                inc_counter("impl:cudnn");
                 impl::cudnn::conv2_valid_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, S1, S2, P1, P2);
             }
         else if
             constexpr_select(impl == etl::conv_impl::STD) {
+                inc_counter("impl:std");
                 impl::standard::conv2_valid_flipped(smart_forward(input), smart_forward(kernel), conv, S1, S2, P1, P2);
             }
         else {
@@ -235,13 +257,16 @@ struct dyn_conv2_valid_impl {
         constexpr_select auto impl = select_conv_impl<conv_type::VALID, I, K, C>();
 
         if /*constepxr_select*/ (impl == etl::conv_impl::VEC) {
+            inc_counter("impl:vec");
             impl::vec::conv2_valid(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
         } else if
             constexpr_select(impl == etl::conv_impl::CUDNN) {
+                inc_counter("impl:cudnn");
                 impl::cudnn::conv2_valid(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
             }
         else if
             constexpr_select(impl == etl::conv_impl::STD) {
+                inc_counter("impl:std");
                 impl::standard::conv2_valid(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
             }
         else {
@@ -265,13 +290,16 @@ struct dyn_conv2_valid_flipped_impl {
         constexpr_select auto impl = select_conv_impl<conv_type::VALID, I, K, C>();
 
         if /*constepxr_select*/ (impl == etl::conv_impl::VEC) {
+            inc_counter("impl:vec");
             impl::vec::conv2_valid_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
         } else if
             constexpr_select(impl == etl::conv_impl::CUDNN) {
+                inc_counter("impl:cudnn");
                 impl::cudnn::conv2_valid_flipped(smart_forward_gpu(input), smart_forward_gpu(kernel), conv, s1, s2, p1, p2);
             }
         else if
             constexpr_select(impl == etl::conv_impl::STD) {
+                inc_counter("impl:std");
                 impl::standard::conv2_valid_flipped(smart_forward(input), smart_forward(kernel), conv, s1, s2, p1, p2);
             }
         else {

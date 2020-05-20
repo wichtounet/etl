@@ -123,17 +123,21 @@ struct dot_impl {
 
         if
             constexpr_select(impl == etl::dot_impl::BLAS) {
+                inc_counter("impl:blas");
                 return etl::impl::blas::dot(a, b);
             }
         else if
             constexpr_select(impl == etl::dot_impl::CUBLAS) {
+                inc_counter("impl:cublas");
                 return etl::impl::cublas::dot(a, b);
             }
         else if
             constexpr_select(impl == etl::dot_impl::VEC) {
+                inc_counter("impl:vec");
                 return etl::impl::vec::dot(a, b);
             }
         else {
+            inc_counter("impl:std");
             return etl::impl::standard::dot(a, b);
         }
     }

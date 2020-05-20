@@ -96,14 +96,18 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
 
         if
             constexpr_select(impl == bias_add_impl::VEC) {
+                inc_counter("impl:vec");
                 impl::vec::bias_add_4d(smart_forward(a), smart_forward(b), lhs);
             }
         else if
             constexpr_select(impl == bias_add_impl::STD) {
+                inc_counter("impl:std");
                 impl::standard::bias_add_4d(smart_forward(a), smart_forward(b), lhs);
             }
         else if
             constexpr_select(impl == bias_add_impl::EGBLAS) {
+                inc_counter("impl:egblas");
+
                 decltype(auto) e_x = smart_forward_gpu(a);
                 decltype(auto) e_b = smart_forward_gpu(b);
                 auto& e_y          = lhs;
@@ -120,6 +124,7 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
             }
         else if
             constexpr_select(impl == bias_add_impl::CUDNN) {
+                inc_counter("impl:cudnn");
                 impl::cudnn::bias_add_4d(smart_forward_gpu(a), smart_forward_gpu(b), lhs);
             }
         else {

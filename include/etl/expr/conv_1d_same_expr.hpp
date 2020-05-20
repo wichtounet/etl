@@ -88,11 +88,13 @@ struct conv_1d_same_expr : base_temporary_expr_bin<conv_1d_same_expr<A, B>, A, B
 
         if
             constexpr_select(impl == etl::conv_impl::VEC) {
+                inc_counter("impl:vec");
                 engine_dispatch_1d([&](size_t first, size_t last) { impl::vec::conv1_same(input, kernel, conv, first, last); }, 0, etl::size(conv),
                                    parallel_dispatch);
             }
         else if
             constexpr_select(impl == etl::conv_impl::STD) {
+                inc_counter("impl:std");
                 engine_dispatch_1d([&](size_t first, size_t last) { impl::standard::conv1_same(input, kernel, conv, first, last); }, 0, etl::size(conv),
                                    parallel_dispatch);
             }
@@ -102,10 +104,12 @@ struct conv_1d_same_expr : base_temporary_expr_bin<conv_1d_same_expr<A, B>, A, B
 #else
         if
             constexpr_select(impl == etl::conv_impl::VEC) {
+                inc_counter("impl:vec");
                 impl::vec::conv1_same(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
             }
         else if
             constexpr_select(impl == etl::conv_impl::STD) {
+                inc_counter("impl:std");
                 impl::standard::conv1_same(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
             }
         else {

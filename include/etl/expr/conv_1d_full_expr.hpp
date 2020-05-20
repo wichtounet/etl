@@ -88,24 +88,29 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
 
         if
             constexpr_select(impl == etl::conv_impl::VEC) {
+                inc_counter("inc:vec");
                 engine_dispatch_1d([&](size_t first, size_t last) { impl::vec::conv1_full(input, kernel, conv, first, last); }, 0, etl::size(conv),
                                    parallel_dispatch);
             }
         else if
             constexpr_select(impl == etl::conv_impl::STD) {
+                inc_counter("inc:std");
                 engine_dispatch_1d([&](size_t first, size_t last) { impl::standard::conv1_full(input, kernel, conv, first, last); }, 0, etl::size(conv),
                                    parallel_dispatch);
             }
         else if
             constexpr_select(impl == etl::conv_impl::FFT_STD) {
+                inc_counter("inc:fft_std");
                 impl::standard::conv1_full_fft(smart_forward(input_raw), smart_forward(kernel_raw), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::FFT_MKL) {
+                inc_counter("inc:fft_mkl");
                 impl::blas::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::FFT_CUFFT) {
+                inc_counter("inc:fft_cufft");
                 impl::cufft::conv1_full(smart_forward_gpu(input_raw), smart_forward_gpu(kernel_raw), conv);
             }
         else {
@@ -114,22 +119,27 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
 #else
         if
             constexpr_select(impl == etl::conv_impl::VEC) {
+                inc_counter("inc:vec");
                 impl::vec::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
             }
         else if
             constexpr_select(impl == etl::conv_impl::STD) {
+                inc_counter("inc:std");
                 impl::standard::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
             }
         else if
             constexpr_select(impl == etl::conv_impl::FFT_STD) {
+                inc_counter("inc:fft_std");
                 impl::standard::conv1_full_fft(smart_forward(input_raw), smart_forward(kernel_raw), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::FFT_MKL) {
+                inc_counter("inc:fft_mkl");
                 impl::blas::conv1_full(smart_forward(input_raw), smart_forward(kernel_raw), conv);
             }
         else if
             constexpr_select(impl == etl::conv_impl::FFT_CUFFT) {
+                inc_counter("inc:fft_cufft");
                 impl::cufft::conv1_full(smart_forward_gpu(input_raw), smart_forward_gpu(kernel_raw), conv);
             }
         else {

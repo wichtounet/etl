@@ -154,10 +154,12 @@ public:
         if constexpr (Max) {
             if
                 constexpr_select(impl == pool_impl::STD) {
+                    inc_counter("inc:std");
                     impl::standard::max_pool_upsample_3d::apply(smart_forward(a), smart_forward(b), smart_forward(c), result, c1, c2, c3);
                 }
             else if
                 constexpr_select(impl == pool_impl::CUDNN) {
+                    inc_counter("inc:cudnn");
                     impl::cudnn::max_pool_upsample_3d::apply(smart_forward_gpu(a), smart_forward_gpu(b), smart_forward_gpu(c), result, c1, c2, c3);
                 }
             else {
@@ -166,10 +168,12 @@ public:
         } else {
             if
                 constexpr_select(impl == pool_impl::STD) {
+                    inc_counter("inc:std");
                     impl::standard::avg_pool_upsample_3d::apply(smart_forward(a), smart_forward(b), smart_forward(c), result, c1, c2, c3);
                 }
             else if
                 constexpr_select(impl == pool_impl::CUDNN) {
+                    inc_counter("inc:cudnn");
                     impl::cudnn::avg_pool_upsample_3d::apply(smart_forward_gpu(a), smart_forward_gpu(b), smart_forward_gpu(c), result, c1, c2, c3);
                 }
             else {

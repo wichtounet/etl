@@ -166,18 +166,22 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
 
         if
             constexpr_select(impl == gemm_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
             }
         else if
             constexpr_select(impl == gemm_impl::BLAS) {
+                inc_counter("impl:blas");
                 etl::impl::blas::gemv_t(smart_forward(a.a()), smart_forward(b), c);
             }
         else if
             constexpr_select(impl == gemm_impl::VEC) {
+                inc_counter("impl:vec");
                 etl::impl::vec::gemv_t(smart_forward(a.a()), smart_forward(b), c);
             }
         else if
             constexpr_select(impl == gemm_impl::CUBLAS) {
+                inc_counter("impl:cublas");
                 etl::impl::cublas::gemv_t(smart_forward_gpu(a.a()), smart_forward_gpu(b), c);
             }
         else {
@@ -197,18 +201,22 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
 
         if
             constexpr_select(impl == gemm_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
             }
         else if
             constexpr_select(impl == gemm_impl::BLAS) {
+                inc_counter("impl:blas");
                 etl::impl::blas::gemv(smart_forward(a), smart_forward(b), c);
             }
         else if
             constexpr_select(impl == gemm_impl::VEC) {
+                inc_counter("impl:vec");
                 etl::impl::vec::gemv(smart_forward(a), smart_forward(b), c);
             }
         else if
             constexpr_select(impl == gemm_impl::CUBLAS) {
+                inc_counter("impl:cublas");
                 etl::impl::cublas::gemv(smart_forward_gpu(a), smart_forward_gpu(b), c);
             }
         else {

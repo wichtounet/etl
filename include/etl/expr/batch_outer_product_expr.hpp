@@ -150,18 +150,22 @@ struct batch_outer_product_expr : base_temporary_expr_bin<batch_outer_product_ex
 
         if
             constexpr_select(impl == etl::outer_impl::STD) {
+                inc_counter("impl:std");
                 etl::impl::standard::batch_outer(smart_forward(a), smart_forward(b), c);
             }
         else if
             constexpr_select(impl == etl::outer_impl::BLAS) {
+                inc_counter("impl:blas");
                 etl::impl::blas::batch_outer(smart_forward(a), smart_forward(b), c);
             }
         else if
             constexpr_select(impl == etl::outer_impl::CUBLAS) {
+                inc_counter("impl:cublas");
                 etl::impl::cublas::batch_outer(smart_forward_gpu(a), smart_forward_gpu(b), c);
             }
         else if
             constexpr_select(impl == etl::outer_impl::VEC) {
+                inc_counter("impl:vec");
                 etl::impl::vec::batch_outer(smart_forward(a), smart_forward(b), c);
             }
         else {
