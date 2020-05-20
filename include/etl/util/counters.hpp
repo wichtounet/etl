@@ -164,13 +164,6 @@ inline void dump_counters_pretty() {
     }
 
     std::cout << " " << std::string(line_length, '-') << '\n';
-
-    // Print all the used counters
-    for (decltype(auto) counter : counters) {
-        if (counter.name) {
-            std::cout << counter.name << ": " << counter.count << std::endl;
-        }
-    }
 }
 
 /*!
