@@ -158,4 +158,74 @@ inline double bce_error([[maybe_unused]] size_t n,
 #endif
 }
 
+/*!
+ * \brief Indicates if EGBLAS has single-precision BCE
+ */
+#ifdef EGBLAS_HAS_BCE_SLOSS
+static constexpr bool has_sbce = true;
+#else
+static constexpr bool has_sbce = false;
+#endif
+
+/*!
+ * \brief Wrappers for single-precision egblas bce operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline std::pair<float, float> bce([[maybe_unused]] size_t n,
+                                   [[maybe_unused]] float alpha,
+                                   [[maybe_unused]] float beta,
+                                   [[maybe_unused]] const float* A,
+                                   [[maybe_unused]] size_t lda,
+                                   [[maybe_unused]] const float* B,
+                                   [[maybe_unused]] size_t ldb) {
+#ifdef EGBLAS_HAS_SBCE
+    inc_counter("egblas");
+    return egblas_sbce(n, alpha, beta, A, lda, B, ldb);
+#else
+    cpp_unreachable("Invalid call to egblas::bce");
+
+    return std::make_pair(0.0f, 0.0f);
+#endif
+}
+
+/*!
+ * \brief Indicates if EGBLAS has double-precision BCE
+ */
+#ifdef EGBLAS_HAS_BCE_DLOSS
+static constexpr bool has_dbce = true;
+#else
+static constexpr bool has_dbce = false;
+#endif
+
+/*!
+ * \brief Wrappers for single-precision egblas bce operation
+ * \param n The size of the vector
+ * \param alpha The scaling factor alpha
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline std::pair<double, double> bce([[maybe_unused]] size_t n,
+                                     [[maybe_unused]] double alpha,
+                                     [[maybe_unused]] double beta,
+                                     [[maybe_unused]] const double* A,
+                                     [[maybe_unused]] size_t lda,
+                                     [[maybe_unused]] const double* B,
+                                     [[maybe_unused]] size_t ldb) {
+#ifdef EGBLAS_HAS_SBCE
+    inc_counter("egblas");
+    return egblas_dbce(n, alpha, beta, A, lda, B, ldb);
+#else
+    cpp_unreachable("Invalid call to egblas::bce");
+
+    return std::make_pair(0.0, 0.0);
+#endif
+}
+
 } //end of namespace etl::impl::egblas
