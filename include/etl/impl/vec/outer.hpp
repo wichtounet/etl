@@ -14,6 +14,9 @@
 
 namespace etl::impl::vec {
 
+#pragma GCC push_options
+#pragma GCC optimize ("-fno-aggressive-loop-optimizations")
+
 /*!
  * \brief Compute the batch outer product of a and b and store the result in c
  * \param lhs The a expression
@@ -261,6 +264,8 @@ void batch_outer_impl(const L& lhs, const R& rhs, C&& result) {
 
     result.invalidate_gpu();
 }
+
+#pragma GCC pop_options
 
 /*!
  * \brief Compute the batch outer product of a and b and store the result in c
