@@ -38,38 +38,37 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
 
     size_t j = 0;
 
+    // As an optimization, we directly do the first iteration of the K-loop
+    // since K cannot be zero. This avoids having to preset the vector with zero
+
 #ifdef ETL_GEMM_SMALL_RR_R_UNROLL_8
+    // Vectorized loop unrolled eight times
     for (; j + vec_size * 7 < j_end; j += vec_size * 8) {
         for (size_t i = 0; i < M; ++i) {
-            auto r1 = vec_type::template zero<T>();
-            auto r2 = vec_type::template zero<T>();
-            auto r3 = vec_type::template zero<T>();
-            auto r4 = vec_type::template zero<T>();
-            auto r5 = vec_type::template zero<T>();
-            auto r6 = vec_type::template zero<T>();
-            auto r7 = vec_type::template zero<T>();
-            auto r8 = vec_type::template zero<T>();
+            size_t k = 0;
 
-            for (size_t k = 0; k < K; ++k) {
-                auto a1 = vec_type::set(a[i * K + k]);
+            auto a1 = vec_type::set(a[i * K + k]);
 
-                auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
-                auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
-                auto b3 = vec_type::loadu(b + k * N + j + vec_size * 2);
-                auto b4 = vec_type::loadu(b + k * N + j + vec_size * 3);
-                auto b5 = vec_type::loadu(b + k * N + j + vec_size * 4);
-                auto b6 = vec_type::loadu(b + k * N + j + vec_size * 5);
-                auto b7 = vec_type::loadu(b + k * N + j + vec_size * 6);
-                auto b8 = vec_type::loadu(b + k * N + j + vec_size * 7);
+            auto r1 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 0));
+            auto r2 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 1));
+            auto r3 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 2));
+            auto r4 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 3));
+            auto r5 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 4));
+            auto r6 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 5));
+            auto r7 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 6));
+            auto r8 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 7));
 
-                r1 = vec_type::fmadd(a1, b1, r1);
-                r2 = vec_type::fmadd(a1, b2, r2);
-                r3 = vec_type::fmadd(a1, b3, r3);
-                r4 = vec_type::fmadd(a1, b4, r4);
-                r5 = vec_type::fmadd(a1, b5, r5);
-                r6 = vec_type::fmadd(a1, b6, r6);
-                r7 = vec_type::fmadd(a1, b7, r7);
-                r8 = vec_type::fmadd(a1, b8, r8);
+            for (++k; k < K; ++k) {
+                a1 = vec_type::set(a[i * K + k]);
+
+                r1 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 0), r1);
+                r2 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 1), r2);
+                r3 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 2), r3);
+                r4 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 3), r4);
+                r5 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 4), r5);
+                r6 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 5), r6);
+                r7 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 6), r7);
+                r8 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 7), r8);
             }
 
             vec_type::storeu(c + i * N + j + 0 * vec_size, r1);
@@ -84,30 +83,41 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
     }
 #endif
 
+    // Vectorized loop unrolled four times
     for (; j + vec_size * 3 < j_end; j += 4 * vec_size) {
         size_t i = 0;
 
         for (; i + 1 < M; i += 2) {
-            auto r11 = vec_type::template zero<T>();
-            auto r12 = vec_type::template zero<T>();
+            size_t k = 0;
 
-            auto r21 = vec_type::template zero<T>();
-            auto r22 = vec_type::template zero<T>();
+            auto a1 = vec_type::set(a[(i + 0) * K + k]);
+            auto a2 = vec_type::set(a[(i + 1) * K + k]);
 
-            auto r31 = vec_type::template zero<T>();
-            auto r32 = vec_type::template zero<T>();
+            auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+            auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
+            auto b3 = vec_type::loadu(b + k * N + j + vec_size * 2);
+            auto b4 = vec_type::loadu(b + k * N + j + vec_size * 3);
 
-            auto r41 = vec_type::template zero<T>();
-            auto r42 = vec_type::template zero<T>();
+            auto r11 = vec_type::mul(a1, b1);
+            auto r12 = vec_type::mul(a2, b1);
 
-            for (size_t k = 0; k < K; ++k) {
-                auto a1 = vec_type::set(a[(i + 0) * K + k]);
-                auto a2 = vec_type::set(a[(i + 1) * K + k]);
+            auto r21 = vec_type::mul(a1, b2);
+            auto r22 = vec_type::mul(a2, b2);
 
-                auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
-                auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
-                auto b3 = vec_type::loadu(b + k * N + j + vec_size * 2);
-                auto b4 = vec_type::loadu(b + k * N + j + vec_size * 3);
+            auto r31 = vec_type::mul(a1, b3);
+            auto r32 = vec_type::mul(a2, b3);
+
+            auto r41 = vec_type::mul(a1, b4);
+            auto r42 = vec_type::mul(a2, b4);
+
+            for (++k; k < K; ++k) {
+                a1 = vec_type::set(a[(i + 0) * K + k]);
+                a2 = vec_type::set(a[(i + 1) * K + k]);
+
+                b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+                b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
+                b3 = vec_type::loadu(b + k * N + j + vec_size * 2);
+                b4 = vec_type::loadu(b + k * N + j + vec_size * 3);
 
                 r11 = vec_type::fmadd(a1, b1, r11);
                 r12 = vec_type::fmadd(a2, b1, r12);
@@ -134,23 +144,22 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
         }
 
         if (i < M) {
-            auto r11 = vec_type::template zero<T>();
-            auto r21 = vec_type::template zero<T>();
-            auto r31 = vec_type::template zero<T>();
-            auto r41 = vec_type::template zero<T>();
+            size_t k = 0;
 
-            for (size_t k = 0; k < K; ++k) {
-                auto a1 = vec_type::set(a[(i + 0) * K + k]);
+            auto a1 = vec_type::set(a[(i + 0) * K + k]);
 
-                auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
-                auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
-                auto b3 = vec_type::loadu(b + k * N + j + vec_size * 2);
-                auto b4 = vec_type::loadu(b + k * N + j + vec_size * 3);
+            auto r11 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 0));
+            auto r21 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 1));
+            auto r31 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 2));
+            auto r41 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 3));
 
-                r11 = vec_type::fmadd(a1, b1, r11);
-                r21 = vec_type::fmadd(a1, b2, r21);
-                r31 = vec_type::fmadd(a1, b3, r31);
-                r41 = vec_type::fmadd(a1, b4, r41);
+            for (++k; k < K; ++k) {
+                a1 = vec_type::set(a[(i + 0) * K + k]);
+
+                r11 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 0), r11);
+                r21 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 1), r21);
+                r31 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 2), r31);
+                r41 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 3), r41);
             }
 
             vec_type::storeu(c + i * N + j + 0 * vec_size, r11);
@@ -160,28 +169,39 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
         }
     }
 
+    // Vectorized loop unrolled twice
     for (; j + vec_size < j_end; j += 2 * vec_size) {
         size_t i = 0;
 
         for (; i + 3 < M; i += 4) {
-            auto r11 = vec_type::template zero<T>();
-            auto r12 = vec_type::template zero<T>();
-            auto r13 = vec_type::template zero<T>();
-            auto r14 = vec_type::template zero<T>();
+            size_t k = 0;
 
-            auto r21 = vec_type::template zero<T>();
-            auto r22 = vec_type::template zero<T>();
-            auto r23 = vec_type::template zero<T>();
-            auto r24 = vec_type::template zero<T>();
+            auto a1 = vec_type::set(a[(i + 0) * K + k]);
+            auto a2 = vec_type::set(a[(i + 1) * K + k]);
+            auto a3 = vec_type::set(a[(i + 2) * K + k]);
+            auto a4 = vec_type::set(a[(i + 3) * K + k]);
 
-            for (size_t k = 0; k < K; ++k) {
-                auto a1 = vec_type::set(a[(i + 0) * K + k]);
-                auto a2 = vec_type::set(a[(i + 1) * K + k]);
-                auto a3 = vec_type::set(a[(i + 2) * K + k]);
-                auto a4 = vec_type::set(a[(i + 3) * K + k]);
+            auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+            auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
 
-                auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
-                auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
+            auto r11 = vec_type::mul(a1, b1);
+            auto r12 = vec_type::mul(a2, b1);
+            auto r13 = vec_type::mul(a3, b1);
+            auto r14 = vec_type::mul(a4, b1);
+
+            auto r21 = vec_type::mul(a1, b2);
+            auto r22 = vec_type::mul(a2, b2);
+            auto r23 = vec_type::mul(a3, b2);
+            auto r24 = vec_type::mul(a4, b2);
+
+            for (++k; k < K; ++k) {
+                a1 = vec_type::set(a[(i + 0) * K + k]);
+                a2 = vec_type::set(a[(i + 1) * K + k]);
+                a3 = vec_type::set(a[(i + 2) * K + k]);
+                a4 = vec_type::set(a[(i + 3) * K + k]);
+
+                b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+                b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
 
                 r11 = vec_type::fmadd(a1, b1, r11);
                 r12 = vec_type::fmadd(a2, b1, r12);
@@ -208,18 +228,26 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
         }
 
         for (; i + 1 < M; i += 2) {
-            auto r11 = vec_type::template zero<T>();
-            auto r12 = vec_type::template zero<T>();
+            size_t k = 0;
 
-            auto r21 = vec_type::template zero<T>();
-            auto r22 = vec_type::template zero<T>();
+            auto a1 = vec_type::set(a[(i + 0) * K + k]);
+            auto a2 = vec_type::set(a[(i + 1) * K + k]);
 
-            for (size_t k = 0; k < K; ++k) {
-                auto a1 = vec_type::set(a[(i + 0) * K + k]);
-                auto a2 = vec_type::set(a[(i + 1) * K + k]);
+            auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+            auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
 
-                auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
-                auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
+            auto r11 = vec_type::mul(a1, b1);
+            auto r12 = vec_type::mul(a2, b1);
+
+            auto r21 = vec_type::mul(a1, b2);
+            auto r22 = vec_type::mul(a2, b2);
+
+            for (++k; k < K; ++k) {
+                a1 = vec_type::set(a[(i + 0) * K + k]);
+                a2 = vec_type::set(a[(i + 1) * K + k]);
+
+                b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+                b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
 
                 r11 = vec_type::fmadd(a1, b1, r11);
                 r12 = vec_type::fmadd(a2, b1, r12);
@@ -236,14 +264,21 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
         }
 
         if (i < M) {
-            auto r11 = vec_type::template zero<T>();
-            auto r21 = vec_type::template zero<T>();
+            size_t k = 0;
 
-            for (size_t k = 0; k < K; ++k) {
-                auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
-                auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
+            auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+            auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
 
-                auto a1 = vec_type::set(a[(i + 0) * K + k]);
+            auto a1 = vec_type::set(a[(i + 0) * K + k]);
+
+            auto r11 = vec_type::mul(a1, b1);
+            auto r21 = vec_type::mul(a1, b2);
+
+            for (++k; k < K; ++k) {
+                b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+                b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
+
+                a1 = vec_type::set(a[(i + 0) * K + k]);
 
                 r11 = vec_type::fmadd(a1, b1, r11);
                 r21 = vec_type::fmadd(a1, b2, r21);
@@ -254,18 +289,26 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
         }
     }
 
+    // Vectorized loop
     for (; j < j_end; j += vec_size) {
         size_t i = 0;
 
         for (; i + 1 < M; i += 2) {
-            auto r1 = vec_type::template zero<T>();
-            auto r2 = vec_type::template zero<T>();
+            size_t k = 0;
 
-            for (size_t k = 0; k < K; ++k) {
-                auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+            auto a1 = vec_type::set(a[(i + 0) * K + k]);
+            auto a2 = vec_type::set(a[(i + 1) * K + k]);
 
-                auto a1 = vec_type::set(a[(i + 0) * K + k]);
-                auto a2 = vec_type::set(a[(i + 1) * K + k]);
+            auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+
+            auto r1 = vec_type::mul(a1, b1);
+            auto r2 = vec_type::mul(a2, b1);
+
+            for (++k; k < K; ++k) {
+                b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+
+                a1 = vec_type::set(a[(i + 0) * K + k]);
+                a2 = vec_type::set(a[(i + 1) * K + k]);
 
                 r1 = vec_type::fmadd(a1, b1, r1);
                 r2 = vec_type::fmadd(a2, b1, r2);
@@ -276,20 +319,23 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
         }
 
         if (i < M) {
-            auto r1 = vec_type::template zero<T>();
+            size_t k = 0;
 
-            for (size_t k = 0; k < K; ++k) {
-                auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+            auto a1 = vec_type::set(a[(i + 0) * K + k]);
 
-                auto a1 = vec_type::set(a[(i + 0) * K + k]);
+            auto r1 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 0));
 
-                r1 = vec_type::fmadd(a1, b1, r1);
+            for (++k; k < K; ++k) {
+                a1 = vec_type::set(a[(i + 0) * K + k]);
+
+                r1 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 0), r1);
             }
 
             vec_type::storeu(c + (i + 0) * N + j, r1);
         }
     }
 
+    // Remainder Loop unrolled by 2
     for (; j + 1 < N; j += 2) {
         const size_t j1 = j + 0;
         const size_t j2 = j + 1;
@@ -297,12 +343,14 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
         size_t i = 0;
 
         for (; i + 1 < M; i += 2) {
-            auto r11 = T();
-            auto r12 = T();
-            auto r21 = T();
-            auto r22 = T();
+            size_t k = 0;
 
-            for (size_t k = 0; k < K; ++k) {
+            auto r11 = a[(i + 0) * K + k] * b[k * N + j1];
+            auto r21 = a[(i + 0) * K + k] * b[k * N + j2];
+            auto r12 = a[(i + 1) * K + k] * b[k * N + j1];
+            auto r22 = a[(i + 1) * K + k] * b[k * N + j2];
+
+            for (++k; k < K; ++k) {
                 r11 += a[(i + 0) * K + k] * b[k * N + j1];
                 r21 += a[(i + 0) * K + k] * b[k * N + j2];
                 r12 += a[(i + 1) * K + k] * b[k * N + j1];
@@ -316,10 +364,12 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
         }
 
         if (i < M) {
-            auto r1 = T();
-            auto r2 = T();
+            size_t k = 0;
 
-            for (size_t k = 0; k < K; ++k) {
+            auto r1 = a[i * K + k] * b[k * N + j1];
+            auto r2 = a[i * K + k] * b[k * N + j2];
+
+            for (++k; k < K; ++k) {
                 r1 += a[i * K + k] * b[k * N + j1];
                 r2 += a[i * K + k] * b[k * N + j2];
             }
@@ -329,14 +379,17 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
         }
     }
 
+    // Final remainder loop iteration
     if (j < N) {
         size_t i = 0;
 
         for (; i + 1 < M; i += 2) {
-            auto r1 = T();
-            auto r2 = T();
+            size_t k = 0;
 
-            for (size_t k = 0; k < K; ++k) {
+            auto r1 = a[(i + 0) * K + k] * b[k * N + j];
+            auto r2 = a[(i + 1) * K + k] * b[k * N + j];
+
+            for (++k; k < K; ++k) {
                 r1 += a[(i + 0) * K + k] * b[k * N + j];
                 r2 += a[(i + 1) * K + k] * b[k * N + j];
             }
@@ -346,9 +399,11 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
         }
 
         if (i < M) {
-            auto r1 = T();
+            size_t k = 0;
 
-            for (size_t k = 0; k < K; ++k) {
+            auto r1 = a[i * K + k] * b[k * N + j];
+
+            for (++k; k < K; ++k) {
                 r1 += a[i * K + k] * b[k * N + j];
             }
 
