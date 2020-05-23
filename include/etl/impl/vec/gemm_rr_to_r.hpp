@@ -83,6 +83,106 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
     }
 #endif
 
+    // Vectorized loop unrolled five times
+    // This should max out the number of registers better than four
+    for (; j + vec_size * 4 < j_end; j += 5 * vec_size) {
+        size_t i = 0;
+
+        for (; i + 1 < M; i += 2) {
+            size_t k = 0;
+
+            auto a1 = vec_type::set(a[(i + 0) * K + k]);
+            auto a2 = vec_type::set(a[(i + 1) * K + k]);
+
+            auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+            auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
+            auto b3 = vec_type::loadu(b + k * N + j + vec_size * 2);
+            auto b4 = vec_type::loadu(b + k * N + j + vec_size * 3);
+            auto b5 = vec_type::loadu(b + k * N + j + vec_size * 4);
+
+            auto r11 = vec_type::mul(a1, b1);
+            auto r12 = vec_type::mul(a2, b1);
+
+            auto r21 = vec_type::mul(a1, b2);
+            auto r22 = vec_type::mul(a2, b2);
+
+            auto r31 = vec_type::mul(a1, b3);
+            auto r32 = vec_type::mul(a2, b3);
+
+            auto r41 = vec_type::mul(a1, b4);
+            auto r42 = vec_type::mul(a2, b4);
+
+            auto r51 = vec_type::mul(a1, b5);
+            auto r52 = vec_type::mul(a2, b5);
+
+            for (++k; k < K; ++k) {
+                a1 = vec_type::set(a[(i + 0) * K + k]);
+                a2 = vec_type::set(a[(i + 1) * K + k]);
+
+                b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+                b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
+                b3 = vec_type::loadu(b + k * N + j + vec_size * 2);
+                b4 = vec_type::loadu(b + k * N + j + vec_size * 3);
+                b5 = vec_type::loadu(b + k * N + j + vec_size * 4);
+
+                r11 = vec_type::fmadd(a1, b1, r11);
+                r12 = vec_type::fmadd(a2, b1, r12);
+
+                r21 = vec_type::fmadd(a1, b2, r21);
+                r22 = vec_type::fmadd(a2, b2, r22);
+
+                r31 = vec_type::fmadd(a1, b3, r31);
+                r32 = vec_type::fmadd(a2, b3, r32);
+
+                r41 = vec_type::fmadd(a1, b4, r41);
+                r42 = vec_type::fmadd(a2, b4, r42);
+
+                r51 = vec_type::fmadd(a1, b5, r41);
+                r52 = vec_type::fmadd(a2, b5, r42);
+            }
+
+            vec_type::storeu(c + (i + 0) * N + j + 0 * vec_size, r11);
+            vec_type::storeu(c + (i + 0) * N + j + 1 * vec_size, r21);
+            vec_type::storeu(c + (i + 0) * N + j + 2 * vec_size, r31);
+            vec_type::storeu(c + (i + 0) * N + j + 3 * vec_size, r41);
+            vec_type::storeu(c + (i + 0) * N + j + 4 * vec_size, r51);
+
+            vec_type::storeu(c + (i + 1) * N + j + 0 * vec_size, r12);
+            vec_type::storeu(c + (i + 1) * N + j + 1 * vec_size, r22);
+            vec_type::storeu(c + (i + 1) * N + j + 2 * vec_size, r32);
+            vec_type::storeu(c + (i + 1) * N + j + 3 * vec_size, r42);
+            vec_type::storeu(c + (i + 1) * N + j + 4 * vec_size, r52);
+        }
+
+        if (i < M) {
+            size_t k = 0;
+
+            auto a1 = vec_type::set(a[(i + 0) * K + k]);
+
+            auto r11 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 0));
+            auto r21 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 1));
+            auto r31 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 2));
+            auto r41 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 3));
+            auto r51 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 4));
+
+            for (++k; k < K; ++k) {
+                a1 = vec_type::set(a[(i + 0) * K + k]);
+
+                r11 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 0), r11);
+                r21 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 1), r21);
+                r31 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 2), r31);
+                r41 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 3), r41);
+                r51 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 4), r51);
+            }
+
+            vec_type::storeu(c + i * N + j + 0 * vec_size, r11);
+            vec_type::storeu(c + i * N + j + 1 * vec_size, r21);
+            vec_type::storeu(c + i * N + j + 2 * vec_size, r31);
+            vec_type::storeu(c + i * N + j + 3 * vec_size, r41);
+            vec_type::storeu(c + i * N + j + 4 * vec_size, r51);
+        }
+    }
+
     // Vectorized loop unrolled four times
     for (; j + vec_size * 3 < j_end; j += 4 * vec_size) {
         size_t i = 0;
@@ -166,6 +266,79 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
             vec_type::storeu(c + i * N + j + 1 * vec_size, r21);
             vec_type::storeu(c + i * N + j + 2 * vec_size, r31);
             vec_type::storeu(c + i * N + j + 3 * vec_size, r41);
+        }
+    }
+
+    // Vectorized loop unrolled three times
+    for (; j + vec_size * 2 < j_end; j += 3 * vec_size) {
+        size_t i = 0;
+
+        for (; i + 1 < M; i += 2) {
+            size_t k = 0;
+
+            auto a1 = vec_type::set(a[(i + 0) * K + k]);
+            auto a2 = vec_type::set(a[(i + 1) * K + k]);
+
+            auto b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+            auto b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
+            auto b3 = vec_type::loadu(b + k * N + j + vec_size * 2);
+
+            auto r11 = vec_type::mul(a1, b1);
+            auto r12 = vec_type::mul(a2, b1);
+
+            auto r21 = vec_type::mul(a1, b2);
+            auto r22 = vec_type::mul(a2, b2);
+
+            auto r31 = vec_type::mul(a1, b3);
+            auto r32 = vec_type::mul(a2, b3);
+
+            for (++k; k < K; ++k) {
+                a1 = vec_type::set(a[(i + 0) * K + k]);
+                a2 = vec_type::set(a[(i + 1) * K + k]);
+
+                b1 = vec_type::loadu(b + k * N + j + vec_size * 0);
+                b2 = vec_type::loadu(b + k * N + j + vec_size * 1);
+                b3 = vec_type::loadu(b + k * N + j + vec_size * 2);
+
+                r11 = vec_type::fmadd(a1, b1, r11);
+                r12 = vec_type::fmadd(a2, b1, r12);
+
+                r21 = vec_type::fmadd(a1, b2, r21);
+                r22 = vec_type::fmadd(a2, b2, r22);
+
+                r31 = vec_type::fmadd(a1, b3, r31);
+                r32 = vec_type::fmadd(a2, b3, r32);
+            }
+
+            vec_type::storeu(c + (i + 0) * N + j + 0 * vec_size, r11);
+            vec_type::storeu(c + (i + 0) * N + j + 1 * vec_size, r21);
+            vec_type::storeu(c + (i + 0) * N + j + 2 * vec_size, r31);
+
+            vec_type::storeu(c + (i + 1) * N + j + 0 * vec_size, r12);
+            vec_type::storeu(c + (i + 1) * N + j + 1 * vec_size, r22);
+            vec_type::storeu(c + (i + 1) * N + j + 2 * vec_size, r32);
+        }
+
+        if (i < M) {
+            size_t k = 0;
+
+            auto a1 = vec_type::set(a[(i + 0) * K + k]);
+
+            auto r11 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 0));
+            auto r21 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 1));
+            auto r31 = vec_type::mul(a1, vec_type::loadu(b + k * N + j + vec_size * 2));
+
+            for (++k; k < K; ++k) {
+                a1 = vec_type::set(a[(i + 0) * K + k]);
+
+                r11 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 0), r11);
+                r21 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 1), r21);
+                r31 = vec_type::fmadd(a1, vec_type::loadu(b + k * N + j + vec_size * 2), r31);
+            }
+
+            vec_type::storeu(c + i * N + j + 0 * vec_size, r11);
+            vec_type::storeu(c + i * N + j + 1 * vec_size, r21);
+            vec_type::storeu(c + i * N + j + 2 * vec_size, r31);
         }
     }
 
