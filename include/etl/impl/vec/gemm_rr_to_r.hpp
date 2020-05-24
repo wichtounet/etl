@@ -832,6 +832,438 @@ void gemm_large_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
     }
 }
 
+template <size_t vec_size>
+inline constexpr size_t prev_vec_block(size_t value) noexcept {
+    return value - (value % vec_size);
+}
+
+/*!
+ * \brief Optimized version of large GEMM for row major version
+ * \param a The lhs matrix
+ * \param b The rhs matrix
+ * \param c The result matrix
+ * \param beta The multipliying of the previous value
+ */
+template <typename V, typename T>
+void gemm_large_kernel_rr_to_r_temp(const T* a, const T* b, T* ETL_RESTRICT c, size_t M, size_t N, size_t K, T beta) {
+    using vec_type = V;
+
+    constexpr size_t vec_size = vec_type::template traits<T>::size;
+
+    constexpr size_t K_BLOCK = 112UL * (16UL / sizeof(T));
+    constexpr size_t J_BLOCK = 96UL;
+
+    etl::custom_dyn_matrix<T> A(const_cast<T*>(a), M, K);
+    etl::custom_dyn_matrix<T> B(const_cast<T*>(b), K, N);
+    etl::custom_dyn_matrix<T> C(c, M, N);
+
+    etl::dyn_matrix_impl<T, order::RowMajor> A2(M, K_BLOCK);
+    etl::dyn_matrix_impl<T, order::ColumnMajor> B2(K_BLOCK, J_BLOCK);
+
+    auto * A2M = A2.memory_start();
+    auto * B2M = B2.memory_start();
+
+    if (beta == T(0)) {
+        C = 0;
+    } else {
+        C = beta * C;
+    }
+
+    size_t kblock = 0;
+    size_t kk     = 0;
+
+    // Main loop
+    for (; kk + vec_size - 1 < K; kk += kblock) {
+        kblock = kk + K_BLOCK <= K ? K_BLOCK : prev_vec_block<vec_size>(K - kk);
+
+        if (!kblock) {
+            continue;
+        }
+
+        // Copy A into A2
+        for (size_t iii = 0; iii < M; ++iii) {
+            for (size_t kkk = 0; kkk < kblock; ++kkk) {
+                A2(iii, kkk) = A(iii, kkk + kk);
+            }
+        }
+
+        size_t jj     = 0;
+        size_t jblock = 0;
+
+        for (; jj < N; jj += jblock) {
+            jblock = jj + J_BLOCK <= N ? J_BLOCK : N - jj;
+
+            // Copy B into B2
+            for (size_t kkk = 0; kkk < kblock; ++kkk) {
+                for (size_t jjj = 0; jjj < jblock; ++jjj) {
+                    B2(kkk, jjj) = B(kkk + kk, jjj + jj);
+                }
+            }
+
+            size_t i = 0;
+
+            for (; i + 4 < M; i += 5) {
+                size_t j = 0;
+
+                for (; j + 1 < jblock; j += 2) {
+                    size_t k = 0;
+
+                    auto a1 = vec_type::load(A2M + (i + 0) * K_BLOCK + k);
+                    auto a2 = vec_type::load(A2M + (i + 1) * K_BLOCK + k);
+                    auto a3 = vec_type::load(A2M + (i + 2) * K_BLOCK + k);
+                    auto a4 = vec_type::load(A2M + (i + 3) * K_BLOCK + k);
+                    auto a5 = vec_type::load(A2M + (i + 4) * K_BLOCK + k);
+
+                    auto b1 = vec_type::load(B2M + (j + 0) * K_BLOCK + k);
+                    auto b2 = vec_type::load(B2M + (j + 1) * K_BLOCK + k);
+
+                    auto xmm1  = vec_type::mul(a1, b1);
+                    auto xmm2  = vec_type::mul(a1, b2);
+                    auto xmm3  = vec_type::mul(a2, b1);
+                    auto xmm4  = vec_type::mul(a2, b2);
+                    auto xmm5  = vec_type::mul(a3, b1);
+                    auto xmm6  = vec_type::mul(a3, b2);
+                    auto xmm7  = vec_type::mul(a4, b1);
+                    auto xmm8  = vec_type::mul(a4, b2);
+                    auto xmm9  = vec_type::mul(a5, b1);
+                    auto xmm10 = vec_type::mul(a5, b2);
+
+                    for (k += vec_size; k < kblock; k += vec_size) {
+                        a1 = vec_type::load(A2M + (i + 0) * K_BLOCK + k);
+                        a2 = vec_type::load(A2M + (i + 1) * K_BLOCK + k);
+                        a3 = vec_type::load(A2M + (i + 2) * K_BLOCK + k);
+                        a4 = vec_type::load(A2M + (i + 3) * K_BLOCK + k);
+                        a5 = vec_type::load(A2M + (i + 4) * K_BLOCK + k);
+
+                        b1 = vec_type::load(B2M + (j + 0) * K_BLOCK + k);
+                        b2 = vec_type::load(B2M + (j + 1) * K_BLOCK + k);
+
+                        xmm1  = vec_type::fmadd(a1, b1, xmm1);
+                        xmm2  = vec_type::fmadd(a1, b2, xmm2);
+                        xmm3  = vec_type::fmadd(a2, b1, xmm3);
+                        xmm4  = vec_type::fmadd(a2, b2, xmm4);
+                        xmm5  = vec_type::fmadd(a3, b1, xmm5);
+                        xmm6  = vec_type::fmadd(a3, b2, xmm6);
+                        xmm7  = vec_type::fmadd(a4, b1, xmm7);
+                        xmm8  = vec_type::fmadd(a4, b2, xmm8);
+                        xmm9  = vec_type::fmadd(a5, b1, xmm9);
+                        xmm10 = vec_type::fmadd(a5, b2, xmm10);
+                    }
+
+                    C(i + 0, jj + j + 0) += vec_type::hadd(xmm1);
+                    C(i + 0, jj + j + 1) += vec_type::hadd(xmm2);
+                    C(i + 1, jj + j + 0) += vec_type::hadd(xmm3);
+                    C(i + 1, jj + j + 1) += vec_type::hadd(xmm4);
+                    C(i + 2, jj + j + 0) += vec_type::hadd(xmm5);
+                    C(i + 2, jj + j + 1) += vec_type::hadd(xmm6);
+                    C(i + 3, jj + j + 0) += vec_type::hadd(xmm7);
+                    C(i + 3, jj + j + 1) += vec_type::hadd(xmm8);
+                    C(i + 4, jj + j + 0) += vec_type::hadd(xmm9);
+                    C(i + 4, jj + j + 1) += vec_type::hadd(xmm10);
+                }
+
+                if (j < jblock) {
+                    size_t k = 0;
+
+                    auto a1 = vec_type::load(A2M + (i + 0) * K_BLOCK + k);
+                    auto a2 = vec_type::load(A2M + (i + 1) * K_BLOCK + k);
+                    auto a3 = vec_type::load(A2M + (i + 2) * K_BLOCK + k);
+                    auto a4 = vec_type::load(A2M + (i + 3) * K_BLOCK + k);
+                    auto a5 = vec_type::load(A2M + (i + 4) * K_BLOCK + k);
+
+                    auto b1 = vec_type::load(B2M + j * K_BLOCK + k);
+
+                    auto xmm1 = vec_type::mul(a1, b1);
+                    auto xmm2 = vec_type::mul(a2, b1);
+                    auto xmm3 = vec_type::mul(a3, b1);
+                    auto xmm4 = vec_type::mul(a4, b1);
+                    auto xmm5 = vec_type::mul(a5, b1);
+
+                    for (k += vec_size; k < kblock; k += vec_size) {
+                        a1 = vec_type::load(A2M + (i + 0) * K_BLOCK + k);
+                        a2 = vec_type::load(A2M + (i + 1) * K_BLOCK + k);
+                        a3 = vec_type::load(A2M + (i + 2) * K_BLOCK + k);
+                        a4 = vec_type::load(A2M + (i + 3) * K_BLOCK + k);
+                        a5 = vec_type::load(A2M + (i + 4) * K_BLOCK + k);
+
+                        b1 = vec_type::load(B2M + j * K_BLOCK + k);
+
+                        xmm1 = vec_type::fmadd(a1, b1, xmm1);
+                        xmm2 = vec_type::fmadd(a2, b1, xmm2);
+                        xmm3 = vec_type::fmadd(a3, b1, xmm3);
+                        xmm4 = vec_type::fmadd(a4, b1, xmm4);
+                        xmm5 = vec_type::fmadd(a5, b1, xmm5);
+                    }
+
+                    C(i + 0, jj + j) += vec_type::hadd(xmm1);
+                    C(i + 1, jj + j) += vec_type::hadd(xmm2);
+                    C(i + 2, jj + j) += vec_type::hadd(xmm3);
+                    C(i + 3, jj + j) += vec_type::hadd(xmm4);
+                    C(i + 4, jj + j) += vec_type::hadd(xmm5);
+                }
+            }
+
+            for (; i + 1 < M; i += 2) {
+                size_t j = 0;
+
+                for (; j + 3 < jblock; j += 4) {
+                    size_t k = 0;
+
+                    auto a1 = vec_type::load(A2M + (i + 0) * K_BLOCK + k);
+                    auto a2 = vec_type::load(A2M + (i + 1) * K_BLOCK + k);
+
+                    auto b1 = vec_type::load(B2M + (j + 0) * K_BLOCK + k);
+                    auto b2 = vec_type::load(B2M + (j + 1) * K_BLOCK + k);
+                    auto b3 = vec_type::load(B2M + (j + 2) * K_BLOCK + k);
+                    auto b4 = vec_type::load(B2M + (j + 3) * K_BLOCK + k);
+
+                    auto xmm1 = vec_type::mul(a1, b1);
+                    auto xmm2 = vec_type::mul(a1, b2);
+                    auto xmm3 = vec_type::mul(a1, b3);
+                    auto xmm4 = vec_type::mul(a1, b4);
+                    auto xmm5 = vec_type::mul(a2, b1);
+                    auto xmm6 = vec_type::mul(a2, b2);
+                    auto xmm7 = vec_type::mul(a2, b3);
+                    auto xmm8 = vec_type::mul(a2, b4);
+
+                    for (k += vec_size; k < kblock; k += vec_size) {
+                        a1 = vec_type::load(A2M + (i + 0) * K_BLOCK + k);
+                        a2 = vec_type::load(A2M + (i + 1) * K_BLOCK + k);
+
+                        b1 = vec_type::load(B2M + (j + 0) * K_BLOCK + k);
+                        b2 = vec_type::load(B2M + (j + 1) * K_BLOCK + k);
+                        b3 = vec_type::load(B2M + (j + 2) * K_BLOCK + k);
+                        b4 = vec_type::load(B2M + (j + 3) * K_BLOCK + k);
+
+                        xmm1 = vec_type::fmadd(a1, b1, xmm1);
+                        xmm2 = vec_type::fmadd(a1, b2, xmm2);
+                        xmm3 = vec_type::fmadd(a1, b3, xmm3);
+                        xmm4 = vec_type::fmadd(a1, b4, xmm4);
+
+                        xmm5 = vec_type::fmadd(a2, b1, xmm5);
+                        xmm6 = vec_type::fmadd(a2, b2, xmm6);
+                        xmm7 = vec_type::fmadd(a2, b3, xmm7);
+                        xmm8 = vec_type::fmadd(a2, b2, xmm8);
+                    }
+
+                    C(i + 0, jj + j + 0) += vec_type::hadd(xmm1);
+                    C(i + 0, jj + j + 1) += vec_type::hadd(xmm2);
+                    C(i + 0, jj + j + 2) += vec_type::hadd(xmm3);
+                    C(i + 0, jj + j + 3) += vec_type::hadd(xmm4);
+
+                    C(i + 1, jj + j + 0) += vec_type::hadd(xmm5);
+                    C(i + 1, jj + j + 1) += vec_type::hadd(xmm6);
+                    C(i + 1, jj + j + 2) += vec_type::hadd(xmm7);
+                    C(i + 1, jj + j + 3) += vec_type::hadd(xmm8);
+                }
+
+                for (; j + 1 < jblock; j += 2) {
+                    size_t k = 0;
+
+                    auto a1 = vec_type::load(A2M + (i + 0) * K_BLOCK + k);
+                    auto a2 = vec_type::load(A2M + (i + 1) * K_BLOCK + k);
+
+                    auto b1 = vec_type::load(B2M + (j + 0) * K_BLOCK + k);
+                    auto b2 = vec_type::load(B2M + (j + 1) * K_BLOCK + k);
+
+                    auto xmm1 = vec_type::mul(a1, b1);
+                    auto xmm2 = vec_type::mul(a1, b2);
+                    auto xmm3 = vec_type::mul(a2, b1);
+                    auto xmm4 = vec_type::mul(a2, b2);
+
+                    for (k += vec_size; k < kblock; k += vec_size) {
+                        a1 = vec_type::load(A2M + (i + 0) * K_BLOCK + k);
+                        a2 = vec_type::load(A2M + (i + 1) * K_BLOCK + k);
+
+                        b1 = vec_type::load(B2M + (j + 0) * K_BLOCK + k);
+                        b2 = vec_type::load(B2M + (j + 1) * K_BLOCK + k);
+
+                        xmm1 = vec_type::fmadd(a1, b1, xmm1);
+                        xmm2 = vec_type::fmadd(a1, b2, xmm2);
+
+                        xmm3 = vec_type::fmadd(a2, b1, xmm3);
+                        xmm4 = vec_type::fmadd(a2, b2, xmm4);
+                    }
+
+                    C(i + 0, jj + j + 0) += vec_type::hadd(xmm1);
+                    C(i + 0, jj + j + 1) += vec_type::hadd(xmm2);
+
+                    C(i + 1, jj + j + 0) += vec_type::hadd(xmm3);
+                    C(i + 1, jj + j + 1) += vec_type::hadd(xmm4);
+                }
+
+                if (j < jblock) {
+                    size_t k = 0;
+
+                    auto a1 = vec_type::load(A2M + (i + 0) * K_BLOCK + k);
+                    auto a2 = vec_type::load(A2M + (i + 1) * K_BLOCK + k);
+
+                    auto b1 = vec_type::load(B2M + j * K_BLOCK + k);
+
+                    auto xmm1 = vec_type::mul(a1, b1);
+                    auto xmm2 = vec_type::mul(a2, b1);
+
+                    for (k += vec_size; k < kblock; k += vec_size) {
+                        a1 = vec_type::load(A2M + (i + 0) * K_BLOCK + k);
+                        a2 = vec_type::load(A2M + (i + 1) * K_BLOCK + k);
+
+                        b1 = vec_type::load(B2M + j * K_BLOCK + k);
+
+                        xmm1 = vec_type::fmadd(a1, b1, xmm1);
+                        xmm2 = vec_type::fmadd(a2, b1, xmm2);
+                    }
+
+                    C(i + 0, jj + j) += vec_type::hadd(xmm1);
+                    C(i + 1, jj + j) += vec_type::hadd(xmm2);
+                }
+            }
+
+            if (i < M) {
+                size_t j = 0;
+
+                for (; j + 1 < jblock; j += 2) {
+                    size_t k = 0;
+
+                    auto a1 = vec_type::load(A2M + i * K_BLOCK + k);
+
+                    auto b1 = vec_type::load(B2M + (j + 0) * K_BLOCK + k);
+                    auto b2 = vec_type::load(B2M + (j + 1) * K_BLOCK + k);
+
+                    auto xmm1 = vec_type::mul(a1, b1);
+                    auto xmm2 = vec_type::mul(a1, b2);
+
+                    for (k += vec_size; k < kblock; k += vec_size) {
+                        a1 = vec_type::load(A2M + i * K_BLOCK + k);
+
+                        b1 = vec_type::load(B2M + (j + 0) * K_BLOCK + k);
+                        b2 = vec_type::load(B2M + (j + 1) * K_BLOCK + k);
+
+                        xmm1 = vec_type::fmadd(a1, b1, xmm1);
+                        xmm2 = vec_type::fmadd(a1, b2, xmm2);
+                    }
+
+                    C(i, jj + j + 0) += vec_type::hadd(xmm1);
+                    C(i, jj + j + 1) += vec_type::hadd(xmm2);
+                }
+
+                if (j < jblock) {
+                    size_t k = 0;
+
+                    auto a1 = vec_type::load(A2M + i * K_BLOCK + k);
+
+                    auto b1 = vec_type::load(B2M + j * K_BLOCK + k);
+
+                    auto xmm1 = vec_type::mul(a1, b1);
+
+                    for (k += vec_size; k < kblock; k += vec_size) {
+                        a1 = vec_type::load(A2M + i * K_BLOCK + k);
+
+                        b1 = vec_type::load(B2M + j * K_BLOCK + k);
+
+                        xmm1 = vec_type::fmadd(a1, b1, xmm1);
+                    }
+
+                    C(i, jj + j) += vec_type::hadd(xmm1);
+                }
+            }
+        }
+    }
+
+    // Remainder loop
+    if (kk < K) {
+        const size_t kend = K - kk;
+
+        // Copy A into A2
+        for (size_t iii = 0; iii < M; ++iii) {
+            for (size_t kkk = 0; kkk < kend; ++kkk) {
+                A2(iii, kkk) = A(iii, kkk + kk);
+            }
+        }
+
+        size_t jj     = 0;
+        size_t jblock = 0;
+
+        for (; jj < N; jj += jblock) {
+            jblock = jj + J_BLOCK <= N ? J_BLOCK : N - jj;
+
+            // Copy B into B2
+            for (size_t kkk = 0; kkk < kend; ++kkk) {
+                for (size_t jjj = 0; jjj < jblock; ++jjj) {
+                    B2(kkk, jjj) = B(kkk + kk, jjj + jj);
+                }
+            }
+
+            size_t i = 0;
+
+            for (; i + 4 < M; i += 5) {
+                size_t j = 0;
+
+                for (; j + 1 < jblock; j += 2) {
+                    for (size_t k = 0; k < kend; ++k) {
+                        C(i + 0, jj + j + 0) += A2(i + 0, k) * B2(k, j + 0);
+                        C(i + 0, jj + j + 1) += A2(i + 0, k) * B2(k, j + 1);
+                        C(i + 1, jj + j + 0) += A2(i + 1, k) * B2(k, j + 0);
+                        C(i + 1, jj + j + 1) += A2(i + 1, k) * B2(k, j + 1);
+                        C(i + 2, jj + j + 0) += A2(i + 2, k) * B2(k, j + 0);
+                        C(i + 2, jj + j + 1) += A2(i + 2, k) * B2(k, j + 1);
+                        C(i + 3, jj + j + 0) += A2(i + 3, k) * B2(k, j + 0);
+                        C(i + 3, jj + j + 1) += A2(i + 3, k) * B2(k, j + 1);
+                        C(i + 4, jj + j + 0) += A2(i + 4, k) * B2(k, j + 0);
+                        C(i + 4, jj + j + 1) += A2(i + 4, k) * B2(k, j + 1);
+                    }
+                }
+
+                if (j < jblock) {
+                    for (size_t k = 0; k < kend; ++k) {
+                        C(i + 0, jj + j) += A2(i + 0, k) * B2(k, j);
+                        C(i + 1, jj + j) += A2(i + 1, k) * B2(k, j);
+                        C(i + 2, jj + j) += A2(i + 2, k) * B2(k, j);
+                        C(i + 3, jj + j) += A2(i + 3, k) * B2(k, j);
+                        C(i + 4, jj + j) += A2(i + 4, k) * B2(k, j);
+                    }
+                }
+            }
+
+            for (; i + 1 < M; i += 2) {
+                size_t j = 0;
+
+                for (; j + 1 < jblock; j += 2) {
+                    for (size_t k = 0; k < kend; ++k) {
+                        C(i + 0, jj + j + 0) += A2(i + 0, k) * B2(k, j + 0);
+                        C(i + 0, jj + j + 1) += A2(i + 0, k) * B2(k, j + 1);
+                        C(i + 1, jj + j + 0) += A2(i + 1, k) * B2(k, j + 0);
+                        C(i + 1, jj + j + 1) += A2(i + 1, k) * B2(k, j + 1);
+                    }
+                }
+
+                if (j < jblock) {
+                    for (size_t k = 0; k < kend; ++k) {
+                        C(i + 0, jj + j) += A2(i + 0, k) * B2(k, j);
+                        C(i + 1, jj + j) += A2(i + 1, k) * B2(k, j);
+                    }
+                }
+            }
+
+            if (i < M) {
+                size_t j = 0;
+
+                for (; j + 1 < jblock; j += 2) {
+                    for (size_t k = 0; k < kend; ++k) {
+                        C(i, jj + j + 0) += A2(i, k) * B2(k, j + 0);
+                        C(i, jj + j + 1) += A2(i, k) * B2(k, j + 1);
+                    }
+                }
+
+                if (j < jblock) {
+                    for (size_t k = 0; k < kend; ++k) {
+                        C(i, jj + j) += A2(i, k) * B2(k, j);
+                    }
+                }
+            }
+        }
+    }
+}
+
 /*!
  * \brief Vectorized implementation of row-major matrix - row-major matrix
  * multiplication and assignment into a row-major matrix.
@@ -852,8 +1284,10 @@ void gemm_rr_to_r(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
 
     if (K * N <= gemm_rr_small_threshold) {
         gemm_small_kernel_rr_to_r<default_vec>(a, b, c, M, N, K);
-    } else {
+    } else if (K * N <= gemm_rr_medium_threshold) {
         gemm_large_kernel_rr_to_r<default_vec>(a, b, c, M, N, K, T(0));
+    } else {
+        gemm_large_kernel_rr_to_r_temp<default_vec>(a, b, c, M, N, K, T(0));
     }
 }
 
