@@ -137,8 +137,8 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
                 r41 = vec_type::fmadd(a1, b4, r41);
                 r42 = vec_type::fmadd(a2, b4, r42);
 
-                r51 = vec_type::fmadd(a1, b5, r41);
-                r52 = vec_type::fmadd(a2, b5, r42);
+                r51 = vec_type::fmadd(a1, b5, r51);
+                r52 = vec_type::fmadd(a2, b5, r52);
             }
 
             vec_type::storeu(c + (i + 0) * N + j + 0 * vec_size, r11);
