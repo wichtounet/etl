@@ -850,8 +850,8 @@ void gemm_large_kernel_rr_to_r_temp(const T* a, const T* b, T* ETL_RESTRICT c, s
 
     constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-    constexpr size_t K_BLOCK = 112UL * (16UL / sizeof(T));
-    constexpr size_t J_BLOCK = 96UL;
+    constexpr size_t K_BLOCK = 112 * (16 / sizeof(T));
+    constexpr size_t J_BLOCK = 96;
 
     etl::custom_dyn_matrix<T> A(const_cast<T*>(a), M, K);
     etl::custom_dyn_matrix<T> B(const_cast<T*>(b), K, N);
