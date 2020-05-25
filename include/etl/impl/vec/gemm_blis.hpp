@@ -5,6 +5,13 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*
+ * This is a tentative implementation of a BLIS Like kernel
+ * However, this is current slower than the other kernels
+ * and it is also only "optimized" for float
+ * so, it is current disabled.
+ */
+
 #pragma once
 
 namespace etl::impl::vec {
