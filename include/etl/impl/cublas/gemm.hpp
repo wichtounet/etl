@@ -763,7 +763,7 @@ void gemv([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c
  * \param c The result vector
  */
 template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemv_t(A&& a, B&& b, C&& c) {
+void gemv_t([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Invalid operation called blas::gemv_t with heterogeneous types");
 }
 
@@ -775,7 +775,7 @@ void gemv_t(A&& a, B&& b, C&& c) {
  * \param c The result vector
  */
 template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gevm(A&& a, B&& b, C&& c) {
+void gevm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Invalid operation called blas::gevm with heterogeneous types");
 }
 
@@ -787,7 +787,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * \param c The result vector
  */
 template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gevm_t(A&& a, B&& b, C&& c) {
+void gevm_t([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     cpp_unreachable("Invalid operation called blas::gevm_t with heterogeneous types");
 }
 
