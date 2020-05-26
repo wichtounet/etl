@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "etl/impl/egblas/logistic_noise.hpp"
+
 namespace etl {
 
 /*!
@@ -226,7 +228,8 @@ struct logistic_noise_unary_op {
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_slogistic_noise_seed)
+                                           || (is_double_precision_t<T> && impl::egblas::has_dlogistic_noise_seed);
 
     /*!
      * \brief Apply the unary operator on x
@@ -239,6 +242,51 @@ struct logistic_noise_unary_op {
         std::normal_distribution<double> noise_distribution(0.0, math::logistic_sigmoid(x));
 
         return x + noise_distribution(rand_engine);
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
+     */
+    template <typename X, typename Y>
+    auto gpu_compute_hint(const X & x, Y& y) noexcept {
+        static random_engine rand_engine(std::time(nullptr));
+
+        std::uniform_int_distribution<long> seed_dist;
+
+        decltype(auto) t1 = smart_gpu_compute_hint(x, y);
+
+        auto t2 = force_temporary_gpu_dim_only(t1);
+
+        T alpha(1);
+        impl::egblas::logistic_noise_seed(etl::size(y), alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1, seed_dist(rand_engine));
+
+        return t2;
+    }
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y>
+    Y& gpu_compute(const X & x, Y& y) noexcept {
+        static random_engine rand_engine(std::time(nullptr));
+
+        std::uniform_int_distribution<long> seed_dist;
+
+        decltype(auto) t1 = select_smart_gpu_compute(x, y);
+
+        T alpha(1);
+        impl::egblas::logistic_noise_seed(etl::size(y), alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1, seed_dist(rand_engine));
+
+        y.validate_gpu();
+        y.invalidate_cpu();
+
+        return y;
     }
 
     /*!
@@ -282,7 +330,8 @@ public:
      * \brief Indicates if the operator can be computed on GPU
      */
     template <typename E>
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_slogistic_noise_seed)
+                                           || (is_double_precision_t<T> && impl::egblas::has_dlogistic_noise_seed);
 
     /*!
      * \brief Apply the unary operator on x
@@ -293,6 +342,47 @@ public:
         std::normal_distribution<double> noise_distribution(0.0, math::logistic_sigmoid(x));
 
         return x + noise_distribution(rand_engine);
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
+     */
+    template <typename X, typename Y>
+    auto gpu_compute_hint(const X & x, Y& y) noexcept {
+        std::uniform_int_distribution<long> seed_dist;
+
+        decltype(auto) t1 = smart_gpu_compute_hint(x, y);
+
+        auto t2 = force_temporary_gpu_dim_only(t1);
+
+        T alpha(1);
+        impl::egblas::logistic_noise_seed(etl::size(y), alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1, seed_dist(rand_engine));
+
+        return t2;
+    }
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y>
+    Y& gpu_compute(const X & x, Y& y) noexcept {
+        std::uniform_int_distribution<long> seed_dist;
+
+        decltype(auto) t1 = select_smart_gpu_compute(x, y);
+
+        T alpha(1);
+        impl::egblas::logistic_noise_seed(etl::size(y), alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1, seed_dist(rand_engine));
+
+        y.validate_gpu();
+        y.invalidate_cpu();
+
+        return y;
     }
 
     /*!
