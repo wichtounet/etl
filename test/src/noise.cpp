@@ -38,3 +38,20 @@ TEMPLATE_TEST_CASE_2("logistic_noise/3", "[logistic_noise]", Z, float, double) {
     etl::random_engine g(666);
     d = state_logistic_noise(g, a);
 }
+
+TEMPLATE_TEST_CASE_2("logistic_noise/4", "[logistic_noise]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> d;
+
+    std::shared_ptr<void*> states;
+    d = state_logistic_noise(a, states);
+}
+
+TEMPLATE_TEST_CASE_2("logistic_noise/5", "[logistic_noise]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> d;
+
+    std::shared_ptr<void*> states;
+    etl::random_engine g(666);
+    d = state_logistic_noise(g, a, states);
+}

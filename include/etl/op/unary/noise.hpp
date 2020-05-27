@@ -436,6 +436,20 @@ struct state_logistic_noise_unary_op {
     }
 
     /*!
+     * \brief Construct a new operator
+     */
+    explicit state_logistic_noise_unary_op(const std::shared_ptr<void*> states) : rand_engine(std::time(nullptr)) {
+        if constexpr (impl::egblas::has_logistic_noise_prepare) {
+            this->states = states;
+
+            if (!*this->states) {
+                std::uniform_int_distribution<long> seed_dist;
+                *this->states = impl::egblas::logistic_noise_prepare_seed(seed_dist(rand_engine));
+            }
+        }
+    }
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -519,6 +533,20 @@ public:
 
             states  = std::make_shared<void*>();
             *states = impl::egblas::logistic_noise_prepare_seed(seed_dist(rand_engine));
+        }
+    }
+
+    /*!
+     * \brief Construct a new state_logistic_noise_unary_g_op
+     */
+    state_logistic_noise_unary_g_op(G& rand_engine, const std::shared_ptr<void*> & states) : rand_engine(rand_engine) {
+        if constexpr (impl::egblas::has_logistic_noise_prepare) {
+            this->states = states;
+
+            if (!*this->states) {
+                std::uniform_int_distribution<long> seed_dist;
+                *this->states = impl::egblas::logistic_noise_prepare_seed(seed_dist(rand_engine));
+            }
         }
     }
 

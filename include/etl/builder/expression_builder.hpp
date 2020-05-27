@@ -305,10 +305,31 @@ auto state_logistic_noise(E&& value) {
  * \param value The input ETL expression
  * \return an expression representing the input expression plus noise
  */
-template <typename E, typename G>
-auto state_logistic_noise(G& g, E&& value) {
+template <typename E>
+auto state_logistic_noise(E&& value, const std::shared_ptr<void*> & states) {
     static_assert(is_etl_expr<E>, "etl::logistic_noise can only be used on ETL expressions");
+    return detail::make_stateful_unary_expr<E, state_logistic_noise_unary_op<value_t<E>>>(value, states);
+}
+
+/*!
+ * \brief Add some normal noise (0, sigmoid(x)) to the given expression
+ * \param value The input ETL expression
+ * \return an expression representing the input expression plus noise
+ */
+template <typename G, typename E, cpp_enable_iff(is_etl_expr<E>)>
+auto state_logistic_noise(G& g, E&& value) {
     return detail::make_stateful_unary_expr<E, state_logistic_noise_unary_g_op<G, value_t<E>>>(value, g);
+}
+
+/*!
+ * \brief Add some normal noise (0, sigmoid(x)) to the given expression
+ * \param value The input ETL expression
+ * \return an expression representing the input expression plus noise
+ */
+template <typename E, typename G>
+auto state_logistic_noise(G& g, E&& value, const std::shared_ptr<void*> & states) {
+    static_assert(is_etl_expr<E>, "etl::logistic_noise can only be used on ETL expressions");
+    return detail::make_stateful_unary_expr<E, state_logistic_noise_unary_g_op<G, value_t<E>>>(value, g, states);
 }
 
 /*!
