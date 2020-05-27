@@ -252,7 +252,7 @@ struct logistic_noise_unary_op {
      * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
     template <typename X, typename Y>
-    auto gpu_compute_hint(const X & x, Y& y) noexcept {
+    static auto gpu_compute_hint(const X & x, Y& y) noexcept {
         static random_engine rand_engine(std::time(nullptr));
 
         std::uniform_int_distribution<long> seed_dist;
@@ -273,7 +273,7 @@ struct logistic_noise_unary_op {
      * \param y The expression into which to store the reuslt
      */
     template <typename X, typename Y>
-    Y& gpu_compute(const X & x, Y& y) noexcept {
+    static Y& gpu_compute(const X & x, Y& y) noexcept {
         static random_engine rand_engine(std::time(nullptr));
 
         std::uniform_int_distribution<long> seed_dist;
@@ -352,7 +352,7 @@ public:
      * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
     template <typename X, typename Y>
-    auto gpu_compute_hint(const X & x, Y& y) noexcept {
+    auto gpu_compute_hint(const X & x, Y& y) const noexcept {
         std::uniform_int_distribution<long> seed_dist;
 
         decltype(auto) t1 = smart_gpu_compute_hint(x, y);
@@ -371,7 +371,7 @@ public:
      * \param y The expression into which to store the reuslt
      */
     template <typename X, typename Y>
-    Y& gpu_compute(const X & x, Y& y) noexcept {
+    Y& gpu_compute(const X & x, Y& y) const noexcept {
         std::uniform_int_distribution<long> seed_dist;
 
         decltype(auto) t1 = select_smart_gpu_compute(x, y);
@@ -391,6 +391,206 @@ public:
      */
     static std::string desc() noexcept {
         return "logistic_noise";
+    }
+};
+
+/*!
+ * \brief Unary operation applying a logistic noise
+ *
+ * This version is stateful in that the random generator states are created
+ * only once. This has an improvement on GPU.
+ *
+ * \tparam T The type of value
+ */
+template <typename T>
+struct state_logistic_noise_unary_op {
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_slogistic_noise_seed)
+                                           || (is_double_precision_t<T> && impl::egblas::has_dlogistic_noise_seed);
+
+    mutable random_engine  rand_engine; ///< The random generator
+    std::shared_ptr<void*> states;      ///< The random generator extra states
+
+    /*!
+     * \brief Construct a new operator
+     */
+    state_logistic_noise_unary_op() : rand_engine(std::time(nullptr)) {
+        if constexpr (impl::egblas::has_logistic_noise_prepare) {
+            states  = std::make_shared<void*>();
+            *states = impl::egblas::logistic_noise_prepare();
+        }
+    }
+
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
+    T apply(const T& x) const {
+        std::normal_distribution<double> noise_distribution(0.0, math::logistic_sigmoid(x));
+
+        return x + noise_distribution(rand_engine);
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
+     */
+    template <typename X, typename Y>
+    auto gpu_compute_hint(const X & x, Y& y) const noexcept {
+        decltype(auto) t1 = smart_gpu_compute_hint(x, y);
+
+        auto t2 = force_temporary_gpu_dim_only(t1);
+
+        T alpha(1);
+        impl::egblas::logistic_noise_states(etl::size(y), alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1, *states);
+
+        return t2;
+    }
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y>
+    Y& gpu_compute(const X & x, Y& y) const noexcept {
+        decltype(auto) t1 = select_smart_gpu_compute(x, y);
+
+        T alpha(1);
+        impl::egblas::logistic_noise_states(etl::size(y), alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1, *states);
+
+        y.validate_gpu();
+        y.invalidate_cpu();
+
+        return y;
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
+    static std::string desc() noexcept {
+        return "state_logistic_noise";
+    }
+};
+
+/*!
+ * \brief Unary operation applying a logistic noise. 
+ *
+ * This version is stateful in that the random generator states are created
+ * only once. This has an improvement on GPU.
+ *
+ * \tparam T The type of value
+ */
+template <typename G, typename T>
+struct state_logistic_noise_unary_g_op {
+    static constexpr bool linear      = true;  ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = false; ///< Indicates if the operator is thread safe or not
+
+private:
+    G&                     rand_engine; ///< The custom random engine
+    std::shared_ptr<void*> states;      ///< The random generator extra states
+
+public:
+    /*!
+     * \brief Construct a new state_logistic_noise_unary_g_op
+     */
+    explicit state_logistic_noise_unary_g_op(G& rand_engine) : rand_engine(rand_engine) {
+        if constexpr (impl::egblas::has_logistic_noise_prepare) {
+            std::uniform_int_distribution<long> seed_dist;
+
+            states  = std::make_shared<void*>();
+            *states = impl::egblas::logistic_noise_prepare_seed(seed_dist(rand_engine));
+        }
+    }
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    static constexpr bool vectorizable = false;
+
+    /*!
+     * \brief Indicates if the operator can be computed on GPU
+     */
+    template <typename E>
+    static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_slogistic_noise_states)
+                                           || (is_double_precision_t<T> && impl::egblas::has_dlogistic_noise_states);
+
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
+    T apply(const T& x) const {
+        std::normal_distribution<double> noise_distribution(0.0, math::logistic_sigmoid(x));
+
+        return x + noise_distribution(rand_engine);
+    }
+
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
+     */
+    template <typename X, typename Y>
+    auto gpu_compute_hint(const X & x, Y& y) const noexcept {
+        decltype(auto) t1 = smart_gpu_compute_hint(x, y);
+
+        auto t2 = force_temporary_gpu_dim_only(t1);
+
+        T alpha(1);
+        impl::egblas::logistic_noise_states(etl::size(y), alpha, t1.gpu_memory(), 1, t2.gpu_memory(), 1, *states);
+
+        return t2;
+    }
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename X, typename Y>
+    Y& gpu_compute(const X & x, Y& y) const noexcept {
+        decltype(auto) t1 = select_smart_gpu_compute(x, y);
+
+        T alpha(1);
+        impl::egblas::logistic_noise_states(etl::size(y), alpha, t1.gpu_memory(), 1, y.gpu_memory(), 1, *states);
+
+        y.validate_gpu();
+        y.invalidate_cpu();
+
+        return y;
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
+    static std::string desc() noexcept {
+        return "state_logistic_noise";
     }
 };
 
