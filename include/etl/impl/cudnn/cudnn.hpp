@@ -319,9 +319,14 @@ cudnnTensorDescriptor_t create_tensor_flat(I&& input) {
 
     auto data_type = std::is_same_v<std::remove_const_t<T>, float> ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
+    // Surprisingly, CUDNN does not do any optimization for flat vectors
+    // It means that the position of the dimension is very important
+    // Putting at the first position (N) is generally the slowest case
+    // But putting it at the last (W) seems better
+
     cudnnTensorDescriptor_t tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&tensor));
-    cudnn_check(cudnnSetTensor4dDescriptor(tensor, CUDNN_TENSOR_NCHW, data_type, etl::size(input), 1, 1, 1));
+    cudnn_check(cudnnSetTensor4dDescriptor(tensor, CUDNN_TENSOR_NCHW, data_type, 1, 1, 1, etl::size(input)));
 
     return tensor;
 }
