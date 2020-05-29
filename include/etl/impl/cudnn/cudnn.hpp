@@ -500,4 +500,46 @@ inline cudnn_wrapper<cudnnPoolingDescriptor_t> create_pooling_desc_wrapper(
     return cudnn_wrapper<cudnnPoolingDescriptor_t>{create_pooling_desc(mode, c1, c2, c3, s1, s2, s3, p1, p2, p3)};
 }
 
+template <typename Value>
+struct cudnn_desc_cache_value {
+    bool found;
+
+#ifdef ETL_CUDNN_DESC_CACHE
+    Value & value;
+#else
+    Value value;
+#endif
+
+    operator bool() const {
+        return found;
+    }
+
+    Value * operator->() {
+        return &value;
+    }
+};
+
+template <typename Key, typename Value>
+struct cudnn_desc_cache {
+#ifdef ETL_CUDNN_DESC_CACHE
+    std::vector<std::pair<Key, std::unique_ptr<Value>>> cache;
+
+    cudnn_desc_cache_value<Value> operator[]([[maybe_unused]] const Key& key) {
+        for (auto & [k, value] : cache) {
+            if (k == key) {
+                return {true, *value};
+            }
+        }
+
+        cache.emplace_back(key, std::make_unique<Value>());
+
+        return {false, *cache.back().second};
+    }
+#else
+    cudnn_desc_cache_value<Value> operator[]([[maybe_unused]] const Key& key) {
+        return {false, Value{}};
+    }
+#endif
+};
+
 } //end of namespace etl::impl::cudnn
