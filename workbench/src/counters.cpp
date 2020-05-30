@@ -587,6 +587,56 @@ void opt() {
     etl::dump_counters_pretty();
 }
 
+// Make sure NADAM expressions are fully optimized
+void nadam() {
+    std::cout << "\nNADAM\n";
+
+#ifdef ETL_CUDA
+    etl::gpu_memory_allocator::clear();
+#endif
+
+    etl::reset_counters();
+
+    {
+        etl::dyn_matrix<float, 4> w_grad(128, 3, 28, 28);
+        etl::dyn_matrix<float, 4> w_m(128, 3, 28, 28);
+        etl::dyn_matrix<float, 4> w_v(128, 3, 28, 28);
+        etl::dyn_matrix<float, 4> w(128, 3, 28, 28);
+
+        for (size_t i = 0; i < 10; ++i) {
+            float beta1 = 0.1f;
+            float beta2 = 0.2f;
+
+            // This can be done as a single egblas call
+            w_m = (beta1 * w_m) + ((1.0f - beta1) >> w_grad);
+
+            // This needs two egblas calls
+            // t1 = w_grad >> w_grad
+            w_v = (beta2 * w_v) + ((1.0f - beta2) >> (w_grad >> w_grad));
+
+            float m1 = 0.01f;
+            float m2 = 0.02f;
+            float m_schedule_next = 0.07f;
+            size_t t = 4;
+            float e = 0.0005f;
+
+            // This needs five egblas calls
+            // t0 = m1 * w_grad + (m2 / (1.0f - m_schedule_next)) * w_m
+            // t1 = w_v / (1.0f - beta2^t)
+            // t2 = sqrt(t1)
+            // t3 = t0 / (t2 + e)
+            // w = w + t3
+            w += (m1 * w_grad + (m2 / (1.0f - m_schedule_next)) * w_m) / (etl::sqrt(w_v / (1.0f - std::pow(beta2, t))) + e);
+
+            // This could be optimized with a single egblas kernel doing the
+            // three expressions at once
+            // However, this needs 7 scalar parameters and 4 tensors
+        }
+    }
+
+    etl::dump_counters_pretty();
+}
+
 void random_test() {
     std::cout << "\nRandom\n" << std::endl;
 
@@ -620,6 +670,7 @@ int main() {
     direct();
     ml();
     opt();
+    nadam();
     sub();
     sub_ro();
     random_test();
