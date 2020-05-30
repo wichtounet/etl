@@ -354,6 +354,48 @@ auto bernoulli(G& g, E&& value) {
 }
 
 /*!
+ * \brief Apply Bernoulli sampling to the values of the expression
+ * \param value the expression to sample
+ * \return an expression representing the Bernoulli sampling of the given expression
+ */
+template <typename E>
+auto state_bernoulli(const E& value) {
+    static_assert(is_etl_expr<E>, "etl::bernoulli can only be used on ETL expressions");
+    return detail::make_stateful_unary_expr<E, state_bernoulli_unary_op<value_t<E>>>(value);
+}
+
+/*!
+ * \brief Apply Bernoulli sampling to the values of the expression
+ * \param value the expression to sample
+ * \return an expression representing the Bernoulli sampling of the given expression
+ */
+template <typename E>
+auto state_bernoulli(const E& value, const std::shared_ptr<void*> & states) {
+    static_assert(is_etl_expr<E>, "etl::bernoulli can only be used on ETL expressions");
+    return detail::make_stateful_unary_expr<E, state_bernoulli_unary_op<value_t<E>>>(value, states);
+}
+
+/*!
+ * \brief Apply Bernoulli sampling to the values of the expression
+ * \param value the expression to sample
+ * \return an expression representing the Bernoulli sampling of the given expression
+ */
+template <typename E, typename G, cpp_enable_iff(is_etl_expr<E>)>
+auto state_bernoulli(G& g, E&& value) {
+    return detail::make_stateful_unary_expr<E, state_bernoulli_unary_g_op<G, value_t<E>>>(value, g);
+}
+
+/*!
+ * \brief Apply Bernoulli sampling to the values of the expression
+ * \param value the expression to sample
+ * \return an expression representing the Bernoulli sampling of the given expression
+ */
+template <typename E, typename G, cpp_enable_iff(is_etl_expr<E>)>
+auto state_bernoulli(G& g, E&& value, const std::shared_ptr<void*> & states) {
+    return detail::make_stateful_unary_expr<E, state_bernoulli_unary_g_op<G, value_t<E>>>(value, g, states);
+}
+
+/*!
  * \brief Apply Reverse Bernoulli sampling to the values of the expression
  * \param value the expression to sample
  * \return an expression representing the Reverse Bernoulli sampling of the given expression

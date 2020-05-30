@@ -646,11 +646,36 @@ constexpr bool binary(double a) {
     return a == 0.0 || a == 1.0;
 }
 
-TEMPLATE_TEST_CASE_2("fast_matrix/bernoulli", "fast_matrix::bernoulli", Z, float, double) {
+TEMPLATE_TEST_CASE_2("fast_matrix/bernoulli/0", "fast_matrix::bernoulli", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
 
     etl::fast_matrix<Z, 2, 2> d;
     d = etl::bernoulli(a);
+
+    REQUIRE_DIRECT(binary(d[0]));
+    REQUIRE_DIRECT(binary(d[1]));
+    REQUIRE_DIRECT(binary(d[2]));
+    REQUIRE_DIRECT(binary(d[3]));
+}
+
+TEMPLATE_TEST_CASE_2("fast_matrix/bernoulli/1", "fast_matrix::bernoulli", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
+
+    etl::fast_matrix<Z, 2, 2> d;
+    d = etl::state_bernoulli(a);
+
+    REQUIRE_DIRECT(binary(d[0]));
+    REQUIRE_DIRECT(binary(d[1]));
+    REQUIRE_DIRECT(binary(d[2]));
+    REQUIRE_DIRECT(binary(d[3]));
+}
+
+TEMPLATE_TEST_CASE_2("fast_matrix/bernoulli/2", "fast_matrix::bernoulli", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
+
+    auto states = std::make_shared<void*>();
+    etl::fast_matrix<Z, 2, 2> d;
+    d = etl::state_bernoulli(a, states);
 
     REQUIRE_DIRECT(binary(d[0]));
     REQUIRE_DIRECT(binary(d[1]));
