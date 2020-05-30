@@ -8,6 +8,7 @@
 #pragma once
 
 #include "etl/impl/cudnn/sigmoid.hpp"
+#include "etl/impl/egblas/sigmoid.hpp"
 
 namespace etl {
 
@@ -78,7 +79,17 @@ struct sigmoid_unary_op {
         decltype(auto) t1 = smart_gpu_compute_hint(x, y);
 
         auto t2 = force_temporary_gpu_dim_only(t1);
-        impl::cudnn::sigmoid(t1, t2);
+
+        auto n = etl::size(x);
+
+        if (n < 8 * 1024 * 1024 && is_single_precision<Y> && impl::egblas::has_ssigmoid) {
+            impl::egblas::sigmoid(n, 1, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+        } else if (n < 1024 * 1024 && is_double_precision<Y> && impl::egblas::has_dsigmoid) {
+            impl::egblas::sigmoid(n, 1, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+        } else {
+            impl::cudnn::sigmoid(t1, t2);
+        }
+
         return t2;
     }
     /*!
@@ -91,7 +102,15 @@ struct sigmoid_unary_op {
     static Y& gpu_compute(const X& x, Y& y) noexcept {
         decltype(auto) t1 = select_smart_gpu_compute(x, y);
 
-        impl::cudnn::sigmoid(t1, y);
+        auto n = etl::size(x);
+
+        if (n < 8 * 1024 * 1024 && is_single_precision<Y> && impl::egblas::has_ssigmoid) {
+            impl::egblas::sigmoid(n, 1, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+        } else if (n < 1024 * 1024 && is_double_precision<Y> && impl::egblas::has_dsigmoid) {
+            impl::egblas::sigmoid(n, 1, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+        } else {
+            impl::cudnn::sigmoid(t1, y);
+        }
 
         return y;
     }
