@@ -37,230 +37,270 @@ void batch_outer_impl(const L& lhs, const R& rhs, C&& result) {
     lhs.ensure_cpu_up_to_date();
     rhs.ensure_cpu_up_to_date();
 
-    // TODO Ideally, we would need a kernel for very small matrices
-    // TODO If N is a multiple of the vector size, this would only perform
-    // aligned loads and then we can use load/store instead of loadu/storeu
+    // While this algorithm is very efficient in single-thread
+    // the parallelization is not the base
+    // TODO The transposition could be done in parallel
+    // Also, L2 transposition could be done only partly by each thread
 
-    result = 0;
+    auto L2 = force_temporary_opp(lhs);
+    auto R2 = force_temporary_opp(rhs);
 
     auto batch_fun_m = [&](const size_t first, const size_t last) {
-        for (size_t i = first; i < last; ++i) {
-            size_t b = 0;
+        size_t i = first;
 
-            for (; b + 7 < B; b += 8) {
-                const auto b1 = b + 0;
-                const auto b2 = b + 1;
-                const auto b3 = b + 2;
-                const auto b4 = b + 3;
-                const auto b5 = b + 4;
-                const auto b6 = b + 5;
-                const auto b7 = b + 6;
-                const auto b8 = b + 7;
+        for (; i + 1 < last; i += 2) {
+            size_t j = 0;
 
-                auto factor1 = lhs(b1, i);
-                auto factor2 = lhs(b2, i);
-                auto factor3 = lhs(b3, i);
-                auto factor4 = lhs(b4, i);
-                auto factor5 = lhs(b5, i);
-                auto factor6 = lhs(b6, i);
-                auto factor7 = lhs(b7, i);
-                auto factor8 = lhs(b8, i);
+            for (; j + 3 < N; j += 4) {
+                size_t b = 0;
 
-                auto f1 = vec_type::set(factor1);
-                auto f2 = vec_type::set(factor2);
-                auto f3 = vec_type::set(factor3);
-                auto f4 = vec_type::set(factor4);
-                auto f5 = vec_type::set(factor5);
-                auto f6 = vec_type::set(factor6);
-                auto f7 = vec_type::set(factor7);
-                auto f8 = vec_type::set(factor8);
+                auto xmm1 = vec_type::template zero<T>();
+                auto xmm2 = vec_type::template zero<T>();
+                auto xmm3 = vec_type::template zero<T>();
+                auto xmm4 = vec_type::template zero<T>();
+                auto xmm5 = vec_type::template zero<T>();
+                auto xmm6 = vec_type::template zero<T>();
+                auto xmm7 = vec_type::template zero<T>();
+                auto xmm8 = vec_type::template zero<T>();
 
-                size_t j = 0;
+                for (; b + vec_size - 1 < B; b += vec_size) {
+                    auto l1 = L2.template loadu<vec_type>((i + 0) * B + b);
+                    auto l2 = L2.template loadu<vec_type>((i + 1) * B + b);
 
-                for (; j + 2 * vec_size - 1 < N; j += 2 * vec_size) {
-                    auto r11 = result.template loadu<vec_type>(i * N + j + 0 * vec_size);
-                    auto r21 = result.template loadu<vec_type>(i * N + j + 1 * vec_size);
+                    auto r1 = R2.template loadu<vec_type>((j + 0) * B + b);
+                    auto r2 = R2.template loadu<vec_type>((j + 1) * B + b);
+                    auto r3 = R2.template loadu<vec_type>((j + 2) * B + b);
+                    auto r4 = R2.template loadu<vec_type>((j + 3) * B + b);
 
-                    auto a11 = rhs.template loadu<vec_type>(b1 * N + j + 0 * vec_size);
-                    auto a12 = rhs.template loadu<vec_type>(b2 * N + j + 0 * vec_size);
-                    auto a13 = rhs.template loadu<vec_type>(b3 * N + j + 0 * vec_size);
-                    auto a14 = rhs.template loadu<vec_type>(b4 * N + j + 0 * vec_size);
-                    auto a15 = rhs.template loadu<vec_type>(b5 * N + j + 0 * vec_size);
-                    auto a16 = rhs.template loadu<vec_type>(b6 * N + j + 0 * vec_size);
-                    auto a17 = rhs.template loadu<vec_type>(b7 * N + j + 0 * vec_size);
-                    auto a18 = rhs.template loadu<vec_type>(b8 * N + j + 0 * vec_size);
+                    xmm1 = vec_type::fmadd(l1, r1, xmm1);
+                    xmm2 = vec_type::fmadd(l1, r2, xmm2);
+                    xmm3 = vec_type::fmadd(l1, r3, xmm3);
+                    xmm4 = vec_type::fmadd(l1, r4, xmm4);
 
-                    r11 = vec_type::fmadd(f1, a11, r11);
-                    r11 = vec_type::fmadd(f2, a12, r11);
-                    r11 = vec_type::fmadd(f3, a13, r11);
-                    r11 = vec_type::fmadd(f4, a14, r11);
-                    r11 = vec_type::fmadd(f5, a15, r11);
-                    r11 = vec_type::fmadd(f6, a16, r11);
-                    r11 = vec_type::fmadd(f7, a17, r11);
-                    r11 = vec_type::fmadd(f8, a18, r11);
-
-                    auto a21 = rhs.template loadu<vec_type>(b1 * N + j + 1 * vec_size);
-                    auto a22 = rhs.template loadu<vec_type>(b2 * N + j + 1 * vec_size);
-                    auto a23 = rhs.template loadu<vec_type>(b3 * N + j + 1 * vec_size);
-                    auto a24 = rhs.template loadu<vec_type>(b4 * N + j + 1 * vec_size);
-                    auto a25 = rhs.template loadu<vec_type>(b5 * N + j + 1 * vec_size);
-                    auto a26 = rhs.template loadu<vec_type>(b6 * N + j + 1 * vec_size);
-                    auto a27 = rhs.template loadu<vec_type>(b7 * N + j + 1 * vec_size);
-                    auto a28 = rhs.template loadu<vec_type>(b8 * N + j + 1 * vec_size);
-
-                    r21 = vec_type::fmadd(f1, a21, r21);
-                    r21 = vec_type::fmadd(f2, a22, r21);
-                    r21 = vec_type::fmadd(f3, a23, r21);
-                    r21 = vec_type::fmadd(f4, a24, r21);
-                    r21 = vec_type::fmadd(f5, a25, r21);
-                    r21 = vec_type::fmadd(f6, a26, r21);
-                    r21 = vec_type::fmadd(f7, a27, r21);
-                    r21 = vec_type::fmadd(f8, a28, r21);
-
-                    result.template storeu<vec_type>(r11, i * N + j + 0 * vec_size);
-                    result.template storeu<vec_type>(r21, i * N + j + 1 * vec_size);
+                    xmm5 = vec_type::fmadd(l2, r1, xmm5);
+                    xmm6 = vec_type::fmadd(l2, r2, xmm6);
+                    xmm7 = vec_type::fmadd(l2, r3, xmm7);
+                    xmm8 = vec_type::fmadd(l2, r4, xmm8);
                 }
 
-                for (; j + vec_size - 1 < N; j += vec_size) {
-                    auto r1 = result.template loadu<vec_type>(i * N + j);
+                T r1 = vec_type::hadd(xmm1);
+                T r2 = vec_type::hadd(xmm2);;
+                T r3 = vec_type::hadd(xmm3);;
+                T r4 = vec_type::hadd(xmm4);;
+                T r5 = vec_type::hadd(xmm5);
+                T r6 = vec_type::hadd(xmm6);;
+                T r7 = vec_type::hadd(xmm7);;
+                T r8 = vec_type::hadd(xmm8);;
 
-                    auto a1 = rhs.template loadu<vec_type>(b1 * N + j);
-                    auto a2 = rhs.template loadu<vec_type>(b2 * N + j);
-                    auto a3 = rhs.template loadu<vec_type>(b3 * N + j);
-                    auto a4 = rhs.template loadu<vec_type>(b4 * N + j);
-                    auto a5 = rhs.template loadu<vec_type>(b5 * N + j);
-                    auto a6 = rhs.template loadu<vec_type>(b6 * N + j);
-                    auto a7 = rhs.template loadu<vec_type>(b7 * N + j);
-                    auto a8 = rhs.template loadu<vec_type>(b8 * N + j);
+                for (; b + 1 < B; b += 2) {
+                    r1 += L2(b + 0, i + 0) * R2(b + 0, j + 0);
+                    r1 += L2(b + 1, i + 0) * R2(b + 1, j + 0);
 
-                    r1 = vec_type::fmadd(f1, a1, r1);
-                    r1 = vec_type::fmadd(f2, a2, r1);
-                    r1 = vec_type::fmadd(f3, a3, r1);
-                    r1 = vec_type::fmadd(f4, a4, r1);
-                    r1 = vec_type::fmadd(f5, a5, r1);
-                    r1 = vec_type::fmadd(f6, a6, r1);
-                    r1 = vec_type::fmadd(f7, a7, r1);
-                    r1 = vec_type::fmadd(f8, a8, r1);
+                    r2 += L2(b + 0, i + 0) * R2(b + 0, j + 1);
+                    r2 += L2(b + 1, i + 0) * R2(b + 1, j + 1);
 
-                    result.template storeu<vec_type>(r1, i * N + j);
+                    r3 += L2(b + 0, i + 0) * R2(b + 0, j + 2);
+                    r3 += L2(b + 1, i + 0) * R2(b + 1, j + 2);
+
+                    r4 += L2(b + 0, i + 0) * R2(b + 0, j + 3);
+                    r4 += L2(b + 1, i + 0) * R2(b + 1, j + 3);
+
+                    r5 += L2(b + 0, i + 1) * R2(b + 0, j + 0);
+                    r5 += L2(b + 1, i + 1) * R2(b + 1, j + 0);
+
+                    r6 += L2(b + 0, i + 1) * R2(b + 0, j + 1);
+                    r6 += L2(b + 1, i + 1) * R2(b + 1, j + 1);
+
+                    r7 += L2(b + 0, i + 1) * R2(b + 0, j + 2);
+                    r7 += L2(b + 1, i + 1) * R2(b + 1, j + 2);
+
+                    r8 += L2(b + 0, i + 1) * R2(b + 0, j + 3);
+                    r8 += L2(b + 1, i + 1) * R2(b + 1, j + 3);
                 }
 
-                for (; j + 1 < N; j += 2) {
-                    result(i, j + 0) += factor1 * rhs(b1, j + 0);
-                    result(i, j + 0) += factor2 * rhs(b2, j + 0);
-                    result(i, j + 0) += factor3 * rhs(b3, j + 0);
-                    result(i, j + 0) += factor4 * rhs(b4, j + 0);
-                    result(i, j + 0) += factor5 * rhs(b5, j + 0);
-                    result(i, j + 0) += factor6 * rhs(b6, j + 0);
-                    result(i, j + 0) += factor7 * rhs(b7, j + 0);
-                    result(i, j + 0) += factor8 * rhs(b8, j + 0);
+                if (b < B) {
+                    r1 += L2(b, i + 0) * R2(b, j + 0);
+                    r2 += L2(b, i + 0) * R2(b, j + 1);
+                    r3 += L2(b, i + 0) * R2(b, j + 2);
+                    r4 += L2(b, i + 0) * R2(b, j + 3);
 
-                    result(i, j + 1) += factor1 * rhs(b1, j + 1);
-                    result(i, j + 1) += factor2 * rhs(b2, j + 1);
-                    result(i, j + 1) += factor3 * rhs(b3, j + 1);
-                    result(i, j + 1) += factor4 * rhs(b4, j + 1);
-                    result(i, j + 1) += factor5 * rhs(b5, j + 1);
-                    result(i, j + 1) += factor6 * rhs(b6, j + 1);
-                    result(i, j + 1) += factor7 * rhs(b7, j + 1);
-                    result(i, j + 1) += factor8 * rhs(b8, j + 1);
+                    r5 += L2(b, i + 1) * R2(b, j + 0);
+                    r6 += L2(b, i + 1) * R2(b, j + 1);
+                    r7 += L2(b, i + 1) * R2(b, j + 2);
+                    r8 += L2(b, i + 1) * R2(b, j + 3);
                 }
 
-                if (j < N) {
-                    result(i, j) += factor1 * rhs(b1, j);
-                    result(i, j) += factor2 * rhs(b2, j);
-                    result(i, j) += factor3 * rhs(b3, j);
-                    result(i, j) += factor4 * rhs(b4, j);
-                    result(i, j) += factor5 * rhs(b5, j);
-                    result(i, j) += factor6 * rhs(b6, j);
-                    result(i, j) += factor7 * rhs(b7, j);
-                    result(i, j) += factor8 * rhs(b8, j);
-                }
+                result(i + 0, j + 0) = r1;
+                result(i + 0, j + 1) = r2;
+                result(i + 0, j + 2) = r3;
+                result(i + 0, j + 3) = r4;
+
+                result(i + 1, j + 0) = r5;
+                result(i + 1, j + 1) = r6;
+                result(i + 1, j + 2) = r7;
+                result(i + 1, j + 3) = r8;
             }
 
-            for (; b + 3 < B; b += 4) {
-                const auto b1 = b + 0;
-                const auto b2 = b + 1;
-                const auto b3 = b + 2;
-                const auto b4 = b + 3;
+            for (; j + 1 < N; j += 2) {
+                size_t b = 0;
 
-                auto factor1 = lhs(b1, i);
-                auto factor2 = lhs(b2, i);
-                auto factor3 = lhs(b3, i);
-                auto factor4 = lhs(b4, i);
+                auto xmm1 = vec_type::template zero<T>();
+                auto xmm2 = vec_type::template zero<T>();
+                auto xmm3 = vec_type::template zero<T>();
+                auto xmm4 = vec_type::template zero<T>();
 
-                auto f1 = vec_type::set(factor1);
-                auto f2 = vec_type::set(factor2);
-                auto f3 = vec_type::set(factor3);
-                auto f4 = vec_type::set(factor4);
+                for (; b + vec_size - 1 < B; b += vec_size) {
+                    auto l1 = L2.template loadu<vec_type>((i + 0) * B + b);
+                    auto l2 = L2.template loadu<vec_type>((i + 1) * B + b);
 
-                size_t j = 0;
+                    auto r1 = R2.template loadu<vec_type>((j + 0) * B + b);
+                    auto r2 = R2.template loadu<vec_type>((j + 1) * B + b);
 
-                for (; j + vec_size - 1 < N; j += vec_size) {
-                    auto r1 = result.template loadu<vec_type>(i * N + j);
+                    xmm1 = vec_type::fmadd(l1, r1, xmm1);
+                    xmm2 = vec_type::fmadd(l1, r2, xmm2);
 
-                    auto a1 = rhs.template loadu<vec_type>(b1 * N + j);
-                    auto a2 = rhs.template loadu<vec_type>(b2 * N + j);
-                    auto a3 = rhs.template loadu<vec_type>(b3 * N + j);
-                    auto a4 = rhs.template loadu<vec_type>(b4 * N + j);
-
-                    r1 = vec_type::fmadd(f1, a1, r1);
-                    r1 = vec_type::fmadd(f2, a2, r1);
-                    r1 = vec_type::fmadd(f3, a3, r1);
-                    r1 = vec_type::fmadd(f4, a4, r1);
-
-                    result.template storeu<vec_type>(r1, i * N + j);
+                    xmm3 = vec_type::fmadd(l2, r1, xmm3);
+                    xmm4 = vec_type::fmadd(l2, r2, xmm4);
                 }
 
-                for (; j + 1 < N; j += 2) {
-                    result(i, j + 0) += factor1 * rhs(b1, j + 0);
-                    result(i, j + 0) += factor2 * rhs(b2, j + 0);
-                    result(i, j + 0) += factor3 * rhs(b3, j + 0);
-                    result(i, j + 0) += factor4 * rhs(b4, j + 0);
+                T r1 = vec_type::hadd(xmm1);
+                T r2 = vec_type::hadd(xmm2);;
+                T r3 = vec_type::hadd(xmm3);;
+                T r4 = vec_type::hadd(xmm4);;
 
-                    result(i, j + 1) += factor1 * rhs(b1, j + 1);
-                    result(i, j + 1) += factor2 * rhs(b2, j + 1);
-                    result(i, j + 1) += factor3 * rhs(b3, j + 1);
-                    result(i, j + 1) += factor4 * rhs(b4, j + 1);
+                for (; b + 1 < B; b += 2) {
+                    r1 += L2(b + 0, i + 0) * R2(b + 0, j + 0);
+                    r1 += L2(b + 1, i + 0) * R2(b + 1, j + 0);
+
+                    r2 += L2(b + 0, i + 0) * R2(b + 0, j + 1);
+                    r2 += L2(b + 1, i + 0) * R2(b + 1, j + 1);
+
+                    r3 += L2(b + 0, i + 1) * R2(b + 0, j + 0);
+                    r3 += L2(b + 1, i + 1) * R2(b + 1, j + 0);
+
+                    r4 += L2(b + 0, i + 1) * R2(b + 0, j + 1);
+                    r4 += L2(b + 1, i + 1) * R2(b + 1, j + 1);
                 }
 
-                if (j < N) {
-                    result(i, j) += factor1 * rhs(b1, j);
-                    result(i, j) += factor2 * rhs(b2, j);
-                    result(i, j) += factor3 * rhs(b3, j);
-                    result(i, j) += factor4 * rhs(b4, j);
+                if (b < B) {
+                    r1 += L2(b, i + 0) * R2(b, j + 0);
+                    r2 += L2(b, i + 0) * R2(b, j + 1);
+                    r3 += L2(b, i + 1) * R2(b, j + 0);
+                    r4 += L2(b, i + 1) * R2(b, j + 1);
                 }
+
+                result(i + 0, j + 0) = r1;
+                result(i + 0, j + 1) = r2;
+
+                result(i + 1, j + 0) = r3;
+                result(i + 1, j + 1) = r4;
             }
 
-            for (; b < B; ++b) {
-                auto factor1 = lhs(b, i);
+            if (j < N) {
+                size_t b = 0;
 
-                auto f1 = vec_type::set(factor1);
+                auto xmm1 = vec_type::template zero<T>();
+                auto xmm2 = vec_type::template zero<T>();
 
-                size_t j = 0;
+                for (; b + vec_size - 1 < B; b += vec_size) {
+                    auto l1 = L2.template loadu<vec_type>((i + 0) * B + b);
+                    auto l2 = L2.template loadu<vec_type>((i + 1) * B + b);
 
-                for (; j + vec_size - 1 < N; j += vec_size) {
-                    auto r1 = result.template loadu<vec_type>(i * N + j);
+                    auto r1 = R2.template loadu<vec_type>(j * B + b);
 
-                    auto a1 = rhs.template loadu<vec_type>(b * N + j);
-
-                    r1 = vec_type::fmadd(f1, a1, r1);
-
-                    result.template storeu<vec_type>(r1, i * N + j);
+                    xmm1 = vec_type::fmadd(l1, r1, xmm1);
+                    xmm2 = vec_type::fmadd(l2, r1, xmm2);
                 }
 
-                for (; j + 1 < N; j += 2) {
-                    result(i, j + 0) += factor1 * rhs(b, j + 0);
-                    result(i, j + 1) += factor1 * rhs(b, j + 1);
+                T r1 = vec_type::hadd(xmm1);
+                T r2 = vec_type::hadd(xmm2);
+
+                for (; b + 1 < B; b += 2) {
+                    r1 += L2(b + 0, i + 0) * R2(b + 0, j);
+                    r1 += L2(b + 1, i + 0) * R2(b + 1, j);
+
+                    r2 += L2(b + 0, i + 1) * R2(b + 0, j);
+                    r2 += L2(b + 1, i + 1) * R2(b + 1, j);
                 }
 
-                if (j < N) {
-                    result(i, j) += factor1 * rhs(b, j);
+                if (b < B) {
+                    r1 += L2(b, i + 0) * R2(b, j);
+                    r2 += L2(b, i + 1) * R2(b, j);
                 }
+
+                result(i + 0, j) = r1;
+                result(i + 1, j) = r2;
+            }
+        }
+
+        if (i < last) {
+            size_t j = 0;
+
+            for (; j + 1 < N; j += 2) {
+                size_t b = 0;
+
+                auto xmm1 = vec_type::template zero<T>();
+                auto xmm2 = vec_type::template zero<T>();
+
+                for (; b + vec_size - 1 < B; b += vec_size) {
+                    auto l1 = L2.template loadu<vec_type>(i * B + b);
+
+                    auto r1 = R2.template loadu<vec_type>((j + 0) * B + b);
+                    auto r2 = R2.template loadu<vec_type>((j + 1) * B + b);
+
+                    xmm1 = vec_type::fmadd(l1, r1, xmm1);
+                    xmm2 = vec_type::fmadd(l1, r2, xmm2);
+                }
+
+                T r1 = vec_type::hadd(xmm1);
+                T r2 = vec_type::hadd(xmm2);;
+
+                for (; b + 1 < B; b += 2) {
+                    r1 += L2(b + 0, i) * R2(b + 0, j + 0);
+                    r1 += L2(b + 1, i) * R2(b + 1, j + 0);
+
+                    r2 += L2(b + 0, i) * R2(b + 0, j + 1);
+                    r2 += L2(b + 1, i) * R2(b + 1, j + 1);
+                }
+
+                if (b < B) {
+                    r1 += L2(b, i) * R2(b, j + 0);
+                    r2 += L2(b, i) * R2(b, j + 1);
+                }
+
+                result(i, j + 0) = r1;
+                result(i, j + 1) = r2;
+            }
+
+            for (; j < N; ++j) {
+                size_t b = 0;
+
+                auto xmm1 = vec_type::template zero<T>();
+
+                for (; b + vec_size - 1 < B; b += vec_size) {
+                    auto l1 = L2.template loadu<vec_type>(i * B + b);
+                    auto r1 = R2.template loadu<vec_type>(j * B + b);
+
+                    xmm1 = vec_type::fmadd(l1, r1, xmm1);
+                }
+
+                T r1 = vec_type::hadd(xmm1);
+
+                for (; b + 1 < B; b += 2) {
+                    r1 += L2(b + 0, i) * R2(b + 0, j);
+                    r1 += L2(b + 1, i) * R2(b + 1, j);
+                }
+
+                if (b < B) {
+                    r1 += L2(b, i) * R2(b, j);
+                }
+
+                result(i, j) = r1;
             }
         }
     };
 
-    engine_dispatch_1d(batch_fun_m, 0, M, engine_select_parallel(M, 2) && N > 25);
+    engine_dispatch_1d(batch_fun_m, 0, M, engine_select_parallel(M, 2) && N > 20);
 
     result.invalidate_gpu();
 }
