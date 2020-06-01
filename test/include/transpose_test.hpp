@@ -33,6 +33,14 @@ INPLACE_TRANSPOSE_FUNCTOR(std_inplace_trans, SELECTED_SECTION(etl::transpose_imp
 #define INPLACE_TRANSPOSE_TEST_CASE_SECTION_DEFAULT TRANSPOSE_TEST_CASE_SECTIONS(default_inplace_trans, default_inplace_trans)
 #define INPLACE_TRANSPOSE_TEST_CASE_SECTION_STD TRANSPOSE_TEST_CASE_SECTIONS(std_inplace_trans, std_inplace_trans)
 
+#ifdef ETL_VECTORIZE_IMPL
+TRANSPOSE_FUNCTOR(vec_transpose, c = selected_helper(etl::transpose_impl::VEC, transpose(a)))
+
+#define TRANSPOSE_TEST_CASE_SECTION_VEC TRANSPOSE_TEST_CASE_SECTIONS(vec_transpose, vec_transpose)
+#else
+#define TRANSPOSE_TEST_CASE_SECTION_VEC
+#endif
+
 #ifdef ETL_MKL_MODE
 TRANSPOSE_FUNCTOR(blas_transpose, c = selected_helper(etl::transpose_impl::MKL, transpose(a)))
 INPLACE_TRANSPOSE_FUNCTOR(blas_inplace_trans, SELECTED_SECTION(etl::transpose_impl::MKL) { a.transpose_inplace(); })
@@ -77,6 +85,7 @@ INPLACE_TRANSPOSE_FUNCTOR(cublas_inplace_trans, SELECTED_SECTION(etl::transpose_
     TRANSPOSE_TEST_CASE_DECL(name, description) { \
         TRANSPOSE_TEST_CASE_SECTION_DEFAULT       \
         TRANSPOSE_TEST_CASE_SECTION_STD           \
+        TRANSPOSE_TEST_CASE_SECTION_VEC           \
         TRANSPOSE_TEST_CASE_SECTION_BLAS          \
         TRANSPOSE_TEST_CASE_SECTION_CUBLAS        \
     }                                             \

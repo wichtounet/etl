@@ -299,6 +299,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("strans [transpose][s]", trans_policy,
     CPM_SECTION_INIT([](size_t d1, size_t d2){ return std::make_tuple(smat(d1,d2), smat(d2,d1)); }),
     CPM_SECTION_FUNCTOR("default", [](smat& a, smat& r){ r = transpose(a); }),
     CPM_SECTION_FUNCTOR("std", [](smat& a, smat& r){ r = selected_helper(etl::transpose_impl::STD, transpose(a)); })
+    VEC_SECTION_FUNCTOR("vec", [](smat& a, smat& r){ r = selected_helper(etl::transpose_impl::VEC, transpose(a)); })
     BLAS_SECTION_FUNCTOR("blas", [](smat& a, smat& r){ r = selected_helper(etl::transpose_impl::MKL, transpose(a)); })
     CUBLAS_SECTION_FUNCTOR("cublas", [](smat& a, smat& r){ r = selected_helper(etl::transpose_impl::CUBLAS, transpose(a)); })
 )

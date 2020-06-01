@@ -14,6 +14,7 @@
 
 //Include the implementations
 #include "etl/impl/std/transpose.hpp"
+#include "etl/impl/vec/transpose.hpp"
 #include "etl/impl/blas/transpose.hpp"
 #include "etl/impl/cublas/transpose.hpp"
 
@@ -41,15 +42,23 @@ constexpr transpose_impl select_default_transpose_impl(bool no_gpu) {
         return transpose_impl::CUBLAS;
     }
 
+    constexpr bool vec_possible = vectorize_impl && is_dma<C> && is_floating<C>;
+
 #ifdef SLOW_MKL
-    // STD is always faster than MKL for out-of-place transpose
-    return transpose_impl::STD;
+    // VEC and STD is always faster than MKL for out-of-place transpose
+    if (vec_possible) {
+        return transpose_impl::VEC;
+    } else {
+        return transpose_impl::STD;
+    }
 #else
     // Condition to use MKL
     constexpr bool mkl_possible = mkl_enabled && is_dma<C> && is_floating<C>;
 
     if (mkl_possible) {
         return transpose_impl::MKL;
+    } else if (vec_possible) {
+        return transpose_impl::VEC;
     } else {
         return transpose_impl::STD;
     }
@@ -110,6 +119,15 @@ transpose_impl select_transpose_impl(transpose_impl def) {
             case transpose_impl::MKL:
                 if (!mkl_enabled || !all_dma<A, C> || !all_floating<A, C>) {
                     std::cerr << "Forced selection to MKL transpose implementation, but not possible for this expression" << std::endl;
+                    return def;
+                }
+
+                return forced;
+
+            //VEC cannot always be used
+            case transpose_impl::VEC:
+                if (!vectorize_impl || !all_dma<A, C> || !all_floating<A, C>) {
+                    std::cerr << "Forced selection to VEC transpose implementation, but not possible for this expression" << std::endl;
                     return def;
                 }
 
@@ -299,6 +317,11 @@ struct transpose {
                 constexpr_select(impl == transpose_impl::MKL) {
                     inc_counter("impl:mkl");
                     etl::impl::blas::transpose(aa, c);
+                }
+            else if
+                constexpr_select(impl == transpose_impl::VEC) {
+                    inc_counter("impl:vec");
+                    etl::impl::vec::transpose(aa, c);
                 }
             else if
                 constexpr_select(impl == transpose_impl::STD) {

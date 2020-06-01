@@ -19,6 +19,7 @@ namespace etl {
  */
 enum class transpose_impl {
     STD,    ///< Standard implementation
+    VEC,    ///< Vectorized implementation
     MKL,    ///< MKL implementation
     CUBLAS, ///< CUBLAS implementation
 };
