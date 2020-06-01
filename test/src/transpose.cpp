@@ -80,6 +80,41 @@ TRANSPOSE_TEST_CASE("transpose/dyn_matrix_2", "transpose") {
     REQUIRE_EQUALS(b(2, 1), -1);
 }
 
+TRANSPOSE_TEST_CASE("transpose/dyn_matrix_3", "transpose") {
+    etl::dyn_matrix<T> a(99, 33);
+    etl::dyn_matrix<T> b;
+    etl::dyn_matrix<T> c(33, 99);
+
+    Impl::apply(a, b);
+
+    for (size_t j = 0; j < 99; ++j) {
+        for (size_t i = 0; i < 33; ++i) {
+            c(i, j) = a(j, i);
+        }
+    }
+
+    REQUIRE(b == c);
+}
+
+TRANSPOSE_TEST_CASE("transpose/dyn_matrix_4", "transpose") {
+    const size_t N = 8 * 16 + 4 + 3;
+    const size_t M = 9 * 16 + 4 + 2;
+
+    etl::dyn_matrix<T> a(N, M);
+    etl::dyn_matrix<T> b;
+    etl::dyn_matrix<T> c(M, N);
+
+    Impl::apply(a, b);
+
+    for (size_t j = 0; j < N; ++j) {
+        for (size_t i = 0; i < M; ++i) {
+            c(i, j) = a(j, i);
+        }
+    }
+
+    REQUIRE(b == c);
+}
+
 INPLACE_TRANSPOSE_TEST_CASE("transpose/inplace/2", "[transpose]") {
     etl::dyn_matrix<T> a(3, 3, std::initializer_list<T>({1, 2, 3, 4, 5, 6, 7, 8, 9}));
 
