@@ -44,6 +44,8 @@ struct magic_view {
 
     const size_t n; ///< The dimensions of the magic matrix
 
+    static constexpr bool gpu_computable = false;
+
     /*!
      * \brief Construct a new magic_view with the given dimension
      */
@@ -139,6 +141,8 @@ struct magic_view {
 template <typename V, size_t N>
 struct fast_magic_view {
     using value_type = V; ///< The value type
+
+    static constexpr bool gpu_computable = false;
 
     /*!
      * \brief Returns the element at the given index

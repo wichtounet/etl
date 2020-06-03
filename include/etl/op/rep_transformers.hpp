@@ -19,6 +19,8 @@ struct rep_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
 
+    static constexpr bool gpu_computable = false;
+
 protected:
     sub_type sub; ///< The subexpression
 
@@ -100,6 +102,8 @@ struct rep_r_transformer : rep_transformer<T, rep_r_transformer<T, D...>> {
     using sub_type   = typename base_type::sub_type;   ///< The type on which the expression works
     using value_type = typename base_type::value_type; ///< The type of value
 
+    static constexpr bool gpu_computable = false;
+
 private:
     static constexpr size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr size_t dimensions = sizeof...(D) + sub_d;                 ///< The number of dimensions of the transformer
@@ -165,6 +169,8 @@ struct rep_l_transformer : rep_transformer<T, rep_l_transformer<T, D...>> {
     using base_type  = rep_transformer<T, this_type>;  ///< The base type
     using sub_type   = typename base_type::sub_type;   ///< The type on which the expression works
     using value_type = typename base_type::value_type; ///< The type of value
+
+    static constexpr bool gpu_computable = false;
 
 private:
     static constexpr size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
@@ -232,6 +238,8 @@ struct dyn_rep_r_transformer : rep_transformer<T, dyn_rep_r_transformer<T, D>> {
     using sub_type   = typename base_type::sub_type;   ///< The type on which the expression works
     using value_type = typename base_type::value_type; ///< The type of value
 
+    static constexpr bool gpu_computable = false;
+
 private:
     static constexpr size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr size_t dimensions = D + sub_d;                            ///< The number of dimensions of the transformer
@@ -293,6 +301,8 @@ struct dyn_rep_l_transformer : rep_transformer<T, dyn_rep_l_transformer<T, D>> {
     using base_type  = rep_transformer<T, this_type>;  ///< The base type
     using sub_type   = typename base_type::sub_type;   ///< The type on which the expression works
     using value_type = typename base_type::value_type; ///< The type of value
+
+    static constexpr bool gpu_computable = false;
 
 private:
     static constexpr size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type

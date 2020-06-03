@@ -21,6 +21,8 @@ struct argmax_transformer {
 
     friend struct etl_traits<argmax_transformer>;
 
+    static constexpr bool gpu_computable = false;
+
 private:
     sub_type sub; ///< The subexpression
 
@@ -120,6 +122,8 @@ struct argmin_transformer {
 
     friend struct etl_traits<argmin_transformer>;
 
+    static constexpr bool gpu_computable = false;
+
 private:
     sub_type sub; ///< The subexpression
 
@@ -217,6 +221,8 @@ struct sum_r_transformer {
     using value_type = value_t<T>; ///< The type of valuie
 
     friend struct etl_traits<sum_r_transformer>;
+
+    static constexpr bool gpu_computable = false;
 
 private:
     sub_type sub; ///< The subexpression
@@ -316,6 +322,8 @@ struct mean_r_transformer {
 
     friend struct etl_traits<mean_r_transformer>;
 
+    static constexpr bool gpu_computable = false;
+
 private:
     sub_type sub; ///< The subexpression
 
@@ -413,6 +421,8 @@ struct sum_l_transformer {
     using value_type = value_t<T>; ///< The type of valuie
 
     friend struct etl_traits<sum_l_transformer>;
+
+    static constexpr bool gpu_computable = false;
 
 private:
     sub_type sub; ///< The subexpression
@@ -532,6 +542,8 @@ struct mean_l_transformer {
     using value_type = value_t<T>; ///< The type of valuie
 
     friend struct etl_traits<mean_l_transformer>;
+
+    static constexpr bool gpu_computable = false;
 
 private:
     sub_type sub; ///< The subexpression

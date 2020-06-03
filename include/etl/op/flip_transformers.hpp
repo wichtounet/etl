@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "etl/impl/egblas/one_if_max_sub.hpp"
+
 namespace etl {
 
 /*!
@@ -22,6 +24,8 @@ struct one_if_max_sub_transformer {
     friend etl_traits<one_if_max_sub_transformer>;
 
     static_assert(is_2d<sub_type>, "one_if_max_sub is only defined for 2D Matrix");
+
+    static constexpr bool gpu_computable = impl::egblas::has_sone_if_max_sub && all_row_major<T> && all_floating<T>;
 
 private:
     sub_type sub; ///< The subexpression
@@ -82,6 +86,38 @@ public:
         return sub.alias(rhs);
     }
 
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     *
+     * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
+     */
+    template <typename Y>
+    auto gpu_compute_hint(Y& y) const noexcept {
+        decltype(auto) t1 = smart_gpu_compute_hint(sub, y);
+
+        auto t2 = force_temporary_gpu_dim_only(t1);
+
+        impl::egblas::one_if_max_sub(etl::dim<0>(y), etl::dim<1>(y), 1, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
+
+        return t2;
+    }
+    /*!
+     * \brief Compute the result of the operation using the GPU
+     *
+     * \param x The expression of the unary operation
+     * \param y The expression into which to store the reuslt
+     */
+    template <typename Y>
+    Y& gpu_compute(Y& y) const noexcept {
+        decltype(auto) t1 = select_smart_gpu_compute(sub, y);
+
+        impl::egblas::one_if_max_sub(etl::dim<0>(y), etl::dim<1>(y), 1, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+
+        return y;
+    }
+
     // Internals
 
     /*!
@@ -132,6 +168,8 @@ struct hflip_transformer {
     using value_type = value_t<T>; ///< The type of valuie
 
     friend etl_traits<hflip_transformer>;
+
+    static constexpr bool gpu_computable = false;
 
 private:
     sub_type sub; ///< The subexpression
@@ -256,6 +294,8 @@ struct vflip_transformer {
 
     friend etl_traits<vflip_transformer>;
 
+    static constexpr bool gpu_computable = false;
+
 private:
     sub_type sub; ///< The subexpression
 
@@ -379,6 +419,8 @@ struct fflip_transformer {
 
     friend etl_traits<fflip_transformer>;
 
+    static constexpr bool gpu_computable = false;
+
 private:
     sub_type sub; ///< The subexpression
 
@@ -492,29 +534,29 @@ template <typename T>
 struct etl_traits<
     T,
     std::enable_if_t<
-        cpp::is_specialization_of_v<
-            etl::hflip_transformer,
-            std::decay_t<
-                T>> || cpp::is_specialization_of_v<etl::vflip_transformer, std::decay_t<T>> || cpp::is_specialization_of_v<etl::fflip_transformer, std::decay_t<T>> || cpp::is_specialization_of_v<etl::one_if_max_sub_transformer, std::decay_t<T>>>> {
+           cpp::is_specialization_of_v<etl::hflip_transformer, std::decay_t<T>>
+        || cpp::is_specialization_of_v<etl::vflip_transformer, std::decay_t<T>>
+        || cpp::is_specialization_of_v<etl::fflip_transformer, std::decay_t<T>>
+        || cpp::is_specialization_of_v<etl::one_if_max_sub_transformer, std::decay_t<T>>>> {
     using expr_t     = T;                                  ///< The expression type
     using sub_expr_t = std::decay_t<typename T::sub_type>; ///< The sub expression type
     using value_type = value_t<sub_expr_t>;                ///< The value type
 
-    static constexpr bool is_etl         = true;                                  ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer = true;                                  ///< Indicates if the type is a transformer
-    static constexpr bool is_view        = false;                                 ///< Indicates if the type is a view
-    static constexpr bool is_magic_view  = false;                                 ///< Indicates if the type is a magic view
-    static constexpr bool is_fast        = etl_traits<sub_expr_t>::is_fast;       ///< Indicates if the expression is fast
-    static constexpr bool is_linear      = false;                                 ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe = true;                                  ///< Indicates if the expression is thread safe
-    static constexpr bool is_value       = false;                                 ///< Indicates if the expression is of value type
-    static constexpr bool is_direct      = false;                                 ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator   = false;                                 ///< Indicates if the expression is a generated
-    static constexpr bool is_padded      = false;                                 ///< Indicates if the expression is padded
-    static constexpr bool is_aligned     = false;                                 ///< Indicates if the expression is padded
-    static constexpr bool is_temporary   = etl_traits<sub_expr_t>::is_temporary;  ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr bool gpu_computable = false;                                 ///< Indicates if the expression can be computed on GPU
-    static constexpr order storage_order = etl_traits<sub_expr_t>::storage_order; ///< The expression storage order
+    static constexpr bool  is_etl         = true;                                  ///< Indicates if the type is an ETL expression
+    static constexpr bool  is_transformer = true;                                  ///< Indicates if the type is a transformer
+    static constexpr bool  is_view        = false;                                 ///< Indicates if the type is a view
+    static constexpr bool  is_magic_view  = false;                                 ///< Indicates if the type is a magic view
+    static constexpr bool  is_fast        = etl_traits<sub_expr_t>::is_fast;       ///< Indicates if the expression is fast
+    static constexpr bool  is_linear      = false;                                 ///< Indicates if the expression is linear
+    static constexpr bool  is_thread_safe = true;                                  ///< Indicates if the expression is thread safe
+    static constexpr bool  is_value       = false;                                 ///< Indicates if the expression is of value type
+    static constexpr bool  is_direct      = false;                                 ///< Indicates if the expression has direct memory access
+    static constexpr bool  is_generator   = false;                                 ///< Indicates if the expression is a generated
+    static constexpr bool  is_padded      = false;                                 ///< Indicates if the expression is padded
+    static constexpr bool  is_aligned     = false;                                 ///< Indicates if the expression is padded
+    static constexpr bool  is_temporary   = etl_traits<sub_expr_t>::is_temporary;  ///< Indicates if the expression needs an evaluator visitor
+    static constexpr bool  gpu_computable = T::gpu_computable;                     ///< Indicates if the expression can be computed on GPU
+    static constexpr order storage_order  = etl_traits<sub_expr_t>::storage_order; ///< The expression storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

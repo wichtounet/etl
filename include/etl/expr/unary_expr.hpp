@@ -58,8 +58,8 @@ struct transform_op {
     /*!
      * \brief Indicates if the operator can be computed on GPU
      */
-    template <typename E>
-    static constexpr bool gpu_computable = false;
+    template <typename Expr>
+    static constexpr bool gpu_computable = Expr::gpu_computable;
 };
 
 /*!
@@ -915,6 +915,24 @@ public:
     template <typename E>
     bool alias(const E& rhs) const noexcept {
         return value.alias(rhs);
+    }
+
+    /*!
+     * \brief Return a GPU computed version of this expression
+     * \return a GPU-computed ETL expression for this expression
+     */
+    template <typename Y>
+    decltype(auto) gpu_compute_hint(Y& y) const {
+        return value.gpu_compute_hint(y);
+    }
+
+    /*!
+     * \brief Return a GPU computed version of this expression
+     * \return a GPU-computed ETL expression for this expression
+     */
+    template <typename Y>
+    decltype(auto) gpu_compute(Y& y) const {
+        return value.gpu_compute(y);
     }
 
     // Assignment functions

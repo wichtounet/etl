@@ -30,6 +30,8 @@ struct mm_mul_transformer {
     left_type left;   ///< The left expression
     right_type right; ///< The right expression
 
+    static constexpr bool gpu_computable = false;
+
     /*!
      * \brief Construct a new transformer around the given expressions
      * \param left The left hand side sub expression
@@ -161,6 +163,8 @@ struct dyn_convmtx_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
 
+    static constexpr bool gpu_computable = false;
+
     static_assert(is_1d<T>, "convmtx can only be applied on vectors");
 
     sub_type sub; ///< The subexpression
@@ -264,6 +268,8 @@ struct dyn_convmtx2_transformer {
     using value_type = value_t<T>; ///< The type of valuie
 
     static_assert(is_2d<T>, "convmtx2 can only be applied on matrices");
+
+    static constexpr bool gpu_computable = false;
 
     sub_type sub;          ///< The subexpression
     const size_t k1;       ///< The first dimension of the kernel
