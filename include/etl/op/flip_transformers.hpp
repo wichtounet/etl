@@ -101,6 +101,9 @@ public:
 
         impl::egblas::one_if_max_sub(etl::dim<0>(y), etl::dim<1>(y), 1, t1.gpu_memory(), 1, t2.gpu_memory(), 1);
 
+        t2.invalidate_cpu();
+        t2.validate_gpu();
+
         return t2;
     }
     /*!
@@ -114,6 +117,9 @@ public:
         decltype(auto) t1 = select_smart_gpu_compute(sub, y);
 
         impl::egblas::one_if_max_sub(etl::dim<0>(y), etl::dim<1>(y), 1, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+
+        y.invalidate_cpu();
+        y.validate_gpu();
 
         return y;
     }
