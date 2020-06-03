@@ -37,11 +37,6 @@ void batch_outer_impl(const L& lhs, const R& rhs, C&& result) {
     lhs.ensure_cpu_up_to_date();
     rhs.ensure_cpu_up_to_date();
 
-    // While this algorithm is very efficient in single-thread
-    // the parallelization is not the base
-    // TODO The transposition could be done in parallel
-    // Also, L2 transposition could be done only partly by each thread
-
     auto L2 = force_temporary_opp(lhs);
     auto R2 = force_temporary_opp(rhs);
 
