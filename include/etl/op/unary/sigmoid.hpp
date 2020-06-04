@@ -106,8 +106,14 @@ struct sigmoid_unary_op {
 
         if (n < 8 * 1024 * 1024 && is_single_precision<Y> && impl::egblas::has_ssigmoid) {
             impl::egblas::sigmoid(n, 1, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+
+            y.validate_gpu();
+            y.invalidate_cpu();
         } else if (n < 1024 * 1024 && is_double_precision<Y> && impl::egblas::has_dsigmoid) {
             impl::egblas::sigmoid(n, 1, t1.gpu_memory(), 1, y.gpu_memory(), 1);
+
+            y.validate_gpu();
+            y.invalidate_cpu();
         } else {
             impl::cudnn::sigmoid(t1, y);
         }
