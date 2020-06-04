@@ -78,18 +78,22 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
         [[maybe_unused]] const auto K = etl::dim<1>(a);
 
         if constexpr (!Mean && impl::egblas::has_sbias_batch_sum && all_row_major<A> && all_floating<A, L>) {
-            a.ensure_gpu_up_to_date();
+            auto t1 = smart_forward_gpu(a);
+            t1.ensure_gpu_up_to_date();
+
             lhs.ensure_gpu_allocated();
 
-            impl::egblas::bias_batch_sum(N, K, a.gpu_memory(), 1, lhs.gpu_memory(), 1);
+            impl::egblas::bias_batch_sum(N, K, t1.gpu_memory(), 1, lhs.gpu_memory(), 1);
 
             lhs.validate_gpu();
             lhs.invalidate_cpu();
         } else if constexpr (Mean && impl::egblas::has_sbias_batch_mean && all_row_major<A> && all_floating<A, L>) {
-            a.ensure_gpu_up_to_date();
+            auto t1 = smart_forward_gpu(a);
+            t1.ensure_gpu_up_to_date();
+
             lhs.ensure_gpu_allocated();
 
-            impl::egblas::bias_batch_mean(N, K, a.gpu_memory(), 1, lhs.gpu_memory(), 1);
+            impl::egblas::bias_batch_mean(N, K, t1.gpu_memory(), 1, lhs.gpu_memory(), 1);
 
             lhs.validate_gpu();
             lhs.invalidate_cpu();
