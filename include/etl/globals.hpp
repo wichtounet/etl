@@ -956,9 +956,14 @@ void shuffle_swap(T& v1, size_t i, size_t new_i) {
         v1(i)     = v1(new_i);
         v1(new_i) = t;
     } else {
-        auto t    = etl::force_temporary(v1(i));
-        v1(i)     = v1(new_i);
-        v1(new_i) = t;
+        auto s1 = v1(i);
+        auto s2 = v1(new_i);
+
+        for (size_t index = 0 ; index < etl::subsize(v1); ++index) {
+            auto t    = s1[index];
+            s1[index] = s2[index];
+            s2[index] = t;
+        }
     }
 }
 
@@ -997,6 +1002,9 @@ void parallel_shuffle(T1& v1, T2& v2, G&& g) {
         using param_t        = typename distribution_t::param_type;
 
         distribution_t dist;
+
+        // Note: We must handle non-homogeneous matrices here
+        // For instance, a matrix and a vector hence, the code in shuffle_swap
 
         for (auto i = n - 1; i > 0; --i) {
             auto new_i = dist(g, param_t(0, i));
