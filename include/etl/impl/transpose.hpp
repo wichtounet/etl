@@ -42,6 +42,37 @@ constexpr transpose_impl select_default_transpose_impl(bool no_gpu) {
         return transpose_impl::CUBLAS;
     }
 
+#ifdef SLOW_MKL
+    // STD is always faster than MKL for out-of-place transpose
+    return transpose_impl::STD;
+#else
+    // Condition to use MKL
+    constexpr bool mkl_possible = mkl_enabled && is_dma<C> && is_floating<C>;
+
+    if (mkl_possible) {
+        return transpose_impl::MKL;
+    } else {
+        return transpose_impl::STD;
+    }
+#endif
+}
+
+/*!
+ * \brief Select the default transposition implementation to use
+ *
+ * This does not take local context into account
+ *
+ * \tparam A The type of input
+ * \tparam C The type of output
+ *
+ * \return The best default transpose implementation to use
+ */
+template <typename A, typename C>
+constexpr transpose_impl select_default_oop_transpose_impl(bool no_gpu) {
+    if (cublas_enabled && all_dma<A, C> && all_floating<A, C> && !no_gpu) {
+        return transpose_impl::CUBLAS;
+    }
+
     constexpr bool vec_possible = vectorize_impl && is_dma<C> && is_floating<C>;
 
 #ifdef SLOW_MKL
@@ -156,6 +187,19 @@ transpose_impl select_normal_transpose_impl() {
 }
 
 /*!
+ * \brief Select the transposition implementation to use
+ *
+ * \tparam A The type of input
+ * \tparam C The type of output
+ *
+ * \return The best transpose implementation to use
+ */
+template <typename A, typename C>
+transpose_impl select_oop_transpose_impl() {
+    return select_transpose_impl<A, C>(select_default_oop_transpose_impl<A, C>(local_context().cpu));
+}
+
+/*!
  * \brief Select the transposition implementation to use for an inplace
  * square transposition operation.
  *
@@ -182,6 +226,19 @@ transpose_impl select_in_square_transpose_impl() {
 template <typename A, typename C>
 constexpr transpose_impl select_normal_transpose_impl() {
     return select_default_transpose_impl<A, C>(false);
+}
+
+/*!
+ * \brief Select the transposition implementation to use
+ *
+ * \tparam A The type of input
+ * \tparam C The type of output
+ *
+ * \return The best transpose implementation to use
+ */
+template <typename A, typename C>
+constexpr transpose_impl select_oop_transpose_impl() {
+    return select_default_oop_transpose_impl<A, C>(false);
 }
 
 /*!
@@ -277,7 +334,7 @@ struct transpose {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        constexpr_select const auto impl = select_normal_transpose_impl<A, C>();
+        constexpr_select const auto impl = select_oop_transpose_impl<A, C>();
 
         if
             constexpr_select(impl == transpose_impl::CUBLAS) {
