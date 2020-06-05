@@ -437,24 +437,15 @@ auto rep_l(E&& value, size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_l_tra
  *
  * \return an expression representing the aggregated expression
  */
-template <typename E, cpp_enable_iff(decay_traits<E>::dimensions() > 1)>
-auto argmax(E&& value) -> detail::stable_transform_helper<E, argmax_transformer> {
+template <typename E>
+auto argmax(E&& value) {
     static_assert(is_etl_expr<E>, "etl::argmax can only be used on ETL expressions");
-    return detail::make_transform_expr<E, argmax_transformer>(value);
-}
 
-/*!
- * \brief Returns the indices of the maximum values in the first axis of the
- * given matrix. If passed a vector, returns the index of the maximum element.
- *
- * \param value The matrix or vector to aggregate
- *
- * \return an expression representing the aggregated expression
- */
-template <typename E, cpp_enable_iff(is_1d<E>)>
-size_t argmax(E&& value) {
-    static_assert(is_etl_expr<E>, "etl::argmax can only be used on ETL expressions");
-    return max_index(value);
+    if constexpr (decay_traits<E>::dimensions() > 1) {
+        return detail::make_transform_expr<E, argmax_transformer>(value);
+    } else {
+        return max_index(value);
+    }
 }
 
 /*!
@@ -465,24 +456,15 @@ size_t argmax(E&& value) {
  *
  * \return an expression representing the aggregated expression
  */
-template <typename E, cpp_enable_iff(decay_traits<E>::dimensions() > 1)>
-auto argmin(E&& value) -> detail::stable_transform_helper<E, argmin_transformer> {
-    static_assert(is_etl_expr<E>, "etl::argmax can only be used on ETL expressions");
-    return detail::make_transform_expr<E, argmin_transformer>(value);
-}
+template <typename E>
+auto argmin(E&& value) {
+    static_assert(is_etl_expr<E>, "etl::argmin can only be used on ETL expressions");
 
-/*!
- * \brief Returns the indices of the minimum values in the first axis of the
- * given matrix. If passed a vector, returns the index of the mimimum element.
- *
- * \param value The value to aggregate
- *
- * \return an expression representing the aggregated expression
- */
-template <typename E, cpp_enable_iff(is_1d<E>)>
-size_t argmin(E&& value) {
-    static_assert(is_etl_expr<E>, "etl::argmax can only be used on ETL expressions");
-    return min_index(value);
+    if constexpr (decay_traits<E>::dimensions() > 1) {
+        return detail::make_transform_expr<E, argmin_transformer>(value);
+    } else {
+        return min_index(value);
+    }
 }
 
 /*!

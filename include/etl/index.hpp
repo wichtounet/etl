@@ -97,14 +97,12 @@ constexpr size_t cm_compute_index(size_t first, size_t second, S... args) noexce
 //Note: Version with sizes moved to a std::array and accessed with
 //standard loop may be faster, but need some stack space (relevant ?)
 
-// Static index (row major)
-
 /*!
  * \brief Compute the index for a 1D fast matrix
  * \param i The index to access
  * \return The flat position of (i)
  */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::RowMajor)>
+template <typename T>
 constexpr size_t fast_index(size_t i) noexcept(assert_nothrow) {
     static_assert(is_1d<T>, "Invalid number of dimensions for fast_index");
 
@@ -119,14 +117,21 @@ constexpr size_t fast_index(size_t i) noexcept(assert_nothrow) {
  * \param j The index of the second dimension to access
  * \return The flat position of (i,j)
  */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::RowMajor)>
+template <typename T>
 constexpr size_t fast_index(size_t i, size_t j) noexcept(assert_nothrow) {
     static_assert(is_2d<T>, "Invalid number of dimensions for fast_index");
 
-    cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
-    cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");
+    if constexpr (decay_traits<T>::storage_order == order::RowMajor) {
+        cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
+        cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");
 
-    return i * decay_traits<T>::template dim<1>() + j;
+        return i * decay_traits<T>::template dim<1>() + j;
+    } else {
+        cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
+        cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");
+
+        return i + j * decay_traits<T>::template dim<0>();
+    }
 }
 
 /*!
@@ -136,15 +141,23 @@ constexpr size_t fast_index(size_t i, size_t j) noexcept(assert_nothrow) {
  * \param k The index of the third dimension to access
  * \return The flat position of (i,j,k)
  */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::RowMajor)>
+template <typename T>
 constexpr size_t fast_index(size_t i, size_t j, size_t k) noexcept(assert_nothrow) {
     static_assert(is_3d<T>, "Invalid number of dimensions for fast_index");
 
-    cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
-    cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");
-    cpp_assert(k < decay_traits<T>::template dim<2>(), "Out of bounds");
+    if constexpr (decay_traits<T>::storage_order == order::RowMajor) {
+        cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
+        cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");
+        cpp_assert(k < decay_traits<T>::template dim<2>(), "Out of bounds");
 
-    return i * decay_traits<T>::template dim<1>() * decay_traits<T>::template dim<2>() + j * decay_traits<T>::template dim<2>() + k;
+        return i * decay_traits<T>::template dim<1>() * decay_traits<T>::template dim<2>() + j * decay_traits<T>::template dim<2>() + k;
+    } else {
+        cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
+        cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");
+        cpp_assert(k < decay_traits<T>::template dim<2>(), "Out of bounds");
+
+        return i + j * decay_traits<T>::template dim<0>() + k * decay_traits<T>::template dim<0>() * decay_traits<T>::template dim<1>();
+    }
 }
 
 /*!
@@ -155,17 +168,27 @@ constexpr size_t fast_index(size_t i, size_t j, size_t k) noexcept(assert_nothro
  * \param l The index of the fourth dimension to access
  * \return The flat position of (i,j,k,l)
  */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::RowMajor)>
+template <typename T>
 constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexcept(assert_nothrow) {
     static_assert(is_4d<T>, "Invalid number of dimensions for fast_index");
 
-    cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
-    cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");
-    cpp_assert(k < decay_traits<T>::template dim<2>(), "Out of bounds");
-    cpp_assert(l < decay_traits<T>::template dim<3>(), "Out of bounds");
+    if constexpr (decay_traits<T>::storage_order == order::RowMajor) {
+        cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
+        cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");
+        cpp_assert(k < decay_traits<T>::template dim<2>(), "Out of bounds");
+        cpp_assert(l < decay_traits<T>::template dim<3>(), "Out of bounds");
 
-    return i * decay_traits<T>::template dim<1>() * decay_traits<T>::template dim<2>() * decay_traits<T>::template dim<3>()
-           + j * decay_traits<T>::template dim<2>() * decay_traits<T>::template dim<3>() + k * decay_traits<T>::template dim<3>() + l;
+        return i * decay_traits<T>::template dim<1>() * decay_traits<T>::template dim<2>() * decay_traits<T>::template dim<3>()
+               + j * decay_traits<T>::template dim<2>() * decay_traits<T>::template dim<3>() + k * decay_traits<T>::template dim<3>() + l;
+    } else {
+        cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
+        cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");
+        cpp_assert(k < decay_traits<T>::template dim<2>(), "Out of bounds");
+        cpp_assert(l < decay_traits<T>::template dim<3>(), "Out of bounds");
+
+        return i + j * decay_traits<T>::template dim<0>() + k * decay_traits<T>::template dim<0>() * decay_traits<T>::template dim<1>()
+               + l * decay_traits<T>::template dim<0>() * decay_traits<T>::template dim<1>() * decay_traits<T>::template dim<2>();
+    }
 }
 
 /*!
@@ -173,11 +196,15 @@ constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexcept(ass
  * \param sizes The indices to access
  * \return The flat position of (sizes...)
  */
-template <typename T, typename... S, cpp_enable_iff(sizeof...(S) > 4 && decay_traits<T>::storage_order == order::RowMajor)>
+template <typename T, typename... S, cpp_enable_iff(sizeof...(S) > 4)>
 constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for fast_index");
 
-    return detail::rm_compute_index<T, 0>(sizes...);
+    if constexpr (decay_traits<T>::storage_order == order::RowMajor) {
+        return detail::rm_compute_index<T, 0>(sizes...);
+    } else {
+        return detail::cm_compute_index<T, 0>(sizes...);
+    }
 }
 
 // Dynamic index (row major)
@@ -188,7 +215,7 @@ constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) {
  * \param i The index to access
  * \return The flat position of (i)
  */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::RowMajor)>
+template <typename T>
 size_t dyn_index([[maybe_unused]] const T& expression, size_t i) noexcept(assert_nothrow) {
     static_assert(is_1d<T>, "Invalid number of dimensions for dyn_index");
 
@@ -204,14 +231,21 @@ size_t dyn_index([[maybe_unused]] const T& expression, size_t i) noexcept(assert
  * \param j The index of the second dimension to access
  * \return The flat position of (i,j)
  */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::RowMajor)>
+template <typename T>
 size_t dyn_index(const T& expression, size_t i, size_t j) noexcept(assert_nothrow) {
     static_assert(is_2d<T>, "Invalid number of dimensions for dyn_index");
 
-    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
-    cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
+    if constexpr (decay_traits<T>::storage_order == order::RowMajor) {
+        cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
+        cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
 
-    return i * decay_traits<T>::dim(expression, 1) + j;
+        return i * decay_traits<T>::dim(expression, 1) + j;
+    } else {
+        cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
+        cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
+
+        return i + j * decay_traits<T>::dim(expression, 0);
+    }
 }
 
 /*!
@@ -222,15 +256,23 @@ size_t dyn_index(const T& expression, size_t i, size_t j) noexcept(assert_nothro
  * \param k The index of the third dimension to access
  * \return The flat position of (i,j,k)
  */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::RowMajor)>
+template <typename T>
 size_t dyn_index(const T& expression, size_t i, size_t j, size_t k) noexcept(assert_nothrow) {
     static_assert(is_3d<T>, "Invalid number of dimensions for dyn_index");
 
-    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
-    cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
-    cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
+    if constexpr (decay_traits<T>::storage_order == order::RowMajor) {
+        cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
+        cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
+        cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
 
-    return i * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2) + j * decay_traits<T>::dim(expression, 2) + k;
+        return i * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2) + j * decay_traits<T>::dim(expression, 2) + k;
+    } else {
+        cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
+        cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
+        cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
+
+        return i + j * decay_traits<T>::dim(expression, 0) + k * decay_traits<T>::dim(expression, 0) * decay_traits<T>::dim(expression, 1);
+    }
 }
 
 /*!
@@ -242,17 +284,27 @@ size_t dyn_index(const T& expression, size_t i, size_t j, size_t k) noexcept(ass
  * \param l The index of the fourth dimension to access
  * \return The flat position of (i,j,k,l)
  */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::RowMajor)>
+template <typename T>
 size_t dyn_index(const T& expression, size_t i, size_t j, size_t k, size_t l) noexcept(assert_nothrow) {
     static_assert(is_4d<T>, "Invalid number of dimensions for dyn_index");
 
-    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
-    cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
-    cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
-    cpp_assert(l < decay_traits<T>::dim(expression, 3), "Out of bounds");
+    if constexpr (decay_traits<T>::storage_order == order::RowMajor) {
+        cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
+        cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
+        cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
+        cpp_assert(l < decay_traits<T>::dim(expression, 3), "Out of bounds");
 
-    return i * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2) * decay_traits<T>::dim(expression, 3)
-           + j * decay_traits<T>::dim(expression, 2) * decay_traits<T>::dim(expression, 3) + k * decay_traits<T>::dim(expression, 3) + l;
+        return i * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2) * decay_traits<T>::dim(expression, 3)
+               + j * decay_traits<T>::dim(expression, 2) * decay_traits<T>::dim(expression, 3) + k * decay_traits<T>::dim(expression, 3) + l;
+    } else {
+        cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
+        cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
+        cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
+        cpp_assert(l < decay_traits<T>::dim(expression, 3), "Out of bounds");
+
+        return i + j * decay_traits<T>::dim(expression, 0) + k * decay_traits<T>::dim(expression, 0) * decay_traits<T>::dim(expression, 1)
+               + l * decay_traits<T>::dim(expression, 0) * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2);
+    }
 }
 
 /*!
@@ -261,206 +313,39 @@ size_t dyn_index(const T& expression, size_t i, size_t j, size_t k, size_t l) no
  * \param sizes The indices to access
  * \return The flat position of (sizes...)
  */
-template <typename T, typename... S, cpp_enable_iff(sizeof...(S) > 4 && decay_traits<T>::storage_order == order::RowMajor)>
+template <typename T, typename... S, cpp_enable_iff(sizeof...(S) > 4)>
 size_t dyn_index(const T& expression, S... sizes) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for dyn_index");
 
-    size_t index   = 0;
-    size_t subsize = decay_traits<T>::size(expression);
-    size_t i       = 0;
+    if constexpr (decay_traits<T>::storage_order == order::RowMajor) {
+        size_t index   = 0;
+        size_t subsize = decay_traits<T>::size(expression);
+        size_t i       = 0;
 
-    cpp::for_each_in(
-        [&subsize, &index, &i, &expression](size_t s) {
-            cpp_assert(s < decay_traits<T>::dim(expression, i), "Out of bounds");
-            subsize /= decay_traits<T>::dim(expression, i++);
-            index += subsize * s;
-        },
-        sizes...);
+        cpp::for_each_in(
+            [&subsize, &index, &i, &expression](size_t s) {
+                cpp_assert(s < decay_traits<T>::dim(expression, i), "Out of bounds");
+                subsize /= decay_traits<T>::dim(expression, i++);
+                index += subsize * s;
+            },
+            sizes...);
 
-    return index;
-}
+        return index;
+    } else {
+        size_t index   = 0;
+        size_t subsize = 1;
+        size_t i       = 0;
 
-// Fast index (column major)
+        cpp::for_each_in(
+            [&subsize, &index, &i, &expression](size_t s) {
+                cpp_assert(s < decay_traits<T>::dim(expression, i), "Out of bounds");
+                index += subsize * s;
+                subsize *= decay_traits<T>::dim(expression, i++);
+            },
+            sizes...);
 
-/*!
- * \brief Compute the index for a 1D fast matrix
- * \param i The index to access
- * \return The flat position of (i)
- */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::ColumnMajor)>
-constexpr size_t fast_index(size_t i) noexcept(assert_nothrow) {
-    static_assert(is_1d<T>, "Invalid number of dimensions for fast_index");
-
-    cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
-
-    return i;
-}
-
-/*!
- * \brief Compute the index for a 2D fast matrix
- * \param i The index of the first dimension to access
- * \param j The index of the second dimension to access
- * \return The flat position of (i,j)
- */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::ColumnMajor)>
-constexpr size_t fast_index(size_t i, size_t j) noexcept(assert_nothrow) {
-    static_assert(is_2d<T>, "Invalid number of dimensions for fast_index");
-
-    cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
-    cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");
-
-    return i + j * decay_traits<T>::template dim<0>();
-}
-
-/*!
- * \brief Compute the index for a 3D fast matrix
- * \param i The index of the first dimension to access
- * \param j The index of the second dimension to access
- * \param k The index of the third dimension to access
- * \return The flat position of (i,j,k)
- */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::ColumnMajor)>
-constexpr size_t fast_index(size_t i, size_t j, size_t k) noexcept(assert_nothrow) {
-    static_assert(is_3d<T>, "Invalid number of dimensions for fast_index");
-
-    cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
-    cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");
-    cpp_assert(k < decay_traits<T>::template dim<2>(), "Out of bounds");
-
-    return i + j * decay_traits<T>::template dim<0>() + k * decay_traits<T>::template dim<0>() * decay_traits<T>::template dim<1>();
-}
-
-/*!
- * \brief Compute the index for a 4D fast matrix
- * \param i The index of the first dimension to access
- * \param j The index of the second dimension to access
- * \param k The index of the third dimension to access
- * \param l The index of the fourth dimension to access
- * \return The flat position of (i,j,k,l)
- */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::ColumnMajor)>
-constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexcept(assert_nothrow) {
-    static_assert(is_4d<T>, "Invalid number of dimensions for fast_index");
-
-    cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
-    cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");
-    cpp_assert(k < decay_traits<T>::template dim<2>(), "Out of bounds");
-    cpp_assert(l < decay_traits<T>::template dim<3>(), "Out of bounds");
-
-    return i + j * decay_traits<T>::template dim<0>() + k * decay_traits<T>::template dim<0>() * decay_traits<T>::template dim<1>()
-           + l * decay_traits<T>::template dim<0>() * decay_traits<T>::template dim<1>() * decay_traits<T>::template dim<2>();
-}
-
-/*!
- * \brief Compute the index for a N-D fast matrix
- * \param sizes The indices to access
- * \return The flat position of (sizes...)
- */
-template <typename T, typename... S, cpp_enable_iff(sizeof...(S) > 4 && decay_traits<T>::storage_order == order::ColumnMajor)>
-constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) {
-    static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for fast_index");
-
-    return detail::cm_compute_index<T, 0>(sizes...);
-}
-
-// Dynamic index (column major)
-
-/*!
- * \brief Compute the index for a 1D dynamic matrix
- * \param expression The matrix reference
- * \param i The index to access
- * \return The flat position of (i)
- */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::ColumnMajor)>
-size_t dyn_index([[maybe_unused]] const T& expression, size_t i) noexcept(assert_nothrow) {
-    static_assert(is_1d<T>, "Invalid number of dimensions for dyn_index");
-
-    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
-
-    return i;
-}
-
-/*!
- * \brief Compute the index for a 2D dynamic matrix
- * \param expression The matrix reference
- * \param i The index of the first dimension to access
- * \param j The index of the second dimension to access
- * \return The flat position of (i,j)
- */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::ColumnMajor)>
-size_t dyn_index(const T& expression, size_t i, size_t j) noexcept(assert_nothrow) {
-    static_assert(is_2d<T>, "Invalid number of dimensions for dyn_index");
-
-    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
-    cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
-
-    return i + j * decay_traits<T>::dim(expression, 0);
-}
-
-/*!
- * \brief Compute the index for a 3D dynamic matrix
- * \param expression The matrix reference
- * \param i The index of the first dimension to access
- * \param j The index of the second dimension to access
- * \param k The index of the third dimension to access
- * \return The flat position of (i,j,k)
- */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::ColumnMajor)>
-size_t dyn_index(const T& expression, size_t i, size_t j, size_t k) noexcept(assert_nothrow) {
-    static_assert(is_3d<T>, "Invalid number of dimensions for dyn_index");
-
-    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
-    cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
-    cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
-
-    return i + j * decay_traits<T>::dim(expression, 0) + k * decay_traits<T>::dim(expression, 0) * decay_traits<T>::dim(expression, 1);
-}
-
-/*!
- * \brief Compute the index for a 4D dynamic matrix
- * \param expression The matrix reference
- * \param i The index of the first dimension to access
- * \param j The index of the second dimension to access
- * \param k The index of the third dimension to access
- * \param l The index of the fourth dimension to access
- * \return The flat position of (i,j,k,l)
- */
-template <typename T, cpp_enable_iff(decay_traits<T>::storage_order == order::ColumnMajor)>
-size_t dyn_index(const T& expression, size_t i, size_t j, size_t k, size_t l) noexcept(assert_nothrow) {
-    static_assert(is_4d<T>, "Invalid number of dimensions for dyn_index");
-
-    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
-    cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
-    cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
-    cpp_assert(l < decay_traits<T>::dim(expression, 3), "Out of bounds");
-
-    return i + j * decay_traits<T>::dim(expression, 0) + k * decay_traits<T>::dim(expression, 0) * decay_traits<T>::dim(expression, 1)
-           + l * decay_traits<T>::dim(expression, 0) * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2);
-}
-
-/*!
- * \brief Compute the index for a N-D dynamic matrix
- * \param expression The matrix reference
- * \param sizes The indices to access
- * \return The flat position of (sizes...)
- */
-template <typename T, typename... S, cpp_enable_iff(sizeof...(S) > 4 && decay_traits<T>::storage_order == order::ColumnMajor)>
-size_t dyn_index(const T& expression, S... sizes) noexcept(assert_nothrow) {
-    static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for dyn_index");
-
-    size_t index   = 0;
-    size_t subsize = 1;
-    size_t i       = 0;
-
-    cpp::for_each_in(
-        [&subsize, &index, &i, &expression](size_t s) {
-            cpp_assert(s < decay_traits<T>::dim(expression, i), "Out of bounds");
-            index += subsize * s;
-            subsize *= decay_traits<T>::dim(expression, i++);
-        },
-        sizes...);
-
-    return index;
+        return index;
+    }
 }
 
 } //end of namespace etl

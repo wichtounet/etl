@@ -16,30 +16,24 @@ namespace etl {
  * \param m The expression to transform
  * \return a string representing the contents of the expression
  */
-template <typename T, cpp_enable_iff(decay_traits<T>::dimensions() > 1)>
+template <typename T>
 std::string to_string(T&& m) {
-    etl::force(m);
+    if constexpr (decay_traits<T>::dimensions() > 1) {
+        etl::force(m);
 
-    std::string v = "[";
-    for (size_t i = 0; i < etl::dim<0>(m); ++i) {
-        v += to_string(sub(m, i));
+        std::string v = "[";
+        for (size_t i = 0; i < etl::dim<0>(m); ++i) {
+            v += to_string(sub(m, i));
 
-        if (i < etl::dim<0>(m) - 1) {
-            v += "\n";
+            if (i < etl::dim<0>(m) - 1) {
+                v += "\n";
+            }
         }
+        v += "]";
+        return v;
+    } else {
+        return to_octave(m);
     }
-    v += "]";
-    return v;
-}
-
-/*!
- * \brief Construct a textual representation of the matrix contents
- * \param m The expression to transform
- * \return a string representing the contents of the expression
- */
-template <typename T, cpp_enable_iff(is_1d<T>)>
-std::string to_string(T&& m) {
-    return to_octave(m);
 }
 
 /*!
@@ -47,52 +41,38 @@ std::string to_string(T&& m) {
  * \param m The expression to transform
  * \return a string representing the contents of the expression
  */
-template <bool Sub = false, typename T, cpp_enable_iff(decay_traits<T>::dimensions() > 1)>
+template <bool Sub = false, typename T>
 std::string to_octave(T&& m) {
     etl::force(m);
 
     std::string v;
+
     if (!Sub) {
         v = "[";
     }
 
-    for (size_t i = 0; i < etl::dim<0>(m); ++i) {
-        v += to_octave<true>(sub(m, i));
+    if constexpr (decay_traits<T>::dimensions() > 1) {
+        for (size_t i = 0; i < etl::dim<0>(m); ++i) {
+            v += to_octave<true>(sub(m, i));
 
-        if (i < etl::dim<0>(m) - 1) {
-            v += ";";
+            if (i < etl::dim<0>(m) - 1) {
+                v += ";";
+            }
         }
-    }
 
-    if (!Sub) {
-        v += "]";
-    }
+        if (!Sub) {
+            v += "]";
+        }
+    } else {
+        std::string comma;
+        for (size_t j = 0; j < etl::dim<0>(m); ++j) {
+            v += comma + std::to_string(m(j));
+            comma = ",";
+        }
 
-    return v;
-}
-
-/*!
- * \brief Construct a textual representation of the matrix contents, following the octave format
- * \param m The expression to transform
- * \return a string representing the contents of the expression
- */
-template <bool Sub = false, typename T, cpp_enable_iff(is_1d<T>)>
-std::string to_octave(T&& m) {
-    etl::force(m);
-
-    std::string v;
-    if (!Sub) {
-        v = "[";
-    }
-
-    std::string comma;
-    for (size_t j = 0; j < etl::dim<0>(m); ++j) {
-        v += comma + std::to_string(m(j));
-        comma = ",";
-    }
-
-    if (!Sub) {
-        v += "]";
+        if (!Sub) {
+            v += "]";
+        }
     }
 
     return v;

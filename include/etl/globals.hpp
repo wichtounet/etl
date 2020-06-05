@@ -765,9 +765,13 @@ void shuffle_first(T& matrix) {
  *
  * \param vector The vector to shuffle
  */
-template <typename T, cpp_enable_iff(is_1d<T>)>
+template <typename T>
 void shuffle(T& vector) {
-    shuffle_flat(vector);
+    if constexpr (is_1d<T>) {
+        shuffle_flat(vector);
+    } else {
+        shuffle_first(vector);
+    }
 }
 
 /*!
@@ -779,44 +783,13 @@ void shuffle(T& vector) {
  * \param vector The vector to shuffle
  * \param g The generator to use for random number generation
  */
-template <typename T, typename G, cpp_enable_iff(is_1d<T>)>
+template <typename T, typename G>
 void shuffle(T& vector, G&& g) {
-    shuffle_flat(vector, g);
-}
-
-/*!
- * \brief Shuffle all the elements of a matrix.
- *
- * The elements will be shuffled according to the first dimension of
- * the matrix.
- *
- * Note: This function will be executed on GPU if EGBLAS is
- * configured and the shuffle operation is available.
- *
- *
- * \param matrix The matrix to shuffle
- */
-template <typename T, cpp_enable_iff(decay_traits<T>::dimensions() > 1)>
-void shuffle(T& matrix) {
-    shuffle_first(matrix);
-}
-
-/*!
- * \brief Shuffle all the elements of a matrix.
- *
- * The elements will be shuffled according to the first dimension of
- * the matrix.
- *
- * Note: This function will be executed on GPU if EGBLAS is
- * configured and the shuffle operation is available.
- *
- *
- * \param matrix The matrix to shuffle
- * \param g The generator to use for random number generation
- */
-template <typename T, typename G, cpp_enable_iff(decay_traits<T>::dimensions() > 1)>
-void shuffle(T& matrix, G&& g) {
-    shuffle_first(matrix, g);
+    if constexpr (is_1d<T>) {
+        shuffle_flat(vector, g);
+    } else {
+        shuffle_first(vector, g);
+    }
 }
 
 /*!
@@ -976,18 +949,17 @@ void parallel_shuffle(T1& v1, T2& v2) {
     parallel_shuffle(v1, v2, g);
 }
 
-template <typename T, cpp_enable_if(is_1d<T>)>
+template <typename T>
 void shuffle_swap(T& v1, size_t i, size_t new_i) {
-    auto t    = v1(i);
-    v1(i)     = v1(new_i);
-    v1(new_i) = t;
-}
-
-template <typename T, cpp_disable_if(is_1d<T>)>
-void shuffle_swap(T& v1, size_t i, size_t new_i) {
-    auto t    = etl::force_temporary(v1(i));
-    v1(i)     = v1(new_i);
-    v1(new_i) = t;
+    if constexpr (is_1d<T>) {
+        auto t    = v1(i);
+        v1(i)     = v1(new_i);
+        v1(new_i) = t;
+    } else {
+        auto t    = etl::force_temporary(v1(i));
+        v1(i)     = v1(new_i);
+        v1(new_i) = t;
+    }
 }
 
 /*!
