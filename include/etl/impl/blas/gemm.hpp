@@ -305,12 +305,9 @@ inline void cblas_gemv(const CBLAS_ORDER Layout,
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
-void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
+template <typename A, typename B, typename C, typename T>
+void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, T alpha) {
     if constexpr (all_homogeneous<A, B, C>) {
-        using T = value_t<A>;
-
-        T alpha(1.0);
         T beta(0.0);
 
         a.ensure_cpu_up_to_date();
@@ -353,14 +350,11 @@ void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
-void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
+template <typename A, typename B, typename C, typename T>
+void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, T alpha) {
     if constexpr (all_homogeneous<A, B, C>) {
-        using T = value_t<A>;
-
         static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-        T alpha(1.0);
         T beta(0.0);
 
         a.ensure_cpu_up_to_date();
@@ -381,14 +375,11 @@ void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
-void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
+template <typename A, typename B, typename C, typename T>
+void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, T alpha) {
     if constexpr (all_homogeneous<A, B, C>) {
-        using T = value_t<A>;
-
         static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-        T alpha(1.0);
         T beta(0.0);
 
         a.ensure_cpu_up_to_date();
@@ -409,14 +400,11 @@ void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
-void gemm_tt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
+template <typename A, typename B, typename C, typename T>
+void gemm_tt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, T alpha) {
     if constexpr (all_homogeneous<A, B, C>) {
-        using T = value_t<A>;
-
         static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-        T alpha(1.0);
         T beta(0.0);
 
         a.ensure_cpu_up_to_date();
@@ -1307,8 +1295,8 @@ void blas_conv4_valid_back_flipped(I_T&& input, K_T&& kernel, C_T&& conv, size_t
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
-void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
+template <typename A, typename B, typename C, typename T>
+void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
@@ -1318,8 +1306,8 @@ void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
-void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
+template <typename A, typename B, typename C, typename T>
+void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
     cpp_unreachable("Unsupported feature called: blas gemm_nt");
 }
 
@@ -1329,8 +1317,8 @@ void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
-void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
+template <typename A, typename B, typename C, typename T>
+void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
     cpp_unreachable("Unsupported feature called: blas gemm_tn");
 }
 
@@ -1340,8 +1328,8 @@ void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C>
-void gemm_tt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
+template <typename A, typename B, typename C, typename T>
+void gemm_tt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
