@@ -15,8 +15,8 @@ namespace etl::impl::standard {
  * \param b The right input matrix
  * \param c The output matrix
  */
-template <typename A, typename B, typename C>
-static void mm_mul(A&& a, B&& b, C&& c) {
+template <typename A, typename B, typename C, typename T>
+static void mm_mul(A&& a, B&& b, C&& c, T alpha) {
     static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     c = 0;
@@ -25,7 +25,7 @@ static void mm_mul(A&& a, B&& b, C&& c) {
         for (size_t i = 0; i < rows(a); i++) {
             for (size_t k = 0; k < columns(a); k++) {
                 for (size_t j = 0; j < columns(b); j++) {
-                    c(i, j) += a(i, k) * b(k, j);
+                    c(i, j) += alpha * a(i, k) * b(k, j);
                 }
             }
         }
@@ -33,7 +33,7 @@ static void mm_mul(A&& a, B&& b, C&& c) {
         for (size_t j = 0; j < columns(b); j++) {
             for (size_t k = 0; k < columns(a); k++) {
                 for (size_t i = 0; i < rows(a); i++) {
-                    c(i, j) += a(i, k) * b(k, j);
+                    c(i, j) += alpha * a(i, k) * b(k, j);
                 }
             }
         }
