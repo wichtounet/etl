@@ -160,67 +160,61 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \param b The B matrix
      * \param c The C matrix (output)
      */
-    template <typename AA, typename BB, typename C, cpp_enable_iff(is_transpose_expr<AA>)>
+    template <typename AA, typename BB, typename C>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
-        constexpr_select auto impl = select_gemv_impl<C>();
+        constexpr_select
+        auto impl = select_gemv_impl<C>();
 
         if
-            constexpr_select(impl == gemm_impl::STD) {
-                inc_counter("impl:std");
-                etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
-            }
-        else if
-            constexpr_select(impl == gemm_impl::BLAS) {
-                inc_counter("impl:blas");
-                etl::impl::blas::gemv_t(smart_forward(a.a()), smart_forward(b), c);
-            }
-        else if
-            constexpr_select(impl == gemm_impl::VEC) {
-                inc_counter("impl:vec");
-                etl::impl::vec::gemv_t(smart_forward(a.a()), smart_forward(b), c);
-            }
-        else if
-            constexpr_select(impl == gemm_impl::CUBLAS) {
-                inc_counter("impl:cublas");
-                etl::impl::cublas::gemv_t(smart_forward_gpu(a.a()), smart_forward_gpu(b), c);
-            }
-        else {
-            cpp_unreachable("Invalid selection for gevm");
-        }
-    }
-
-    /*!
-     * \brief Compute c = trans(A) * b
-     * \param a The a vector
-     * \param b The B matrix
-     * \param c The C matrix (output)
-     */
-    template <typename AA, typename BB, typename C, cpp_enable_iff(!is_transpose_expr<AA>)>
-    static void apply_raw(AA&& a, BB&& b, C&& c) {
-        constexpr_select auto impl = select_gemv_impl<C>();
-
-        if
-            constexpr_select(impl == gemm_impl::STD) {
-                inc_counter("impl:std");
-                etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
-            }
-        else if
-            constexpr_select(impl == gemm_impl::BLAS) {
-                inc_counter("impl:blas");
-                etl::impl::blas::gemv(smart_forward(a), smart_forward(b), c);
-            }
-        else if
-            constexpr_select(impl == gemm_impl::VEC) {
-                inc_counter("impl:vec");
-                etl::impl::vec::gemv(smart_forward(a), smart_forward(b), c);
-            }
-        else if
-            constexpr_select(impl == gemm_impl::CUBLAS) {
-                inc_counter("impl:cublas");
-                etl::impl::cublas::gemv(smart_forward_gpu(a), smart_forward_gpu(b), c);
+            constexpr_select(is_transpose_expr<BB>) {
+                if
+                    constexpr_select(impl == gemm_impl::STD) {
+                        inc_counter("impl:std");
+                        etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
+                    }
+                else if
+                    constexpr_select(impl == gemm_impl::BLAS) {
+                        inc_counter("impl:blas");
+                        etl::impl::blas::gemv_t(smart_forward(a.a()), smart_forward(b), c);
+                    }
+                else if
+                    constexpr_select(impl == gemm_impl::VEC) {
+                        inc_counter("impl:vec");
+                        etl::impl::vec::gemv_t(smart_forward(a.a()), smart_forward(b), c);
+                    }
+                else if
+                    constexpr_select(impl == gemm_impl::CUBLAS) {
+                        inc_counter("impl:cublas");
+                        etl::impl::cublas::gemv_t(smart_forward_gpu(a.a()), smart_forward_gpu(b), c);
+                    }
+                else {
+                    cpp_unreachable("Invalid selection for gevm");
+                }
             }
         else {
-            cpp_unreachable("Invalid selection for gevm");
+            if
+                constexpr_select(impl == gemm_impl::STD) {
+                    inc_counter("impl:std");
+                    etl::impl::standard::mv_mul(smart_forward(a), smart_forward(b), c);
+                }
+            else if
+                constexpr_select(impl == gemm_impl::BLAS) {
+                    inc_counter("impl:blas");
+                    etl::impl::blas::gemv(smart_forward(a), smart_forward(b), c);
+                }
+            else if
+                constexpr_select(impl == gemm_impl::VEC) {
+                    inc_counter("impl:vec");
+                    etl::impl::vec::gemv(smart_forward(a), smart_forward(b), c);
+                }
+            else if
+                constexpr_select(impl == gemm_impl::CUBLAS) {
+                    inc_counter("impl:cublas");
+                    etl::impl::cublas::gemv(smart_forward_gpu(a), smart_forward_gpu(b), c);
+                }
+            else {
+                cpp_unreachable("Invalid selection for gevm");
+            }
         }
     }
 
