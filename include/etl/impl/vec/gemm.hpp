@@ -32,7 +32,7 @@ namespace etl::impl::vec {
  * \param c The result matrix
  */
 template <typename A, typename B, typename C, typename T>
-void gemm(A&& a, B&& b, C&& c, T alpha) {
+void gemm(A&& a, B&& b, C&& c, [[maybe_unused]] T alpha) {
     if constexpr (all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>) {
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
@@ -103,7 +103,7 @@ void gemm(A&& a, B&& b, C&& c, T alpha) {
  * \param c The result matrix (row major)
  */
 template <typename A, typename B, typename C, typename T>
-void gemm_tn(A&& a, B&& b, C&& c, T alpha) {
+void gemm_tn(A&& a, B&& b, C&& c, [[maybe_unused]] T alpha) {
     if constexpr (all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>) {
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
@@ -133,7 +133,7 @@ void gemm_tn(A&& a, B&& b, C&& c, T alpha) {
  * \param c The result matrix (row major)
  */
 template <typename A, typename B, typename C, typename T>
-void gemm_nt(A&& a, B&& b, C&& c, T alpha) {
+void gemm_nt(A&& a, B&& b, C&& c, [[maybe_unused]] T alpha) {
     if constexpr (all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>) {
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();

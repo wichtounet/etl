@@ -306,7 +306,7 @@ inline void cblas_gemv(const CBLAS_ORDER Layout,
  * param c The result
  */
 template <typename A, typename B, typename C, typename T>
-void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, T alpha) {
+void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
     if constexpr (all_homogeneous<A, B, C>) {
         T beta(0.0);
 
@@ -351,7 +351,7 @@ void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c
  * param c The result
  */
 template <typename A, typename B, typename C, typename T>
-void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, T alpha) {
+void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
     if constexpr (all_homogeneous<A, B, C>) {
         static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
@@ -376,7 +376,7 @@ void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&
  * param c The result
  */
 template <typename A, typename B, typename C, typename T>
-void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, T alpha) {
+void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
     if constexpr (all_homogeneous<A, B, C>) {
         static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
@@ -401,7 +401,7 @@ void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&
  * param c The result
  */
 template <typename A, typename B, typename C, typename T>
-void gemm_tt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, T alpha) {
+void gemm_tt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
     if constexpr (all_homogeneous<A, B, C>) {
         static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
