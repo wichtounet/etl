@@ -163,57 +163,41 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gevm_impl<C>();
 
-        if
-            constexpr_select(is_transpose_expr<BB>) {
-                if
-                    constexpr_select(impl == gemm_impl::STD) {
-                        inc_counter("impl:std");
-                        etl::impl::standard::vm_mul(smart_forward(a), smart_forward(b), c);
-                    }
-                else if
-                    constexpr_select(impl == gemm_impl::BLAS) {
-                        inc_counter("impl:blas");
-                        etl::impl::blas::gevm_t(smart_forward(a), smart_forward(b.a()), c);
-                    }
-                else if
-                    constexpr_select(impl == gemm_impl::VEC) {
-                        inc_counter("impl:vec");
-                        etl::impl::vec::gevm_t(smart_forward(a), smart_forward(b.a()), c);
-                    }
-                else if
-                    constexpr_select(impl == gemm_impl::CUBLAS) {
-                        inc_counter("impl:cublas");
-                        etl::impl::cublas::gevm_t(smart_forward_gpu(a), smart_forward_gpu(b.a()), c);
-                    }
-                else {
-                    cpp_unreachable("Invalid selection for gevm");
-                }
+        // clang-format off
+        if constexpr_select (is_transpose_expr<BB>) {
+            if constexpr_select (impl == gemm_impl::STD) {
+                inc_counter("impl:std");
+                etl::impl::standard::vm_mul(smart_forward(a), smart_forward(b), c);
+            } else if constexpr_select (impl == gemm_impl::BLAS) {
+                inc_counter("impl:blas");
+                etl::impl::blas::gevm_t(smart_forward(a), smart_forward(b.a()), c);
+            } else if constexpr_select (impl == gemm_impl::VEC) {
+                inc_counter("impl:vec");
+                etl::impl::vec::gevm_t(smart_forward(a), smart_forward(b.a()), c);
+            } else if constexpr_select (impl == gemm_impl::CUBLAS) {
+                inc_counter("impl:cublas");
+                etl::impl::cublas::gevm_t(smart_forward_gpu(a), smart_forward_gpu(b.a()), c);
+            } else {
+                cpp_unreachable("Invalid selection for gevm");
             }
-        else {
-            if
-                constexpr_select(impl == gemm_impl::STD) {
-                    inc_counter("impl:std");
-                    etl::impl::standard::vm_mul(smart_forward(a), smart_forward(b), c);
-                }
-            else if
-                constexpr_select(impl == gemm_impl::BLAS) {
-                    inc_counter("impl:blas");
-                    etl::impl::blas::gevm(smart_forward(a), smart_forward(b), c);
-                }
-            else if
-                constexpr_select(impl == gemm_impl::VEC) {
-                    inc_counter("impl:vec");
-                    etl::impl::vec::gevm(smart_forward(a), smart_forward(b), c);
-                }
-            else if
-                constexpr_select(impl == gemm_impl::CUBLAS) {
-                    inc_counter("impl:cublas");
-                    etl::impl::cublas::gevm(smart_forward_gpu(a), smart_forward_gpu(b), c);
-                }
-            else {
+        } else {
+            if constexpr_select (impl == gemm_impl::STD) {
+                inc_counter("impl:std");
+                etl::impl::standard::vm_mul(smart_forward(a), smart_forward(b), c);
+            } else if constexpr_select (impl == gemm_impl::BLAS) {
+                inc_counter("impl:blas");
+                etl::impl::blas::gevm(smart_forward(a), smart_forward(b), c);
+            } else if constexpr_select (impl == gemm_impl::VEC) {
+                inc_counter("impl:vec");
+                etl::impl::vec::gevm(smart_forward(a), smart_forward(b), c);
+            } else if constexpr_select (impl == gemm_impl::CUBLAS) {
+                inc_counter("impl:cublas");
+                etl::impl::cublas::gevm(smart_forward_gpu(a), smart_forward_gpu(b), c);
+            } else {
                 cpp_unreachable("Invalid selection for gevm");
             }
         }
+        // clang-format on
     }
 
     /*!
