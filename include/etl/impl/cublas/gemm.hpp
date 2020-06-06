@@ -338,9 +338,9 @@ void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c
         constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
         using VT = value_t<A>;
-        using T  = cublas_type<VT>;
+        using CT  = cublas_type<VT>;
 
-        auto beta = make_default<T>(0.0);
+        auto beta = make_default<CT>(0.0);
 
         a.ensure_gpu_up_to_date();
         b.ensure_gpu_up_to_date();
@@ -415,9 +415,9 @@ void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&
         static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
         using VT = value_t<A>;
-        using T  = cublas_type<VT>;
+        using CT  = cublas_type<VT>;
 
-        auto beta = make_default<T>(0.0);
+        auto beta = make_default<CT>(0.0);
 
         a.ensure_gpu_up_to_date();
         b.ensure_gpu_up_to_date();
@@ -480,9 +480,9 @@ void gemm_tn(A&& a, B&& b, C&& c, T alpha) {
         static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
         using VT = value_t<A>;
-        using T  = cublas_type<VT>;
+        using CT  = cublas_type<VT>;
 
-        auto beta = make_default<T>(0.0);
+        auto beta = make_default<CT>(0.0);
 
         a.ensure_gpu_up_to_date();
         b.ensure_gpu_up_to_date();
@@ -545,9 +545,9 @@ void gemm_tt(A&& a, B&& b, C&& c, T alpha) {
         static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
         using VT = value_t<A>;
-        using T  = cublas_type<VT>;
+        using CT  = cublas_type<VT>;
 
-        auto beta = make_default<T>(0.0);
+        auto beta = make_default<CT>(0.0);
 
         a.ensure_gpu_up_to_date();
         b.ensure_gpu_up_to_date();
@@ -612,9 +612,10 @@ void gemv(A&& a, B&& b, C&& c) {
         c.ensure_gpu_allocated();
 
         using VT = value_t<A>;
-        using T  = cublas_type<VT>;
+        using CT  = cublas_type<VT>;
 
-        auto beta = make_default<T>(0.0);
+        auto alpha = make_default<CT>(1.0);
+        auto beta  = make_default<CT>(0.0);
 
         // Perform the actual multiplication
 
@@ -673,9 +674,10 @@ void gemv_t(A&& a, B&& b, C&& c) {
         c.ensure_gpu_allocated();
 
         using VT = value_t<A>;
-        using T  = cublas_type<VT>;
+        using CT  = cublas_type<VT>;
 
-        auto beta = make_default<T>(0.0);
+        auto alpha = make_default<CT>(1.0);
+        auto beta = make_default<CT>(0.0);
 
         // Perform the actual multiplication
 
@@ -734,9 +736,10 @@ void gevm(A&& a, B&& b, C&& c) {
         c.ensure_gpu_allocated();
 
         using VT = value_t<A>;
-        using T  = cublas_type<VT>;
+        using CT  = cublas_type<VT>;
 
-        auto beta = make_default<T>(0.0);
+        auto alpha = make_default<CT>(1.0);
+        auto beta = make_default<CT>(0.0);
 
         // Perform the actual multiplication
 
@@ -795,9 +798,10 @@ void gevm_t(A&& a, B&& b, C&& c) {
         c.ensure_gpu_allocated();
 
         using VT = value_t<A>;
-        using T  = cublas_type<VT>;
+        using CT  = cublas_type<VT>;
 
-        auto beta = make_default<T>(0.0);
+        auto alpha = make_default<CT>(1.0);
+        auto beta = make_default<CT>(0.0);
 
         // Perform the actual multiplication
 

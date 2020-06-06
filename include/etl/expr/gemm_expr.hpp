@@ -179,16 +179,16 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
         constexpr_select auto impl = select_gemm_impl<AA, BB, C>();
 
         // clang-format off
-        if constexpr_select(impl == gemm_impl::std) {
+        if constexpr_select(impl == gemm_impl::STD) {
             inc_counter("impl:std");
             etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c, alpha);
-        } else if constexpr_select(impl == gemm_impl::vec) {
+        } else if constexpr_select(impl == gemm_impl::VEC) {
             inc_counter("impl:vec");
             etl::impl::vec::gemm(smart_forward(a), smart_forward(b), c, alpha);
-        } else if constexpr_select(impl == gemm_impl::blas) {
+        } else if constexpr_select(impl == gemm_impl::BLAS) {
             inc_counter("impl:blas");
             etl::impl::blas::gemm_tt(smart_forward(a.a()), smart_forward(b.a()), c, alpha);
-        } else if constexpr_select(impl == gemm_impl::cublas) {
+        } else if constexpr_select(impl == gemm_impl::CUBLAS) {
             inc_counter("impl:cublas");
             etl::impl::cublas::gemm_tt(smart_forward_gpu(a.a()), smart_forward_gpu(b.a()), c, alpha);
         } else {
