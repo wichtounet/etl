@@ -470,6 +470,8 @@ struct etl_traits<etl::gemm_expr<A, B, Strassen>> {
     }
 };
 
+// Operators
+
 /*!
  * \brief Multiply two matrices together
  * \param a The left hand side matrix
@@ -498,6 +500,38 @@ gemm_expr<detail::build_type<A>, detail::build_type<B>, false> mul(A&& a, B&& b)
     return gemm_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b};
 }
 
+// alpha * gemm operators
+
+/*!
+ * \brief Create an expression for alpha * (A * B)
+ * \param alpha The alpha factor
+ * \param gemm The GEMM expression
+ * \return An expression representing alpha * (A * B)
+ */
+template <typename A, typename B, cpp_enable_iff(all_2d<A, B>)>
+gemm_expr<A, B, false> operator*(value_t<A> alpha, gemm_expr<A, B, false>&& gemm) {
+    static_assert(all_etl_expr<A, B>, "Matrix multiplication only supported for ETL expressions");
+    static_assert(all_2d<A, B>, "Matrix multiplication only works in 2D");
+
+    return gemm_expr<A, B, false>{gemm.a(), gemm.b(), alpha};
+}
+
+/*!
+ * \brief Create an expression for alpha * (A * B)
+ * \param alpha The alpha factor
+ * \param gemm The GEMM expression
+ * \return An expression representing alpha * (A * B)
+ */
+template <typename A, typename B, cpp_enable_iff(all_2d<A, B>)>
+gemm_expr<A, B, false> mul(value_t<A> alpha, gemm_expr<A, B, false>&& gemm) {
+    static_assert(all_etl_expr<A, B>, "Matrix multiplication only supported for ETL expressions");
+    static_assert(all_2d<A, B>, "Matrix multiplication only works in 2D");
+
+    return gemm_expr<A, B, false>{gemm.a(), gemm.b(), alpha};
+}
+
+// Variant with three parameters
+
 /*!
  * \brief Multiply two matrices together and store the result in c
  * \param a The left hand side matrix
@@ -513,6 +547,8 @@ auto mul(A&& a, B&& b, C&& c) {
     c = mul(a, b);
     return c;
 }
+
+// Strassen variants
 
 /*!
  * \brief Multiply two matrices together using strassen
