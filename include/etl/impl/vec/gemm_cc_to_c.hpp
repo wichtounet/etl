@@ -22,10 +22,12 @@ namespace etl::impl::vec {
  * \param c The result matrix
  */
 template <typename V, typename T>
-void gemm_small_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
+void gemm_small_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K, T alpha) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
+
+    auto alpha_vec = vec_type::set(alpha);
 
     size_t i = 0;
 
@@ -67,17 +69,17 @@ void gemm_small_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 r42 = vec_type::fmadd(a41, b2, r42);
             }
 
-            vec_type::storeu(c + (i + vec_size * 0) + (j + 0) * M, r11);
-            vec_type::storeu(c + (i + vec_size * 0) + (j + 1) * M, r12);
+            vec_type::storeu(c + (i + vec_size * 0) + (j + 0) * M, vec_type::mul(alpha_vec, r11));
+            vec_type::storeu(c + (i + vec_size * 0) + (j + 1) * M, vec_type::mul(alpha_vec, r12));
 
-            vec_type::storeu(c + (i + vec_size * 1) + (j + 0) * M, r21);
-            vec_type::storeu(c + (i + vec_size * 1) + (j + 1) * M, r22);
+            vec_type::storeu(c + (i + vec_size * 1) + (j + 0) * M, vec_type::mul(alpha_vec, r21));
+            vec_type::storeu(c + (i + vec_size * 1) + (j + 1) * M, vec_type::mul(alpha_vec, r22));
 
-            vec_type::storeu(c + (i + vec_size * 2) + (j + 0) * M, r31);
-            vec_type::storeu(c + (i + vec_size * 2) + (j + 1) * M, r32);
+            vec_type::storeu(c + (i + vec_size * 2) + (j + 0) * M, vec_type::mul(alpha_vec, r31));
+            vec_type::storeu(c + (i + vec_size * 2) + (j + 1) * M, vec_type::mul(alpha_vec, r32));
 
-            vec_type::storeu(c + (i + vec_size * 3) + (j + 0) * M, r41);
-            vec_type::storeu(c + (i + vec_size * 3) + (j + 1) * M, r42);
+            vec_type::storeu(c + (i + vec_size * 3) + (j + 0) * M, vec_type::mul(alpha_vec, r41));
+            vec_type::storeu(c + (i + vec_size * 3) + (j + 1) * M, vec_type::mul(alpha_vec, r42));
         }
 
         if (j < N) {
@@ -100,10 +102,10 @@ void gemm_small_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 r41 = vec_type::fmadd(a41, b1, r41);
             }
 
-            vec_type::storeu(c + i + vec_size * 0 + j * M, r11);
-            vec_type::storeu(c + i + vec_size * 1 + j * M, r21);
-            vec_type::storeu(c + i + vec_size * 2 + j * M, r31);
-            vec_type::storeu(c + i + vec_size * 3 + j * M, r41);
+            vec_type::storeu(c + i + vec_size * 0 + j * M, vec_type::mul(alpha_vec, r11));
+            vec_type::storeu(c + i + vec_size * 1 + j * M, vec_type::mul(alpha_vec, r21));
+            vec_type::storeu(c + i + vec_size * 2 + j * M, vec_type::mul(alpha_vec, r31));
+            vec_type::storeu(c + i + vec_size * 3 + j * M, vec_type::mul(alpha_vec, r41));
         }
     }
 
@@ -131,11 +133,11 @@ void gemm_small_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 r22 = vec_type::fmadd(a21, b2, r22);
             }
 
-            vec_type::storeu(c + (i + vec_size * 0) + (j + 0) * M, r11);
-            vec_type::storeu(c + (i + vec_size * 0) + (j + 1) * M, r12);
+            vec_type::storeu(c + (i + vec_size * 0) + (j + 0) * M, vec_type::mul(alpha_vec, r11));
+            vec_type::storeu(c + (i + vec_size * 0) + (j + 1) * M, vec_type::mul(alpha_vec, r12));
 
-            vec_type::storeu(c + (i + vec_size * 1) + (j + 0) * M, r21);
-            vec_type::storeu(c + (i + vec_size * 1) + (j + 1) * M, r22);
+            vec_type::storeu(c + (i + vec_size * 1) + (j + 0) * M, vec_type::mul(alpha_vec, r21));
+            vec_type::storeu(c + (i + vec_size * 1) + (j + 1) * M, vec_type::mul(alpha_vec, r22));
         }
 
         if (j < N) {
@@ -152,8 +154,8 @@ void gemm_small_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 r21 = vec_type::fmadd(a21, b1, r21);
             }
 
-            vec_type::storeu(c + i + vec_size * 0 + j * M, r11);
-            vec_type::storeu(c + i + vec_size * 1 + j * M, r21);
+            vec_type::storeu(c + i + vec_size * 0 + j * M, vec_type::mul(alpha_vec, r11));
+            vec_type::storeu(c + i + vec_size * 1 + j * M, vec_type::mul(alpha_vec, r21));
         }
     }
 
@@ -174,8 +176,8 @@ void gemm_small_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 r2 = vec_type::fmadd(a1, b2, r2);
             }
 
-            vec_type::storeu(c + i + (j + 0) * M, r1);
-            vec_type::storeu(c + i + (j + 1) * M, r2);
+            vec_type::storeu(c + i + (j + 0) * M, vec_type::mul(alpha_vec, r1));
+            vec_type::storeu(c + i + (j + 1) * M, vec_type::mul(alpha_vec, r2));
         }
 
         if (j < N) {
@@ -189,7 +191,7 @@ void gemm_small_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 r1 = vec_type::fmadd(a1, b1, r1);
             }
 
-            vec_type::storeu(c + i + j * M, r1);
+            vec_type::storeu(c + i + j * M, vec_type::mul(alpha_vec, r1));
         }
     }
 
@@ -205,8 +207,8 @@ void gemm_small_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 value2 += a[i + k * M] * b[k + (j + 1) * K];
             }
 
-            c[i + (j + 0) * M] = value1;
-            c[i + (j + 1) * M] = value2;
+            c[i + (j + 0) * M] = alpha * value1;
+            c[i + (j + 1) * M] = alpha * value2;
         }
 
         if (j < N) {
@@ -216,7 +218,7 @@ void gemm_small_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 value += a[i + k * M] * b[k + j * K];
             }
 
-            c[i + j * M] = value;
+            c[i + j * M] = alpha * value;
         }
     }
 }
@@ -228,14 +230,16 @@ void gemm_small_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
  * \param c The result matrix
  */
 template <typename V, typename T>
-void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
+void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K, T alpha) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-    const size_t m_block_size = 128;
-    const size_t n_block_size = 64;
-    const size_t k_block_size = 128;
+    constexpr size_t m_block_size = 128;
+    constexpr size_t n_block_size = 64;
+    constexpr size_t k_block_size = 128;
+
+    auto alpha_vec = vec_type::set(alpha);
 
     for (size_t block_i = 0; block_i < M; block_i += m_block_size) {
         const size_t i_end = std::min(block_i + m_block_size, M);
@@ -290,15 +294,15 @@ void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                             r24 = vec_type::fmadd(a4, b2, r24);
                         }
 
-                        vec_type::storeu(c + i + 0 * vec_size + (j + 0) * M, r11);
-                        vec_type::storeu(c + i + 1 * vec_size + (j + 0) * M, r12);
-                        vec_type::storeu(c + i + 2 * vec_size + (j + 0) * M, r13);
-                        vec_type::storeu(c + i + 3 * vec_size + (j + 0) * M, r14);
+                        vec_type::storeu(c + i + 0 * vec_size + (j + 0) * M, vec_type::mul(alpha_vec, r11));
+                        vec_type::storeu(c + i + 1 * vec_size + (j + 0) * M, vec_type::mul(alpha_vec, r12));
+                        vec_type::storeu(c + i + 2 * vec_size + (j + 0) * M, vec_type::mul(alpha_vec, r13));
+                        vec_type::storeu(c + i + 3 * vec_size + (j + 0) * M, vec_type::mul(alpha_vec, r14));
 
-                        vec_type::storeu(c + i + 0 * vec_size + (j + 1) * M, r21);
-                        vec_type::storeu(c + i + 1 * vec_size + (j + 1) * M, r22);
-                        vec_type::storeu(c + i + 2 * vec_size + (j + 1) * M, r23);
-                        vec_type::storeu(c + i + 3 * vec_size + (j + 1) * M, r24);
+                        vec_type::storeu(c + i + 0 * vec_size + (j + 1) * M, vec_type::mul(alpha_vec, r21));
+                        vec_type::storeu(c + i + 1 * vec_size + (j + 1) * M, vec_type::mul(alpha_vec, r22));
+                        vec_type::storeu(c + i + 2 * vec_size + (j + 1) * M, vec_type::mul(alpha_vec, r23));
+                        vec_type::storeu(c + i + 3 * vec_size + (j + 1) * M, vec_type::mul(alpha_vec, r24));
                     }
 
                     for (; j < j_end; ++j) {
@@ -321,10 +325,10 @@ void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                             r4 = vec_type::fmadd(a4, b1, r4);
                         }
 
-                        vec_type::storeu(c + i + 0 * vec_size + j * M, r1);
-                        vec_type::storeu(c + i + 1 * vec_size + j * M, r2);
-                        vec_type::storeu(c + i + 2 * vec_size + j * M, r3);
-                        vec_type::storeu(c + i + 3 * vec_size + j * M, r4);
+                        vec_type::storeu(c + i + 0 * vec_size + j * M, vec_type::mul(alpha_vec, r1));
+                        vec_type::storeu(c + i + 1 * vec_size + j * M, vec_type::mul(alpha_vec, r2));
+                        vec_type::storeu(c + i + 2 * vec_size + j * M, vec_type::mul(alpha_vec, r3));
+                        vec_type::storeu(c + i + 3 * vec_size + j * M, vec_type::mul(alpha_vec, r4));
                     }
                 }
 
@@ -367,17 +371,17 @@ void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                             r42 = vec_type::fmadd(a2, b4, r42);
                         }
 
-                        vec_type::storeu(c + i + 0 * vec_size + (j + 0) * M, r11);
-                        vec_type::storeu(c + i + 1 * vec_size + (j + 0) * M, r12);
+                        vec_type::storeu(c + i + 0 * vec_size + (j + 0) * M, vec_type::mul(alpha_vec, r11));
+                        vec_type::storeu(c + i + 1 * vec_size + (j + 0) * M, vec_type::mul(alpha_vec, r12));
 
-                        vec_type::storeu(c + i + 0 * vec_size + (j + 1) * M, r21);
-                        vec_type::storeu(c + i + 1 * vec_size + (j + 1) * M, r22);
+                        vec_type::storeu(c + i + 0 * vec_size + (j + 1) * M, vec_type::mul(alpha_vec, r21));
+                        vec_type::storeu(c + i + 1 * vec_size + (j + 1) * M, vec_type::mul(alpha_vec, r22));
 
-                        vec_type::storeu(c + i + 0 * vec_size + (j + 2) * M, r31);
-                        vec_type::storeu(c + i + 1 * vec_size + (j + 2) * M, r32);
+                        vec_type::storeu(c + i + 0 * vec_size + (j + 2) * M, vec_type::mul(alpha_vec, r31));
+                        vec_type::storeu(c + i + 1 * vec_size + (j + 2) * M, vec_type::mul(alpha_vec, r32));
 
-                        vec_type::storeu(c + i + 0 * vec_size + (j + 3) * M, r41);
-                        vec_type::storeu(c + i + 1 * vec_size + (j + 3) * M, r42);
+                        vec_type::storeu(c + i + 0 * vec_size + (j + 3) * M, vec_type::mul(alpha_vec, r41));
+                        vec_type::storeu(c + i + 1 * vec_size + (j + 3) * M, vec_type::mul(alpha_vec, r42));
                     }
 
                     for (; j + 1 < j_end; j += 2) {
@@ -401,11 +405,11 @@ void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                             r22 = vec_type::fmadd(a2, b2, r22);
                         }
 
-                        vec_type::storeu(c + i + 0 * vec_size + (j + 0) * M, r11);
-                        vec_type::storeu(c + i + 1 * vec_size + (j + 0) * M, r12);
+                        vec_type::storeu(c + i + 0 * vec_size + (j + 0) * M, vec_type::mul(alpha_vec, r11));
+                        vec_type::storeu(c + i + 1 * vec_size + (j + 0) * M, vec_type::mul(alpha_vec, r12));
 
-                        vec_type::storeu(c + i + 0 * vec_size + (j + 1) * M, r21);
-                        vec_type::storeu(c + i + 1 * vec_size + (j + 1) * M, r22);
+                        vec_type::storeu(c + i + 0 * vec_size + (j + 1) * M, vec_type::mul(alpha_vec, r21));
+                        vec_type::storeu(c + i + 1 * vec_size + (j + 1) * M, vec_type::mul(alpha_vec, r22));
                     }
 
                     for (; j < j_end; ++j) {
@@ -422,8 +426,8 @@ void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                             r2 = vec_type::fmadd(a2, b1, r2);
                         }
 
-                        vec_type::storeu(c + i + 0 * vec_size + j * M, r1);
-                        vec_type::storeu(c + i + 1 * vec_size + j * M, r2);
+                        vec_type::storeu(c + i + 0 * vec_size + j * M, vec_type::mul(alpha_vec, r1));
+                        vec_type::storeu(c + i + 1 * vec_size + j * M, vec_type::mul(alpha_vec, r2));
                     }
                 }
 
@@ -439,7 +443,7 @@ void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                             r1 = vec_type::fmadd(a1, b1, r1);
                         }
 
-                        vec_type::storeu(c + i + j * M, r1);
+                        vec_type::storeu(c + i + j * M, vec_type::mul(alpha_vec, r1));
                     }
                 }
 
@@ -452,7 +456,7 @@ void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                             x += a[i + k * M] * b[k + j * K];
                         }
 
-                        c[i + j * M] = x;
+                        c[i + j * M] = alpha * x;
                     }
                 }
             }
@@ -473,15 +477,15 @@ void gemm_large_kernel_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
  * \param K The number of columns of the matrix A and rows of the matrix B
  */
 template <typename T>
-void gemm_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
+void gemm_cc_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K, T alpha) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
     // Dispatch to the best kernel
 
     if (M * N <= gemm_cc_small_threshold) {
-        gemm_small_kernel_cc_to_c<default_vec>(a, b, c, M, N, K);
+        gemm_small_kernel_cc_to_c<default_vec>(a, b, c, M, N, K, alpha);
     } else {
-        gemm_large_kernel_cc_to_c<default_vec>(a, b, c, M, N, K);
+        gemm_large_kernel_cc_to_c<default_vec>(a, b, c, M, N, K, alpha);
     }
 }
 

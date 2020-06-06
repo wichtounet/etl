@@ -70,7 +70,7 @@ void blas_conv2_valid_multi([[maybe_unused]] const I& input,
         if (s1 > 1 || s2 > 1) {
             etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
 
-            gemm_large_kernel_rr_to_r<default_vec>(prepared_k.memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, c1 * c2, k1 * k2, T(0));
+            gemm_large_kernel_rr_to_r<default_vec>(prepared_k.memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, c1 * c2, k1 * k2, T(1), T(0));
 
             // Strided copy of the large result into the small result
             for (size_t k = 0; k < K; ++k) {
@@ -81,7 +81,7 @@ void blas_conv2_valid_multi([[maybe_unused]] const I& input,
                 }
             }
         } else {
-            gemm_large_kernel_rr_to_r<default_vec>(prepared_k.memory_start(), input_col.memory_start(), conv.memory_start(), K, f1 * f2, k1 * k2, T(0));
+            gemm_large_kernel_rr_to_r<default_vec>(prepared_k.memory_start(), input_col.memory_start(), conv.memory_start(), K, f1 * f2, k1 * k2, T(1), T(0));
         }
 
         conv.invalidate_gpu();
@@ -143,7 +143,7 @@ void blas_conv2_valid_multi_flipped([[maybe_unused]] I&& input,
         if (s1 > 1 || s2 > 1) {
             etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
 
-            gemm_large_kernel_rr_to_r<default_vec>(kernels.memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, c1 * c2, k1 * k2, T(0));
+            gemm_large_kernel_rr_to_r<default_vec>(kernels.memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, c1 * c2, k1 * k2, T(1), T(0));
 
             // Strided copy of the large result into the small result
             for (size_t k = 0; k < K; ++k) {
@@ -154,7 +154,7 @@ void blas_conv2_valid_multi_flipped([[maybe_unused]] I&& input,
                 }
             }
         } else {
-            gemm_large_kernel_rr_to_r<default_vec>(kernels.memory_start(), input_col.memory_start(), conv.memory_start(), K, f1 * f2, k1 * k2, T(0));
+            gemm_large_kernel_rr_to_r<default_vec>(kernels.memory_start(), input_col.memory_start(), conv.memory_start(), K, f1 * f2, k1 * k2, T(1), T(0));
         }
 
         conv.invalidate_gpu();
@@ -226,7 +226,7 @@ void blas_conv2_valid_multi_multi([[maybe_unused]] const I& input,
             etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
 
             gemm_large_kernel_rr_to_r<default_vec>(prepared_k.memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, N * c1 * c2, k1 * k2,
-                                                   T(0));
+                                                   T(1), T(0));
 
             // Strided copy of the large result into the small result
             for (size_t k = 0; k < K; ++k) {
@@ -239,7 +239,7 @@ void blas_conv2_valid_multi_multi([[maybe_unused]] const I& input,
                 }
             }
         } else {
-            gemm_large_kernel_rr_to_r<default_vec>(prepared_k.memory_start(), input_col.memory_start(), conv.memory_start(), K, N * c1 * c2, k1 * k2, T(0));
+            gemm_large_kernel_rr_to_r<default_vec>(prepared_k.memory_start(), input_col.memory_start(), conv.memory_start(), K, N * c1 * c2, k1 * k2, T(1), T(0));
         }
 
         conv.invalidate_gpu();
@@ -305,7 +305,7 @@ void blas_conv2_valid_multi_multi_flipped([[maybe_unused]] const I& input,
         if (s1 > 1 || s2 > 1) {
             etl::dyn_matrix<T, 4> tmp_result(K, N, c1, c2);
 
-            gemm_large_kernel_rr_to_r<default_vec>(kernels.memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, N * c1 * c2, k1 * k2, T(0));
+            gemm_large_kernel_rr_to_r<default_vec>(kernels.memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, N * c1 * c2, k1 * k2, T(1), T(0));
 
             // Strided copy of the large result into the small result
             for (size_t k = 0; k < K; ++k) {
@@ -318,7 +318,7 @@ void blas_conv2_valid_multi_multi_flipped([[maybe_unused]] const I& input,
                 }
             }
         } else {
-            gemm_large_kernel_rr_to_r<default_vec>(kernels.memory_start(), input_col.memory_start(), conv.memory_start(), K, N * c1 * c2, k1 * k2, T(0));
+            gemm_large_kernel_rr_to_r<default_vec>(kernels.memory_start(), input_col.memory_start(), conv.memory_start(), K, N * c1 * c2, k1 * k2, T(1), T(0));
         }
 
         conv.invalidate_gpu();
@@ -377,7 +377,7 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
                         im2col_direct_tr(input_col, input(i)(c), m1, m2);
 
                         gemm_large_kernel_rr_to_r<default_vec>(kernels(c).memory_start(), input_col.memory_start(), conv(i).memory_start(), K, c1 * c2, m1 * m2,
-                                                               T(1.0));
+                                                               T(1), T(1.0));
                     }
                 }
             } else {
@@ -398,7 +398,7 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
 
                         if (s1 > 1 || s2 > 1) {
                             gemm_large_kernel_rr_to_r<default_vec>(kernels(c).memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, sc1 * sc2,
-                                                                   m1 * m2, T(0.0));
+                                                                   m1 * m2, T(1), T(0.0));
 
                             // Strided copy of the large result into the small result
                             for (size_t k = 0; k < K; ++k) {
@@ -410,7 +410,7 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
                             }
                         } else {
                             gemm_large_kernel_rr_to_r<default_vec>(kernels(c).memory_start(), input_col.memory_start(), conv(i).memory_start(), K, c1 * c2,
-                                                                   m1 * m2, T(1.0));
+                                                                   m1 * m2, T(1), T(1.0));
                         }
                     }
                 }
@@ -550,7 +550,7 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                 if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
                     im2col_direct_tr(input_col, input(i)(c), k1, k2);
                     gemm_large_kernel_rr_to_r<default_vec>(kernel(i).memory_start(), input_col.memory_start(), conv_temp(c).memory_start(), K, f1 * f2, k1 * k2,
-                                                           T(1.0));
+                                                           T(1), T(1.0));
                 } else {
                     if (p1 || p2) {
                         etl::dyn_matrix<T, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
@@ -567,7 +567,7 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                         etl::dyn_matrix<T, 3> tmp_result(K, c1, c2);
 
                         gemm_large_kernel_rr_to_r<default_vec>(kernel(i).memory_start(), input_col.memory_start(), tmp_result.memory_start(), K, c1 * c2,
-                                                               k1 * k2, T(0.0));
+                                                               k1 * k2, T(1), T(0.0));
 
                         // Strided copy of the large result into the small result
                         for (size_t k = 0; k < K; ++k) {
@@ -579,7 +579,7 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
                         }
                     } else {
                         gemm_large_kernel_rr_to_r<default_vec>(kernel(i).memory_start(), input_col.memory_start(), conv_temp(c).memory_start(), K, f1 * f2,
-                                                               k1 * k2, T(1.0));
+                                                               k1 * k2, T(1), T(1.0));
                     }
                 }
             }
@@ -699,7 +699,7 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
 
                         // conv(i) = kernel(k) * input_col
                         gemm_large_kernel_rr_to_r<default_vec>(kernel(k).memory_start(), input_col.memory_start(), conv(i).memory_start(), C, c1 * c2, k1 * k2,
-                                                               T(1.0));
+                                                               T(1), T(1.0));
                     }
                 }
             } else {
@@ -721,7 +721,7 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
                         if (s1 > 1 || s2 > 1) {
                             // tmp_result = kernel(k) * input_col
                             gemm_large_kernel_rr_to_r<default_vec>(kernel(k).memory_start(), input_col.memory_start(), tmp_result.memory_start(), C, c1 * c2,
-                                                                   k1 * k2, T(0.0));
+                                                                   k1 * k2, T(1), T(0.0));
 
                             // Strided copy of the large result into the small result
                             for (size_t c = 0; c < C; ++c) {
@@ -734,7 +734,7 @@ void blas_conv4_valid_back_prepared(I_T&& input, K_T&& kernel, C_T&& conv, size_
                         } else {
                             // conv(i) = kernel(k) * input_col
                             gemm_large_kernel_rr_to_r<default_vec>(kernel(k).memory_start(), input_col.memory_start(), conv(i).memory_start(), C, c1 * c2,
-                                                                   k1 * k2, T(1.0));
+                                                                   k1 * k2, T(1), T(1.0));
                         }
                     }
                 }

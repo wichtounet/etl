@@ -24,7 +24,7 @@ namespace etl::impl::vec {
  * \param c The result matrix
  */
 template <typename V, typename T>
-void gemm_small_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
+void gemm_small_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K, T alpha) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -91,15 +91,15 @@ void gemm_small_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 v24 += a[(i + 3) * K + k] * b[k + (j + 1) * K];
             }
 
-            c[(i + 0) + (j + 0) * M] = v11;
-            c[(i + 1) + (j + 0) * M] = v12;
-            c[(i + 2) + (j + 0) * M] = v13;
-            c[(i + 3) + (j + 0) * M] = v14;
+            c[(i + 0) + (j + 0) * M] = alpha * v11;
+            c[(i + 1) + (j + 0) * M] = alpha * v12;
+            c[(i + 2) + (j + 0) * M] = alpha * v13;
+            c[(i + 3) + (j + 0) * M] = alpha * v14;
 
-            c[(i + 0) + (j + 1) * M] = v21;
-            c[(i + 1) + (j + 1) * M] = v22;
-            c[(i + 2) + (j + 1) * M] = v23;
-            c[(i + 3) + (j + 1) * M] = v24;
+            c[(i + 0) + (j + 1) * M] = alpha * v21;
+            c[(i + 1) + (j + 1) * M] = alpha * v22;
+            c[(i + 2) + (j + 1) * M] = alpha * v23;
+            c[(i + 3) + (j + 1) * M] = alpha * v24;
         }
 
         for (; j < N; ++j) {
@@ -136,10 +136,10 @@ void gemm_small_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 v14 += a[(i + 3) * K + k] * b[k + j * K];
             }
 
-            c[(i + 0) + j * M] = v11;
-            c[(i + 1) + j * M] = v12;
-            c[(i + 2) + j * M] = v13;
-            c[(i + 3) + j * M] = v14;
+            c[(i + 0) + j * M] = alpha * v11;
+            c[(i + 1) + j * M] = alpha * v12;
+            c[(i + 2) + j * M] = alpha * v13;
+            c[(i + 3) + j * M] = alpha * v14;
         }
     }
 
@@ -183,11 +183,11 @@ void gemm_small_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 v22 += a[(i + 1) * K + k] * b[k + (j + 1) * K];
             }
 
-            c[(i + 0) + (j + 0) * M] = v11;
-            c[(i + 1) + (j + 0) * M] = v12;
+            c[(i + 0) + (j + 0) * M] = alpha * v11;
+            c[(i + 1) + (j + 0) * M] = alpha * v12;
 
-            c[(i + 0) + (j + 1) * M] = v21;
-            c[(i + 1) + (j + 1) * M] = v22;
+            c[(i + 0) + (j + 1) * M] = alpha * v21;
+            c[(i + 1) + (j + 1) * M] = alpha * v22;
         }
 
         for (; j < N; ++j) {
@@ -214,8 +214,8 @@ void gemm_small_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 v12 += a[(i + 1) * K + k] * b[k + j * K];
             }
 
-            c[(i + 0) + j * M] = v11;
-            c[(i + 1) + j * M] = v12;
+            c[(i + 0) + j * M] = alpha * v11;
+            c[(i + 1) + j * M] = alpha * v12;
         }
     }
 
@@ -246,8 +246,8 @@ void gemm_small_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 v21 += a[i * K + k] * b[k + (j + 1) * K];
             }
 
-            c[i + (j + 0) * M] = v11;
-            c[i + (j + 1) * M] = v21;
+            c[i + (j + 0) * M] = alpha * v11;
+            c[i + (j + 1) * M] = alpha * v21;
         }
 
         for (; j < N; ++j) {
@@ -269,7 +269,7 @@ void gemm_small_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                 v11 += a[i * K + k] * b[k + j * K];
             }
 
-            c[i + j * M] = v11;
+            c[i + j * M] = alpha * v11;
         }
     }
 }
@@ -283,7 +283,7 @@ void gemm_small_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
  * \param c The result matrix
  */
 template <typename V, typename T>
-void gemm_large_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
+void gemm_large_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K, T alpha) {
     using vec_type = V;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
@@ -362,15 +362,15 @@ void gemm_large_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                             v24 += a[(i + 3) * K + k] * b[k + (j + 1) * K];
                         }
 
-                        c[(i + 0) + (j + 0) * M] += v11;
-                        c[(i + 1) + (j + 0) * M] += v12;
-                        c[(i + 2) + (j + 0) * M] += v13;
-                        c[(i + 3) + (j + 0) * M] += v14;
+                        c[(i + 0) + (j + 0) * M] += alpha * v11;
+                        c[(i + 1) + (j + 0) * M] += alpha * v12;
+                        c[(i + 2) + (j + 0) * M] += alpha * v13;
+                        c[(i + 3) + (j + 0) * M] += alpha * v14;
 
-                        c[(i + 0) + (j + 1) * M] += v21;
-                        c[(i + 1) + (j + 1) * M] += v22;
-                        c[(i + 2) + (j + 1) * M] += v23;
-                        c[(i + 3) + (j + 1) * M] += v24;
+                        c[(i + 0) + (j + 1) * M] += alpha * v21;
+                        c[(i + 1) + (j + 1) * M] += alpha * v22;
+                        c[(i + 2) + (j + 1) * M] += alpha * v23;
+                        c[(i + 3) + (j + 1) * M] += alpha * v24;
                     }
 
                     for (; j < j_end; ++j) {
@@ -407,10 +407,10 @@ void gemm_large_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                             v14 += a[(i + 3) * K + k] * b[k + j * K];
                         }
 
-                        c[(i + 0) + j * M] += v11;
-                        c[(i + 1) + j * M] += v12;
-                        c[(i + 2) + j * M] += v13;
-                        c[(i + 3) + j * M] += v14;
+                        c[(i + 0) + j * M] += alpha * v11;
+                        c[(i + 1) + j * M] += alpha * v12;
+                        c[(i + 2) + j * M] += alpha * v13;
+                        c[(i + 3) + j * M] += alpha * v14;
                     }
                 }
 
@@ -454,11 +454,11 @@ void gemm_large_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                             v22 += a[(i + 1) * K + k] * b[k + (j + 1) * K];
                         }
 
-                        c[(i + 0) + (j + 0) * M] += v11;
-                        c[(i + 1) + (j + 0) * M] += v12;
+                        c[(i + 0) + (j + 0) * M] += alpha * v11;
+                        c[(i + 1) + (j + 0) * M] += alpha * v12;
 
-                        c[(i + 0) + (j + 1) * M] += v21;
-                        c[(i + 1) + (j + 1) * M] += v22;
+                        c[(i + 0) + (j + 1) * M] += alpha * v21;
+                        c[(i + 1) + (j + 1) * M] += alpha * v22;
                     }
 
                     for (; j < j_end; ++j) {
@@ -485,8 +485,8 @@ void gemm_large_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                             v12 += a[(i + 1) * K + k] * b[k + j * K];
                         }
 
-                        c[(i + 0) + j * M] += v11;
-                        c[(i + 1) + j * M] += v12;
+                        c[(i + 0) + j * M] += alpha * v11;
+                        c[(i + 1) + j * M] += alpha * v12;
                     }
                 }
 
@@ -517,8 +517,8 @@ void gemm_large_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                             v21 += a[i * K + k] * b[k + (j + 1) * K];
                         }
 
-                        c[i + (j + 0) * M] += v11;
-                        c[i + (j + 1) * M] += v21;
+                        c[i + (j + 0) * M] += alpha * v11;
+                        c[i + (j + 1) * M] += alpha * v21;
                     }
 
                     for (; j < j_end; ++j) {
@@ -540,7 +540,7 @@ void gemm_large_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
                             v11 += a[i * K + k] * b[k + j * K];
                         }
 
-                        c[i + j * M] += v11;
+                        c[i + j * M] += alpha * v11;
                     }
                 }
             }
@@ -561,14 +561,14 @@ void gemm_large_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
  * \param K The number of columns of the matrix A and rows of the matrix B
  */
 template <typename T>
-void gemm_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K) {
+void gemm_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K, T alpha) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
     if (M * N <= 10) {
-        gemm_small_kernel_rc_to_c<default_vec>(a, b, c, M, N, K);
+        gemm_small_kernel_rc_to_c<default_vec>(a, b, c, M, N, K, alpha);
     } else {
         // TODO Use the large kernel once it's been made faster
-        gemm_small_kernel_rc_to_c<default_vec>(a, b, c, M, N, K);
+        gemm_small_kernel_rc_to_c<default_vec>(a, b, c, M, N, K, alpha);
     }
 }
 

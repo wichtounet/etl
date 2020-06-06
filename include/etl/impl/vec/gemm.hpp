@@ -31,8 +31,8 @@ namespace etl::impl::vec {
  * \param b The rhs matrix
  * \param c The result matrix
  */
-template <typename A, typename B, typename C>
-void gemm(A&& a, B&& b, C&& c) {
+template <typename A, typename B, typename C, typename T>
+void gemm(A&& a, B&& b, C&& c, T alpha) {
     if constexpr (all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>) {
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
@@ -43,13 +43,13 @@ void gemm(A&& a, B&& b, C&& c) {
 
         // Handle all the cases in the most optimized way
         if constexpr (all_row_major<A, B, C>) {
-            gemm_rr_to_r(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+            gemm_rr_to_r(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, alpha);
         } else if constexpr (all_column_major<A, B, C>) {
-            gemm_cc_to_c(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+            gemm_cc_to_c(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, alpha);
         } else if constexpr (all_row_major<B, C> && is_column_major<A>) {
-            gemm_cr_to_r(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+            gemm_cr_to_r(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, alpha);
         } else if constexpr (all_row_major<A, C> && is_column_major<B>) {
-            gemm_rc_to_r(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+            gemm_rc_to_r(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, alpha);
         } else if constexpr (is_row_major<C> && all_column_major<A, B>) {
             if (etl::size(a) < etl::size(b)) {
                 auto t_a = force_temporary_opp(a);
@@ -57,19 +57,19 @@ void gemm(A&& a, B&& b, C&& c) {
                 t_a.ensure_cpu_up_to_date();
                 b.ensure_cpu_up_to_date();
 
-                gemm_rc_to_r(t_a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+                gemm_rc_to_r(t_a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, alpha);
             } else {
                 auto t_b = force_temporary_opp(b);
 
                 t_b.ensure_cpu_up_to_date();
                 a.ensure_cpu_up_to_date();
 
-                gemm_cr_to_r(a.memory_start(), t_b.memory_start(), c.memory_start(), M, N, K);
+                gemm_cr_to_r(a.memory_start(), t_b.memory_start(), c.memory_start(), M, N, K, alpha);
             }
         } else if constexpr (is_row_major<A> && all_column_major<B, C>) {
-            gemm_rc_to_c(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+            gemm_rc_to_c(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, alpha);
         } else if constexpr (is_row_major<B> && all_column_major<A, C>) {
-            gemm_cr_to_c(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+            gemm_cr_to_c(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, alpha);
         } else if constexpr (is_column_major<C> && all_row_major<A, B>) {
             if (etl::size(a) < etl::size(b)) {
                 auto t_a = force_temporary_opp(a);
@@ -77,14 +77,14 @@ void gemm(A&& a, B&& b, C&& c) {
                 t_a.ensure_cpu_up_to_date();
                 b.ensure_cpu_up_to_date();
 
-                gemm_cr_to_c(t_a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+                gemm_cr_to_c(t_a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, alpha);
             } else {
                 auto t_b = force_temporary_opp(b);
 
                 t_b.ensure_cpu_up_to_date();
                 a.ensure_cpu_up_to_date();
 
-                gemm_rc_to_c(a.memory_start(), t_b.memory_start(), c.memory_start(), M, N, K);
+                gemm_rc_to_c(a.memory_start(), t_b.memory_start(), c.memory_start(), M, N, K, alpha);
             }
         }
 
@@ -102,8 +102,8 @@ void gemm(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C>
-void gemm_tn(A&& a, B&& b, C&& c) {
+template <typename A, typename B, typename C, typename T>
+void gemm_tn(A&& a, B&& b, C&& c, T alpha) {
     if constexpr (all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>) {
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
@@ -113,9 +113,9 @@ void gemm_tn(A&& a, B&& b, C&& c) {
         const size_t K = etl::rows(a);    // columns(trans(A)) = rows(B)
 
         if constexpr (all_row_major<A, B, C>) {
-            gemm_cr_to_r(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+            gemm_cr_to_r(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, alpha);
         } else if constexpr (all_column_major<A, B, C>) {
-            gemm_rc_to_c(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+            gemm_rc_to_c(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, alpha);
         }
 
         c.invalidate_gpu();
@@ -132,8 +132,8 @@ void gemm_tn(A&& a, B&& b, C&& c) {
  * \param b The rhs matrix (transposed row major)
  * \param c The result matrix (row major)
  */
-template <typename A, typename B, typename C>
-void gemm_nt(A&& a, B&& b, C&& c) {
+template <typename A, typename B, typename C, typename T>
+void gemm_nt(A&& a, B&& b, C&& c, T alpha) {
     if constexpr (all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>) {
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
@@ -143,9 +143,9 @@ void gemm_nt(A&& a, B&& b, C&& c) {
         const size_t K = etl::columns(a);
 
         if constexpr (all_row_major<A, B, C>) {
-            gemm_rc_to_r(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+            gemm_rc_to_r(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, alpha);
         } else if constexpr (all_column_major<A, B, C>) {
-            gemm_cr_to_c(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K);
+            gemm_cr_to_c(a.memory_start(), b.memory_start(), c.memory_start(), M, N, K, alpha);
         }
 
         c.invalidate_gpu();
