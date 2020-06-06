@@ -330,33 +330,73 @@ inline void cublas_gemv(cublasHandle_t handle,
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, typename T, cpp_enable_iff((all_row_major<A, B, C> || all_column_major<A, B, C>)&&all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c, T alpha) {
-    decltype(auto) handle = start_cublas();
+template <typename A, typename B, typename C, typename T>
+void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
+    if ((all_row_major<A, B, C> || all_column_major<A, B, C>) &&all_homogeneous<A, B, C>) {
+        decltype(auto) handle = start_cublas();
 
-    constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+        constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    using VT = value_t<A>;
-    using T  = cublas_type<VT>;
+        using VT = value_t<A>;
+        using T  = cublas_type<VT>;
 
-    auto beta = make_default<T>(0.0);
+        auto beta = make_default<T>(0.0);
 
-    a.ensure_gpu_up_to_date();
-    b.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
+        a.ensure_gpu_up_to_date();
+        b.ensure_gpu_up_to_date();
+        c.ensure_gpu_allocated();
 
-    // Do the actual multiplication
+        // Do the actual multiplication
 
-    if (row_major) {
-        cublas_gemm(handle.get(), CUBLAS_OP_N, CUBLAS_OP_N, etl::columns(c), etl::rows(c), etl::columns(a), &alpha, b.gpu_memory(), etl::major_stride(b),
-                    a.gpu_memory(), etl::major_stride(a), &beta, c.gpu_memory(), etl::major_stride(c));
+        if (row_major) {
+            cublas_gemm(handle.get(),
+                        CUBLAS_OP_N,
+                        CUBLAS_OP_N,
+                        etl::columns(c),
+                        etl::rows(c),
+                        etl::columns(a),
+                        &alpha,
+                        b.gpu_memory(),
+                        etl::major_stride(b),
+                        a.gpu_memory(),
+                        etl::major_stride(a),
+                        &beta,
+                        c.gpu_memory(),
+                        etl::major_stride(c));
+        } else {
+            cublas_gemm(handle.get(),
+                        CUBLAS_OP_N,
+                        CUBLAS_OP_N,
+                        etl::rows(c),
+                        etl::columns(c),
+                        etl::columns(a),
+                        &alpha,
+                        a.gpu_memory(),
+                        etl::major_stride(a),
+                        b.gpu_memory(),
+                        etl::major_stride(b),
+                        &beta,
+                        c.gpu_memory(),
+                        etl::major_stride(c));
+        }
+
+        c.validate_gpu();
+        c.invalidate_cpu();
+    } else if constexpr (all_row_major<B, C> && is_column_major<A> && all_homogeneous<A, B, C>) {
+        gemm(force_temporary_opp(a), b, c);
+    } else if constexpr (all_row_major<A, C> && is_column_major<B> && all_homogeneous<A, B, C>) {
+        gemm(a, force_temporary_opp(b), c);
+    } else if constexpr (is_row_major<C> && all_column_major<A, B> && all_homogeneous<A, B, C>) {
+        gemm(force_temporary_opp(a), force_temporary_opp(b), c);
+    } else if constexpr (is_row_major<A> && all_column_major<B, C> && all_homogeneous<A, B, C>) {
+        gemm(force_temporary_opp(a), b, c);
+    } else if constexpr (is_row_major<B> && all_column_major<A, C> && all_homogeneous<A, B, C>) {
+        gemm(a, force_temporary_opp(b), c);
+    } else if constexpr (all_row_major<A, B> && is_column_major<C> && all_homogeneous<A, B, C>) {
+        gemm(force_temporary_opp(a), force_temporary_opp(b), c);
     } else {
-        cublas_gemm(handle.get(), CUBLAS_OP_N, CUBLAS_OP_N, etl::rows(c), etl::columns(c), etl::columns(a), &alpha, a.gpu_memory(), etl::major_stride(a),
-                    b.gpu_memory(), etl::major_stride(b), &beta, c.gpu_memory(), etl::major_stride(c));
+        cpp_unreachable("Unhandled condition in cublas:gemm");
     }
-
-    c.validate_gpu();
-    c.invalidate_cpu();
 }
 
 /*!
@@ -365,101 +405,63 @@ void gemm(A&& a, B&& b, C&& c, T alpha) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, typename T, cpp_enable_iff(all_row_major<B, C>&& is_column_major<A>&& all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c, T alpha) {
-    gemm(force_temporary_opp(a), b, c);
-}
+template <typename A, typename B, typename C, typename T>
+void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
+    if constexpr (all_homogeneous<A, B, C>) {
+        decltype(auto) handle = start_cublas();
 
-/*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, typename T, cpp_enable_iff(all_row_major<A, C>&& is_column_major<B>&& all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c, T alpha) {
-    gemm(a, force_temporary_opp(b), c);
-}
+        constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-/*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, typename T, cpp_enable_iff(is_row_major<C>&& all_column_major<A, B>&& all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c, T alpha) {
-    gemm(force_temporary_opp(a), force_temporary_opp(b), c);
-}
+        static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
-/*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, typename T, cpp_enable_iff(is_row_major<A>&& all_column_major<B, C>&& all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c, T alpha) {
-    gemm(force_temporary_opp(a), b, c);
-}
+        using VT = value_t<A>;
+        using T  = cublas_type<VT>;
 
-/*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, typename T, cpp_enable_iff(is_row_major<B>&& all_column_major<A, C>&& all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c, T alpha) {
-    gemm(a, force_temporary_opp(b), c);
-}
+        auto beta = make_default<T>(0.0);
 
-/*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, typename T, cpp_enable_iff(all_row_major<A, B>&& is_column_major<C>&& all_homogeneous<A, B, C>)>
-void gemm(A&& a, B&& b, C&& c, T alpha) {
-    gemm(force_temporary_opp(a), force_temporary_opp(b), c);
-}
+        a.ensure_gpu_up_to_date();
+        b.ensure_gpu_up_to_date();
+        c.ensure_gpu_allocated();
 
-/*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, typename T, cpp_enable_iff(all_homogeneous<A, B, C>)>
-void gemm_nt(A&& a, B&& b, C&& c, T alpha) {
-    decltype(auto) handle = start_cublas();
+        // Do the actual multiplication
 
-    constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+        if (row_major) {
+            cublas_gemm(handle.get(),
+                        CUBLAS_OP_T,
+                        CUBLAS_OP_N,
+                        etl::columns(c),
+                        etl::rows(c),
+                        etl::columns(a),
+                        &alpha,
+                        b.gpu_memory(),
+                        etl::major_stride(b),
+                        a.gpu_memory(),
+                        etl::major_stride(a),
+                        &beta,
+                        c.gpu_memory(),
+                        etl::major_stride(c));
+        } else {
+            cublas_gemm(handle.get(),
+                        CUBLAS_OP_N,
+                        CUBLAS_OP_T,
+                        etl::rows(c),
+                        etl::columns(c),
+                        etl::columns(a),
+                        &alpha,
+                        a.gpu_memory(),
+                        etl::major_stride(a),
+                        b.gpu_memory(),
+                        etl::major_stride(b),
+                        &beta,
+                        c.gpu_memory(),
+                        etl::major_stride(c));
+        }
 
-    static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
-
-    using VT = value_t<A>;
-    using T  = cublas_type<VT>;
-
-    auto beta = make_default<T>(0.0);
-
-    a.ensure_gpu_up_to_date();
-    b.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
-
-    // Do the actual multiplication
-
-    if (row_major) {
-        cublas_gemm(handle.get(), CUBLAS_OP_T, CUBLAS_OP_N, etl::columns(c), etl::rows(c), etl::columns(a), &alpha, b.gpu_memory(), etl::major_stride(b),
-                    a.gpu_memory(), etl::major_stride(a), &beta, c.gpu_memory(), etl::major_stride(c));
+        c.validate_gpu();
+        c.invalidate_cpu();
     } else {
-        cublas_gemm(handle.get(), CUBLAS_OP_N, CUBLAS_OP_T, etl::rows(c), etl::columns(c), etl::columns(a), &alpha, a.gpu_memory(), etl::major_stride(a),
-                    b.gpu_memory(), etl::major_stride(b), &beta, c.gpu_memory(), etl::major_stride(c));
+        cpp_unreachable("Invalid operation called cublas::gemm_nt with heterogeneous types");
     }
-
-    c.validate_gpu();
-    c.invalidate_cpu();
 }
 
 /*!
@@ -468,35 +470,63 @@ void gemm_nt(A&& a, B&& b, C&& c, T alpha) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, typename T, cpp_enable_iff(all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C, typename T>
 void gemm_tn(A&& a, B&& b, C&& c, T alpha) {
-    decltype(auto) handle = start_cublas();
+    if constexpr (all_homogeneous<A, B, C>) {
+        decltype(auto) handle = start_cublas();
 
-    constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+        constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
+        static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
-    using VT = value_t<A>;
-    using T  = cublas_type<VT>;
+        using VT = value_t<A>;
+        using T  = cublas_type<VT>;
 
-    auto beta = make_default<T>(0.0);
+        auto beta = make_default<T>(0.0);
 
-    a.ensure_gpu_up_to_date();
-    b.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
+        a.ensure_gpu_up_to_date();
+        b.ensure_gpu_up_to_date();
+        c.ensure_gpu_allocated();
 
-    // Do the actual multiplication
+        // Do the actual multiplication
 
-    if (row_major) {
-        cublas_gemm(handle.get(), CUBLAS_OP_N, CUBLAS_OP_T, etl::columns(c), etl::rows(c), etl::rows(a), &alpha, b.gpu_memory(), etl::major_stride(b),
-                    a.gpu_memory(), etl::major_stride(a), &beta, c.gpu_memory(), etl::major_stride(c));
+        if (row_major) {
+            cublas_gemm(handle.get(),
+                        CUBLAS_OP_N,
+                        CUBLAS_OP_T,
+                        etl::columns(c),
+                        etl::rows(c),
+                        etl::rows(a),
+                        &alpha,
+                        b.gpu_memory(),
+                        etl::major_stride(b),
+                        a.gpu_memory(),
+                        etl::major_stride(a),
+                        &beta,
+                        c.gpu_memory(),
+                        etl::major_stride(c));
+        } else {
+            cublas_gemm(handle.get(),
+                        CUBLAS_OP_T,
+                        CUBLAS_OP_N,
+                        etl::rows(c),
+                        etl::columns(c),
+                        etl::rows(a),
+                        &alpha,
+                        a.gpu_memory(),
+                        etl::major_stride(a),
+                        b.gpu_memory(),
+                        etl::major_stride(b),
+                        &beta,
+                        c.gpu_memory(),
+                        etl::major_stride(c));
+        }
+
+        c.validate_gpu();
+        c.invalidate_cpu();
     } else {
-        cublas_gemm(handle.get(), CUBLAS_OP_T, CUBLAS_OP_N, etl::rows(c), etl::columns(c), etl::rows(a), &alpha, a.gpu_memory(), etl::major_stride(a),
-                    b.gpu_memory(), etl::major_stride(b), &beta, c.gpu_memory(), etl::major_stride(c));
+        cpp_unreachable("Invalid operation called cublas::gemm_tn with heterogeneous types");
     }
-
-    c.validate_gpu();
-    c.invalidate_cpu();
 }
 
 /*!
@@ -505,35 +535,63 @@ void gemm_tn(A&& a, B&& b, C&& c, T alpha) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, typename T, cpp_enable_iff(all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C, typename T>
 void gemm_tt(A&& a, B&& b, C&& c, T alpha) {
-    decltype(auto) handle = start_cublas();
+    if constexpr (all_homogeneous<A, B, C>) {
+        decltype(auto) handle = start_cublas();
 
-    constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+        constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
+        static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
-    using VT = value_t<A>;
-    using T  = cublas_type<VT>;
+        using VT = value_t<A>;
+        using T  = cublas_type<VT>;
 
-    auto beta = make_default<T>(0.0);
+        auto beta = make_default<T>(0.0);
 
-    a.ensure_gpu_up_to_date();
-    b.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
+        a.ensure_gpu_up_to_date();
+        b.ensure_gpu_up_to_date();
+        c.ensure_gpu_allocated();
 
-    // Do the actual multiplication
+        // Do the actual multiplication
 
-    if (row_major) {
-        cublas_gemm(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::columns(c), etl::rows(c), etl::rows(a), &alpha, b.gpu_memory(), etl::major_stride(b),
-                    a.gpu_memory(), etl::major_stride(a), &beta, c.gpu_memory(), etl::major_stride(c));
+        if (row_major) {
+            cublas_gemm(handle.get(),
+                        CUBLAS_OP_T,
+                        CUBLAS_OP_T,
+                        etl::columns(c),
+                        etl::rows(c),
+                        etl::rows(a),
+                        &alpha,
+                        b.gpu_memory(),
+                        etl::major_stride(b),
+                        a.gpu_memory(),
+                        etl::major_stride(a),
+                        &beta,
+                        c.gpu_memory(),
+                        etl::major_stride(c));
+        } else {
+            cublas_gemm(handle.get(),
+                        CUBLAS_OP_T,
+                        CUBLAS_OP_T,
+                        etl::rows(c),
+                        etl::columns(c),
+                        etl::rows(a),
+                        &alpha,
+                        a.gpu_memory(),
+                        etl::major_stride(a),
+                        b.gpu_memory(),
+                        etl::major_stride(b),
+                        &beta,
+                        c.gpu_memory(),
+                        etl::major_stride(c));
+        }
+
+        c.validate_gpu();
+        c.invalidate_cpu();
     } else {
-        cublas_gemm(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::rows(c), etl::columns(c), etl::rows(a), &alpha, a.gpu_memory(), etl::major_stride(a),
-                    b.gpu_memory(), etl::major_stride(b), &beta, c.gpu_memory(), etl::major_stride(c));
+        cpp_unreachable("Invalid operation called cublas::gemm_tt with heterogeneous types");
     }
-
-    c.validate_gpu();
-    c.invalidate_cpu();
 }
 
 /*!
@@ -542,35 +600,59 @@ void gemm_tt(A&& a, B&& b, C&& c, T alpha) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C>
 void gemv(A&& a, B&& b, C&& c) {
-    decltype(auto) handle = start_cublas();
+    if constexpr (all_homogeneous<A, B, C>) {
+        decltype(auto) handle = start_cublas();
 
-    constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+        constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    a.ensure_gpu_up_to_date();
-    b.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
+        a.ensure_gpu_up_to_date();
+        b.ensure_gpu_up_to_date();
+        c.ensure_gpu_allocated();
 
-    using VT = value_t<A>;
-    using T  = cublas_type<VT>;
+        using VT = value_t<A>;
+        using T  = cublas_type<VT>;
 
-    auto beta = make_default<T>(0.0);
+        auto beta = make_default<T>(0.0);
 
-    //Perform the actual multiplication
+        // Perform the actual multiplication
 
-    if (row_major) {
-        cublas_gemv(handle.get(), CUBLAS_OP_T, etl::columns(a), etl::rows(a), &alpha, safe_cast(a.gpu_memory()), major_stride(a), safe_cast(b.gpu_memory()), 1,
-                    &beta, safe_cast(c.gpu_memory()), 1);
+        if (row_major) {
+            cublas_gemv(handle.get(),
+                        CUBLAS_OP_T,
+                        etl::columns(a),
+                        etl::rows(a),
+                        &alpha,
+                        safe_cast(a.gpu_memory()),
+                        major_stride(a),
+                        safe_cast(b.gpu_memory()),
+                        1,
+                        &beta,
+                        safe_cast(c.gpu_memory()),
+                        1);
+        } else {
+            cublas_gemv(handle.get(),
+                        CUBLAS_OP_N,
+                        etl::rows(a),
+                        etl::columns(a),
+                        &alpha,
+                        safe_cast(a.gpu_memory()),
+                        major_stride(a),
+                        safe_cast(b.gpu_memory()),
+                        1,
+                        &beta,
+                        safe_cast(c.gpu_memory()),
+                        1);
+        }
+
+        // Copy the result from GPU to CPU
+
+        c.validate_gpu();
+        c.invalidate_cpu();
     } else {
-        cublas_gemv(handle.get(), CUBLAS_OP_N, etl::rows(a), etl::columns(a), &alpha, safe_cast(a.gpu_memory()), major_stride(a), safe_cast(b.gpu_memory()), 1,
-                    &beta, safe_cast(c.gpu_memory()), 1);
+        cpp_unreachable("Invalid operation called blas::gemv with heterogeneous types");
     }
-
-    //Copy the result from GPU to CPU
-
-    c.validate_gpu();
-    c.invalidate_cpu();
 }
 
 /*!
@@ -579,35 +661,59 @@ void gemv(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C>
 void gemv_t(A&& a, B&& b, C&& c) {
-    decltype(auto) handle = start_cublas();
+    if constexpr (all_homogeneous<A, B, C>) {
+        decltype(auto) handle = start_cublas();
 
-    constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+        constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    a.ensure_gpu_up_to_date();
-    b.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
+        a.ensure_gpu_up_to_date();
+        b.ensure_gpu_up_to_date();
+        c.ensure_gpu_allocated();
 
-    using VT = value_t<A>;
-    using T  = cublas_type<VT>;
+        using VT = value_t<A>;
+        using T  = cublas_type<VT>;
 
-    auto beta = make_default<T>(0.0);
+        auto beta = make_default<T>(0.0);
 
-    //Perform the actual multiplication
+        // Perform the actual multiplication
 
-    if (row_major) {
-        cublas_gemv(handle.get(), CUBLAS_OP_N, etl::columns(a), etl::rows(a), &alpha, safe_cast(a.gpu_memory()), major_stride(a), safe_cast(b.gpu_memory()), 1,
-                    &beta, safe_cast(c.gpu_memory()), 1);
+        if (row_major) {
+            cublas_gemv(handle.get(),
+                        CUBLAS_OP_N,
+                        etl::columns(a),
+                        etl::rows(a),
+                        &alpha,
+                        safe_cast(a.gpu_memory()),
+                        major_stride(a),
+                        safe_cast(b.gpu_memory()),
+                        1,
+                        &beta,
+                        safe_cast(c.gpu_memory()),
+                        1);
+        } else {
+            cublas_gemv(handle.get(),
+                        CUBLAS_OP_T,
+                        etl::rows(a),
+                        etl::columns(a),
+                        &alpha,
+                        safe_cast(a.gpu_memory()),
+                        major_stride(a),
+                        safe_cast(b.gpu_memory()),
+                        1,
+                        &beta,
+                        safe_cast(c.gpu_memory()),
+                        1);
+        }
+
+        // Copy the result from GPU to CPU
+
+        c.validate_gpu();
+        c.invalidate_cpu();
     } else {
-        cublas_gemv(handle.get(), CUBLAS_OP_T, etl::rows(a), etl::columns(a), &alpha, safe_cast(a.gpu_memory()), major_stride(a), safe_cast(b.gpu_memory()), 1,
-                    &beta, safe_cast(c.gpu_memory()), 1);
+        cpp_unreachable("Invalid operation called blas::gemv_t with heterogeneous types");
     }
-
-    //Copy the result from GPU to CPU
-
-    c.validate_gpu();
-    c.invalidate_cpu();
 }
 
 /*!
@@ -616,35 +722,59 @@ void gemv_t(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C>
 void gevm(A&& a, B&& b, C&& c) {
-    decltype(auto) handle = start_cublas();
+    if constexpr (all_homogeneous<A, B, C>) {
+        decltype(auto) handle = start_cublas();
 
-    constexpr bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+        constexpr bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
-    a.ensure_gpu_up_to_date();
-    b.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
+        a.ensure_gpu_up_to_date();
+        b.ensure_gpu_up_to_date();
+        c.ensure_gpu_allocated();
 
-    using VT = value_t<A>;
-    using T  = cublas_type<VT>;
+        using VT = value_t<A>;
+        using T  = cublas_type<VT>;
 
-    auto beta = make_default<T>(0.0);
+        auto beta = make_default<T>(0.0);
 
-    //Perform the actual multiplication
+        // Perform the actual multiplication
 
-    if (row_major) {
-        cublas_gemv(handle.get(), CUBLAS_OP_N, etl::columns(b), etl::rows(b), &alpha, safe_cast(b.gpu_memory()), major_stride(b), safe_cast(a.gpu_memory()), 1,
-                    &beta, safe_cast(c.gpu_memory()), 1);
+        if (row_major) {
+            cublas_gemv(handle.get(),
+                        CUBLAS_OP_N,
+                        etl::columns(b),
+                        etl::rows(b),
+                        &alpha,
+                        safe_cast(b.gpu_memory()),
+                        major_stride(b),
+                        safe_cast(a.gpu_memory()),
+                        1,
+                        &beta,
+                        safe_cast(c.gpu_memory()),
+                        1);
+        } else {
+            cublas_gemv(handle.get(),
+                        CUBLAS_OP_T,
+                        etl::rows(b),
+                        etl::columns(b),
+                        &alpha,
+                        safe_cast(b.gpu_memory()),
+                        major_stride(b),
+                        safe_cast(a.gpu_memory()),
+                        1,
+                        &beta,
+                        safe_cast(c.gpu_memory()),
+                        1);
+        }
+
+        // Copy the result from GPU to CPU
+
+        c.validate_gpu();
+        c.invalidate_cpu();
     } else {
-        cublas_gemv(handle.get(), CUBLAS_OP_T, etl::rows(b), etl::columns(b), &alpha, safe_cast(b.gpu_memory()), major_stride(b), safe_cast(a.gpu_memory()), 1,
-                    &beta, safe_cast(c.gpu_memory()), 1);
+        cpp_unreachable("Invalid operation called blas::gevm with heterogeneous types");
     }
-
-    //Copy the result from GPU to CPU
-
-    c.validate_gpu();
-    c.invalidate_cpu();
 }
 
 /*!
@@ -653,134 +783,59 @@ void gevm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_homogeneous<A, B, C>)>
+template <typename A, typename B, typename C>
 void gevm_t(A&& a, B&& b, C&& c) {
-    decltype(auto) handle = start_cublas();
+    if constexpr (all_homogeneous<A, B, C>) {
+        decltype(auto) handle = start_cublas();
 
-    constexpr bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+        constexpr bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
-    a.ensure_gpu_up_to_date();
-    b.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
+        a.ensure_gpu_up_to_date();
+        b.ensure_gpu_up_to_date();
+        c.ensure_gpu_allocated();
 
-    using VT = value_t<A>;
-    using T  = cublas_type<VT>;
+        using VT = value_t<A>;
+        using T  = cublas_type<VT>;
 
-    auto beta = make_default<T>(0.0);
+        auto beta = make_default<T>(0.0);
 
-    //Perform the actual multiplication
+        // Perform the actual multiplication
 
-    if (row_major) {
-        cublas_gemv(handle.get(), CUBLAS_OP_T, etl::columns(b), etl::rows(b), &alpha, safe_cast(b.gpu_memory()), major_stride(b), safe_cast(a.gpu_memory()), 1,
-                    &beta, safe_cast(c.gpu_memory()), 1);
+        if (row_major) {
+            cublas_gemv(handle.get(),
+                        CUBLAS_OP_T,
+                        etl::columns(b),
+                        etl::rows(b),
+                        &alpha,
+                        safe_cast(b.gpu_memory()),
+                        major_stride(b),
+                        safe_cast(a.gpu_memory()),
+                        1,
+                        &beta,
+                        safe_cast(c.gpu_memory()),
+                        1);
+        } else {
+            cublas_gemv(handle.get(),
+                        CUBLAS_OP_N,
+                        etl::rows(b),
+                        etl::columns(b),
+                        &alpha,
+                        safe_cast(b.gpu_memory()),
+                        major_stride(b),
+                        safe_cast(a.gpu_memory()),
+                        1,
+                        &beta,
+                        safe_cast(c.gpu_memory()),
+                        1);
+        }
+
+        // Copy the result from GPU to CPU
+
+        c.validate_gpu();
+        c.invalidate_cpu();
     } else {
-        cublas_gemv(handle.get(), CUBLAS_OP_N, etl::rows(b), etl::columns(b), &alpha, safe_cast(b.gpu_memory()), major_stride(b), safe_cast(a.gpu_memory()), 1,
-                    &beta, safe_cast(c.gpu_memory()), 1);
+        cpp_unreachable("Invalid operation called blas::gevm_t with heterogeneous types");
     }
-
-    //Copy the result from GPU to CPU
-
-    c.validate_gpu();
-    c.invalidate_cpu();
-}
-
-// Fallback functions for heterogeneous types
-// CPP17: Replace with a if constexpr in the base functions ?
-
-/*!
- * \brief GEMM with heterogeneous types
- *
- * \param a The lhs matrix
- * \param b The rhs matrix
- * \param c The result matrix
- */
-template <typename A, typename B, typename C, typename T, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
-    cpp_unreachable("Invalid operation called cublas::gemm with heterogeneous types");
-}
-
-/*!
- * \brief GEMM with heterogeneous types
- *
- * \param a The lhs matrix (row major)
- * \param b The rhs matrix (transposed row major)
- * \param c The result matrix (row major)
- */
-template <typename A, typename B, typename C, typename T, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
-    cpp_unreachable("Invalid operation called cublas::gemm_nt with heterogeneous types");
-}
-
-/*!
- * \brief GEMM with heterogeneous types
- *
- * \param a The lhs matrix (row major)
- * \param b The rhs matrix (transposed row major)
- * \param c The result matrix (row major)
- */
-template <typename A, typename B, typename C, typename T, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
-    cpp_unreachable("Invalid operation called cublas::gemm_tn with heterogeneous types");
-}
-
-/*!
- * \brief GEMM with heterogeneous types
- *
- * \param a The lhs matrix (row major)
- * \param b The rhs matrix (transposed row major)
- * \param c The result matrix (row major)
- */
-template <typename A, typename B, typename C, typename T, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemm_tt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
-    cpp_unreachable("Invalid operation called cublas::gemm_tt with heterogeneous types");
-}
-
-/*!
- * \brief GEMV with heterogeneous types
- *
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemv([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
-    cpp_unreachable("Invalid operation called blas::gemv with heterogeneous types");
-}
-
-/*!
- * \brief GEMV with heterogeneous types
- *
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gemv_t([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
-    cpp_unreachable("Invalid operation called blas::gemv_t with heterogeneous types");
-}
-
-/*!
- * \brief GEVM with heterogeneous types
- *
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gevm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
-    cpp_unreachable("Invalid operation called blas::gevm with heterogeneous types");
-}
-
-/*!
- * \brief GEVM with heterogeneous types
- *
- * \param a The lhs matrix
- * \param b The rhs vector
- * \param c The result vector
- */
-template <typename A, typename B, typename C, cpp_enable_iff(!all_homogeneous<A, B, C>)>
-void gevm_t([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
-    cpp_unreachable("Invalid operation called blas::gevm_t with heterogeneous types");
 }
 
 #else
