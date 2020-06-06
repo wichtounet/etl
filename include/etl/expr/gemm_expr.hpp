@@ -38,11 +38,21 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      */
     static constexpr bool gpu_computable = cublas_enabled && all_homogeneous<A, B>;
 
+    const value_type alpha; ///< The alpha multiplicator
+
     /*!
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    explicit gemm_expr(A a, B b) : base_type(a, b) {
+    explicit gemm_expr(A a, B b) : base_type(a, b), alpha(1) {
+        //Nothing else to init
+    }
+
+    /*!
+     * \brief Construct a new expression
+     * \param a The sub expression
+     */
+    explicit gemm_expr(A a, B b, value_type alpha) : base_type(a, b), alpha(alpha) {
         //Nothing else to init
     }
 
@@ -165,28 +175,28 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \param c The C matrix (output)
      */
     template <typename AA, typename BB, typename C, cpp_enable_iff(is_transpose_expr<AA>&& is_transpose_expr<BB>)>
-    static void apply_raw(AA&& a, BB&& b, C&& c) {
+    void apply_raw(AA&& a, BB&& b, C&& c) const {
         constexpr_select auto impl = select_gemm_impl<AA, BB, C>();
 
         if
             constexpr_select(impl == gemm_impl::STD) {
                 inc_counter("impl:std");
-                etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
+                etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c, alpha);
             }
         else if
             constexpr_select(impl == gemm_impl::VEC) {
                 inc_counter("impl:vec");
-                etl::impl::vec::gemm(smart_forward(a), smart_forward(b), c);
+                etl::impl::vec::gemm(smart_forward(a), smart_forward(b), c, alpha);
             }
         else if
             constexpr_select(impl == gemm_impl::BLAS) {
                 inc_counter("impl:blas");
-                etl::impl::blas::gemm_tt(smart_forward(a.a()), smart_forward(b.a()), c);
+                etl::impl::blas::gemm_tt(smart_forward(a.a()), smart_forward(b.a()), c, alpha);
             }
         else if
             constexpr_select(impl == gemm_impl::CUBLAS) {
                 inc_counter("impl:cublas");
-                etl::impl::cublas::gemm_tt(smart_forward_gpu(a.a()), smart_forward_gpu(b.a()), c);
+                etl::impl::cublas::gemm_tt(smart_forward_gpu(a.a()), smart_forward_gpu(b.a()), c, alpha);
             }
         else {
             cpp_unreachable("Invalid selection of gemm");
@@ -200,28 +210,28 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \param c The C matrix (output)
      */
     template <typename AA, typename BB, typename C, cpp_enable_iff(!is_transpose_expr<AA> && is_transpose_expr<BB>)>
-    static void apply_raw(AA&& a, BB&& b, C&& c) {
+    void apply_raw(AA&& a, BB&& b, C&& c) const {
         constexpr_select auto impl = select_gemm_impl<AA, BB, C>();
 
         if
             constexpr_select(impl == gemm_impl::STD) {
                 inc_counter("impl:std");
-                etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
+                etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c, alpha);
             }
         else if
             constexpr_select(impl == gemm_impl::VEC) {
                 inc_counter("impl:vec");
-                etl::impl::vec::gemm_nt(smart_forward(a), smart_forward(b.a()), c);
+                etl::impl::vec::gemm_nt(smart_forward(a), smart_forward(b.a()), c, alpha);
             }
         else if
             constexpr_select(impl == gemm_impl::BLAS) {
                 inc_counter("impl:blas");
-                etl::impl::blas::gemm_nt(smart_forward(a), smart_forward(b.a()), c);
+                etl::impl::blas::gemm_nt(smart_forward(a), smart_forward(b.a()), c, alpha);
             }
         else if
             constexpr_select(impl == gemm_impl::CUBLAS) {
                 inc_counter("impl:cublas");
-                etl::impl::cublas::gemm_nt(smart_forward_gpu(a), smart_forward_gpu(b.a()), c);
+                etl::impl::cublas::gemm_nt(smart_forward_gpu(a), smart_forward_gpu(b.a()), c, alpha);
             }
         else {
             cpp_unreachable("Invalid selection of gemm");
@@ -235,28 +245,28 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \param c The C matrix (output)
      */
     template <typename AA, typename BB, typename C, cpp_enable_iff(is_transpose_expr<AA> && !is_transpose_expr<BB>)>
-    static void apply_raw(AA&& a, BB&& b, C&& c) {
+    void apply_raw(AA&& a, BB&& b, C&& c) const {
         constexpr_select auto impl = select_gemm_impl<AA, BB, C>();
 
         if
             constexpr_select(impl == gemm_impl::STD) {
                 inc_counter("impl:std");
-                etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
+                etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c, alpha);
             }
         else if
             constexpr_select(impl == gemm_impl::VEC) {
                 inc_counter("impl:vec");
-                etl::impl::vec::gemm_tn(smart_forward(a.a()), smart_forward(b), c);
+                etl::impl::vec::gemm_tn(smart_forward(a.a()), smart_forward(b), c, alpha);
             }
         else if
             constexpr_select(impl == gemm_impl::BLAS) {
                 inc_counter("impl:blas");
-                etl::impl::blas::gemm_tn(smart_forward(a.a()), smart_forward(b), c);
+                etl::impl::blas::gemm_tn(smart_forward(a.a()), smart_forward(b), c, alpha);
             }
         else if
             constexpr_select(impl == gemm_impl::CUBLAS) {
                 inc_counter("impl:cublas");
-                etl::impl::cublas::gemm_tn(smart_forward_gpu(a.a()), smart_forward_gpu(b), c);
+                etl::impl::cublas::gemm_tn(smart_forward_gpu(a.a()), smart_forward_gpu(b), c, alpha);
             }
         else {
             cpp_unreachable("Invalid selection of gemm");
@@ -270,28 +280,28 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \param c The C matrix (output)
      */
     template <typename AA, typename BB, typename C, cpp_enable_iff(!is_transpose_expr<AA> && !is_transpose_expr<BB>)>
-    static void apply_raw(AA&& a, BB&& b, C&& c) {
+    void apply_raw(AA&& a, BB&& b, C&& c) const {
         constexpr_select auto impl = select_gemm_impl<AA, BB, C>();
 
         if
             constexpr_select(impl == gemm_impl::STD) {
                 inc_counter("impl:std");
-                etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c);
+                etl::impl::standard::mm_mul(smart_forward(a), smart_forward(b), c, alpha);
             }
         else if
             constexpr_select(impl == gemm_impl::VEC) {
                 inc_counter("impl:vec");
-                etl::impl::vec::gemm(smart_forward(a), smart_forward(b), c);
+                etl::impl::vec::gemm(smart_forward(a), smart_forward(b), c, alpha);
             }
         else if
             constexpr_select(impl == gemm_impl::BLAS) {
                 inc_counter("impl:blas");
-                etl::impl::blas::gemm(smart_forward(a), smart_forward(b), c);
+                etl::impl::blas::gemm(smart_forward(a), smart_forward(b), c, alpha);
             }
         else if
             constexpr_select(impl == gemm_impl::CUBLAS) {
                 inc_counter("impl:cublas");
-                etl::impl::cublas::gemm(smart_forward_gpu(a), smart_forward_gpu(b), c);
+                etl::impl::cublas::gemm(smart_forward_gpu(a), smart_forward_gpu(b), c, alpha);
             }
         else {
             cpp_unreachable("Invalid selection of gemm");
