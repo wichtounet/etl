@@ -402,7 +402,7 @@ void scale_back_real(A&& a, C&& c) {
         }
 
         //The GPU memory is not up-to-date
-        c.validate_gpu();
+        c.validate_cpu();
         c.invalidate_gpu();
 #endif
     } else if constexpr (is_complex_double_precision<A>) {
@@ -431,7 +431,7 @@ void scale_back_real(A&& a, C&& c) {
         }
 
         //The GPU memory is not up-to-date
-        c.validate_gpu();
+        c.validate_cpu();
         c.invalidate_gpu();
 #endif
     }
