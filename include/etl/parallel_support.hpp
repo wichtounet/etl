@@ -288,6 +288,34 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, boo
     }
 }
 
+template <typename Functor>
+inline void engine_dispatch_1d_block(Functor&& functor, size_t first, size_t last, size_t block) {
+    cpp_assert(last >= first, "Range must be valid");
+
+    const size_t n = last - first;
+
+    if (n) {
+        if (engine_select_parallel(n >= 2 * block)) {
+            const size_t T     = std::min(n / block, etl::threads);
+            const size_t batch = n / (T * block);
+
+            ETL_PARALLEL_SESSION {
+                thread_engine::acquire();
+
+                for (size_t t = 0; t < T - 1; ++t) {
+                    thread_engine::schedule(functor, first + t * batch, first + (t + 1) * batch);
+                }
+
+                thread_engine::schedule(functor, first + (T - 1) * batch, last);
+
+                thread_engine::wait();
+            }
+        } else {
+            functor(first, last);
+        }
+    }
+}
+
 /*!
  * \brief Dispatch the elements of a range to a functor in a parallel
  * manner, using the global thread engine. The spawned threads will
