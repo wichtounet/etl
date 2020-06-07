@@ -65,6 +65,35 @@ inline cuDoubleComplex make_default<cuDoubleComplex>(double value) {
 }
 
 /*!
+ * \brief Create the default multiplication of the given type
+ * \param value The value to get in return
+ */
+template <typename CT, typename T>
+inline CT cublas_convert(T value) {
+    return value;
+}
+
+template <>
+inline cuComplex cublas_convert(std::complex<float> value) {
+    return {value.real(), value.imag()};
+}
+
+template <>
+inline cuDoubleComplex cublas_convert(std::complex<double> value) {
+    return {value.real(), value.imag()};
+}
+
+template <>
+inline cuComplex cublas_convert(etl::complex<float> value) {
+    return {value.real, value.imag};
+}
+
+template <>
+inline cuDoubleComplex cublas_convert(etl::complex<double> value) {
+    return {value.real, value.imag};
+}
+
+/*!
  * \brief Perform a GEMM operation with CUBLAS, overloaded version for single-precision
  * \param handle The handle to the CUBLAS library context
  * \param transa The operation op(A)
@@ -332,7 +361,7 @@ inline void cublas_gemv(cublasHandle_t handle,
  */
 template <typename A, typename B, typename C, typename T>
 void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
-    if ((all_row_major<A, B, C> || all_column_major<A, B, C>) &&all_homogeneous<A, B, C>) {
+    if constexpr ((all_row_major<A, B, C> || all_column_major<A, B, C>) &&all_homogeneous<A, B, C>) {
         decltype(auto) handle = start_cublas();
 
         constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -340,7 +369,8 @@ void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c
         using VT = value_t<A>;
         using CT  = cublas_type<VT>;
 
-        auto beta = make_default<CT>(0.0);
+        auto calpha = cublas_convert<CT>(alpha);
+        auto beta   = make_default<CT>(0.0);
 
         a.ensure_gpu_up_to_date();
         b.ensure_gpu_up_to_date();
@@ -355,7 +385,7 @@ void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c
                         etl::columns(c),
                         etl::rows(c),
                         etl::columns(a),
-                        &alpha,
+                        &calpha,
                         b.gpu_memory(),
                         etl::major_stride(b),
                         a.gpu_memory(),
@@ -370,7 +400,7 @@ void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c
                         etl::rows(c),
                         etl::columns(c),
                         etl::columns(a),
-                        &alpha,
+                        &calpha,
                         a.gpu_memory(),
                         etl::major_stride(a),
                         b.gpu_memory(),
@@ -383,17 +413,17 @@ void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c
         c.validate_gpu();
         c.invalidate_cpu();
     } else if constexpr (all_row_major<B, C> && is_column_major<A> && all_homogeneous<A, B, C>) {
-        gemm(force_temporary_opp(a), b, c);
+        gemm(force_temporary_opp(a), b, c, alpha);
     } else if constexpr (all_row_major<A, C> && is_column_major<B> && all_homogeneous<A, B, C>) {
-        gemm(a, force_temporary_opp(b), c);
+        gemm(a, force_temporary_opp(b), c, alpha);
     } else if constexpr (is_row_major<C> && all_column_major<A, B> && all_homogeneous<A, B, C>) {
-        gemm(force_temporary_opp(a), force_temporary_opp(b), c);
+        gemm(force_temporary_opp(a), force_temporary_opp(b), c, alpha);
     } else if constexpr (is_row_major<A> && all_column_major<B, C> && all_homogeneous<A, B, C>) {
-        gemm(force_temporary_opp(a), b, c);
+        gemm(force_temporary_opp(a), b, c, alpha);
     } else if constexpr (is_row_major<B> && all_column_major<A, C> && all_homogeneous<A, B, C>) {
-        gemm(a, force_temporary_opp(b), c);
+        gemm(a, force_temporary_opp(b), c, alpha);
     } else if constexpr (all_row_major<A, B> && is_column_major<C> && all_homogeneous<A, B, C>) {
-        gemm(force_temporary_opp(a), force_temporary_opp(b), c);
+        gemm(force_temporary_opp(a), force_temporary_opp(b), c, alpha);
     } else {
         cpp_unreachable("Unhandled condition in cublas:gemm");
     }
@@ -417,7 +447,8 @@ void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&
         using VT = value_t<A>;
         using CT  = cublas_type<VT>;
 
-        auto beta = make_default<CT>(0.0);
+        auto calpha = cublas_convert<CT>(alpha);
+        auto beta   = make_default<CT>(0.0);
 
         a.ensure_gpu_up_to_date();
         b.ensure_gpu_up_to_date();
@@ -432,7 +463,7 @@ void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&
                         etl::columns(c),
                         etl::rows(c),
                         etl::columns(a),
-                        &alpha,
+                        &calpha,
                         b.gpu_memory(),
                         etl::major_stride(b),
                         a.gpu_memory(),
@@ -447,7 +478,7 @@ void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&
                         etl::rows(c),
                         etl::columns(c),
                         etl::columns(a),
-                        &alpha,
+                        &calpha,
                         a.gpu_memory(),
                         etl::major_stride(a),
                         b.gpu_memory(),
@@ -471,7 +502,7 @@ void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&
  * param c The result
  */
 template <typename A, typename B, typename C, typename T>
-void gemm_tn(A&& a, B&& b, C&& c, T alpha) {
+void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
     if constexpr (all_homogeneous<A, B, C>) {
         decltype(auto) handle = start_cublas();
 
@@ -482,7 +513,8 @@ void gemm_tn(A&& a, B&& b, C&& c, T alpha) {
         using VT = value_t<A>;
         using CT  = cublas_type<VT>;
 
-        auto beta = make_default<CT>(0.0);
+        auto calpha = cublas_convert<CT>(alpha);
+        auto beta   = make_default<CT>(0.0);
 
         a.ensure_gpu_up_to_date();
         b.ensure_gpu_up_to_date();
@@ -497,7 +529,7 @@ void gemm_tn(A&& a, B&& b, C&& c, T alpha) {
                         etl::columns(c),
                         etl::rows(c),
                         etl::rows(a),
-                        &alpha,
+                        &calpha,
                         b.gpu_memory(),
                         etl::major_stride(b),
                         a.gpu_memory(),
@@ -512,7 +544,7 @@ void gemm_tn(A&& a, B&& b, C&& c, T alpha) {
                         etl::rows(c),
                         etl::columns(c),
                         etl::rows(a),
-                        &alpha,
+                        &calpha,
                         a.gpu_memory(),
                         etl::major_stride(a),
                         b.gpu_memory(),
@@ -536,7 +568,7 @@ void gemm_tn(A&& a, B&& b, C&& c, T alpha) {
  * param c The result
  */
 template <typename A, typename B, typename C, typename T>
-void gemm_tt(A&& a, B&& b, C&& c, T alpha) {
+void gemm_tt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
     if constexpr (all_homogeneous<A, B, C>) {
         decltype(auto) handle = start_cublas();
 
@@ -547,6 +579,7 @@ void gemm_tt(A&& a, B&& b, C&& c, T alpha) {
         using VT = value_t<A>;
         using CT  = cublas_type<VT>;
 
+        auto calpha = cublas_convert<CT>(alpha);
         auto beta = make_default<CT>(0.0);
 
         a.ensure_gpu_up_to_date();
@@ -562,7 +595,7 @@ void gemm_tt(A&& a, B&& b, C&& c, T alpha) {
                         etl::columns(c),
                         etl::rows(c),
                         etl::rows(a),
-                        &alpha,
+                        &calpha,
                         b.gpu_memory(),
                         etl::major_stride(b),
                         a.gpu_memory(),
@@ -601,7 +634,7 @@ void gemm_tt(A&& a, B&& b, C&& c, T alpha) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemv(A&& a, B&& b, C&& c) {
+void gemv([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     if constexpr (all_homogeneous<A, B, C>) {
         decltype(auto) handle = start_cublas();
 
@@ -663,7 +696,7 @@ void gemv(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gemv_t(A&& a, B&& b, C&& c) {
+void gemv_t([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     if constexpr (all_homogeneous<A, B, C>) {
         decltype(auto) handle = start_cublas();
 
@@ -725,7 +758,7 @@ void gemv_t(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gevm(A&& a, B&& b, C&& c) {
+void gevm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     if constexpr (all_homogeneous<A, B, C>) {
         decltype(auto) handle = start_cublas();
 
@@ -787,7 +820,7 @@ void gevm(A&& a, B&& b, C&& c) {
  * param c The result
  */
 template <typename A, typename B, typename C>
-void gevm_t(A&& a, B&& b, C&& c) {
+void gevm_t([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c) {
     if constexpr (all_homogeneous<A, B, C>) {
         decltype(auto) handle = start_cublas();
 
