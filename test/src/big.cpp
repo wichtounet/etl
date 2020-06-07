@@ -174,7 +174,7 @@ TEMPLATE_TEST_CASE_2("big/cos", "[big][cos]", Z, double, float) {
     c = etl::cos(a);
 
     for (size_t i = 0; i < c.size(); ++i) {
-        REQUIRE_EQUALS_APPROX(c[i], std::cos(a[i]));
+        REQUIRE_EQUALS_APPROX_E(c[i], std::cos(a[i]), base_eps * 10);
     }
 }
 
@@ -186,7 +186,7 @@ TEMPLATE_TEST_CASE_2("big/sin", "[big][sin]", Z, double, float) {
     c = etl::sin(a);
 
     for (size_t i = 0; i < c.size(); ++i) {
-        REQUIRE_EQUALS_APPROX(c[i], std::sin(a[i]));
+        REQUIRE_EQUALS_APPROX_E(c[i], std::sin(a[i]), base_eps * 10);
     }
 }
 
