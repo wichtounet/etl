@@ -164,7 +164,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
         constexpr_select auto impl = select_gevm_impl<C>();
 
         // clang-format off
-        if constexpr_select (is_transpose_expr<BB>) {
+        if constexpr (is_transpose_expr<BB>) {
             if constexpr_select (impl == gemm_impl::STD) {
                 inc_counter("impl:std");
                 etl::impl::standard::vm_mul(smart_forward(a), smart_forward(b), c);
