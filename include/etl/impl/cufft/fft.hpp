@@ -82,8 +82,8 @@ namespace detail {
  * \param odata The output data
  * \param direction The direction of the transform
  */
-inline cufftResult cufft_exec_c2c(cufftHandle plan, cufftComplex* idata, cufftComplex* odata, int direction) {
-    return cufftExecC2C(plan, idata, odata, direction);
+inline void cufft_exec_c2c(cufftHandle plan, cufftComplex* idata, cufftComplex* odata, int direction) {
+    cufft_check(cufftExecC2C(plan, idata, odata, direction));
 }
 
 /*!
@@ -93,8 +93,8 @@ inline cufftResult cufft_exec_c2c(cufftHandle plan, cufftComplex* idata, cufftCo
  * \param odata The output data
  * \param direction The direction of the transform
  */
-inline cufftResult cufft_exec_c2c(cufftHandle plan, cufftDoubleComplex* idata, cufftDoubleComplex* odata, int direction) {
-    return cufftExecZ2Z(plan, idata, odata, direction);
+inline void cufft_exec_c2c(cufftHandle plan, cufftDoubleComplex* idata, cufftDoubleComplex* odata, int direction) {
+    cufft_check(cufftExecZ2Z(plan, idata, odata, direction));
 }
 
 /*!
@@ -108,7 +108,7 @@ void inplace_fft1_kernel(T&& a, size_t n) {
 
     a.ensure_gpu_up_to_date();
 
-    cufftPlan1d(&handle.get(), n, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z, 1);
+    cufft_check(cufftPlan1d(&handle.get(), n, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z, 1));
     cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 
     a.invalidate_cpu();
@@ -128,7 +128,7 @@ void inplace_fft1_many_kernel(T&& a, size_t batch, size_t n) {
 
     a.ensure_gpu_up_to_date();
 
-    cufftPlanMany(&handle.get(), 1, dims, nullptr, 1, n, nullptr, 1, n, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z, batch);
+    cufft_check(cufftPlanMany(&handle.get(), 1, dims, nullptr, 1, n, nullptr, 1, n, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z, batch));
 
     cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 
@@ -147,7 +147,7 @@ void inplace_ifft1_kernel(T&& a, size_t n) {
 
     a.ensure_gpu_up_to_date();
 
-    cufftPlan1d(&handle.get(), n, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z, 1);
+    cufft_check(cufftPlan1d(&handle.get(), n, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z, 1));
     cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
 
     a.invalidate_cpu();
@@ -167,7 +167,7 @@ void inplace_ifft1_many_kernel(T&& a, size_t batch, size_t n) {
 
     a.ensure_gpu_up_to_date();
 
-    cufftPlanMany(&handle.get(), 1, dims, nullptr, 1, n, nullptr, 1, n, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z, batch);
+    cufft_check(cufftPlanMany(&handle.get(), 1, dims, nullptr, 1, n, nullptr, 1, n, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z, batch));
 
     cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
 
@@ -186,7 +186,7 @@ inline void inplace_fft2_kernel(T&& a, size_t d1, size_t d2) {
 
     a.ensure_gpu_up_to_date();
 
-    cufftPlan2d(&handle.get(), d1, d2, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z);
+    cufft_check(cufftPlan2d(&handle.get(), d1, d2, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z));
     cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 
     a.invalidate_cpu();
@@ -207,7 +207,7 @@ void inplace_fft2_many_kernel(T&& a, size_t batch, size_t d1, size_t d2) {
 
     a.ensure_gpu_up_to_date();
 
-    cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, d1 * d2, nullptr, 1, d1 * d2, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z, batch);
+    cufft_check(cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, d1 * d2, nullptr, 1, d1 * d2, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z, batch));
 
     cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 
@@ -226,7 +226,7 @@ void inplace_ifft2_kernel(T&& a, size_t d1, size_t d2) {
 
     a.ensure_gpu_up_to_date();
 
-    cufftPlan2d(&handle.get(), d1, d2, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z);
+    cufft_check(cufftPlan2d(&handle.get(), d1, d2, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z));
     cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
 
     a.invalidate_cpu();
@@ -247,7 +247,7 @@ void inplace_ifft2_many_kernel(T&& a, size_t batch, size_t d1, size_t d2) {
 
     a.ensure_gpu_up_to_date();
 
-    cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, d1 * d2, nullptr, 1, d1 * d2, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z, batch);
+    cufft_check(cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, d1 * d2, nullptr, 1, d1 * d2, is_complex_single_precision<T> ? CUFFT_C2C : CUFFT_Z2Z, batch));
 
     cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
 
