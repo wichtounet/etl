@@ -213,7 +213,7 @@ public:
             }
         }
 
-        // If the cache is pool, release the memory
+        // If the cache is full, release the memory
 
         base_release(gpu_memory);
     }
