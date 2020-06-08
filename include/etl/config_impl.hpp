@@ -155,16 +155,17 @@ static_assert(false, "EGBLAS is only intended to work with CUBLAS, not alone");
 #define ETL_CUDNN_MODE_BOOL false
 #endif
 
+#ifdef ETL_EGBLAS_MODE
+#define ETL_CUDA
+#define ETL_EGBLAS_MODE_BOOL true
+#else
+#define ETL_EGBLAS_MODE_BOOL false
+#endif
+
 #ifdef ETL_CUDA
 #define ETL_CUDA_BOOL true
 #else
 #define ETL_CUDA_BOOL false
-#endif
-
-#ifdef ETL_EGBLAS_MODE
-#define ETL_EGBLAS_MODE_BOOL true
-#else
-#define ETL_EGBLAS_MODE_BOOL false
 #endif
 
 #ifdef ETL_STRICT_DIV
