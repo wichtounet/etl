@@ -46,13 +46,10 @@ inline const char* cufft_str(cufftResult code) {
     }
 }
 
-#define cufft_check(call)                                                                                        \
-    {                                                                                                            \
-        auto status = call;                                                                                      \
-        if (status != CUFFT_SUCCESS) {                                                                           \
-            std::cerr << "CUDA error: " << etl::impl::cufft::cufft_str(status) << " from " << #call << std::endl \
-                      << "from " << __FILE__ << ":" << __LINE__ << std::endl;                                    \
-        }                                                                                                        \
+#define cufft_check(call)                                                                                    \
+    if (auto status = call; status != CUFFT_SUCCESS) {                                                       \
+        std::cerr << "CUDA error: " << etl::impl::cufft::cufft_str(status) << " from " << #call << std::endl \
+                  << "from " << __FILE__ << ":" << __LINE__ << std::endl;                                    \
     }
 
 /*!
