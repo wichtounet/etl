@@ -60,6 +60,15 @@ IFFT2_TEST_CASE("ifft_2d_c/2", "[fast][ifft]") {
     REQUIRE_EQUALS_APPROX(c(1, 0).imag(), T(1.0));
     REQUIRE_EQUALS_APPROX(c(1, 1).real(), T(-0.5));
     REQUIRE_EQUALS_APPROX(c(1, 1).imag(), T(-0.5));
+
+    REQUIRE_EQUALS_APPROX(a(0, 0).real(), T(1.0));
+    REQUIRE_EQUALS_APPROX(a(0, 0).imag(), T(1.0));
+    REQUIRE_EQUALS_APPROX(a(0, 1).real(), T(2.0));
+    REQUIRE_EQUALS_APPROX(a(0, 1).imag(), T(3.0));
+    REQUIRE_EQUALS_APPROX(a(1, 0).real(), T(-1.0));
+    REQUIRE_EQUALS_APPROX(a(1, 0).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(a(1, 1).real(), T(-2.0));
+    REQUIRE_EQUALS_APPROX(a(1, 1).imag(), T(0.0));
 }
 
 IFFT2_TEST_CASE("ifft_2d_c/4", "[fast][ifft]") {
