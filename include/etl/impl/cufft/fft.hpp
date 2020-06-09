@@ -461,6 +461,17 @@ void fft1(A&& a, C&& c) {
 }
 
 /*!
+ * \brief Perform the 1D FFT on a and store the result in c
+ * \param c The output expression
+ */
+template <typename C>
+void inplace_fft1(C&& c) {
+    static_assert(is_complex<C>);
+
+    detail::inplace_fft1_kernel(c, etl::size(c));
+}
+
+/*!
  * \brief Perform many 1D FFT on a and store the result in c
  * \param a The input expression
  * \param c The output expression
@@ -489,6 +500,24 @@ void fft1_many(A&& a, C&& c) {
 }
 
 /*!
+ * \brief Perform many 1D FFT on a and store the result in c
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
+template <typename C>
+void inplace_fft1_many(C&& c) {
+    static_assert(is_complex<C>);
+
+    static constexpr size_t N = decay_traits<C>::dimensions();
+
+    size_t n     = etl::dim<N - 1>(c); //Size of the transform
+    size_t batch = etl::size(c) / n;   //Number of batch
+
+    detail::inplace_fft1_many_kernel(c, batch, n);
+}
+
+/*!
  * \brief Perform the 1D Inverse FFT on a and store the result in c
  * \param a The input expression
  * \param c The output expression
@@ -498,6 +527,19 @@ void ifft1(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
     c.gpu_copy_from(a.gpu_memory());
+
+    detail::inplace_ifft1_kernel(c, etl::size(c));
+
+    detail::scale_back(c);
+}
+
+/*!
+ * \brief Perform the 1D Inverse FFT on a and store the result in c
+ * \param c The output expression
+ */
+template <typename C>
+void inplace_ifft1(C&& c) {
+    c.ensure_gpu_up_to_date();
 
     detail::inplace_ifft1_kernel(c, etl::size(c));
 
@@ -535,6 +577,27 @@ void ifft1_many(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
     c.gpu_copy_from(a.gpu_memory());
+
+    detail::inplace_ifft1_many_kernel(c, batch, n);
+
+    detail::scale_back(c, 1.0 / double(n));
+}
+
+/*!
+ * \brief Perform many 1D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
+template <typename C>
+void inplace_ifft1_many(C&& c) {
+    static constexpr size_t N = decay_traits<C>::dimensions();
+
+    size_t n     = etl::dim<N - 1>(c); //Size of the transform
+    size_t batch = etl::size(c) / n;   //Number of batch
+
+    c.ensure_gpu_up_to_date();
 
     detail::inplace_ifft1_many_kernel(c, batch, n);
 
@@ -610,6 +673,20 @@ void fft2(A&& a, C&& c) {
 }
 
 /*!
+ * \brief Perform the 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
+template <typename C>
+void inplace_fft2(C&& c) {
+    static_assert(is_complex<C>);
+
+    c.ensure_gpu_up_to_date();
+
+    detail::inplace_fft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
+}
+
+/*!
  * \brief Perform the 2D Inverse FFT on a and store the result in c
  * \param a The input expression
  * \param c The output expression
@@ -619,6 +696,19 @@ void ifft2(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
     c.gpu_copy_from(a.gpu_memory());
+
+    detail::inplace_ifft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
+
+    detail::scale_back(c);
+}
+
+/*!
+ * \brief Perform the 2D Inverse FFT on a and store the result in c
+ * \param c The output expression
+ */
+template <typename C>
+void inplace_ifft2(C&& c) {
+    c.ensure_gpu_up_to_date();
 
     detail::inplace_ifft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
 
@@ -668,6 +758,25 @@ void fft2_many(A&& a, C&& c) {
 }
 
 /*!
+ * \brief Perform many 2D FFT on a and store the result in c
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
+template <typename C>
+void inplace_fft2_many(C&& c) {
+    static constexpr size_t N = decay_traits<C>::dimensions();
+
+    size_t n1    = etl::dim<N - 2>(c);       //Size of the transform
+    size_t n2    = etl::dim<N - 1>(c);       //Size of the transform
+    size_t batch = etl::size(c) / (n1 * n2); //Number of batch
+
+    c.ensure_gpu_up_to_date();
+
+    detail::inplace_fft2_many_kernel(c, batch, n1, n2);
+}
+
+/*!
  * \brief Perform many 2D Inverse FFT on a and store the result in c
  * \param a The input expression
  * \param c The output expression
@@ -685,6 +794,27 @@ void ifft2_many(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
     c.gpu_copy_from(a.gpu_memory());
+
+    detail::inplace_ifft2_many_kernel(c, batch, n1, n2);
+
+    detail::scale_back(c, 1.0 / double(n1 * n2));
+}
+
+/*!
+ * \brief Perform many 2D Inverse FFT on a and store the result in c
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
+template <typename C>
+void inplace_ifft2_many(C&& c) {
+    static constexpr size_t N = decay_traits<C>::dimensions();
+
+    size_t n1    = etl::dim<N - 2>(c);       //Size of the transform
+    size_t n2    = etl::dim<N - 1>(c);       //Size of the transform
+    size_t batch = etl::size(c) / (n1 * n2); //Number of batch
+
+    c.ensure_gpu_up_to_date();
 
     detail::inplace_ifft2_many_kernel(c, batch, n1, n2);
 

@@ -191,7 +191,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::fft1_impl::apply(mat, mat);
+        detail::inplace_fft1_impl::apply(mat);
 
         return mat;
     }
@@ -207,7 +207,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::fft1_many_impl::apply(mat, mat);
+        detail::inplace_fft1_many_impl::apply(mat);
 
         return mat;
     }
@@ -221,7 +221,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::ifft1_impl::apply(mat, mat);
+        detail::inplace_ifft1_impl::apply(mat);
 
         return mat;
     }
@@ -235,7 +235,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::ifft1_many_impl::apply(mat, mat);
+        detail::inplace_ifft1_many_impl::apply(mat);
 
         return mat;
     }
@@ -249,7 +249,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::fft2_impl::apply(mat, mat);
+        detail::inplace_fft2_impl::apply(mat);
 
         return mat;
     }
@@ -265,7 +265,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::fft2_many_impl::apply(mat, mat);
+        detail::inplace_fft2_many_impl::apply(mat);
 
         return mat;
     }
@@ -279,7 +279,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::ifft2_impl::apply(mat, mat);
+        detail::inplace_ifft2_impl::apply(mat);
 
         return mat;
     }
@@ -293,7 +293,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::ifft2_many_impl::apply(mat, mat);
+        detail::inplace_ifft2_many_impl::apply(mat);
 
         return mat;
     }

@@ -328,6 +328,44 @@ struct fft1_impl {
 };
 
 /*!
+ * \brief Functor for Inplace 1D FFT
+ */
+struct inplace_fft1_impl {
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template <typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
+    template <typename C>
+    static void apply(C&& c) {
+        constexpr_select auto impl = select_fft1_impl();
+
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
+                etl::impl::standard::fft1(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
+                etl::impl::blas::fft1(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
+                etl::impl::cufft::inplace_fft1(c);
+            }
+    }
+};
+
+/*!
  * \brief Functor for 1D IFFT
  */
 struct ifft1_impl {
@@ -361,6 +399,44 @@ struct ifft1_impl {
             constexpr_select(impl == fft_impl::CUFFT) {
                 inc_counter("impl:cufft");
                 etl::impl::cufft::ifft1(smart_forward_gpu(a), c);
+            }
+    }
+};
+
+/*!
+ * \brief Functor for 1D IFFT
+ */
+struct inplace_ifft1_impl {
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template <typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
+    template <typename C>
+    static void apply(C&& c) {
+        constexpr_select auto impl = select_ifft1_impl();
+
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
+                etl::impl::standard::ifft1(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
+                etl::impl::blas::ifft1(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
+                etl::impl::cufft::inplace_ifft1(c);
             }
     }
 };
@@ -442,6 +518,44 @@ struct fft2_impl {
 };
 
 /*!
+ * \brief Functor for 2D FFT
+ */
+struct inplace_fft2_impl {
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template <typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
+    template <typename C>
+    static void apply(C&& c) {
+        constexpr_select auto impl = select_fft2_impl();
+
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
+                etl::impl::standard::fft2(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
+                etl::impl::blas::fft2(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
+                etl::impl::cufft::inplace_fft2(c);
+            }
+    }
+};
+
+/*!
  * \brief Functor for 2D IFFT
  */
 struct ifft2_impl {
@@ -475,6 +589,44 @@ struct ifft2_impl {
             constexpr_select(impl == fft_impl::CUFFT) {
                 inc_counter("impl:cufft");
                 etl::impl::cufft::ifft2(smart_forward_gpu(a), c);
+            }
+    }
+};
+
+/*!
+ * \brief Functor for 2D IFFT
+ */
+struct inplace_ifft2_impl {
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template <typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
+    template <typename C>
+    static void apply(C&& c) {
+        constexpr_select auto impl = select_fft2_impl();
+
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
+                etl::impl::standard::ifft2(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
+                etl::impl::blas::ifft2(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
+                etl::impl::cufft::inplace_ifft2(c);
             }
     }
 };
@@ -556,6 +708,44 @@ struct fft1_many_impl {
 };
 
 /*!
+ * \brief Functor for Batched 1D FFT
+ */
+struct inplace_fft1_many_impl {
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template <typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
+    template <typename C>
+    static void apply(C&& c) {
+        const auto impl = select_fft1_many_impl();
+
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
+                etl::impl::standard::fft1_many(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
+                etl::impl::blas::fft1_many(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
+                etl::impl::cufft::inplace_fft1_many(c);
+            }
+    }
+};
+
+/*!
  * \brief Functor for Batched 2D FFT
  */
 struct fft2_many_impl {
@@ -589,6 +779,44 @@ struct fft2_many_impl {
             constexpr_select(impl == fft_impl::CUFFT) {
                 inc_counter("impl:cufft");
                 etl::impl::cufft::fft2_many(smart_forward_gpu(a), c);
+            }
+    }
+};
+
+/*!
+ * \brief Functor for Batched 2D FFT
+ */
+struct inplace_fft2_many_impl {
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template <typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
+    template <typename C>
+    static void apply(C&& c) {
+        const auto impl = select_fft2_many_impl();
+
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
+                etl::impl::standard::fft2_many(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
+                etl::impl::blas::fft2_many(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
+                etl::impl::cufft::inplace_fft2_many(c);
             }
     }
 };
@@ -632,6 +860,44 @@ struct ifft1_many_impl {
 };
 
 /*!
+ * \brief Functor for Batched 1D IFFT
+ */
+struct inplace_ifft1_many_impl {
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template <typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
+    template <typename C>
+    static void apply(C&& c) {
+        constexpr_select auto impl = select_fft1_many_impl();
+
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
+                etl::impl::standard::ifft1_many(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
+                etl::impl::blas::ifft1_many(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
+                etl::impl::cufft::inplace_ifft1_many(c);
+            }
+    }
+};
+
+/*!
  * \brief Functor for Batched 2D IFFT
  */
 struct ifft2_many_impl {
@@ -665,6 +931,44 @@ struct ifft2_many_impl {
             constexpr_select(impl == fft_impl::CUFFT) {
                 inc_counter("impl:cufft");
                 etl::impl::cufft::ifft2_many(smart_forward_gpu(a), c);
+            }
+    }
+};
+
+/*!
+ * \brief Functor for Batched 2D IFFT
+ */
+struct inplace_ifft2_many_impl {
+    /*!
+     * \brief Indicates if the temporary expression can be directly evaluated
+     * using only GPU.
+     */
+    template <typename A>
+    static constexpr bool gpu_computable = cufft_enabled;
+
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
+    template <typename C>
+    static void apply(C&& c) {
+        constexpr_select auto impl = select_fft2_many_impl();
+
+        if
+            constexpr_select(impl == fft_impl::STD) {
+                inc_counter("impl:std");
+                etl::impl::standard::ifft2_many(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::MKL) {
+                inc_counter("impl:mkl");
+                etl::impl::blas::ifft2_many(c, c);
+            }
+        else if
+            constexpr_select(impl == fft_impl::CUFFT) {
+                inc_counter("impl:cufft");
+                etl::impl::cufft::inplace_ifft2_many(c);
             }
     }
 };
