@@ -37,6 +37,9 @@ inline void transpose_block_4x4_kernel(size_t N, size_t M, const T* A2, T* C2, s
     C2[(j2 + 3) * N + (i2 + 3)] = A2[(i2 + 3) * M + (j2 + 3)];
 }
 
+#ifdef __SSE3__
+// sse_vec will only be defined if __SSE3__is enabled
+
 // SSE Version optimized for float
 template <>
 inline void transpose_block_4x4_kernel<sse_vec>(size_t N, size_t M, const float* A2, float* C2, size_t i2, size_t j2) {
@@ -54,6 +57,8 @@ inline void transpose_block_4x4_kernel<sse_vec>(size_t N, size_t M, const float*
     vec_type::storeu(C2 + (j2 + 2) * N + i2, r3);
     vec_type::storeu(C2 + (j2 + 3) * N + i2, r4);
 }
+
+#endif
 
 template <typename V, typename A, typename C>
 void transpose_impl(const A& a, C&& c) {
@@ -135,9 +140,12 @@ void transpose_impl(const A& a, C&& c) {
 }
 
 template <typename A, typename C>
-void transpose(A&& a, C&& c) {
+void transpose([[maybe_unused]] A&& a, [[maybe_unused]] C&& c) {
     if constexpr (all_vectorizable<vector_mode, A, C> && sse3_enabled) {
+#ifdef __SSE3__
+// sse_vec will only be defined if __SSE3__is enabled
         transpose_impl<sse_vec>(a, c);
+#endif
     } else {
         cpp_unreachable("Invalid call to vec::batch_outer");
     }
