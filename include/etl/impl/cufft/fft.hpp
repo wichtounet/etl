@@ -1220,6 +1220,114 @@ void ifft2_many([[maybe_unused]] A&& a, [[maybe_unused]] C&& c) {
 }
 
 /*!
+ * \brief Perform the 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
+template <typename C>
+void inplace_fft1([[maybe_unused]] C&& c) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
+
+/*!
+ * \brief Perform the 1D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
+template <typename C>
+void inplace_ifft1([[maybe_unused]] C&& c) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
+
+/*!
+ * \brief Perform the 1D Inverse FFT on a and store the real part of the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
+template <typename C>
+void inplace_ifft1_real([[maybe_unused]] C&& c) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
+
+/*!
+ * \brief Perform many 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
+template <typename C>
+void inplace_fft1_many([[maybe_unused]] C&& c) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
+
+/*!
+ * \brief Perform many 1D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
+template <typename C>
+void inplace_ifft1_many([[maybe_unused]] C&& c) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
+
+/*!
+ * \brief Perform the 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
+template <typename C>
+void inplace_fft2([[maybe_unused]] C&& c) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
+
+/*!
+ * \brief Perform the 2D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
+template <typename C>
+void inplace_ifft2([[maybe_unused]] C&& c) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
+
+/*!
+ * \brief Perform the 2D Inverse FFT on a and store the real part of the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
+template <typename C>
+void inplace_ifft2_real([[maybe_unused]] C&& c) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
+
+/*!
+ * \brief Perform many 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
+template <typename C>
+void inplace_fft2_many([[maybe_unused]] C&& c) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
+
+/*!
+ * \brief Perform many 2D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
+template <typename C>
+void inplace_ifft2_many([[maybe_unused]] C&& c) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
+
+/*!
  * \brief Perform the 1D full convolution of a with b and store the result in c
  * \param a The input matrix
  * \param b The kernel matrix
