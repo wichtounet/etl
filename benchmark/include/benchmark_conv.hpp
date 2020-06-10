@@ -276,6 +276,22 @@ using imagenet_gradients_policy = NARY_POLICY(
     /* W */ VALUES_POLICY(256, 128, 64,  32,  16)
     );
 
+using conv_4d_valid_5x5_policy = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 4, 6, 8, 10, 12, 14, 16, 18, 64),
+    /* K */ VALUES_POLICY(6, 8, 10, 12, 14, 16, 18, 20, 22, 40),
+    /* C */ VALUES_POLICY(3, 5, 7, 9, 11, 13, 15, 17, 19, 2),
+    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28, 28),
+    /* W */ VALUES_POLICY(5, 5, 5, 5, 5, 5, 5, 5, 5, 5)
+    );
+
+using conv_4d_valid_3x3_policy = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 4, 6, 8, 10, 12, 14, 16, 18, 64),
+    /* K */ VALUES_POLICY(6, 8, 10, 12, 14, 16, 18, 20, 22, 40),
+    /* C */ VALUES_POLICY(3, 5, 7, 9, 11, 13, 15, 17, 19, 2),
+    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28, 28),
+    /* W */ VALUES_POLICY(3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
+    );
+
 #define CONV4_BENCH(Name, Policy, Function) \
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF(Name, Policy, \
     FLOPS([](size_t n, size_t k, size_t c, size_t i, size_t w){ return 2 * n * k * c * i * i * w * w; }), \

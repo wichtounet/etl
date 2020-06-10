@@ -304,3 +304,5 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_full_multi_flipped [conv][conv2]", con
 
 CONV4_BENCH("sconv4_valid [conv][conv4]", conv_4d_valid_policy, conv_4d_valid)
 CONV4_BENCH("sconv4_valid_flipped [conv][conv4]", conv_4d_valid_policy, conv_4d_valid_flipped)
+CONV4_BENCH("sconv4_valid_flipped_5x5 [conv][conv4]", conv_4d_valid_5x5_policy, conv_4d_valid_flipped)
+CONV4_BENCH("sconv4_valid_flipped_3x3 [conv][conv4]", conv_4d_valid_3x3_policy, conv_4d_valid_flipped)
