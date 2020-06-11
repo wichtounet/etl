@@ -939,6 +939,12 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
 
     if constexpr (is_parallel) {
         if constexpr (is_blas_parallel_config) {
+            // With a parallel BLAS library, we have two choices
+            // 1) Use a parallel gemm and a serial outer loop
+            // 2) Use a single-threaded gemm and a parallel outer loop
+            // We choose 2) because tests have shown that this is
+            // significantly faster
+
             disable_blas_threads();
 
             engine_dispatch_1d_serial(batch_fun_n, 0, N, 2UL);
