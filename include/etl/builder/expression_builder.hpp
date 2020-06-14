@@ -63,9 +63,9 @@ auto abs(E&& value) -> detail::unary_helper<E, abs_unary_op> {
  * \return an expression representing the max values from lhs and rhs
  */
 template <typename L, typename R>
-auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op_scalar<L, R, max_binary_op<detail::wrap_scalar_value_t<L>, detail::wrap_scalar_value_t<R>>> {
+auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op_scalar<L, R, max_binary_op<detail::wrap_scalar_value_t<L>, detail::wrap_scalar_value_t<L>>> {
     static_assert(is_etl_expr<L>, "etl::max can only be used on ETL expressions");
-    return {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
+    return {detail::wrap_scalar(lhs), detail::smart_wrap_scalar<L>(rhs)};
 }
 
 /*!
@@ -75,9 +75,9 @@ auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op_scalar<L, R, max_bin
  * \return an expression representing the min values from lhs and rhs
  */
 template <typename L, typename R>
-auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op_scalar<L, R, min_binary_op<detail::wrap_scalar_value_t<L>, detail::wrap_scalar_value_t<R>>> {
+auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op_scalar<L, R, min_binary_op<detail::wrap_scalar_value_t<L>, detail::wrap_scalar_value_t<L>>> {
     static_assert(is_etl_expr<L>, "etl::max can only be used on ETL expressions");
-    return {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
+    return {detail::wrap_scalar(lhs), detail::smart_wrap_scalar<L>(rhs)};
 }
 
 /*!

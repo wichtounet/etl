@@ -41,6 +41,15 @@ template <typename T>
 using wrap_scalar_t = std::conditional_t<etl::is_etl_expr<T>, T, etl::scalar<std::decay_t<T>>>;
 
 /*!
+ * \brief Wraps a type either into a scalar or keep the ETL expression.
+ *
+ * If the type is not an ETL expression, we use the type of the hint
+ * in order to create the correct scalar type.
+ */
+template <typename H, typename T>
+using smart_wrap_scalar_t = std::conditional_t<etl::is_etl_expr<T>, T, etl::scalar<etl::value_t<H>>>;
+
+/*!
  * \brief Extract the value type of the given type taking scalar into account
  */
 template <typename T, typename Enable = void>
@@ -95,6 +104,21 @@ etl::scalar<std::decay_t<T>> wrap_scalar(T&& value) {
 }
 
 /*!
+ * \brief Transform a scalar value into an etl::scalar
+ * \param value The value to wraps
+ * \return an etl::scalar or a forwarded expression
+ */
+template <typename Hint, typename T>
+decltype(auto) smart_wrap_scalar(T&& value) {
+    if constexpr (is_etl_expr<T>) {
+        return std::forward<T>(value);
+    } else {
+        using scalar_type = etl::value_t<Hint>;
+        return etl::scalar<scalar_type>{scalar_type(value)};
+    }
+}
+
+/*!
  * \brief Helper to create a binary expr with left typing
  */
 template <typename LE, typename RE, template <typename> typename OP>
@@ -112,7 +136,7 @@ using left_binary_helper_op = binary_expr<value_t<LE>, build_type<LE>, OP, build
  * direct operation
  */
 template <typename LE, typename RE, typename OP>
-using left_binary_helper_op_scalar = binary_expr<wrap_scalar_value_t<LE>, build_type<wrap_scalar_t<LE>>, OP, build_type<wrap_scalar_t<RE>>>;
+using left_binary_helper_op_scalar = binary_expr<wrap_scalar_value_t<LE>, build_type<wrap_scalar_t<LE>>, OP, build_type<smart_wrap_scalar_t<LE, RE>>>;
 
 /*!
  * \brief Helper to create a binary expr with right typing
