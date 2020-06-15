@@ -61,9 +61,16 @@ void validate_expression_impl([[maybe_unused]] const LE& lhs, [[maybe_unused]] c
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
 }
 
+// In relaxed mode, the expressions are only validated when assigned
+// This allows for batch_hint to works
+
+#ifdef ETL_RELAXED
+#define validate_expression(lhs, rhs) static_assert(all_etl_expr<decltype(lhs), decltype(rhs)>, "ETL functions are only made for ETL expressions ");
+#else
 #define validate_expression(lhs, rhs)                                                                              \
     static_assert(all_etl_expr<decltype(lhs), decltype(rhs)>, "ETL functions are only made for ETL expressions "); \
     validate_expression_impl(lhs, rhs);
+#endif
 
 /*!
  * \brief Make sure that rhs can assigned to lhs.

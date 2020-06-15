@@ -204,6 +204,12 @@ static_assert(false, "EGBLAS is only intended to work with CUBLAS, not alone");
 #define ETL_NO_UNROLL_NON_VECT_BOOL false
 #endif
 
+#ifdef ETL_RELAXED
+#define ETL_RELAXED_BOOL true
+#else
+#define ETL_RELAXED_BOOL false
+#endif
+
 #ifdef __INTEL_COMPILER
 #define ETL_INTEL_COMPILER_BOOL true
 #else

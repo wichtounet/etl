@@ -153,6 +153,11 @@ constexpr bool padding_impl = !ETL_NO_PADDING_IMPL_BOOL;
 constexpr bool unroll_normal_loops = ETL_NO_UNROLL_NON_VECT_BOOL;
 
 /*!
+ * \brief Indicates if ETL is relaxed.
+ */
+constexpr bool relaxed = ETL_RELAXED_BOOL;
+
+/*!
  * \brief Cache size of the machine.
  */
 constexpr size_t cache_size = ETL_CACHE_SIZE;
