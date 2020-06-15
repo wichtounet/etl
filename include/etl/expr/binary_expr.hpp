@@ -40,6 +40,10 @@ public:
     using const_memory_type = void;                           ///< The const memory type
     using iterator          = etl::iterator<const this_type>; ///< The iterator type
     using const_iterator    = etl::iterator<const this_type>; ///< The const iterator type
+    using operator_type     = BinaryOp;                       ///< The binary operator type
+
+    using left_type  = std::decay_t<LeftExpr>;  ///< The LHS side type
+    using right_type = std::decay_t<RightExpr>; ///< The RHS side type
 
     /*!
      * \brief The vectorization type for V
