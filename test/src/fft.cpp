@@ -492,9 +492,15 @@ TEMPLATE_TEST_CASE_2("fft_1d_many/5", "[fast][fft]", Z, float, double) {
         }
     }
 
+#ifdef ETL_CUFFT_MODE
+    auto eps = base_eps_etl_large * 2;
+#else
+    auto eps = base_eps * 10;
+#endif
+
     for(size_t i = 0; i < a.size(); ++i){
-        REQUIRE_EQUALS_APPROX_E(c_1[i].real(), c_2[i].real(), base_eps * 10);
-        REQUIRE_EQUALS_APPROX_E(c_1[i].imag(), c_2[i].imag(), base_eps * 10);
+        REQUIRE_EQUALS_APPROX_E(c_1[i].real(), c_2[i].real(), eps);
+        REQUIRE_EQUALS_APPROX_E(c_1[i].imag(), c_2[i].imag(), eps);
     }
 }
 
@@ -517,8 +523,14 @@ TEMPLATE_TEST_CASE_2("fft_1d_many/6", "[fast][fft]", Z, float, double) {
         }
     }
 
+#ifdef ETL_CUFFT_MODE
+    auto eps = base_eps_etl_large * 2;
+#else
+    auto eps = base_eps * 10;
+#endif
+
     for(size_t i = 0; i < a.size(); ++i){
-        REQUIRE_EQUALS_APPROX_E(c_1[i].real(), c_2[i].real(), base_eps * 10);
-        REQUIRE_EQUALS_APPROX_E(c_1[i].imag(), c_2[i].imag(), base_eps * 10);
+        REQUIRE_EQUALS_APPROX_E(c_1[i].real(), c_2[i].real(), eps);
+        REQUIRE_EQUALS_APPROX_E(c_1[i].imag(), c_2[i].imag(), eps);
     }
 }
