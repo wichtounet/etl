@@ -14,6 +14,7 @@
 
 #include "etl/expr/batch_k_scale_expr.hpp"
 #include "etl/expr/batch_k_scale_plus_expr.hpp"
+#include "etl/expr/batch_k_minus_scale_expr.hpp"
 
 namespace etl {
 
@@ -40,11 +41,35 @@ auto batch_hint(Expr&& expr) {
         constexpr size_t right_dimensions = decay_traits<right_type>::dimensions();
 
         if constexpr (std::is_same_v<operator_type, mul_binary_op<value_type>>) {
-            if constexpr (left_dimensions == 1 && right_dimensions == 4 && all_dma<left_type, right_type>) {
-                // Detect gamma[K] * beta[B, K, W, H]
-                return batch_k_scale(expr.get_lhs(), expr.get_rhs());
+
+            if constexpr (is_binary_expr<right_type>) {
+                auto& right_expr = expr.get_rhs();
+
+                using right_value_type    = typename right_type::value_type;
+                using right_operator_type = typename right_type::operator_type;
+
+                using right_left_type  = typename right_type::left_type;
+                using right_right_type = typename right_type::right_type;
+
+                constexpr size_t right_left_dimensions  = decay_traits<right_left_type>::dimensions();
+                constexpr size_t right_right_dimensions = decay_traits<right_right_type>::dimensions();
+
+                if constexpr (std::is_same_v<right_operator_type, minus_binary_op<right_value_type>>) {
+                    if constexpr (right_left_dimensions == 4 && right_right_dimensions == 1 && left_dimensions == 1 && all_dma<right_left_type, right_right_type, left_type>) {
+                        // Detect gamma[K] * (input[B, K, W, H]) - beta[k])
+                        return batch_k_minus_scale(expr.get_lhs(), right_expr.get_lhs(), right_expr.get_rhs());
+                    } else {
+                        return std::forward<Expr>(expr);
+                    }
+                } else {
+                    return std::forward<Expr>(expr);
+                }
             } else {
-                return std::forward<Expr>(expr);
+                if constexpr (left_dimensions == 1 && right_dimensions == 4 && all_dma<left_type, right_type>) {
+                    // Detect gamma[K] * beta[B, K, W, H]
+                    return batch_k_scale(expr.get_lhs(), expr.get_rhs());
+                } else {
+                }
             }
         } else if constexpr (std::is_same_v<operator_type, plus_binary_op<value_type>>) {
             if constexpr (is_binary_expr<left_type>) {
