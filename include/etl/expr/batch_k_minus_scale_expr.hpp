@@ -91,6 +91,7 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
 
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
+        c.ensure_cpu_up_to_date();
 
         auto batch_fun_b = [&](const size_t first, const size_t last) {
             CPU_SECTION {
@@ -136,6 +137,7 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
 
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
+        c.ensure_cpu_up_to_date();
         lhs.ensure_cpu_up_to_date();
 
         auto batch_fun_b = [&](const size_t first, const size_t last) {
@@ -182,6 +184,7 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
 
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
+        c.ensure_cpu_up_to_date();
         lhs.ensure_cpu_up_to_date();
 
         auto batch_fun_b = [&](const size_t first, const size_t last) {
@@ -228,6 +231,7 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
 
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
+        c.ensure_cpu_up_to_date();
         lhs.ensure_cpu_up_to_date();
 
         auto batch_fun_b = [&](const size_t first, const size_t last) {
@@ -274,6 +278,7 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
 
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
+        c.ensure_cpu_up_to_date();
         lhs.ensure_cpu_up_to_date();
 
         auto batch_fun_b = [&](const size_t first, const size_t last) {
@@ -320,6 +325,7 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
 
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
+        c.ensure_cpu_up_to_date();
         lhs.ensure_cpu_up_to_date();
 
         auto batch_fun_b = [&](const size_t first, const size_t last) {
