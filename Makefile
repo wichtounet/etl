@@ -199,8 +199,9 @@ CPP_FILES=$(wildcard test/src/*.cpp)
 TEST_FILES=$(CPP_FILES:test/%=%)
 
 # Create the main test executable
-$(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
-$(eval $(call add_executable_set,etl_test,etl_test))
+# Should not be build at the same time as the sub executables
+#$(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
+#$(eval $(call add_executable_set,etl_test,etl_test))
 
 # Create the sub test executable
 $(eval $(call add_test_executable,etl_test_alias,src/test.cpp src/alias.cpp))
