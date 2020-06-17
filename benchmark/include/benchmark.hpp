@@ -116,6 +116,7 @@ using dot_policy = VALUES_POLICY(100, 500, 1000, 10000, 100000, 1000000, 2000000
 
 using large_vector_policy = VALUES_POLICY(10, 100, 1000, 10000, 1000000, 10000000, 100000000);
 
+using mp_policy = VALUES_POLICY(28, 32, 64, 100, 128, 140, 160, 180, 200, 400, 600);
 using pmp_policy = VALUES_POLICY(100, 120, 140, 160, 180, 200, 400, 600, 800, 1000);
 using pmp_policy_3 = VALUES_POLICY(10, 20, 30, 40, 50, 60, 80, 90, 100);
 
