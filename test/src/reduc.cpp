@@ -389,6 +389,97 @@ TEMPLATE_TEST_CASE_2("bias_batch_sum_4d/4", "[mean]", Z, float, double) {
     REQUIRE_EQUALS(b(2), Z(2.0 / (8 * 16.5)));
 }
 
+// Tests for bias_batch_var_4d
+
+TEMPLATE_TEST_CASE_2("bias_batch_var_4d/0", "[mean]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 3, 2, 2> a({1, 8, 3, 4, 5, 6, 7, 8, 9, 2, 11, 3, 13, 3, 15, 7, 17, 4, 19, 9, 21, 0, 11, 24});
+    etl::fast_matrix<Z, 3> mean;
+    etl::fast_matrix<Z, 3> var;
+
+    mean = etl::bias_batch_mean_4d(a);
+    var  = etl::bias_batch_var_4d(a, mean);
+
+    REQUIRE_EQUALS(mean(0), Z(6.75));
+    REQUIRE_EQUALS(mean(1), Z(9.375));
+    REQUIRE_EQUALS(mean(2), Z(10.125));
+
+    REQUIRE_EQUALS(var(0), Z(177.5));
+    REQUIRE_EQUALS(var(1), Z(217.875));
+    REQUIRE_EQUALS(var(2), Z(532.875));
+}
+
+TEMPLATE_TEST_CASE_2("bias_batch_var_4d/1", "[mean]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 3, 2, 2> a({1, 8, 3, 4, 5, 6, 7, 8, 9, 2, 11, 3, 13, 3, 15, 7, 17, 4, 19, 9, 21, 0, 11, 24});
+    etl::fast_matrix<Z, 3> mean;
+    etl::fast_matrix<Z, 3> var;
+
+    var = Z(10);
+    mean = etl::bias_batch_mean_4d(a);
+    var  += etl::bias_batch_var_4d(a, mean);
+
+    REQUIRE_EQUALS(mean(0), Z(6.75));
+    REQUIRE_EQUALS(mean(1), Z(9.375));
+    REQUIRE_EQUALS(mean(2), Z(10.125));
+
+    REQUIRE_EQUALS(var(0), Z(187.5));
+    REQUIRE_EQUALS(var(1), Z(227.875));
+    REQUIRE_EQUALS(var(2), Z(542.875));
+}
+
+TEMPLATE_TEST_CASE_2("bias_batch_var_4d/2", "[mean]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 3, 2, 2> a({1, 8, 3, 4, 5, 6, 7, 8, 9, 2, 11, 3, 13, 3, 15, 7, 17, 4, 19, 9, 21, 0, 11, 24});
+    etl::fast_matrix<Z, 3> mean;
+    etl::fast_matrix<Z, 3> var;
+
+    var = Z(10);
+    mean = etl::bias_batch_mean_4d(a);
+    var  -= etl::bias_batch_var_4d(a, mean);
+
+    REQUIRE_EQUALS(mean(0), Z(6.75));
+    REQUIRE_EQUALS(mean(1), Z(9.375));
+    REQUIRE_EQUALS(mean(2), Z(10.125));
+
+    REQUIRE_EQUALS(var(0), Z(10 - 177.5));
+    REQUIRE_EQUALS(var(1), Z(10 - 217.875));
+    REQUIRE_EQUALS(var(2), Z(10 - 532.875));
+}
+
+TEMPLATE_TEST_CASE_2("bias_batch_var_4d/3", "[mean]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 3, 2, 2> a({1, 8, 3, 4, 5, 6, 7, 8, 9, 2, 11, 3, 13, 3, 15, 7, 17, 4, 19, 9, 21, 0, 11, 24});
+    etl::fast_matrix<Z, 3> mean;
+    etl::fast_matrix<Z, 3> var;
+
+    var = Z(10);
+    mean = etl::bias_batch_mean_4d(a);
+    var  *= etl::bias_batch_var_4d(a, mean);
+
+    REQUIRE_EQUALS(mean(0), Z(6.75));
+    REQUIRE_EQUALS(mean(1), Z(9.375));
+    REQUIRE_EQUALS(mean(2), Z(10.125));
+
+    REQUIRE_EQUALS(var(0), Z(10 * 177.5));
+    REQUIRE_EQUALS(var(1), Z(10 * 217.875));
+    REQUIRE_EQUALS(var(2), Z(10 * 532.875));
+}
+
+TEMPLATE_TEST_CASE_2("bias_batch_var_4d/4", "[mean]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 3, 2, 2> a({1, 8, 3, 4, 5, 6, 7, 8, 9, 2, 11, 3, 13, 3, 15, 7, 17, 4, 19, 9, 21, 0, 11, 24});
+    etl::fast_matrix<Z, 3> mean;
+    etl::fast_matrix<Z, 3> var;
+
+    var = Z(10);
+    mean = etl::bias_batch_mean_4d(a);
+    var  /= etl::bias_batch_var_4d(a, mean);
+
+    REQUIRE_EQUALS(mean(0), Z(6.75));
+    REQUIRE_EQUALS(mean(1), Z(9.375));
+    REQUIRE_EQUALS(mean(2), Z(10.125));
+
+    REQUIRE_EQUALS(var(0), Z(10 / 177.5));
+    REQUIRE_EQUALS(var(1), Z(10 / 217.875));
+    REQUIRE_EQUALS(var(2), Z(10 / 532.875));
+}
+
 // Tests for argmax
 
 TEMPLATE_TEST_CASE_2("argmax/0", "[mean]", Z, float, double) {

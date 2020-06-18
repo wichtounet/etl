@@ -85,6 +85,7 @@
 #include "etl/expr/bias_batch_mean_2d_expr.hpp"
 #include "etl/expr/bias_batch_mean_4d_expr.hpp"
 #include "etl/expr/bias_batch_var_2d_expr.hpp"
+#include "etl/expr/bias_batch_var_4d_expr.hpp"
 #include "etl/expr/bias_add_2d_expr.hpp"
 #include "etl/expr/bias_add_4d_expr.hpp"
 #include "etl/expr/pool_upsample_2d_expr.hpp"
