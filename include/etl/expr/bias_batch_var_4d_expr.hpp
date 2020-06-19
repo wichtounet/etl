@@ -95,7 +95,7 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
                         var += sum((a(bb)(k) - b(k)) >> (a(bb)(k) - b(k)));
                     }
 
-                    lhs(k) = var / (etl::size(lhs) / etl::size(b));
+                    lhs(k) = var / (etl::size(a) / etl::size(lhs));
                 }
             }
         };
@@ -140,7 +140,7 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
                         var += sum((a(bb)(k) - b(k)) >> (a(bb)(k) - b(k)));
                     }
 
-                    lhs(k) += var / (etl::size(lhs) / etl::size(b));
+                    lhs(k) += var / (etl::size(a) / etl::size(lhs));
                 }
             }
         };
@@ -185,7 +185,7 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
                         var += sum((a(bb)(k) - b(k)) >> (a(bb)(k) - b(k)));
                     }
 
-                    lhs(k) -= var / (etl::size(lhs) / etl::size(b));
+                    lhs(k) -= var / (etl::size(a) / etl::size(lhs));
                 }
             }
         };
@@ -230,7 +230,7 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
                         var += sum((a(bb)(k) - b(k)) >> (a(bb)(k) - b(k)));
                     }
 
-                    lhs(k) *= var / (etl::size(lhs) / etl::size(b));
+                    lhs(k) *= var / (etl::size(a) / etl::size(lhs));
                 }
             }
         };
@@ -275,7 +275,7 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
                         var += sum((a(bb)(k) - b(k)) >> (a(bb)(k) - b(k)));
                     }
 
-                    lhs(k) /= var / (etl::size(lhs) / etl::size(b));
+                    lhs(k) /= var / (etl::size(a) / etl::size(lhs));
                 }
             }
         };
@@ -320,7 +320,7 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
                         var += sum((a(bb)(k) - b(k)) >> (a(bb)(k) - b(k)));
                     }
 
-                    lhs(k) %= var / (etl::size(lhs) / etl::size(b));
+                    lhs(k) %= var / (etl::size(a) / etl::size(lhs));
                 }
             }
         };

@@ -403,9 +403,9 @@ TEMPLATE_TEST_CASE_2("bias_batch_var_4d/0", "[mean]", Z, float, double) {
     REQUIRE_EQUALS(mean(1), Z(9.375));
     REQUIRE_EQUALS(mean(2), Z(10.125));
 
-    REQUIRE_EQUALS(var(0), Z(177.5));
-    REQUIRE_EQUALS(var(1), Z(217.875));
-    REQUIRE_EQUALS(var(2), Z(532.875));
+    REQUIRE_EQUALS_APPROX(var(0), Z(22.1875));
+    REQUIRE_EQUALS_APPROX(var(1), Z(27.23438));
+    REQUIRE_EQUALS_APPROX(var(2), Z(66.60938));
 }
 
 TEMPLATE_TEST_CASE_2("bias_batch_var_4d/1", "[mean]", Z, float, double) {
@@ -421,9 +421,9 @@ TEMPLATE_TEST_CASE_2("bias_batch_var_4d/1", "[mean]", Z, float, double) {
     REQUIRE_EQUALS(mean(1), Z(9.375));
     REQUIRE_EQUALS(mean(2), Z(10.125));
 
-    REQUIRE_EQUALS(var(0), Z(187.5));
-    REQUIRE_EQUALS(var(1), Z(227.875));
-    REQUIRE_EQUALS(var(2), Z(542.875));
+    REQUIRE_EQUALS_APPROX(var(0), Z(32.1875));
+    REQUIRE_EQUALS_APPROX(var(1), Z(37.23438));
+    REQUIRE_EQUALS_APPROX(var(2), Z(76.60938));
 }
 
 TEMPLATE_TEST_CASE_2("bias_batch_var_4d/2", "[mean]", Z, float, double) {
@@ -439,9 +439,9 @@ TEMPLATE_TEST_CASE_2("bias_batch_var_4d/2", "[mean]", Z, float, double) {
     REQUIRE_EQUALS(mean(1), Z(9.375));
     REQUIRE_EQUALS(mean(2), Z(10.125));
 
-    REQUIRE_EQUALS(var(0), Z(10 - 177.5));
-    REQUIRE_EQUALS(var(1), Z(10 - 217.875));
-    REQUIRE_EQUALS(var(2), Z(10 - 532.875));
+    REQUIRE_EQUALS_APPROX(var(0), Z(10 - 22.1875));
+    REQUIRE_EQUALS_APPROX(var(1), Z(10 - 27.23438));
+    REQUIRE_EQUALS_APPROX(var(2), Z(10 - 66.60938));
 }
 
 TEMPLATE_TEST_CASE_2("bias_batch_var_4d/3", "[mean]", Z, float, double) {
@@ -457,9 +457,9 @@ TEMPLATE_TEST_CASE_2("bias_batch_var_4d/3", "[mean]", Z, float, double) {
     REQUIRE_EQUALS(mean(1), Z(9.375));
     REQUIRE_EQUALS(mean(2), Z(10.125));
 
-    REQUIRE_EQUALS(var(0), Z(10 * 177.5));
-    REQUIRE_EQUALS(var(1), Z(10 * 217.875));
-    REQUIRE_EQUALS(var(2), Z(10 * 532.875));
+    REQUIRE_EQUALS_APPROX(var(0), Z(10 * 22.1875));
+    REQUIRE_EQUALS_APPROX(var(1), Z(10 * 27.23438));
+    REQUIRE_EQUALS_APPROX(var(2), Z(10 * 66.60938));
 }
 
 TEMPLATE_TEST_CASE_2("bias_batch_var_4d/4", "[mean]", Z, float, double) {
@@ -475,9 +475,9 @@ TEMPLATE_TEST_CASE_2("bias_batch_var_4d/4", "[mean]", Z, float, double) {
     REQUIRE_EQUALS(mean(1), Z(9.375));
     REQUIRE_EQUALS(mean(2), Z(10.125));
 
-    REQUIRE_EQUALS(var(0), Z(10 / 177.5));
-    REQUIRE_EQUALS(var(1), Z(10 / 217.875));
-    REQUIRE_EQUALS(var(2), Z(10 / 532.875));
+    REQUIRE_EQUALS_APPROX(var(0), Z(10.0 / 22.1875));
+    REQUIRE_EQUALS_APPROX(var(1), Z(10.0 / 27.23438));
+    REQUIRE_EQUALS_APPROX(var(2), Z(10.0 / 66.60938));
 }
 
 // Tests for argmax
