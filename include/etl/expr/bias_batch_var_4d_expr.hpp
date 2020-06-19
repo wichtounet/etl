@@ -73,8 +73,6 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
         auto& a = this->a();
         auto& b = this->b();
 
-        using T = value_t<A>;
-
         check(a, b, lhs);
 
         const auto N = etl::dim<0>(a);
@@ -89,13 +87,17 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
         auto batch_fun_k = [&](const size_t first, const size_t last) {
             CPU_SECTION {
                 for (size_t k = first; k < last; ++k) {
-                    T var = 0;
+                    lhs(k) = 0;
+                }
 
-                    for (size_t bb = 0; bb < N; ++bb) {
-                        var += sum((a(bb)(k) - b(k)) >> (a(bb)(k) - b(k)));
+                for (size_t bb = 0; bb < N; ++bb) {
+                    for (size_t k = first; k < last; ++k) {
+                        lhs(k) += sum((a(bb)(k) - b(k)) >> (a(bb)(k) - b(k)));
                     }
+                }
 
-                    lhs(k) = var / (etl::size(a) / etl::size(lhs));
+                for (size_t k = first; k < last; ++k) {
+                    lhs(k) /= (etl::size(a) / etl::size(lhs));
                 }
             }
         };
