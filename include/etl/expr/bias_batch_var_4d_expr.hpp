@@ -84,6 +84,11 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
 
+        // Note: We use etl::sum directly instead of doing the sum manually
+        // That way, we will access the already vectorized sum
+        // Now, this means that evaluator decisions will be called several 
+        // times. This could be an issue that could be looked at in the future
+
         auto batch_fun_k = [&](const size_t first, const size_t last) {
             CPU_SECTION {
                 for (size_t k = first; k < last; ++k) {
