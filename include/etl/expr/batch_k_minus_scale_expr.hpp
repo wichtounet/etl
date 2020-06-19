@@ -46,7 +46,7 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
         static_assert(etl::dimensions<B>() == 4, "The rhs of batch_k_minus_scale is a 4D matrix");
         static_assert(etl::dimensions<C>() == 1, "The beta of batch_k_minus_scale is a 4D matrix");
 
-        if constexpr (all_fast<A, B, C>) {
+        if constexpr (all_fast<A, B, C, L>) {
             static_assert(etl::dim<0, B>() == etl::dim<0, L>(), "Invalid dimensions for batch_k_minus_scale");
             static_assert(etl::dim<1, B>() == etl::dim<1, L>(), "Invalid dimensions for batch_k_minus_scale");
             static_assert(etl::dim<2, B>() == etl::dim<2, L>(), "Invalid dimensions for batch_k_minus_scale");
@@ -61,7 +61,7 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
             cpp_assert(etl::dim<3>(b) == etl::dim<3>(lhs), "Invalid dimensions for batch_k_minus_scale");
 
             cpp_assert(etl::dim<0>(a) == etl::dim<1>(b), "Invalid dimensions for batch_k_minus_scale");
-            cpp_assert(etl::dim<0>(a) == etl::dim<1>(c), "Invalid dimensions for batch_k_minus_scale");
+            cpp_assert(etl::dim<0>(a) == etl::dim<0>(c), "Invalid dimensions for batch_k_minus_scale");
         }
     }
 
