@@ -18,6 +18,8 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
     using base_type   = base_temporary_expr_tern<this_type, A, B, C>; ///< The base type
     using left_traits = decay_traits<A>;                             ///< The traits of the sub type
 
+    static constexpr bool D4 = is_4d<B>; ///< If the expression is 4D (instead of 2D)
+
     static constexpr auto storage_order = left_traits::storage_order; ///< The sub storage order
 
     /*!
@@ -41,27 +43,48 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
      */
     template <typename L>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c, [[maybe_unused]] L& lhs) {
-        static_assert(etl::dimensions<L>() == 4, "The output of batch_k_scale_plus is a 4D matrix");
-        static_assert(etl::dimensions<A>() == 1, "The lhs of batch_k_scale_plus is a 1D matrix");
-        static_assert(etl::dimensions<B>() == 4, "The rhs of batch_k_scale_plus is a 4D matrix");
-        static_assert(etl::dimensions<C>() == 1, "The beta of batch_k_scale_plus is a 4D matrix");
+        if constexpr (D4) {
+            static_assert(etl::dimensions<L>() == 4, "The output of batch_k_scale_plus is a 4D matrix");
+            static_assert(etl::dimensions<A>() == 1, "The lhs of batch_k_scale_plus is a 1D matrix");
+            static_assert(etl::dimensions<B>() == 4, "The rhs of batch_k_scale_plus is a 4D matrix");
+            static_assert(etl::dimensions<C>() == 1, "The beta of batch_k_scale_plus is a 1D matrix");
 
-        if constexpr (all_fast<A, B, C, L>) {
-            static_assert(etl::dim<0, B>() == etl::dim<0, L>(), "Invalid dimensions for batch_k_scale_plus");
-            static_assert(etl::dim<1, B>() == etl::dim<1, L>(), "Invalid dimensions for batch_k_scale_plus");
-            static_assert(etl::dim<2, B>() == etl::dim<2, L>(), "Invalid dimensions for batch_k_scale_plus");
-            static_assert(etl::dim<3, B>() == etl::dim<3, L>(), "Invalid dimensions for batch_k_scale_plus");
+            if constexpr (all_fast<A, B, C, L>) {
+                static_assert(etl::dim<0, B>() == etl::dim<0, L>(), "Invalid dimensions for batch_k_scale_plus");
+                static_assert(etl::dim<1, B>() == etl::dim<1, L>(), "Invalid dimensions for batch_k_scale_plus");
+                static_assert(etl::dim<2, B>() == etl::dim<2, L>(), "Invalid dimensions for batch_k_scale_plus");
+                static_assert(etl::dim<3, B>() == etl::dim<3, L>(), "Invalid dimensions for batch_k_scale_plus");
 
-            static_assert(etl::dim<0, A>() == etl::dim<1, B>(), "Invalid dimensions for batch_k_scale_plus");
-            static_assert(etl::dim<0, A>() == etl::dim<0, C>(), "Invalid dimensions for batch_k_scale_plus");
+                static_assert(etl::dim<0, A>() == etl::dim<1, B>(), "Invalid dimensions for batch_k_scale_plus");
+                static_assert(etl::dim<0, A>() == etl::dim<0, C>(), "Invalid dimensions for batch_k_scale_plus");
+            } else {
+                cpp_assert(etl::dim<0>(b) == etl::dim<0>(lhs), "Invalid dimensions for batch_k_scale_plus");
+                cpp_assert(etl::dim<1>(b) == etl::dim<1>(lhs), "Invalid dimensions for batch_k_scale_plus");
+                cpp_assert(etl::dim<2>(b) == etl::dim<2>(lhs), "Invalid dimensions for batch_k_scale_plus");
+                cpp_assert(etl::dim<3>(b) == etl::dim<3>(lhs), "Invalid dimensions for batch_k_scale_plus");
+
+                cpp_assert(etl::dim<0>(a) == etl::dim<1>(b), "Invalid dimensions for batch_k_scale_plus");
+                cpp_assert(etl::dim<0>(a) == etl::dim<0>(c), "Invalid dimensions for batch_k_scale_plus");
+            }
         } else {
-            cpp_assert(etl::dim<0>(b) == etl::dim<0>(lhs), "Invalid dimensions for batch_k_scale_plus");
-            cpp_assert(etl::dim<1>(b) == etl::dim<1>(lhs), "Invalid dimensions for batch_k_scale_plus");
-            cpp_assert(etl::dim<2>(b) == etl::dim<2>(lhs), "Invalid dimensions for batch_k_scale_plus");
-            cpp_assert(etl::dim<3>(b) == etl::dim<3>(lhs), "Invalid dimensions for batch_k_scale_plus");
+            static_assert(etl::dimensions<L>() == 2, "The output of batch_k_scale_plus is a 2D matrix");
+            static_assert(etl::dimensions<A>() == 1, "The lhs of batch_k_scale_plus is a 1D matrix");
+            static_assert(etl::dimensions<B>() == 2, "The rhs of batch_k_scale_plus is a 2D matrix");
+            static_assert(etl::dimensions<C>() == 1, "The beta of batch_k_scale_plus is a 1D matrix");
 
-            cpp_assert(etl::dim<0>(a) == etl::dim<1>(b), "Invalid dimensions for batch_k_scale_plus");
-            cpp_assert(etl::dim<0>(a) == etl::dim<0>(c), "Invalid dimensions for batch_k_scale_plus");
+            if constexpr (all_fast<A, B, C, L>) {
+                static_assert(etl::dim<0, B>() == etl::dim<0, L>(), "Invalid dimensions for batch_k_scale_plus");
+                static_assert(etl::dim<1, B>() == etl::dim<1, L>(), "Invalid dimensions for batch_k_scale_plus");
+
+                static_assert(etl::dim<0, A>() == etl::dim<1, B>(), "Invalid dimensions for batch_k_scale_plus");
+                static_assert(etl::dim<0, A>() == etl::dim<0, C>(), "Invalid dimensions for batch_k_scale_plus");
+            } else {
+                cpp_assert(etl::dim<0>(b) == etl::dim<0>(lhs), "Invalid dimensions for batch_k_scale_plus");
+                cpp_assert(etl::dim<1>(b) == etl::dim<1>(lhs), "Invalid dimensions for batch_k_scale_plus");
+
+                cpp_assert(etl::dim<0>(a) == etl::dim<1>(b), "Invalid dimensions for batch_k_scale_plus");
+                cpp_assert(etl::dim<0>(a) == etl::dim<0>(c), "Invalid dimensions for batch_k_scale_plus");
+            }
         }
     }
 
@@ -81,11 +104,6 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
 
         check(a, b, c, lhs);
 
-        const auto Batch = etl::dim<0>(lhs);
-        const auto K = etl::dim<1>(lhs);
-        const auto M = etl::dim<2>(lhs);
-        const auto N = etl::dim<3>(lhs);
-
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
@@ -93,21 +111,43 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
         b.ensure_cpu_up_to_date();
         c.ensure_cpu_up_to_date();
 
-        auto batch_fun_b = [&](const size_t first, const size_t last) {
-            CPU_SECTION {
-                for (size_t batch = first; batch < last; ++batch) {
-                    for (size_t k = 0; k < K; ++k) {
-                        for (size_t m = 0; m < M; ++m) {
-                            for (size_t n = 0; n < N; ++n) {
-                                lhs(batch, k, m, n) = a(k) * b(batch, k, m, n) + c(k);
+        if constexpr (D4) {
+            const auto Batch = etl::dim<0>(lhs);
+            const auto K     = etl::dim<1>(lhs);
+            const auto M     = etl::dim<2>(lhs);
+            const auto N     = etl::dim<3>(lhs);
+
+            auto batch_fun_b = [&](const size_t first, const size_t last) {
+                CPU_SECTION {
+                    for (size_t batch = first; batch < last; ++batch) {
+                        for (size_t k = 0; k < K; ++k) {
+                            for (size_t m = 0; m < M; ++m) {
+                                for (size_t n = 0; n < N; ++n) {
+                                    lhs(batch, k, m, n) = a(k) * b(batch, k, m, n) + c(k);
+                                }
                             }
                         }
                     }
                 }
-            }
-        };
+            };
 
-        engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+        } else {
+            const auto Batch = etl::dim<0>(lhs);
+            const auto K     = etl::dim<1>(lhs);
+
+            auto batch_fun_b = [&](const size_t first, const size_t last) {
+                CPU_SECTION {
+                    for (size_t batch = first; batch < last; ++batch) {
+                        for (size_t k = 0; k < K; ++k) {
+                            lhs(batch, k) = a(k) * b(batch, k) + c(k);
+                        }
+                    }
+                }
+            };
+
+            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+        }
 
         lhs.validate_cpu();
         lhs.invalidate_gpu();
@@ -127,11 +167,6 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
 
         check(a, b, c, lhs);
 
-        const auto Batch = etl::dim<0>(lhs);
-        const auto K = etl::dim<1>(lhs);
-        const auto M = etl::dim<2>(lhs);
-        const auto N = etl::dim<3>(lhs);
-
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
@@ -140,21 +175,43 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
         c.ensure_cpu_up_to_date();
         lhs.ensure_cpu_up_to_date();
 
-        auto batch_fun_b = [&](const size_t first, const size_t last) {
-            CPU_SECTION {
-                for (size_t batch = first; batch < last; ++batch) {
-                    for (size_t k = 0; k < K; ++k) {
-                        for (size_t m = 0; m < M; ++m) {
-                            for (size_t n = 0; n < N; ++n) {
-                                lhs(batch, k, m, n) += a(k) * b(batch, k, m, n) + c(k);
+        if constexpr (D4) {
+            const auto Batch = etl::dim<0>(lhs);
+            const auto K     = etl::dim<1>(lhs);
+            const auto M     = etl::dim<2>(lhs);
+            const auto N     = etl::dim<3>(lhs);
+
+            auto batch_fun_b = [&](const size_t first, const size_t last) {
+                CPU_SECTION {
+                    for (size_t batch = first; batch < last; ++batch) {
+                        for (size_t k = 0; k < K; ++k) {
+                            for (size_t m = 0; m < M; ++m) {
+                                for (size_t n = 0; n < N; ++n) {
+                                    lhs(batch, k, m, n) += a(k) * b(batch, k, m, n) + c(k);
+                                }
                             }
                         }
                     }
                 }
-            }
-        };
+            };
 
-        engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+        } else {
+            const auto Batch = etl::dim<0>(lhs);
+            const auto K     = etl::dim<1>(lhs);
+
+            auto batch_fun_b = [&](const size_t first, const size_t last) {
+                CPU_SECTION {
+                    for (size_t batch = first; batch < last; ++batch) {
+                        for (size_t k = 0; k < K; ++k) {
+                            lhs(batch, k) += a(k) * b(batch, k) + c(k);
+                        }
+                    }
+                }
+            };
+
+            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+        }
 
         lhs.validate_cpu();
         lhs.invalidate_gpu();
@@ -174,11 +231,6 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
 
         check(a, b, c, lhs);
 
-        const auto Batch = etl::dim<0>(lhs);
-        const auto K = etl::dim<1>(lhs);
-        const auto M = etl::dim<2>(lhs);
-        const auto N = etl::dim<3>(lhs);
-
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
@@ -187,21 +239,43 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
         c.ensure_cpu_up_to_date();
         lhs.ensure_cpu_up_to_date();
 
-        auto batch_fun_b = [&](const size_t first, const size_t last) {
-            CPU_SECTION {
-                for (size_t batch = first; batch < last; ++batch) {
-                    for (size_t k = 0; k < K; ++k) {
-                        for (size_t m = 0; m < M; ++m) {
-                            for (size_t n = 0; n < N; ++n) {
-                                lhs(batch, k, m, n) -= a(k) * b(batch, k, m, n) + c(k);
+        if constexpr (D4) {
+            const auto Batch = etl::dim<0>(lhs);
+            const auto K     = etl::dim<1>(lhs);
+            const auto M     = etl::dim<2>(lhs);
+            const auto N     = etl::dim<3>(lhs);
+
+            auto batch_fun_b = [&](const size_t first, const size_t last) {
+                CPU_SECTION {
+                    for (size_t batch = first; batch < last; ++batch) {
+                        for (size_t k = 0; k < K; ++k) {
+                            for (size_t m = 0; m < M; ++m) {
+                                for (size_t n = 0; n < N; ++n) {
+                                    lhs(batch, k, m, n) -= a(k) * b(batch, k, m, n) + c(k);
+                                }
                             }
                         }
                     }
                 }
-            }
-        };
+            };
 
-        engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+        } else {
+            const auto Batch = etl::dim<0>(lhs);
+            const auto K     = etl::dim<1>(lhs);
+
+            auto batch_fun_b = [&](const size_t first, const size_t last) {
+                CPU_SECTION {
+                    for (size_t batch = first; batch < last; ++batch) {
+                        for (size_t k = 0; k < K; ++k) {
+                            lhs(batch, k) -= a(k) * b(batch, k) + c(k);
+                        }
+                    }
+                }
+            };
+
+            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+        }
 
         lhs.validate_cpu();
         lhs.invalidate_gpu();
@@ -221,11 +295,6 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
 
         check(a, b, c, lhs);
 
-        const auto Batch = etl::dim<0>(lhs);
-        const auto K = etl::dim<1>(lhs);
-        const auto M = etl::dim<2>(lhs);
-        const auto N = etl::dim<3>(lhs);
-
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
@@ -234,21 +303,43 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
         c.ensure_cpu_up_to_date();
         lhs.ensure_cpu_up_to_date();
 
-        auto batch_fun_b = [&](const size_t first, const size_t last) {
-            CPU_SECTION {
-                for (size_t batch = first; batch < last; ++batch) {
-                    for (size_t k = 0; k < K; ++k) {
-                        for (size_t m = 0; m < M; ++m) {
-                            for (size_t n = 0; n < N; ++n) {
-                                lhs(batch, k, m, n) *= a(k) * b(batch, k, m, n) + c(k);
+        if constexpr (D4) {
+            const auto Batch = etl::dim<0>(lhs);
+            const auto K     = etl::dim<1>(lhs);
+            const auto M     = etl::dim<2>(lhs);
+            const auto N     = etl::dim<3>(lhs);
+
+            auto batch_fun_b = [&](const size_t first, const size_t last) {
+                CPU_SECTION {
+                    for (size_t batch = first; batch < last; ++batch) {
+                        for (size_t k = 0; k < K; ++k) {
+                            for (size_t m = 0; m < M; ++m) {
+                                for (size_t n = 0; n < N; ++n) {
+                                    lhs(batch, k, m, n) *= a(k) * b(batch, k, m, n) + c(k);
+                                }
                             }
                         }
                     }
                 }
-            }
-        };
+            };
 
-        engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+        } else {
+            const auto Batch = etl::dim<0>(lhs);
+            const auto K     = etl::dim<1>(lhs);
+
+            auto batch_fun_b = [&](const size_t first, const size_t last) {
+                CPU_SECTION {
+                    for (size_t batch = first; batch < last; ++batch) {
+                        for (size_t k = 0; k < K; ++k) {
+                            lhs(batch, k) *= a(k) * b(batch, k) + c(k);
+                        }
+                    }
+                }
+            };
+
+            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+        }
 
         lhs.validate_cpu();
         lhs.invalidate_gpu();
@@ -268,11 +359,6 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
 
         check(a, b, c, lhs);
 
-        const auto Batch = etl::dim<0>(lhs);
-        const auto K = etl::dim<1>(lhs);
-        const auto M = etl::dim<2>(lhs);
-        const auto N = etl::dim<3>(lhs);
-
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
@@ -281,21 +367,43 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
         c.ensure_cpu_up_to_date();
         lhs.ensure_cpu_up_to_date();
 
-        auto batch_fun_b = [&](const size_t first, const size_t last) {
-            CPU_SECTION {
-                for (size_t batch = first; batch < last; ++batch) {
-                    for (size_t k = 0; k < K; ++k) {
-                        for (size_t m = 0; m < M; ++m) {
-                            for (size_t n = 0; n < N; ++n) {
-                                lhs(batch, k, m, n) /= a(k) * b(batch, k, m, n) + c(k);
+        if constexpr (D4) {
+            const auto Batch = etl::dim<0>(lhs);
+            const auto K     = etl::dim<1>(lhs);
+            const auto M     = etl::dim<2>(lhs);
+            const auto N     = etl::dim<3>(lhs);
+
+            auto batch_fun_b = [&](const size_t first, const size_t last) {
+                CPU_SECTION {
+                    for (size_t batch = first; batch < last; ++batch) {
+                        for (size_t k = 0; k < K; ++k) {
+                            for (size_t m = 0; m < M; ++m) {
+                                for (size_t n = 0; n < N; ++n) {
+                                    lhs(batch, k, m, n) /= a(k) * b(batch, k, m, n) + c(k);
+                                }
                             }
                         }
                     }
                 }
-            }
-        };
+            };
 
-        engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+        } else {
+            const auto Batch = etl::dim<0>(lhs);
+            const auto K     = etl::dim<1>(lhs);
+
+            auto batch_fun_b = [&](const size_t first, const size_t last) {
+                CPU_SECTION {
+                    for (size_t batch = first; batch < last; ++batch) {
+                        for (size_t k = 0; k < K; ++k) {
+                            lhs(batch, k) /= a(k) * b(batch, k) + c(k);
+                        }
+                    }
+                }
+            };
+
+            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+        }
 
         lhs.validate_cpu();
         lhs.invalidate_gpu();
@@ -315,11 +423,6 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
 
         check(a, b, c, lhs);
 
-        const auto Batch = etl::dim<0>(lhs);
-        const auto K = etl::dim<1>(lhs);
-        const auto M = etl::dim<2>(lhs);
-        const auto N = etl::dim<3>(lhs);
-
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
@@ -328,21 +431,43 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
         c.ensure_cpu_up_to_date();
         lhs.ensure_cpu_up_to_date();
 
-        auto batch_fun_b = [&](const size_t first, const size_t last) {
-            CPU_SECTION {
-                for (size_t batch = first; batch < last; ++batch) {
-                    for (size_t k = 0; k < K; ++k) {
-                        for (size_t m = 0; m < M; ++m) {
-                            for (size_t n = 0; n < N; ++n) {
-                                lhs(batch, k, m, n) %= a(k) * b(batch, k, m, n) + c(k);
+        if constexpr (D4) {
+            const auto Batch = etl::dim<0>(lhs);
+            const auto K     = etl::dim<1>(lhs);
+            const auto M     = etl::dim<2>(lhs);
+            const auto N     = etl::dim<3>(lhs);
+
+            auto batch_fun_b = [&](const size_t first, const size_t last) {
+                CPU_SECTION {
+                    for (size_t batch = first; batch < last; ++batch) {
+                        for (size_t k = 0; k < K; ++k) {
+                            for (size_t m = 0; m < M; ++m) {
+                                for (size_t n = 0; n < N; ++n) {
+                                    lhs(batch, k, m, n) %= a(k) * b(batch, k, m, n) + c(k);
+                                }
                             }
                         }
                     }
                 }
-            }
-        };
+            };
 
-        engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+        } else {
+            const auto Batch = etl::dim<0>(lhs);
+            const auto K     = etl::dim<1>(lhs);
+
+            auto batch_fun_b = [&](const size_t first, const size_t last) {
+                CPU_SECTION {
+                    for (size_t batch = first; batch < last; ++batch) {
+                        for (size_t k = 0; k < K; ++k) {
+                            lhs(batch, k) %= a(k) * b(batch, k) + c(k);
+                        }
+                    }
+                }
+            };
+
+            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+        }
 
         lhs.validate_cpu();
         lhs.invalidate_gpu();
@@ -435,7 +560,7 @@ struct etl_traits<etl::batch_k_scale_plus_expr<A, B, C>> {
      * \return the number of dimensions of the expression
      */
     static constexpr size_t dimensions() {
-        return 4;
+        return decay_traits<B>::dimensions();
     }
 };
 
@@ -452,7 +577,7 @@ template <typename A, typename B, typename C>
 batch_k_scale_plus_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>> batch_k_scale_plus(const A& a, const B& b, const C& c) {
     static_assert(all_etl_expr<A, B, C>, "etl::batch_k_scale_plus can only be used on ETL expressions");
     static_assert(is_1d<A>, "etl::batch_k_scale_plus is only defined for 1D LHS");
-    static_assert(is_4d<B>, "etl::batch_k_scale_plus is only defined for 4D RHS");
+    static_assert(is_2d<B> || is_4d<B>, "etl::batch_k_scale_plus is only defined for 2D/4D RHS");
     static_assert(is_1d<C>, "etl::batch_k_scale_plus is only defined for 1D LHS");
 
     return {a, b, c};

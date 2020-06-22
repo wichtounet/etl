@@ -18,6 +18,10 @@
 
 namespace etl {
 
+constexpr bool is_2d4d(size_t dimensions) {
+    return dimensions == 2 || dimensions == 4;
+}
+
 /*!
  * \brief Build a special expression for batched expressions
  * \param expr The expression to be transformed.
@@ -41,7 +45,6 @@ auto batch_hint(Expr&& expr) {
         constexpr size_t right_dimensions = decay_traits<right_type>::dimensions();
 
         if constexpr (std::is_same_v<operator_type, mul_binary_op<value_type>>) {
-
             if constexpr (is_binary_expr<right_type>) {
                 auto& right_expr = expr.get_rhs();
 
@@ -85,7 +88,7 @@ auto batch_hint(Expr&& expr) {
                 constexpr size_t left_right_dimensions = decay_traits<left_right_type>::dimensions();
 
                 if constexpr (std::is_same_v<left_operator_type, mul_binary_op<left_value_type>>) {
-                    if constexpr (left_left_dimensions == 1 && left_right_dimensions == 4 && right_dimensions == 1 && all_dma<left_left_type, left_right_type, right_type>) {
+                    if constexpr (left_left_dimensions == 1 && is_2d4d(left_right_dimensions) && right_dimensions == 1 && all_dma<left_left_type, left_right_type, right_type>) {
                         // Detect (gamma[K] * input[B, K, W, H]) + beta[k]
                         return batch_k_scale_plus(left_expr.get_lhs(), left_expr.get_rhs(), expr.get_rhs());
                     } else {
