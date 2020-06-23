@@ -58,7 +58,8 @@ auto batch_hint(Expr&& expr) {
                 constexpr size_t right_right_dimensions = decay_traits<right_right_type>::dimensions();
 
                 if constexpr (std::is_same_v<right_operator_type, minus_binary_op<right_value_type>>) {
-                    if constexpr (right_left_dimensions == 4 && right_right_dimensions == 1 && left_dimensions == 1 && all_homogeneous<right_left_type, right_right_type, left_type>) {
+                    if constexpr (is_2d4d(right_left_dimensions) && right_right_dimensions == 1 && left_dimensions == 1
+                                  && all_homogeneous<right_left_type, right_right_type, left_type>) {
                         // Detect gamma[K] * (input[B, K, W, H]) - beta[k])
                         return batch_k_minus_scale(expr.get_lhs(), right_expr.get_lhs(), right_expr.get_rhs());
                     } else {
@@ -99,7 +100,8 @@ auto batch_hint(Expr&& expr) {
                 constexpr size_t left_right_dimensions = decay_traits<left_right_type>::dimensions();
 
                 if constexpr (std::is_same_v<left_operator_type, mul_binary_op<left_value_type>>) {
-                    if constexpr (left_left_dimensions == 1 && is_2d4d(left_right_dimensions) && right_dimensions == 1 && all_homogeneous<left_left_type, left_right_type, right_type>) {
+                    if constexpr (left_left_dimensions == 1 && is_2d4d(left_right_dimensions) && right_dimensions == 1
+                                  && all_homogeneous<left_left_type, left_right_type, right_type>) {
                         // Detect (gamma[K] * input[B, K, W, H]) + beta[k]
                         return batch_k_scale_plus(left_expr.get_lhs(), left_expr.get_rhs(), expr.get_rhs());
                     } else {
