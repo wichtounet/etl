@@ -63,7 +63,7 @@ auto batch_hint(Expr&& expr) {
                         // Detect gamma[K] * (input[B, K, W, H]) - beta[k])
                         return batch_k_minus_scale(expr.get_lhs(), right_expr.get_lhs(), right_expr.get_rhs());
                     } else {
-                        if constexpr (left_dimensions == 1 && right_dimensions == 4 && all_homogeneous<left_type, right_type>) {
+                        if constexpr (left_dimensions == 1 && is_2d4d(right_dimensions) && all_homogeneous<left_type, right_type>) {
                             // Detect gamma[K] * beta[B, K, W, H]
                             return batch_k_scale(expr.get_lhs(), expr.get_rhs());
                         } else {
@@ -71,7 +71,7 @@ auto batch_hint(Expr&& expr) {
                         }
                     }
                 } else {
-                    if constexpr (left_dimensions == 1 && right_dimensions == 4 && all_homogeneous<left_type, right_type>) {
+                    if constexpr (left_dimensions == 1 && is_2d4d(right_dimensions) && all_homogeneous<left_type, right_type>) {
                         // Detect gamma[K] * beta[B, K, W, H]
                         return batch_k_scale(expr.get_lhs(), expr.get_rhs());
                     } else {
@@ -79,7 +79,7 @@ auto batch_hint(Expr&& expr) {
                     }
                 }
             } else {
-                if constexpr (left_dimensions == 1 && right_dimensions == 4 && all_homogeneous<left_type, right_type>) {
+                if constexpr (left_dimensions == 1 && is_2d4d(right_dimensions) && all_homogeneous<left_type, right_type>) {
                     // Detect gamma[K] * beta[B, K, W, H]
                     return batch_k_scale(expr.get_lhs(), expr.get_rhs());
                 } else {
