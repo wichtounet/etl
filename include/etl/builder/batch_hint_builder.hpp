@@ -72,6 +72,7 @@ auto batch_hint(Expr&& expr) {
                     // Detect gamma[K] * beta[B, K, W, H]
                     return batch_k_scale(expr.get_lhs(), expr.get_rhs());
                 } else {
+                    return std::forward<Expr>(expr);
                 }
             }
         } else if constexpr (std::is_same_v<operator_type, plus_binary_op<value_type>>) {
