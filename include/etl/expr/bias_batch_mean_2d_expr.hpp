@@ -31,7 +31,9 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    static constexpr bool gpu_computable = !Mean && cudnn_enabled && is_floating<A>;
+    static constexpr bool gpu_computable = (!Mean && cudnn_enabled && is_floating<A>)
+            || (impl::egblas::has_sbias_batch_sum && all_row_major<A> && all_single_precision<A>)
+            || (impl::egblas::has_dbias_batch_sum && all_row_major<A> && all_double_precision<A>);
 
     /*!
      * \brief Construct a new expression
