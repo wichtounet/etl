@@ -189,217 +189,91 @@ struct mul_binary_op {
      *
      * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
      */
-    template <typename L, typename R, typename YY, cpp_enable_iff(is_axmy_left<L, R>)>
+    template <typename L, typename R, typename YY>
     static YY& gpu_compute(const L& lhs, const R& rhs, YY& yy) noexcept {
-        auto& rhs_lhs = rhs.get_lhs();
-        auto& rhs_rhs = rhs.get_rhs();
+        if constexpr (is_axmy_left<L, R>) {
+            auto& rhs_lhs = rhs.get_lhs();
+            auto& rhs_rhs = rhs.get_rhs();
 
-        decltype(auto) x = smart_gpu_compute_hint(rhs_lhs, yy);
-        decltype(auto) y = smart_gpu_compute_hint(rhs_rhs, yy);
+            decltype(auto) x = smart_gpu_compute_hint(rhs_lhs, yy);
+            decltype(auto) y = smart_gpu_compute_hint(rhs_rhs, yy);
 
-        constexpr auto incx = gpu_inc<decltype(rhs_lhs)>;
-        constexpr auto incy = gpu_inc<decltype(rhs_rhs)>;
+            constexpr auto incx = gpu_inc<decltype(rhs_lhs)>;
+            constexpr auto incy = gpu_inc<decltype(rhs_rhs)>;
 
-        impl::egblas::axmy_3(etl::size(yy), lhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
+            impl::egblas::axmy_3(etl::size(yy), lhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
+        } else if constexpr (is_axmy_right<L, R>) {
+            auto& lhs_lhs = lhs.get_lhs();
+            auto& lhs_rhs = lhs.get_rhs();
 
-        yy.validate_gpu();
-        yy.invalidate_cpu();
+            decltype(auto) x = smart_gpu_compute_hint(lhs_lhs, yy);
+            decltype(auto) y = smart_gpu_compute_hint(lhs_rhs, yy);
 
-        return yy;
-    }
+            constexpr auto incx = gpu_inc<decltype(lhs_lhs)>;
+            constexpr auto incy = gpu_inc<decltype(lhs_rhs)>;
 
-    /*!
-     * \brief Compute the result of the operation using the GPU
-     *
-     * \param lhs The left hand side value on which to apply the operator
-     * \param rhs The right hand side value on which to apply the operator
-     *
-     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
-     */
-    template <typename L, typename R, typename YY, cpp_enable_iff(is_axmy_right<L, R>)>
-    static YY& gpu_compute(const L& lhs, const R& rhs, YY& yy) noexcept {
-        auto& lhs_lhs = lhs.get_lhs();
-        auto& lhs_rhs = lhs.get_rhs();
+            impl::egblas::axmy_3(etl::size(yy), rhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
+        } else if constexpr (is_axmy_left_left<L, R>) {
+            auto& lhs_lhs = lhs.get_lhs();
+            auto& lhs_rhs = lhs.get_rhs();
 
-        decltype(auto) x = smart_gpu_compute_hint(lhs_lhs, yy);
-        decltype(auto) y = smart_gpu_compute_hint(lhs_rhs, yy);
+            decltype(auto) x = smart_gpu_compute_hint(lhs_rhs, yy);
+            decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
 
-        constexpr auto incx = gpu_inc<decltype(lhs_lhs)>;
-        constexpr auto incy = gpu_inc<decltype(lhs_rhs)>;
+            constexpr auto incx = gpu_inc<decltype(lhs_rhs)>;
+            constexpr auto incy = gpu_inc<decltype(rhs)>;
 
-        impl::egblas::axmy_3(etl::size(yy), rhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
+            impl::egblas::axmy_3(etl::size(yy), lhs_lhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
+        } else if constexpr (is_axmy_left_right<L, R>) {
+            auto& lhs_lhs = lhs.get_lhs();
+            auto& lhs_rhs = lhs.get_rhs();
 
-        yy.validate_gpu();
-        yy.invalidate_cpu();
+            decltype(auto) x = smart_gpu_compute_hint(lhs_lhs, yy);
+            decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
 
-        return yy;
-    }
+            constexpr auto incx = gpu_inc<decltype(lhs_lhs)>;
+            constexpr auto incy = gpu_inc<decltype(rhs)>;
 
-    /*!
-     * \brief Compute the result of the operation using the GPU
-     *
-     * \param lhs The left hand side value on which to apply the operator
-     * \param rhs The right hand side value on which to apply the operator
-     *
-     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
-     */
-    template <typename L, typename R, typename YY, cpp_enable_iff(is_axmy_left_left<L, R>)>
-    static YY& gpu_compute(const L& lhs, const R& rhs, YY& yy) noexcept {
-        auto& lhs_lhs = lhs.get_lhs();
-        auto& lhs_rhs = lhs.get_rhs();
+            impl::egblas::axmy_3(etl::size(yy), lhs_rhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
+        } else if constexpr (is_axmy_right_left<L, R>) {
+            auto& rhs_lhs = rhs.get_lhs();
+            auto& rhs_rhs = rhs.get_rhs();
 
-        decltype(auto) x = smart_gpu_compute_hint(lhs_rhs, yy);
-        decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
+            decltype(auto) x = smart_gpu_compute_hint(lhs, yy);
+            decltype(auto) y = smart_gpu_compute_hint(rhs_rhs, yy);
 
-        constexpr auto incx = gpu_inc<decltype(lhs_rhs)>;
-        constexpr auto incy = gpu_inc<decltype(rhs)>;
+            constexpr auto incx = gpu_inc<decltype(lhs)>;
+            constexpr auto incy = gpu_inc<decltype(rhs_rhs)>;
 
-        impl::egblas::axmy_3(etl::size(yy), lhs_lhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
+            impl::egblas::axmy_3(etl::size(yy), rhs_lhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
+        } else if constexpr (is_axmy_right_right<L, R>) {
+            auto& rhs_lhs = rhs.get_lhs();
+            auto& rhs_rhs = rhs.get_rhs();
 
-        yy.validate_gpu();
-        yy.invalidate_cpu();
+            decltype(auto) x = smart_gpu_compute_hint(lhs, yy);
+            decltype(auto) y = smart_gpu_compute_hint(rhs_lhs, yy);
 
-        return yy;
-    }
+            constexpr auto incx = gpu_inc<decltype(lhs)>;
+            constexpr auto incy = gpu_inc<decltype(rhs_lhs)>;
 
-    /*!
-     * \brief Compute the result of the operation using the GPU
-     *
-     * \param lhs The left hand side value on which to apply the operator
-     * \param rhs The right hand side value on which to apply the operator
-     *
-     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
-     */
-    template <typename L, typename R, typename YY, cpp_enable_iff(is_axmy_left_right<L, R>)>
-    static YY& gpu_compute(const L& lhs, const R& rhs, YY& yy) noexcept {
-        auto& lhs_lhs = lhs.get_lhs();
-        auto& lhs_rhs = lhs.get_rhs();
+            impl::egblas::axmy_3(etl::size(yy), rhs_rhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
+        } else if constexpr (!is_scalar<L> && !is_scalar<R> && !is_axmy<L, R>) {
+            decltype(auto) x = smart_gpu_compute_hint(lhs, yy);
+            decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
 
-        decltype(auto) x = smart_gpu_compute_hint(lhs_lhs, yy);
-        decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
+            constexpr auto incx = gpu_inc<decltype(lhs)>;
+            constexpr auto incy = gpu_inc<decltype(rhs)>;
 
-        constexpr auto incx = gpu_inc<decltype(lhs_lhs)>;
-        constexpr auto incy = gpu_inc<decltype(rhs)>;
+            impl::egblas::axmy_3(etl::size(yy), 1, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
+        } else if constexpr (is_scalar<L> && !is_scalar<R> && !is_axmy<L, R>) {
+            smart_gpu_compute(rhs, yy);
 
-        impl::egblas::axmy_3(etl::size(yy), lhs_rhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
+            impl::egblas::scalar_mul(yy.gpu_memory(), etl::size(yy), 1, lhs.value);
+        } else if constexpr (!is_scalar<L> && is_scalar<R> && !is_axmy<L, R>) {
+            smart_gpu_compute(lhs, yy);
 
-        yy.validate_gpu();
-        yy.invalidate_cpu();
-
-        return yy;
-    }
-
-    /*!
-     * \brief Compute the result of the operation using the GPU
-     *
-     * \param lhs The left hand side value on which to apply the operator
-     * \param rhs The right hand side value on which to apply the operator
-     *
-     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
-     */
-    template <typename L, typename R, typename YY, cpp_enable_iff(is_axmy_right_left<L, R>)>
-    static YY& gpu_compute(const L& lhs, const R& rhs, YY& yy) noexcept {
-        auto& rhs_lhs = rhs.get_lhs();
-        auto& rhs_rhs = rhs.get_rhs();
-
-        decltype(auto) x = smart_gpu_compute_hint(lhs, yy);
-        decltype(auto) y = smart_gpu_compute_hint(rhs_rhs, yy);
-
-        constexpr auto incx = gpu_inc<decltype(lhs)>;
-        constexpr auto incy = gpu_inc<decltype(rhs_rhs)>;
-
-        impl::egblas::axmy_3(etl::size(yy), rhs_lhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
-
-        yy.validate_gpu();
-        yy.invalidate_cpu();
-
-        return yy;
-    }
-
-    /*!
-     * \brief Compute the result of the operation using the GPU
-     *
-     * \param lhs The left hand side value on which to apply the operator
-     * \param rhs The right hand side value on which to apply the operator
-     *
-     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
-     */
-    template <typename L, typename R, typename YY, cpp_enable_iff(is_axmy_right_right<L, R>)>
-    static YY& gpu_compute(const L& lhs, const R& rhs, YY& yy) noexcept {
-        auto& rhs_lhs = rhs.get_lhs();
-        auto& rhs_rhs = rhs.get_rhs();
-
-        decltype(auto) x = smart_gpu_compute_hint(lhs, yy);
-        decltype(auto) y = smart_gpu_compute_hint(rhs_lhs, yy);
-
-        constexpr auto incx = gpu_inc<decltype(lhs)>;
-        constexpr auto incy = gpu_inc<decltype(rhs_lhs)>;
-
-        impl::egblas::axmy_3(etl::size(yy), rhs_rhs.value, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
-
-        yy.validate_gpu();
-        yy.invalidate_cpu();
-
-        return yy;
-    }
-
-    /*!
-     * \brief Compute the result of the operation using the GPU
-     *
-     * \param lhs The left hand side value on which to apply the operator
-     * \param rhs The right hand side value on which to apply the operator
-     *
-     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
-     */
-    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && !is_scalar<R> && !is_axmy<L, R>)>
-    static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
-        decltype(auto) x = smart_gpu_compute_hint(lhs, yy);
-        decltype(auto) y = smart_gpu_compute_hint(rhs, yy);
-
-        constexpr auto incx = gpu_inc<decltype(lhs)>;
-        constexpr auto incy = gpu_inc<decltype(rhs)>;
-
-        impl::egblas::axmy_3(etl::size(yy), 1, x.gpu_memory(), incx, y.gpu_memory(), incy, yy.gpu_memory(), 1);
-
-        yy.validate_gpu();
-        yy.invalidate_cpu();
-
-        return yy;
-    }
-
-    /*!
-     * \brief Compute the result of the operation using the GPU
-     *
-     * \param lhs The left hand side value on which to apply the operator
-     * \param rhs The right hand side value on which to apply the operator
-     *
-     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
-     */
-    template <typename L, typename R, typename Y, cpp_enable_iff(is_scalar<L> && !is_scalar<R> && !is_axmy<L, R>)>
-    static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
-        smart_gpu_compute(rhs, yy);
-
-        impl::egblas::scalar_mul(yy.gpu_memory(), etl::size(yy), 1, lhs.value);
-
-        yy.validate_gpu();
-        yy.invalidate_cpu();
-
-        return yy;
-    }
-
-    /*!
-     * \brief Compute the result of the operation using the GPU
-     *
-     * \param lhs The left hand side value on which to apply the operator
-     * \param rhs The right hand side value on which to apply the operator
-     *
-     * \return The result of applying the binary operator on lhs and rhs. The result must be a GPU computed expression.
-     */
-    template <typename L, typename R, typename Y, cpp_enable_iff(!is_scalar<L> && is_scalar<R> && !is_axmy<L, R>)>
-    static Y& gpu_compute(const L& lhs, const R& rhs, Y& yy) noexcept {
-        smart_gpu_compute(lhs, yy);
-
-        impl::egblas::scalar_mul(yy.gpu_memory(), etl::size(yy), 1, rhs.value);
+            impl::egblas::scalar_mul(yy.gpu_memory(), etl::size(yy), 1, rhs.value);
+        }
 
         yy.validate_gpu();
         yy.invalidate_cpu();
