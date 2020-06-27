@@ -54,10 +54,10 @@ auto batch_hint(Expr&& expr) {
                 using right_left_type  = typename right_type::left_type;
                 using right_right_type = typename right_type::right_type;
 
-                constexpr size_t right_left_dimensions  = decay_traits<right_left_type>::dimensions();
-                constexpr size_t right_right_dimensions = decay_traits<right_right_type>::dimensions();
-
                 if constexpr (std::is_same_v<right_operator_type, minus_binary_op<right_value_type>>) {
+                    constexpr size_t right_left_dimensions  = decay_traits<right_left_type>::dimensions();
+                    constexpr size_t right_right_dimensions = decay_traits<right_right_type>::dimensions();
+
                     if constexpr (is_2d4d(right_left_dimensions) && right_right_dimensions == 1 && left_dimensions == 1
                                   && all_homogeneous<right_left_type, right_right_type, left_type>) {
                         // Detect gamma[K] * (input[B, K, W, H]) - beta[k])
@@ -96,10 +96,10 @@ auto batch_hint(Expr&& expr) {
                 using left_left_type  = typename left_type::left_type;
                 using left_right_type = typename left_type::right_type;
 
-                constexpr size_t left_left_dimensions  = decay_traits<left_left_type>::dimensions();
-                constexpr size_t left_right_dimensions = decay_traits<left_right_type>::dimensions();
-
                 if constexpr (std::is_same_v<left_operator_type, mul_binary_op<left_value_type>>) {
+                    constexpr size_t left_left_dimensions  = decay_traits<left_left_type>::dimensions();
+                    constexpr size_t left_right_dimensions = decay_traits<left_right_type>::dimensions();
+
                     if constexpr (left_left_dimensions == 1 && is_2d4d(left_right_dimensions) && right_dimensions == 1
                                   && all_homogeneous<left_left_type, left_right_type, right_type>) {
                         // Detect (gamma[K] * input[B, K, W, H]) + beta[k]
