@@ -338,13 +338,13 @@ $(eval $(call add_test_executable,etl_test_upsample,src/test.cpp src/upsample.cp
 $(eval $(call add_test_executable,etl_test_views,src/test.cpp src/views.cpp))
 $(eval $(call add_test_executable,etl_test_virtual_views,src/test.cpp src/virtual_views.cpp))
 
-debug_test_all: $(DEBUG_TEST_EXECUTABLES)
-release_debug_test_all: $(RELEASE_DEBUG_TEST_EXECUTABLES)
-release_test_all: $(RELEASE_TEST_EXECUTABLES)
+debug_etl_test_all: $(DEBUG_TEST_EXECUTABLES)
+release_debug_etl_test_all: $(RELEASE_DEBUG_TEST_EXECUTABLES)
+release_etl_test_all: $(RELEASE_TEST_EXECUTABLES)
 
-run_debug_test_all: $(DEBUG_TEST_TARGETS)
-run_release_debug_test_all: $(RELEASE_DEBUG_TEST_TARGETS)
-run_release_test_all: $(RELEASE_TEST_TARGETS)
+run_debug_etl_test_all: $(DEBUG_TEST_TARGETS)
+run_release_debug_etl_test_all: $(RELEASE_DEBUG_TEST_TARGETS)
+run_release_etl_test_all: $(RELEASE_TEST_TARGETS)
 
 # Create the benchmark executables
 BENCH_FILES=$(wildcard benchmark/src/benchmark*cpp)
