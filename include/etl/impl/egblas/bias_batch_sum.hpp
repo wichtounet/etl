@@ -138,4 +138,120 @@ inline void bias_batch_mean([[maybe_unused]] size_t  b,
 #endif
 }
 
+#ifdef EGBLAS_HAS_SBIAS_BATCH_SUM4
+static constexpr bool has_sbias_batch_sum4 = true;
+#else
+static constexpr bool has_sbias_batch_sum4 = false;
+#endif
+
+/*!
+ * \brief Wrappers for single-precision egblas bias_batch_sum operation
+ * \param b The batch dimension of the matrix
+ * \param n The size of the output vector
+ * \param w The inner first dimension of the input matrix
+ * \param h The inner first dimension of the input matrix
+ * \param A The memory of the vector a
+ * \param B The memory of the vector b
+ */
+inline void bias_batch_sum4([[maybe_unused]] size_t b,
+                           [[maybe_unused]] size_t n,
+                           [[maybe_unused]] size_t w,
+                           [[maybe_unused]] size_t h,
+                           [[maybe_unused]] float* A,
+                           [[maybe_unused]] float* B) {
+#ifdef EGBLAS_HAS_SBIAS_BATCH_SUM4
+    inc_counter("egblas");
+    egblas_sbias_batch_sum4(b, n, w, h, A, B);
+#else
+    cpp_unreachable("Invalid call to egblas::bias_batch_sum");
+#endif
+}
+
+#ifdef EGBLAS_HAS_SBIAS_BATCH_MEAN4
+static constexpr bool has_sbias_batch_mean4 = true;
+#else
+static constexpr bool has_sbias_batch_mean4 = false;
+#endif
+
+/*!
+ * \brief Wrappers for single-precision egblas bias_batch_mean operation
+ * \param b The batch dimension of the matrix
+ * \param n The size of the output vector
+ * \param w The inner first dimension of the input matrix
+ * \param h The inner first dimension of the input matrix
+ * \param A The memory of the vector a
+ * \param B The memory of the vector b
+ */
+inline void bias_batch_mean4([[maybe_unused]] size_t b,
+                           [[maybe_unused]] size_t n,
+                           [[maybe_unused]] size_t w,
+                           [[maybe_unused]] size_t h,
+                           [[maybe_unused]] float* A,
+                           [[maybe_unused]] float* B) {
+#ifdef EGBLAS_HAS_SBIAS_BATCH_MEAN4
+    inc_counter("egblas");
+    egblas_sbias_batch_mean4(b, n, w, h, A, B);
+#else
+    cpp_unreachable("Invalid call to egblas::bias_batch_mean");
+#endif
+}
+
+#ifdef EGBLAS_HAS_DBIAS_BATCH_SUM4
+static constexpr bool has_dbias_batch_sum4 = true;
+#else
+static constexpr bool has_dbias_batch_sum4 = false;
+#endif
+
+/*!
+ * \brief Wrappers for single-precision egblas bias_batch_sum operation
+ * \param b The batch dimension of the matrix
+ * \param n The size of the output vector
+ * \param w The inner first dimension of the input matrix
+ * \param h The inner first dimension of the input matrix
+ * \param A The memory of the vector a
+ * \param B The memory of the vector b
+ */
+inline void bias_batch_sum4([[maybe_unused]] size_t b,
+                           [[maybe_unused]] size_t n,
+                           [[maybe_unused]] size_t w,
+                           [[maybe_unused]] size_t h,
+                           [[maybe_unused]] double* A,
+                           [[maybe_unused]] double* B) {
+#ifdef EGBLAS_HAS_DBIAS_BATCH_SUM4
+    inc_counter("egblas");
+    egblas_dbias_batch_sum4(b, n, w, h, A, B);
+#else
+    cpp_unreachable("Invalid call to egblas::bias_batch_sum");
+#endif
+}
+
+#ifdef EGBLAS_HAS_DBIAS_BATCH_MEAN4
+static constexpr bool has_dbias_batch_mean4 = true;
+#else
+static constexpr bool has_dbias_batch_mean4 = false;
+#endif
+
+/*!
+ * \brief Wrappers for single-precision egblas bias_batch_mean operation
+ * \param b The batch dimension of the matrix
+ * \param n The size of the output vector
+ * \param w The inner first dimension of the input matrix
+ * \param h The inner first dimension of the input matrix
+ * \param A The memory of the vector a
+ * \param B The memory of the vector b
+ */
+inline void bias_batch_mean4([[maybe_unused]] size_t b,
+                           [[maybe_unused]] size_t n,
+                           [[maybe_unused]] size_t w,
+                           [[maybe_unused]] size_t h,
+                           [[maybe_unused]] double* A,
+                           [[maybe_unused]] double* B) {
+#ifdef EGBLAS_HAS_DBIAS_BATCH_MEAN4
+    inc_counter("egblas");
+    egblas_dbias_batch_mean4(b, n, w, h, A, B);
+#else
+    cpp_unreachable("Invalid call to egblas::bias_batch_mean");
+#endif
+}
+
 } //end of namespace etl::impl::egblas
