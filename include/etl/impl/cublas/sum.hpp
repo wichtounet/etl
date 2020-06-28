@@ -38,7 +38,7 @@ namespace etl::impl::cublas {
  */
 template <typename A, cpp_enable_iff(is_gpu_computable<A>&& is_single_precision<A>)>
 float sum(const A& a) {
-    auto t1 = smart_forward_gpu(a);
+    decltype(auto) t1 = smart_forward_gpu(a);
 
     t1.ensure_gpu_up_to_date();
 
@@ -70,7 +70,7 @@ float sum(const A& a) {
  */
 template <typename A, cpp_enable_iff(is_gpu_computable<A>&& is_double_precision<A>)>
 double sum(const A& a) {
-    auto t1 = smart_forward_gpu(a);
+    decltype(auto) t1 = smart_forward_gpu(a);
 
     t1.ensure_gpu_up_to_date();
 
@@ -106,7 +106,7 @@ template <typename A, cpp_enable_iff(is_gpu_computable<A>&& is_single_precision<
 float asum(const A& a) {
     decltype(auto) handle = start_cublas();
 
-    auto t1 = smart_forward_gpu(a);
+    decltype(auto) t1 = smart_forward_gpu(a);
 
     t1.ensure_gpu_up_to_date();
 
@@ -122,7 +122,7 @@ template <typename A, cpp_enable_iff(is_gpu_computable<A>&& is_double_precision<
 double asum(const A& a) {
     decltype(auto) handle = start_cublas();
 
-    auto t1 = smart_forward_gpu(a);
+    decltype(auto) t1 = smart_forward_gpu(a);
 
     t1.ensure_gpu_up_to_date();
 

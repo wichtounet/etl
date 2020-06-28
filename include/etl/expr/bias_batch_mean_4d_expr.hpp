@@ -82,7 +82,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
         [[maybe_unused]] const auto H = etl::dim<3>(a);
 
         if constexpr (!Mean && impl::egblas::has_sbias_batch_sum4 && all_row_major<A> && all_floating<A, L>) {
-            auto t1 = smart_forward_gpu(a);
+            decltype(auto) t1 = smart_forward_gpu(a);
             t1.ensure_gpu_up_to_date();
 
             lhs.ensure_gpu_allocated();
@@ -92,7 +92,7 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
             lhs.validate_gpu();
             lhs.invalidate_cpu();
         } else if constexpr (Mean && impl::egblas::has_sbias_batch_mean4 && all_row_major<A> && all_floating<A, L>) {
-            auto t1 = smart_forward_gpu(a);
+            decltype(auto) t1 = smart_forward_gpu(a);
             t1.ensure_gpu_up_to_date();
 
             lhs.ensure_gpu_allocated();
