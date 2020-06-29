@@ -63,7 +63,7 @@ constexpr size_t gevm_cm_small_threshold = 4000000; ///< The number of elements 
 constexpr size_t gemv_rm_small_threshold = 4500000; ///< The number of elements of A after which we use BLAS-like kernel
 constexpr size_t gemv_cm_small_threshold = 2400000; ///< The number of elements of A after which we use BLAS-like kernel
 
-constexpr size_t parallel_threshold = 128 * 1024; ///< The minimum number of elements before considering parallel implementation
+constexpr size_t parallel_threshold = 64 * 1024; ///< The minimum number of elements before considering parallel implementation
 
 constexpr size_t sum_parallel_threshold     = 1024 * 32;  ///< The minimum number of elements before considering parallel acc implementation
 constexpr size_t vec_sum_parallel_threshold = 1024 * 128; ///< The minimum number of elements before considering parallel acc implementation
