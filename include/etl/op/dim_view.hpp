@@ -336,6 +336,14 @@ struct etl_traits<etl::dim_view<T, D>> {
     static constexpr size_t dimensions() {
         return 1;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 } //end of namespace etl

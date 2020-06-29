@@ -387,6 +387,14 @@ struct etl_traits<etl::bias_batch_mean_2d_expr<A, Mean>> {
     static constexpr size_t dimensions() {
         return 1;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 /*!

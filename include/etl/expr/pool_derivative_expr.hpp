@@ -193,6 +193,14 @@ struct etl_traits<etl::pool_derivative_expr<A, B, C1, C2, C3, Impl>> {
     static constexpr size_t dimensions() {
         return left_traits::dimensions();
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 /*!

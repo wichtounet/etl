@@ -191,6 +191,14 @@ struct etl_traits<etl::dyn_pool_2d_expr<A, Impl>> {
     static constexpr size_t dimensions() {
         return D;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 /*!

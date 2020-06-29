@@ -361,6 +361,14 @@ struct etl_traits<etl::sub_matrix_2d<T, Aligned>> {
     static constexpr size_t dimensions() noexcept {
         return 2;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 } //end of namespace etl

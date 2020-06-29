@@ -330,6 +330,14 @@ struct etl_traits<etl::memory_slice_view<T, Aligned>> {
     static constexpr size_t dimensions() {
         return 1;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 /*!

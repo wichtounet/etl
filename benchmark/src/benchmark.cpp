@@ -51,6 +51,13 @@ CPM_BENCH() {
 
 //Bench addition
 CPM_BENCH() {
+
+    CPM_TWO_PASS_NS(
+        "r = a + b (s) [std][add][d]",
+        [](size_t d){ return std::make_tuple(svec(d), svec(d), svec(d)); },
+        [](svec& a, svec& b, svec& r){ r = a + b; }
+        );
+
     // TODO Find out why this is not as fast as Blaze
 #ifdef ETL_EXTENDED_BENCH
     CPM_TWO_PASS_NS(

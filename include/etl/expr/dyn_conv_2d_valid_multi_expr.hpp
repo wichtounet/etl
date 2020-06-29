@@ -212,6 +212,14 @@ struct etl_traits<etl::dyn_conv_2d_valid_multi_expr<A, B, Flipped>> {
     static constexpr size_t dimensions() {
         return 3;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 /*!

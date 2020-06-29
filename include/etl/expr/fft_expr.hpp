@@ -186,6 +186,14 @@ struct etl_traits<etl::fft_expr<A, T, Impl>> {
     static constexpr size_t dimensions() {
         return sub_traits::dimensions();
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 //Helpers to compute the type of the result

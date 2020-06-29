@@ -887,6 +887,14 @@ struct etl_traits<etl::sub_view<T, Aligned>> {
     static constexpr size_t dimensions() noexcept {
         return sub_traits::dimensions() - 1;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 } //end of namespace etl

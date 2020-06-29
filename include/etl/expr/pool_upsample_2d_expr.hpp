@@ -319,6 +319,14 @@ struct etl_traits<etl::pool_upsample_2d_expr<A, B, C, C1, C2, Max>> {
     static constexpr size_t dimensions() {
         return sub_traits::dimensions();
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 /*!

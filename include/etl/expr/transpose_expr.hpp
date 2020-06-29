@@ -253,6 +253,14 @@ struct etl_traits<etl::transpose_expr<A>> {
     static constexpr size_t dimensions() {
         return 2;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 } //end of namespace etl

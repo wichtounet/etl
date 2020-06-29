@@ -286,6 +286,14 @@ struct etl_traits<etl::magic_view<V>> {
     static constexpr size_t dimensions() {
         return 2;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return 16;
+    }
 };
 
 /*!
@@ -363,6 +371,14 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
      */
     static constexpr size_t dimensions() {
         return 2;
+    }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return 16;
     }
 };
 

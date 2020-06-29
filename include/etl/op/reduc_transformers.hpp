@@ -736,6 +736,14 @@ struct etl_traits<
     static constexpr size_t dimensions() {
         return 1;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return 1;
+    }
 };
 
 /*!
@@ -816,6 +824,14 @@ struct etl_traits<T,
      */
     static constexpr size_t dimensions() {
         return etl_traits<sub_expr_t>::dimensions() - 1;
+    }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return 1;
     }
 };
 

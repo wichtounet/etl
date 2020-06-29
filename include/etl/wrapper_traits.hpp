@@ -90,6 +90,14 @@ struct wrapper_traits {
     static constexpr size_t dimensions() {
         return sub_traits::dimensions();
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return sub_traits::complexity();
+    }
 };
 
 } //end of namespace etl

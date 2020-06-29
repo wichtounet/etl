@@ -196,6 +196,14 @@ struct etl_traits<etl::convmtx_2d_expr<A, K1, K2>> {
     static constexpr size_t dimensions() {
         return 2;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 /*!

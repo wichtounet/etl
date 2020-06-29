@@ -213,6 +213,14 @@ struct etl_traits<etl::pool_3d_expr<A, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>
     static constexpr size_t dimensions() {
         return D;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 /*!

@@ -237,6 +237,14 @@ struct etl_traits<etl::conv_4d_valid_back_expr<A, B, S1, S2, P1, P2, Flipped>> {
     static constexpr size_t dimensions() {
         return 4;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 /*!

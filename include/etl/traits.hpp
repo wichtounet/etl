@@ -1114,6 +1114,14 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>>> {
     static constexpr size_t dimensions() {
         return T::n_dimensions;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 /*!
@@ -1122,8 +1130,8 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>>> {
  * \return The number of dimensions of the given expression.
  */
 template <typename E>
-constexpr size_t dimensions(const E& expr) noexcept {
-    return (void)expr, etl_traits<E>::dimensions();
+constexpr size_t dimensions([[maybe_unused]] const E& expr) noexcept {
+    return etl_traits<E>::dimensions();
 }
 
 /*!
@@ -1134,6 +1142,26 @@ constexpr size_t dimensions(const E& expr) noexcept {
 template <typename E>
 constexpr size_t dimensions() noexcept {
     return decay_traits<E>::dimensions();
+}
+
+/*!
+ * \brief Return the complexity of the expression
+ * \param expr The expression to get the complexity for
+ * \return The estimated complexity of the given expression.
+ */
+template <typename E>
+constexpr size_t complexity([[maybe_unused]] const E& expr) noexcept {
+    return etl_traits<E>::complexity();
+}
+
+/*!
+ * \brief Return the complexity of the expression
+ * \tparam E The expression type to get the complexity for
+ * \return The estimated complexity of the given type.
+ */
+template <typename E>
+constexpr size_t complexity() noexcept {
+    return decay_traits<E>::complexity();
 }
 
 /*!

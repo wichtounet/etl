@@ -424,6 +424,14 @@ struct etl_traits<etl::binary_expr<T, LE, BinaryOp, RE>> {
     static constexpr size_t dimensions() {
         return sub_traits::dimensions();
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return left_traits::complexity() + right_traits::complexity();
+    }
 };
 
 } //end of namespace etl

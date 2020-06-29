@@ -254,6 +254,14 @@ struct etl_traits<etl::generator_expr<Generator>> {
     static constexpr size_t dimensions() {
         return 0;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return 4;
+    }
 };
 
 } //end of namespace etl

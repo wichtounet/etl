@@ -217,6 +217,14 @@ struct etl_traits<etl::conv_2d_full_expr<A, B, Flipped>> {
     static constexpr size_t dimensions() {
         return 2;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 /*!

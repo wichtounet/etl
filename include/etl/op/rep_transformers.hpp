@@ -439,6 +439,14 @@ struct etl_traits<rep_r_transformer<T, D...>> {
     static constexpr size_t dimensions() {
         return sizeof...(D) + etl_traits<sub_expr_t>::dimensions();
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return 3;
+    }
 };
 
 /*!
@@ -526,6 +534,14 @@ struct etl_traits<rep_l_transformer<T, D...>> {
     static constexpr size_t dimensions() {
         return sizeof...(D) + etl_traits<sub_expr_t>::dimensions();
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return 3;
+    }
 };
 
 /*!
@@ -589,6 +605,14 @@ struct etl_traits<dyn_rep_r_transformer<T, D>> {
     static constexpr size_t dimensions() {
         return D + etl_traits<sub_expr_t>::dimensions();
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return 3;
+    }
 };
 
 /*!
@@ -649,6 +673,14 @@ struct etl_traits<dyn_rep_l_transformer<T, D>> {
      */
     static constexpr size_t dimensions() {
         return D + etl_traits<sub_expr_t>::dimensions();
+    }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return 3;
     }
 };
 

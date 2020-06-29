@@ -634,6 +634,14 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
     static constexpr size_t dimensions() {
         return 2;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return 5;
+    }
 };
 
 /*!
@@ -698,6 +706,14 @@ struct etl_traits<dyn_convmtx_transformer<E>> {
      */
     static constexpr size_t dimensions() {
         return 2;
+    }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return 5;
     }
 };
 
@@ -765,6 +781,14 @@ struct etl_traits<dyn_convmtx2_transformer<E>> {
      */
     static constexpr size_t dimensions() {
         return 2;
+    }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return 5;
     }
 };
 

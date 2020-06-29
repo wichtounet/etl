@@ -372,6 +372,14 @@ struct etl_traits<etl::bias_add_4d_expr<A, B>> {
     static constexpr size_t dimensions() {
         return 4;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 /*!

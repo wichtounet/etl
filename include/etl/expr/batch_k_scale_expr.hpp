@@ -548,6 +548,14 @@ struct etl_traits<etl::batch_k_scale_expr<A, B>> {
     static constexpr size_t dimensions() {
         return decay_traits<B>::dimensions();
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 // Note: This function should not be called directly

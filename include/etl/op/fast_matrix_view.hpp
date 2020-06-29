@@ -772,6 +772,14 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
     static constexpr size_t dimensions() {
         return sizeof...(Dims);
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return -1;
+    }
 };
 
 } //end of namespace etl

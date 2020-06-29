@@ -323,6 +323,14 @@ struct etl_traits<etl::batch_embedding_lookup_expr<A, B>> {
     static constexpr size_t dimensions() {
         return 3;
     }
+
+    /*!
+     * \brief Estimate the complexity of computation
+     * \return An estimation of the complexity of the expression
+     */
+    static constexpr int complexity() noexcept {
+        return 4;
+    }
 };
 
 /*!
