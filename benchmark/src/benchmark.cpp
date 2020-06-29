@@ -5,7 +5,7 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#define CPM_BENCHMARK "Tests Benchmarks"
+#define CPM_LIB
 #include "benchmark.hpp"
 
 namespace {
