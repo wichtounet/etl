@@ -35,6 +35,14 @@ struct uniform_noise_unary_op {
     static constexpr bool gpu_computable = false;
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -90,6 +98,14 @@ public:
     static constexpr bool gpu_computable = false;
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -131,6 +147,14 @@ struct normal_noise_unary_op {
      */
     template <typename E>
     static constexpr bool gpu_computable = false;
+
+    /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
 
     /*!
      * \brief Apply the unary operator on x
@@ -188,6 +212,14 @@ public:
     static constexpr bool gpu_computable = false;
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -230,6 +262,14 @@ struct logistic_noise_unary_op {
     template <typename E>
     static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_slogistic_noise_seed)
                                            || (is_double_precision_t<T> && impl::egblas::has_dlogistic_noise_seed);
+
+    /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
 
     /*!
      * \brief Apply the unary operator on x
@@ -334,6 +374,14 @@ public:
                                            || (is_double_precision_t<T> && impl::egblas::has_dlogistic_noise_seed);
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
@@ -421,6 +469,14 @@ struct state_logistic_noise_unary_op {
     template <typename E>
     static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_slogistic_noise_seed)
                                            || (is_double_precision_t<T> && impl::egblas::has_dlogistic_noise_seed);
+
+    /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
 
     mutable random_engine  rand_engine; ///< The random generator
     std::shared_ptr<void*> states;      ///< The random generator extra states
@@ -564,6 +620,14 @@ public:
     template <typename E>
     static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_slogistic_noise_states)
                                            || (is_double_precision_t<T> && impl::egblas::has_dlogistic_noise_states);
+
+    /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
 
     /*!
      * \brief Apply the unary operator on x

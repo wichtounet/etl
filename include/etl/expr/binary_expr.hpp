@@ -430,7 +430,7 @@ struct etl_traits<etl::binary_expr<T, LE, BinaryOp, RE>> {
      * \return An estimation of the complexity of the expression
      */
     static constexpr int complexity() noexcept {
-        return left_traits::complexity() + right_traits::complexity();
+        return BinaryOp::complexity() + left_traits::complexity() + right_traits::complexity();
     }
 };
 

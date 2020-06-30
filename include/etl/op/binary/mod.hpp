@@ -33,6 +33,14 @@ struct mod_binary_op {
     static constexpr bool gpu_computable = false;
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 2;
+    }
+
+    /*!
      * \brief Apply the unary operator on lhs and rhs
      * \param lhs The left hand side value on which to apply the operator
      * \param rhs The right hand side value on which to apply the operator

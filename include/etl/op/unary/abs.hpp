@@ -36,6 +36,14 @@ struct abs_unary_op {
                                            || (is_complex_single_t<T> && impl::egblas::has_cabs) || (is_complex_double_t<T> && impl::egblas::has_zabs);
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
+
+    /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>

@@ -35,6 +35,14 @@ struct real_unary_op {
     static constexpr bool gpu_computable = (is_complex_single_t<T> && impl::egblas::has_creal) || (is_complex_double_t<T> && impl::egblas::has_zreal);
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
+
+    /*!
      * \brief Apply the unary operator on x
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x

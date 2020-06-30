@@ -41,6 +41,14 @@ struct minus_binary_op {
                                              || (is_complex_double_t<T> && impl::egblas::has_scalar_zadd && impl::egblas::has_scalar_zmul)));
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
+
+    /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>

@@ -36,6 +36,14 @@ struct sqrt_unary_op {
                                            || (is_complex_single_t<T> && impl::egblas::has_csqrt) || (is_complex_double_t<T> && impl::egblas::has_zsqrt);
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 12;
+    }
+
+    /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
@@ -131,6 +139,14 @@ struct sqrt_unary_op<etl::complex<TT>> {
     template <typename E>
     static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_ssqrt) || (is_double_precision_t<T> && impl::egblas::has_dsqrt)
                                            || (is_complex_single_t<T> && impl::egblas::has_csqrt) || (is_complex_double_t<T> && impl::egblas::has_zsqrt);
+
+    /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 12;
+    }
 
     /*!
      * \brief Apply the unary operator on x

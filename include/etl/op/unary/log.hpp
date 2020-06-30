@@ -37,6 +37,14 @@ struct log_unary_op {
                                            || (is_complex_single_t<T> && impl::egblas::has_clog) || (is_complex_double_t<T> && impl::egblas::has_zlog);
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 12;
+    }
+
+    /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
@@ -133,6 +141,14 @@ struct log_unary_op<etl::complex<TT>> {
     template <typename E>
     static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_slog) || (is_double_precision_t<T> && impl::egblas::has_dlog)
                                            || (is_complex_single_t<T> && impl::egblas::has_clog) || (is_complex_double_t<T> && impl::egblas::has_zlog);
+
+    /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 12;
+    }
 
     /*!
      * \brief Apply the unary operator on x

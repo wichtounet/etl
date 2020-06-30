@@ -37,6 +37,14 @@ struct ranged_noise_binary_g_op {
     template <typename L, typename R>
     static constexpr bool gpu_computable = false;
 
+    /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
+
     G& rand_engine; ///< The random engine
 
     /*!

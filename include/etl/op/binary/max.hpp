@@ -37,6 +37,14 @@ struct max_binary_op {
                                            || (all_complex_double_precision<L, R> && impl::egblas::has_zmax3);
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
+
+    /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>

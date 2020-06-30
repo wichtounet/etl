@@ -38,6 +38,14 @@ struct pow_binary_op {
                                            || (is_complex_single_t<T> && impl::egblas::has_cpow_yx) || (is_complex_double_t<T> && impl::egblas::has_zpow_yx);
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 16;
+    }
+
+    /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
@@ -151,6 +159,14 @@ struct precise_pow_binary_op {
     static constexpr bool gpu_computable = false;
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 16;
+    }
+
+    /*!
      * \brief Apply the unary operator on lhs and rhs
      * \param x The left hand side value on which to apply the operator
      * \param value The right hand side value on which to apply the operator
@@ -192,6 +208,14 @@ struct integer_pow_binary_op {
     template <typename L, typename R>
     static constexpr bool gpu_computable = (is_single_precision_t<T> && impl::egblas::has_spow_yx) || (is_double_precision_t<T> && impl::egblas::has_dpow_yx)
                                            || (is_complex_single_t<T> && impl::egblas::has_cpow_yx) || (is_complex_double_t<T> && impl::egblas::has_zpow_yx);
+
+    /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 16;
+    }
 
     /*!
      * \brief Apply the unary operator on lhs and rhs

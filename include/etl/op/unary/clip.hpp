@@ -44,6 +44,14 @@ struct clip_scalar_op {
                                            || (is_complex_single_t<T> && impl::egblas::has_cclip_value)
                                            || (is_complex_double_t<T> && impl::egblas::has_zclip_value);
 
+    /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
+
     S min; ///< The minimum for clipping
     S max; ///< The maximum for clipping
 

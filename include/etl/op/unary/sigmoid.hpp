@@ -37,6 +37,14 @@ struct sigmoid_unary_op {
     static constexpr bool gpu_computable = is_floating<E>&& cudnn_enabled;
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 12;
+    }
+
+    /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
@@ -152,6 +160,14 @@ struct fast_sigmoid_unary_op {
      */
     template <typename E>
     static constexpr bool gpu_computable = false;
+
+    /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 4;
+    }
 
     /*!
      * \brief Apply the unary operator on x

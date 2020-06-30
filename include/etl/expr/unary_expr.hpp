@@ -36,6 +36,14 @@ struct identity_op {
      */
     template <typename E>
     static constexpr bool gpu_computable = false;
+
+    /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
 };
 
 /*!
@@ -60,6 +68,14 @@ struct transform_op {
      */
     template <typename Expr>
     static constexpr bool gpu_computable = Expr::gpu_computable;
+
+    /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
 };
 
 /*!
@@ -89,6 +105,14 @@ struct stateful_op {
      */
     template <typename E>
     static constexpr bool gpu_computable = Sub::template gpu_computable<E>;
+
+    /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
 };
 
 /*!
@@ -1346,7 +1370,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
      * \return An estimation of the complexity of the expression
      */
     static constexpr int complexity() noexcept {
-        return sub_traits::complexity();
+        return UnaryOp::complexity() + sub_traits::complexity();
     }
 };
 

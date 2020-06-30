@@ -35,6 +35,14 @@ struct logical_xor_binary_op {
     static constexpr bool gpu_computable = impl::egblas::has_bxor;
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
+
+    /*!
      * \brief Apply the unary operator on lhs and rhs
      * \param lhs The left hand side value on which to apply the operator
      * \param rhs The right hand side value on which to apply the operator

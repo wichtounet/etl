@@ -35,6 +35,14 @@ struct relu_derivative_op {
     static constexpr bool gpu_computable = is_floating_t<T>&& impl::egblas::has_srelu_der_out&& impl::egblas::has_drelu_der_out;
 
     /*!
+     * \brief Estimate the complexity of operator
+     * \return An estimation of the complexity of the operator
+     */
+    static constexpr int complexity() {
+        return 1;
+    }
+
+    /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
