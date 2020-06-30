@@ -129,28 +129,32 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
     void assign_add_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
 
-        auto& a = this->a();
+        if constexpr (all_floating<A, L> && ((!Mean && cudnn_enabled) || (all_row_major<A, L> && impl::egblas::has_sbias_batch_sum))) {
+            std_add_evaluate(*this, lhs);
+        } else {
+            auto& a = this->a();
 
-        standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(a);
 
-        const auto N = etl::size(a) / etl::size(lhs);
-        const auto K = etl::size(lhs);
+            const auto N = etl::size(a) / etl::size(lhs);
+            const auto K = etl::size(lhs);
 
-        using T = value_t<A>;
+            using T = value_t<A>;
 
-        check(a, lhs);
+            check(a, lhs);
 
-        for (size_t k = 0; k < K; ++k) {
-            T mean(0);
+            for (size_t k = 0; k < K; ++k) {
+                T mean(0);
 
-            for (size_t b = 0; b < N; ++b) {
-                mean += a(b, k);
-            }
+                for (size_t b = 0; b < N; ++b) {
+                    mean += a(b, k);
+                }
 
-            if constexpr (Mean) {
-                lhs(k) += mean / N;
-            } else {
-                lhs(k) += mean;
+                if constexpr (Mean) {
+                    lhs(k) += mean / N;
+                } else {
+                    lhs(k) += mean;
+                }
             }
         }
     }
@@ -163,28 +167,32 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
     void assign_sub_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
 
-        auto& a = this->a();
+        if constexpr (all_floating<A, L> && ((!Mean && cudnn_enabled) || (all_row_major<A, L> && impl::egblas::has_sbias_batch_sum))) {
+            std_sub_evaluate(*this, lhs);
+        } else {
+            auto& a = this->a();
 
-        standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(a);
 
-        const auto N = etl::size(a) / etl::size(lhs);
-        const auto K = etl::size(lhs);
+            const auto N = etl::size(a) / etl::size(lhs);
+            const auto K = etl::size(lhs);
 
-        using T = value_t<A>;
+            using T = value_t<A>;
 
-        check(a, lhs);
+            check(a, lhs);
 
-        for (size_t k = 0; k < K; ++k) {
-            T mean(0);
+            for (size_t k = 0; k < K; ++k) {
+                T mean(0);
 
-            for (size_t b = 0; b < N; ++b) {
-                mean += a(b, k);
-            }
+                for (size_t b = 0; b < N; ++b) {
+                    mean += a(b, k);
+                }
 
-            if constexpr (Mean) {
-                lhs(k) -= mean / N;
-            } else {
-                lhs(k) -= mean;
+                if constexpr (Mean) {
+                    lhs(k) -= mean / N;
+                } else {
+                    lhs(k) -= mean;
+                }
             }
         }
     }
@@ -197,28 +205,32 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
     void assign_mul_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
 
-        auto& a = this->a();
+        if constexpr (all_floating<A, L> && ((!Mean && cudnn_enabled) || (all_row_major<A, L> && impl::egblas::has_sbias_batch_sum))) {
+            std_mul_evaluate(*this, lhs);
+        } else {
+            auto& a = this->a();
 
-        standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(a);
 
-        const auto N = etl::size(a) / etl::size(lhs);
-        const auto K = etl::size(lhs);
+            const auto N = etl::size(a) / etl::size(lhs);
+            const auto K = etl::size(lhs);
 
-        using T = value_t<A>;
+            using T = value_t<A>;
 
-        check(a, lhs);
+            check(a, lhs);
 
-        for (size_t k = 0; k < K; ++k) {
-            T mean(0);
+            for (size_t k = 0; k < K; ++k) {
+                T mean(0);
 
-            for (size_t b = 0; b < N; ++b) {
-                mean += a(b, k);
-            }
+                for (size_t b = 0; b < N; ++b) {
+                    mean += a(b, k);
+                }
 
-            if constexpr (Mean) {
-                lhs(k) *= mean / N;
-            } else {
-                lhs(k) *= mean;
+                if constexpr (Mean) {
+                    lhs(k) *= mean / N;
+                } else {
+                    lhs(k) *= mean;
+                }
             }
         }
     }
@@ -231,28 +243,32 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
     void assign_div_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
 
-        auto& a = this->a();
+        if constexpr (all_floating<A, L> && ((!Mean && cudnn_enabled) || (all_row_major<A, L> && impl::egblas::has_sbias_batch_sum))) {
+            std_div_evaluate(*this, lhs);
+        } else {
+            auto& a = this->a();
 
-        standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(a);
 
-        const auto N = etl::size(a) / etl::size(lhs);
-        const auto K = etl::size(lhs);
+            const auto N = etl::size(a) / etl::size(lhs);
+            const auto K = etl::size(lhs);
 
-        using T = value_t<A>;
+            using T = value_t<A>;
 
-        check(a, lhs);
+            check(a, lhs);
 
-        for (size_t k = 0; k < K; ++k) {
-            T mean(0);
+            for (size_t k = 0; k < K; ++k) {
+                T mean(0);
 
-            for (size_t b = 0; b < N; ++b) {
-                mean += a(b, k);
-            }
+                for (size_t b = 0; b < N; ++b) {
+                    mean += a(b, k);
+                }
 
-            if constexpr (Mean) {
-                lhs(k) /= mean / N;
-            } else {
-                lhs(k) /= mean;
+                if constexpr (Mean) {
+                    lhs(k) /= mean / N;
+                } else {
+                    lhs(k) /= mean;
+                }
             }
         }
     }
@@ -265,28 +281,32 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
     void assign_mod_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
 
-        auto& a = this->a();
+        if constexpr (all_floating<A, L> && ((!Mean && cudnn_enabled) || (all_row_major<A, L> && impl::egblas::has_sbias_batch_sum))) {
+            std_mod_evaluate(*this, lhs);
+        } else {
+            auto& a = this->a();
 
-        standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(a);
 
-        const auto N = etl::size(a) / etl::size(lhs);
-        const auto K = etl::size(lhs);
+            const auto N = etl::size(a) / etl::size(lhs);
+            const auto K = etl::size(lhs);
 
-        using T = value_t<A>;
+            using T = value_t<A>;
 
-        check(a, lhs);
+            check(a, lhs);
 
-        for (size_t k = 0; k < K; ++k) {
-            T mean(0);
+            for (size_t k = 0; k < K; ++k) {
+                T mean(0);
 
-            for (size_t b = 0; b < N; ++b) {
-                mean += a(b, k);
-            }
+                for (size_t b = 0; b < N; ++b) {
+                    mean += a(b, k);
+                }
 
-            if constexpr (Mean) {
-                lhs(k) %= mean / N;
-            } else {
-                lhs(k) %= mean;
+                if constexpr (Mean) {
+                    lhs(k) %= mean / N;
+                } else {
+                    lhs(k) %= mean;
+                }
             }
         }
     }
