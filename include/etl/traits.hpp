@@ -1150,7 +1150,7 @@ constexpr size_t dimensions() noexcept {
  * \return The estimated complexity of the given expression.
  */
 template <typename E>
-constexpr size_t complexity([[maybe_unused]] const E& expr) noexcept {
+constexpr int complexity([[maybe_unused]] const E& expr) noexcept {
     return etl_traits<E>::complexity();
 }
 
@@ -1160,7 +1160,7 @@ constexpr size_t complexity([[maybe_unused]] const E& expr) noexcept {
  * \return The estimated complexity of the given type.
  */
 template <typename E>
-constexpr size_t complexity() noexcept {
+constexpr int complexity() noexcept {
     return decay_traits<E>::complexity();
 }
 
