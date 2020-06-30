@@ -243,7 +243,8 @@ void direct_assign_impl(E& expr, R& result) {
     safe_ensure_cpu_up_to_date(result);
 
     if constexpr (is_thread_safe<E>) {
-        if (engine_select_parallel(etl::size(result))) {
+        int factor = std::max(etl::complexity(expr), 1);
+        if (engine_select_parallel(etl::size(result), parallel_threshold / factor)) {
             inc_counter("par:assign");
             par_exec<detail::Assign>(expr, result);
         } else {
@@ -276,7 +277,8 @@ void vectorized_assign_impl(E& expr, R& result) {
     constexpr auto V = detail::select_vector_mode<E, R>();
 
     if constexpr (is_thread_safe<E>) {
-        if (engine_select_parallel(etl::size(result))) {
+        int factor = std::max(etl::complexity(expr), 1);
+        if (engine_select_parallel(etl::size(result), parallel_threshold / factor)) {
             inc_counter("par_vec:assign");
             par_exec<detail::VectorizedAssign<V>>(expr, result);
         } else {
@@ -371,7 +373,8 @@ void direct_compound_add_impl(E& expr, R& result) {
     safe_ensure_cpu_up_to_date(result);
 
     if constexpr (is_thread_safe<E>) {
-        if (engine_select_parallel(etl::size(result))) {
+        int factor = std::max(etl::complexity(expr), 1);
+        if (engine_select_parallel(etl::size(result), parallel_threshold / factor)) {
             inc_counter("par:assign");
             par_exec<detail::AssignAdd>(expr, result);
         } else {
@@ -406,7 +409,8 @@ void vectorized_compound_add_impl(E& expr, R& result) {
     constexpr auto V = detail::select_vector_mode<E, R>();
 
     if constexpr (is_thread_safe<E>) {
-        if (engine_select_parallel(etl::size(result))) {
+        int factor = std::max(etl::complexity(expr), 1);
+        if (engine_select_parallel(etl::size(result), parallel_threshold / factor)) {
             inc_counter("par_vec:assign");
             par_exec<detail::VectorizedAssignAdd<V>>(expr, result);
         } else {
@@ -572,7 +576,8 @@ void direct_compound_sub_impl(E& expr, R& result) {
     safe_ensure_cpu_up_to_date(result);
 
     if constexpr (is_thread_safe<E>) {
-        if (engine_select_parallel(etl::size(result))) {
+        int factor = std::max(etl::complexity(expr), 1);
+        if (engine_select_parallel(etl::size(result), parallel_threshold / factor)) {
             par_exec<detail::AssignSub>(expr, result);
             inc_counter("par:assign");
         } else {
@@ -607,7 +612,8 @@ void vectorized_compound_sub_impl(E& expr, R& result) {
     constexpr auto V = detail::select_vector_mode<E, R>();
 
     if constexpr (is_thread_safe<E>) {
-        if (engine_select_parallel(etl::size(result))) {
+        int factor = std::max(etl::complexity(expr), 1);
+        if (engine_select_parallel(etl::size(result), parallel_threshold / factor)) {
             inc_counter("par_vec:assign");
             par_exec<detail::VectorizedAssignSub<V>>(expr, result);
         } else {
@@ -768,7 +774,8 @@ void direct_compound_mul_impl(E& expr, R& result) {
     safe_ensure_cpu_up_to_date(result);
 
     if constexpr (is_thread_safe<E>) {
-        if (engine_select_parallel(etl::size(result))) {
+        int factor = std::max(etl::complexity(expr), 1);
+        if (engine_select_parallel(etl::size(result), parallel_threshold / factor)) {
             inc_counter("par:assign");
             par_exec<detail::AssignMul>(expr, result);
         } else {
@@ -803,7 +810,8 @@ void vectorized_compound_mul_impl(E& expr, R& result) {
     constexpr auto V = detail::select_vector_mode<E, R>();
 
     if constexpr (is_thread_safe<E>) {
-        if (engine_select_parallel(etl::size(result))) {
+        int factor = std::max(etl::complexity(expr), 1);
+        if (engine_select_parallel(etl::size(result), parallel_threshold / factor)) {
             inc_counter("par_vec:assign");
             par_exec<detail::VectorizedAssignMul<V>>(expr, result);
         } else {
@@ -963,7 +971,8 @@ void direct_compound_div_impl(E& expr, R& result) {
     safe_ensure_cpu_up_to_date(result);
 
     if constexpr (is_thread_safe<E>) {
-        if (engine_select_parallel(etl::size(result))) {
+        int factor = std::max(etl::complexity(expr), 1);
+        if (engine_select_parallel(etl::size(result), parallel_threshold / factor)) {
             inc_counter("par:assign");
             par_exec<detail::AssignDiv>(expr, result);
         } else {
@@ -998,7 +1007,8 @@ void vectorized_compound_div_impl(E& expr, R& result) {
     constexpr auto V = detail::select_vector_mode<E, R>();
 
     if constexpr (is_thread_safe<E>) {
-        if (engine_select_parallel(etl::size(result))) {
+        int factor = std::max(etl::complexity(expr), 1);
+        if (engine_select_parallel(etl::size(result), parallel_threshold / factor)) {
             inc_counter("par_vec:assign");
             par_exec<detail::VectorizedAssignDiv<V>>(expr, result);
         } else {
