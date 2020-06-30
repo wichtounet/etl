@@ -659,6 +659,43 @@ void random_test() {
     etl::dump_counters_pretty();
 }
 
+void compound_gpu() {
+    std::cout << "\nCompound GPU\n" << std::endl;
+
+#ifdef ETL_CUDA
+    etl::gpu_memory_allocator::clear();
+#endif
+
+    etl::reset_counters();
+
+    {
+        using T = float;
+
+        etl::dyn_matrix<T, 2> I2(32, 10);
+        etl::dyn_matrix<T, 1> L2(10);
+
+        etl::dyn_matrix<T, 4> I4(32, 10, 4, 4);
+        etl::dyn_matrix<T, 1> L4(10);
+
+        // Regardless of the operation, they should all evaluate properly
+        // on GPU
+
+        L2 = bias_batch_sum_2d(I2);
+        L2 += bias_batch_sum_2d(I2);
+        L2 -= bias_batch_sum_2d(I2);
+        L2 *= bias_batch_sum_2d(I2);
+        L2 /= bias_batch_sum_2d(I2);
+
+        L4 = bias_batch_sum_4d(I4);
+        L4 += bias_batch_sum_4d(I4);
+        L4 -= bias_batch_sum_4d(I4);
+        L4 *= bias_batch_sum_4d(I4);
+        L4 /= bias_batch_sum_4d(I4);
+    }
+
+    etl::dump_counters_pretty();
+}
+
 } // end of anonymous namespace
 
 int main() {
@@ -674,6 +711,7 @@ int main() {
     sub();
     sub_ro();
     random_test();
+    compound_gpu();
 
     auto end_time = timer_clock::now();
     auto duration = std::chrono::duration_cast<milliseconds>(end_time - start_time);
