@@ -319,6 +319,16 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("inplace_strans [transpose][s]", trans_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](smat& r){ SELECTED_SECTION(etl::transpose_impl::CUBLAS){ r.transpose_inplace(); } })
 )
 
+// Front Transpose
+CPM_BENCH() {
+    CPM_TWO_PASS_NS_P(
+        trans_front_policy,
+        "R = transpose_front(A) (s) [transpose_front][s]",
+        [](auto d1, auto d2, auto d3){ return std::make_tuple(smat3(d1, d2, d3), smat3(d2, d1, d3)); },
+        [](smat3& A, smat3& R){ R = transpose_front(A); }
+        );
+}
+
 //Sigmoid benchmark
 CPM_DIRECT_SECTION_TWO_PASS_NS_F("a = sigmoid(b) (s) [std][sigmoid][d]",
     FLOPS([](size_t d){ return 22 * d; }),
