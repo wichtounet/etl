@@ -82,6 +82,7 @@
 
 // The complex expressions
 #include "etl/expr/transpose_expr.hpp"
+#include "etl/expr/transpose_front_expr.hpp"
 #include "etl/expr/bias_batch_mean_2d_expr.hpp"
 #include "etl/expr/bias_batch_mean_4d_expr.hpp"
 #include "etl/expr/bias_batch_var_2d_expr.hpp"

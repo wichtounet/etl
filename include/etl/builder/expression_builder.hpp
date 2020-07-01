@@ -615,6 +615,18 @@ auto ctrans(const E& value) {
 }
 
 /*!
+ * \brief Returns the transpose of the given expression.
+ * \param value The expression
+ * \return The transpose of the given expression.
+ */
+template <typename E>
+auto transpose_front(const E& value) -> transpose_front_expr<detail::build_type<E>> {
+    static_assert(is_etl_expr<E>, "etl::transpose_front can only be used on ETL expressions");
+    static_assert(decay_traits<E>::dimensions() >= 3, "Transpose not defined for matrix > 2D");
+    return transpose_front_expr<detail::build_type<E>>{value};
+}
+
+/*!
  * \brief Returns euclidean norm of the given expression.
  * \param a The expression
  * \return The euclidean norm of the expression
