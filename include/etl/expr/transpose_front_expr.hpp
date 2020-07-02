@@ -76,11 +76,17 @@ struct transpose_front_expr : base_temporary_expr_un<transpose_front_expr<A>, A>
         const auto B = etl::dim<0>(a);
         const auto K = etl::dim<1>(a);
 
-        for (size_t b = 0; b < B; ++b) {
-            for (size_t k = 0; k < K; ++k) {
-                lhs(k)(b) = a(b)(k);
+        auto batch_fun_b = [&](const size_t first, const size_t last) {
+            for (size_t b = first; b < last; ++b) {
+                for (size_t k = 0; k < K; ++k) {
+                    lhs(k)(b) = a(b)(k);
+                }
             }
-        }
+        };
+
+        // Ideally, this should be optimized to not use hyper thread
+        // for large containers, but the threshold is tricky to define
+        engine_dispatch_1d_serial(batch_fun_b, 0, B, 8UL);
 
         a.ensure_cpu_up_to_date();
 
