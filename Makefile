@@ -360,6 +360,7 @@ $(eval $(call add_executable,benchmark_gemm,benchmark/src/benchmark_base.cpp ben
 $(eval $(call add_executable,benchmark_pool,benchmark/src/benchmark_base.cpp benchmark/src/benchmark_pool.cpp))
 $(eval $(call add_executable,benchmark_thesis,benchmark/src/benchmark_base.cpp benchmark/src/benchmark_thesis.cpp))
 $(eval $(call add_executable,benchmark_trigo,benchmark/src/benchmark_base.cpp benchmark/src/benchmark_trigo.cpp))
+$(eval $(call add_executable,benchmark_batch_hint,benchmark/src/benchmark_base.cpp benchmark/src/benchmark_batch_hint.cpp))
 
 # Create various executables
 $(eval $(call add_executable,test_asm_1,workbench/src/test.cpp))
