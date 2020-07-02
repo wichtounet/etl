@@ -71,6 +71,23 @@ TEMPLATE_TEST_CASE_2("batch_hint/A/2", "[batch_hint]", Z, float, double) {
     }
 }
 
+TEMPLATE_TEST_CASE_2("batch_hint/A/3", "[batch_hint]", Z, float, double) {
+    etl::fast_matrix<Z, 109> gamma;
+    etl::fast_matrix<Z, 2, 109> input;
+    etl::fast_matrix<Z, 2, 109> output;
+
+    gamma = etl::sequence_generator(2.0);
+    input = etl::sequence_generator(1.0);
+
+    output = batch_hint(gamma >> input);
+
+    for (size_t b = 0; b < 2; ++b) {
+        for (size_t i = 0; i < 109; ++i) {
+            REQUIRE(output(b, i) == gamma(i) * input(b, i));
+        }
+    }
+}
+
 TEMPLATE_TEST_CASE_2("batch_hint/B/0", "[batch_hint]", Z, float, double) {
     etl::fast_matrix<Z, 3> gamma;
     etl::fast_matrix<Z, 3> beta;
