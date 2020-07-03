@@ -473,6 +473,29 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sbias_add_2d", bias_add_2d_policy,
     VEC_SECTION_FUNCTOR("vec", [](smat& a, svec& b, smat& c){ c = selected_helper(etl::bias_add_impl::VEC, etl::bias_add_2d(a, b)); })
 )
 
+CPM_BENCH() {
+    CPM_TWO_PASS_NS_P(
+            bias_add_2d_policy,
+            "sbias_batch_mean_2d",
+            [](size_t d1, size_t d2) { return std::make_tuple(smat(d1, d2), svec(d2)); },
+            [](smat& a, svec& r) { r = bias_batch_mean_2d(a); },
+            [](size_t d1, size_t d2) { return d1 * d2; });
+
+    CPM_TWO_PASS_NS_P(
+            bias_add_2d_policy,
+            "sbias_batch_sum_2d",
+            [](size_t d1, size_t d2) { return std::make_tuple(smat(d1, d2), svec(d2)); },
+            [](smat& a, svec& r) { r = bias_batch_sum_2d(a); },
+            [](size_t d1, size_t d2) { return d1 * d2; });
+
+    CPM_TWO_PASS_NS_P(
+            bias_add_2d_policy,
+            "sbias_batch_var_2d",
+            [](size_t d1, size_t d2) { return std::make_tuple(smat(d1, d2), svec(d2), svec(d2)); },
+            [](smat& a, svec& b, svec& r) { r = bias_batch_var_2d(a, b); },
+            [](size_t d1, size_t d2) { return d1 * d2; });
+}
+
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("r = a dot b (s)", dot_policy,
     FLOPS([](size_t d1){ return 2 * d1; }),
     CPM_SECTION_INIT([](size_t d1){ return std::make_tuple(svec(d1), svec(d1)); }),
