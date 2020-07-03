@@ -105,19 +105,23 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
 
             standard_evaluator::pre_assign_rhs(a);
 
-            for (size_t k = 0; k < K; ++k) {
-                T mean(0);
+            auto batch_fun_k = [&](const size_t first, const size_t last) {
+                for (size_t k = first; k < last; ++k) {
+                    T mean(0);
 
-                for (size_t b = 0; b < N; ++b) {
-                    mean += a(b, k);
-                }
+                    for (size_t b = 0; b < N; ++b) {
+                        mean += a(b, k);
+                    }
 
-                if constexpr (Mean) {
-                    lhs(k) = mean / N;
-                } else {
-                    lhs(k) = mean;
+                    if constexpr (Mean) {
+                        lhs(k) = mean / N;
+                    } else {
+                        lhs(k) = mean;
+                    }
                 }
-            }
+            };
+
+            engine_dispatch_1d_serial(batch_fun_k, 0, K, 4UL);
         }
     }
 
@@ -143,19 +147,23 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
 
             check(a, lhs);
 
-            for (size_t k = 0; k < K; ++k) {
-                T mean(0);
+            auto batch_fun_k = [&](const size_t first, const size_t last) {
+                for (size_t k = first; k < last; ++k) {
+                    T mean(0);
 
-                for (size_t b = 0; b < N; ++b) {
-                    mean += a(b, k);
-                }
+                    for (size_t b = 0; b < N; ++b) {
+                        mean += a(b, k);
+                    }
 
-                if constexpr (Mean) {
-                    lhs(k) += mean / N;
-                } else {
-                    lhs(k) += mean;
+                    if constexpr (Mean) {
+                        lhs(k) += mean / N;
+                    } else {
+                        lhs(k) += mean;
+                    }
                 }
-            }
+            };
+
+            engine_dispatch_1d_serial(batch_fun_k, 0, K, 4UL);
         }
     }
 
@@ -181,19 +189,23 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
 
             check(a, lhs);
 
-            for (size_t k = 0; k < K; ++k) {
-                T mean(0);
+            auto batch_fun_k = [&](const size_t first, const size_t last) {
+                for (size_t k = first; k < last; ++k) {
+                    T mean(0);
 
-                for (size_t b = 0; b < N; ++b) {
-                    mean += a(b, k);
-                }
+                    for (size_t b = 0; b < N; ++b) {
+                        mean += a(b, k);
+                    }
 
-                if constexpr (Mean) {
-                    lhs(k) -= mean / N;
-                } else {
-                    lhs(k) -= mean;
+                    if constexpr (Mean) {
+                        lhs(k) -= mean / N;
+                    } else {
+                        lhs(k) -= mean;
+                    }
                 }
-            }
+            };
+
+            engine_dispatch_1d_serial(batch_fun_k, 0, K, 4UL);
         }
     }
 
@@ -219,19 +231,23 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
 
             check(a, lhs);
 
-            for (size_t k = 0; k < K; ++k) {
-                T mean(0);
+            auto batch_fun_k = [&](const size_t first, const size_t last) {
+                for (size_t k = first; k < last; ++k) {
+                    T mean(0);
 
-                for (size_t b = 0; b < N; ++b) {
-                    mean += a(b, k);
-                }
+                    for (size_t b = 0; b < N; ++b) {
+                        mean += a(b, k);
+                    }
 
-                if constexpr (Mean) {
-                    lhs(k) *= mean / N;
-                } else {
-                    lhs(k) *= mean;
+                    if constexpr (Mean) {
+                        lhs(k) *= mean / N;
+                    } else {
+                        lhs(k) *= mean;
+                    }
                 }
-            }
+            };
+
+            engine_dispatch_1d_serial(batch_fun_k, 0, K, 4UL);
         }
     }
 
@@ -257,19 +273,23 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
 
             check(a, lhs);
 
-            for (size_t k = 0; k < K; ++k) {
-                T mean(0);
+            auto batch_fun_k = [&](const size_t first, const size_t last) {
+                for (size_t k = first; k < last; ++k) {
+                    T mean(0);
 
-                for (size_t b = 0; b < N; ++b) {
-                    mean += a(b, k);
-                }
+                    for (size_t b = 0; b < N; ++b) {
+                        mean += a(b, k);
+                    }
 
-                if constexpr (Mean) {
-                    lhs(k) /= mean / N;
-                } else {
-                    lhs(k) /= mean;
+                    if constexpr (Mean) {
+                        lhs(k) /= mean / N;
+                    } else {
+                        lhs(k) /= mean;
+                    }
                 }
-            }
+            };
+
+            engine_dispatch_1d_serial(batch_fun_k, 0, K, 4UL);
         }
     }
 
@@ -295,19 +315,23 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
 
             check(a, lhs);
 
-            for (size_t k = 0; k < K; ++k) {
-                T mean(0);
+            auto batch_fun_k = [&](const size_t first, const size_t last) {
+                for (size_t k = first; k < last; ++k) {
+                    T mean(0);
 
-                for (size_t b = 0; b < N; ++b) {
-                    mean += a(b, k);
-                }
+                    for (size_t b = 0; b < N; ++b) {
+                        mean += a(b, k);
+                    }
 
-                if constexpr (Mean) {
-                    lhs(k) %= mean / N;
-                } else {
-                    lhs(k) %= mean;
+                    if constexpr (Mean) {
+                        lhs(k) %= mean / N;
+                    } else {
+                        lhs(k) %= mean;
+                    }
                 }
-            }
+            };
+
+            engine_dispatch_1d_serial(batch_fun_k, 0, K, 4UL);
         }
     }
 

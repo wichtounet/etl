@@ -83,15 +83,19 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
-        for (size_t k = 0; k < K; ++k) {
-            T mean(0);
+        auto batch_fun_k = [&](const size_t first, const size_t last) {
+            for (size_t k = first; k < last; ++k) {
+                T mean(0);
 
-            for (size_t bb = 0; bb < N; ++bb) {
-                mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
+                for (size_t bb = 0; bb < N; ++bb) {
+                    mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
+                }
+
+                lhs(k) = mean / N;
             }
+        };
 
-            lhs(k) = mean / N;
-        }
+        engine_dispatch_1d_serial(batch_fun_k, 0, K, 4UL);
     }
 
     /*!
@@ -115,15 +119,19 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
 
         check(a, b, lhs);
 
-        for (size_t k = 0; k < K; ++k) {
-            T mean(0);
+        auto batch_fun_k = [&](const size_t first, const size_t last) {
+            for (size_t k = first; k < last; ++k) {
+                T mean(0);
 
-            for (size_t bb = 0; bb < N; ++bb) {
-                mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
+                for (size_t bb = 0; bb < N; ++bb) {
+                    mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
+                }
+
+                lhs(k) += mean / N;
             }
+        };
 
-            lhs(k) += mean / N;
-        }
+        engine_dispatch_1d_serial(batch_fun_k, 0, K, 4UL);
     }
 
     /*!
@@ -147,15 +155,19 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
 
         check(a, b, lhs);
 
-        for (size_t k = 0; k < K; ++k) {
-            T mean(0);
+        auto batch_fun_k = [&](const size_t first, const size_t last) {
+            for (size_t k = first; k < last; ++k) {
+                T mean(0);
 
-            for (size_t bb = 0; bb < N; ++bb) {
-                mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
+                for (size_t bb = 0; bb < N; ++bb) {
+                    mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
+                }
+
+                lhs(k) -= mean / N;
             }
+        };
 
-            lhs(k) -= mean / N;
-        }
+        engine_dispatch_1d_serial(batch_fun_k, 0, K, 4UL);
     }
 
     /*!
@@ -179,15 +191,19 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
 
         check(a, b, lhs);
 
-        for (size_t k = 0; k < K; ++k) {
-            T mean(0);
+        auto batch_fun_k = [&](const size_t first, const size_t last) {
+            for (size_t k = first; k < last; ++k) {
+                T mean(0);
 
-            for (size_t bb = 0; bb < N; ++bb) {
-                mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
+                for (size_t bb = 0; bb < N; ++bb) {
+                    mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
+                }
+
+                lhs(k) *= mean / N;
             }
+        };
 
-            lhs(k) *= mean / N;
-        }
+        engine_dispatch_1d_serial(batch_fun_k, 0, K, 4UL);
     }
 
     /*!
@@ -211,15 +227,19 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
 
         check(a, b, lhs);
 
-        for (size_t k = 0; k < K; ++k) {
-            T mean(0);
+        auto batch_fun_k = [&](const size_t first, const size_t last) {
+            for (size_t k = first; k < last; ++k) {
+                T mean(0);
 
-            for (size_t bb = 0; bb < N; ++bb) {
-                mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
+                for (size_t bb = 0; bb < N; ++bb) {
+                    mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
+                }
+
+                lhs(k) /= mean / N;
             }
+        };
 
-            lhs(k) /= mean / N;
-        }
+        engine_dispatch_1d_serial(batch_fun_k, 0, K, 4UL);
     }
 
     /*!
@@ -243,15 +263,19 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
 
         check(a, b, lhs);
 
-        for (size_t k = 0; k < K; ++k) {
-            T mean(0);
+        auto batch_fun_k = [&](const size_t first, const size_t last) {
+            for (size_t k = first; k < last; ++k) {
+                T mean(0);
 
-            for (size_t bb = 0; bb < N; ++bb) {
-                mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
+                for (size_t bb = 0; bb < N; ++bb) {
+                    mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
+                }
+
+                lhs(k) %= mean / N;
             }
+        };
 
-            lhs(k) %= mean / N;
-        }
+        engine_dispatch_1d_serial(batch_fun_k, 0, K, 4UL);
     }
 
     /*!
