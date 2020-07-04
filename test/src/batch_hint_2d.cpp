@@ -89,9 +89,10 @@ TEMPLATE_TEST_CASE_2("batch_hint/A/3", "[batch_hint]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("batch_hint/A/4", "[batch_hint]", Z, float, double) {
-    etl::fast_matrix<Z, 109> gamma;
-    etl::fast_matrix<Z, 3, 109> input;
-    etl::fast_matrix<Z, 3, 109> output;
+    constexpr size_t N = 4 * 16 + 2 * 16 + 16 + 4 + 3 + 2 + 1
+    etl::fast_matrix<Z, N> gamma;
+    etl::fast_matrix<Z, 3, N> input;
+    etl::fast_matrix<Z, 3, N> output;
 
     gamma = etl::sequence_generator(2.0);
     input = etl::sequence_generator(1.0);
