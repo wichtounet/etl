@@ -391,3 +391,108 @@ TEMPLATE_TEST_CASE_2("batch_hint/C/1", "[batch_hint]", Z, float, double) {
         }
     }
 }
+
+TEMPLATE_TEST_CASE_2("batch_hint/C/2", "[batch_hint]", Z, float, double) {
+    etl::fast_matrix<Z, 97> gamma;
+    etl::fast_matrix<Z, 97> beta;
+    etl::fast_matrix<Z, 7, 97> input;
+    etl::fast_matrix<Z, 7, 97> output;
+
+
+    gamma = etl::sequence_generator(1.0);
+    beta = etl::sequence_generator(1.0);
+    input = etl::sequence_generator(1.0);
+    output = 42;
+
+    output = batch_hint(gamma >> (input - beta));
+
+    for (size_t b = 0; b < 7; ++b) {
+        for (size_t i = 0; i < 97; ++i) {
+            REQUIRE(output(b, i) == gamma(i) * (input(b, i) - beta(i)));
+        }
+    }
+}
+
+TEMPLATE_TEST_CASE_2("batch_hint/C/3", "[batch_hint]", Z, float, double) {
+    etl::fast_matrix<Z, 97> gamma;
+    etl::fast_matrix<Z, 97> beta;
+    etl::fast_matrix<Z, 7, 97> input;
+    etl::fast_matrix<Z, 7, 97> output;
+
+
+    gamma = etl::sequence_generator(1.0);
+    beta = etl::sequence_generator(1.0);
+    input = etl::sequence_generator(1.0);
+    output = 42;
+
+    output += batch_hint(gamma >> (input - beta));
+
+    for (size_t b = 0; b < 7; ++b) {
+        for (size_t i = 0; i < 97; ++i) {
+            REQUIRE(output(b, i) == Z(42) + (gamma(i) * (input(b, i) - beta(i))));
+        }
+    }
+}
+
+TEMPLATE_TEST_CASE_2("batch_hint/C/4", "[batch_hint]", Z, float, double) {
+    etl::fast_matrix<Z, 97> gamma;
+    etl::fast_matrix<Z, 97> beta;
+    etl::fast_matrix<Z, 7, 97> input;
+    etl::fast_matrix<Z, 7, 97> output;
+
+
+    gamma = etl::sequence_generator(1.0);
+    beta = etl::sequence_generator(1.0);
+    input = etl::sequence_generator(1.0);
+    output = 42;
+
+    output -= batch_hint(gamma >> (input - beta));
+
+    for (size_t b = 0; b < 7; ++b) {
+        for (size_t i = 0; i < 97; ++i) {
+            REQUIRE(output(b, i) == Z(42) - (gamma(i) * (input(b, i) - beta(i))));
+        }
+    }
+}
+
+TEMPLATE_TEST_CASE_2("batch_hint/C/5", "[batch_hint]", Z, float, double) {
+    etl::fast_matrix<Z, 97> gamma;
+    etl::fast_matrix<Z, 97> beta;
+    etl::fast_matrix<Z, 7, 97> input;
+    etl::fast_matrix<Z, 7, 97> output;
+
+
+    gamma = etl::sequence_generator(1.0);
+    beta = etl::sequence_generator(1.0);
+    input = etl::sequence_generator(1.0);
+    output = 42;
+
+    output *= batch_hint(gamma >> (input - beta));
+
+    for (size_t b = 0; b < 7; ++b) {
+        for (size_t i = 0; i < 97; ++i) {
+            REQUIRE(output(b, i) == Z(42) * (gamma(i) * (input(b, i) - beta(i))));
+        }
+    }
+}
+
+TEMPLATE_TEST_CASE_2("batch_hint/C/6", "[batch_hint]", Z, float, double) {
+    etl::fast_matrix<Z, 97> gamma;
+    etl::fast_matrix<Z, 97> beta;
+    etl::fast_matrix<Z, 7, 97> input;
+    etl::fast_matrix<Z, 7, 97> output;
+
+
+    gamma = etl::sequence_generator(1.0);
+    beta = etl::sequence_generator(1.0);
+    input = etl::sequence_generator(1.0);
+    output = 42;
+
+    output /= batch_hint(gamma >> (input - beta));
+
+    for (size_t b = 0; b < 7; ++b) {
+        for (size_t i = 0; i < 97; ++i) {
+            REQUIRE(output(b, i) == Z(42) / (gamma(i) * (input(b, i) - beta(i))));
+        }
+    }
+}
