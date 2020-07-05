@@ -9,6 +9,8 @@
 
 #include "etl/expr/base_temporary_expr.hpp"
 
+#include "etl/impl/egblas/batch_k_scale.hpp"
+
 namespace etl {
 
 /*!
@@ -30,8 +32,9 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    static constexpr bool gpu_computable = false;
-
+    static constexpr bool gpu_computable =
+               (!D4 && impl::egblas::has_sbatch_k_scale2 && all_row_major<A, B> && all_floating<A, B>)
+            || (D4  && impl::egblas::has_dbatch_k_scale4 && all_row_major<A, B> && all_floating<A, B>);
     /*!
      * \brief Construct a new expression
      * \param a The sub expression
@@ -113,189 +116,222 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
             const auto M     = etl::dim<2>(lhs);
             const auto N     = etl::dim<3>(lhs);
 
-            auto batch_fun_b = [&](const size_t first, const size_t last) {
-                CPU_SECTION {
-                    if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
-                        using vec_type = default_vec;
-                        using T        = value_t<L>;
+            if constexpr (impl::egblas::has_sbatch_k_scale4 && all_row_major<A, B, L> && all_floating<A, B, L>) {
+                decltype(auto) t1 = smart_forward_gpu(a);
+                decltype(auto) t2 = smart_forward_gpu(b);
 
-                        static constexpr size_t vec_size = vec_type::template traits<T>::size;
+                t1.ensure_gpu_up_to_date();
+                t2.ensure_gpu_up_to_date();
 
-                        const auto MN = M * N;
+                lhs.ensure_gpu_allocated();
 
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                T ak = a(k);
+                impl::egblas::batch_k_scale(Batch, K, M, N, t2.gpu_memory(), t1.gpu_memory(), lhs.gpu_memory());
 
-                                auto lhs_sub = lhs(batch)(k);
-                                auto b_sub   = b(batch)(k);
+                lhs.validate_gpu();
+                lhs.invalidate_cpu();
+            } else {
+                auto batch_fun_b = [&](const size_t first, const size_t last) {
+                    CPU_SECTION {
+                        if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
+                            using vec_type = default_vec;
+                            using T        = value_t<L>;
 
-                                size_t mn = 0;
+                            static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-                                auto a1 = vec_type::set(ak);
+                            const auto MN = M * N;
 
-                                for (; mn + 4 * vec_size - 1 < MN; mn += 4 * vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
-                                    auto b3 = b_sub.template loadu<vec_type>(mn + 2 * vec_size);
-                                    auto b4 = b_sub.template loadu<vec_type>(mn + 3 * vec_size);
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    T ak = a(k);
 
-                                    auto r1 = vec_type::mul(a1, b1);
-                                    auto r2 = vec_type::mul(a1, b2);
-                                    auto r3 = vec_type::mul(a1, b3);
-                                    auto r4 = vec_type::mul(a1, b4);
+                                    auto lhs_sub = lhs(batch)(k);
+                                    auto b_sub   = b(batch)(k);
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r3, mn + 2 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r4, mn + 3 * vec_size);
-                                }
+                                    size_t mn = 0;
 
-                                for (; mn + 2 * vec_size - 1 < MN; mn += 2 * vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                    auto a1 = vec_type::set(ak);
 
-                                    auto r1 = vec_type::mul(a1, b1);
-                                    auto r2 = vec_type::mul(a1, b2);
+                                    for (; mn + 4 * vec_size - 1 < MN; mn += 4 * vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                        auto b3 = b_sub.template loadu<vec_type>(mn + 2 * vec_size);
+                                        auto b4 = b_sub.template loadu<vec_type>(mn + 3 * vec_size);
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
-                                }
+                                        auto r1 = vec_type::mul(a1, b1);
+                                        auto r2 = vec_type::mul(a1, b2);
+                                        auto r3 = vec_type::mul(a1, b3);
+                                        auto r4 = vec_type::mul(a1, b4);
 
-                                for (; mn + vec_size - 1 < MN; mn += vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn);
+                                        lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r3, mn + 2 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r4, mn + 3 * vec_size);
+                                    }
 
-                                    auto r1 = vec_type::mul(a1, b1);
+                                    for (; mn + 2 * vec_size - 1 < MN; mn += 2 * vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn);
-                                }
+                                        auto r1 = vec_type::mul(a1, b1);
+                                        auto r2 = vec_type::mul(a1, b2);
 
-                                for (; mn + 3 < MN; mn += 4) {
-                                    lhs_sub[mn + 0] = ak * b_sub[mn + 0];
-                                    lhs_sub[mn + 1] = ak * b_sub[mn + 1];
-                                    lhs_sub[mn + 2] = ak * b_sub[mn + 2];
-                                    lhs_sub[mn + 3] = ak * b_sub[mn + 3];
-                                }
+                                        lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
+                                    }
 
-                                for (; mn + 1 < MN; mn += 2) {
-                                    lhs_sub[mn + 0] = ak * b_sub[mn + 0];
-                                    lhs_sub[mn + 1] = ak * b_sub[mn + 1];
-                                }
+                                    for (; mn + vec_size - 1 < MN; mn += vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn);
 
-                                for (; mn < MN; ++mn) {
-                                    lhs_sub[mn] = ak * b_sub[mn];
+                                        auto r1 = vec_type::mul(a1, b1);
+
+                                        lhs_sub.template storeu<vec_type>(r1, mn);
+                                    }
+
+                                    for (; mn + 3 < MN; mn += 4) {
+                                        lhs_sub[mn + 0] = ak * b_sub[mn + 0];
+                                        lhs_sub[mn + 1] = ak * b_sub[mn + 1];
+                                        lhs_sub[mn + 2] = ak * b_sub[mn + 2];
+                                        lhs_sub[mn + 3] = ak * b_sub[mn + 3];
+                                    }
+
+                                    for (; mn + 1 < MN; mn += 2) {
+                                        lhs_sub[mn + 0] = ak * b_sub[mn + 0];
+                                        lhs_sub[mn + 1] = ak * b_sub[mn + 1];
+                                    }
+
+                                    for (; mn < MN; ++mn) {
+                                        lhs_sub[mn] = ak * b_sub[mn];
+                                    }
                                 }
                             }
-                        }
-                    } else {
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                for (size_t m = 0; m < M; ++m) {
-                                    for (size_t n = 0; n < N; ++n) {
-                                        lhs(batch, k, m, n) = a(k) * b(batch, k, m, n);
+                        } else {
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    for (size_t m = 0; m < M; ++m) {
+                                        for (size_t n = 0; n < N; ++n) {
+                                            lhs(batch, k, m, n) = a(k) * b(batch, k, m, n);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            };
+                };
 
-            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+                engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+
+                lhs.validate_cpu();
+                lhs.invalidate_gpu();
+            }
         } else {
             const auto Batch = etl::dim<0>(lhs);
             const auto K     = etl::dim<1>(lhs);
 
-            auto batch_fun_b = [&](const size_t first, const size_t last) {
-                CPU_SECTION {
-                    if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
-                        using vec_type = default_vec;
-                        using T        = value_t<L>;
+            if constexpr (impl::egblas::has_sbatch_k_scale2 && all_row_major<A, B, L> && all_floating<A, B, L>) {
+                decltype(auto) t1 = smart_forward_gpu(a);
+                decltype(auto) t2 = smart_forward_gpu(b);
 
-                        static constexpr size_t vec_size = vec_type::template traits<T>::size;
+                t1.ensure_gpu_up_to_date();
+                t2.ensure_gpu_up_to_date();
 
-                        for (size_t batch = first; batch < last; ++batch) {
-                            size_t k = 0;
+                lhs.ensure_gpu_allocated();
 
-                            size_t base = batch * K;
+                impl::egblas::batch_k_scale(Batch, K, t2.gpu_memory(), t1.gpu_memory(), lhs.gpu_memory());
 
-                            for (; k + 4 * vec_size - 1 < K; k += 4 * vec_size) {
-                                auto a1 = a.template load<vec_type>(k + 0 * vec_size);
-                                auto a2 = a.template load<vec_type>(k + 1 * vec_size);
-                                auto a3 = a.template load<vec_type>(k + 2 * vec_size);
-                                auto a4 = a.template load<vec_type>(k + 3 * vec_size);
+                lhs.validate_gpu();
+                lhs.invalidate_cpu();
+            } else {
+                auto batch_fun_b = [&](const size_t first, const size_t last) {
+                    CPU_SECTION {
+                        if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
+                            using vec_type = default_vec;
+                            using T        = value_t<L>;
 
-                                auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
-                                auto b3 = b.template loadu<vec_type>(base + k + 2 * vec_size);
-                                auto b4 = b.template loadu<vec_type>(base + k + 3 * vec_size);
+                            static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-                                auto r1 = vec_type::mul(a1, b1);
-                                auto r2 = vec_type::mul(a2, b2);
-                                auto r3 = vec_type::mul(a3, b3);
-                                auto r4 = vec_type::mul(a4, b4);
+                            for (size_t batch = first; batch < last; ++batch) {
+                                size_t k = 0;
 
-                                lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
-                                lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
-                                lhs.template storeu<vec_type>(r3, base + k + 2 * vec_size);
-                                lhs.template storeu<vec_type>(r4, base + k + 3 * vec_size);
+                                size_t base = batch * K;
+
+                                for (; k + 4 * vec_size - 1 < K; k += 4 * vec_size) {
+                                    auto a1 = a.template load<vec_type>(k + 0 * vec_size);
+                                    auto a2 = a.template load<vec_type>(k + 1 * vec_size);
+                                    auto a3 = a.template load<vec_type>(k + 2 * vec_size);
+                                    auto a4 = a.template load<vec_type>(k + 3 * vec_size);
+
+                                    auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
+                                    auto b3 = b.template loadu<vec_type>(base + k + 2 * vec_size);
+                                    auto b4 = b.template loadu<vec_type>(base + k + 3 * vec_size);
+
+                                    auto r1 = vec_type::mul(a1, b1);
+                                    auto r2 = vec_type::mul(a2, b2);
+                                    auto r3 = vec_type::mul(a3, b3);
+                                    auto r4 = vec_type::mul(a4, b4);
+
+                                    lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
+                                    lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
+                                    lhs.template storeu<vec_type>(r3, base + k + 2 * vec_size);
+                                    lhs.template storeu<vec_type>(r4, base + k + 3 * vec_size);
+                                }
+
+                                for (; k + 2 * vec_size - 1 < K; k += 2 * vec_size) {
+                                    auto a1 = a.template load<vec_type>(k + 0 * vec_size);
+                                    auto a2 = a.template load<vec_type>(k + 1 * vec_size);
+
+                                    auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
+
+                                    auto r1 = vec_type::mul(a1, b1);
+                                    auto r2 = vec_type::mul(a2, b2);
+
+                                    lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
+                                    lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
+                                }
+
+                                for (; k + vec_size - 1 < K; k += vec_size) {
+                                    auto a1 = a.template load<vec_type>(k);
+
+                                    auto b1 = b.template loadu<vec_type>(base + k);
+
+                                    auto r1 = vec_type::mul(a1, b1);
+
+                                    lhs.template storeu<vec_type>(r1, base + k);
+                                }
+
+                                for (; k + 3 < K; k += 4) {
+                                    lhs(batch, k + 0) = a(k + 0) * b(batch, k + 0);
+                                    lhs(batch, k + 1) = a(k + 1) * b(batch, k + 1);
+                                    lhs(batch, k + 2) = a(k + 2) * b(batch, k + 2);
+                                    lhs(batch, k + 3) = a(k + 3) * b(batch, k + 3);
+                                }
+
+                                for (; k + 1 < K; k += 2) {
+                                    lhs(batch, k + 0) = a(k + 0) * b(batch, k + 0);
+                                    lhs(batch, k + 1) = a(k + 1) * b(batch, k + 1);
+                                }
+
+                                if (k < K) {
+                                    lhs(batch, k) = a(k) * b(batch, k);
+                                }
                             }
-
-                            for (; k + 2 * vec_size - 1 < K; k += 2 * vec_size) {
-                                auto a1 = a.template load<vec_type>(k + 0 * vec_size);
-                                auto a2 = a.template load<vec_type>(k + 1 * vec_size);
-
-                                auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
-
-                                auto r1 = vec_type::mul(a1, b1);
-                                auto r2 = vec_type::mul(a2, b2);
-
-                                lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
-                                lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
-                            }
-
-                            for (; k + vec_size - 1 < K; k += vec_size) {
-                                auto a1 = a.template load<vec_type>(k);
-
-                                auto b1 = b.template loadu<vec_type>(base + k);
-
-                                auto r1 = vec_type::mul(a1, b1);
-
-                                lhs.template storeu<vec_type>(r1, base + k);
-                            }
-
-                            for (; k + 3 < K; k += 4) {
-                                lhs(batch, k + 0) = a(k + 0) * b(batch, k + 0);
-                                lhs(batch, k + 1) = a(k + 1) * b(batch, k + 1);
-                                lhs(batch, k + 2) = a(k + 2) * b(batch, k + 2);
-                                lhs(batch, k + 3) = a(k + 3) * b(batch, k + 3);
-                            }
-
-                            for (; k + 1 < K; k += 2) {
-                                lhs(batch, k + 0) = a(k + 0) * b(batch, k + 0);
-                                lhs(batch, k + 1) = a(k + 1) * b(batch, k + 1);
-                            }
-
-                            if (k < K) {
-                                lhs(batch, k) = a(k) * b(batch, k);
-                            }
-                        }
-                    } else {
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                lhs(batch, k) = a(k) * b(batch, k);
+                        } else {
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    lhs(batch, k) = a(k) * b(batch, k);
+                                }
                             }
                         }
                     }
-                }
-            };
+                };
 
-            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+                engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+
+                lhs.validate_cpu();
+                lhs.invalidate_gpu();
+            }
         }
-
-        lhs.validate_cpu();
-        lhs.invalidate_gpu();
     }
 
     /*!
@@ -319,214 +355,225 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
         lhs.ensure_cpu_up_to_date();
 
         if constexpr (D4) {
-            const auto Batch = etl::dim<0>(lhs);
-            const auto K     = etl::dim<1>(lhs);
-            const auto M     = etl::dim<2>(lhs);
-            const auto N     = etl::dim<3>(lhs);
+            if constexpr (impl::egblas::has_sbatch_k_scale4 && all_row_major<A, B, L> && all_floating<A, B, L>) {
+                std_add_evaluate(*this, lhs);
+            } else {
+                const auto Batch = etl::dim<0>(lhs);
+                const auto K     = etl::dim<1>(lhs);
+                const auto M     = etl::dim<2>(lhs);
+                const auto N     = etl::dim<3>(lhs);
 
-            auto batch_fun_b = [&](const size_t first, const size_t last) {
-                CPU_SECTION {
-                    if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
-                        using vec_type = default_vec;
-                        using T        = value_t<L>;
+                auto batch_fun_b = [&](const size_t first, const size_t last) {
+                    CPU_SECTION {
+                        if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
+                            using vec_type = default_vec;
+                            using T        = value_t<L>;
 
-                        static constexpr size_t vec_size = vec_type::template traits<T>::size;
+                            static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-                        const auto MN = M * N;
+                            const auto MN = M * N;
 
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                T ak = a(k);
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    T ak = a(k);
 
-                                auto lhs_sub = lhs(batch)(k);
-                                auto b_sub   = b(batch)(k);
+                                    auto lhs_sub = lhs(batch)(k);
+                                    auto b_sub   = b(batch)(k);
 
-                                size_t mn = 0;
+                                    size_t mn = 0;
 
-                                auto a1 = vec_type::set(ak);
+                                    auto a1 = vec_type::set(ak);
 
-                                for (; mn + 4 * vec_size - 1 < MN; mn += 4 * vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
-                                    auto b3 = b_sub.template loadu<vec_type>(mn + 2 * vec_size);
-                                    auto b4 = b_sub.template loadu<vec_type>(mn + 3 * vec_size);
+                                    for (; mn + 4 * vec_size - 1 < MN; mn += 4 * vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                        auto b3 = b_sub.template loadu<vec_type>(mn + 2 * vec_size);
+                                        auto b4 = b_sub.template loadu<vec_type>(mn + 3 * vec_size);
 
-                                    auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
-                                    auto l3 = lhs_sub.template loadu<vec_type>(mn + 2 * vec_size);
-                                    auto l4 = lhs_sub.template loadu<vec_type>(mn + 3 * vec_size);
+                                        auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                        auto l3 = lhs_sub.template loadu<vec_type>(mn + 2 * vec_size);
+                                        auto l4 = lhs_sub.template loadu<vec_type>(mn + 3 * vec_size);
 
-                                    auto r1 = vec_type::add(l1, vec_type::mul(a1, b1));
-                                    auto r2 = vec_type::add(l2, vec_type::mul(a1, b2));
-                                    auto r3 = vec_type::add(l3, vec_type::mul(a1, b3));
-                                    auto r4 = vec_type::add(l4, vec_type::mul(a1, b4));
+                                        auto r1 = vec_type::add(l1, vec_type::mul(a1, b1));
+                                        auto r2 = vec_type::add(l2, vec_type::mul(a1, b2));
+                                        auto r3 = vec_type::add(l3, vec_type::mul(a1, b3));
+                                        auto r4 = vec_type::add(l4, vec_type::mul(a1, b4));
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r3, mn + 2 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r4, mn + 3 * vec_size);
-                                }
+                                        lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r3, mn + 2 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r4, mn + 3 * vec_size);
+                                    }
 
-                                for (; mn + 2 * vec_size - 1 < MN; mn += 2 * vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                    for (; mn + 2 * vec_size - 1 < MN; mn += 2 * vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
 
-                                    auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                        auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
 
-                                    auto r1 = vec_type::add(l1, vec_type::mul(a1, b1));
-                                    auto r2 = vec_type::add(l2, vec_type::mul(a1, b2));
+                                        auto r1 = vec_type::add(l1, vec_type::mul(a1, b1));
+                                        auto r2 = vec_type::add(l2, vec_type::mul(a1, b2));
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
-                                }
+                                        lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
+                                    }
 
-                                for (; mn + vec_size - 1 < MN; mn += vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn);
+                                    for (; mn + vec_size - 1 < MN; mn += vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn);
 
-                                    auto l1 = lhs_sub.template loadu<vec_type>(mn);
+                                        auto l1 = lhs_sub.template loadu<vec_type>(mn);
 
-                                    auto r1 = vec_type::add(l1, vec_type::mul(a1, b1));
+                                        auto r1 = vec_type::add(l1, vec_type::mul(a1, b1));
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn);
-                                }
+                                        lhs_sub.template storeu<vec_type>(r1, mn);
+                                    }
 
-                                for (; mn + 3 < MN; mn += 4) {
-                                    lhs_sub[mn + 0] += ak * b_sub[mn + 0];
-                                    lhs_sub[mn + 1] += ak * b_sub[mn + 1];
-                                    lhs_sub[mn + 2] += ak * b_sub[mn + 2];
-                                    lhs_sub[mn + 3] += ak * b_sub[mn + 3];
-                                }
+                                    for (; mn + 3 < MN; mn += 4) {
+                                        lhs_sub[mn + 0] += ak * b_sub[mn + 0];
+                                        lhs_sub[mn + 1] += ak * b_sub[mn + 1];
+                                        lhs_sub[mn + 2] += ak * b_sub[mn + 2];
+                                        lhs_sub[mn + 3] += ak * b_sub[mn + 3];
+                                    }
 
-                                for (; mn + 1 < MN; mn += 2) {
-                                    lhs_sub[mn + 0] += ak * b_sub[mn + 0];
-                                    lhs_sub[mn + 1] += ak * b_sub[mn + 1];
-                                }
+                                    for (; mn + 1 < MN; mn += 2) {
+                                        lhs_sub[mn + 0] += ak * b_sub[mn + 0];
+                                        lhs_sub[mn + 1] += ak * b_sub[mn + 1];
+                                    }
 
-                                for (; mn < MN; ++mn) {
-                                    lhs_sub[mn] += ak * b_sub[mn];
+                                    for (; mn < MN; ++mn) {
+                                        lhs_sub[mn] += ak * b_sub[mn];
+                                    }
                                 }
                             }
-                        }
-                    } else {
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                for (size_t m = 0; m < M; ++m) {
-                                    for (size_t n = 0; n < N; ++n) {
-                                        lhs(batch, k, m, n) += a(k) * b(batch, k, m, n);
+                        } else {
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    for (size_t m = 0; m < M; ++m) {
+                                        for (size_t n = 0; n < N; ++n) {
+                                            lhs(batch, k, m, n) += a(k) * b(batch, k, m, n);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            };
+                };
 
-            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+                engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+
+                lhs.validate_cpu();
+                lhs.invalidate_gpu();
+            }
         } else {
-            const auto Batch = etl::dim<0>(lhs);
-            const auto K     = etl::dim<1>(lhs);
+            if constexpr (impl::egblas::has_sbatch_k_scale2 && all_row_major<A, B, L> && all_floating<A, B, L>) {
+                std_add_evaluate(*this, lhs);
+            } else {
+                const auto Batch = etl::dim<0>(lhs);
+                const auto K     = etl::dim<1>(lhs);
 
-            auto batch_fun_b = [&](const size_t first, const size_t last) {
-                CPU_SECTION {
-                    if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
-                        using vec_type = default_vec;
-                        using T        = value_t<L>;
+                auto batch_fun_b = [&](const size_t first, const size_t last) {
+                    CPU_SECTION {
+                        if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
+                            using vec_type = default_vec;
+                            using T        = value_t<L>;
 
-                        static constexpr size_t vec_size = vec_type::template traits<T>::size;
+                            static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-                        for (size_t batch = first; batch < last; ++batch) {
-                            size_t k = 0;
+                            for (size_t batch = first; batch < last; ++batch) {
+                                size_t k = 0;
 
-                            size_t base = batch * K;
+                                size_t base = batch * K;
 
-                            for (; k + 4 * vec_size - 1 < K; k += 4 * vec_size) {
-                                auto a1 = a.template load<vec_type>(k + 0 * vec_size);
-                                auto a2 = a.template load<vec_type>(k + 1 * vec_size);
-                                auto a3 = a.template load<vec_type>(k + 2 * vec_size);
-                                auto a4 = a.template load<vec_type>(k + 3 * vec_size);
+                                for (; k + 4 * vec_size - 1 < K; k += 4 * vec_size) {
+                                    auto a1 = a.template load<vec_type>(k + 0 * vec_size);
+                                    auto a2 = a.template load<vec_type>(k + 1 * vec_size);
+                                    auto a3 = a.template load<vec_type>(k + 2 * vec_size);
+                                    auto a4 = a.template load<vec_type>(k + 3 * vec_size);
 
-                                auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
-                                auto b3 = b.template loadu<vec_type>(base + k + 2 * vec_size);
-                                auto b4 = b.template loadu<vec_type>(base + k + 3 * vec_size);
+                                    auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
+                                    auto b3 = b.template loadu<vec_type>(base + k + 2 * vec_size);
+                                    auto b4 = b.template loadu<vec_type>(base + k + 3 * vec_size);
 
-                                auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
-                                auto l3 = lhs.template loadu<vec_type>(base + k + 2 * vec_size);
-                                auto l4 = lhs.template loadu<vec_type>(base + k + 3 * vec_size);
+                                    auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
+                                    auto l3 = lhs.template loadu<vec_type>(base + k + 2 * vec_size);
+                                    auto l4 = lhs.template loadu<vec_type>(base + k + 3 * vec_size);
 
-                                auto r1 = vec_type::add(l1, vec_type::mul(a1, b1));
-                                auto r2 = vec_type::add(l2, vec_type::mul(a2, b2));
-                                auto r3 = vec_type::add(l3, vec_type::mul(a3, b3));
-                                auto r4 = vec_type::add(l4, vec_type::mul(a4, b4));
+                                    auto r1 = vec_type::add(l1, vec_type::mul(a1, b1));
+                                    auto r2 = vec_type::add(l2, vec_type::mul(a2, b2));
+                                    auto r3 = vec_type::add(l3, vec_type::mul(a3, b3));
+                                    auto r4 = vec_type::add(l4, vec_type::mul(a4, b4));
 
-                                lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
-                                lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
-                                lhs.template storeu<vec_type>(r3, base + k + 2 * vec_size);
-                                lhs.template storeu<vec_type>(r4, base + k + 3 * vec_size);
+                                    lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
+                                    lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
+                                    lhs.template storeu<vec_type>(r3, base + k + 2 * vec_size);
+                                    lhs.template storeu<vec_type>(r4, base + k + 3 * vec_size);
+                                }
+
+                                for (; k + 2 * vec_size - 1 < K; k += 2 * vec_size) {
+                                    auto a1 = a.template load<vec_type>(k + 0 * vec_size);
+                                    auto a2 = a.template load<vec_type>(k + 1 * vec_size);
+
+                                    auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
+
+                                    auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
+
+                                    auto r1 = vec_type::add(l1, vec_type::mul(a1, b1));
+                                    auto r2 = vec_type::add(l2, vec_type::mul(a2, b2));
+
+                                    lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
+                                    lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
+                                }
+
+                                for (; k + vec_size - 1 < K; k += vec_size) {
+                                    auto a1 = a.template load<vec_type>(k);
+
+                                    auto b1 = b.template loadu<vec_type>(base + k);
+
+                                    auto l1 = lhs.template loadu<vec_type>(base + k);
+
+                                    auto r1 = vec_type::add(l1, vec_type::mul(a1, b1));
+
+                                    lhs.template storeu<vec_type>(r1, base + k);
+                                }
+
+                                for (; k + 3 < K; k += 4) {
+                                    lhs(batch, k + 0) += a(k + 0) * b(batch, k + 0);
+                                    lhs(batch, k + 1) += a(k + 1) * b(batch, k + 1);
+                                    lhs(batch, k + 2) += a(k + 2) * b(batch, k + 2);
+                                    lhs(batch, k + 3) += a(k + 3) * b(batch, k + 3);
+                                }
+
+                                for (; k + 1 < K; k += 2) {
+                                    lhs(batch, k + 0) += a(k + 0) * b(batch, k + 0);
+                                    lhs(batch, k + 1) += a(k + 1) * b(batch, k + 1);
+                                }
+
+                                if (k < K) {
+                                    lhs(batch, k) += a(k) * b(batch, k);
+                                }
                             }
-
-                            for (; k + 2 * vec_size - 1 < K; k += 2 * vec_size) {
-                                auto a1 = a.template load<vec_type>(k + 0 * vec_size);
-                                auto a2 = a.template load<vec_type>(k + 1 * vec_size);
-
-                                auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
-
-                                auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
-
-                                auto r1 = vec_type::add(l1, vec_type::mul(a1, b1));
-                                auto r2 = vec_type::add(l2, vec_type::mul(a2, b2));
-
-                                lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
-                                lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
-                            }
-
-                            for (; k + vec_size - 1 < K; k += vec_size) {
-                                auto a1 = a.template load<vec_type>(k);
-
-                                auto b1 = b.template loadu<vec_type>(base + k);
-
-                                auto l1 = lhs.template loadu<vec_type>(base + k);
-
-                                auto r1 = vec_type::add(l1, vec_type::mul(a1, b1));
-
-                                lhs.template storeu<vec_type>(r1, base + k);
-                            }
-
-                            for (; k + 3 < K; k += 4) {
-                                lhs(batch, k + 0) += a(k + 0) * b(batch, k + 0);
-                                lhs(batch, k + 1) += a(k + 1) * b(batch, k + 1);
-                                lhs(batch, k + 2) += a(k + 2) * b(batch, k + 2);
-                                lhs(batch, k + 3) += a(k + 3) * b(batch, k + 3);
-                            }
-
-                            for (; k + 1 < K; k += 2) {
-                                lhs(batch, k + 0) += a(k + 0) * b(batch, k + 0);
-                                lhs(batch, k + 1) += a(k + 1) * b(batch, k + 1);
-                            }
-
-                            if (k < K) {
-                                lhs(batch, k) += a(k) * b(batch, k);
-                            }
-                        }
-                    } else {
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                lhs(batch, k) += a(k) * b(batch, k);
+                        } else {
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    lhs(batch, k) += a(k) * b(batch, k);
+                                }
                             }
                         }
                     }
-                }
-            };
+                };
 
-            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+                engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+
+                lhs.validate_cpu();
+                lhs.invalidate_gpu();
+            }
         }
-
-        lhs.validate_cpu();
-        lhs.invalidate_gpu();
     }
 
     /*!
@@ -550,214 +597,225 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
         lhs.ensure_cpu_up_to_date();
 
         if constexpr (D4) {
-            const auto Batch = etl::dim<0>(lhs);
-            const auto K     = etl::dim<1>(lhs);
-            const auto M     = etl::dim<2>(lhs);
-            const auto N     = etl::dim<3>(lhs);
+            if constexpr (impl::egblas::has_sbatch_k_scale4 && all_row_major<A, B, L> && all_floating<A, B, L>) {
+                std_sub_evaluate(*this, lhs);
+            } else {
+                const auto Batch = etl::dim<0>(lhs);
+                const auto K     = etl::dim<1>(lhs);
+                const auto M     = etl::dim<2>(lhs);
+                const auto N     = etl::dim<3>(lhs);
 
-            auto batch_fun_b = [&](const size_t first, const size_t last) {
-                CPU_SECTION {
-                    if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
-                        using vec_type = default_vec;
-                        using T        = value_t<L>;
+                auto batch_fun_b = [&](const size_t first, const size_t last) {
+                    CPU_SECTION {
+                        if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
+                            using vec_type = default_vec;
+                            using T        = value_t<L>;
 
-                        static constexpr size_t vec_size = vec_type::template traits<T>::size;
+                            static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-                        const auto MN = M * N;
+                            const auto MN = M * N;
 
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                T ak = a(k);
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    T ak = a(k);
 
-                                auto lhs_sub = lhs(batch)(k);
-                                auto b_sub   = b(batch)(k);
+                                    auto lhs_sub = lhs(batch)(k);
+                                    auto b_sub   = b(batch)(k);
 
-                                size_t mn = 0;
+                                    size_t mn = 0;
 
-                                auto a1 = vec_type::set(ak);
+                                    auto a1 = vec_type::set(ak);
 
-                                for (; mn + 4 * vec_size - 1 < MN; mn += 4 * vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
-                                    auto b3 = b_sub.template loadu<vec_type>(mn + 2 * vec_size);
-                                    auto b4 = b_sub.template loadu<vec_type>(mn + 3 * vec_size);
+                                    for (; mn + 4 * vec_size - 1 < MN; mn += 4 * vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                        auto b3 = b_sub.template loadu<vec_type>(mn + 2 * vec_size);
+                                        auto b4 = b_sub.template loadu<vec_type>(mn + 3 * vec_size);
 
-                                    auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
-                                    auto l3 = lhs_sub.template loadu<vec_type>(mn + 2 * vec_size);
-                                    auto l4 = lhs_sub.template loadu<vec_type>(mn + 3 * vec_size);
+                                        auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                        auto l3 = lhs_sub.template loadu<vec_type>(mn + 2 * vec_size);
+                                        auto l4 = lhs_sub.template loadu<vec_type>(mn + 3 * vec_size);
 
-                                    auto r1 = vec_type::sub(l1, vec_type::mul(a1, b1));
-                                    auto r2 = vec_type::sub(l2, vec_type::mul(a1, b2));
-                                    auto r3 = vec_type::sub(l3, vec_type::mul(a1, b3));
-                                    auto r4 = vec_type::sub(l4, vec_type::mul(a1, b4));
+                                        auto r1 = vec_type::sub(l1, vec_type::mul(a1, b1));
+                                        auto r2 = vec_type::sub(l2, vec_type::mul(a1, b2));
+                                        auto r3 = vec_type::sub(l3, vec_type::mul(a1, b3));
+                                        auto r4 = vec_type::sub(l4, vec_type::mul(a1, b4));
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r3, mn + 2 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r4, mn + 3 * vec_size);
-                                }
+                                        lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r3, mn + 2 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r4, mn + 3 * vec_size);
+                                    }
 
-                                for (; mn + 2 * vec_size - 1 < MN; mn += 2 * vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                    for (; mn + 2 * vec_size - 1 < MN; mn += 2 * vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
 
-                                    auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                        auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
 
-                                    auto r1 = vec_type::sub(l1, vec_type::mul(a1, b1));
-                                    auto r2 = vec_type::sub(l2, vec_type::mul(a1, b2));
+                                        auto r1 = vec_type::sub(l1, vec_type::mul(a1, b1));
+                                        auto r2 = vec_type::sub(l2, vec_type::mul(a1, b2));
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
-                                }
+                                        lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
+                                    }
 
-                                for (; mn + vec_size - 1 < MN; mn += vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn);
+                                    for (; mn + vec_size - 1 < MN; mn += vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn);
 
-                                    auto l1 = lhs_sub.template loadu<vec_type>(mn);
+                                        auto l1 = lhs_sub.template loadu<vec_type>(mn);
 
-                                    auto r1 = vec_type::sub(l1, vec_type::mul(a1, b1));
+                                        auto r1 = vec_type::sub(l1, vec_type::mul(a1, b1));
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn);
-                                }
+                                        lhs_sub.template storeu<vec_type>(r1, mn);
+                                    }
 
-                                for (; mn + 3 < MN; mn += 4) {
-                                    lhs_sub[mn + 0] -= ak * b_sub[mn + 0];
-                                    lhs_sub[mn + 1] -= ak * b_sub[mn + 1];
-                                    lhs_sub[mn + 2] -= ak * b_sub[mn + 2];
-                                    lhs_sub[mn + 3] -= ak * b_sub[mn + 3];
-                                }
+                                    for (; mn + 3 < MN; mn += 4) {
+                                        lhs_sub[mn + 0] -= ak * b_sub[mn + 0];
+                                        lhs_sub[mn + 1] -= ak * b_sub[mn + 1];
+                                        lhs_sub[mn + 2] -= ak * b_sub[mn + 2];
+                                        lhs_sub[mn + 3] -= ak * b_sub[mn + 3];
+                                    }
 
-                                for (; mn + 1 < MN; mn += 2) {
-                                    lhs_sub[mn + 0] -= ak * b_sub[mn + 0];
-                                    lhs_sub[mn + 1] -= ak * b_sub[mn + 1];
-                                }
+                                    for (; mn + 1 < MN; mn += 2) {
+                                        lhs_sub[mn + 0] -= ak * b_sub[mn + 0];
+                                        lhs_sub[mn + 1] -= ak * b_sub[mn + 1];
+                                    }
 
-                                for (; mn < MN; ++mn) {
-                                    lhs_sub[mn] -= ak * b_sub[mn];
+                                    for (; mn < MN; ++mn) {
+                                        lhs_sub[mn] -= ak * b_sub[mn];
+                                    }
                                 }
                             }
-                        }
-                    } else {
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                for (size_t m = 0; m < M; ++m) {
-                                    for (size_t n = 0; n < N; ++n) {
-                                        lhs(batch, k, m, n) -= a(k) * b(batch, k, m, n);
+                        } else {
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    for (size_t m = 0; m < M; ++m) {
+                                        for (size_t n = 0; n < N; ++n) {
+                                            lhs(batch, k, m, n) -= a(k) * b(batch, k, m, n);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            };
+                };
 
-            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+                engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+
+                lhs.validate_cpu();
+                lhs.invalidate_gpu();
+            }
         } else {
-            const auto Batch = etl::dim<0>(lhs);
-            const auto K     = etl::dim<1>(lhs);
+            if constexpr (impl::egblas::has_sbatch_k_scale2 && all_row_major<A, B, L> && all_floating<A, B, L>) {
+                std_sub_evaluate(*this, lhs);
+            } else {
+                const auto Batch = etl::dim<0>(lhs);
+                const auto K     = etl::dim<1>(lhs);
 
-            auto batch_fun_b = [&](const size_t first, const size_t last) {
-                CPU_SECTION {
-                    if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
-                        using vec_type = default_vec;
-                        using T        = value_t<L>;
+                auto batch_fun_b = [&](const size_t first, const size_t last) {
+                    CPU_SECTION {
+                        if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
+                            using vec_type = default_vec;
+                            using T        = value_t<L>;
 
-                        static constexpr size_t vec_size = vec_type::template traits<T>::size;
+                            static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-                        for (size_t batch = first; batch < last; ++batch) {
-                            size_t k = 0;
+                            for (size_t batch = first; batch < last; ++batch) {
+                                size_t k = 0;
 
-                            size_t base = batch * K;
+                                size_t base = batch * K;
 
-                            for (; k + 4 * vec_size - 1 < K; k += 4 * vec_size) {
-                                auto a1 = a.template load<vec_type>(k + 0 * vec_size);
-                                auto a2 = a.template load<vec_type>(k + 1 * vec_size);
-                                auto a3 = a.template load<vec_type>(k + 2 * vec_size);
-                                auto a4 = a.template load<vec_type>(k + 3 * vec_size);
+                                for (; k + 4 * vec_size - 1 < K; k += 4 * vec_size) {
+                                    auto a1 = a.template load<vec_type>(k + 0 * vec_size);
+                                    auto a2 = a.template load<vec_type>(k + 1 * vec_size);
+                                    auto a3 = a.template load<vec_type>(k + 2 * vec_size);
+                                    auto a4 = a.template load<vec_type>(k + 3 * vec_size);
 
-                                auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
-                                auto b3 = b.template loadu<vec_type>(base + k + 2 * vec_size);
-                                auto b4 = b.template loadu<vec_type>(base + k + 3 * vec_size);
+                                    auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
+                                    auto b3 = b.template loadu<vec_type>(base + k + 2 * vec_size);
+                                    auto b4 = b.template loadu<vec_type>(base + k + 3 * vec_size);
 
-                                auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
-                                auto l3 = lhs.template loadu<vec_type>(base + k + 2 * vec_size);
-                                auto l4 = lhs.template loadu<vec_type>(base + k + 3 * vec_size);
+                                    auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
+                                    auto l3 = lhs.template loadu<vec_type>(base + k + 2 * vec_size);
+                                    auto l4 = lhs.template loadu<vec_type>(base + k + 3 * vec_size);
 
-                                auto r1 = vec_type::sub(l1, vec_type::mul(a1, b1));
-                                auto r2 = vec_type::sub(l2, vec_type::mul(a2, b2));
-                                auto r3 = vec_type::sub(l3, vec_type::mul(a3, b3));
-                                auto r4 = vec_type::sub(l4, vec_type::mul(a4, b4));
+                                    auto r1 = vec_type::sub(l1, vec_type::mul(a1, b1));
+                                    auto r2 = vec_type::sub(l2, vec_type::mul(a2, b2));
+                                    auto r3 = vec_type::sub(l3, vec_type::mul(a3, b3));
+                                    auto r4 = vec_type::sub(l4, vec_type::mul(a4, b4));
 
-                                lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
-                                lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
-                                lhs.template storeu<vec_type>(r3, base + k + 2 * vec_size);
-                                lhs.template storeu<vec_type>(r4, base + k + 3 * vec_size);
+                                    lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
+                                    lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
+                                    lhs.template storeu<vec_type>(r3, base + k + 2 * vec_size);
+                                    lhs.template storeu<vec_type>(r4, base + k + 3 * vec_size);
+                                }
+
+                                for (; k + 2 * vec_size - 1 < K; k += 2 * vec_size) {
+                                    auto a1 = a.template load<vec_type>(k + 0 * vec_size);
+                                    auto a2 = a.template load<vec_type>(k + 1 * vec_size);
+
+                                    auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
+
+                                    auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
+
+                                    auto r1 = vec_type::sub(l1, vec_type::mul(a1, b1));
+                                    auto r2 = vec_type::sub(l2, vec_type::mul(a2, b2));
+
+                                    lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
+                                    lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
+                                }
+
+                                for (; k + vec_size - 1 < K; k += vec_size) {
+                                    auto a1 = a.template load<vec_type>(k);
+
+                                    auto b1 = b.template loadu<vec_type>(base + k);
+
+                                    auto l1 = lhs.template loadu<vec_type>(base + k);
+
+                                    auto r1 = vec_type::sub(l1, vec_type::mul(a1, b1));
+
+                                    lhs.template storeu<vec_type>(r1, base + k);
+                                }
+
+                                for (; k + 3 < K; k += 4) {
+                                    lhs(batch, k + 0) -= a(k + 0) * b(batch, k + 0);
+                                    lhs(batch, k + 1) -= a(k + 1) * b(batch, k + 1);
+                                    lhs(batch, k + 2) -= a(k + 2) * b(batch, k + 2);
+                                    lhs(batch, k + 3) -= a(k + 3) * b(batch, k + 3);
+                                }
+
+                                for (; k + 1 < K; k += 2) {
+                                    lhs(batch, k + 0) -= a(k + 0) * b(batch, k + 0);
+                                    lhs(batch, k + 1) -= a(k + 1) * b(batch, k + 1);
+                                }
+
+                                if (k < K) {
+                                    lhs(batch, k) -= a(k) * b(batch, k);
+                                }
                             }
-
-                            for (; k + 2 * vec_size - 1 < K; k += 2 * vec_size) {
-                                auto a1 = a.template load<vec_type>(k + 0 * vec_size);
-                                auto a2 = a.template load<vec_type>(k + 1 * vec_size);
-
-                                auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
-
-                                auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
-
-                                auto r1 = vec_type::sub(l1, vec_type::mul(a1, b1));
-                                auto r2 = vec_type::sub(l2, vec_type::mul(a2, b2));
-
-                                lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
-                                lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
-                            }
-
-                            for (; k + vec_size - 1 < K; k += vec_size) {
-                                auto a1 = a.template load<vec_type>(k);
-
-                                auto b1 = b.template loadu<vec_type>(base + k);
-
-                                auto l1 = lhs.template loadu<vec_type>(base + k);
-
-                                auto r1 = vec_type::sub(l1, vec_type::mul(a1, b1));
-
-                                lhs.template storeu<vec_type>(r1, base + k);
-                            }
-
-                            for (; k + 3 < K; k += 4) {
-                                lhs(batch, k + 0) -= a(k + 0) * b(batch, k + 0);
-                                lhs(batch, k + 1) -= a(k + 1) * b(batch, k + 1);
-                                lhs(batch, k + 2) -= a(k + 2) * b(batch, k + 2);
-                                lhs(batch, k + 3) -= a(k + 3) * b(batch, k + 3);
-                            }
-
-                            for (; k + 1 < K; k += 2) {
-                                lhs(batch, k + 0) -= a(k + 0) * b(batch, k + 0);
-                                lhs(batch, k + 1) -= a(k + 1) * b(batch, k + 1);
-                            }
-
-                            if (k < K) {
-                                lhs(batch, k) -= a(k) * b(batch, k);
-                            }
-                        }
-                    } else {
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                lhs(batch, k) -= a(k) * b(batch, k);
+                        } else {
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    lhs(batch, k) -= a(k) * b(batch, k);
+                                }
                             }
                         }
                     }
-                }
-            };
+                };
 
-            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+                engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+
+                lhs.validate_cpu();
+                lhs.invalidate_gpu();
+            }
         }
-
-        lhs.validate_cpu();
-        lhs.invalidate_gpu();
     }
 
     /*!
@@ -781,214 +839,225 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
         lhs.ensure_cpu_up_to_date();
 
         if constexpr (D4) {
-            const auto Batch = etl::dim<0>(lhs);
-            const auto K     = etl::dim<1>(lhs);
-            const auto M     = etl::dim<2>(lhs);
-            const auto N     = etl::dim<3>(lhs);
+            if constexpr (impl::egblas::has_sbatch_k_scale4 && all_row_major<A, B, L> && all_floating<A, B, L>) {
+                std_mul_evaluate(*this, lhs);
+            } else {
+                const auto Batch = etl::dim<0>(lhs);
+                const auto K     = etl::dim<1>(lhs);
+                const auto M     = etl::dim<2>(lhs);
+                const auto N     = etl::dim<3>(lhs);
 
-            auto batch_fun_b = [&](const size_t first, const size_t last) {
-                CPU_SECTION {
-                    if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
-                        using vec_type = default_vec;
-                        using T        = value_t<L>;
+                auto batch_fun_b = [&](const size_t first, const size_t last) {
+                    CPU_SECTION {
+                        if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
+                            using vec_type = default_vec;
+                            using T        = value_t<L>;
 
-                        static constexpr size_t vec_size = vec_type::template traits<T>::size;
+                            static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-                        const auto MN = M * N;
+                            const auto MN = M * N;
 
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                T ak = a(k);
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    T ak = a(k);
 
-                                auto lhs_sub = lhs(batch)(k);
-                                auto b_sub   = b(batch)(k);
+                                    auto lhs_sub = lhs(batch)(k);
+                                    auto b_sub   = b(batch)(k);
 
-                                size_t mn = 0;
+                                    size_t mn = 0;
 
-                                auto a1 = vec_type::set(ak);
+                                    auto a1 = vec_type::set(ak);
 
-                                for (; mn + 4 * vec_size - 1 < MN; mn += 4 * vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
-                                    auto b3 = b_sub.template loadu<vec_type>(mn + 2 * vec_size);
-                                    auto b4 = b_sub.template loadu<vec_type>(mn + 3 * vec_size);
+                                    for (; mn + 4 * vec_size - 1 < MN; mn += 4 * vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                        auto b3 = b_sub.template loadu<vec_type>(mn + 2 * vec_size);
+                                        auto b4 = b_sub.template loadu<vec_type>(mn + 3 * vec_size);
 
-                                    auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
-                                    auto l3 = lhs_sub.template loadu<vec_type>(mn + 2 * vec_size);
-                                    auto l4 = lhs_sub.template loadu<vec_type>(mn + 3 * vec_size);
+                                        auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                        auto l3 = lhs_sub.template loadu<vec_type>(mn + 2 * vec_size);
+                                        auto l4 = lhs_sub.template loadu<vec_type>(mn + 3 * vec_size);
 
-                                    auto r1 = vec_type::mul(l1, vec_type::mul(a1, b1));
-                                    auto r2 = vec_type::mul(l2, vec_type::mul(a1, b2));
-                                    auto r3 = vec_type::mul(l3, vec_type::mul(a1, b3));
-                                    auto r4 = vec_type::mul(l4, vec_type::mul(a1, b4));
+                                        auto r1 = vec_type::mul(l1, vec_type::mul(a1, b1));
+                                        auto r2 = vec_type::mul(l2, vec_type::mul(a1, b2));
+                                        auto r3 = vec_type::mul(l3, vec_type::mul(a1, b3));
+                                        auto r4 = vec_type::mul(l4, vec_type::mul(a1, b4));
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r3, mn + 2 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r4, mn + 3 * vec_size);
-                                }
+                                        lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r3, mn + 2 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r4, mn + 3 * vec_size);
+                                    }
 
-                                for (; mn + 2 * vec_size - 1 < MN; mn += 2 * vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                    for (; mn + 2 * vec_size - 1 < MN; mn += 2 * vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
 
-                                    auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                        auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
 
-                                    auto r1 = vec_type::mul(l1, vec_type::mul(a1, b1));
-                                    auto r2 = vec_type::mul(l2, vec_type::mul(a1, b2));
+                                        auto r1 = vec_type::mul(l1, vec_type::mul(a1, b1));
+                                        auto r2 = vec_type::mul(l2, vec_type::mul(a1, b2));
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
-                                }
+                                        lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
+                                    }
 
-                                for (; mn + vec_size - 1 < MN; mn += vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn);
+                                    for (; mn + vec_size - 1 < MN; mn += vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn);
 
-                                    auto l1 = lhs_sub.template loadu<vec_type>(mn);
+                                        auto l1 = lhs_sub.template loadu<vec_type>(mn);
 
-                                    auto r1 = vec_type::mul(l1, vec_type::mul(a1, b1));
+                                        auto r1 = vec_type::mul(l1, vec_type::mul(a1, b1));
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn);
-                                }
+                                        lhs_sub.template storeu<vec_type>(r1, mn);
+                                    }
 
-                                for (; mn + 3 < MN; mn += 4) {
-                                    lhs_sub[mn + 0] *= ak * b_sub[mn + 0];
-                                    lhs_sub[mn + 1] *= ak * b_sub[mn + 1];
-                                    lhs_sub[mn + 2] *= ak * b_sub[mn + 2];
-                                    lhs_sub[mn + 3] *= ak * b_sub[mn + 3];
-                                }
+                                    for (; mn + 3 < MN; mn += 4) {
+                                        lhs_sub[mn + 0] *= ak * b_sub[mn + 0];
+                                        lhs_sub[mn + 1] *= ak * b_sub[mn + 1];
+                                        lhs_sub[mn + 2] *= ak * b_sub[mn + 2];
+                                        lhs_sub[mn + 3] *= ak * b_sub[mn + 3];
+                                    }
 
-                                for (; mn + 1 < MN; mn += 2) {
-                                    lhs_sub[mn + 0] *= ak * b_sub[mn + 0];
-                                    lhs_sub[mn + 1] *= ak * b_sub[mn + 1];
-                                }
+                                    for (; mn + 1 < MN; mn += 2) {
+                                        lhs_sub[mn + 0] *= ak * b_sub[mn + 0];
+                                        lhs_sub[mn + 1] *= ak * b_sub[mn + 1];
+                                    }
 
-                                for (; mn < MN; ++mn) {
-                                    lhs_sub[mn] *= ak * b_sub[mn];
+                                    for (; mn < MN; ++mn) {
+                                        lhs_sub[mn] *= ak * b_sub[mn];
+                                    }
                                 }
                             }
-                        }
-                    } else {
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                for (size_t m = 0; m < M; ++m) {
-                                    for (size_t n = 0; n < N; ++n) {
-                                        lhs(batch, k, m, n) *= a(k) * b(batch, k, m, n);
+                        } else {
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    for (size_t m = 0; m < M; ++m) {
+                                        for (size_t n = 0; n < N; ++n) {
+                                            lhs(batch, k, m, n) *= a(k) * b(batch, k, m, n);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            };
+                };
 
-            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+                engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+
+                lhs.validate_cpu();
+                lhs.invalidate_gpu();
+            }
         } else {
-            const auto Batch = etl::dim<0>(lhs);
-            const auto K     = etl::dim<1>(lhs);
+            if constexpr (impl::egblas::has_sbatch_k_scale2 && all_row_major<A, B, L> && all_floating<A, B, L>) {
+                std_mul_evaluate(*this, lhs);
+            } else {
+                const auto Batch = etl::dim<0>(lhs);
+                const auto K     = etl::dim<1>(lhs);
 
-            auto batch_fun_b = [&](const size_t first, const size_t last) {
-                CPU_SECTION {
-                    if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
-                        using vec_type = default_vec;
-                        using T        = value_t<L>;
+                auto batch_fun_b = [&](const size_t first, const size_t last) {
+                    CPU_SECTION {
+                        if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
+                            using vec_type = default_vec;
+                            using T        = value_t<L>;
 
-                        static constexpr size_t vec_size = vec_type::template traits<T>::size;
+                            static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-                        for (size_t batch = first; batch < last; ++batch) {
-                            size_t k = 0;
+                            for (size_t batch = first; batch < last; ++batch) {
+                                size_t k = 0;
 
-                            size_t base = batch * K;
+                                size_t base = batch * K;
 
-                            for (; k + 4 * vec_size - 1 < K; k += 4 * vec_size) {
-                                auto a1 = a.template load<vec_type>(k + 0 * vec_size);
-                                auto a2 = a.template load<vec_type>(k + 1 * vec_size);
-                                auto a3 = a.template load<vec_type>(k + 2 * vec_size);
-                                auto a4 = a.template load<vec_type>(k + 3 * vec_size);
+                                for (; k + 4 * vec_size - 1 < K; k += 4 * vec_size) {
+                                    auto a1 = a.template load<vec_type>(k + 0 * vec_size);
+                                    auto a2 = a.template load<vec_type>(k + 1 * vec_size);
+                                    auto a3 = a.template load<vec_type>(k + 2 * vec_size);
+                                    auto a4 = a.template load<vec_type>(k + 3 * vec_size);
 
-                                auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
-                                auto b3 = b.template loadu<vec_type>(base + k + 2 * vec_size);
-                                auto b4 = b.template loadu<vec_type>(base + k + 3 * vec_size);
+                                    auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
+                                    auto b3 = b.template loadu<vec_type>(base + k + 2 * vec_size);
+                                    auto b4 = b.template loadu<vec_type>(base + k + 3 * vec_size);
 
-                                auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
-                                auto l3 = lhs.template loadu<vec_type>(base + k + 2 * vec_size);
-                                auto l4 = lhs.template loadu<vec_type>(base + k + 3 * vec_size);
+                                    auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
+                                    auto l3 = lhs.template loadu<vec_type>(base + k + 2 * vec_size);
+                                    auto l4 = lhs.template loadu<vec_type>(base + k + 3 * vec_size);
 
-                                auto r1 = vec_type::mul(l1, vec_type::mul(a1, b1));
-                                auto r2 = vec_type::mul(l2, vec_type::mul(a2, b2));
-                                auto r3 = vec_type::mul(l3, vec_type::mul(a3, b3));
-                                auto r4 = vec_type::mul(l4, vec_type::mul(a4, b4));
+                                    auto r1 = vec_type::mul(l1, vec_type::mul(a1, b1));
+                                    auto r2 = vec_type::mul(l2, vec_type::mul(a2, b2));
+                                    auto r3 = vec_type::mul(l3, vec_type::mul(a3, b3));
+                                    auto r4 = vec_type::mul(l4, vec_type::mul(a4, b4));
 
-                                lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
-                                lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
-                                lhs.template storeu<vec_type>(r3, base + k + 2 * vec_size);
-                                lhs.template storeu<vec_type>(r4, base + k + 3 * vec_size);
+                                    lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
+                                    lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
+                                    lhs.template storeu<vec_type>(r3, base + k + 2 * vec_size);
+                                    lhs.template storeu<vec_type>(r4, base + k + 3 * vec_size);
+                                }
+
+                                for (; k + 2 * vec_size - 1 < K; k += 2 * vec_size) {
+                                    auto a1 = a.template load<vec_type>(k + 0 * vec_size);
+                                    auto a2 = a.template load<vec_type>(k + 1 * vec_size);
+
+                                    auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
+
+                                    auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
+
+                                    auto r1 = vec_type::mul(l1, vec_type::mul(a1, b1));
+                                    auto r2 = vec_type::mul(l2, vec_type::mul(a2, b2));
+
+                                    lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
+                                    lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
+                                }
+
+                                for (; k + vec_size - 1 < K; k += vec_size) {
+                                    auto a1 = a.template load<vec_type>(k);
+
+                                    auto b1 = b.template loadu<vec_type>(base + k);
+
+                                    auto l1 = lhs.template loadu<vec_type>(base + k);
+
+                                    auto r1 = vec_type::mul(l1, vec_type::mul(a1, b1));
+
+                                    lhs.template storeu<vec_type>(r1, base + k);
+                                }
+
+                                for (; k + 3 < K; k += 4) {
+                                    lhs(batch, k + 0) *= a(k + 0) * b(batch, k + 0);
+                                    lhs(batch, k + 1) *= a(k + 1) * b(batch, k + 1);
+                                    lhs(batch, k + 2) *= a(k + 2) * b(batch, k + 2);
+                                    lhs(batch, k + 3) *= a(k + 3) * b(batch, k + 3);
+                                }
+
+                                for (; k + 1 < K; k += 2) {
+                                    lhs(batch, k + 0) *= a(k + 0) * b(batch, k + 0);
+                                    lhs(batch, k + 1) *= a(k + 1) * b(batch, k + 1);
+                                }
+
+                                if (k < K) {
+                                    lhs(batch, k) *= a(k) * b(batch, k);
+                                }
                             }
-
-                            for (; k + 2 * vec_size - 1 < K; k += 2 * vec_size) {
-                                auto a1 = a.template load<vec_type>(k + 0 * vec_size);
-                                auto a2 = a.template load<vec_type>(k + 1 * vec_size);
-
-                                auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
-
-                                auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
-
-                                auto r1 = vec_type::mul(l1, vec_type::mul(a1, b1));
-                                auto r2 = vec_type::mul(l2, vec_type::mul(a2, b2));
-
-                                lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
-                                lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
-                            }
-
-                            for (; k + vec_size - 1 < K; k += vec_size) {
-                                auto a1 = a.template load<vec_type>(k);
-
-                                auto b1 = b.template loadu<vec_type>(base + k);
-
-                                auto l1 = lhs.template loadu<vec_type>(base + k);
-
-                                auto r1 = vec_type::mul(l1, vec_type::mul(a1, b1));
-
-                                lhs.template storeu<vec_type>(r1, base + k);
-                            }
-
-                            for (; k + 3 < K; k += 4) {
-                                lhs(batch, k + 0) *= a(k + 0) * b(batch, k + 0);
-                                lhs(batch, k + 1) *= a(k + 1) * b(batch, k + 1);
-                                lhs(batch, k + 2) *= a(k + 2) * b(batch, k + 2);
-                                lhs(batch, k + 3) *= a(k + 3) * b(batch, k + 3);
-                            }
-
-                            for (; k + 1 < K; k += 2) {
-                                lhs(batch, k + 0) *= a(k + 0) * b(batch, k + 0);
-                                lhs(batch, k + 1) *= a(k + 1) * b(batch, k + 1);
-                            }
-
-                            if (k < K) {
-                                lhs(batch, k) *= a(k) * b(batch, k);
-                            }
-                        }
-                    } else {
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                lhs(batch, k) *= a(k) * b(batch, k);
+                        } else {
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    lhs(batch, k) *= a(k) * b(batch, k);
+                                }
                             }
                         }
                     }
-                }
-            };
+                };
 
-            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+                engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+
+                lhs.validate_cpu();
+                lhs.invalidate_gpu();
+            }
         }
-
-        lhs.validate_cpu();
-        lhs.invalidate_gpu();
     }
 
     /*!
@@ -1012,214 +1081,225 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
         lhs.ensure_cpu_up_to_date();
 
         if constexpr (D4) {
-            const auto Batch = etl::dim<0>(lhs);
-            const auto K     = etl::dim<1>(lhs);
-            const auto M     = etl::dim<2>(lhs);
-            const auto N     = etl::dim<3>(lhs);
+            if constexpr (impl::egblas::has_sbatch_k_scale4 && all_row_major<A, B, L> && all_floating<A, B, L>) {
+                std_div_evaluate(*this, lhs);
+            } else {
+                const auto Batch = etl::dim<0>(lhs);
+                const auto K     = etl::dim<1>(lhs);
+                const auto M     = etl::dim<2>(lhs);
+                const auto N     = etl::dim<3>(lhs);
 
-            auto batch_fun_b = [&](const size_t first, const size_t last) {
-                CPU_SECTION {
-                    if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
-                        using vec_type = default_vec;
-                        using T        = value_t<L>;
+                auto batch_fun_b = [&](const size_t first, const size_t last) {
+                    CPU_SECTION {
+                        if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
+                            using vec_type = default_vec;
+                            using T        = value_t<L>;
 
-                        static constexpr size_t vec_size = vec_type::template traits<T>::size;
+                            static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-                        const auto MN = M * N;
+                            const auto MN = M * N;
 
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                T ak = a(k);
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    T ak = a(k);
 
-                                auto lhs_sub = lhs(batch)(k);
-                                auto b_sub   = b(batch)(k);
+                                    auto lhs_sub = lhs(batch)(k);
+                                    auto b_sub   = b(batch)(k);
 
-                                size_t mn = 0;
+                                    size_t mn = 0;
 
-                                auto a1 = vec_type::set(ak);
+                                    auto a1 = vec_type::set(ak);
 
-                                for (; mn + 4 * vec_size - 1 < MN; mn += 4 * vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
-                                    auto b3 = b_sub.template loadu<vec_type>(mn + 2 * vec_size);
-                                    auto b4 = b_sub.template loadu<vec_type>(mn + 3 * vec_size);
+                                    for (; mn + 4 * vec_size - 1 < MN; mn += 4 * vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                        auto b3 = b_sub.template loadu<vec_type>(mn + 2 * vec_size);
+                                        auto b4 = b_sub.template loadu<vec_type>(mn + 3 * vec_size);
 
-                                    auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
-                                    auto l3 = lhs_sub.template loadu<vec_type>(mn + 2 * vec_size);
-                                    auto l4 = lhs_sub.template loadu<vec_type>(mn + 3 * vec_size);
+                                        auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                        auto l3 = lhs_sub.template loadu<vec_type>(mn + 2 * vec_size);
+                                        auto l4 = lhs_sub.template loadu<vec_type>(mn + 3 * vec_size);
 
-                                    auto r1 = vec_type::div(l1, vec_type::mul(a1, b1));
-                                    auto r2 = vec_type::div(l2, vec_type::mul(a1, b2));
-                                    auto r3 = vec_type::div(l3, vec_type::mul(a1, b3));
-                                    auto r4 = vec_type::div(l4, vec_type::mul(a1, b4));
+                                        auto r1 = vec_type::div(l1, vec_type::mul(a1, b1));
+                                        auto r2 = vec_type::div(l2, vec_type::mul(a1, b2));
+                                        auto r3 = vec_type::div(l3, vec_type::mul(a1, b3));
+                                        auto r4 = vec_type::div(l4, vec_type::mul(a1, b4));
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r3, mn + 2 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r4, mn + 3 * vec_size);
-                                }
+                                        lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r3, mn + 2 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r4, mn + 3 * vec_size);
+                                    }
 
-                                for (; mn + 2 * vec_size - 1 < MN; mn += 2 * vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                    for (; mn + 2 * vec_size - 1 < MN; mn += 2 * vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto b2 = b_sub.template loadu<vec_type>(mn + 1 * vec_size);
 
-                                    auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
-                                    auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
+                                        auto l1 = lhs_sub.template loadu<vec_type>(mn + 0 * vec_size);
+                                        auto l2 = lhs_sub.template loadu<vec_type>(mn + 1 * vec_size);
 
-                                    auto r1 = vec_type::div(l1, vec_type::mul(a1, b1));
-                                    auto r2 = vec_type::div(l2, vec_type::mul(a1, b2));
+                                        auto r1 = vec_type::div(l1, vec_type::mul(a1, b1));
+                                        auto r2 = vec_type::div(l2, vec_type::mul(a1, b2));
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
-                                    lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
-                                }
+                                        lhs_sub.template storeu<vec_type>(r1, mn + 0 * vec_size);
+                                        lhs_sub.template storeu<vec_type>(r2, mn + 1 * vec_size);
+                                    }
 
-                                for (; mn + vec_size - 1 < MN; mn += vec_size) {
-                                    auto b1 = b_sub.template loadu<vec_type>(mn);
+                                    for (; mn + vec_size - 1 < MN; mn += vec_size) {
+                                        auto b1 = b_sub.template loadu<vec_type>(mn);
 
-                                    auto l1 = lhs_sub.template loadu<vec_type>(mn);
+                                        auto l1 = lhs_sub.template loadu<vec_type>(mn);
 
-                                    auto r1 = vec_type::div(l1, vec_type::mul(a1, b1));
+                                        auto r1 = vec_type::div(l1, vec_type::mul(a1, b1));
 
-                                    lhs_sub.template storeu<vec_type>(r1, mn);
-                                }
+                                        lhs_sub.template storeu<vec_type>(r1, mn);
+                                    }
 
-                                for (; mn + 3 < MN; mn += 4) {
-                                    lhs_sub[mn + 0] /= ak * b_sub[mn + 0];
-                                    lhs_sub[mn + 1] /= ak * b_sub[mn + 1];
-                                    lhs_sub[mn + 2] /= ak * b_sub[mn + 2];
-                                    lhs_sub[mn + 3] /= ak * b_sub[mn + 3];
-                                }
+                                    for (; mn + 3 < MN; mn += 4) {
+                                        lhs_sub[mn + 0] /= ak * b_sub[mn + 0];
+                                        lhs_sub[mn + 1] /= ak * b_sub[mn + 1];
+                                        lhs_sub[mn + 2] /= ak * b_sub[mn + 2];
+                                        lhs_sub[mn + 3] /= ak * b_sub[mn + 3];
+                                    }
 
-                                for (; mn + 1 < MN; mn += 2) {
-                                    lhs_sub[mn + 0] /= ak * b_sub[mn + 0];
-                                    lhs_sub[mn + 1] /= ak * b_sub[mn + 1];
-                                }
+                                    for (; mn + 1 < MN; mn += 2) {
+                                        lhs_sub[mn + 0] /= ak * b_sub[mn + 0];
+                                        lhs_sub[mn + 1] /= ak * b_sub[mn + 1];
+                                    }
 
-                                for (; mn < MN; ++mn) {
-                                    lhs_sub[mn] /= ak * b_sub[mn];
+                                    for (; mn < MN; ++mn) {
+                                        lhs_sub[mn] /= ak * b_sub[mn];
+                                    }
                                 }
                             }
-                        }
-                    } else {
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                for (size_t m = 0; m < M; ++m) {
-                                    for (size_t n = 0; n < N; ++n) {
-                                        lhs(batch, k, m, n) /= a(k) * b(batch, k, m, n);
+                        } else {
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    for (size_t m = 0; m < M; ++m) {
+                                        for (size_t n = 0; n < N; ++n) {
+                                            lhs(batch, k, m, n) /= a(k) * b(batch, k, m, n);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            };
+                };
 
-            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+                engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+
+                lhs.validate_cpu();
+                lhs.invalidate_gpu();
+            }
         } else {
-            const auto Batch = etl::dim<0>(lhs);
-            const auto K     = etl::dim<1>(lhs);
+            if constexpr (impl::egblas::has_sbatch_k_scale2 && all_row_major<A, B, L> && all_floating<A, B, L>) {
+                std_div_evaluate(*this, lhs);
+            } else {
+                const auto Batch = etl::dim<0>(lhs);
+                const auto K     = etl::dim<1>(lhs);
 
-            auto batch_fun_b = [&](const size_t first, const size_t last) {
-                CPU_SECTION {
-                    if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
-                        using vec_type = default_vec;
-                        using T        = value_t<L>;
+                auto batch_fun_b = [&](const size_t first, const size_t last) {
+                    CPU_SECTION {
+                        if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
+                            using vec_type = default_vec;
+                            using T        = value_t<L>;
 
-                        static constexpr size_t vec_size = vec_type::template traits<T>::size;
+                            static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-                        for (size_t batch = first; batch < last; ++batch) {
-                            size_t k = 0;
+                            for (size_t batch = first; batch < last; ++batch) {
+                                size_t k = 0;
 
-                            size_t base = batch * K;
+                                size_t base = batch * K;
 
-                            for (; k + 4 * vec_size - 1 < K; k += 4 * vec_size) {
-                                auto a1 = a.template load<vec_type>(k + 0 * vec_size);
-                                auto a2 = a.template load<vec_type>(k + 1 * vec_size);
-                                auto a3 = a.template load<vec_type>(k + 2 * vec_size);
-                                auto a4 = a.template load<vec_type>(k + 3 * vec_size);
+                                for (; k + 4 * vec_size - 1 < K; k += 4 * vec_size) {
+                                    auto a1 = a.template load<vec_type>(k + 0 * vec_size);
+                                    auto a2 = a.template load<vec_type>(k + 1 * vec_size);
+                                    auto a3 = a.template load<vec_type>(k + 2 * vec_size);
+                                    auto a4 = a.template load<vec_type>(k + 3 * vec_size);
 
-                                auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
-                                auto b3 = b.template loadu<vec_type>(base + k + 2 * vec_size);
-                                auto b4 = b.template loadu<vec_type>(base + k + 3 * vec_size);
+                                    auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
+                                    auto b3 = b.template loadu<vec_type>(base + k + 2 * vec_size);
+                                    auto b4 = b.template loadu<vec_type>(base + k + 3 * vec_size);
 
-                                auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
-                                auto l3 = lhs.template loadu<vec_type>(base + k + 2 * vec_size);
-                                auto l4 = lhs.template loadu<vec_type>(base + k + 3 * vec_size);
+                                    auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
+                                    auto l3 = lhs.template loadu<vec_type>(base + k + 2 * vec_size);
+                                    auto l4 = lhs.template loadu<vec_type>(base + k + 3 * vec_size);
 
-                                auto r1 = vec_type::div(l1, vec_type::mul(a1, b1));
-                                auto r2 = vec_type::div(l2, vec_type::mul(a2, b2));
-                                auto r3 = vec_type::div(l3, vec_type::mul(a3, b3));
-                                auto r4 = vec_type::div(l4, vec_type::mul(a4, b4));
+                                    auto r1 = vec_type::div(l1, vec_type::mul(a1, b1));
+                                    auto r2 = vec_type::div(l2, vec_type::mul(a2, b2));
+                                    auto r3 = vec_type::div(l3, vec_type::mul(a3, b3));
+                                    auto r4 = vec_type::div(l4, vec_type::mul(a4, b4));
 
-                                lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
-                                lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
-                                lhs.template storeu<vec_type>(r3, base + k + 2 * vec_size);
-                                lhs.template storeu<vec_type>(r4, base + k + 3 * vec_size);
+                                    lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
+                                    lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
+                                    lhs.template storeu<vec_type>(r3, base + k + 2 * vec_size);
+                                    lhs.template storeu<vec_type>(r4, base + k + 3 * vec_size);
+                                }
+
+                                for (; k + 2 * vec_size - 1 < K; k += 2 * vec_size) {
+                                    auto a1 = a.template load<vec_type>(k + 0 * vec_size);
+                                    auto a2 = a.template load<vec_type>(k + 1 * vec_size);
+
+                                    auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
+
+                                    auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
+                                    auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
+
+                                    auto r1 = vec_type::div(l1, vec_type::mul(a1, b1));
+                                    auto r2 = vec_type::div(l2, vec_type::mul(a2, b2));
+
+                                    lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
+                                    lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
+                                }
+
+                                for (; k + vec_size - 1 < K; k += vec_size) {
+                                    auto a1 = a.template load<vec_type>(k);
+
+                                    auto b1 = b.template loadu<vec_type>(base + k);
+
+                                    auto l1 = lhs.template loadu<vec_type>(base + k);
+
+                                    auto r1 = vec_type::div(l1, vec_type::mul(a1, b1));
+
+                                    lhs.template storeu<vec_type>(r1, base + k);
+                                }
+
+                                for (; k + 3 < K; k += 4) {
+                                    lhs(batch, k + 0) /= a(k + 0) * b(batch, k + 0);
+                                    lhs(batch, k + 1) /= a(k + 1) * b(batch, k + 1);
+                                    lhs(batch, k + 2) /= a(k + 2) * b(batch, k + 2);
+                                    lhs(batch, k + 3) /= a(k + 3) * b(batch, k + 3);
+                                }
+
+                                for (; k + 1 < K; k += 2) {
+                                    lhs(batch, k + 0) /= a(k + 0) * b(batch, k + 0);
+                                    lhs(batch, k + 1) /= a(k + 1) * b(batch, k + 1);
+                                }
+
+                                if (k < K) {
+                                    lhs(batch, k) /= a(k) * b(batch, k);
+                                }
                             }
-
-                            for (; k + 2 * vec_size - 1 < K; k += 2 * vec_size) {
-                                auto a1 = a.template load<vec_type>(k + 0 * vec_size);
-                                auto a2 = a.template load<vec_type>(k + 1 * vec_size);
-
-                                auto b1 = b.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto b2 = b.template loadu<vec_type>(base + k + 1 * vec_size);
-
-                                auto l1 = lhs.template loadu<vec_type>(base + k + 0 * vec_size);
-                                auto l2 = lhs.template loadu<vec_type>(base + k + 1 * vec_size);
-
-                                auto r1 = vec_type::div(l1, vec_type::mul(a1, b1));
-                                auto r2 = vec_type::div(l2, vec_type::mul(a2, b2));
-
-                                lhs.template storeu<vec_type>(r1, base + k + 0 * vec_size);
-                                lhs.template storeu<vec_type>(r2, base + k + 1 * vec_size);
-                            }
-
-                            for (; k + vec_size - 1 < K; k += vec_size) {
-                                auto a1 = a.template load<vec_type>(k);
-
-                                auto b1 = b.template loadu<vec_type>(base + k);
-
-                                auto l1 = lhs.template loadu<vec_type>(base + k);
-
-                                auto r1 = vec_type::div(l1, vec_type::mul(a1, b1));
-
-                                lhs.template storeu<vec_type>(r1, base + k);
-                            }
-
-                            for (; k + 3 < K; k += 4) {
-                                lhs(batch, k + 0) /= a(k + 0) * b(batch, k + 0);
-                                lhs(batch, k + 1) /= a(k + 1) * b(batch, k + 1);
-                                lhs(batch, k + 2) /= a(k + 2) * b(batch, k + 2);
-                                lhs(batch, k + 3) /= a(k + 3) * b(batch, k + 3);
-                            }
-
-                            for (; k + 1 < K; k += 2) {
-                                lhs(batch, k + 0) /= a(k + 0) * b(batch, k + 0);
-                                lhs(batch, k + 1) /= a(k + 1) * b(batch, k + 1);
-                            }
-
-                            if (k < K) {
-                                lhs(batch, k) /= a(k) * b(batch, k);
-                            }
-                        }
-                    } else {
-                        for (size_t batch = first; batch < last; ++batch) {
-                            for (size_t k = 0; k < K; ++k) {
-                                lhs(batch, k) /= a(k) * b(batch, k);
+                        } else {
+                            for (size_t batch = first; batch < last; ++batch) {
+                                for (size_t k = 0; k < K; ++k) {
+                                    lhs(batch, k) /= a(k) * b(batch, k);
+                                }
                             }
                         }
                     }
-                }
-            };
+                };
 
-            engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+                engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+
+                lhs.validate_cpu();
+                lhs.invalidate_gpu();
+            }
         }
-
-        lhs.validate_cpu();
-        lhs.invalidate_gpu();
     }
 
     /*!
@@ -1263,6 +1343,9 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
             };
 
             engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
+
+            lhs.validate_cpu();
+            lhs.invalidate_gpu();
         } else {
             const auto Batch = etl::dim<0>(lhs);
             const auto K     = etl::dim<1>(lhs);
@@ -1278,10 +1361,10 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
             };
 
             engine_dispatch_1d_serial(batch_fun_b, 0, Batch, 2UL);
-        }
 
-        lhs.validate_cpu();
-        lhs.invalidate_gpu();
+            lhs.validate_cpu();
+            lhs.invalidate_gpu();
+        }
     }
 
     /*!
