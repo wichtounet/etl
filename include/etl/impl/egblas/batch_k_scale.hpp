@@ -134,4 +134,122 @@ inline void batch_k_scale([[maybe_unused]] size_t        b,
 #endif
 }
 
+// batch_k_scale_plus
+
+#ifdef EGBLAS_HAS_SBATCH_K_SCALE_PLUS2
+static constexpr bool has_sbatch_k_scale_plus2 = true;
+#else
+static constexpr bool has_sbatch_k_scale_plus2 = false;
+#endif
+
+/*!
+ * \brief Wrappers for single-precision egblas batch_k_scale_plus operation
+ * \param b The batch dimension of the matrix
+ * \param n The size of the output vector
+ * \param A The memory of the vector a
+ * \param B The memory of the vector b
+ */
+inline void batch_k_scale_plus([[maybe_unused]] size_t       b,
+                               [[maybe_unused]] size_t       k,
+                               [[maybe_unused]] const float* A,
+                               [[maybe_unused]] const float* gamma,
+                               [[maybe_unused]] const float* beta,
+                               [[maybe_unused]] float*       B) {
+#ifdef EGBLAS_HAS_SBATCH_K_SCALE_PLUS2
+    inc_counter("egblas");
+    egblas_sbatch_k_scale_plus2(b, k, A, gamma, beta, B);
+#else
+    cpp_unreachable("Invalid call to egblas::batch_k_scale_plus");
+#endif
+}
+
+#ifdef EGBLAS_HAS_DBATCH_K_SCALE_PLUS2
+static constexpr bool has_dbatch_k_scale_plus2 = true;
+#else
+static constexpr bool has_dbatch_k_scale_plus2 = false;
+#endif
+
+/*!
+ * \brief Wrappers for double-precision egblas batch_k_scale_plus operation
+ * \param b The batch dimension of the matrix
+ * \param n The size of the output vector
+ * \param A The memory of the vector a
+ * \param B The memory of the vector b
+ */
+inline void batch_k_scale_plus([[maybe_unused]] size_t        b,
+                               [[maybe_unused]] size_t        k,
+                               [[maybe_unused]] const double* A,
+                               [[maybe_unused]] const double* gamma,
+                               [[maybe_unused]] const double* beta,
+                               [[maybe_unused]] double*       B) {
+#ifdef EGBLAS_HAS_DBATCH_K_SCALE_PLUS2
+    inc_counter("egblas");
+    egblas_dbatch_k_scale_plus2(b, k, A, gamma, beta, B);
+#else
+    cpp_unreachable("Invalid call to egblas::batch_k_scale_plus");
+#endif
+}
+
+#ifdef EGBLAS_HAS_SBATCH_K_SCALE_PLUS4
+static constexpr bool has_sbatch_k_scale_plus4 = true;
+#else
+static constexpr bool has_sbatch_k_scale_plus4 = false;
+#endif
+
+/*!
+ * \brief Wrappers for single-precision egblas batch_k_scale_plus operation
+ * \param b The batch dimension of the matrix
+ * \param n The size of the output vector
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void batch_k_scale_plus([[maybe_unused]] size_t       b,
+                               [[maybe_unused]] size_t       k,
+                               [[maybe_unused]] size_t       m,
+                               [[maybe_unused]] size_t       n,
+                               [[maybe_unused]] const float* A,
+                               [[maybe_unused]] const float* gamma,
+                               [[maybe_unused]] const float* beta,
+                               [[maybe_unused]] float*       B) {
+#ifdef EGBLAS_HAS_SBATCH_K_SCALE_PLUS4
+    inc_counter("egblas");
+    egblas_sbatch_k_scale_plus4(b, k, m, n, A, gamma, beta, B);
+#else
+    cpp_unreachable("Invalid call to egblas::batch_k_scale_plus");
+#endif
+}
+
+#ifdef EGBLAS_HAS_DBATCH_K_SCALE_PLUS4
+static constexpr bool has_dbatch_k_scale_plus4 = true;
+#else
+static constexpr bool has_dbatch_k_scale_plus4 = false;
+#endif
+
+/*!
+ * \brief Wrappers for double-precision egblas batch_k_scale_plus operation
+ * \param b The batch dimension of the matrix
+ * \param n The size of the output vector
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void batch_k_scale_plus([[maybe_unused]] size_t        b,
+                               [[maybe_unused]] size_t        k,
+                               [[maybe_unused]] size_t        m,
+                               [[maybe_unused]] size_t        n,
+                               [[maybe_unused]] const double* A,
+                               [[maybe_unused]] const double* gamma,
+                               [[maybe_unused]] const double* beta,
+                               [[maybe_unused]] double*       B) {
+#ifdef EGBLAS_HAS_DBATCH_K_SCALE_PLUS4
+    inc_counter("egblas");
+    egblas_dbatch_k_scale_plus4(b, k, m, n, A, gamma, beta, B);
+#else
+    cpp_unreachable("Invalid call to egblas::batch_k_scale_plus");
+#endif
+}
+
 } //end of namespace etl::impl::egblas
