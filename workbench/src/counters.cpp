@@ -250,6 +250,7 @@ void sub() {
         etl::dyn_matrix<float, 3> B(16, 2048, 2048);
         etl::dyn_matrix<float, 3> C(16, 2048, 2048);
         etl::dyn_matrix<float, 3> D(16, 2048, 2048);
+        etl::dyn_matrix<float, 2> W(2048, 2048);
 
         A = etl::normal_generator<float>(1.0, 0.0);
         B = etl::normal_generator<float>(1.0, 0.0);
@@ -259,6 +260,7 @@ void sub() {
         for (size_t i = 0; i < 10; ++i) {
             for (size_t k = 0; k < 16; ++k) {
                 C(k) = A(k) * B(k) * B(k);
+                D(k) = A(k) * trans(W);
                 D(k) += C(k);
                 D(k) *= 1.1f;
                 fake += etl::mean(D(k));
