@@ -10,7 +10,7 @@
 #include "etl/expr/base_temporary_expr.hpp"
 
 //Get the implementations
-#include "etl/impl/transpose.hpp"
+#include "etl/impl/egblas/transpose_front.hpp"
 
 namespace etl {
 
@@ -31,7 +31,7 @@ struct transpose_front_expr : base_temporary_expr_un<transpose_front_expr<A>, A>
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable = all_row_major<A> && all_floating<A> && impl::egblas::has_stranspose_front;
 
     /*!
      * \brief Construct a new expression
@@ -76,22 +76,34 @@ struct transpose_front_expr : base_temporary_expr_un<transpose_front_expr<A>, A>
         const auto B = etl::dim<0>(a);
         const auto K = etl::dim<1>(a);
 
-        auto batch_fun_b = [&](const size_t first, const size_t last) {
-            for (size_t b = first; b < last; ++b) {
-                for (size_t k = 0; k < K; ++k) {
-                    lhs(k)(b) = a(b)(k);
+        if constexpr (all_row_major<A, C> && all_floating<A, C> && impl::egblas::has_stranspose_front) {
+            decltype(auto) t1 = smart_forward_gpu(a);
+            t1.ensure_gpu_up_to_date();
+
+            lhs.ensure_gpu_allocated();
+
+            impl::egblas::transpose_front(B, K, etl::size(a) / (B * K), t1.gpu_memory(), lhs.gpu_memory());
+
+            lhs.validate_gpu();
+            lhs.invalidate_cpu();
+        } else {
+            auto batch_fun_b = [&](const size_t first, const size_t last) {
+                for (size_t b = first; b < last; ++b) {
+                    for (size_t k = 0; k < K; ++k) {
+                        lhs(k)(b) = a(b)(k);
+                    }
                 }
-            }
-        };
+            };
 
-        // Ideally, this should be optimized to not use hyper thread
-        // for large containers, but the threshold is tricky to define
-        engine_dispatch_1d_serial(batch_fun_b, 0, B, 8UL);
+            // Ideally, this should be optimized to not use hyper thread
+            // for large containers, but the threshold is tricky to define
+            engine_dispatch_1d_serial(batch_fun_b, 0, B, 8UL);
 
-        a.ensure_cpu_up_to_date();
+            a.ensure_cpu_up_to_date();
 
-        lhs.validate_cpu();
-        lhs.invalidate_gpu();
+            lhs.validate_cpu();
+            lhs.invalidate_gpu();
+        }
     }
 
     /*!
