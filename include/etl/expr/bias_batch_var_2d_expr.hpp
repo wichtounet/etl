@@ -9,7 +9,7 @@
 
 #include "etl/expr/base_temporary_expr.hpp"
 
-#include "etl/impl/cudnn/bias_batch_mean.hpp"
+#include "etl/impl/egblas/bias_batch_sum.hpp"
 
 namespace etl {
 
@@ -30,7 +30,9 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
      * \brief Indicates if the temporary expression can be directly evaluated
      * using only GPU.
      */
-    static constexpr bool gpu_computable = false;
+    static constexpr bool gpu_computable =
+               (impl::egblas::has_sbias_batch_var && all_row_major<A> && all_single_precision<A>)
+            || (impl::egblas::has_dbias_batch_var && all_row_major<A> && all_double_precision<A>);
 
     /*!
      * \brief Construct a new expression
@@ -80,22 +82,40 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
         const auto N = etl::dim<0>(a);
         const auto K = etl::dim<1>(a);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
+        if constexpr (impl::egblas::has_sbias_batch_var && all_row_major<A> && all_floating<A, L>) {
+            decltype(auto) t1 = smart_forward_gpu(a);
+            decltype(auto) t2 = smart_forward_gpu(b);
 
-        auto batch_fun_k = [&](const size_t first, const size_t last) {
-            for (size_t k = first; k < last; ++k) {
-                T mean(0);
+            t1.ensure_gpu_up_to_date();
+            t2.ensure_gpu_up_to_date();
 
-                for (size_t bb = 0; bb < N; ++bb) {
-                    mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
+            lhs.ensure_gpu_allocated();
+
+            impl::egblas::bias_batch_var(N, K, t1.gpu_memory(), 1, t2.gpu_memory(), 1, lhs.gpu_memory(), 1);
+
+            lhs.validate_gpu();
+            lhs.invalidate_cpu();
+        } else {
+            standard_evaluator::pre_assign_rhs(a);
+            standard_evaluator::pre_assign_rhs(b);
+
+            auto batch_fun_k = [&](const size_t first, const size_t last) {
+                for (size_t k = first; k < last; ++k) {
+                    T mean(0);
+
+                    for (size_t bb = 0; bb < N; ++bb) {
+                        mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
+                    }
+
+                    lhs(k) = mean / N;
                 }
+            };
 
-                lhs(k) = mean / N;
-            }
-        };
+            engine_dispatch_1d_serial(batch_fun_k, 0, K, 4UL);
 
-        engine_dispatch_1d_serial(batch_fun_k, 0, K, 4UL);
+            lhs.validate_cpu();
+            lhs.invalidate_gpu();
+        }
     }
 
     /*!

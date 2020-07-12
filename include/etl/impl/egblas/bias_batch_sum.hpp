@@ -138,6 +138,68 @@ inline void bias_batch_mean([[maybe_unused]] size_t  b,
 #endif
 }
 
+#ifdef EGBLAS_HAS_SBIAS_BATCH_VAR
+static constexpr bool has_sbias_batch_var = true;
+#else
+static constexpr bool has_sbias_batch_var = false;
+#endif
+
+/*!
+ * \brief Wrappers for single-precision egblas bias_batch_var operation
+ * \param b The batch dimension of the matrix
+ * \param n The size of the output vector
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void bias_batch_var([[maybe_unused]] size_t b,
+                           [[maybe_unused]] size_t n,
+                           [[maybe_unused]] float* A,
+                           [[maybe_unused]] size_t lda,
+                           [[maybe_unused]] float* B,
+                           [[maybe_unused]] size_t ldb,
+                           [[maybe_unused]] float* Y,
+                           [[maybe_unused]] size_t ldy) {
+#ifdef EGBLAS_HAS_SBIAS_BATCH_VAR
+    inc_counter("egblas");
+    egblas_sbias_batch_var(b, n, A, lda, B, ldb, Y, ldy);
+#else
+    cpp_unreachable("Invalid call to egblas::bias_batch_var");
+#endif
+}
+
+#ifdef EGBLAS_HAS_DBIAS_BATCH_VAR
+static constexpr bool has_dbias_batch_var = true;
+#else
+static constexpr bool has_dbias_batch_var = false;
+#endif
+
+/*!
+ * \brief Wrappers for double-precision egblas bias_batch_var operation
+ * \param b The batch dimension of the matrix
+ * \param n The size of the output vector
+ * \param A The memory of the vector a
+ * \param lda The leading dimension of a
+ * \param B The memory of the vector b
+ * \param ldb The leading dimension of b
+ */
+inline void bias_batch_var([[maybe_unused]] size_t  b,
+                           [[maybe_unused]] size_t  n,
+                           [[maybe_unused]] double* A,
+                           [[maybe_unused]] size_t  lda,
+                           [[maybe_unused]] double* B,
+                           [[maybe_unused]] size_t  ldb,
+                           [[maybe_unused]] double* Y,
+                           [[maybe_unused]] size_t  ldy) {
+#ifdef EGBLAS_HAS_DBIAS_BATCH_VAR
+    inc_counter("egblas");
+    egblas_dbias_batch_var(b, n, A, lda, B, ldb, Y, ldy);
+#else
+    cpp_unreachable("Invalid call to egblas::bias_batch_var");
+#endif
+}
+
 #ifdef EGBLAS_HAS_SBIAS_BATCH_SUM4
 static constexpr bool has_sbias_batch_sum4 = true;
 #else
