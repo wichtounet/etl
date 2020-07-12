@@ -327,9 +327,9 @@ TEMPLATE_TEST_CASE_2("bias_batch_mean_4d/4", "[mean]", Z, float, double) {
 
     b /= etl::bias_batch_mean_4d(a);
 
-    REQUIRE_EQUALS(b(0), Z(2.0 / 8.5));
-    REQUIRE_EQUALS(b(1), Z(2.0 / 12.5));
-    REQUIRE_EQUALS(b(2), Z(2.0 / 16.5));
+    REQUIRE_EQUALS_APPROX(b(0), Z(2.0 / 8.5));
+    REQUIRE_EQUALS_APPROX(b(1), Z(2.0 / 12.5));
+    REQUIRE_EQUALS_APPROX(b(2), Z(2.0 / 16.5));
 }
 
 // Tests for bias_batch_sum_4d
@@ -384,9 +384,9 @@ TEMPLATE_TEST_CASE_2("bias_batch_sum_4d/4", "[mean]", Z, float, double) {
 
     b /= etl::bias_batch_sum_4d(a);
 
-    REQUIRE_EQUALS(b(0), Z(2.0 / (8 * 8.5)));
-    REQUIRE_EQUALS(b(1), Z(2.0 / (8 * 12.5)));
-    REQUIRE_EQUALS(b(2), Z(2.0 / (8 * 16.5)));
+    REQUIRE_EQUALS_APPROX(b(0), Z(2.0 / (8 * 8.5)));
+    REQUIRE_EQUALS_APPROX(b(1), Z(2.0 / (8 * 12.5)));
+    REQUIRE_EQUALS_APPROX(b(2), Z(2.0 / (8 * 16.5)));
 }
 
 // Tests for bias_batch_var_4d
