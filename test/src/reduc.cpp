@@ -389,6 +389,44 @@ TEMPLATE_TEST_CASE_2("bias_batch_sum_4d/4", "[mean]", Z, float, double) {
     REQUIRE_EQUALS_APPROX(b(2), Z(2.0 / (8 * 16.5)));
 }
 
+TEMPLATE_TEST_CASE_2("bias_batch_sum_4d/5", "[mean]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 9, 7, 11> a;
+    etl::fast_matrix<Z, 9> b;
+
+    a = etl::sequence_generator<Z>(1.0);
+
+    b = etl::bias_batch_sum_4d(a);
+
+    for (size_t k = 0; k < etl::dim<0>(b); ++k) {
+        Z acc(0);
+
+        for (size_t b = 0; b < etl::dim<0>(a); ++b) {
+            acc += sum(a(b)(k));
+        }
+
+        REQUIRE(b(k) == acc);
+    }
+}
+
+TEMPLATE_TEST_CASE_2("bias_batch_sum_4d/6", "[sum]", Z, float, double) {
+    etl::dyn_matrix<Z, 4> a(4, 11, 17, 23);
+    etl::dyn_vector<Z> b(11);
+
+    a = etl::sequence_generator<Z>(1.0);
+
+    b = etl::bias_batch_sum_4d(a);
+
+    for (size_t k = 0; k < etl::dim<0>(b); ++k) {
+        Z acc(0);
+
+        for (size_t b = 0; b < etl::dim<0>(a); ++b) {
+            acc += sum(a(b)(k));
+        }
+
+        REQUIRE(b(k) == acc);
+    }
+}
+
 // Tests for bias_batch_var_4d
 
 TEMPLATE_TEST_CASE_2("bias_batch_var_4d/0", "[mean]", Z, float, double) {
