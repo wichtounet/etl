@@ -15,6 +15,7 @@
 #include "sum_impl.hpp"
 #include "cce_impl.hpp"
 #include "bce_impl.hpp"
+#include "mse_impl.hpp"
 #include "transpose_impl.hpp"
 #include "dot_impl.hpp"
 #include "conv_impl.hpp"
