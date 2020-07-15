@@ -161,7 +161,7 @@ inline double mse_error([[maybe_unused]] size_t n,
 /*!
  * \brief Indicates if EGBLAS has single-precision MSE
  */
-#ifdef EGBLAS_HAS_MSE_SLOSS
+#ifdef EGBLAS_HAS_SMSE
 static constexpr bool has_smse = true;
 #else
 static constexpr bool has_smse = false;
@@ -196,7 +196,7 @@ inline std::pair<float, float> mse([[maybe_unused]] size_t n,
 /*!
  * \brief Indicates if EGBLAS has double-precision MSE
  */
-#ifdef EGBLAS_HAS_MSE_DLOSS
+#ifdef EGBLAS_HAS_DMSE
 static constexpr bool has_dmse = true;
 #else
 static constexpr bool has_dmse = false;
@@ -218,7 +218,7 @@ inline std::pair<double, double> mse([[maybe_unused]] size_t n,
                                      [[maybe_unused]] size_t lda,
                                      [[maybe_unused]] const double* B,
                                      [[maybe_unused]] size_t ldb) {
-#ifdef EGBLAS_HAS_SMSE
+#ifdef EGBLAS_HAS_DMSE
     inc_counter("egblas");
     return egblas_dmse(n, alpha, beta, A, lda, B, ldb);
 #else
