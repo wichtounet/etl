@@ -22,7 +22,7 @@ namespace etl::impl::standard {
  */
 template <typename O, typename L>
 value_t<O> mse_loss(const size_t n, const O& output, const L& labels, value_t<O> scale) {
-    return scale * (1.0 / (2.0 * n)) * sum((output - labels) >> (output - labels));
+    return scale * sum((output - labels) >> (output - labels));
 }
 
 /*!
@@ -33,7 +33,7 @@ value_t<O> mse_loss(const size_t n, const O& output, const L& labels, value_t<O>
  */
 template <typename O, typename L>
 value_t<O> mse_error(const size_t n, const O& output, const L& labels, value_t<O> scale) {
-    return scale * (1.0 / n) * asum(labels - output);
+    return scale * asum(labels - output);
 }
 
 /*!
