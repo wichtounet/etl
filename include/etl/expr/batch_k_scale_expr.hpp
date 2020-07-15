@@ -104,12 +104,6 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
 
         check(a, b, lhs);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
-
-        a.ensure_cpu_up_to_date();
-        b.ensure_cpu_up_to_date();
-
         if constexpr (D4) {
             const auto Batch = etl::dim<0>(lhs);
             const auto K     = etl::dim<1>(lhs);
@@ -130,6 +124,12 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
                 lhs.validate_gpu();
                 lhs.invalidate_cpu();
             } else {
+                standard_evaluator::pre_assign_rhs(a);
+                standard_evaluator::pre_assign_rhs(b);
+
+                a.ensure_cpu_up_to_date();
+                b.ensure_cpu_up_to_date();
+
                 auto batch_fun_b = [&](const size_t first, const size_t last) {
                     CPU_SECTION {
                         if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
@@ -241,6 +241,12 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
                 lhs.validate_gpu();
                 lhs.invalidate_cpu();
             } else {
+                standard_evaluator::pre_assign_rhs(a);
+                standard_evaluator::pre_assign_rhs(b);
+
+                a.ensure_cpu_up_to_date();
+                b.ensure_cpu_up_to_date();
+
                 auto batch_fun_b = [&](const size_t first, const size_t last) {
                     CPU_SECTION {
                         if constexpr (vec_enabled && all_vectorizable<vector_mode, A, L> && all_row_major<A, L>) {
@@ -347,13 +353,6 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
 
         check(a, b, lhs);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
-
-        a.ensure_cpu_up_to_date();
-        b.ensure_cpu_up_to_date();
-        lhs.ensure_cpu_up_to_date();
-
         if constexpr (D4) {
             if constexpr (impl::egblas::has_sbatch_k_scale4 && all_row_major<A, B, L> && all_floating<A, B, L>) {
                 std_add_evaluate(*this, lhs);
@@ -362,6 +361,13 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
                 const auto K     = etl::dim<1>(lhs);
                 const auto M     = etl::dim<2>(lhs);
                 const auto N     = etl::dim<3>(lhs);
+
+                standard_evaluator::pre_assign_rhs(a);
+                standard_evaluator::pre_assign_rhs(b);
+
+                a.ensure_cpu_up_to_date();
+                b.ensure_cpu_up_to_date();
+                lhs.ensure_cpu_up_to_date();
 
                 auto batch_fun_b = [&](const size_t first, const size_t last) {
                     CPU_SECTION {
@@ -472,6 +478,13 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
             } else {
                 const auto Batch = etl::dim<0>(lhs);
                 const auto K     = etl::dim<1>(lhs);
+
+                standard_evaluator::pre_assign_rhs(a);
+                standard_evaluator::pre_assign_rhs(b);
+
+                a.ensure_cpu_up_to_date();
+                b.ensure_cpu_up_to_date();
+                lhs.ensure_cpu_up_to_date();
 
                 auto batch_fun_b = [&](const size_t first, const size_t last) {
                     CPU_SECTION {
@@ -589,13 +602,6 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
 
         check(a, b, lhs);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
-
-        a.ensure_cpu_up_to_date();
-        b.ensure_cpu_up_to_date();
-        lhs.ensure_cpu_up_to_date();
-
         if constexpr (D4) {
             if constexpr (impl::egblas::has_sbatch_k_scale4 && all_row_major<A, B, L> && all_floating<A, B, L>) {
                 std_sub_evaluate(*this, lhs);
@@ -604,6 +610,13 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
                 const auto K     = etl::dim<1>(lhs);
                 const auto M     = etl::dim<2>(lhs);
                 const auto N     = etl::dim<3>(lhs);
+
+                standard_evaluator::pre_assign_rhs(a);
+                standard_evaluator::pre_assign_rhs(b);
+
+                a.ensure_cpu_up_to_date();
+                b.ensure_cpu_up_to_date();
+                lhs.ensure_cpu_up_to_date();
 
                 auto batch_fun_b = [&](const size_t first, const size_t last) {
                     CPU_SECTION {
@@ -714,6 +727,13 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
             } else {
                 const auto Batch = etl::dim<0>(lhs);
                 const auto K     = etl::dim<1>(lhs);
+
+                standard_evaluator::pre_assign_rhs(a);
+                standard_evaluator::pre_assign_rhs(b);
+
+                a.ensure_cpu_up_to_date();
+                b.ensure_cpu_up_to_date();
+                lhs.ensure_cpu_up_to_date();
 
                 auto batch_fun_b = [&](const size_t first, const size_t last) {
                     CPU_SECTION {
@@ -831,13 +851,6 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
 
         check(a, b, lhs);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
-
-        a.ensure_cpu_up_to_date();
-        b.ensure_cpu_up_to_date();
-        lhs.ensure_cpu_up_to_date();
-
         if constexpr (D4) {
             if constexpr (impl::egblas::has_sbatch_k_scale4 && all_row_major<A, B, L> && all_floating<A, B, L>) {
                 std_mul_evaluate(*this, lhs);
@@ -846,6 +859,13 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
                 const auto K     = etl::dim<1>(lhs);
                 const auto M     = etl::dim<2>(lhs);
                 const auto N     = etl::dim<3>(lhs);
+
+                standard_evaluator::pre_assign_rhs(a);
+                standard_evaluator::pre_assign_rhs(b);
+
+                a.ensure_cpu_up_to_date();
+                b.ensure_cpu_up_to_date();
+                lhs.ensure_cpu_up_to_date();
 
                 auto batch_fun_b = [&](const size_t first, const size_t last) {
                     CPU_SECTION {
@@ -956,6 +976,13 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
             } else {
                 const auto Batch = etl::dim<0>(lhs);
                 const auto K     = etl::dim<1>(lhs);
+
+                standard_evaluator::pre_assign_rhs(a);
+                standard_evaluator::pre_assign_rhs(b);
+
+                a.ensure_cpu_up_to_date();
+                b.ensure_cpu_up_to_date();
+                lhs.ensure_cpu_up_to_date();
 
                 auto batch_fun_b = [&](const size_t first, const size_t last) {
                     CPU_SECTION {
@@ -1073,13 +1100,6 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
 
         check(a, b, lhs);
 
-        standard_evaluator::pre_assign_rhs(a);
-        standard_evaluator::pre_assign_rhs(b);
-
-        a.ensure_cpu_up_to_date();
-        b.ensure_cpu_up_to_date();
-        lhs.ensure_cpu_up_to_date();
-
         if constexpr (D4) {
             if constexpr (impl::egblas::has_sbatch_k_scale4 && all_row_major<A, B, L> && all_floating<A, B, L>) {
                 std_div_evaluate(*this, lhs);
@@ -1088,6 +1108,13 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
                 const auto K     = etl::dim<1>(lhs);
                 const auto M     = etl::dim<2>(lhs);
                 const auto N     = etl::dim<3>(lhs);
+
+                standard_evaluator::pre_assign_rhs(a);
+                standard_evaluator::pre_assign_rhs(b);
+
+                a.ensure_cpu_up_to_date();
+                b.ensure_cpu_up_to_date();
+                lhs.ensure_cpu_up_to_date();
 
                 auto batch_fun_b = [&](const size_t first, const size_t last) {
                     CPU_SECTION {
@@ -1198,6 +1225,13 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
             } else {
                 const auto Batch = etl::dim<0>(lhs);
                 const auto K     = etl::dim<1>(lhs);
+
+                standard_evaluator::pre_assign_rhs(a);
+                standard_evaluator::pre_assign_rhs(b);
+
+                a.ensure_cpu_up_to_date();
+                b.ensure_cpu_up_to_date();
+                lhs.ensure_cpu_up_to_date();
 
                 auto batch_fun_b = [&](const size_t first, const size_t last) {
                     CPU_SECTION {
