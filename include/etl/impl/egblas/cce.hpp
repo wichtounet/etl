@@ -174,7 +174,7 @@ inline std::pair<float, float> cce([[maybe_unused]] size_t n,
                                    [[maybe_unused]] float beta,
                                    [[maybe_unused]] float* A,
                                    [[maybe_unused]] float* B) {
-#ifdef EGBLAS_HAS_CCE_SLOSS
+#ifdef EGBLAS_HAS_SCCE
     inc_counter("egblas");
     return egblas_scce(n, m, alpha, beta, A, B);
 #else
@@ -208,7 +208,7 @@ inline std::pair<double, double> cce([[maybe_unused]] size_t n,
                                      [[maybe_unused]] double beta,
                                      [[maybe_unused]] double* A,
                                      [[maybe_unused]] double* B) {
-#ifdef EGBLAS_HAS_CCE_SLOSS
+#ifdef EGBLAS_HAS_DCCE
     inc_counter("egblas");
     return egblas_dcce(n, m, alpha, beta, A, B);
 #else

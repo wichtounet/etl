@@ -161,7 +161,7 @@ inline double bce_error([[maybe_unused]] size_t n,
 /*!
  * \brief Indicates if EGBLAS has single-precision BCE
  */
-#ifdef EGBLAS_HAS_BCE_SLOSS
+#ifdef EGBLAS_HAS_SBCE
 static constexpr bool has_sbce = true;
 #else
 static constexpr bool has_sbce = false;
@@ -196,7 +196,7 @@ inline std::pair<float, float> bce([[maybe_unused]] size_t n,
 /*!
  * \brief Indicates if EGBLAS has double-precision BCE
  */
-#ifdef EGBLAS_HAS_BCE_DLOSS
+#ifdef EGBLAS_HAS_DBCE
 static constexpr bool has_dbce = true;
 #else
 static constexpr bool has_dbce = false;
@@ -218,7 +218,7 @@ inline std::pair<double, double> bce([[maybe_unused]] size_t n,
                                      [[maybe_unused]] size_t lda,
                                      [[maybe_unused]] const double* B,
                                      [[maybe_unused]] size_t ldb) {
-#ifdef EGBLAS_HAS_SBCE
+#ifdef EGBLAS_HAS_DBCE
     inc_counter("egblas");
     return egblas_dbce(n, alpha, beta, A, lda, B, ldb);
 #else
