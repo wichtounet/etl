@@ -81,7 +81,7 @@ struct mse_impl {
             etl::force(output);
             etl::force(labels);
 
-            return impl::standard::mse(etl::size(output), output, labels, alpha, beta);
+            return impl::standard::mse(output, labels, alpha, beta);
         } else if constexpr (impl == etl::mse_impl::EGBLAS) {
             decltype(auto) output_gpu = smart_forward_gpu(output);
             decltype(auto) labels_gpu = smart_forward_gpu(labels);

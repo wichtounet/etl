@@ -21,7 +21,7 @@ namespace etl::impl::standard {
  * \return The MSE Loss of the output and labels
  */
 template <typename O, typename L>
-value_t<O> mse_loss(const size_t n, const O& output, const L& labels, value_t<O> scale) {
+value_t<O> mse_loss(const O& output, const L& labels, value_t<O> scale) {
     return scale * sum((output - labels) >> (output - labels));
 }
 
@@ -32,7 +32,7 @@ value_t<O> mse_loss(const size_t n, const O& output, const L& labels, value_t<O>
  * \return The MSE Error of the output and labels
  */
 template <typename O, typename L>
-value_t<O> mse_error(const size_t n, const O& output, const L& labels, value_t<O> scale) {
+value_t<O> mse_error(const O& output, const L& labels, value_t<O> scale) {
     return scale * asum(labels - output);
 }
 
@@ -43,8 +43,8 @@ value_t<O> mse_error(const size_t n, const O& output, const L& labels, value_t<O
  * \return The MSE Error of the output and labels
  */
 template <typename O, typename L>
-std::pair<value_t<O>, value_t<O>> mse(const size_t n, const O& output, const L& labels, value_t<O> alpha, value_t<O> beta) {
-    return std::make_pair(mse_loss(n, output, labels, alpha), mse_error(n, output, labels, beta));
+std::pair<value_t<O>, value_t<O>> mse(const O& output, const L& labels, value_t<O> alpha, value_t<O> beta) {
+    return std::make_pair(mse_loss(output, labels, alpha), mse_error(output, labels, beta));
 }
 
 } //end of namespace etl::impl::standard
