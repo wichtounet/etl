@@ -17,6 +17,7 @@
 
 #include "etl/impl/cce.hpp"
 #include "etl/impl/bce.hpp"
+#include "etl/impl/mse.hpp"
 
 namespace etl::ml {
 
@@ -595,5 +596,44 @@ std::pair<value_t<O>, value_t<O>> cce(O&& output, L&& labels, value_t<O> alpha, 
 
     return detail::cce_impl::apply(output, labels, alpha, beta);
 }
+
+/*!
+ * \brief Returns the Binary Cross Entropy Loss
+ * \param output The outputs
+ * \param labels The labels
+ * \return The MSE Loss of the output and labels
+ */
+    template <typename O, typename L>
+    value_t<O> mse_loss(O&& output, L&& labels, value_t<O> scale) {
+        static_assert(all_etl_expr<O, L>, "etl::mse_loss can only be used on ETL expressions");
+
+        return detail::mse_loss_impl::apply(output, labels, scale);
+    }
+
+/*!
+ * \brief Returns the Binary Cross Entropy Error
+ * \param output The outputs
+ * \param labels The labels
+ * \return The MSE Error of the output and labels
+ */
+    template <typename O, typename L>
+    value_t<O> mse_error(O&& output, L&& labels, value_t<O> scale) {
+        static_assert(all_etl_expr<O, L>, "etl::mse_error can only be used on ETL expressions");
+
+        return detail::mse_error_impl::apply(output, labels, scale);
+    }
+
+/*!
+ * \brief Returns the Binary Cross Entropy Loss and Error
+ * \param output The outputs
+ * \param labels The labels
+ * \return The MSE Loss and Error of the output and labels
+ */
+    template <typename O, typename L>
+    std::pair<value_t<O>, value_t<O>> mse(O&& output, L&& labels, value_t<O> alpha, value_t<O> beta) {
+        static_assert(all_etl_expr<O, L>, "etl::mse can only be used on ETL expressions");
+
+        return detail::mse_impl::apply(output, labels, alpha, beta);
+    }
 
 } //end of namespace etl::ml
