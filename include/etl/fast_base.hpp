@@ -104,17 +104,10 @@ protected:
     /*!
      * \brief Init the container if necessary
      */
-    template <typename S = ST, cpp_enable_iff(matrix_detail::is_vector<S>)>
     void init() {
-        _data.resize(alloc_size_mat<value_type>(size(), dim<n_dimensions - 1>()));
-    }
-
-    /*!
-     * \copydoc init
-     */
-    template <typename S = ST, cpp_disable_iff(matrix_detail::is_vector<S>)>
-    void init() noexcept {
-        //Nothing else to init
+        if constexpr (matrix_detail::is_vector<ST>) {
+            _data.resize(alloc_size_mat<value_type>(size(), dim<n_dimensions - 1>()));
+        }
     }
 
     /*!

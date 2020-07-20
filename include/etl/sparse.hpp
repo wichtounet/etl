@@ -758,19 +758,13 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template <typename E, cpp_enable_iff(is_sparse_matrix<E>)>
+    template <typename E>
     bool alias(const E& rhs) const noexcept {
-        return this == &rhs;
-    }
-
-    /*!
-     * \brief Test if this expression aliases with the given expression
-     * \param rhs The other expression to test
-     * \return true if the two expressions aliases, false otherwise
-     */
-    template <typename E, cpp_disable_iff(is_sparse_matrix<E>)>
-    bool alias(const E& rhs) const noexcept {
-        return rhs.alias(*this);
+        if constexpr (is_sparse_matrix<E>) {
+            return this == &rhs;
+        } else {
+            return rhs.alias(*this);
+        }
     }
 
     // Internals
