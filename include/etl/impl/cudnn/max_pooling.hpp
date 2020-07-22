@@ -103,8 +103,8 @@ struct max_pool_2d {
             pool_2d(CUDNN_POOLING_MAX, x, y, c1, c2, s1, s2, p1, p2);
         } else {
             // Deep handling
-            for (size_t i = 0; i < etl::dim<0>(sub); ++i) {
-                apply(sub(i), m(i), c1, c2, s1, s2, p1, p2);
+            for (size_t i = 0; i < etl::dim<0>(x); ++i) {
+                apply(x(i), y(i), c1, c2, s1, s2, p1, p2);
             }
         }
     }
@@ -127,8 +127,8 @@ struct avg_pool_2d {
             pool_2d(CUDNN_POOLING_AVERAGE_COUNT_INCLUDE_PADDING, x, y, c1, c2, s1, s2, p1, p2);
         } else {
             // Deep handling
-            for (size_t i = 0; i < etl::dim<0>(sub); ++i) {
-                apply(sub(i), m(i), c1, c2, s1, s2, p1, p2);
+            for (size_t i = 0; i < etl::dim<0>(x); ++i) {
+                apply(x(i), y(i), c1, c2, s1, s2, p1, p2);
             }
         }
     }
@@ -151,8 +151,8 @@ struct max_pool_3d {
             pool_3d(CUDNN_POOLING_MAX, x, y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
         } else {
             // Deep handling
-            for (size_t i = 0; i < etl::dim<0>(sub); ++i) {
-                apply(sub(i), m(i), c1, c2, c3, s1, s2, s3, p1, p2, p3);
+            for (size_t i = 0; i < etl::dim<0>(x); ++i) {
+                apply(x(i), y(i), c1, c2, c3, s1, s2, s3, p1, p2, p3);
             }
         }
     }
@@ -175,8 +175,8 @@ struct avg_pool_3d {
             pool_3d(CUDNN_POOLING_AVERAGE_COUNT_INCLUDE_PADDING, x, y, c1, c2, c3, s1, s2, s3, p1, p2, p3);
         } else {
             // Deep handling
-            for (size_t i = 0; i < etl::dim<0>(sub); ++i) {
-                apply(sub(i), m(i), c1, c2, c3, s1, s2, s3, p1, p2, p3);
+            for (size_t i = 0; i < etl::dim<0>(x); ++i) {
+                apply(x(i), y(i), c1, c2, c3, s1, s2, s3, p1, p2, p3);
             }
         }
     }
