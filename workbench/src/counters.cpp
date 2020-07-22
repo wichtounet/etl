@@ -264,6 +264,7 @@ void sub() {
                 D(k) += C(k);
                 D(k) *= 1.1f;
                 fake += etl::mean(D(k));
+                A(k) = 0;
             }
         }
     }
