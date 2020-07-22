@@ -57,7 +57,12 @@ struct assignable {
      * \return the unary expression
      */
     derived_t& operator=(const value_type& v) {
-        std::fill(as_derived().begin(), as_derived().end(), v);
+        if constexpr (decay_traits<derived_t>::is_direct) {
+            direct_fill(as_derived(), v);
+        } else {
+            std::fill(as_derived().begin(), as_derived().end(), v);
+        }
+
         return as_derived();
     }
 
