@@ -699,6 +699,33 @@ void compound_gpu() {
     etl::dump_counters_pretty();
 }
 
+void temp() {
+    std::cout << "\nTemporary GPU\n" << std::endl;
+
+#ifdef ETL_CUDA
+    etl::gpu_memory_allocator::clear();
+#endif
+
+    etl::reset_counters();
+
+    {
+        using T = float;
+
+        etl::dyn_matrix<T, 2> A(32, 32);
+        etl::dyn_matrix<T, 2> B(32, 32);
+        etl::dyn_matrix<T, 2> C(32, 32);
+        etl::dyn_matrix<T, 2> D(32, 32);
+
+        for (size_t i = 0; i < 10; ++i) {
+            C = A * B;
+            D = (C * B) * (A * C);
+            A = (D * D) + (B * C);
+        }
+    }
+
+    etl::dump_counters_pretty();
+}
+
 } // end of anonymous namespace
 
 int main() {
@@ -715,6 +742,7 @@ int main() {
     sub_ro();
     random_test();
     compound_gpu();
+    temp();
 
     auto end_time = timer_clock::now();
     auto duration = std::chrono::duration_cast<milliseconds>(end_time - start_time);
