@@ -589,8 +589,6 @@ void gemv_large_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
 template <typename A, typename B, typename C>
 void gemv(A&& a, B&& b, C&& c) {
     if constexpr (vec_enabled && vectorize_impl && all_homogeneous<A, B, C> && all_vectorizable<vector_mode, A, B, C>) {
-        cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
-
         a.ensure_cpu_up_to_date();
         b.ensure_cpu_up_to_date();
 

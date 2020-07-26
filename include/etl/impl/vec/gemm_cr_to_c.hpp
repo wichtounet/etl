@@ -472,6 +472,7 @@ void gemm_large_kernel_cr_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
 template <typename T>
 void gemm_cr_to_c(const T* a, const T* b, T* c, size_t M, size_t N, size_t K, T alpha) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+    cpp_assert(vectorize_impl, "vectorize_impl must be enabled for impl::VEC");
 
     if (M * N <= gemm_rr_small_threshold) {
         gemm_small_kernel_cr_to_c<default_vec>(a, b, c, M, N, K, alpha);

@@ -1290,6 +1290,7 @@ void gemm_large_kernel_rr_to_r_temp(const T* a, const T* b, T* ETL_RESTRICT c, s
 template <typename T>
 void gemm_rr_to_r(const T* a, const T* b, T* c, size_t M, size_t N, size_t K, T alpha) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+    cpp_assert(vectorize_impl, "vectorize_impl must be enabled for impl::VEC");
 
     // Dispatch to the best kernel
 
