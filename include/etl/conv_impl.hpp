@@ -18,12 +18,13 @@ namespace etl {
  * \brief Enumeration describing the different convolution implementations
  */
 enum class conv_impl {
-    STD,      ///< Standard implementation
-    VEC,      ///< Uniform Vectorized Implementation with locality
-    CUDNN,    ///< CUDNN implementation
-    FFT_STD,  ///< FFT reduction (with STD impl)
-    FFT_MKL,  ///< FFT reduction (with MKL impl)
-    FFT_CUFFT ///< FFT reduction (with CUFFT impl)
+    STD,       ///< Standard implementation
+    VEC,       ///< Uniform Vectorized Implementation with locality
+    CUDNN,     ///< CUDNN implementation
+    FFT_STD,   ///< FFT reduction (with STD impl)
+    FFT_MKL,   ///< FFT reduction (with MKL impl)
+    FFT_CUFFT, ///< FFT reduction (with CUFFT impl)
+    EGBLAS     ///< EGBLAS implementation
 };
 
 /*!

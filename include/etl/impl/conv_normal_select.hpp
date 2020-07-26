@@ -29,6 +29,13 @@ constexpr etl::conv_impl select_default_conv1_impl_new(bool no_gpu) {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
+    // First handle GPU
+    if (TT == conv_type::VALID) {
+        if (egblas_enabled && all_floating<I, K, C> && all_homogeneous<I, K, C> && impl::egblas::has_sconv1_valid && !no_gpu) {
+            return etl::conv_impl::EGBLAS;
+        }
+    }
+
     if (TT == conv_type::FULL) {
         if (impl::cufft::conv1_possible<I, K, C> && !no_gpu) {
             return etl::conv_impl::FFT_CUFFT;
@@ -160,6 +167,15 @@ inline etl::conv_impl select_conv1_impl_new() {
             case conv_impl::VEC:
                 if (!impl::vec::conv1_possible<vector_mode, I, K, C>) {
                     std::cerr << "Forced selection to VEC conv1 implementation, but not possible for this expression" << std::endl;
+                    return default_impl;
+                }
+
+                return forced;
+
+            //EGBLAS cannot always be used
+            case conv_impl::EGBLAS:
+                if (!egblas_enabled || !all_floating<I, K, C> || !all_homogeneous<I, K, C> || local_context().cpu) {
+                    std::cerr << "Forced selection to EGBLAS conv1 implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
 

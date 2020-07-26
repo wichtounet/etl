@@ -25,6 +25,7 @@
 #include "etl/impl/std/conv.hpp"
 #include "etl/impl/vec/conv.hpp"
 #include "etl/impl/cudnn/conv.hpp"
+#include "etl/impl/egblas/conv_1d.hpp"
 
 #include "etl/impl/conv_select.hpp" // The selection functions
 
