@@ -72,6 +72,8 @@ struct conv_2d_valid_multi_expr : base_temporary_expr_bin<conv_2d_valid_multi_ex
     void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, B, C>, "conv2_valid only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
         auto& b = this->b();
 

@@ -72,6 +72,8 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
     void assign_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>, "bias_batch_var_4d only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
         auto& b = this->b();
 

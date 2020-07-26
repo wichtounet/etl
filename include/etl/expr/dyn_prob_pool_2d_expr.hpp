@@ -52,6 +52,8 @@ struct dyn_prob_pool_2d_expr : base_temporary_expr_un<dyn_prob_pool_2d_expr<A>, 
         static_assert(all_etl_expr<A, L>, "max_pool_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<L>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
 
         impl::standard::dyn_pmp_h_impl::template apply<>(smart_forward(a), lhs, c1, c2, c1, c2, 0, 0);

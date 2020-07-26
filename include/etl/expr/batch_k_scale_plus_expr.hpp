@@ -100,6 +100,8 @@ struct batch_k_scale_plus_expr : base_temporary_expr_tern<batch_k_scale_plus_exp
     void assign_to(L&& lhs) const {
         static_assert(all_etl_expr<A, B, L>, "batch_k_scale_plus only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
         auto& b = this->b();
         auto& c = this->c();

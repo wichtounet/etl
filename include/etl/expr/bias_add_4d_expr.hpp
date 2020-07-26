@@ -82,6 +82,8 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
     void assign_to(L&& lhs) const {
         static_assert(all_etl_expr<A, L>, "bias_add only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         if (this->is_evaluated()) {
             lhs = this->result();
             return;

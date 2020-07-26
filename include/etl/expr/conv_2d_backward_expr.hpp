@@ -91,6 +91,8 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
     void assign_to(C&& conv) const {
         static_assert(all_etl_expr<A, B, C>, "conv2_backward only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& input  = this->a();
         auto& kernel = this->b();
 

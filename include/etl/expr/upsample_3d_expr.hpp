@@ -51,6 +51,8 @@ struct upsample_3d_expr : base_temporary_expr_un<upsample_3d_expr<A, C1, C2, C3>
         static_assert(all_etl_expr<A, L>, "upsample_3d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<L>(), "upsample_3d must be applied on matrices of same dimensionality");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
 
         impl::standard::upsample_3d::template apply<C1, C2, C3>(smart_forward(a), lhs);

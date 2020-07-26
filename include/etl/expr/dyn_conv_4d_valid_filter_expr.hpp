@@ -73,6 +73,8 @@ struct dyn_conv_4d_valid_filter_expr : base_temporary_expr_bin<dyn_conv_4d_valid
     void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, B, C>, "conv4_valid_filter only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
         auto& b = this->b();
 

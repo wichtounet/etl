@@ -68,6 +68,8 @@ struct embedding_gradients_expr : base_temporary_expr_tern<embedding_gradients_e
     void assign_to(L&& lhs) const {
         static_assert(is_etl_expr<L>, "embedding_gradients only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
         auto& b = this->b();
         auto& c = this->c();

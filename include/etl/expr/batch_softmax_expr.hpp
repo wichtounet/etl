@@ -99,6 +99,8 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
     void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, C>, "Function expression only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
 
         standard_evaluator::pre_assign_rhs(a);

@@ -91,6 +91,8 @@ struct dyn_conv_4d_backward_expr : base_temporary_expr_bin<dyn_conv_4d_backward_
     void assign_to(C&& conv) const {
         static_assert(all_etl_expr<A, B, C>, "conv4_backward only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& input  = this->a();
         auto& kernel = this->b();
 

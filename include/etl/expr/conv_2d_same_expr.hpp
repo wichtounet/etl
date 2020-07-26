@@ -69,6 +69,8 @@ struct conv_2d_same_expr : base_temporary_expr_bin<conv_2d_same_expr<A, B, Flipp
     void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, B, C>, "conv2_same only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
         auto& b = this->b();
 

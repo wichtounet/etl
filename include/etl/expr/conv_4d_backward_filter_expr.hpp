@@ -77,6 +77,8 @@ struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_f
     void assign_to(C&& conv) const {
         static_assert(all_etl_expr<A, B, C>, "conv4_backward_filter only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& input  = this->a();
         auto& kernel = this->b();
 

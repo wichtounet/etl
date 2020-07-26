@@ -52,6 +52,8 @@ struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2>, A>
         static_assert(all_etl_expr<A, C>, "upsample_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "upsample_2d must be applied on matrices of same dimensionality");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
 
         impl::standard::upsample_2d::template apply<C1, C2>(smart_forward(a), c);

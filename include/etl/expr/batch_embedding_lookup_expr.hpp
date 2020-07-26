@@ -70,6 +70,8 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
     void assign_to(L&& lhs) const {
         static_assert(all_etl_expr<A, B, L>, "batch_embedding_lookup only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
         auto& b = this->b();
 

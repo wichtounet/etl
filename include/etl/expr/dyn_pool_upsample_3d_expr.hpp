@@ -143,6 +143,8 @@ public:
     void assign_to(R&& result) const {
         static_assert(all_etl_expr<A, B, C, R>, "Max Pool Derivative only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
         auto& b = this->b();
         auto& c = this->c();

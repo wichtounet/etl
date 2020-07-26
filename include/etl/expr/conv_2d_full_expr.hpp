@@ -69,6 +69,8 @@ struct conv_2d_full_expr : base_temporary_expr_bin<conv_2d_full_expr<A, B, Flipp
     void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, B, C>, "conv2_full only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
         auto& b = this->b();
 

@@ -146,6 +146,8 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
     void assign_to(R&& result) const {
         static_assert(all_etl_expr<A, B, C, R>, "Max Pool Derivative only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
         auto& b = this->b();
         auto& c = this->c();

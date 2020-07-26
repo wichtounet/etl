@@ -70,6 +70,8 @@ struct conv_1d_same_expr : base_temporary_expr_bin<conv_1d_same_expr<A, B>, A, B
     void assign_to(C&& conv) const {
         static_assert(all_etl_expr<A, B, C>, "conv1_same only supported for ETL expressions");
 
+        inc_counter("temp:assign");
+
         auto& input_raw  = this->a();
         auto& kernel_raw = this->b();
 

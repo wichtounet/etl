@@ -52,6 +52,8 @@ struct inv_expr : base_temporary_expr_un<inv_expr<A>, A> {
         static_assert(all_etl_expr<A, C>, "max_pool_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
+        inc_counter("temp:assign");
+
         auto& a = this->a();
 
         detail::inv_impl::apply(smart_forward(a), c);
