@@ -665,6 +665,19 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
 #define DYN_CONV4_VALID_BACK_FLIPPED_TEST_CASE_SECTION_CUDNN
 #endif
 
+#ifdef ETL_EGBLAS_MODE
+CONV_FUNCTOR(egblas_conv1_valid, c = selected_helper(etl::conv_impl::EGBLAS, (etl::conv_1d_valid(a, b))))
+CONV_FUNCTOR(egblas_conv1_same, c = selected_helper(etl::conv_impl::EGBLAS, (etl::conv_1d_same(a, b))))
+
+#define CONV1_VALID_TEST_CASE_SECTION_EGBLAS CONV_TEST_CASE_SECTIONS(egblas_conv1_valid)
+#define CONV1_SAME_TEST_CASE_SECTION_EGBLAS CONV_TEST_CASE_SECTIONS(egblas_conv1_same)
+
+#else
+#define CONV1_VALID_TEST_CASE_SECTION_EGBLAS
+#define CONV1_SAME_TEST_CASE_SECTION_EGBLAS
+
+#endif
+
 #define CONV_TEST_CASE_DECL(name, description)                                 \
     template <typename T, typename Impl>                                       \
     static void UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)(); \
@@ -699,6 +712,7 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
         CONV1_SAME_TEST_CASE_SECTION_DEFAULT    \
         CONV1_SAME_TEST_CASE_SECTION_STD        \
         CONV1_SAME_TEST_CASE_SECTION_VEC        \
+        CONV1_SAME_TEST_CASE_SECTION_EGBLAS     \
     }                                           \
     CONV_TEST_CASE_DEFN
 
@@ -707,6 +721,7 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
         CONV1_VALID_TEST_CASE_SECTION_DEFAULT    \
         CONV1_VALID_TEST_CASE_SECTION_STD        \
         CONV1_VALID_TEST_CASE_SECTION_VEC        \
+        CONV1_VALID_TEST_CASE_SECTION_EGBLAS     \
     }                                            \
     CONV_TEST_CASE_DEFN
 
