@@ -77,20 +77,18 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
 
         check(input_raw, kernel_raw, conv);
 
-        // Make temporaries if necessary
-
         // Execute the correct implementation
 
         constexpr_select const auto impl = detail::select_conv1_impl_new<conv_type::VALID, A, B, C>();
 
 //CPP17: if constexpr
 #ifdef ETL_PARALLEL_SUPPORT
-        bool parallel_dispatch = detail::select_parallel(input, kernel, conv);
-
         if
             constexpr_select(impl == etl::conv_impl::VEC) {
                 decltype(auto) input  = make_temporary(input_raw);
                 decltype(auto) kernel = make_temporary(kernel_raw);
+
+                bool parallel_dispatch = detail::select_parallel(input, kernel, conv);
 
                 inc_counter("impl:vec");
                 engine_dispatch_1d([&](size_t first, size_t last) { impl::vec::conv1_valid(input, kernel, conv, first, last); }, 0, etl::size(conv),
@@ -100,6 +98,8 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
             constexpr_select(impl == etl::conv_impl::STD) {
                 decltype(auto) input  = make_temporary(input_raw);
                 decltype(auto) kernel = make_temporary(kernel_raw);
+
+                bool parallel_dispatch = detail::select_parallel(input, kernel, conv);
 
                 inc_counter("impl:std");
                 engine_dispatch_1d([&](size_t first, size_t last) { impl::standard::conv1_valid(input, kernel, conv, first, last); }, 0, etl::size(conv),
