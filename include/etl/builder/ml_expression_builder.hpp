@@ -197,9 +197,9 @@ dyn_conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, t
  * \tparam C2 The second pooling ratio
  * \return A expression representing the 2D Forward Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, typename E>
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, typename E>
 pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::max_pool_2d> max_pool_forward(E&& value) {
-    return pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::max_pool_2d>{value};
+    return pool_2d_expr<detail::build_type<E>, C1, C2, S1, S2, P1, P2, impl::max_pool_2d>{value};
 }
 
 /*!
@@ -212,6 +212,18 @@ pool_2d_expr<detail::build_type<E>, C1, C2, C1, C2, 0, 0, impl::max_pool_2d> max
 template <typename E>
 dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d> max_pool_forward(E&& value, size_t c1, size_t c2) {
     return dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d>{value, c1, c2, c1, c2, 0, 0};
+}
+
+/*!
+ * \brief Forward 2D Max Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \return A expression representing the 2D Max Pooling of the input expression.
+ */
+template <typename E>
+dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d> max_pool_forward(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
+    return dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d>{value, c1, c2, s1, s2, p1, p2};
 }
 
 /*!
