@@ -182,3 +182,51 @@ TEMPLATE_TEST_CASE_2("ml/pool/max/3", "[ml]", Z, double, float) {
     REQUIRE_EQUALS(b(1, 0), 14.0);
     REQUIRE_EQUALS(b(1, 1), 16.0);
 }
+
+TEMPLATE_TEST_CASE_2("ml/pool/avg/0", "[ml]", Z, double, float) {
+    etl::fast_matrix<Z, 4, 4> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0});
+    etl::fast_matrix<Z, 2, 2> b;
+
+    b = etl::ml::avg_pool_forward<2, 2, 2, 2, 0, 0>(a);
+
+    REQUIRE_EQUALS(b(0, 0), 3.5);
+    REQUIRE_EQUALS(b(0, 1), 5.5);
+    REQUIRE_EQUALS(b(1, 0), 11.5);
+    REQUIRE_EQUALS(b(1, 1), 13.5);
+}
+
+TEMPLATE_TEST_CASE_2("ml/pool/avg/1", "[ml]", Z, double, float) {
+    etl::fast_matrix<Z, 4, 4> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0});
+    etl::fast_matrix<Z, 2, 2> b;
+
+    b = etl::ml::avg_pool_forward<2, 2>(a);
+
+    REQUIRE_EQUALS(b(0, 0), 3.5);
+    REQUIRE_EQUALS(b(0, 1), 5.5);
+    REQUIRE_EQUALS(b(1, 0), 11.5);
+    REQUIRE_EQUALS(b(1, 1), 13.5);
+}
+
+TEMPLATE_TEST_CASE_2("ml/pool/avg/2", "[ml]", Z, double, float) {
+    etl::fast_matrix<Z, 4, 4> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0});
+    etl::fast_matrix<Z, 2, 2> b;
+
+    b = etl::ml::avg_pool_forward(a, 2, 2, 2, 2, 0, 0);
+
+    REQUIRE_EQUALS(b(0, 0), 3.5);
+    REQUIRE_EQUALS(b(0, 1), 5.5);
+    REQUIRE_EQUALS(b(1, 0), 11.5);
+    REQUIRE_EQUALS(b(1, 1), 13.5);
+}
+
+TEMPLATE_TEST_CASE_2("ml/pool/avg/3", "[ml]", Z, double, float) {
+    etl::fast_matrix<Z, 4, 4> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0});
+    etl::fast_matrix<Z, 2, 2> b;
+
+    b = etl::ml::avg_pool_forward(a, 2, 2);
+
+    REQUIRE_EQUALS(b(0, 0), 3.5);
+    REQUIRE_EQUALS(b(0, 1), 5.5);
+    REQUIRE_EQUALS(b(1, 0), 11.5);
+    REQUIRE_EQUALS(b(1, 1), 13.5);
+}
