@@ -18,10 +18,10 @@ namespace etl {
  * \brief An upsample expression.
  * \tparam A The type of the expression to upsample
  */
-template <typename A, size_t C1, size_t C2, size_t S1, size_t S2>
-struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2, S1, S2>, A> {
+template <typename A, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2>
+struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2, S1, S2, P1, P2>, A> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
-    using this_type  = upsample_2d_expr<A, C1, C2, S1, S2>;  ///< The type of this expression
+    using this_type  = upsample_2d_expr<A, C1, C2, S1, S2, P1, P2>;  ///< The type of this expression
     using base_type  = base_temporary_expr_un<this_type, A>; ///< The base type
     using sub_traits = decay_traits<A>;                      ///< The traits of the sub type
 
@@ -56,7 +56,7 @@ struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2, S1,
 
         auto& a = this->a();
 
-        impl::standard::upsample_2d::template apply<C1, C2, S1, S2>(smart_forward(a), c);
+        impl::standard::upsample_2d::template apply<C1, C2, S1, S2, P1, P2>(smart_forward(a), c);
     }
 
     /*!
@@ -119,12 +119,12 @@ struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2, S1,
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, size_t C1, size_t C2, size_t S1, size_t S2>
-struct etl_traits<etl::upsample_2d_expr<A, C1, C2, S1, S2>> {
-    using expr_t     = etl::upsample_2d_expr<A, C1, C2, S1, S2>; ///< The expression type
-    using sub_expr_t = std::decay_t<A>;                          ///< The sub expression type
-    using sub_traits = etl_traits<sub_expr_t>;                   ///< The sub traits
-    using value_type = value_t<A>;                               ///< The value type of the expression
+template <typename A, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2>
+struct etl_traits<etl::upsample_2d_expr<A, C1, C2, S1, S2, P1, P2>> {
+    using expr_t     = etl::upsample_2d_expr<A, C1, C2, S1, S2, P1, P2>; ///< The expression type
+    using sub_expr_t = std::decay_t<A>;                                  ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;                           ///< The sub traits
+    using value_type = value_t<A>;                                       ///< The value type of the expression
 
     static constexpr size_t D = sub_traits::dimensions(); ///< The number of dimensions of this expressions
 
@@ -158,8 +158,8 @@ struct etl_traits<etl::upsample_2d_expr<A, C1, C2, S1, S2>> {
      */
     template <size_t DD>
     static constexpr size_t dim() {
-        return DD == D - 2 ? ((decay_traits<A>::template dim<DD>() - 1) * S1 + C1)
-                           : DD == D - 1 ? ((decay_traits<A>::template dim<DD>() - 1) * S2 + C2) : decay_traits<A>::template dim<DD>();
+        return DD == D - 2 ? ((decay_traits<A>::template dim<DD>() - 1) * S1 + C1 - 2 * P1)
+                           : DD == D - 1 ? ((decay_traits<A>::template dim<DD>() - 1) * S2 + C2 - 2 * P2) : decay_traits<A>::template dim<DD>();
     }
 
     /*!
@@ -170,9 +170,9 @@ struct etl_traits<etl::upsample_2d_expr<A, C1, C2, S1, S2>> {
      */
     static size_t dim(const expr_t& e, size_t d) {
         if (d == D - 2) {
-            return (etl::dim(e._a, d) - 1) * S1 + C1;
+            return (etl::dim(e._a, d) - 1) * S1 + C1 - 2 * P1;
         } else if (d == D - 1) {
-            return (etl::dim(e._a, d) - 1) * S2 + C2;
+            return (etl::dim(e._a, d) - 1) * S2 + C2 - 2 * P2;
         } else {
             return etl::dim(e._a, d);
         }
@@ -232,9 +232,9 @@ struct etl_traits<etl::upsample_2d_expr<A, C1, C2, S1, S2>> {
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Upsampling of the given expression
  */
-template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, typename E>
-upsample_2d_expr<detail::build_type<E>, C1, C2, S1, S2> upsample_2d(E&& value) {
-    return upsample_2d_expr<detail::build_type<E>, C1, C2, S1, S2>{value};
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, typename E>
+upsample_2d_expr<detail::build_type<E>, C1, C2, S1, S2, P1, P2> upsample_2d(E&& value) {
+    return upsample_2d_expr<detail::build_type<E>, C1, C2, S1, S2, P1, P2>{value};
 }
 
 } //end of namespace etl

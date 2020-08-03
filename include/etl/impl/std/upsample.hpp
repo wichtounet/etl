@@ -21,16 +21,38 @@ struct upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, typename A, typename M>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M>
     static void upsample_block_2d(A&& in, M& m, size_t j, size_t k) {
         auto value = in(j, k);
 
+        // Slow path for cells with padding
+        if constexpr (P1 || P2) {
+            if (cpp_unlikely(j < P1 || k < P2 || j >= etl::dim<0>(in) - P1 || k >= etl::dim<1>(in) - P2)) {
+                const int64_t base_j = j * S1 - P1;
+                const int64_t base_k = k * S2 - P2;
+
+                for (size_t jj = 0; jj < C1; ++jj) {
+                    for (size_t kk = 0; kk < C2; ++kk) {
+                        if (base_j + jj >= 0 && base_k + kk >= 0 && base_j + jj < etl::dim<0>(m) && base_k + kk < etl::dim<1>(m)) {
+                            if constexpr (S1 == C1 && S2 == C2) {
+                                m(base_j + jj, base_k + kk) = value;
+                            } else {
+                                m(base_j + jj, base_k + kk) += value;
+                            }
+                        }
+                    }
+                }
+
+                return;
+            }
+        }
+
         for (size_t jj = 0; jj < C1; ++jj) {
             for (size_t kk = 0; kk < C2; ++kk) {
                 if constexpr (S1 == C1 && S2 == C2) {
-                    m(j * S1 + jj, k * S2 + kk) = value;
+                    m(j * S1 - P1 + jj, k * S2 - P2 + kk) = value;
                 } else {
-                    m(j * S1 + jj, k * S2 + kk) += value;
+                    m(j * S1 - P1 + jj, k * S2 - P2 + kk) += value;
                 }
             }
         }
@@ -44,16 +66,38 @@ struct upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, typename A, typename M>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M>
     static void upsample_block_3d(A&& in, M& m, size_t q, size_t j, size_t k) {
         auto value = in(q, j, k);
 
+        // Slow path for cells with padding
+        if constexpr (P1 || P2) {
+            if (cpp_unlikely(j < P1 || k < P2 || j >= etl::dim<1>(in) - P1 || k >= etl::dim<2>(in) - P2)) {
+                const int64_t base_j = j * S1 - P1;
+                const int64_t base_k = k * S2 - P2;
+
+                for (size_t jj = 0; jj < C1; ++jj) {
+                    for (size_t kk = 0; kk < C2; ++kk) {
+                        if (base_j + jj >= 0 && base_k + kk >= 0 && base_j + jj < etl::dim<1>(m) && base_k + kk < etl::dim<2>(m)) {
+                            if constexpr (S1 == C1 && S2 == C2) {
+                                m(q, base_j + jj, base_k + kk) = value;
+                            } else {
+                                m(q, base_j + jj, base_k + kk) += value;
+                            }
+                        }
+                    }
+                }
+
+                return;
+            }
+        }
+
         for (size_t jj = 0; jj < C1; ++jj) {
             for (size_t kk = 0; kk < C2; ++kk) {
                 if constexpr (S1 == C1 && S2 == C2) {
-                    m(q, j * S1 + jj, k * S2 + kk) = value;
+                    m(q, j * S1 - P1 + jj, k * S2 - P2 + kk) = value;
                 } else {
-                    m(q, j * S1 + jj, k * S2 + kk) += value;
+                    m(q, j * S1 - P1 + jj, k * S2 - P2 + kk) += value;
                 }
             }
         }
@@ -67,16 +111,38 @@ struct upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, typename A, typename M>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M>
     static void upsample_block_4d(A&& in, M& m, size_t p, size_t q, size_t j, size_t k) {
         auto value = in(p, q, j, k);
+
+        // Slow path for cells with padding
+        if constexpr (P1 || P2) {
+            if (cpp_unlikely(j < P1 || k < P2 || j >= etl::dim<2>(in) - P1 || k >= etl::dim<3>(in) - P2)) {
+                const int64_t base_j = j * S1 - P1;
+                const int64_t base_k = k * S2 - P2;
+
+                for (size_t jj = 0; jj < C1; ++jj) {
+                    for (size_t kk = 0; kk < C2; ++kk) {
+                        if (base_j + jj >= 0 && base_k + kk >= 0 && base_j + jj < etl::dim<2>(m) && base_k + kk < etl::dim<3>(m)) {
+                            if constexpr (S1 == C1 && S2 == C2) {
+                                m(p, q, base_j + jj, base_k + kk) = value;
+                            } else {
+                                m(p, q, base_j + jj, base_k + kk) += value;
+                            }
+                        }
+                    }
+                }
+
+                return;
+            }
+        }
 
         for (size_t jj = 0; jj < C1; ++jj) {
             for (size_t kk = 0; kk < C2; ++kk) {
                 if constexpr (S1 == C1 && S2 == C2) {
-                    m(p, q, j * S1 + jj, k * S2 + kk) = value;
+                    m(p, q, j * S1 - P1 + jj, k * S2 - P2 + kk) = value;
                 } else {
-                    m(p, q, j * S1 + jj, k * S2 + kk) += value;
+                    m(p, q, j * S1 - P1 + jj, k * S2 - P2 + kk) += value;
                 }
             }
         }
@@ -91,19 +157,41 @@ struct upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename M>
-    static void upsample_block_2d(A&& in, M& m, size_t j, size_t k, size_t c1, size_t c2, size_t s1, size_t s2) {
+    static void upsample_block_2d(A&& in, M& m, size_t j, size_t k, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         auto value = in(j, k);
 
+        // Slow path for cells with padding
+        if (cpp_unlikely(p1 || p2)) {
+            if (cpp_unlikely(j < p1 || k < p2 || j >= etl::dim<0>(in) - p1 || k >= etl::dim<1>(in) - p2)) {
+                const int64_t base_j = j * s1 - p1;
+                const int64_t base_k = k * s2 - p2;
+
+                for (size_t jj = 0; jj < c1; ++jj) {
+                    for (size_t kk = 0; kk < c2; ++kk) {
+                        if (base_j + jj >= 0 && base_k + kk >= 0 && base_j + jj < etl::dim<0>(m) && base_k + kk < etl::dim<1>(m)) {
+                            if (s1 == c1 && s2 == c2) {
+                                m(base_j + jj, base_k + kk) = value;
+                            } else {
+                                m(base_j + jj, base_k + kk) += value;
+                            }
+                        }
+                    }
+                }
+
+                return;
+            }
+        }
+
         if (s1 == c1 && s2 == c2) {
             for (size_t jj = 0; jj < c1; ++jj) {
                 for (size_t kk = 0; kk < c2; ++kk) {
-                    m(j * s1 + jj, k * s2 + kk) = value;
+                    m(j * s1 - p1 + jj, k * s2 - p2 + kk) = value;
                 }
             }
         } else {
             for (size_t jj = 0; jj < c1; ++jj) {
                 for (size_t kk = 0; kk < c2; ++kk) {
-                    m(j * s1 + jj, k * s2 + kk) += value;
+                    m(j * s1 - p1 + jj, k * s2 - p2 + kk) += value;
                 }
             }
         }
@@ -118,19 +206,41 @@ struct upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename M>
-    static void upsample_block_3d(A&& in, M& m, size_t q, size_t j, size_t k, size_t c1, size_t c2, size_t s1, size_t s2) {
+    static void upsample_block_3d(A&& in, M& m, size_t q, size_t j, size_t k, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         auto value = in(q, j, k);
 
+        // Slow path for cells with padding
+        if (cpp_unlikely(p1 || p2)) {
+            if (cpp_unlikely(j < p1 || k < p2 || j >= etl::dim<1>(in) - p1 || k >= etl::dim<2>(in) - p2)) {
+                const int64_t base_j = j * s1 - p1;
+                const int64_t base_k = k * s2 - p2;
+
+                for (size_t jj = 0; jj < c1; ++jj) {
+                    for (size_t kk = 0; kk < c2; ++kk) {
+                        if (base_j + jj >= 0 && base_k + kk >= 0 && base_j + jj < etl::dim<1>(m) && base_k + kk < etl::dim<2>(m)) {
+                            if (s1 == c1 && s2 == c2) {
+                                m(q, base_j + jj, base_k + kk) = value;
+                            } else {
+                                m(q, base_j + jj, base_k + kk) += value;
+                            }
+                        }
+                    }
+                }
+
+                return;
+            }
+        }
+
         if (s1 == c1 && s2 == c2) {
             for (size_t jj = 0; jj < c1; ++jj) {
                 for (size_t kk = 0; kk < c2; ++kk) {
-                    m(q, j * s1 + jj, k * s2 + kk) = value;
+                    m(q, j * s1 - p1 + jj, k * s2 - p2 + kk) = value;
                 }
             }
         } else {
             for (size_t jj = 0; jj < c1; ++jj) {
                 for (size_t kk = 0; kk < c2; ++kk) {
-                    m(q, j * s1 + jj, k * s2 + kk) += value;
+                    m(q, j * s1 - p1 + jj, k * s2 - p2 + kk) += value;
                 }
             }
         }
@@ -145,19 +255,41 @@ struct upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename M>
-    static void upsample_block_4d(A&& in, M& m, size_t p, size_t q, size_t j, size_t k, size_t c1, size_t c2, size_t s1, size_t s2) {
+    static void upsample_block_4d(A&& in, M& m, size_t p, size_t q, size_t j, size_t k, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         auto value = in(p, q, j, k);
+
+        // Slow path for cells with padding
+        if (cpp_unlikely(p1 || p2)) {
+            if (cpp_unlikely(j < p1 || k < p2 || j >= etl::dim<2>(in) - p1 || k >= etl::dim<3>(in) - p2)) {
+                const int64_t base_j = j * s1 - p1;
+                const int64_t base_k = k * s2 - p2;
+
+                for (size_t jj = 0; jj < c1; ++jj) {
+                    for (size_t kk = 0; kk < c2; ++kk) {
+                        if (base_j + jj >= 0 && base_k + kk >= 0 && base_j + jj < etl::dim<2>(m) && base_k + kk < etl::dim<3>(m)) {
+                            if (s1 == c1 && s2 == c2) {
+                                m(p, q, base_j + jj, base_k + kk) = value;
+                            } else {
+                                m(p, q, base_j + jj, base_k + kk) += value;
+                            }
+                        }
+                    }
+                }
+
+                return;
+            }
+        }
 
         if (s1 == c1 && s2 == c2) {
             for (size_t jj = 0; jj < c1; ++jj) {
                 for (size_t kk = 0; kk < c2; ++kk) {
-                    m(p, q, j * s1 + jj, k * s2 + kk) = value;
+                    m(p, q, j * s1 - p1 + jj, k * s2 - p2 + kk) = value;
                 }
             }
         } else {
             for (size_t jj = 0; jj < c1; ++jj) {
                 for (size_t kk = 0; kk < c2; ++kk) {
-                    m(p, q, j * s1 + jj, k * s2 + kk) += value;
+                    m(p, q, j * s1 - p1 + jj, k * s2 - p2 + kk) += value;
                 }
             }
         }
@@ -172,7 +304,7 @@ struct upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, typename A, typename M, cpp_enable_iff(is_2d<A>)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_iff(is_2d<A>)>
     static void apply(A&& in, M&& m) {
         if (S1 == C1 && S2 == C2) {
             m = 0;
@@ -180,7 +312,7 @@ struct upsample_2d {
 
         for (size_t j = 0; j < etl::dim<0>(in); ++j) {
             for (size_t k = 0; k < etl::dim<1>(in); ++k) {
-                upsample_block_2d<C1, C2, S1, S2>(in, m, j, k);
+                upsample_block_2d<C1, C2, S1, S2, P1, P2>(in, m, j, k);
             }
         }
     }
@@ -193,14 +325,14 @@ struct upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename M, cpp_enable_iff(is_2d<A>)>
-    static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t s1, size_t s2) {
+    static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         if (s1 == c1 && s2 == c2) {
             m = 0;
         }
 
         for (size_t j = 0; j < etl::dim<0>(in); ++j) {
             for (size_t k = 0; k < etl::dim<1>(in); ++k) {
-                upsample_block_2d(in, m, j, k, c1, c2, s1, s2);
+                upsample_block_2d(in, m, j, k, c1, c2, s1, s2, p1, p2);
             }
         }
     }
@@ -214,7 +346,7 @@ struct upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, typename A, typename M, cpp_enable_iff(is_3d<A>)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_iff(is_3d<A>)>
     static void apply(A&& in, M&& m) {
         if (S1 == C1 && S2 == C2) {
             m = 0;
@@ -228,7 +360,7 @@ struct upsample_2d {
             for (size_t q = first; q < last; ++q) {
                 for (size_t j = 0; j < etl::dim<1>(in); ++j) {
                     for (size_t k = 0; k < etl::dim<2>(in); ++k) {
-                        upsample_block_3d<C1, C2, S1, S2>(in, m, q, j, k);
+                        upsample_block_3d<C1, C2, S1, S2, P1, P2>(in, m, q, j, k);
                     }
                 }
             }
@@ -247,7 +379,7 @@ struct upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename M, cpp_enable_iff(is_3d<A>)>
-    static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t s1, size_t s2) {
+    static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         if (s1 == c1 && s2 == c2) {
             m = 0;
         }
@@ -260,7 +392,7 @@ struct upsample_2d {
             for (size_t q = first; q < last; ++q) {
                 for (size_t j = 0; j < etl::dim<1>(in); ++j) {
                     for (size_t k = 0; k < etl::dim<2>(in); ++k) {
-                        upsample_block_3d(in, m, q, j, k, c1, c2, s1, s2);
+                        upsample_block_3d(in, m, q, j, k, c1, c2, s1, s2, p1, p2);
                     }
                 }
             }
@@ -280,7 +412,7 @@ struct upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, typename A, typename M, cpp_enable_iff(is_4d<A>)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, M&& m) {
         if (S1 == C1 && S2 == C2) {
             m = 0;
@@ -295,7 +427,7 @@ struct upsample_2d {
                 for (size_t q = 0; q < etl::dim<1>(in); ++q) {
                     for (size_t j = 0; j < etl::dim<2>(in); ++j) {
                         for (size_t k = 0; k < etl::dim<3>(in); ++k) {
-                            upsample_block_4d<C1, C2, S1, S2>(in, m, p, q, j, k);
+                            upsample_block_4d<C1, C2, S1, S2, P1, P2>(in, m, p, q, j, k);
                         }
                     }
                 }
@@ -315,7 +447,7 @@ struct upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename M, cpp_enable_iff(is_4d<A>)>
-    static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t s1, size_t s2) {
+    static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         if (s1 == c1 && s2 == c2) {
             m = 0;
         }
@@ -329,7 +461,7 @@ struct upsample_2d {
                 for (size_t q = 0; q < etl::dim<1>(in); ++q) {
                     for (size_t j = 0; j < etl::dim<2>(in); ++j) {
                         for (size_t k = 0; k < etl::dim<3>(in); ++k) {
-                            upsample_block_4d(in, m, p, q, j, k, c1, c2, s1, s2);
+                            upsample_block_4d(in, m, p, q, j, k, c1, c2, s1, s2, p1, p2);
                         }
                     }
                 }
@@ -350,10 +482,10 @@ struct upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
     static void apply(A&& in, M& m) {
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
-            apply<C1, C2, S1, S2>(in(i), m(i));
+            apply<C1, C2, S1, S2, P1, P2>(in(i), m(i));
         }
     }
 
@@ -365,9 +497,9 @@ struct upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
-    static void apply(A&& in, M& m, size_t c1, size_t c2, size_t s1, size_t s2) {
+    static void apply(A&& in, M& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
-            apply(in(i), m(i), c1, c2, s1, s2);
+            apply(in(i), m(i), c1, c2, s1, s2, p1, p2);
         }
     }
 };
