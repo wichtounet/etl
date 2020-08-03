@@ -306,7 +306,7 @@ struct upsample_2d {
      */
     template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_iff(is_2d<A>)>
     static void apply(A&& in, M&& m) {
-        if (S1 == C1 && S2 == C2) {
+        if (S1 != C1 || S2 != C2) {
             m = 0;
         }
 
@@ -326,7 +326,7 @@ struct upsample_2d {
      */
     template <typename A, typename M, cpp_enable_iff(is_2d<A>)>
     static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
-        if (s1 == c1 && s2 == c2) {
+        if (s1 != c1 || s2 != c2) {
             m = 0;
         }
 
@@ -348,7 +348,7 @@ struct upsample_2d {
      */
     template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_iff(is_3d<A>)>
     static void apply(A&& in, M&& m) {
-        if (S1 == C1 && S2 == C2) {
+        if (S1 != C1 || S2 != C2) {
             m = 0;
         }
 
@@ -380,7 +380,7 @@ struct upsample_2d {
      */
     template <typename A, typename M, cpp_enable_iff(is_3d<A>)>
     static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
-        if (s1 == c1 && s2 == c2) {
+        if (s1 != c1 || s2 != c2) {
             m = 0;
         }
 
@@ -414,7 +414,7 @@ struct upsample_2d {
      */
     template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, M&& m) {
-        if (S1 == C1 && S2 == C2) {
+        if (S1 != C1 || S2 != C2) {
             m = 0;
         }
 
@@ -448,7 +448,7 @@ struct upsample_2d {
      */
     template <typename A, typename M, cpp_enable_iff(is_4d<A>)>
     static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
-        if (s1 == c1 && s2 == c2) {
+        if (s1 != c1 || s2 != c2) {
             m = 0;
         }
 
