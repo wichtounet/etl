@@ -117,6 +117,19 @@ TEMPLATE_TEST_CASE_2("dyn_upsample/2d/5", "[pooling]", Z, float, double) {
     REQUIRE_EQUALS(c(1, 1), 4.0);
 }
 
+TEMPLATE_TEST_CASE_2("dyn_upsample/2d/6", "[pooling]", Z, float, double) {
+    etl::dyn_matrix<Z> a(3, 3, etl::values(1.0, 2.0, 2.0, 3.0, 4.0, 4.0, 3.0, 4.0, 4.0));
+    etl::dyn_matrix<Z> c(2, 2);
+
+    c = etl::upsample_2d(a, 2, 2, 1, 1, 1, 1);
+
+    REQUIRE_EQUALS(c(0, 0), 10.0);
+    REQUIRE_EQUALS(c(0, 1), 12.0);
+
+    REQUIRE_EQUALS(c(1, 0), 14.0);
+    REQUIRE_EQUALS(c(1, 1), 16.0);
+}
+
 TEMPLATE_TEST_CASE_2("dyn_upsample/2d/3", "[pooling]", Z, float, double) {
     etl::dyn_matrix<Z, 2> a(2, 2, etl::values(1.0, 2.0, 3.0, 4.0));
     etl::dyn_matrix<Z, 2> c(2, 2);
