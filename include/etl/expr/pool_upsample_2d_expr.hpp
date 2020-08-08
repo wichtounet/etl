@@ -21,11 +21,11 @@ namespace etl {
  * \tparam B The output type
  * \tparam C The errors type
  */
-template <typename A, typename B, typename C, size_t C1, size_t C2, bool Max>
-struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A, B, C, C1, C2, Max>, A, B, C> {
+template <typename A, typename B, typename C, size_t C1, size_t C2, size_t S1, size_t S2, bool Max>
+struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A, B, C, C1, C2, S1, S2, Max>, A, B, C> {
     using value_type = value_t<A>;                                   ///< The type of value of the expression
     using sub_traits = etl::decay_traits<A>;                         ///< The traits of the first sub type
-    using this_type  = pool_upsample_2d_expr<A, B, C, C1, C2, Max>;  ///< The type of this expression
+    using this_type  = pool_upsample_2d_expr<A, B, C, C1, C2, S1, S2, Max>;  ///< The type of this expression
     using base_type  = base_temporary_expr_tern<this_type, A, B, C>; ///< The base type
 
     static constexpr auto storage_order = sub_traits::storage_order; ///< The sub storage order
@@ -160,12 +160,12 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
             if
                 constexpr_select(impl == pool_impl::STD) {
                     inc_counter("impl:std");
-                    impl::standard::max_pool_upsample_2d::apply<C1, C2>(smart_forward(a), smart_forward(b), smart_forward(c), result);
+                    impl::standard::max_pool_upsample_2d::apply<C1, C2, S1, S2>(smart_forward(a), smart_forward(b), smart_forward(c), result);
                 }
             else if
                 constexpr_select(impl == pool_impl::CUDNN) {
                     inc_counter("impl:cudnn");
-                    impl::cudnn::max_pool_upsample_2d::apply(smart_forward_gpu(a), smart_forward_gpu(b), smart_forward_gpu(c), result, C1, C2);
+                    impl::cudnn::max_pool_upsample_2d::apply(smart_forward_gpu(a), smart_forward_gpu(b), smart_forward_gpu(c), result, C1, C2, S1, S2);
                 }
             else {
                 cpp_unreachable("Invalid pool implementation");
@@ -174,12 +174,12 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
             if
                 constexpr_select(impl == pool_impl::STD) {
                     inc_counter("impl:std");
-                    impl::standard::avg_pool_upsample_2d::apply<C1, C2>(smart_forward(a), smart_forward(b), smart_forward(c), result);
+                    impl::standard::avg_pool_upsample_2d::apply<C1, C2, S1, S2>(smart_forward(a), smart_forward(b), smart_forward(c), result);
                 }
             else if
                 constexpr_select(impl == pool_impl::CUDNN) {
                     inc_counter("impl:cudnn");
-                    impl::cudnn::avg_pool_upsample_2d::apply(smart_forward_gpu(a), smart_forward_gpu(b), smart_forward_gpu(c), result, C1, C2);
+                    impl::cudnn::avg_pool_upsample_2d::apply(smart_forward_gpu(a), smart_forward_gpu(b), smart_forward_gpu(c), result, C1, C2, S1, S2);
                 }
             else {
                 cpp_unreachable("Invalid pool implementation");
@@ -247,12 +247,12 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
  * \brief Traits for a pooling usample expression
  * \tparam A The pooling usample sub type
  */
-template <typename A, typename B, typename C, size_t C1, size_t C2, bool Max>
-struct etl_traits<etl::pool_upsample_2d_expr<A, B, C, C1, C2, Max>> {
-    using expr_t     = etl::pool_upsample_2d_expr<A, B, C, C1, C2, Max>; ///< The expression type
-    using sub_expr_t = std::decay_t<A>;                                  ///< The sub expression type
-    using sub_traits = etl_traits<sub_expr_t>;                           ///< The sub traits
-    using value_type = value_t<A>;                                       ///< The value type of the expression
+template <typename A, typename B, typename C, size_t C1, size_t C2, size_t S1, size_t S2, bool Max>
+struct etl_traits<etl::pool_upsample_2d_expr<A, B, C, C1, C2, S1, S2, Max>> {
+    using expr_t     = etl::pool_upsample_2d_expr<A, B, C, C1, C2, S1, S2, Max>; ///< The expression type
+    using sub_expr_t = std::decay_t<A>;                                          ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;                                   ///< The sub traits
+    using value_type = value_t<A>;                                               ///< The value type of the expression
 
     static constexpr bool is_etl         = true;                                 ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer = false;                                ///< Indicates if the type is a transformer
@@ -339,10 +339,10 @@ struct etl_traits<etl::pool_upsample_2d_expr<A, B, C, C1, C2, Max>> {
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, typename A, typename B, typename C>
-pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, true> max_pool_upsample_2d(A&& input,
-                                                                                                                              B&& output,
-                                                                                                                              C&& errors) {
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, typename A, typename B, typename C>
+pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, S1, S2, true> max_pool_upsample_2d(A&& input,
+                                                                                                                                      B&& output,
+                                                                                                                                      C&& errors) {
     return {input, output, errors};
 }
 
@@ -354,10 +354,10 @@ pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::buil
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, typename A, typename B, typename C>
-pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, false> avg_pool_upsample_2d(A&& input,
-                                                                                                                               B&& output,
-                                                                                                                               C&& errors) {
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, typename A, typename B, typename C>
+pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, S1, S2, false> avg_pool_upsample_2d(A&& input,
+                                                                                                                                       B&& output,
+                                                                                                                                       C&& errors) {
     return {input, output, errors};
 }
 

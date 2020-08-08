@@ -26,12 +26,12 @@ namespace etl::impl::cudnn {
  * \param c2 The second dimension pooling ratio
  */
 template <typename A, typename B, typename C, typename M>
-void unpool_2d(cudnnPoolingMode_t mode, A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
+void unpool_2d(cudnnPoolingMode_t mode, A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t s1, size_t s2) {
     using type = std::remove_const_t<value_t<A>>;
 
     decltype(auto) handle = start_cudnn();
 
-    auto pooling_desc = create_pooling_desc_wrapper(mode, c1, c2, c1, c2, 0, 0);
+    auto pooling_desc = create_pooling_desc_wrapper(mode, c1, c2, s1, s2, 0, 0);
 
     auto in_tensor     = create_tensor_wrapper(in);
     auto out_tensor    = create_tensor_wrapper(out);
@@ -108,14 +108,14 @@ struct max_pool_upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M>
-    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
+    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t s1, size_t s2) {
         if constexpr (decay_traits<A>::dimensions() < 5) {
-            unpool_2d(CUDNN_POOLING_MAX, in, out, errors, m, c1, c2);
+            unpool_2d(CUDNN_POOLING_MAX, in, out, errors, m, c1, c2, s1, s2);
         } else {
             // Deep handling
 
             for (size_t i = 0; i < etl::dim<0>(in); ++i) {
-                apply(in(i), out(i), errors(i), m(i), c1, c2);
+                apply(in(i), out(i), errors(i), m(i), c1, c2, s1, s2);
             }
         }
     }
@@ -158,9 +158,9 @@ struct avg_pool_upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M>
-    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2) {
+    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t s1, size_t s2) {
         if constexpr (decay_traits<A>::dimensions() < 5) {
-            unpool_2d(CUDNN_POOLING_AVERAGE_COUNT_INCLUDE_PADDING, in, out, errors, m, c1, c2);
+            unpool_2d(CUDNN_POOLING_AVERAGE_COUNT_INCLUDE_PADDING, in, out, errors, m, c1, c2, s1, s2);
         } else {
             // Deep handling
             for (size_t i = 0; i < etl::dim<0>(in); ++i) {
@@ -215,7 +215,10 @@ struct max_pool_upsample_2d {
                       [[maybe_unused]] C&& errors,
                       [[maybe_unused]] M& m,
                       [[maybe_unused]] size_t c1,
-                      [[maybe_unused]] size_t c2) {
+                      [[maybe_unused]] size_t c2,
+                      [[maybe_unused]] size_t s1,
+                      [[maybe_unused]] size_t s2
+                      ) {
         cpp_unreachable("Unsupported feature called: cudnn pool");
     }
 };
@@ -260,7 +263,10 @@ struct avg_pool_upsample_2d {
                       [[maybe_unused]] C&& errors,
                       [[maybe_unused]] M& m,
                       [[maybe_unused]] size_t c1,
-                      [[maybe_unused]] size_t c2) {
+                      [[maybe_unused]] size_t c2,
+                      [[maybe_unused]] size_t s1,
+                      [[maybe_unused]] size_t s2
+                      ) {
         cpp_unreachable("Unsupported feature called: cudnn pool");
     }
 };
