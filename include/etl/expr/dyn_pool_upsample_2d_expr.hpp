@@ -70,8 +70,8 @@ public:
         cpp_assert(etl::size(result) == etl::size(a), "max_pool_upsample_2d:A and R must have the same size");
         cpp_assert(etl::size(b) == etl::size(c), "max_pool_upsample_2d:B and C must have the same size");
 
-        cpp_assert(etl::dim<D - 2>(a) == c1 * etl::dim<D - 2>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
-        cpp_assert(etl::dim<D - 1>(a) == c2 * etl::dim<D - 1>(b), "Invalid pooling dimensions for max_pool_upsample_2d");
+        cpp_assert(etl::dim<D - 2>(a) == s1 * (etl::dim<D - 2>(b) - 1) + c1, "Invalid pooling dimensions for max_pool_upsample_2d");
+        cpp_assert(etl::dim<D - 1>(a) == s2 * (etl::dim<D - 1>(b) - 1) + c2, "Invalid pooling dimensions for max_pool_upsample_2d");
     }
 
     // Assignment functions
