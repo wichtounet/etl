@@ -32,13 +32,13 @@ struct max_pool_derivative_2d {
         for (size_t jj = 0; jj < C1; ++jj) {
             for (size_t kk = 0; kk < C2; ++kk) {
                 if constexpr (C1 == S1 && C2 == S2) {
-                    if (max == in(j * C1 + jj, k * C2 + kk)) {
+                    if (max == in(j * S1 + jj, k * S2 + kk)) {
                         m(j * S1 + jj, k * S2 + kk) = 1.0;
                     } else {
                         m(j * S1 + jj, k * S2 + kk) = 0.0;
                     }
                 } else {
-                    if (max == in(j * C1 + jj, k * C2 + kk)) {
+                    if (max == in(j * S1 + jj, k * S2 + kk)) {
                         m(j * S1 + jj, k * S2 + kk) += 1.0;
                     } else {
                         m(j * S1 + jj, k * S2 + kk) += 0.0;
@@ -92,7 +92,7 @@ struct max_pool_derivative_2d {
         if (c1 == s1 && c2 == s2) {
             for (size_t jj = 0; jj < c1; ++jj) {
                 for (size_t kk = 0; kk < c2; ++kk) {
-                    if (max == in(j * c1 + jj, k * c2 + kk)) {
+                    if (max == in(j * s1 + jj, k * s2 + kk)) {
                         m(j * s1 + jj, k * s2 + kk) = 1.0;
                     } else {
                         m(j * s1 + jj, k * s2 + kk) = 0.0;
@@ -102,7 +102,7 @@ struct max_pool_derivative_2d {
         } else {
             for (size_t jj = 0; jj < c1; ++jj) {
                 for (size_t kk = 0; kk < c2; ++kk) {
-                    if (max == in(j * c1 + jj, k * c2 + kk)) {
+                    if (max == in(j * s1 + jj, k * s2 + kk)) {
                         m(j * s1 + jj, k * s2 + kk) += 1.0;
                     } else {
                         m(j * s1 + jj, k * s2 + kk) += 0.0;
