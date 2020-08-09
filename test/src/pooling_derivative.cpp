@@ -38,6 +38,27 @@ TEMPLATE_TEST_CASE_2("pool_derivative/max2/1", "[pooling]", Z, float, double) {
     REQUIRE_EQUALS(c(3, 3), 1.0);
 }
 
+TEMPLATE_TEST_CASE_2("pool_derivative/max2/2", "[pooling]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0});
+    etl::fast_matrix<Z, 2, 2> b;
+    etl::fast_matrix<Z, 3, 3> c;
+
+    b = etl::max_pool_2d<2, 2, 1, 1>(a);
+    c = etl::max_pool_derivative_2d<2, 2, 1, 1>(a, b);
+
+    REQUIRE_EQUALS(c(0, 0), 0.0);
+    REQUIRE_EQUALS(c(0, 1), 0.0);
+    REQUIRE_EQUALS(c(0, 2), 0.0);
+
+    REQUIRE_EQUALS(c(1, 0), 0.0);
+    REQUIRE_EQUALS(c(1, 1), 1.0);
+    REQUIRE_EQUALS(c(1, 2), 1.0);
+
+    REQUIRE_EQUALS(c(2, 0), 0.0);
+    REQUIRE_EQUALS(c(2, 1), 1.0);
+    REQUIRE_EQUALS(c(2, 2), 1.0);
+}
+
 TEMPLATE_TEST_CASE_2("pool_derivative/avg2/1", "[pooling]", Z, float, double) {
     etl::fast_matrix<Z, 4, 4> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0});
     etl::fast_matrix<Z, 2, 2> b;
