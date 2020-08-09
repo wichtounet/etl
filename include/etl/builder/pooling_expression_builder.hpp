@@ -24,7 +24,7 @@ namespace etl {
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Derivative of 2D Average Pooling of the input expression.
  */
-template <size_t C1, size_t C2, typename E, typename F>
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C1, typename E, typename F>
 auto avg_pool_derivative_2d([[maybe_unused]] E&& input, [[maybe_unused]] F&& output) {
     return 1.0 / (C1 * C2);
 }
@@ -39,6 +39,19 @@ auto avg_pool_derivative_2d([[maybe_unused]] E&& input, [[maybe_unused]] F&& out
  */
 template <typename E, typename F>
 auto avg_pool_derivative_2d([[maybe_unused]] E&& input, [[maybe_unused]] F&& output, size_t c1, size_t c2) {
+    return 1.0 / (c1 * c2);
+}
+
+/*!
+ * \brief Derivative of the 2D Average Pooling of the given matrix expression
+ * \param input The input
+ * \param output The output
+ * \param c1 the first pooling ratio
+ * \param c2 the second pooling ratio
+ * \return A expression representing the Derivative of 2D Average Pooling of the input expression.
+ */
+template <typename E, typename F>
+auto avg_pool_derivative_2d([[maybe_unused]] E&& input, [[maybe_unused]] F&& output, size_t c1, size_t c2, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2) {
     return 1.0 / (c1 * c2);
 }
 

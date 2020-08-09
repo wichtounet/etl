@@ -33,15 +33,19 @@ struct dyn_pool_derivative_expr : base_temporary_expr_bin<dyn_pool_derivative_ex
      */
     static constexpr bool gpu_computable = false;
 
-    size_t c1; ///< The pooling ratio for the first dimension
-    size_t c2; ///< The pooling ratio for the second dimension
-    size_t c3; ///< The pooling ratio for the third dimension
+    const size_t c1; ///< The pooling ratio for the first dimension
+    const size_t c2; ///< The pooling ratio for the second dimension
+    const size_t c3; ///< The pooling ratio for the third dimension
+
+    const size_t s1; ///< The stride for the first dimension
+    const size_t s2; ///< The stride for the second dimension
+    const size_t s3; ///< The stride for the third dimension
 
     /*!
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    explicit dyn_pool_derivative_expr(A a, B b, size_t c1, size_t c2, size_t c3) : base_type(a, b), c1(c1), c2(c2), c3(c3) {
+    explicit dyn_pool_derivative_expr(A a, B b, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3) : base_type(a, b), c1(c1), c2(c2), c3(c3), s1(s1), s2(s2), s3(s3) {
         //Nothing else to init
     }
 
@@ -60,7 +64,7 @@ struct dyn_pool_derivative_expr : base_temporary_expr_bin<dyn_pool_derivative_ex
         auto& a = this->a();
         auto& b = this->b();
 
-        Impl::apply(smart_forward(a), smart_forward(b), c, c1, c2, c3);
+        Impl::apply(smart_forward(a), smart_forward(b), c, c1, c2, c3, s1, s2, s3);
     }
 
     /*!
@@ -219,7 +223,21 @@ struct etl_traits<etl::dyn_pool_derivative_expr<A, B, Impl>> {
  */
 template <typename E, typename F>
 dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_2d> max_pool_derivative_2d(E&& input, F&& output, size_t c1, size_t c2) {
-    return dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_2d>{input, output, c1, c2, 0};
+    return dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_2d>{input, output, c1, c2, 0, c1, c2, 0};
+}
+
+/*!
+ * \brief Derivative of the 2D Max Pooling of the given matrix expression
+ * \param input The input
+ * \param output The output
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \return A expression representing the Derivative of 2D Max Pooling of the input expression.
+ */
+template <typename E, typename F>
+dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_2d> max_pool_derivative_2d(
+        E&& input, F&& output, size_t c1, size_t c2, size_t s1, size_t s2) {
+    return dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_2d>{input, output, c1, c2, 0, s1, s2, 0};
 }
 
 /*!
@@ -234,7 +252,7 @@ dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_2d>
 template <typename E, typename F>
 dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_3d> max_pool_derivative_3d(
     E&& input, F&& output, size_t c1, size_t c2, size_t c3) {
-    return dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_3d>{input, output, c1, c2, c3};
+    return dyn_pool_derivative_expr<detail::build_type<E>, F, impl::max_pool_derivative_3d>{input, output, c1, c2, c3, c1, c2, c3};
 }
 
 } //end of namespace etl

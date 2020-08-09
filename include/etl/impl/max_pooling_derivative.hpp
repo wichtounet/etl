@@ -25,16 +25,24 @@ struct max_pool_derivative_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, typename A, typename B, typename M>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, typename A, typename B, typename M>
     static void pool_derivative_block(const A& in, const B& out, M& m, size_t j, size_t k) {
         auto max = out(j, k);
 
         for (size_t jj = 0; jj < C1; ++jj) {
             for (size_t kk = 0; kk < C2; ++kk) {
-                if (max == in(j * C1 + jj, k * C2 + kk)) {
-                    m(j * C1 + jj, k * C2 + kk) = 1.0;
+                if constexpr (C1 == S1 && C2 == S2) {
+                    if (max == in(j * C1 + jj, k * C2 + kk)) {
+                        m(j * S1 + jj, k * S2 + kk) = 1.0;
+                    } else {
+                        m(j * S1 + jj, k * S2 + kk) = 0.0;
+                    }
                 } else {
-                    m(j * C1 + jj, k * C2 + kk) = 0.0;
+                    if (max == in(j * C1 + jj, k * C2 + kk)) {
+                        m(j * S1 + jj, k * S2 + kk) += 1.0;
+                    } else {
+                        m(j * S1 + jj, k * S2 + kk) += 0.0;
+                    }
                 }
             }
         }
@@ -48,14 +56,18 @@ struct max_pool_derivative_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_iff(is_2d<A>)>
+    template <size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3,typename A, typename B, typename M, cpp_enable_iff(is_2d<A>)>
     static void apply(A&& in, B&& out, M&& m) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
 
+        if constexpr (C1 != S1 || C2 != S2) {
+            m = 0;
+        }
+
         for (size_t j = 0; j < etl::dim<0>(out); ++j) {
             for (size_t k = 0; k < etl::dim<1>(out); ++k) {
-                pool_derivative_block<C1, C2>(in, out, m, j, k);
+                pool_derivative_block<C1, C2, S1, S2>(in, out, m, j, k);
             }
         }
 
@@ -74,15 +86,27 @@ struct max_pool_derivative_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename M>
-    static void pool_derivative_block(const A& in, const B& out, M& m, size_t j, size_t k, size_t c1, size_t c2) {
+    static void pool_derivative_block(const A& in, const B& out, M& m, size_t j, size_t k, size_t c1, size_t c2, size_t s1, size_t s2) {
         auto max = out(j, k);
 
-        for (size_t jj = 0; jj < c1; ++jj) {
-            for (size_t kk = 0; kk < c2; ++kk) {
-                if (max == in(j * c1 + jj, k * c2 + kk)) {
-                    m(j * c1 + jj, k * c2 + kk) = 1.0;
-                } else {
-                    m(j * c1 + jj, k * c2 + kk) = 0.0;
+        if (c1 == s1 && c2 == s2) {
+            for (size_t jj = 0; jj < c1; ++jj) {
+                for (size_t kk = 0; kk < c2; ++kk) {
+                    if (max == in(j * c1 + jj, k * c2 + kk)) {
+                        m(j * s1 + jj, k * s2 + kk) = 1.0;
+                    } else {
+                        m(j * s1 + jj, k * s2 + kk) = 0.0;
+                    }
+                }
+            }
+        } else {
+            for (size_t jj = 0; jj < c1; ++jj) {
+                for (size_t kk = 0; kk < c2; ++kk) {
+                    if (max == in(j * c1 + jj, k * c2 + kk)) {
+                        m(j * s1 + jj, k * s2 + kk) += 1.0;
+                    } else {
+                        m(j * s1 + jj, k * s2 + kk) += 0.0;
+                    }
                 }
             }
         }
@@ -97,13 +121,17 @@ struct max_pool_derivative_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename M, cpp_enable_iff(is_2d<A>)>
-    static void apply(A&& in, B&& out, M&& m, size_t c1, size_t c2, [[maybe_unused]] size_t c3) {
+    static void apply(A&& in, B&& out, M&& m, size_t c1, size_t c2, [[maybe_unused]] size_t c3, size_t s1, size_t s2, [[maybe_unused]] size_t s3) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
 
+        if (c1 != s1 || c2 != s2) {
+            m = 0;
+        }
+
         for (size_t j = 0; j < etl::dim<0>(out); ++j) {
             for (size_t k = 0; k < etl::dim<1>(out); ++k) {
-                pool_derivative_block(in, out, m, j, k, c1, c2);
+                pool_derivative_block(in, out, m, j, k, c1, c2, s1, s2);
             }
         }
 
@@ -121,13 +149,13 @@ struct max_pool_derivative_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_iff(!is_2d<A>)>
+    template <size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, typename A, typename B, typename M, cpp_enable_iff(!is_2d<A>)>
     static void apply(A&& in, B&& out, M& m) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
 
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
-            apply<C1, C2, C3>(in(i), out(i), m(i));
+            apply<C1, C2, C3, S1, S2, S3>(in(i), out(i), m(i));
         }
 
         m.invalidate_gpu();
@@ -143,12 +171,12 @@ struct max_pool_derivative_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename M, cpp_enable_iff(!is_2d<A>)>
-    static void apply(A&& in, B&& out, M& m, size_t c1, size_t c2, size_t c3) {
+    static void apply(A&& in, B&& out, M& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
 
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
-            apply(in(i), out(i), m(i), c1, c2, c3);
+            apply(in(i), out(i), m(i), c1, c2, c3, s1, s2, s3);
         }
 
         m.invalidate_gpu();
@@ -172,7 +200,7 @@ struct max_pool_derivative_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M>
+    template <size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, typename A, typename B, typename M>
     static void pool_derivative_block(const A& in, const B& out, M& m, size_t i, size_t j, size_t k) {
         auto max = out(i, j, k);
 
@@ -197,7 +225,7 @@ struct max_pool_derivative_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_iff(is_3d<A>)>
+    template <size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, typename A, typename B, typename M, cpp_enable_iff(is_3d<A>)>
     static void apply(A&& in, B&& out, M&& m) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
@@ -205,7 +233,7 @@ struct max_pool_derivative_3d {
         for (size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (size_t j = 0; j < etl::dim<1>(out); ++j) {
                 for (size_t k = 0; k < etl::dim<2>(out); ++k) {
-                    pool_derivative_block<C1, C2, C3>(in, out, m, i, j, k);
+                    pool_derivative_block<C1, C2, C3, S1, S2, S3>(in, out, m, i, j, k);
                 }
             }
         }
@@ -227,7 +255,18 @@ struct max_pool_derivative_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A, typename B, typename M>
-    static void pool_derivative_block(const A& in, const B& out, M& m, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3) {
+    static void pool_derivative_block(const A&                in,
+                                      const B&                out,
+                                      M&                      m,
+                                      size_t                  i,
+                                      size_t                  j,
+                                      size_t                  k,
+                                      size_t                  c1,
+                                      size_t                  c2,
+                                      size_t                  c3,
+                                      [[maybe_unused]] size_t s1,
+                                      [[maybe_unused]] size_t s2,
+                                      [[maybe_unused]] size_t s3) {
         auto max = out(i, j, k);
 
         for (size_t ii = 0; ii < c1; ++ii) {
@@ -252,14 +291,14 @@ struct max_pool_derivative_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A, typename B, typename M, cpp_enable_iff(is_3d<A>)>
-    static void apply(A&& in, B&& out, M&& m, size_t c1, size_t c2, size_t c3) {
+    static void apply(A&& in, B&& out, M&& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
 
         for (size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (size_t j = 0; j < etl::dim<1>(out); ++j) {
                 for (size_t k = 0; k < etl::dim<2>(out); ++k) {
-                    pool_derivative_block(in, out, m, i, j, k, c1, c2, c3);
+                    pool_derivative_block(in, out, m, i, j, k, c1, c2, c3, s1, s2, s3);
                 }
             }
         }
@@ -278,13 +317,13 @@ struct max_pool_derivative_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_iff(!is_3d<A>)>
+    template <size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, typename A, typename B, typename M, cpp_enable_iff(!is_3d<A>)>
     static void apply(A&& in, B&& out, M& m) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
 
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
-            apply<C1, C2, C3>(in(i), out(i), m(i));
+            apply<C1, C2, C3, S1, S2, S3>(in(i), out(i), m(i));
         }
 
         m.invalidate_gpu();
@@ -300,12 +339,13 @@ struct max_pool_derivative_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A, typename B, typename M, cpp_enable_iff(!is_3d<A>)>
-    static void apply(A&& in, B&& out, M& m, size_t c1, size_t c2, size_t c3) {
+    static void apply(
+            A&& in, B&& out, M& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3) {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
 
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
-            apply(in(i), out(i), m(i), c1, c2, c3);
+            apply(in(i), out(i), m(i), c1, c2, c3, s1, s2, s3);
         }
 
         m.invalidate_gpu();
