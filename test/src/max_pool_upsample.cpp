@@ -66,6 +66,25 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/max2/3", "[pooling]", Z, float, double) 
     REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
+TEMPLATE_TEST_CASE_2("pool_upsample/dyn/max2/3", "[pooling]", Z, float, double) {
+    etl::dyn_matrix<Z, 2> input(3, 3);
+    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+
+    etl::dyn_matrix<Z, 2> errors(2, 2);
+    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+
+    etl::dyn_matrix<Z, 2> output(2, 2);
+    output = etl::max_pool_2d(input, 2, 2, 1, 1);
+
+    etl::dyn_matrix<Z, 2> c1(3, 3);
+    etl::dyn_matrix<Z, 2> c2(3, 3);
+
+    c1 = etl::max_pool_derivative_2d(input, output, 2, 2, 1, 1) >> etl::upsample_2d(errors, 2, 2, 1, 1);
+    c2 = etl::max_pool_upsample_2d(input, output, errors, 2, 2, 1, 1);
+
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
+}
+
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/max2/deep/1", "[pooling]", Z, float, double) {
     etl::dyn_matrix<Z, 3> input(5, 9, 9);
     input = etl::uniform_generator<Z>(-1000.0, 1000.0);
@@ -161,6 +180,26 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/max3/deep/1", "[pooling]", Z, float, dou
     REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
+TEMPLATE_TEST_CASE_2("pool_derivative/max2/0", "[pooling]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0});
+    etl::fast_matrix<Z, 2, 2> b;
+    etl::fast_matrix<Z, 2, 2> errors({1.0, 2.0, 3.0, 4.0});
+
+    b = etl::max_pool_2d<2, 2, 1, 1>(a);
+
+    etl::fast_matrix<Z, 3, 3> c1;
+    etl::fast_matrix<Z, 3, 3> c2;
+
+    c1 = etl::max_pool_derivative_2d<2, 2, 1, 1>(a, b);
+
+    c1 = etl::upsample_2d<2, 2, 1, 1>(errors);
+
+    c1 = etl::max_pool_derivative_2d<2, 2, 1, 1>(a, b) >> etl::upsample_2d<2, 2, 1, 1>(errors);
+    c2 = etl::max_pool_upsample_2d<2, 2, 1, 1>(a, b, errors);
+
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
+}
+
 TEMPLATE_TEST_CASE_2("pool_upsample/max2/1", "[pooling]", Z, float, double) {
     etl::fast_matrix<Z, 4, 4> input;
     input = etl::uniform_generator<Z>(-1000.0, 1000.0);
@@ -214,6 +253,25 @@ TEMPLATE_TEST_CASE_2("pool_upsample/max2/3", "[pooling]", Z, float, double) {
 
     c1 = etl::max_pool_derivative_2d<2, 1>(input, output) >> etl::upsample_2d<2, 1>(errors);
     c2 = etl::max_pool_upsample_2d<2, 1>(input, output, errors);
+
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
+}
+
+TEMPLATE_TEST_CASE_2("pool_upsample/max2/4", "[pooling]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> input;
+    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+
+    etl::fast_matrix<Z, 2, 2> errors;
+    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+
+    etl::fast_matrix<Z, 2, 2> output;
+    output = etl::max_pool_2d<2, 2, 1, 1>(input);
+
+    etl::fast_matrix<Z, 3, 3> c1;
+    etl::fast_matrix<Z, 3, 3> c2;
+
+    c1 = etl::max_pool_derivative_2d<2, 2, 1, 1>(input, output) >> etl::upsample_2d<2, 2, 1, 1>(errors);
+    c2 = etl::max_pool_upsample_2d<2, 2, 1, 1>(input, output, errors);
 
     REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
