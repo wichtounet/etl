@@ -231,7 +231,7 @@ public:
     dyn_matrix_impl& operator=(dyn_matrix_impl&& rhs) noexcept {
         if (this != &rhs) {
             if (_memory) {
-                release(_memory, _size);
+                release(_memory, alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
             }
 
             _size       = rhs._size;
@@ -261,7 +261,7 @@ public:
                 new_memory[i] = _memory[i];
             }
 
-            release(_memory, _size);
+            release(_memory, alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
             _memory = new_memory;
         } else {
@@ -289,7 +289,7 @@ public:
                 new_memory[i] = _memory[i];
             }
 
-            release(_memory, _size);
+            release(_memory, alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
             _memory = new_memory;
         } else {
@@ -389,7 +389,7 @@ public:
      */
     ~dyn_matrix_impl() noexcept {
         if (_memory) {
-            release(_memory, _size);
+            release(_memory, alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
         }
     }
 
@@ -400,7 +400,7 @@ public:
      */
     void clear() {
         if (_memory) {
-            release(_memory, _size);
+            release(_memory, alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
         }
 
         _memory = nullptr;
