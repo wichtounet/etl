@@ -83,7 +83,11 @@ public:
      * \param rhs The matrix to copy
      */
     dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept(assert_nothrow) : base_type(rhs) {
-        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
+        if (_size) {
+            _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
+        } else {
+            _memory = nullptr;
+        }
 
         if (rhs.is_cpu_up_to_date()) {
             direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
