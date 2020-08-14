@@ -201,9 +201,16 @@ public:
     dyn_matrix_impl& operator=(const dyn_matrix_impl& rhs) noexcept(assert_nothrow) {
         if (this != &rhs) {
             if (!_size) {
+                cpp_assert(!_memory, "_size and _memory are not properly synced");
+
                 _size       = rhs._size;
                 _dimensions = rhs._dimensions;
-                _memory     = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
+
+                if (_size) {
+                    _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
+                } else {
+                    _memory = nullptr;
+                }
             } else {
                 validate_assign(*this, rhs);
             }
