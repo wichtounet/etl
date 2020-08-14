@@ -66,6 +66,37 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/3", "[pooling]", Z, float, double) 
     REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
 
+TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/3", "[pooling]", Z, float, double) {
+    etl::dyn_matrix<Z, 2> input(3, 3);
+    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+
+    etl::dyn_matrix<Z, 2> errors(2, 2);
+    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+
+    etl::dyn_matrix<Z, 2> output(2, 2);
+    output = etl::avg_pool_2d(input, 2, 2, 1, 1);
+
+    etl::dyn_matrix<Z, 2> c1(3, 3);
+    etl::dyn_matrix<Z, 2> c2(3, 3);
+
+    c1 = etl::avg_pool_derivative_2d(input, output, 2, 2, 1, 1) >> etl::upsample_2d(errors, 2, 2, 1, 1);
+    c2 = etl::avg_pool_upsample_2d(input, output, errors, 2, 2, 1, 1);
+
+    REQUIRE_EQUALS(c1(0, 0), c2(0, 0));
+    REQUIRE_EQUALS(c1(0, 1), c2(0, 1));
+    REQUIRE_EQUALS(c1(0, 2), c2(0, 2));
+
+    REQUIRE_EQUALS(c1(1, 0), c2(1, 0));
+    REQUIRE_EQUALS(c1(1, 1), c2(1, 1));
+    REQUIRE_EQUALS(c1(1, 2), c2(1, 2));
+
+    REQUIRE_EQUALS(c1(2, 0), c2(2, 0));
+    REQUIRE_EQUALS(c1(2, 1), c2(2, 1));
+    REQUIRE_EQUALS(c1(2, 2), c2(2, 2));
+
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
+}
+
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/deep/1", "[pooling]", Z, float, double) {
     etl::dyn_matrix<Z, 3> input(5, 9, 9);
     input = etl::uniform_generator<Z>(-1000.0, 1000.0);
