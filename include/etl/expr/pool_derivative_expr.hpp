@@ -232,4 +232,31 @@ pool_derivative_expr<detail::build_type<E>, F, C1, C2, C3, C1, C2, C3, impl::max
     return pool_derivative_expr<detail::build_type<E>, F, C1, C2, C3, C1, C2, C3, impl::max_pool_derivative_3d>{input, output};
 }
 
+/*!
+ * \brief Derivative of the 2D Avg Pooling of the given matrix expression
+ * \param input The input
+ * \param output The output
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \return A expression representing the Derivative of 2D Avg Pooling of the input expression.
+ */
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, typename E, typename F>
+pool_derivative_expr<detail::build_type<E>, F, C1, C2, 0, S1, S2, 0, impl::avg_pool_derivative_2d> avg_pool_derivative_2d(E&& input, F&& output) {
+    return pool_derivative_expr<detail::build_type<E>, F, C1, C2, 0, S1, S2, 0, impl::avg_pool_derivative_2d>{input, output};
+}
+
+/*!
+ * \brief Derivative of the 3D Avg Pooling of the given matrix expression
+ * \param input The input
+ * \param output The output
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \tparam C3 The third pooling ratio
+ * \return A expression representing the Derivative of 3D Avg Pooling of the input expression.
+ */
+template <size_t C1, size_t C2, size_t C3, typename E, typename F>
+pool_derivative_expr<detail::build_type<E>, F, C1, C2, C3, C1, C2, C3, impl::avg_pool_derivative_3d> avg_pool_derivative_3d(E&& input, F&& output) {
+    return pool_derivative_expr<detail::build_type<E>, F, C1, C2, C3, C1, C2, C3, impl::avg_pool_derivative_3d>{input, output};
+}
+
 } //end of namespace etl
