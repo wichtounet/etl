@@ -99,6 +99,8 @@ public:
      */
     dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)) {
         _memory     = rhs._memory;
+
+        rhs._size   = 0;
         rhs._memory = nullptr;
     }
 
