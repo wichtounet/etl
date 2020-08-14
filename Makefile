@@ -10,6 +10,9 @@ include make-utils/cpp-utils.mk
 # Use C++20
 $(eval $(call use_cpp20))
 
+# Use ASAN in debug mode
+$(eval $(call enable_asan_debug))
+
 # Configure the BLAS package to use
 ifneq (,$(ETL_BLAS_PKG))
 BLAS_PKG = $(ETL_BLAS_PKG)
