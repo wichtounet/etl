@@ -151,6 +151,8 @@ protected:
     static M* allocate(size_t n) {
         inc_counter("cpu:allocate");
 
+        cpp_assert(n, "Impossible allocate zero elements");
+
         M* memory = aligned_allocator<alignment>::template allocate<M>(n);
 
         cpp_assert(memory, "Impossible to allocate memory for dyn_matrix");
