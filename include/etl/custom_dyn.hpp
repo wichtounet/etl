@@ -55,9 +55,7 @@ private:
     using base_type::_memory;
     using base_type::_size;
 
-    using base_type::allocate;
     using base_type::check_invariants;
-    using base_type::release;
 
 public:
     using base_type::dim;
