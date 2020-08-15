@@ -81,86 +81,67 @@ struct conv_1d_same_expr : base_temporary_expr_bin<conv_1d_same_expr<A, B>, A, B
 
         constexpr_select const auto impl = detail::select_conv1_impl_new<conv_type::SAME, A, B, C>();
 
-//CPP17: if constexpr
-#ifdef ETL_PARALLEL_SUPPORT
-        if
-            constexpr_select(impl == etl::conv_impl::VEC) {
-                decltype(auto) input  = smart_forward(input_raw);
-                decltype(auto) kernel = smart_forward(kernel_raw);
+        if constexpr_select (impl == etl::conv_impl::VEC) {
+            inc_counter("impl:vec");
 
-                bool parallel_dispatch = detail::select_parallel(input, kernel, conv);
+            if constexpr (parallel_support) {
+                bool parallel_dispatch = detail::select_parallel(input_raw, kernel_raw, conv);
 
-                inc_counter("impl:vec");
-                engine_dispatch_1d([&](size_t first, size_t last) { impl::vec::conv1_same(input, kernel, conv, first, last); }, 0, etl::size(conv),
-                                   parallel_dispatch);
-            }
-        else if
-            constexpr_select(impl == etl::conv_impl::STD) {
-                decltype(auto) input  = smart_forward(input_raw);
-                decltype(auto) kernel = smart_forward(kernel_raw);
+                if (parallel_dispatch) {
+                    decltype(auto) input  = smart_forward(input_raw);
+                    decltype(auto) kernel = smart_forward(kernel_raw);
 
-                bool parallel_dispatch = detail::select_parallel(input, kernel, conv);
-
-                inc_counter("impl:std");
-                engine_dispatch_1d([&](size_t first, size_t last) { impl::standard::conv1_same(input, kernel, conv, first, last); }, 0, etl::size(conv),
-                                   parallel_dispatch);
-            }
-        else if
-            constexpr_select(impl == etl::conv_impl::EGBLAS) {
-                if constexpr (all_homogeneous<A, B, C>) {
-                    decltype(auto) input  = smart_forward_gpu(input_raw);
-                    decltype(auto) kernel = smart_forward_gpu(kernel_raw);
-
-                    input.ensure_gpu_up_to_date();
-                    kernel.ensure_gpu_up_to_date();
-
-                    conv.ensure_gpu_allocated();
-
-                    impl::egblas::conv1_same(etl::size(input_raw), etl::size(kernel_raw), value_type(1), input.gpu_memory(), 1, kernel.gpu_memory(), 1, conv.gpu_memory(), 1);
-
-                    conv.validate_gpu();
-                    conv.invalidate_cpu();
+                    engine_dispatch_1d(
+                            [&](size_t first, size_t last) { impl::vec::conv1_same(input, kernel, conv, first, last); }, 0, etl::size(conv), parallel_dispatch);
                 } else {
-                   cpp_unreachable("Invalid conv implementation selection");
+                    impl::vec::conv1_same(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
                 }
-            }
-        else {
-            cpp_unreachable("Invalid conv implementation selection");
-        }
-#else
-        if
-            constexpr_select(impl == etl::conv_impl::VEC) {
-                inc_counter("impl:vec");
+            } else {
                 impl::vec::conv1_same(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
             }
-        else if
-            constexpr_select(impl == etl::conv_impl::STD) {
-                inc_counter("impl:std");
+        } else if constexpr_select (impl == etl::conv_impl::STD) {
+            inc_counter("impl:std");
+
+            if constexpr (parallel_support) {
+                bool parallel_dispatch = detail::select_parallel(input_raw, kernel_raw, conv);
+
+                if (parallel_dispatch) {
+                    decltype(auto) input  = smart_forward(input_raw);
+                    decltype(auto) kernel = smart_forward(kernel_raw);
+
+                    engine_dispatch_1d([&](size_t first, size_t last) { impl::standard::conv1_same(input, kernel, conv, first, last); },
+                                       0,
+                                       etl::size(conv),
+                                       parallel_dispatch);
+                } else {
+                    impl::standard::conv1_same(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
+                }
+            } else {
                 impl::standard::conv1_same(smart_forward(input_raw), smart_forward(kernel_raw), conv, 0, etl::size(conv));
             }
-        else if
-            constexpr_select(impl == etl::conv_impl::EGBLAS) {
-                if constexpr (all_homogeneous<A, B, C>) {
-                    decltype(auto) input  = smart_forward_gpu(input_raw);
-                    decltype(auto) kernel = smart_forward_gpu(kernel_raw);
+        } else if constexpr_select (impl == etl::conv_impl::EGBLAS) {
+            inc_counter("impl:egblas");
 
-                    input.ensure_gpu_up_to_date();
-                    kernel.ensure_gpu_up_to_date();
+            if constexpr (all_homogeneous<A, B, C>) {
+                decltype(auto) input  = smart_forward_gpu(input_raw);
+                decltype(auto) kernel = smart_forward_gpu(kernel_raw);
 
-                    conv.ensure_gpu_allocated();
+                input.ensure_gpu_up_to_date();
+                kernel.ensure_gpu_up_to_date();
 
-                    impl::egblas::conv1_same(etl::size(input_raw), etl::size(kernel_raw), value_type(1), input.gpu_memory(), 1, kernel.gpu_memory(), 1, conv.gpu_memory(), 1);
+                conv.ensure_gpu_allocated();
 
-                    conv.validate_gpu();
-                    conv.invalidate_cpu();
-                } else {
-                   cpp_unreachable("Invalid conv implementation selection");
-                }
+                impl::egblas::conv1_same(
+                        etl::size(input_raw), etl::size(kernel_raw), value_type(1), input.gpu_memory(), 1, kernel.gpu_memory(), 1, conv.gpu_memory(), 1);
+
+                conv.validate_gpu();
+                conv.invalidate_cpu();
+            } else {
+                cpp_unreachable("Invalid conv implementation selection");
             }
-        else {
+        } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
-#endif
     }
 
     /*!
