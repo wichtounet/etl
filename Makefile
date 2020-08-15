@@ -10,8 +10,10 @@ include make-utils/cpp-utils.mk
 # Use C++20
 $(eval $(call use_cpp20))
 
+ifeq (,$(ETL_GPU))
 # Use ASAN in debug mode
 $(eval $(call enable_asan_debug))
+endif
 
 # Configure the BLAS package to use
 ifneq (,$(ETL_BLAS_PKG))
