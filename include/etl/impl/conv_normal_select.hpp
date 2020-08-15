@@ -43,6 +43,12 @@ constexpr etl::conv_impl select_default_conv1_impl_new(bool no_gpu) {
     }
 
     if (TT == conv_type::FULL) {
+        if (egblas_enabled && all_floating<I, K, C> && all_homogeneous<I, K, C> && impl::egblas::has_sconv1_full && !no_gpu) {
+            return etl::conv_impl::EGBLAS;
+        }
+    }
+
+    if (TT == conv_type::FULL) {
         if (impl::cufft::conv1_possible<I, K, C> && !no_gpu) {
             return etl::conv_impl::FFT_CUFFT;
         } else if (impl::blas::conv1_possible<I, K, C>) {

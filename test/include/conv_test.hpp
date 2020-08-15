@@ -668,14 +668,16 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
 #ifdef ETL_EGBLAS_MODE
 CONV_FUNCTOR(egblas_conv1_valid, c = selected_helper(etl::conv_impl::EGBLAS, (etl::conv_1d_valid(a, b))))
 CONV_FUNCTOR(egblas_conv1_same, c = selected_helper(etl::conv_impl::EGBLAS, (etl::conv_1d_same(a, b))))
+CONV_FUNCTOR(egblas_conv1_full, c = selected_helper(etl::conv_impl::EGBLAS, (etl::conv_1d_full(a, b))))
 
 #define CONV1_VALID_TEST_CASE_SECTION_EGBLAS CONV_TEST_CASE_SECTIONS(egblas_conv1_valid)
 #define CONV1_SAME_TEST_CASE_SECTION_EGBLAS CONV_TEST_CASE_SECTIONS(egblas_conv1_same)
+#define CONV1_FULL_TEST_CASE_SECTION_EGBLAS CONV_TEST_CASE_SECTIONS(egblas_conv1_full)
 
 #else
 #define CONV1_VALID_TEST_CASE_SECTION_EGBLAS
 #define CONV1_SAME_TEST_CASE_SECTION_EGBLAS
-
+#define CONV1_FULL_TEST_CASE_SECTION_EGBLAS
 #endif
 
 #define CONV_TEST_CASE_DECL(name, description)                                 \
@@ -704,6 +706,7 @@ CONV_FUNCTOR(egblas_conv1_same, c = selected_helper(etl::conv_impl::EGBLAS, (etl
         CONV1_FULL_TEST_CASE_SECTION_FFT_STD    \
         CONV1_FULL_TEST_CASE_SECTION_FFT_MKL    \
         CONV1_FULL_TEST_CASE_SECTION_FFT_CUFFT  \
+        CONV1_FULL_TEST_CASE_SECTION_EGBLAS     \
     }                                           \
     CONV_TEST_CASE_DEFN
 
