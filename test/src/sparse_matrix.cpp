@@ -49,12 +49,12 @@ TEMPLATE_TEST_CASE_2("sparse_matrix/init/2", "[mat][init][sparse]", Z, double, f
     REQUIRE_EQUALS(a.get(2, 0), Z(3.0));
     REQUIRE_EQUALS(a.get(2, 1), Z(0.0));
 
-    REQUIRE_EQUALS(a(0, 0), Z(1.0));
-    REQUIRE_EQUALS(a(0, 1), Z(0.0));
-    REQUIRE_EQUALS(a(1, 0), Z(0.0));
-    REQUIRE_EQUALS(a(1, 1), Z(2.0));
-    REQUIRE_EQUALS(a(2, 0), Z(3.0));
-    REQUIRE_EQUALS(a(2, 1), Z(0.0));
+    REQUIRE_DIRECT(a(0, 0) == Z(1.0));
+    REQUIRE_DIRECT(a(0, 1) == Z(0.0));
+    REQUIRE_DIRECT(a(1, 0) == Z(0.0));
+    REQUIRE_DIRECT(a(1, 1) == Z(2.0));
+    REQUIRE_DIRECT(a(2, 0) == Z(3.0));
+    REQUIRE_DIRECT(a(2, 1) == Z(0.0));
 }
 
 TEMPLATE_TEST_CASE_2("sparse_matrix/init/3", "[mat][init][sparse]", Z, double, float) {
@@ -72,12 +72,12 @@ TEMPLATE_TEST_CASE_2("sparse_matrix/init/3", "[mat][init][sparse]", Z, double, f
     REQUIRE_EQUALS(a.get(2, 0), Z(0.0));
     REQUIRE_EQUALS(a.get(2, 1), Z(0.01));
 
-    REQUIRE_EQUALS(a(0, 0), Z(0.0));
-    REQUIRE_EQUALS(a(0, 1), Z(1.2));
-    REQUIRE_EQUALS(a(1, 0), Z(0.0));
-    REQUIRE_EQUALS(a(1, 1), Z(2.0));
-    REQUIRE_EQUALS(a(2, 0), Z(0.0));
-    REQUIRE_EQUALS(a(2, 1), Z(0.01));
+    REQUIRE_DIRECT(a(0, 0) == Z(0.0));
+    REQUIRE_DIRECT(a(0, 1) == Z(1.2));
+    REQUIRE_DIRECT(a(1, 0) == Z(0.0));
+    REQUIRE_DIRECT(a(1, 1) == Z(2.0));
+    REQUIRE_DIRECT(a(2, 0) == Z(0.0));
+    REQUIRE_DIRECT(a(2, 1) == Z(0.01));
 }
 
 TEMPLATE_TEST_CASE_2("sparse_matrix/set/1", "[mat][set][sparse]", Z, double, float) {
@@ -237,12 +237,12 @@ TEMPLATE_TEST_CASE_2("sparse_matrix/erase/1", "[mat][erase][sparse]", Z, double,
 TEMPLATE_TEST_CASE_2("sparse_matrix/sequential/1", "[mat][erase][sparse]", Z, double, float) {
     etl::sparse_matrix<Z> a(3, 2, std::initializer_list<Z>({1.0, 0.0, 0.0, 2.0, 3.0, 0.0}));
 
-    REQUIRE_EQUALS(a[0], 1.0);
-    REQUIRE_EQUALS(a[1], 0.0);
-    REQUIRE_EQUALS(a[2], 0.0);
-    REQUIRE_EQUALS(a[3], 2.0);
-    REQUIRE_EQUALS(a[4], 3.0);
-    REQUIRE_EQUALS(a[5], 0.0);
+    REQUIRE_DIRECT(a[0] == 1.0);
+    REQUIRE_DIRECT(a[1] == 0.0);
+    REQUIRE_DIRECT(a[2] == 0.0);
+    REQUIRE_DIRECT(a[3] == 2.0);
+    REQUIRE_DIRECT(a[4] == 3.0);
+    REQUIRE_DIRECT(a[5] == 0.0);
 }
 
 TEMPLATE_TEST_CASE_2("sparse_matrix/add/1", "[mat][add][sparse]", Z, double, float) {

@@ -51,6 +51,12 @@ struct sparse_reference {
         matrix.set_hint(i, j, n, *ptr);
     }
 
+    sparse_reference(sparse_reference&) = delete;
+    sparse_reference& operator=(sparse_reference&) = delete;
+
+    sparse_reference(sparse_reference&&) = delete;
+    sparse_reference& operator=(sparse_reference&&) = delete;
+
     /*!
      * \brief Sets a new value to the proxy reference
      * \param rhs The new value
