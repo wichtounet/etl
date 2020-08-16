@@ -43,6 +43,9 @@ private:
     const size_t s1; ///< The stride for the first dimension
     const size_t s2; ///< The stride for the second dimension
 
+    const size_t p1; ///< The padding for the first dimension
+    const size_t p2; ///< The padding for the second dimension
+
     friend struct etl_traits<dyn_pool_upsample_2d_expr>;
 
 public:
@@ -50,7 +53,8 @@ public:
      * \brief Construct a new expression
      * \param a The sub expression
      */
-    dyn_pool_upsample_2d_expr(A a, B b, C c, size_t c1, size_t c2, size_t s1, size_t s2) : base_type(a, b, c), c1(c1), c2(c2), s1(s1), s2(s2) {
+    dyn_pool_upsample_2d_expr(A a, B b, C c, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) :
+            base_type(a, b, c), c1(c1), c2(c2), s1(s1), s2(s2), p1(p1), p2(p2) {
         //Nothing else to init
     }
 
@@ -70,8 +74,8 @@ public:
         cpp_assert(etl::size(result) == etl::size(a), "max_pool_upsample_2d:A and R must have the same size");
         cpp_assert(etl::size(b) == etl::size(c), "max_pool_upsample_2d:B and C must have the same size");
 
-        cpp_assert(etl::dim<D - 2>(a) == s1 * (etl::dim<D - 2>(b) - 1) + c1, "Invalid pooling dimensions for max_pool_upsample_2d");
-        cpp_assert(etl::dim<D - 1>(a) == s2 * (etl::dim<D - 1>(b) - 1) + c2, "Invalid pooling dimensions for max_pool_upsample_2d");
+        cpp_assert(etl::dim<D - 2>(a) == s1 * (etl::dim<D - 2>(b) - 1) - 2 * p1 + c1, "Invalid pooling dimensions for max_pool_upsample_2d");
+        cpp_assert(etl::dim<D - 1>(a) == s2 * (etl::dim<D - 1>(b) - 1) - 2 * p2 + c2, "Invalid pooling dimensions for max_pool_upsample_2d");
     }
 
     // Assignment functions
@@ -160,12 +164,12 @@ public:
             if
                 constexpr_select(impl == pool_impl::STD) {
                     inc_counter("impl:std");
-                    impl::standard::max_pool_upsample_2d::apply(smart_forward(a), smart_forward(b), smart_forward(c), result, c1, c2, s1, s2);
+                    impl::standard::max_pool_upsample_2d::apply(smart_forward(a), smart_forward(b), smart_forward(c), result, c1, c2, s1, s2, p1, p2);
                 }
             else if
                 constexpr_select(impl == pool_impl::CUDNN) {
                     inc_counter("impl:cudnn");
-                    impl::cudnn::max_pool_upsample_2d::apply(smart_forward_gpu(a), smart_forward_gpu(b), smart_forward_gpu(c), result, c1, c2, s1, s2);
+                    impl::cudnn::max_pool_upsample_2d::apply(smart_forward_gpu(a), smart_forward_gpu(b), smart_forward_gpu(c), result, c1, c2, s1, s2, p1, p2);
                 }
             else {
                 cpp_unreachable("Invalid pool implementation");
@@ -174,12 +178,12 @@ public:
             if
                 constexpr_select(impl == pool_impl::STD) {
                     inc_counter("impl:std");
-                    impl::standard::avg_pool_upsample_2d::apply(smart_forward(a), smart_forward(b), smart_forward(c), result, c1, c2, s1, s2);
+                    impl::standard::avg_pool_upsample_2d::apply(smart_forward(a), smart_forward(b), smart_forward(c), result, c1, c2, s1, s2, p1, p2);
                 }
             else if
                 constexpr_select(impl == pool_impl::CUDNN) {
                     inc_counter("impl:cudnn");
-                    impl::cudnn::avg_pool_upsample_2d::apply(smart_forward_gpu(a), smart_forward_gpu(b), smart_forward_gpu(c), result, c1, c2, s1, s2);
+                    impl::cudnn::avg_pool_upsample_2d::apply(smart_forward_gpu(a), smart_forward_gpu(b), smart_forward_gpu(c), result, c1, c2, s1, s2, p1, p2);
                 }
             else {
                 cpp_unreachable("Invalid pool implementation");
@@ -325,7 +329,7 @@ struct etl_traits<etl::dyn_pool_upsample_2d_expr<A, B, C, Max>> {
 template <typename A, typename B, typename C>
 dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, true> max_pool_upsample_2d(
     A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
-    return {input, output, errors, c1, c2, c1, c2};
+    return {input, output, errors, c1, c2, c1, c2, 0, 0};
 }
 
 /*!
@@ -338,8 +342,8 @@ dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::
  */
 template <typename A, typename B, typename C>
 dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, true> max_pool_upsample_2d(
-    A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t s1, size_t s2) {
-    return {input, output, errors, c1, c2, s1, s2};
+    A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
+    return {input, output, errors, c1, c2, s1, s2, p1, p2};
 }
 
 /*!
@@ -353,7 +357,7 @@ dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::
 template <typename A, typename B, typename C>
 dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, false> avg_pool_upsample_2d(
     A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
-    return {input, output, errors, c1, c2, c1, c2};
+    return {input, output, errors, c1, c2, c1, c2, 0, 0};
 }
 
 /*!
@@ -366,8 +370,8 @@ dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::
  */
 template <typename A, typename B, typename C>
 dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, false> avg_pool_upsample_2d(
-    A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t s1, size_t s2) {
-    return {input, output, errors, c1, c2, s1, s2};
+    A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
+    return {input, output, errors, c1, c2, s1, s2, p1, p2};
 }
 
 } //end of namespace etl

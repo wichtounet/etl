@@ -31,7 +31,7 @@ void unpool_2d(cudnnPoolingMode_t mode, A&& in, B&& out, C&& errors, M& m, size_
 
     decltype(auto) handle = start_cudnn();
 
-    auto pooling_desc = create_pooling_desc_wrapper(mode, c1, c2, s1, s2, 0, 0);
+    auto pooling_desc = create_pooling_desc_wrapper(mode, c1, c2, s1, s2, p1, p2);
 
     auto in_tensor     = create_tensor_wrapper(in);
     auto out_tensor    = create_tensor_wrapper(out);
@@ -110,7 +110,7 @@ struct max_pool_upsample_2d {
     template <typename A, typename B, typename C, typename M>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t s1, size_t s2) {
         if constexpr (decay_traits<A>::dimensions() < 5) {
-            unpool_2d(CUDNN_POOLING_MAX, in, out, errors, m, c1, c2, s1, s2);
+            unpool_2d(CUDNN_POOLING_MAX, in, out, errors, m, c1, c2, s1, s2, p1, p2);
         } else {
             // Deep handling
 
@@ -160,7 +160,7 @@ struct avg_pool_upsample_2d {
     template <typename A, typename B, typename C, typename M>
     static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t s1, size_t s2) {
         if constexpr (decay_traits<A>::dimensions() < 5) {
-            unpool_2d(CUDNN_POOLING_AVERAGE_COUNT_INCLUDE_PADDING, in, out, errors, m, c1, c2, s1, s2);
+            unpool_2d(CUDNN_POOLING_AVERAGE_COUNT_INCLUDE_PADDING, in, out, errors, m, c1, c2, s1, s2, p1, p2);
         } else {
             // Deep handling
             for (size_t i = 0; i < etl::dim<0>(in); ++i) {
@@ -217,7 +217,9 @@ struct max_pool_upsample_2d {
                       [[maybe_unused]] size_t c1,
                       [[maybe_unused]] size_t c2,
                       [[maybe_unused]] size_t s1,
-                      [[maybe_unused]] size_t s2
+                      [[maybe_unused]] size_t s2,
+                      [[maybe_unused]] size_t p1,
+                      [[maybe_unused]] size_t p2
                       ) {
         cpp_unreachable("Unsupported feature called: cudnn pool");
     }
@@ -265,7 +267,9 @@ struct avg_pool_upsample_2d {
                       [[maybe_unused]] size_t c1,
                       [[maybe_unused]] size_t c2,
                       [[maybe_unused]] size_t s1,
-                      [[maybe_unused]] size_t s2
+                      [[maybe_unused]] size_t s2,
+                      [[maybe_unused]] size_t p1,
+                      [[maybe_unused]] size_t p2
                       ) {
         cpp_unreachable("Unsupported feature called: cudnn pool");
     }

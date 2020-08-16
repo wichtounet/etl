@@ -322,8 +322,8 @@ dyn_pool_3d_expr<detail::build_type<E>, impl::avg_pool_3d> avg_pool_3d_forward(E
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t S1, size_t S2, typename A, typename B, typename C>
-pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, S1, S2, true> max_pool_backward(A&& input, B&& output, C&& errors) {
+template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename B, typename C>
+pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, S1, S2, P1, P2, true> max_pool_backward(A&& input, B&& output, C&& errors) {
     return {input, output, errors};
 }
 
@@ -378,8 +378,8 @@ dyn_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, typename A, typename B, typename C>
-pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, S1, S2, false> avg_pool_backward(A&& input, B&& output, C&& errors) {
+template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename B, typename C>
+pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, S1, S2, P1, P2, false> avg_pool_backward(A&& input, B&& output, C&& errors) {
     return {input, output, errors};
 }
 
