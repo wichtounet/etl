@@ -10,11 +10,14 @@
 #include <vector>
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/1", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     auto input = etl::make_dyn_matrix<Z>(4, 4);
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     auto errors = etl::make_dyn_matrix<Z>(2, 2);
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     auto output = etl::make_dyn_matrix<Z>(2, 2);
     output = etl::avg_pool_2d(input, 2, 2);
@@ -29,11 +32,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/1", "[pooling]", Z, float, double) 
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/2", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z, 2> input(9, 9);
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 2> errors(3, 3);
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 2> output(3, 3);
     output = etl::avg_pool_2d(input, 3, 3);
@@ -48,11 +54,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/2", "[pooling]", Z, float, double) 
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/3", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z, 2> input(6, 4);
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 2> errors(1, 4);
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 2> output(1, 4);
     output = etl::avg_pool_2d(input, 6, 1);
@@ -67,11 +76,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/3", "[pooling]", Z, float, double) 
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/3", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z, 2> input(3, 3);
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 2> errors(2, 2);
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 2> output(2, 2);
     output = etl::avg_pool_2d(input, 2, 2, 1, 1);
@@ -98,11 +110,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/3", "[pooling]", Z, float, double) 
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/deep/1", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z, 3> input(5, 9, 9);
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 3> errors(5, 3, 3);
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 3> output(5, 3, 3);
     output = etl::avg_pool_2d(input, 3, 3);
@@ -117,11 +132,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/deep/1", "[pooling]", Z, float, dou
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/1", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z, 3> input(2, 4, 4);
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 3> errors(2, 2, 2);
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 3> output(2, 2, 2);
     output = etl::avg_pool_3d(input, 1, 2, 2);
@@ -136,11 +154,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/1", "[pooling]", Z, float, double) 
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/2", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z, 3> input(2, 6, 9);
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 3> errors(1, 3, 3);
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 3> output(1, 3, 3);
     output = etl::avg_pool_3d(input, 2, 2, 3);
@@ -155,11 +176,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/2", "[pooling]", Z, float, double) 
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/3", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z, 3> input(3, 6, 9);
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 3> errors(1, 6, 3);
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 3> output(1, 6, 3);
     output = etl::avg_pool_3d(input, 3, 1, 3);
@@ -174,11 +198,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/3", "[pooling]", Z, float, double) 
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/deep/1", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z, 4> input(4, 3, 6, 9);
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 4> errors(4, 1, 6, 3);
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::dyn_matrix<Z, 4> output(4, 1, 6, 3);
     output = etl::avg_pool_3d(input, 3, 1, 3);
@@ -193,11 +220,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg3/deep/1", "[pooling]", Z, float, dou
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/avg2/1", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::fast_matrix<Z, 4, 4> input;
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 2, 2> errors;
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 2, 2> output;
     output = etl::avg_pool_2d<2, 2>(input);
@@ -212,11 +242,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg2/1", "[pooling]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/avg2/2", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::fast_matrix<Z, 8, 4> input;
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 4, 2> errors;
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 4, 2> output;
     output = etl::avg_pool_2d<2, 2>(input);
@@ -231,11 +264,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg2/2", "[pooling]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/avg2/3", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::fast_matrix<Z, 8, 4> input;
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 4, 4> errors;
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 4, 4> output;
     output = etl::avg_pool_2d<2, 1>(input);
@@ -250,11 +286,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg2/3", "[pooling]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/avg2/deep/1", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::fast_matrix<Z, 3, 8, 4> input;
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 3, 4, 4> errors;
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 3, 4, 4> output;
     output = etl::avg_pool_2d<2, 1>(input);
@@ -269,11 +308,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg2/deep/1", "[pooling]", Z, float, double)
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/avg3/1", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::fast_matrix<Z, 2, 4, 4> input;
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 1, 2, 2> errors;
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 1, 2, 2> output;
     output = etl::avg_pool_3d<2, 2, 2>(input);
@@ -288,11 +330,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg3/1", "[pooling]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/avg3/2", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::fast_matrix<Z, 4, 8, 8> input;
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 2, 4, 4> errors;
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 2, 4, 4> output;
     output = etl::avg_pool_3d<2, 2, 2>(input);
@@ -307,11 +352,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg3/2", "[pooling]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/avg3/3", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::fast_matrix<Z, 4, 8, 8> input;
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 2, 8, 8> errors;
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 2, 8, 8> output;
     output = etl::avg_pool_3d<2, 1, 1>(input);
@@ -326,11 +374,14 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg3/3", "[pooling]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/deep/avg3/1", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::fast_matrix<Z, 2, 2, 4, 4> input;
-    input = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 2, 1, 2, 2> errors;
-    errors = etl::uniform_generator<Z>(-1000.0, 1000.0);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
 
     etl::fast_matrix<Z, 2, 1, 2, 2> output;
     output = etl::avg_pool_3d<2, 2, 2>(input);

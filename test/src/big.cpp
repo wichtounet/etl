@@ -12,12 +12,15 @@
 // to make sure thresholds are reached
 
 TEMPLATE_TEST_CASE_2("big/add", "[big][add]", Z, double, float) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z> a(etl::parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> b(etl::parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> c(etl::parallel_threshold + 100, 1UL);
 
-    a = etl::uniform_generator(-1000.0, 5000.0);
-    b = etl::uniform_generator(-1000.0, 5000.0);
+    a = etl::uniform_generator(g, -1000.0, 5000.0);
+    b = etl::uniform_generator(g, -1000.0, 5000.0);
 
     c = a + b;
 
@@ -27,12 +30,15 @@ TEMPLATE_TEST_CASE_2("big/add", "[big][add]", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("big/sub", "[big][sub]", Z, double, float) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z> a(etl::parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> b(etl::parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> c(etl::parallel_threshold + 100, 1UL);
 
-    a = etl::uniform_generator(-1000.0, 5000.0);
-    b = etl::uniform_generator(-1000.0, 5000.0);
+    a = etl::uniform_generator(g, -1000.0, 5000.0);
+    b = etl::uniform_generator(g, -1000.0, 5000.0);
 
     c = a - b;
 
@@ -42,12 +48,15 @@ TEMPLATE_TEST_CASE_2("big/sub", "[big][sub]", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("big/mul", "[big][sub]", Z, double, float) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z> a(etl::parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> b(etl::parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> c(etl::parallel_threshold + 100, 1UL);
 
-    a = etl::uniform_generator(-1000.0, 5000.0);
-    b = etl::uniform_generator(-1000.0, 5000.0);
+    a = etl::uniform_generator(g, -1000.0, 5000.0);
+    b = etl::uniform_generator(g, -1000.0, 5000.0);
 
     c = a >> b;
 
@@ -57,12 +66,15 @@ TEMPLATE_TEST_CASE_2("big/mul", "[big][sub]", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("big/compound/add", "[big][add]", Z, double, float) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z> a(etl::parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> b(etl::parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> c(etl::parallel_threshold + 100, 1UL);
 
-    a = etl::uniform_generator(-1000.0, 5000.0);
-    b = etl::uniform_generator(-1000.0, 5000.0);
+    a = etl::uniform_generator(g, -1000.0, 5000.0);
+    b = etl::uniform_generator(g, -1000.0, 5000.0);
     c = 120.0;
 
     c += a + b;
@@ -73,12 +85,15 @@ TEMPLATE_TEST_CASE_2("big/compound/add", "[big][add]", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("big/compound/sub", "[big][add]", Z, double, float) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z> a(etl::parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> b(etl::parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> c(etl::parallel_threshold + 100, 1UL);
 
-    a = etl::uniform_generator(-1000.0, 5000.0);
-    b = etl::uniform_generator(-1000.0, 5000.0);
+    a = etl::uniform_generator(g, -1000.0, 5000.0);
+    b = etl::uniform_generator(g, -1000.0, 5000.0);
     c = 1200.0;
 
     c -= a + b;
@@ -89,12 +104,15 @@ TEMPLATE_TEST_CASE_2("big/compound/sub", "[big][add]", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("big/compound/mul", "[big][add]", Z, double, float) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z> a(etl::parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> b(etl::parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> c(etl::parallel_threshold + 100, 1UL);
 
-    a = etl::uniform_generator(-1000.0, 5000.0);
-    b = etl::uniform_generator(-1000.0, 5000.0);
+    a = etl::uniform_generator(g, -1000.0, 5000.0);
+    b = etl::uniform_generator(g, -1000.0, 5000.0);
     c = 1200.0;
 
     c *= a + b;
@@ -105,12 +123,15 @@ TEMPLATE_TEST_CASE_2("big/compound/mul", "[big][add]", Z, double, float) {
 }
 
 TEMPLATE_TEST_CASE_2("big/compound/div", "[big][add]", Z, double, float) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
     etl::dyn_matrix<Z> a(etl::parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> b(etl::parallel_threshold + 100, 1UL);
     etl::dyn_matrix<Z> c(etl::parallel_threshold + 100, 1UL);
 
-    a = etl::uniform_generator(1000.0, 5000.0);
-    b = etl::uniform_generator(1000.0, 5000.0);
+    a = etl::uniform_generator(g, 1000.0, 5000.0);
+    b = etl::uniform_generator(g, 1000.0, 5000.0);
     c = 1200.0;
 
     c /= a + b;

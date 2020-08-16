@@ -214,6 +214,20 @@ TEMPLATE_TEST_CASE_2("generators/uniform/3", "uniform", Z, float, double) {
     }
 }
 
+TEMPLATE_TEST_CASE_2("generators/uniform/4", "uniform", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
+    etl::dyn_matrix<Z> b(3, 2);
+
+    b = etl::uniform_generator<Z>(g, 1.0, 2.0) >> 4.0;
+
+    for (auto value : b) {
+        REQUIRE_DIRECT(value >= 4.0);
+        REQUIRE_DIRECT(value <= 8.0);
+    }
+}
+
 /// dropout_mask
 
 TEMPLATE_TEST_CASE_2("generators/dropout_mask/1", "uniform", Z, float, double) {
