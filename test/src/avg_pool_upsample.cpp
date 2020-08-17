@@ -94,17 +94,27 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/3", "[pooling]", Z, float, double) 
     c1 = etl::avg_pool_derivative_2d(input, output, 2, 2, 1, 1) >> etl::upsample_2d(errors, 2, 2, 1, 1);
     c2 = etl::avg_pool_upsample_2d(input, output, errors, 2, 2, 1, 1);
 
-    REQUIRE_EQUALS(c1(0, 0), c2(0, 0));
-    REQUIRE_EQUALS(c1(0, 1), c2(0, 1));
-    REQUIRE_EQUALS(c1(0, 2), c2(0, 2));
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
+}
 
-    REQUIRE_EQUALS(c1(1, 0), c2(1, 0));
-    REQUIRE_EQUALS(c1(1, 1), c2(1, 1));
-    REQUIRE_EQUALS(c1(1, 2), c2(1, 2));
+TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/4", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
 
-    REQUIRE_EQUALS(c1(2, 0), c2(2, 0));
-    REQUIRE_EQUALS(c1(2, 1), c2(2, 1));
-    REQUIRE_EQUALS(c1(2, 2), c2(2, 2));
+    etl::dyn_matrix<Z, 2> input(2, 2);
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
+
+    etl::dyn_matrix<Z, 2> errors(2, 2);
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
+
+    etl::dyn_matrix<Z, 2> output(2, 2);
+    output = etl::avg_pool_2d(input, 2, 2, 2, 2, 1, 1);
+
+    etl::dyn_matrix<Z, 2> c1(2, 2);
+    etl::dyn_matrix<Z, 2> c2(2, 2);
+
+    c1 = etl::avg_pool_derivative_2d(input, output, 2, 2, 2, 2, 1, 1) >> etl::upsample_2d(errors, 2, 2, 2, 2, 1, 1);
+    c2 = etl::avg_pool_upsample_2d(input, output, errors, 2, 2, 2, 2, 1, 1);
 
     REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
@@ -281,6 +291,28 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg2/3", "[pooling]", Z, float, double) {
 
     c1 = etl::avg_pool_derivative_2d<2, 1>(input, output) >> etl::upsample_2d<2, 1>(errors);
     c2 = etl::avg_pool_upsample_2d<2, 1>(input, output, errors);
+
+    REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
+}
+
+TEMPLATE_TEST_CASE_2("pool_upsample/avg2/4", "[pooling]", Z, float, double) {
+    std::random_device rd;
+    etl::random_engine g(rd());
+
+    etl::fast_matrix<Z, 4, 4> input;
+    input = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
+
+    etl::fast_matrix<Z, 3, 3> errors;
+    errors = etl::uniform_generator<Z>(g, -1000.0, 1000.0);
+
+    etl::fast_matrix<Z, 3, 3> output;
+    output = etl::avg_pool_2d<2, 2, 2, 2, 1, 1>(input);
+
+    etl::fast_matrix<Z, 4, 4> c1;
+    etl::fast_matrix<Z, 4, 4> c2;
+
+    c1 = etl::avg_pool_derivative_2d<2, 2, 2, 2, 1, 1>(input, output) >> etl::upsample_2d<2, 2, 2, 2, 1, 1>(errors);
+    c2 = etl::avg_pool_upsample_2d<2, 2, 2, 2, 1, 1>(input, output, errors);
 
     REQUIRE_DIRECT(approx_equals(c1, c2, base_eps_etl));
 }
