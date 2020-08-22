@@ -158,6 +158,11 @@ constexpr bool unroll_normal_loops = ETL_NO_UNROLL_NON_VECT_BOOL;
 constexpr bool relaxed = ETL_RELAXED_BOOL;
 
 /*!
+ * \brief Indicates if ETL is trying to generate results similar to CUDNN (default).
+ */
+constexpr bool cudnn_compatible = ETL_CUDNN_COMPATIBLE;
+
+/*!
  * \brief Cache size of the machine.
  */
 constexpr size_t cache_size = ETL_CACHE_SIZE;
