@@ -38,7 +38,6 @@ struct max_pool_derivative_2d {
                 for (size_t jj = 0; jj < C1; ++jj) {
                     for (size_t kk = 0; kk < C2; ++kk) {
                         if (base_j + jj >= 0 && base_k + kk >= 0 && base_j + jj < etl::dim<0>(m) && base_k + kk < etl::dim<1>(m)) {
-
                             if (max == in(base_j + jj, base_k + kk)) {
                                 m(base_j + jj, base_k + kk) = 1.0;
                             } else {
@@ -62,9 +61,11 @@ struct max_pool_derivative_2d {
                     }
                 } else {
                     if (max == in(j * S1 + jj, k * S2 + kk)) {
-                        m(j * S1 - P1 + jj, k * S2 - P2 + kk) += 1.0;
-                    } else {
-                        m(j * S1 - P1 + jj, k * S2 - P2 + kk) += 0.0;
+                        if constexpr (cudnn_compatible) {
+                            m(j * S1 - P1 + jj, k * S2 - P2 + kk) = 1.0;
+                        } else {
+                            m(j * S1 - P1 + jj, k * S2 - P2 + kk) += 1.0;
+                        }
                     }
                 }
             }
@@ -149,9 +150,11 @@ struct max_pool_derivative_2d {
             for (size_t jj = 0; jj < c1; ++jj) {
                 for (size_t kk = 0; kk < c2; ++kk) {
                     if (max == in(j * s1 + jj, k * s2 + kk)) {
-                        m(j * s1 - p1 + jj, k * s2 - p2 + kk) += 1.0;
-                    } else {
-                        m(j * s1 - p1 + jj, k * s2 - p2 + kk) += 0.0;
+                        if constexpr (cudnn_compatible) {
+                            m(j * s1 - p1 + jj, k * s2 - p2 + kk) = 1.0;
+                        } else {
+                            m(j * s1 - p1 + jj, k * s2 - p2 + kk) += 1.0;
+                        }
                     }
                 }
             }
