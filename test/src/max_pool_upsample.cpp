@@ -242,10 +242,6 @@ TEMPLATE_TEST_CASE_2("pool_derivative/max2/0", "[pooling]", Z, float, double) {
     etl::fast_matrix<Z, 3, 3> c1;
     etl::fast_matrix<Z, 3, 3> c2;
 
-    c1 = etl::max_pool_derivative_2d<2, 2, 1, 1>(a, b);
-
-    c1 = etl::upsample_2d<2, 2, 1, 1>(errors);
-
     c1 = etl::max_pool_derivative_2d<2, 2, 1, 1>(a, b) >> etl::upsample_2d<2, 2, 1, 1>(errors);
     c2 = etl::max_pool_upsample_2d<2, 2, 1, 1>(a, b, errors);
 
