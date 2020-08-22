@@ -26,7 +26,7 @@ namespace etl::impl::cudnn {
  * \param c2 The second dimension pooling ratio
  */
 template <typename A, typename B, typename C, typename M>
-void unpool_2d(cudnnPoolingMode_t mode, A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t s1, size_t s2) {
+void unpool_2d(cudnnPoolingMode_t mode, A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = std::remove_const_t<value_t<A>>;
 
     decltype(auto) handle = start_cudnn();
@@ -108,14 +108,14 @@ struct max_pool_upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M>
-    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t s1, size_t s2) {
+    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         if constexpr (decay_traits<A>::dimensions() < 5) {
             unpool_2d(CUDNN_POOLING_MAX, in, out, errors, m, c1, c2, s1, s2, p1, p2);
         } else {
             // Deep handling
 
             for (size_t i = 0; i < etl::dim<0>(in); ++i) {
-                apply(in(i), out(i), errors(i), m(i), c1, c2, s1, s2);
+                apply(in(i), out(i), errors(i), m(i), c1, c2, s1, s2, p1, p2);
             }
         }
     }
@@ -158,13 +158,13 @@ struct avg_pool_upsample_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename B, typename C, typename M>
-    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t s1, size_t s2) {
+    static void apply(A&& in, B&& out, C&& errors, M& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         if constexpr (decay_traits<A>::dimensions() < 5) {
             unpool_2d(CUDNN_POOLING_AVERAGE_COUNT_INCLUDE_PADDING, in, out, errors, m, c1, c2, s1, s2, p1, p2);
         } else {
             // Deep handling
             for (size_t i = 0; i < etl::dim<0>(in); ++i) {
-                apply(in(i), out(i), errors(i), m(i), c1, c2);
+                apply(in(i), out(i), errors(i), m(i), c1, c2, p1, p2);
             }
         }
     }
