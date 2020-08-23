@@ -40,6 +40,10 @@ struct max_pool_derivative_2d {
                         if (base_j + jj >= 0 && base_k + kk >= 0 && base_j + jj < etl::dim<0>(m) && base_k + kk < etl::dim<1>(m)) {
                             if (max == in(base_j + jj, base_k + kk)) {
                                 m(base_j + jj, base_k + kk) = 1.0;
+
+                                if constexpr (cudnn_compatible) {
+                                    return;
+                                }
                             } else {
                                 m(base_j + jj, base_k + kk) = 0.0;
                             }
@@ -53,18 +57,27 @@ struct max_pool_derivative_2d {
 
         for (size_t jj = 0; jj < C1; ++jj) {
             for (size_t kk = 0; kk < C2; ++kk) {
+                const size_t final_j = j * S1 - P1 + jj;
+                const size_t final_k = k * S2 - P2 + kk;
+
                 if constexpr (C1 == S1 && C2 == S2) {
-                    if (max == in(j * S1 + jj, k * S2 + kk)) {
-                        m(j * S1 - P1 + jj, k * S2 - P2 + kk) = 1.0;
+                    if (max == in(final_j, final_k)) {
+                        m(final_j, final_k) = 1.0;
+
+                        if constexpr (cudnn_compatible) {
+                            return;
+                        }
                     } else {
-                        m(j * S1 - P1 + jj, k * S2 - P2 + kk) = 0.0;
+                        m(final_j, final_k) = 0.0;
                     }
                 } else {
-                    if (max == in(j * S1 + jj, k * S2 + kk)) {
+                    if (max == in(final_j, final_k)) {
                         if constexpr (cudnn_compatible) {
-                            m(j * S1 - P1 + jj, k * S2 - P2 + kk) = 1.0;
+                            m(final_j, final_k) = 1.0;
+
+                            return;
                         } else {
-                            m(j * S1 - P1 + jj, k * S2 - P2 + kk) += 1.0;
+                            m(final_j, final_k) += 1.0;
                         }
                     }
                 }
@@ -125,6 +138,10 @@ struct max_pool_derivative_2d {
 
                             if (max == in(base_j + jj, base_k + kk)) {
                                 m(base_j + jj, base_k + kk) = 1.0;
+
+                                if constexpr (cudnn_compatible) {
+                                    return;
+                                }
                             } else {
                                 m(base_j + jj, base_k + kk) = 0.0;
                             }
@@ -139,21 +156,33 @@ struct max_pool_derivative_2d {
         if (c1 == s1 && c2 == s2) {
             for (size_t jj = 0; jj < c1; ++jj) {
                 for (size_t kk = 0; kk < c2; ++kk) {
-                    if (max == in(j * s1 + jj, k * s2 + kk)) {
-                        m(j * s1 - p1 + jj, k * s2 - p2 + kk) = 1.0;
+                    const size_t final_j = j * s1 - p1 + jj;
+                    const size_t final_k = k * s2 - p2 + kk;
+
+                    if (max == in(final_j, final_k)) {
+                        m(final_j, final_k) = 1.0;
+
+                        if constexpr (cudnn_compatible) {
+                            return;
+                        }
                     } else {
-                        m(j * s1 - p1 + jj, k * s2 - p2 + kk) = 0.0;
+                        m(final_j, final_k) = 0.0;
                     }
                 }
             }
         } else {
             for (size_t jj = 0; jj < c1; ++jj) {
                 for (size_t kk = 0; kk < c2; ++kk) {
-                    if (max == in(j * s1 + jj, k * s2 + kk)) {
+                    const size_t final_j = j * s1 - p1 + jj;
+                    const size_t final_k = k * s2 - p2 + kk;
+
+                    if (max == in(final_j, final_k)) {
                         if constexpr (cudnn_compatible) {
-                            m(j * s1 - p1 + jj, k * s2 - p2 + kk) = 1.0;
+                            m(final_j, final_k) = 1.0;
+
+                            return;
                         } else {
-                            m(j * s1 - p1 + jj, k * s2 - p2 + kk) += 1.0;
+                            m(final_j, final_k) += 1.0;
                         }
                     }
                 }
