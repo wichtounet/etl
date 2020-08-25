@@ -300,6 +300,7 @@ $(eval $(call add_test_executable,etl_test_max_pool_2d,src/test.cpp src/max_pool
 $(eval $(call add_test_executable,etl_test_max_pool_3d,src/test.cpp src/max_pool_3d.cpp))
 $(eval $(call add_test_executable,etl_test_max_pool_upsample,src/test.cpp src/max_pool_upsample.cpp))
 $(eval $(call add_test_executable,etl_test_max_pool_derivative,src/test.cpp src/max_pool_derivative.cpp))
+$(eval $(call add_test_executable,etl_test_avg_pool_derivative,src/test.cpp src/avg_pool_derivative.cpp))
 $(eval $(call add_test_executable,etl_test_memory_slice,src/test.cpp src/memory_slice.cpp))
 $(eval $(call add_test_executable,etl_test_merge,src/test.cpp src/merge.cpp))
 $(eval $(call add_test_executable,etl_test_ml,src/test.cpp src/ml.cpp))
