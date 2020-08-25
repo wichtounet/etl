@@ -481,7 +481,7 @@ struct avg_pool_derivative_2d {
 
         for (size_t jj = 0; jj < C1; ++jj) {
             for (size_t kk = 0; kk < C2; ++kk) {
-                if constexpr (C1 == S1 && C2 == S2) {
+                if constexpr ((C1 == S1 && C2 == S2) || cudnn_compatible) {
                     m(j * S1 - P1 + jj, k * S2 - P2 + kk) = 1.0 / (C1 * C2);
                 } else {
                     m(j * S1 - P1 + jj, k * S2 - P2 + kk) += 1.0 / (C1 * C2);
@@ -503,7 +503,7 @@ struct avg_pool_derivative_2d {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
 
-        if constexpr (C1 != S1 || C2 != S2) {
+        if constexpr (!cudnn_compatible && (C1 != S1 || C2 != S2)) {
             m = 0;
         }
 
@@ -548,7 +548,7 @@ struct avg_pool_derivative_2d {
             }
         }
 
-        if (c1 == s1 && c2 == s2) {
+        if ((c1 == s1 && c2 == s2) || cudnn_compatible) {
             for (size_t jj = 0; jj < c1; ++jj) {
                 for (size_t kk = 0; kk < c2; ++kk) {
                     m(j * s1 - p1 + jj, k * s2 - p2 + kk) = 1.0 / (c1 * c2);
@@ -576,7 +576,7 @@ struct avg_pool_derivative_2d {
         in.ensure_cpu_up_to_date();
         out.ensure_cpu_up_to_date();
 
-        if (c1 != s1 || c2 != s2) {
+        if (!cudnn_compatible && (c1 != s1 || c2 != s2)) {
             m = 0;
         }
 
