@@ -406,3 +406,37 @@ DYN_MP2_TEST_CASE("dyn_pooling/max2/12", "[pooling]") {
     REQUIRE_EQUALS(b(2, 1), 4.0);
     REQUIRE_EQUALS(b(2, 2), 4.0);
 }
+
+DYN_MP2_TEST_CASE("dyn_pooling/max2/13", "[pooling]") {
+    etl::fast_matrix<T, 4, 4> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0});
+    etl::fast_matrix<T, 4, 4> b;
+
+    Impl::apply(a, b, 2, 2, 2, 2, 2, 2);
+
+    // CUDNN does not return 0 for values pooled for a fully-padded block
+    // Instead, it uses -FLOAT_MAX as the default
+    T pad_value = T(0);
+    if (b(0, 0) == -std::numeric_limits<T>::max()) {
+        pad_value = -std::numeric_limits<T>::max();
+    }
+
+    REQUIRE_EQUALS(b(0, 0), pad_value);
+    REQUIRE_EQUALS(b(0, 1), pad_value);
+    REQUIRE_EQUALS(b(0, 2), pad_value);
+    REQUIRE_EQUALS(b(0, 3), pad_value);
+
+    REQUIRE_EQUALS(b(1, 0), pad_value);
+    REQUIRE_EQUALS(b(1, 1), 6.0);
+    REQUIRE_EQUALS(b(1, 2), 8.0);
+    REQUIRE_EQUALS(b(1, 3), pad_value);
+
+    REQUIRE_EQUALS(b(2, 0), pad_value);
+    REQUIRE_EQUALS(b(2, 1), 14.0);
+    REQUIRE_EQUALS(b(2, 2), 16.0);
+    REQUIRE_EQUALS(b(2, 3), pad_value);
+
+    REQUIRE_EQUALS(b(3, 0), pad_value);
+    REQUIRE_EQUALS(b(3, 1), pad_value);
+    REQUIRE_EQUALS(b(3, 2), pad_value);
+    REQUIRE_EQUALS(b(3, 3), pad_value);
+}
