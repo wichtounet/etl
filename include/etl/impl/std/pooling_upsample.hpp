@@ -1185,36 +1185,6 @@ struct avg_pool_upsample_2d {
 
     /*!
      * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
-     * \param m The storage matrix
-     * \param i The first index of the block
-     * \param j The second index of the block
-     * \tparam C1 The first dimension pooling ratio
-     * \tparam C2 The second dimension pooling ratio
-     */
-    template <typename B, typename M>
-    static void pool_block_2d_select(const B& out, M& m, size_t i, size_t j, size_t c1, size_t c2, size_t s1, size_t s2) {
-        size_t count = 0;
-
-        for (size_t ii = 0; ii < c1; ++ii) {
-            for (size_t jj = 0; jj < c2; ++jj) {
-                size_t i3 = i + ii;
-                size_t j3 = j + jj;
-
-                if (i3 >= 1 && (i3 - 1) / s1 < etl::dim<0>(out)) {
-                    if (j3 >= 1 && (j3 - 1) / s2 < etl::dim<1>(out)) {
-                        ++count;
-                    }
-                }
-            }
-        }
-
-        m(i, j) *= count;
-    }
-
-    /*!
-     * \brief Pool a block of the sub expression
      * \param errors The sub expression
      * \param m The storage matrix
      * \param i The first index of the block
@@ -1270,36 +1240,6 @@ struct avg_pool_upsample_2d {
                 m(q, i * s1 + ii, j * s2 + jj) += error / (c1 * c2);
             }
         }
-    }
-
-    /*!
-     * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
-     * \param m The storage matrix
-     * \param i The first index of the block
-     * \param j The second index of the block
-     * \tparam C1 The first dimension pooling ratio
-     * \tparam C2 The second dimension pooling ratio
-     */
-    template <typename B, typename M>
-    static void pool_block_3d_select(const B& out, M& m, size_t q, size_t i, size_t j, size_t c1, size_t c2, size_t s1, size_t s2) {
-        size_t count = 0;
-
-        for (size_t ii = 0; ii < c1; ++ii) {
-            for (size_t jj = 0; jj < c2; ++jj) {
-                size_t i3 = i + ii;
-                size_t j3 = j + jj;
-
-                if (i3 >= 1 && (i3 - 1) / s1 < etl::dim<0>(out)) {
-                    if (j3 >= 1 && (j3 - 1) / s2 < etl::dim<1>(out)) {
-                        ++count;
-                    }
-                }
-            }
-        }
-
-        m(q, i, j) *= count;
     }
 
     /*!
@@ -1361,36 +1301,6 @@ struct avg_pool_upsample_2d {
         }
     }
 
-    /*!
-     * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
-     * \param m The storage matrix
-     * \param i The first index of the block
-     * \param j The second index of the block
-     * \tparam C1 The first dimension pooling ratio
-     * \tparam C2 The second dimension pooling ratio
-     */
-    template <typename B, typename M>
-    static void pool_block_4d_select(const B& out, M& m, size_t p, size_t q, size_t i, size_t j, size_t c1, size_t c2, size_t s1, size_t s2) {
-        size_t count = 0;
-
-        for (size_t ii = 0; ii < c1; ++ii) {
-            for (size_t jj = 0; jj < c2; ++jj) {
-                size_t i3 = i + ii;
-                size_t j3 = j + jj;
-
-                if (i3 >= 1 && (i3 - 1) / s1 < etl::dim<0>(out)) {
-                    if (j3 >= 1 && (j3 - 1) / s2 < etl::dim<1>(out)) {
-                        ++count;
-                    }
-                }
-            }
-        }
-
-        m(p, q, i, j) *= count;
-    }
-
     // 2D Handling
 
     /*!
@@ -1416,12 +1326,6 @@ struct avg_pool_upsample_2d {
             for (size_t i = 0; i < etl::dim<0>(out); ++i) {
                 for (size_t j = 0; j < etl::dim<1>(out); ++j) {
                     pool_block_2d_upsample(errors, m, i, j, C1, C2, S1, S2);
-                }
-            }
-
-            for (size_t i = 0; i < etl::dim<0>(in); ++i) {
-                for (size_t j = 0; j < etl::dim<1>(in); ++j) {
-                    pool_block_2d_select(out, m, i, j, C1, C2, S1, S2);
                 }
             }
         }
@@ -1450,12 +1354,6 @@ struct avg_pool_upsample_2d {
             for (size_t i = 0; i < etl::dim<0>(out); ++i) {
                 for (size_t j = 0; j < etl::dim<1>(out); ++j) {
                     pool_block_2d_upsample(errors, m, i, j, c1, c2, s1, s2);
-                }
-            }
-
-            for (size_t i = 0; i < etl::dim<0>(in); ++i) {
-                for (size_t j = 0; j < etl::dim<1>(in); ++j) {
-                    pool_block_2d_select(out, m, i, j, c1, c2, s1, s2);
                 }
             }
         }
@@ -1488,12 +1386,6 @@ struct avg_pool_upsample_2d {
                     for (size_t i = 0; i < etl::dim<1>(out); ++i) {
                         for (size_t j = 0; j < etl::dim<2>(out); ++j) {
                             pool_block_3d_upsample(errors, m, q, i, j, C1, C2, S1, S2);
-                        }
-                    }
-
-                    for (size_t i = 0; i < etl::dim<1>(in); ++i) {
-                        for (size_t j = 0; j < etl::dim<2>(in); ++j) {
-                            pool_block_3d_select(out, m, q, i, j, C1, C2, S1, S2);
                         }
                     }
                 }
@@ -1534,12 +1426,6 @@ struct avg_pool_upsample_2d {
                             pool_block_3d_upsample(errors, m, q, i, j, c1, c2, s1, s2);
                         }
                     }
-
-                    for (size_t i = 0; i < etl::dim<1>(in); ++i) {
-                        for (size_t j = 0; j < etl::dim<2>(in); ++j) {
-                            pool_block_3d_select(out, m, q, i, j, c1, c2, s1, s2);
-                        }
-                    }
                 }
             }
         };
@@ -1577,12 +1463,6 @@ struct avg_pool_upsample_2d {
                         for (size_t i = 0; i < etl::dim<2>(out); ++i) {
                             for (size_t j = 0; j < etl::dim<3>(out); ++j) {
                                 pool_block_4d_upsample(errors, m, q, i, j, C1, C2, S1, S2);
-                            }
-                        }
-
-                        for (size_t i = 0; i < etl::dim<2>(in); ++i) {
-                            for (size_t j = 0; j < etl::dim<3>(in); ++j) {
-                                pool_block_4d_select(out, m, q, i, j, C1, C2, S1, S2);
                             }
                         }
                     }
@@ -1625,12 +1505,6 @@ struct avg_pool_upsample_2d {
                         for (size_t i = 0; i < etl::dim<2>(out); ++i) {
                             for (size_t j = 0; j < etl::dim<3>(out); ++j) {
                                 pool_block_4d_upsample(errors, m, q, i, j, c1, c2, s1, s2);
-                            }
-                        }
-
-                        for (size_t i = 0; i < etl::dim<2>(in); ++i) {
-                            for (size_t j = 0; j < etl::dim<3>(in); ++j) {
-                                pool_block_4d_select(out, m, q, i, j, c1, c2, s1, s2);
                             }
                         }
                     }
