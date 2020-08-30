@@ -370,3 +370,49 @@ TEMPLATE_TEST_CASE_2("pool_upsample/max2/5", "[pooling]", Z, float, double) {
     REQUIRE_EQUALS(result(1, 0), 300);
     REQUIRE_EQUALS(result(1, 1), 400);
 }
+
+TEMPLATE_TEST_CASE_2("pool_upsample/max2/6", "[pooling]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> input({2, 8, 7, 5, 4, 3, 7, 8, 1});
+    etl::fast_matrix<Z, 2, 2> errors({100, 200, 300, 400});
+
+    etl::fast_matrix<Z, 2, 2> output;
+    output = etl::max_pool_2d<2, 2, 1, 1>(input);
+
+    etl::fast_matrix<Z, 3, 3> result;
+    result = etl::max_pool_upsample_2d<2, 2, 1, 1>(input, output, errors);
+
+    REQUIRE_EQUALS(result(0, 0), 0);
+    REQUIRE_EQUALS(result(0, 1), 300);
+    REQUIRE_EQUALS(result(0, 2), 0);
+
+    REQUIRE_EQUALS(result(1, 0), 0);
+    REQUIRE_EQUALS(result(1, 1), 0);
+    REQUIRE_EQUALS(result(1, 2), 0);
+
+    REQUIRE_EQUALS(result(2, 0), 0);
+    REQUIRE_EQUALS(result(2, 1), 700);
+    REQUIRE_EQUALS(result(2, 2), 0);
+}
+
+TEMPLATE_TEST_CASE_2("pool_upsample/max2/7", "[pooling]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> input({2, 8, 7, 5, 9, 3, 7, 8, 1});
+    etl::fast_matrix<Z, 2, 2> errors({100, 200, 300, 400});
+
+    etl::fast_matrix<Z, 2, 2> output;
+    output = etl::max_pool_2d<2, 2, 1, 1>(input);
+
+    etl::fast_matrix<Z, 3, 3> result;
+    result = etl::max_pool_upsample_2d<2, 2, 1, 1>(input, output, errors);
+
+    REQUIRE_EQUALS(result(0, 0), 0);
+    REQUIRE_EQUALS(result(0, 1), 0);
+    REQUIRE_EQUALS(result(0, 2), 0);
+
+    REQUIRE_EQUALS(result(1, 0), 0);
+    REQUIRE_EQUALS(result(1, 1), 1000);
+    REQUIRE_EQUALS(result(1, 2), 0);
+
+    REQUIRE_EQUALS(result(2, 0), 0);
+    REQUIRE_EQUALS(result(2, 1), 0);
+    REQUIRE_EQUALS(result(2, 2), 0);
+}
