@@ -168,6 +168,40 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/4", "[pooling]", Z, float, double) 
     REQUIRE_EQUALS(result(1, 1), 100);
 }
 
+TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/5", "[pooling]", Z, float, double) {
+    etl::dyn_matrix<Z, 2> input(2, 2, etl::values<Z>(1, 2, 3, 4));
+    etl::dyn_matrix<Z, 2> errors(3, 3, etl::values<Z>(100, 200, 300, 400, 500, 600, 700, 800, 900));
+
+    etl::dyn_matrix<Z, 2> output(3, 3);
+    output = etl::avg_pool_2d(input, 2, 2, 1, 1, 1, 1);
+
+    etl::dyn_matrix<Z, 2> result(2, 2);
+    result = etl::avg_pool_upsample_2d(input, output, errors, 2, 2, 1, 1, 1, 1);
+
+    REQUIRE_EQUALS(result(0, 0), 300);
+    REQUIRE_EQUALS(result(0, 1), 400);
+
+    REQUIRE_EQUALS(result(1, 0), 600);
+    REQUIRE_EQUALS(result(1, 1), 700);
+}
+
+TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/6", "[pooling]", Z, float, double) {
+    etl::dyn_matrix<Z, 2> input(2, 2, etl::values<Z>(1, 2, 3, 4));
+    etl::dyn_matrix<Z, 2> errors(5, 5, etl::values<Z>(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500));
+
+    etl::dyn_matrix<Z, 2> output(5, 5);
+    output = etl::avg_pool_2d(input, 2, 2, 1, 1, 2, 2);
+
+    etl::dyn_matrix<Z, 2> result(2, 2);
+    result = etl::avg_pool_upsample_2d(input, output, errors, 2, 2, 1, 1, 2, 2);
+
+    REQUIRE_EQUALS(result(0, 0), 1000);
+    REQUIRE_EQUALS(result(0, 1), 1100);
+
+    REQUIRE_EQUALS(result(1, 0), 1500);
+    REQUIRE_EQUALS(result(1, 1), 1600);
+}
+
 TEMPLATE_TEST_CASE_2("pool_upsample/avg2/1", "[pooling]", Z, float, double) {
     etl::fast_matrix<Z, 4, 4> input({14, 1, 4, 15, 2, 6, 3, 11, 16, 10, 13, 7, 5, 12, 9, 8});
     etl::fast_matrix<Z, 2, 2> errors({100, 200, 300, 400});
@@ -292,4 +326,38 @@ TEMPLATE_TEST_CASE_2("pool_upsample/avg2/4", "[pooling]", Z, float, double) {
     REQUIRE_EQUALS(result(3, 1), 200);
     REQUIRE_EQUALS(result(3, 2), 200);
     REQUIRE_EQUALS(result(3, 3), 225);
+}
+
+TEMPLATE_TEST_CASE_2("pool_upsample/avg2/5", "[pooling]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> input{1, 2, 3, 4};
+    etl::fast_matrix<Z, 3, 3> errors({100, 200, 300, 400, 500, 600, 700, 800, 900});
+
+    etl::fast_matrix<Z, 3, 3> output;
+    output = etl::avg_pool_2d<2, 2, 1, 1, 1, 1>(input);
+
+    etl::fast_matrix<Z, 2, 2> result;
+    result = etl::avg_pool_upsample_2d<2, 2, 1, 1, 1, 1>(input, output, errors);
+
+    REQUIRE_EQUALS(result(0, 0), 300);
+    REQUIRE_EQUALS(result(0, 1), 400);
+
+    REQUIRE_EQUALS(result(1, 0), 600);
+    REQUIRE_EQUALS(result(1, 1), 700);
+}
+
+TEMPLATE_TEST_CASE_2("pool_upsample/avg2/6", "[pooling]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> input{1, 2, 3, 4};
+    etl::fast_matrix<Z, 5, 5> errors({100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500});
+
+    etl::fast_matrix<Z, 5, 5> output;
+    output = etl::avg_pool_2d<2, 2, 1, 1, 2, 2>(input);
+
+    etl::fast_matrix<Z, 2, 2> result;
+    result = etl::avg_pool_upsample_2d<2, 2, 1, 1, 2, 2>(input, output, errors);
+
+    REQUIRE_EQUALS(result(0, 0), 1000);
+    REQUIRE_EQUALS(result(0, 1), 1100);
+
+    REQUIRE_EQUALS(result(1, 0), 1500);
+    REQUIRE_EQUALS(result(1, 1), 1600);
 }
