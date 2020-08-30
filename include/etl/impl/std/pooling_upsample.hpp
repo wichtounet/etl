@@ -50,12 +50,22 @@ struct max_pool_upsample_2d {
             }
         }
 
-        for (size_t ii = 0; ii < C1; ++ii) {
-            for (size_t jj = 0; jj < C2; ++jj) {
-                if (max == in(i * S1 - P1 + ii, j * S2 - P2 + jj)) {
-                    m(i * S1 - P1 + ii, j * S2 - P2 + jj) = error;
-                } else {
-                    m(i * S1 - P1 + ii, j * S2 - P2 + jj) = 0.0;
+        if constexpr (S1 == C1 && S2 == C2) {
+            for (size_t ii = 0; ii < C1; ++ii) {
+                for (size_t jj = 0; jj < C2; ++jj) {
+                    if (max == in(i * S1 - P1 + ii, j * S2 - P2 + jj)) {
+                        m(i * S1 - P1 + ii, j * S2 - P2 + jj) = error;
+                    } else {
+                        m(i * S1 - P1 + ii, j * S2 - P2 + jj) = 0.0;
+                    }
+                }
+            }
+        } else {
+            for (size_t ii = 0; ii < C1; ++ii) {
+                for (size_t jj = 0; jj < C2; ++jj) {
+                    if (max == in(i * S1 - P1 + ii, j * S2 - P2 + jj)) {
+                        m(i * S1 - P1 + ii, j * S2 - P2 + jj) += error;
+                    }
                 }
             }
         }
@@ -98,12 +108,22 @@ struct max_pool_upsample_2d {
             }
         }
 
-        for (size_t ii = 0; ii < C1; ++ii) {
-            for (size_t jj = 0; jj < C2; ++jj) {
-                if (max == in(q, i * S1 + ii, j * S2 + jj)) {
-                    m(q, i * S1 - P1 + ii, j * S2 - P2 + jj) = error;
-                } else {
-                    m(q, i * S1 - P1 + ii, j * S2 - P2 + jj) = 0.0;
+        if constexpr (S1 == C1 && S2 == C2) {
+            for (size_t ii = 0; ii < C1; ++ii) {
+                for (size_t jj = 0; jj < C2; ++jj) {
+                    if (max == in(q, i * S1 + ii, j * S2 + jj)) {
+                        m(q, i * S1 - P1 + ii, j * S2 - P2 + jj) = error;
+                    } else {
+                        m(q, i * S1 - P1 + ii, j * S2 - P2 + jj) = 0.0;
+                    }
+                }
+            }
+        } else {
+            for (size_t ii = 0; ii < C1; ++ii) {
+                for (size_t jj = 0; jj < C2; ++jj) {
+                    if (max == in(q, i * S1 + ii, j * S2 + jj)) {
+                        m(q, i * S1 - P1 + ii, j * S2 - P2 + jj) += error;
+                    }
                 }
             }
         }
@@ -146,12 +166,22 @@ struct max_pool_upsample_2d {
             }
         }
 
-        for (size_t ii = 0; ii < C1; ++ii) {
-            for (size_t jj = 0; jj < C2; ++jj) {
-                if (max == in(p, q, i * S1 + ii, j * S2 + jj)) {
-                    m(p, q, i * S1 - P1 + ii, j * S2 - P2 + jj) += error;
-                } else {
-                    m(p, q, i * S1 - P1 + ii, j * S2 - P2 + jj) += 0.0;
+        if constexpr (S1 == C1 && S2 == C2) {
+            for (size_t ii = 0; ii < C1; ++ii) {
+                for (size_t jj = 0; jj < C2; ++jj) {
+                    if (max == in(p, q, i * S1 + ii, j * S2 + jj)) {
+                        m(p, q, i * S1 - P1 + ii, j * S2 - P2 + jj) = error;
+                    } else {
+                        m(p, q, i * S1 - P1 + ii, j * S2 - P2 + jj) = 0.0;
+                    }
+                }
+            }
+        } else {
+            for (size_t ii = 0; ii < C1; ++ii) {
+                for (size_t jj = 0; jj < C2; ++jj) {
+                    if (max == in(p, q, i * S1 + ii, j * S2 + jj)) {
+                        m(p, q, i * S1 - P1 + ii, j * S2 - P2 + jj) += error;
+                    }
                 }
             }
         }
@@ -194,70 +224,25 @@ struct max_pool_upsample_2d {
             }
         }
 
-        for (size_t ii = 0; ii < c1; ++ii) {
-            for (size_t jj = 0; jj < c2; ++jj) {
-                if (max == in(i * s1 + ii, j * s2 + jj)) {
-                    m(i * s1 - p1 + ii, j * s2 - p2 + jj) = error;
-                } else {
-                    m(i * s1 - p1 + ii, j * s2 - p2 + jj) = 0.0;
+        if (s1 == c1 && s2 == c2) {
+            for (size_t ii = 0; ii < c1; ++ii) {
+                for (size_t jj = 0; jj < c2; ++jj) {
+                    if (max == in(i * s1 + ii, j * s2 + jj)) {
+                        m(i * s1 - p1 + ii, j * s2 - p2 + jj) = error;
+                    } else {
+                        m(i * s1 - p1 + ii, j * s2 - p2 + jj) = 0.0;
+                    }
                 }
             }
-        }
-    }
-
-    /*!
-     * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
-     * \param m The storage matrix
-     * \param i The first index of the block
-     * \param j The second index of the block
-     * \tparam C1 The first dimension pooling ratio
-     * \tparam C2 The second dimension pooling ratio
-     */
-    template <typename C, typename M>
-    static void pool_block_2d_upsample(const C& errors, M& m, size_t i, size_t j, size_t c1, size_t c2, size_t s1, size_t s2) {
-        auto error = errors(i, j);
-
-        for (size_t ii = 0; ii < c1; ++ii) {
-            for (size_t jj = 0; jj < c2; ++jj) {
-                m(i * s1 + ii, j * s2 + jj) += error;
-            }
-        }
-    }
-
-    /*!
-     * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
-     * \param m The storage matrix
-     * \param i The first index of the block
-     * \param j The second index of the block
-     * \tparam C1 The first dimension pooling ratio
-     * \tparam C2 The second dimension pooling ratio
-     */
-    template <typename A, typename B, typename M>
-    static void pool_block_2d_select(const A& in, const B& out, M& m, size_t i, size_t j, size_t c1, size_t c2, size_t s1, size_t s2) {
-        auto value = in(i, j);
-
-        size_t count = 0;
-
-        for (size_t ii = 0; ii < c1; ++ii) {
-            for (size_t jj = 0; jj < c2; ++jj) {
-                size_t i3 = i + ii;
-                size_t j3 = j + jj;
-
-                if (i3 >= 1 && (i3 - 1) / s1 < etl::dim<0>(out)) {
-                    if (j3 >= 1 && (j3 - 1) / s2 < etl::dim<1>(out)) {
-                        if (value == out((i3 - 1) / s1, (j3 - 1) / s2)) {
-                            ++count;
-                        }
+        } else {
+            for (size_t ii = 0; ii < c1; ++ii) {
+                for (size_t jj = 0; jj < c2; ++jj) {
+                    if (max == in(i * s1 + ii, j * s2 + jj)) {
+                        m(i * s1 - p1 + ii, j * s2 - p2 + jj) += error;
                     }
                 }
             }
         }
-
-        m(i, j) *= count;
     }
 
     /*!
@@ -297,70 +282,25 @@ struct max_pool_upsample_2d {
             }
         }
 
-        for (size_t ii = 0; ii < c1; ++ii) {
-            for (size_t jj = 0; jj < c2; ++jj) {
-                if (max == in(q, i * s1 + ii, j * s2 + jj)) {
-                    m(q, i * s1 + ii, j * s2 + jj) = error;
-                } else {
-                    m(q, i * s1 + ii, j * s2 + jj) = 0.0;
+        if (s1 == c1 && s2 == c2) {
+            for (size_t ii = 0; ii < c1; ++ii) {
+                for (size_t jj = 0; jj < c2; ++jj) {
+                    if (max == in(q, i * s1 + ii, j * s2 + jj)) {
+                        m(q, i * s1 + ii, j * s2 + jj) = error;
+                    } else {
+                        m(q, i * s1 + ii, j * s2 + jj) = 0.0;
+                    }
                 }
             }
-        }
-    }
-
-    /*!
-     * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
-     * \param m The storage matrix
-     * \param i The first index of the block
-     * \param j The second index of the block
-     * \tparam C1 The first dimension pooling ratio
-     * \tparam C2 The second dimension pooling ratio
-     */
-    template <typename C, typename M>
-    static void pool_block_3d_upsample(const C& errors, M& m, size_t q, size_t i, size_t j, size_t c1, size_t c2, size_t s1, size_t s2) {
-        auto error = errors(q, i, j);
-
-        for (size_t ii = 0; ii < c1; ++ii) {
-            for (size_t jj = 0; jj < c2; ++jj) {
-                m(q, i * s1 + ii, j * s2 + jj) += error;
-            }
-        }
-    }
-
-    /*!
-     * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
-     * \param m The storage matrix
-     * \param i The first index of the block
-     * \param j The second index of the block
-     * \tparam C1 The first dimension pooling ratio
-     * \tparam C2 The second dimension pooling ratio
-     */
-    template <typename A, typename B, typename M>
-    static void pool_block_3d_select(const A& in, const B& out, M& m, size_t q, size_t i, size_t j, size_t c1, size_t c2, size_t s1, size_t s2) {
-        auto value = in(q, i, j);
-
-        size_t count = 0;
-
-        for (size_t ii = 0; ii < c1; ++ii) {
-            for (size_t jj = 0; jj < c2; ++jj) {
-                size_t i3 = i + ii;
-                size_t j3 = j + jj;
-
-                if (i3 >= 1 && (i3 - 1) / s1 < etl::dim<0>(out)) {
-                    if (j3 >= 1 && (j3 - 1) / s2 < etl::dim<1>(out)) {
-                        if (value == out(q, (i3 - 1) / s1, (j3 - 1) / s2)) {
-                            ++count;
-                        }
+        } else {
+            for (size_t ii = 0; ii < c1; ++ii) {
+                for (size_t jj = 0; jj < c2; ++jj) {
+                    if (max == in(q, i * s1 + ii, j * s2 + jj)) {
+                        m(q, i * s1 + ii, j * s2 + jj) += error;
                     }
                 }
             }
         }
-
-        m(q, i, j) *= count;
     }
 
     /*!
@@ -400,70 +340,25 @@ struct max_pool_upsample_2d {
             }
         }
 
-        for (size_t ii = 0; ii < c1; ++ii) {
-            for (size_t jj = 0; jj < c2; ++jj) {
-                if (max == in(p, q, i * s1 + ii, j * s2 + jj)) {
-                    m(p, q, i * s1 + ii, j * s2 + jj) = error;
-                } else {
-                    m(p, q, i * s1 + ii, j * s2 + jj) = 0.0;
+        if (s1 == c1 && s2 == c2) {
+            for (size_t ii = 0; ii < c1; ++ii) {
+                for (size_t jj = 0; jj < c2; ++jj) {
+                    if (max == in(p, q, i * s1 + ii, j * s2 + jj)) {
+                        m(p, q, i * s1 + ii, j * s2 + jj) = error;
+                    } else {
+                        m(p, q, i * s1 + ii, j * s2 + jj) = 0.0;
+                    }
                 }
             }
-        }
-    }
-
-    /*!
-     * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
-     * \param m The storage matrix
-     * \param i The first index of the block
-     * \param j The second index of the block
-     * \tparam C1 The first dimension pooling ratio
-     * \tparam C2 The second dimension pooling ratio
-     */
-    template <typename C, typename M>
-    static void pool_block_4d_upsample(const C& errors, M& m, size_t p, size_t q, size_t i, size_t j, size_t c1, size_t c2, size_t s1, size_t s2) {
-        auto error = errors(p, q, i, j);
-
-        for (size_t ii = 0; ii < c1; ++ii) {
-            for (size_t jj = 0; jj < c2; ++jj) {
-                m(p, q, i * s1 + ii, j * s2 + jj) += error;
-            }
-        }
-    }
-
-    /*!
-     * \brief Pool a block of the sub expression
-     * \param in The sub expression
-     * \param out The out matrix
-     * \param m The storage matrix
-     * \param i The first index of the block
-     * \param j The second index of the block
-     * \tparam C1 The first dimension pooling ratio
-     * \tparam C2 The second dimension pooling ratio
-     */
-    template <typename A, typename B, typename M>
-    static void pool_block_4d_select(const A& in, const B& out, M& m, size_t p, size_t q, size_t i, size_t j, size_t c1, size_t c2, size_t s1, size_t s2) {
-        auto value = in(p, q, i, j);
-
-        size_t count = 0;
-
-        for (size_t ii = 0; ii < c1; ++ii) {
-            for (size_t jj = 0; jj < c2; ++jj) {
-                size_t i3 = i + ii;
-                size_t j3 = j + jj;
-
-                if (i3 >= 1 && (i3 - 1) / s1 < etl::dim<0>(out)) {
-                    if (j3 >= 1 && (j3 - 1) / s2 < etl::dim<1>(out)) {
-                        if (value == out(p, q, (i3 - 1) / s1, (j3 - 1) / s2)) {
-                            ++count;
-                        }
+        } else {
+            for (size_t ii = 0; ii < c1; ++ii) {
+                for (size_t jj = 0; jj < c2; ++jj) {
+                    if (max == in(p, q, i * s1 + ii, j * s2 + jj)) {
+                        m(p, q, i * s1 + ii, j * s2 + jj) += error;
                     }
                 }
             }
         }
-
-        m(p, q, i, j) *= count;
     }
 
     // 2D Handling
@@ -477,27 +372,13 @@ struct max_pool_upsample_2d {
      */
     template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename B, typename C, typename M, cpp_enable_iff(is_2d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M&& m) {
-        if constexpr (S1 == C1 && S2 == C2) {
-            for (size_t i = 0; i < etl::dim<0>(out); ++i) {
-                for (size_t j = 0; j < etl::dim<1>(out); ++j) {
-                    pool_block_2d<C1, C2, S1, S2, P1, P2>(in, out, errors, m, i, j);
-                }
-            }
-        } else {
-            // Note: The stride versions are highly unoptimized
-
+        if constexpr (S1 != C1 || S2 != C2) {
             m = 0;
+        }
 
-            for (size_t i = 0; i < etl::dim<0>(out); ++i) {
-                for (size_t j = 0; j < etl::dim<1>(out); ++j) {
-                    pool_block_2d_upsample(errors, m, i, j, C1, C2, S1, S2);
-                }
-            }
-
-            for (size_t i = 0; i < etl::dim<0>(in); ++i) {
-                for (size_t j = 0; j < etl::dim<1>(in); ++j) {
-                    pool_block_2d_select(in, out, m, i, j, C1, C2, S1, S2);
-                }
+        for (size_t i = 0; i < etl::dim<0>(out); ++i) {
+            for (size_t j = 0; j < etl::dim<1>(out); ++j) {
+                pool_block_2d<C1, C2, S1, S2, P1, P2>(in, out, errors, m, i, j);
             }
         }
     }
@@ -511,27 +392,13 @@ struct max_pool_upsample_2d {
      */
     template <typename A, typename B, typename C, typename M, cpp_enable_iff(is_2d<A>)>
     static void apply(A&& in, B&& out, C&& errors, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
-        if (s1 == c1 && s2 == c2) {
-            for (size_t i = 0; i < etl::dim<0>(out); ++i) {
-                for (size_t j = 0; j < etl::dim<1>(out); ++j) {
-                    pool_block_2d(in, out, errors, m, i, j, c1, c2, s1, s2, p1, p2);
-                }
-            }
-        } else {
-            // Note: The stride versions are highly unoptimized
-
+        if (s1 != c1 || s2 != c2) {
             m = 0;
+        }
 
-            for (size_t i = 0; i < etl::dim<0>(out); ++i) {
-                for (size_t j = 0; j < etl::dim<1>(out); ++j) {
-                    pool_block_2d_upsample(errors, m, i, j, c1, c2, s1, s2);
-                }
-            }
-
-            for (size_t i = 0; i < etl::dim<0>(in); ++i) {
-                for (size_t j = 0; j < etl::dim<1>(in); ++j) {
-                    pool_block_2d_select(in, out, m, i, j, c1, c2, s1, s2);
-                }
+        for (size_t i = 0; i < etl::dim<0>(out); ++i) {
+            for (size_t j = 0; j < etl::dim<1>(out); ++j) {
+                pool_block_2d(in, out, errors, m, i, j, c1, c2, s1, s2, p1, p2);
             }
         }
     }
@@ -553,23 +420,9 @@ struct max_pool_upsample_2d {
 
         auto batch_fun = [&](const size_t first, const size_t last) {
             for (size_t q = first; q < last; ++q) {
-                if constexpr (S1 == C1 && S2 == C2) {
-                    for (size_t i = 0; i < etl::dim<1>(out); ++i) {
-                        for (size_t j = 0; j < etl::dim<2>(out); ++j) {
-                            pool_block_3d<C1, C2, S1, S2, P1, P2>(in, out, errors, m, q, i, j);
-                        }
-                    }
-                } else {
-                    for (size_t i = 0; i < etl::dim<1>(out); ++i) {
-                        for (size_t j = 0; j < etl::dim<2>(out); ++j) {
-                            pool_block_3d_upsample(errors, m, q, i, j, C1, C2, S1, S2);
-                        }
-                    }
-
-                    for (size_t i = 0; i < etl::dim<1>(in); ++i) {
-                        for (size_t j = 0; j < etl::dim<2>(in); ++j) {
-                            pool_block_3d_select(in, out, m, q, i, j, C1, C2, S1, S2);
-                        }
+                for (size_t i = 0; i < etl::dim<1>(out); ++i) {
+                    for (size_t j = 0; j < etl::dim<2>(out); ++j) {
+                        pool_block_3d<C1, C2, S1, S2, P1, P2>(in, out, errors, m, q, i, j);
                     }
                 }
             }
@@ -594,26 +447,10 @@ struct max_pool_upsample_2d {
         }
 
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if (s1 == c1 && s2 == c2) {
-                for (size_t q = first; q < last; ++q) {
-                    for (size_t i = 0; i < etl::dim<1>(out); ++i) {
-                        for (size_t j = 0; j < etl::dim<2>(out); ++j) {
-                            pool_block_3d(in, out, errors, m, q, i, j, c1, c2, s1, s2, p1, p2);
-                        }
-                    }
-                }
-            } else {
-                for (size_t q = first; q < last; ++q) {
-                    for (size_t i = 0; i < etl::dim<1>(out); ++i) {
-                        for (size_t j = 0; j < etl::dim<2>(out); ++j) {
-                            pool_block_3d_upsample(errors, m, q, i, j, c1, c2, s1, s2);
-                        }
-                    }
-
-                    for (size_t i = 0; i < etl::dim<1>(in); ++i) {
-                        for (size_t j = 0; j < etl::dim<2>(in); ++j) {
-                            pool_block_3d_select(in, out, m, q, i, j, c1, c2, s1, s2);
-                        }
+            for (size_t q = first; q < last; ++q) {
+                for (size_t i = 0; i < etl::dim<1>(out); ++i) {
+                    for (size_t j = 0; j < etl::dim<2>(out); ++j) {
+                        pool_block_3d(in, out, errors, m, q, i, j, c1, c2, s1, s2, p1, p2);
                     }
                 }
             }
@@ -642,23 +479,9 @@ struct max_pool_upsample_2d {
         auto batch_fun = [&](const size_t first, const size_t last) {
             for (size_t p = first; p < last; ++p) {
                 for (size_t q = 0; q < etl::dim<1>(out); ++q) {
-                    if constexpr (S1 == C1 && S2 == C2) {
-                        for (size_t i = 0; i < etl::dim<2>(out); ++i) {
-                            for (size_t j = 0; j < etl::dim<3>(out); ++j) {
-                                pool_block_4d<C1, C2, S1, S2, P1, P2>(in, out, errors, m, p, q, i, j);
-                            }
-                        }
-                    } else {
-                        for (size_t i = 0; i < etl::dim<2>(out); ++i) {
-                            for (size_t j = 0; j < etl::dim<3>(out); ++j) {
-                                pool_block_3d_upsample(errors, m, p, q, i, j, C1, C2, S1, S2);
-                            }
-                        }
-
-                        for (size_t i = 0; i < etl::dim<2>(in); ++i) {
-                            for (size_t j = 0; j < etl::dim<3>(in); ++j) {
-                                pool_block_3d_select(in, out, m, p, q, i, j, C1, C2, S1, S2);
-                            }
+                    for (size_t i = 0; i < etl::dim<2>(out); ++i) {
+                        for (size_t j = 0; j < etl::dim<3>(out); ++j) {
+                            pool_block_4d<C1, C2, S1, S2, P1, P2>(in, out, errors, m, p, q, i, j);
                         }
                     }
                 }
@@ -684,29 +507,11 @@ struct max_pool_upsample_2d {
         }
 
         auto batch_fun = [&](const size_t first, const size_t last) {
-            if(s1 == c1 && s2 == c2) {
-                for (size_t p = first; p < last; ++p) {
-                    for (size_t q = 0; q < etl::dim<1>(out); ++q) {
-                        for (size_t i = 0; i < etl::dim<2>(out); ++i) {
-                            for (size_t j = 0; j < etl::dim<3>(out); ++j) {
-                                pool_block_4d(in, out, errors, m, p, q, i, j, c1, c2, s1, s2, p1, p2);
-                            }
-                        }
-                    }
-                }
-            } else {
-                for (size_t p = first; p < last; ++p) {
-                    for (size_t q = 0; q < etl::dim<1>(out); ++q) {
-                        for (size_t i = 0; i < etl::dim<2>(out); ++i) {
-                            for (size_t j = 0; j < etl::dim<3>(out); ++j) {
-                                pool_block_3d_upsample(errors, m, p, q, i, j, c1, c2, s1, s2);
-                            }
-                        }
-
-                        for (size_t i = 0; i < etl::dim<2>(in); ++i) {
-                            for (size_t j = 0; j < etl::dim<3>(in); ++j) {
-                                pool_block_3d_select(in, out, m, p, q, i, j, c1, c2, s1, s2);
-                            }
+            for (size_t p = first; p < last; ++p) {
+                for (size_t q = 0; q < etl::dim<1>(out); ++q) {
+                    for (size_t i = 0; i < etl::dim<2>(out); ++i) {
+                        for (size_t j = 0; j < etl::dim<3>(out); ++j) {
+                            pool_block_4d(in, out, errors, m, p, q, i, j, c1, c2, s1, s2, p1, p2);
                         }
                     }
                 }
