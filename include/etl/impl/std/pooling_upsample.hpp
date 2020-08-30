@@ -37,10 +37,16 @@ struct max_pool_upsample_2d {
                 for (size_t ii = 0; ii < C1; ++ii) {
                     for (size_t jj = 0; jj < C2; ++jj) {
                         if (base_i + ii >= 0 && base_j + jj >= 0 && base_i + ii < etl::dim<0>(m) && base_j + jj < etl::dim<1>(m)) {
-                            if (max == in(base_i + ii, base_j + jj)) {
-                                m(base_i + ii, base_j + jj) = error;
+                            if constexpr (S1 == C1 && S2 == C2) {
+                                if (max == in(base_i + ii, base_j + jj)) {
+                                    m(base_i + ii, base_j + jj) = error;
+                                } else {
+                                    m(base_i + ii, base_j + jj) = 0.0;
+                                }
                             } else {
-                                m(base_i + ii, base_j + jj) = 0.0;
+                                if (max == in(base_i + ii, base_j + jj)) {
+                                    m(base_i + ii, base_j + jj) += error;
+                                }
                             }
                         }
                     }
@@ -95,10 +101,16 @@ struct max_pool_upsample_2d {
                 for (size_t ii = 0; ii < C1; ++ii) {
                     for (size_t jj = 0; jj < C2; ++jj) {
                         if (base_i + ii >= 0 && base_j + jj >= 0 && base_i + ii < etl::dim<1>(m) && base_j + jj < etl::dim<2>(m)) {
-                            if (max == in(q, base_i + ii, base_j + jj)) {
-                                m(q, base_i + ii, base_j + jj) = error;
+                            if constexpr (S1 == C1 && S2 == C2) {
+                                if (max == in(q, base_i + ii, base_j + jj)) {
+                                    m(q, base_i + ii, base_j + jj) = error;
+                                } else {
+                                    m(q, base_i + ii, base_j + jj) = 0.0;
+                                }
                             } else {
-                                m(q, base_i + ii, base_j + jj) = 0.0;
+                                if (max == in(q, base_i + ii, base_j + jj)) {
+                                    m(q, base_i + ii, base_j + jj) += error;
+                                }
                             }
                         }
                     }
@@ -153,10 +165,16 @@ struct max_pool_upsample_2d {
                 for (size_t ii = 0; ii < C1; ++ii) {
                     for (size_t jj = 0; jj < C2; ++jj) {
                         if (base_i + ii >= 0 && base_j + jj >= 0 && base_i + ii < etl::dim<2>(m) && base_j + jj < etl::dim<3>(m)) {
-                            if (max == in(p, q, base_i + ii, base_j + jj)) {
-                                m(p, q, base_i + ii, base_j + jj) = error;
+                            if constexpr (S1 == C1 && S2 == C2) {
+                                if (max == in(p, q, base_i + ii, base_j + jj)) {
+                                    m(p, q, base_i + ii, base_j + jj) = error;
+                                } else {
+                                    m(p, q, base_i + ii, base_j + jj) = 0.0;
+                                }
                             } else {
-                                m(p, q, base_i + ii, base_j + jj) = 0.0;
+                                if (max == in(p, q, base_i + ii, base_j + jj)) {
+                                    m(p, q, base_i + ii, base_j + jj) += error;
+                                }
                             }
                         }
                     }
@@ -211,10 +229,16 @@ struct max_pool_upsample_2d {
                 for (size_t ii = 0; ii < c1; ++ii) {
                     for (size_t jj = 0; jj < c2; ++jj) {
                         if (base_i + ii >= 0 && base_j + jj >= 0 && base_i + ii < etl::dim<0>(m) && base_j + jj < etl::dim<1>(m)) {
-                            if (max == in(base_i + ii, base_j + jj)) {
-                                m(base_i + ii, base_j + jj) = error;
+                            if (s1 == c1 && s2 == c2) {
+                                if (max == in(base_i + ii, base_j + jj)) {
+                                    m(base_i + ii, base_j + jj) = error;
+                                } else {
+                                    m(base_i + ii, base_j + jj) = 0.0;
+                                }
                             } else {
-                                m(base_i + ii, base_j + jj) = 0.0;
+                                if (max == in(base_i + ii, base_j + jj)) {
+                                    m(base_i + ii, base_j + jj) += error;
+                                }
                             }
                         }
                     }
@@ -227,7 +251,7 @@ struct max_pool_upsample_2d {
         if (s1 == c1 && s2 == c2) {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
-                    if (max == in(i * s1 + ii, j * s2 + jj)) {
+                    if (max == in(i * s1 - p1 + ii, j * s2 - p2 + jj)) {
                         m(i * s1 - p1 + ii, j * s2 - p2 + jj) = error;
                     } else {
                         m(i * s1 - p1 + ii, j * s2 - p2 + jj) = 0.0;
@@ -237,7 +261,7 @@ struct max_pool_upsample_2d {
         } else {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
-                    if (max == in(i * s1 + ii, j * s2 + jj)) {
+                    if (max == in(i * s1 - p1 + ii, j * s2 - p2 + jj)) {
                         m(i * s1 - p1 + ii, j * s2 - p2 + jj) += error;
                     }
                 }
@@ -269,10 +293,16 @@ struct max_pool_upsample_2d {
                 for (size_t ii = 0; ii < c1; ++ii) {
                     for (size_t jj = 0; jj < c2; ++jj) {
                         if (base_i + ii >= 0 && base_j + jj >= 0 && base_i + ii < etl::dim<1>(m) && base_j + jj < etl::dim<2>(m)) {
-                            if (max == in(q, base_i + ii, base_j + jj)) {
-                                m(q, base_i + ii, base_j + jj) = error;
+                            if (s1 == c1 && s2 == c2) {
+                                if (max == in(q, base_i + ii, base_j + jj)) {
+                                    m(q, base_i + ii, base_j + jj) = error;
+                                } else {
+                                    m(q, base_i + ii, base_j + jj) = 0.0;
+                                }
                             } else {
-                                m(q, base_i + ii, base_j + jj) = 0.0;
+                                if (max == in(q, base_i + ii, base_j + jj)) {
+                                    m(q, base_i + ii, base_j + jj) += error;
+                                }
                             }
                         }
                     }
@@ -285,7 +315,7 @@ struct max_pool_upsample_2d {
         if (s1 == c1 && s2 == c2) {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
-                    if (max == in(q, i * s1 + ii, j * s2 + jj)) {
+                    if (max == in(q, i * s1 - p1 + ii, j * s2 - p2 + jj)) {
                         m(q, i * s1 + ii, j * s2 + jj) = error;
                     } else {
                         m(q, i * s1 + ii, j * s2 + jj) = 0.0;
@@ -295,7 +325,7 @@ struct max_pool_upsample_2d {
         } else {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
-                    if (max == in(q, i * s1 + ii, j * s2 + jj)) {
+                    if (max == in(q, i * s1 - p1 + ii, j * s2 - p2 + jj)) {
                         m(q, i * s1 + ii, j * s2 + jj) += error;
                     }
                 }
@@ -327,10 +357,16 @@ struct max_pool_upsample_2d {
                 for (size_t ii = 0; ii < c1; ++ii) {
                     for (size_t jj = 0; jj < c2; ++jj) {
                         if (base_i + ii >= 0 && base_j + jj >= 0 && base_i + ii < etl::dim<2>(m) && base_j + jj < etl::dim<3>(m)) {
-                            if (max == in(p, q, base_i + ii, base_j + jj)) {
-                                m(p, q, base_i + ii, base_j + jj) = error;
+                            if (s1 == c1 && s2 == c2) {
+                                if (max == in(p, q, base_i + ii, base_j + jj)) {
+                                    m(p, q, base_i + ii, base_j + jj) = error;
+                                } else {
+                                    m(p, q, base_i + ii, base_j + jj) = 0.0;
+                                }
                             } else {
-                                m(p, q, base_i + ii, base_j + jj) = 0.0;
+                                if (max == in(p, q, base_i + ii, base_j + jj)) {
+                                    m(p, q, base_i + ii, base_j + jj) += error;
+                                }
                             }
                         }
                     }
@@ -343,7 +379,7 @@ struct max_pool_upsample_2d {
         if (s1 == c1 && s2 == c2) {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
-                    if (max == in(p, q, i * s1 + ii, j * s2 + jj)) {
+                    if (max == in(p, q, i * s1 - p1 + ii, j * s2 - p2 + jj)) {
                         m(p, q, i * s1 + ii, j * s2 + jj) = error;
                     } else {
                         m(p, q, i * s1 + ii, j * s2 + jj) = 0.0;
@@ -353,7 +389,7 @@ struct max_pool_upsample_2d {
         } else {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
-                    if (max == in(p, q, i * s1 + ii, j * s2 + jj)) {
+                    if (max == in(p, q, i * s1 - p1 + ii, j * s2 - p2 + jj)) {
                         m(p, q, i * s1 + ii, j * s2 + jj) += error;
                     }
                 }
