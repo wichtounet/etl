@@ -10,6 +10,7 @@
 // Include all the modules
 
 #include "etl/impl/max_pooling_derivative.hpp"
+#include "etl/impl/avg_pooling_derivative.hpp"
 
 // Include the implementations
 
