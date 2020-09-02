@@ -316,9 +316,9 @@ struct max_pool_upsample_2d {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
                     if (max == in(q, i * s1 - p1 + ii, j * s2 - p2 + jj)) {
-                        m(q, i * s1 + ii, j * s2 + jj) = error;
+                        m(q, i * s1 - p1 + ii, j * s2 - p2 + jj) = error;
                     } else {
-                        m(q, i * s1 + ii, j * s2 + jj) = 0.0;
+                        m(q, i * s1 - p1 + ii, j * s2 - p2 + jj) = 0.0;
                     }
                 }
             }
@@ -326,7 +326,7 @@ struct max_pool_upsample_2d {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
                     if (max == in(q, i * s1 - p1 + ii, j * s2 - p2 + jj)) {
-                        m(q, i * s1 + ii, j * s2 + jj) += error;
+                        m(q, i * s1 - p1 + ii, j * s2 - p2 + jj) += error;
                     }
                 }
             }
@@ -380,9 +380,9 @@ struct max_pool_upsample_2d {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
                     if (max == in(p, q, i * s1 - p1 + ii, j * s2 - p2 + jj)) {
-                        m(p, q, i * s1 + ii, j * s2 + jj) = error;
+                        m(p, q, i * s1 - p1 + ii, j * s2 - p2 + jj) = error;
                     } else {
-                        m(p, q, i * s1 + ii, j * s2 + jj) = 0.0;
+                        m(p, q, i * s1 - p1 + ii, j * s2 - p2 + jj) = 0.0;
                     }
                 }
             }
@@ -390,7 +390,7 @@ struct max_pool_upsample_2d {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
                     if (max == in(p, q, i * s1 - p1 + ii, j * s2 - p2 + jj)) {
-                        m(p, q, i * s1 + ii, j * s2 + jj) += error;
+                        m(p, q, i * s1 - p1 + ii, j * s2 - p2 + jj) += error;
                     }
                 }
             }
