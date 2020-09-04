@@ -123,7 +123,7 @@ struct max_pool_upsample_2d {
         if constexpr (S1 == C1 && S2 == C2) {
             for (size_t ii = 0; ii < C1; ++ii) {
                 for (size_t jj = 0; jj < C2; ++jj) {
-                    if (max == in(q, i * S1 + ii, j * S2 + jj)) {
+                    if (max == in(q, i * S1 - P1 + ii, j * S2 - P2 + jj)) {
                         m(q, i * S1 - P1 + ii, j * S2 - P2 + jj) = error;
                     } else {
                         m(q, i * S1 - P1 + ii, j * S2 - P2 + jj) = 0.0;
@@ -133,7 +133,7 @@ struct max_pool_upsample_2d {
         } else {
             for (size_t ii = 0; ii < C1; ++ii) {
                 for (size_t jj = 0; jj < C2; ++jj) {
-                    if (max == in(q, i * S1 + ii, j * S2 + jj)) {
+                    if (max == in(q, i * S1 -P1 + ii, j * S2 -P2 + jj)) {
                         m(q, i * S1 - P1 + ii, j * S2 - P2 + jj) += error;
                     }
                 }
@@ -187,7 +187,7 @@ struct max_pool_upsample_2d {
         if constexpr (S1 == C1 && S2 == C2) {
             for (size_t ii = 0; ii < C1; ++ii) {
                 for (size_t jj = 0; jj < C2; ++jj) {
-                    if (max == in(p, q, i * S1 + ii, j * S2 + jj)) {
+                    if (max == in(p, q, i * S1 -P1+ ii, j * S2 -P2 + jj)) {
                         m(p, q, i * S1 - P1 + ii, j * S2 - P2 + jj) = error;
                     } else {
                         m(p, q, i * S1 - P1 + ii, j * S2 - P2 + jj) = 0.0;
@@ -197,7 +197,7 @@ struct max_pool_upsample_2d {
         } else {
             for (size_t ii = 0; ii < C1; ++ii) {
                 for (size_t jj = 0; jj < C2; ++jj) {
-                    if (max == in(p, q, i * S1 + ii, j * S2 + jj)) {
+                    if (max == in(p, q, i * S1 - P1 + ii, j * S2 - P2 + jj)) {
                         m(p, q, i * S1 - P1 + ii, j * S2 - P2 + jj) += error;
                     }
                 }
