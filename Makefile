@@ -7,8 +7,8 @@ default: release
 include make-utils/flags.mk
 include make-utils/cpp-utils.mk
 
-# Use C++20
-$(eval $(call use_cpp20))
+# Use C++23
+$(eval $(call use_cpp23))
 
 ifeq (,$(ETL_GPU))
 # Use ASAN in debug mode
