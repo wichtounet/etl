@@ -243,6 +243,8 @@ auto operator%(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<R
 
 // Compound operators
 
+// TODO: Generalize the change to std::forward and decltype(auto)
+
 /*!
  * \brief Compound addition of the right hand side to the left hand side
  * \param lhs The left hand side, will be changed
@@ -250,9 +252,9 @@ auto operator%(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<R
  * \return the left hand side
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_arithmetic_v<RE> && is_simple_lhs<LE>)>
-LE& operator+=(LE&& lhs, RE rhs) {
+decltype(auto) operator+=(LE&& lhs, RE rhs) {
     etl::scalar<RE>(rhs).assign_add_to(lhs);
-    return lhs;
+    return std::forward<LE>(lhs);
 }
 
 /*!
@@ -262,10 +264,10 @@ LE& operator+=(LE&& lhs, RE rhs) {
  * \return the left hand side
  */
 template <typename LE, typename RE, cpp_enable_iff(is_etl_expr<RE>&& is_simple_lhs<LE>)>
-LE& operator+=(LE&& lhs, RE&& rhs) {
+decltype(auto) operator+=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
     rhs.assign_add_to(lhs);
-    return lhs;
+    return std::forward<LE>(lhs);
 }
 
 /*!
