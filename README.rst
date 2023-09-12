@@ -169,10 +169,10 @@ Building
 
 This library is completely header-only, there is no need to build it.
 
-However, this library makes extensive use of C++17 and some features of C++20,
-therefore, a recent compiler is necessary to use it. This library is
-currently tested on the following compilers:
- * GCC 9.3.0 and greater
+However, this library makes use of C++23, therefore, a recent compiler 
+is necessary to use it. This library is currently tested on the following compilers:
+ * GCC 13 and greater
+ * Clang 16 and greater
 
 If compilation does not work on one of these compilers, or produces warnings,
 please open an issue on Github and I'll do my best to fix the issue.
