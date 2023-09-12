@@ -21,17 +21,17 @@ namespace etl {
  * \tparam Expr The type of expr for which the iterator is working
  */
 template <typename Expr>
-struct iterator : public std::iterator<std::random_access_iterator_tag, value_t<Expr>> {
+struct iterator {
 private:
     Expr* expr; ///< Pointer to the expression
     size_t i;   ///< Current index
 
 public:
-    using base_iterator_t = std::iterator<std::random_access_iterator_tag, value_t<Expr>>; ///< The base iterator type
-    using value_type      = value_t<Expr>;                                                 ///< The value type
-    using reference_t     = decltype(std::declval<Expr>()[i]);                             ///< The type of reference
-    using pointer_t       = std::add_pointer_t<decltype(std::declval<Expr>()[i])>;         ///< The type of pointer
-    using difference_t    = typename base_iterator_t::difference_type;                     ///< The type used for subtracting two iterators
+    using iterator_category = std::random_access_iterator_tag;
+    using value_type        = value_t<Expr>;                                         ///< The value type
+    using reference         = decltype(std::declval<Expr>()[i]);                     ///< The type of reference
+    using pointer           = std::add_pointer_t<decltype(std::declval<Expr>()[i])>; ///< The type of pointer
+    using difference_t      = size_t;                                                ///< The type used for subtracting two iterators
 
     /*!
      * \brief Construct a new iterator
@@ -44,7 +44,7 @@ public:
      * \brief Dereference the iterator to get the current value
      * \return a reference to the current element
      */
-    reference_t operator*() {
+    reference operator*() {
         return (*expr)[i];
     }
 
@@ -53,7 +53,7 @@ public:
      * \param n The number of forward position to advance
      * \return a reference to the element at the current position plus n
      */
-    reference_t operator[](difference_t n) {
+    reference operator[](difference_t n) {
         return (*expr)[i + n];
     }
 
