@@ -32,12 +32,12 @@ struct max_pool_derivative_2d {
         // Slow path for cells with padding
         if constexpr (P1 || P2) {
             if (cpp_unlikely(j < P1 || k < P2 || j >= etl::dim<0>(out) - P1 || k >= etl::dim<1>(out) - P2)) {
-                const int64_t base_j = j * S1 - P1;
-                const int64_t base_k = k * S2 - P2;
+                const size_t base_j = j * S1 - P1;
+                const size_t base_k = k * S2 - P2;
 
                 for (size_t jj = 0; jj < C1; ++jj) {
                     for (size_t kk = 0; kk < C2; ++kk) {
-                        if (base_j + jj >= 0 && base_k + kk >= 0 && base_j + jj < etl::dim<0>(m) && base_k + kk < etl::dim<1>(m)) {
+                        if (base_j + jj < etl::dim<0>(m) && base_k + kk < etl::dim<1>(m)) {
                             if (max == in(base_j + jj, base_k + kk)) {
                                 m(base_j + jj, base_k + kk) = 1.0;
 
@@ -129,12 +129,12 @@ struct max_pool_derivative_2d {
         // Slow path for cells with padding
         if (cpp_unlikely(p1 || p2)) {
             if (cpp_unlikely(j < p1 || k < p2 || j >= etl::dim<0>(out) - p1 || k >= etl::dim<1>(out) - p2)) {
-                const int64_t base_j = j * s1 - p1;
-                const int64_t base_k = k * s2 - p2;
+                const size_t base_j = j * s1 - p1;
+                const size_t base_k = k * s2 - p2;
 
                 for (size_t jj = 0; jj < c1; ++jj) {
                     for (size_t kk = 0; kk < c2; ++kk) {
-                        if (base_j + jj >= 0 && base_k + kk >= 0 && base_j + jj < etl::dim<0>(m) && base_k + kk < etl::dim<1>(m)) {
+                        if (base_j + jj < etl::dim<0>(m) && base_k + kk < etl::dim<1>(m)) {
 
                             if (max == in(base_j + jj, base_k + kk)) {
                                 m(base_j + jj, base_k + kk) = 1.0;
