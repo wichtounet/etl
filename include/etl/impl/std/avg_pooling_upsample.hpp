@@ -29,12 +29,12 @@ struct avg_pool_upsample_2d {
         // Slow path for cells with padding
         if constexpr (P1 || P2) {
             if (cpp_unlikely(i < P1 || j < P2 || i >= etl::dim<0>(errors) - P1 || j >= etl::dim<1>(errors) - P2)) {
-                const int64_t base_i = i * S1 - P1;
-                const int64_t base_j = j * S2 - P2;
+                const size_t base_i = i * S1 - P1;
+                const size_t base_j = j * S2 - P2;
 
                 for (size_t ii = 0; ii < C1; ++ii) {
                     for (size_t jj = 0; jj < C2; ++jj) {
-                        if (base_i + ii >= 0 && base_j + jj >= 0 && base_i + ii < etl::dim<0>(m) && base_j + jj < etl::dim<1>(m)) {
+                        if (base_i + ii < etl::dim<0>(m) && base_j + jj < etl::dim<1>(m)) {
                             if constexpr (S1 == C1 && S2 == C2) {
                                 m(base_i + ii, base_j + jj) = error / (C1 * C2);
                             } else {
@@ -79,12 +79,12 @@ struct avg_pool_upsample_2d {
         // Slow path for cells with padding
         if constexpr (P1 || P2) {
             if (cpp_unlikely(i < P1 || j < P2 || i >= etl::dim<1>(errors) - P1 || j >= etl::dim<2>(errors) - P2)) {
-                const int64_t base_i = i * S1 - P1;
-                const int64_t base_j = j * S2 - P2;
+                const size_t base_i = i * S1 - P1;
+                const size_t base_j = j * S2 - P2;
 
                 for (size_t ii = 0; ii < C1; ++ii) {
                     for (size_t jj = 0; jj < C2; ++jj) {
-                        if (base_i + ii >= 0 && base_j + jj >= 0 && base_i + ii < etl::dim<1>(m) && base_j + jj < etl::dim<2>(m)) {
+                        if (base_i + ii < etl::dim<1>(m) && base_j + jj < etl::dim<2>(m)) {
                             if constexpr (S1 == C1 && S2 == C2) {
                                 m(q, base_i + ii, base_j + jj) = error / (C1 * C2);
                             } else {
@@ -129,12 +129,12 @@ struct avg_pool_upsample_2d {
         // Slow path for cells with padding
         if constexpr (P1 || P2) {
             if (cpp_unlikely(i < P1 || j < P2 || i >= etl::dim<2>(errors) - P1 || j >= etl::dim<3>(errors) - P2)) {
-                const int64_t base_i = i * S1 - P1;
-                const int64_t base_j = j * S2 - P2;
+                const size_t base_i = i * S1 - P1;
+                const size_t base_j = j * S2 - P2;
 
                 for (size_t ii = 0; ii < C1; ++ii) {
                     for (size_t jj = 0; jj < C2; ++jj) {
-                        if (base_i + ii >= 0 && base_j + jj >= 0 && base_i + ii < etl::dim<2>(m) && base_j + jj < etl::dim<3>(m)) {
+                        if (base_i + ii < etl::dim<2>(m) && base_j + jj < etl::dim<3>(m)) {
                             if constexpr (S1 == C1 && S2 == C2) {
                                 m(p, q, base_i + ii, base_j + jj) = error / (C1 * C2);
                             } else {
@@ -179,12 +179,12 @@ struct avg_pool_upsample_2d {
         // Slow path for cells with padding
         if (cpp_unlikely(p1 || p2)) {
             if (cpp_unlikely(i < p1 || j < p2 || i >= etl::dim<0>(errors) - p1 || j >= etl::dim<1>(errors) - p2)) {
-                const int64_t base_i = i * s1 - p1;
-                const int64_t base_j = j * s2 - p2;
+                const size_t base_i = i * s1 - p1;
+                const size_t base_j = j * s2 - p2;
 
                 for (size_t ii = 0; ii < c1; ++ii) {
                     for (size_t jj = 0; jj < c2; ++jj) {
-                        if (base_i + ii >= 0 && base_j + jj >= 0 && base_i + ii < etl::dim<0>(m) && base_j + jj < etl::dim<1>(m)) {
+                        if (base_i + ii < etl::dim<0>(m) && base_j + jj < etl::dim<1>(m)) {
                             if (s1 == c1 && s2 == c2) {
                                 m(base_i + ii, base_j + jj) = error / (c1 * c2);
                             } else {
@@ -229,12 +229,12 @@ struct avg_pool_upsample_2d {
         // Slow path for cells with padding
         if (cpp_unlikely(p1 || p2)) {
             if (cpp_unlikely(i < p1 || j < p2 || i >= etl::dim<1>(errors) - p1 || j >= etl::dim<2>(errors) - p2)) {
-                const int64_t base_i = i * s1 - p1;
-                const int64_t base_j = j * s2 - p2;
+                const size_t base_i = i * s1 - p1;
+                const size_t base_j = j * s2 - p2;
 
                 for (size_t ii = 0; ii < c1; ++ii) {
                     for (size_t jj = 0; jj < c2; ++jj) {
-                        if (base_i + ii >= 0 && base_j + jj >= 0 && base_i + ii < etl::dim<1>(m) && base_j + jj < etl::dim<2>(m)) {
+                        if (base_i + ii < etl::dim<1>(m) && base_j + jj < etl::dim<2>(m)) {
                             if (s1 == c1 && s2 == c2) {
                                 m(q, base_i + ii, base_j + jj) = error / (c1 * c2);
                             } else {
@@ -279,12 +279,12 @@ struct avg_pool_upsample_2d {
         // Slow path for cells with padding
         if (cpp_unlikely(p1 || p2)) {
             if (cpp_unlikely(i < p1 || j < p2 || i >= etl::dim<2>(errors) - p1 || j >= etl::dim<3>(errors) - p2)) {
-                const int64_t base_i = i * s1 - p1;
-                const int64_t base_j = j * s2 - p2;
+                const size_t base_i = i * s1 - p1;
+                const size_t base_j = j * s2 - p2;
 
                 for (size_t ii = 0; ii < c1; ++ii) {
                     for (size_t jj = 0; jj < c2; ++jj) {
-                        if (base_i + ii >= 0 && base_j + jj >= 0 && base_i + ii < etl::dim<2>(m) && base_j + jj < etl::dim<3>(m)) {
+                        if (base_i + ii < etl::dim<2>(m) && base_j + jj < etl::dim<3>(m)) {
                             if (s1 == c1 && s2 == c2) {
                                 m(p, q, base_i + ii, base_j + jj) = error / (c1 * c2);
                             } else {
