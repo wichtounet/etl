@@ -46,6 +46,9 @@
 // The traits
 #include "etl/traits.hpp"
 
+// The concepts
+#include "etl/concepts.hpp"
+
 // Opaque memory container
 #include "etl/gpu_handler.hpp"
 
