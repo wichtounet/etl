@@ -8,6 +8,7 @@ etl_file_list
 tidy_report_light
 tidy_report_all
 .cache
+*.plist
 
 # Profiling files
 perf.data
