@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <concepts>
 namespace etl {
 
 /*!
@@ -100,8 +101,8 @@ auto operator%(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the subtraction of lhs and rhs (scalar)
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto operator-(LE&& lhs, RE rhs) {
+template <etl_expr LE, typename RE>
+auto operator-(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
     return detail::left_binary_helper<LE, scalar<value_t<LE>>, minus_binary_op>{lhs, scalar<value_t<LE>>(rhs)};
 }
 
@@ -111,8 +112,8 @@ auto operator-(LE&& lhs, RE rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the subtraction of lhs (scalar) and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto operator-(LE lhs, RE&& rhs) {
+template <typename LE, etl_expr RE>
+auto operator-(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
     return detail::right_binary_helper<scalar<value_t<RE>>, RE, minus_binary_op>{scalar<value_t<RE>>(lhs), rhs};
 }
 
@@ -122,8 +123,8 @@ auto operator-(LE lhs, RE&& rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the addition of lhs and rhs (scalar)
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto operator+(LE&& lhs, RE rhs) {
+template <etl_expr LE, typename RE>
+auto operator+(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
     return detail::left_binary_helper<LE, scalar<value_t<LE>>, plus_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
@@ -133,8 +134,8 @@ auto operator+(LE&& lhs, RE rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the addition of lhs (scalar) and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto operator+(LE lhs, RE&& rhs) {
+template <typename LE, etl_expr RE>
+auto operator+(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
     return detail::right_binary_helper<scalar<value_t<RE>>, RE, plus_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
@@ -144,8 +145,8 @@ auto operator+(LE lhs, RE&& rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the multiplication of lhs and rhs (scalar)
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto operator*(LE&& lhs, RE rhs) {
+template <etl_expr LE, typename RE>
+auto operator*(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
     return detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
@@ -155,8 +156,8 @@ auto operator*(LE&& lhs, RE rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the multiplication of lhs (scalar) and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto operator*(LE lhs, RE&& rhs) {
+template <typename LE, etl_expr RE>
+auto operator*(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
     return detail::right_binary_helper<scalar<value_t<RE>>, RE, mul_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
@@ -166,8 +167,8 @@ auto operator*(LE lhs, RE&& rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the multiplication of lhs and rhs (scalar)
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto operator>>(LE&& lhs, RE rhs) {
+template <etl_expr LE, typename RE>
+auto operator>>(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
     return detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
@@ -177,8 +178,8 @@ auto operator>>(LE&& lhs, RE rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the multiplication of lhs (scalar) and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto operator>>(LE lhs, RE&& rhs) {
+template <typename LE, etl_expr RE>
+auto operator>>(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
     return detail::right_binary_helper<scalar<value_t<RE>>, RE, mul_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
@@ -214,8 +215,8 @@ auto operator/(LE&& lhs, RE rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the division of lhs (scalar) and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto operator/(LE lhs, RE&& rhs) {
+template <typename LE, etl_expr RE>
+auto operator/(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>>{
     return detail::right_binary_helper<scalar<value_t<RE>>, RE, div_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
@@ -225,8 +226,8 @@ auto operator/(LE lhs, RE&& rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the modulo of lhs and rhs (scalar)
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto operator%(LE&& lhs, RE rhs) {
+template <etl_expr LE, typename RE>
+auto operator%(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
     return detail::left_binary_helper<LE, scalar<value_t<LE>>, mod_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
@@ -236,8 +237,8 @@ auto operator%(LE&& lhs, RE rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the modulo of lhs (scalar) and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto operator%(LE lhs, RE&& rhs) {
+template <typename LE, etl_expr RE>
+auto operator%(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
     return detail::right_binary_helper<scalar<value_t<RE>>, RE, mod_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
@@ -482,8 +483,8 @@ auto logical_and(LE&& lhs, RE rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the element wise logical and of lhs and rhs (scalar)
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto logical_and(LE&& lhs, RE rhs) {
+template <etl_expr LE, typename RE>
+auto logical_and(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
     return detail::bool_left_binary_helper<LE, scalar<value_t<LE>>, logical_and_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
@@ -493,8 +494,8 @@ auto logical_and(LE&& lhs, RE rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the element wise logical and of lhs (scalar) and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto logical_and(LE lhs, RE&& rhs) {
+template <typename LE, etl_expr RE>
+auto logical_and(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
     return detail::bool_right_binary_helper<scalar<value_t<RE>>, RE, logical_and_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
@@ -515,8 +516,8 @@ auto logical_xor(LE&& lhs, RE rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the element wise logical xor of lhs and rhs (scalar)
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto logical_xor(LE&& lhs, RE rhs) {
+template <etl_expr LE, typename RE>
+auto logical_xor(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
     return detail::bool_left_binary_helper<LE, scalar<value_t<LE>>, logical_xor_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
@@ -526,8 +527,8 @@ auto logical_xor(LE&& lhs, RE rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the element wise logical xor of lhs (scalar) and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto logical_xor(LE lhs, RE&& rhs) {
+template <typename LE, etl_expr RE>
+auto logical_xor(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
     return detail::bool_right_binary_helper<scalar<value_t<RE>>, RE, logical_xor_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
@@ -548,8 +549,8 @@ auto logical_or(LE&& lhs, RE rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the element wise logical or of lhs and rhs (scalar)
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto logical_or(LE&& lhs, RE rhs) {
+template <etl_expr LE, typename RE>
+auto logical_or(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
     return detail::bool_left_binary_helper<LE, scalar<value_t<LE>>, logical_or_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
@@ -559,8 +560,8 @@ auto logical_or(LE&& lhs, RE rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the element wise logical or of lhs (scalar) and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto logical_or(LE lhs, RE&& rhs) {
+template <typename LE, etl_expr RE>
+auto logical_or(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
     return detail::bool_right_binary_helper<scalar<value_t<RE>>, RE, logical_or_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
