@@ -433,8 +433,8 @@ static_assert(std::is_nothrow_destructible_v<fast_vector<double, 2>>, "fast_vect
  * The memory must be large enough to hold the matrix
  */
 template <size_t... Dims, typename T>
-fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...> fast_matrix_over(T* memory) {
-    return fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...>(cpp::array_wrapper<T>(memory, (Dims * ...)));
+fast_matrix_impl<T, std::span<T>, order::RowMajor, Dims...> fast_matrix_over(T* memory) {
+    return fast_matrix_impl<T, std::span<T>, order::RowMajor, Dims...>(std::span<T>(memory, (Dims * ...)));
 }
 
 /*!
