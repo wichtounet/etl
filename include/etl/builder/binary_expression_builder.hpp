@@ -20,7 +20,7 @@ namespace etl {
  * \param rhs The right hand side expression
  * \return An expression representing the subtraction of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
+template <etl_expr LE, etl_expr RE>
 auto operator-(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
@@ -33,7 +33,7 @@ auto operator-(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the addition of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
+template <etl_expr LE, etl_expr RE>
 auto operator+(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
@@ -46,7 +46,7 @@ auto operator+(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the scalar multipliation of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
+template <etl_expr LE, etl_expr RE>
 auto operator>>(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
@@ -72,7 +72,7 @@ auto scale(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the division of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
+template <etl_expr LE, etl_expr RE>
 auto operator/(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
@@ -85,7 +85,7 @@ auto operator/(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the modulo of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
+template <etl_expr LE, etl_expr RE>
 auto operator%(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
@@ -471,7 +471,7 @@ auto greater_equal(LE&& lhs, RE rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the element wise logical and of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
+template <etl_expr LE, etl_expr RE>
 auto logical_and(LE&& lhs, RE rhs) {
     return detail::bool_left_binary_helper<LE, LE, logical_and_binary_op> {lhs, rhs};
 }
@@ -504,7 +504,7 @@ auto logical_and(LE lhs, RE&& rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the element wise logical xor of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
+template <etl_expr LE, etl_expr RE>
 auto logical_xor(LE&& lhs, RE rhs) {
     return detail::bool_left_binary_helper<LE, LE, logical_xor_binary_op> {lhs, rhs};
 }
@@ -537,7 +537,7 @@ auto logical_xor(LE lhs, RE&& rhs) {
  * \param rhs The right hand side expression
  * \return An expression representing the element wise logical or of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
+template <etl_expr LE, etl_expr RE>
 auto logical_or(LE&& lhs, RE rhs) {
     return detail::bool_left_binary_helper<LE, LE, logical_or_binary_op> {lhs, rhs};
 }
