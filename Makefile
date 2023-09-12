@@ -186,14 +186,6 @@ RELEASE_FLAGS 		+= $(ETL_DEFAULTS)
 RELEASE_DEBUG_FLAGS += $(ETL_DEFAULTS)
 endif
 
-# Add support for precompiler headers for GCC
-ifeq (,$(findstring clang,$(CXX)))
-$(eval $(call precompile_init,test/include))
-$(eval $(call precompile_header,test/include,test.hpp))
-$(eval $(call precompile_header,test/include,test_light.hpp))
-$(eval $(call precompile_finalize))
-endif
-
 # Compile folders
 $(eval $(call auto_folder_compile,workbench/src,-Icpm/include))
 $(eval $(call auto_folder_compile,benchmark/src,-DETL_MANUAL_SELECT -Ibenchmark/include -Icpm/include))
