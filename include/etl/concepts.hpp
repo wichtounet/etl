@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <concepts>
+
 namespace etl {
 
 namespace concepts_detail {
