@@ -21,10 +21,10 @@ namespace etl {
  * \return An expression representing the subtraction of lhs and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
-auto operator-(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, minus_binary_op> {
+auto operator-(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
-    return {lhs, rhs};
+    return detail::left_binary_helper<LE, RE, minus_binary_op>{lhs, rhs};
 }
 
 /*!
@@ -34,10 +34,10 @@ auto operator-(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, minus_b
  * \return An expression representing the addition of lhs and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
-auto operator+(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, plus_binary_op> {
+auto operator+(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
-    return {lhs, rhs};
+    return detail::left_binary_helper<LE, RE, plus_binary_op>{lhs, rhs};
 }
 
 /*!
@@ -47,10 +47,10 @@ auto operator+(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, plus_bi
  * \return An expression representing the scalar multipliation of lhs and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
-auto operator>>(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_op> {
+auto operator>>(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
-    return {lhs, rhs};
+    return detail::left_binary_helper<LE, RE, mul_binary_op>{lhs, rhs};
 }
 
 /*!
@@ -60,7 +60,7 @@ auto operator>>(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_bi
  * \return An expression representing the scalar multiplication of lhs and rhs
  */
 template <typename LE, typename RE>
-auto scale(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_op> {
+auto scale(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
     return detail::left_binary_helper<LE, RE, mul_binary_op>{lhs, rhs};
@@ -73,10 +73,10 @@ auto scale(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_
  * \return An expression representing the division of lhs and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
-auto operator/(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, div_binary_op> {
+auto operator/(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
-    return {lhs, rhs};
+    return detail::left_binary_helper<LE, RE, div_binary_op>{lhs, rhs};
 }
 
 /*!
@@ -86,10 +86,10 @@ auto operator/(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, div_bin
  * \return An expression representing the modulo of lhs and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
-auto operator%(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mod_binary_op> {
+auto operator%(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
-    return {lhs, rhs};
+    return detail::left_binary_helper<LE, RE, mod_binary_op>{lhs, rhs};
 }
 
 // Mix scalars and ETL expressions (vector,matrix,binary,unary)
@@ -101,8 +101,8 @@ auto operator%(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mod_bin
  * \return An expression representing the subtraction of lhs and rhs (scalar)
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto operator-(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, minus_binary_op> {
-    return {lhs, scalar<value_t<LE>>(rhs)};
+auto operator-(LE&& lhs, RE rhs) {
+    return detail::left_binary_helper<LE, scalar<value_t<LE>>, minus_binary_op>{lhs, scalar<value_t<LE>>(rhs)};
 }
 
 /*!
@@ -112,8 +112,8 @@ auto operator-(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_
  * \return An expression representing the subtraction of lhs (scalar) and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto operator-(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<RE>>, RE, minus_binary_op> {
-    return {scalar<value_t<RE>>(lhs), rhs};
+auto operator-(LE lhs, RE&& rhs) {
+    return detail::right_binary_helper<scalar<value_t<RE>>, RE, minus_binary_op>{scalar<value_t<RE>>(lhs), rhs};
 }
 
 /*!
@@ -123,8 +123,8 @@ auto operator-(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<R
  * \return An expression representing the addition of lhs and rhs (scalar)
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto operator+(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, plus_binary_op> {
-    return {lhs, scalar<value_t<LE>>(rhs)};
+auto operator+(LE&& lhs, RE rhs) {
+    return detail::left_binary_helper<LE, scalar<value_t<LE>>, plus_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
 /*!
@@ -134,8 +134,8 @@ auto operator+(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_
  * \return An expression representing the addition of lhs (scalar) and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto operator+(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<RE>>, RE, plus_binary_op> {
-    return {scalar<value_t<RE>>(lhs), rhs};
+auto operator+(LE lhs, RE&& rhs) {
+    return detail::right_binary_helper<scalar<value_t<RE>>, RE, plus_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
 /*!
@@ -145,8 +145,8 @@ auto operator+(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<R
  * \return An expression representing the multiplication of lhs and rhs (scalar)
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto operator*(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {
-    return {lhs, scalar<value_t<LE>>(rhs)};
+auto operator*(LE&& lhs, RE rhs) {
+    return detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
 /*!
@@ -156,8 +156,8 @@ auto operator*(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_
  * \return An expression representing the multiplication of lhs (scalar) and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto operator*(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<RE>>, RE, mul_binary_op> {
-    return {scalar<value_t<RE>>(lhs), rhs};
+auto operator*(LE lhs, RE&& rhs) {
+    return detail::right_binary_helper<scalar<value_t<RE>>, RE, mul_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
 /*!
@@ -167,8 +167,8 @@ auto operator*(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<R
  * \return An expression representing the multiplication of lhs and rhs (scalar)
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto operator>>(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {
-    return {lhs, scalar<value_t<LE>>(rhs)};
+auto operator>>(LE&& lhs, RE rhs) {
+    return detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
 /*!
@@ -178,8 +178,8 @@ auto operator>>(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value
  * \return An expression representing the multiplication of lhs (scalar) and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto operator>>(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<RE>>, RE, mul_binary_op> {
-    return {scalar<value_t<RE>>(lhs), rhs};
+auto operator>>(LE lhs, RE&& rhs) {
+    return detail::right_binary_helper<scalar<value_t<RE>>, RE, mul_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
 /*!
@@ -191,8 +191,8 @@ auto operator>>(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<
 template <typename LE,
           typename RE,
           cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE> && (is_div_strict || !std::is_floating_point_v<RE>))>
-auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, div_binary_op> {
-    return {lhs, scalar<value_t<LE>>(rhs)};
+auto operator/(LE&& lhs, RE rhs) {
+    return detail::left_binary_helper<LE, scalar<value_t<LE>>, div_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
 /*!
@@ -204,8 +204,8 @@ auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_
 template <typename LE,
           typename RE,
           cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE> && !is_div_strict && std::is_floating_point_v<RE>)>
-auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {
-    return {lhs, scalar<value_t<LE>>(value_t<LE>(1.0) / rhs)};
+auto operator/(LE&& lhs, RE rhs) {
+    return detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {lhs, scalar<value_t<LE>>(value_t<LE>(1.0) / rhs)};
 }
 
 /*!
@@ -215,8 +215,8 @@ auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_
  * \return An expression representing the division of lhs (scalar) and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto operator/(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<RE>>, RE, div_binary_op> {
-    return {scalar<value_t<RE>>(lhs), rhs};
+auto operator/(LE lhs, RE&& rhs) {
+    return detail::right_binary_helper<scalar<value_t<RE>>, RE, div_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
 /*!
@@ -226,8 +226,8 @@ auto operator/(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<R
  * \return An expression representing the modulo of lhs and rhs (scalar)
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto operator%(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, mod_binary_op> {
-    return {lhs, scalar<value_t<LE>>(rhs)};
+auto operator%(LE&& lhs, RE rhs) {
+    return detail::left_binary_helper<LE, scalar<value_t<LE>>, mod_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
 /*!
@@ -237,8 +237,8 @@ auto operator%(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_
  * \return An expression representing the modulo of lhs (scalar) and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto operator%(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<RE>>, RE, mod_binary_op> {
-    return {scalar<value_t<RE>>(lhs), rhs};
+auto operator%(LE lhs, RE&& rhs) {
+    return detail::right_binary_helper<scalar<value_t<RE>>, RE, mod_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
 // Compound operators
@@ -404,8 +404,8 @@ LE& operator%=(LE&& lhs, RE&& rhs) {
  * \return An expression representing the element wise comparison of lhs and rhs
  */
 template <typename LE, typename RE>
-auto equal(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper_scalar<LE, RE, equal_binary_op> {
-    return {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
+auto equal(LE&& lhs, RE rhs) {
+    return detail::bool_left_binary_helper_scalar<LE, RE, equal_binary_op> {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
 }
 
 /*!
@@ -415,8 +415,8 @@ auto equal(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper_scalar<LE, RE, e
  * \return An expression representing the element wise comparison of lhs and rhs
  */
 template <typename LE, typename RE>
-auto not_equal(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper_scalar<LE, RE, not_equal_binary_op> {
-    return {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
+auto not_equal(LE&& lhs, RE rhs) {
+    return detail::bool_left_binary_helper_scalar<LE, RE, not_equal_binary_op> {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
 }
 
 /*!
@@ -426,8 +426,8 @@ auto not_equal(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper_scalar<LE, R
  * \return An expression representing the element wise less than comparison of lhs and rhs
  */
 template <typename LE, typename RE>
-auto less(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper_scalar<LE, RE, less_binary_op> {
-    return {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
+auto less(LE&& lhs, RE rhs) {
+    return detail::bool_left_binary_helper_scalar<LE, RE, less_binary_op> {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
 }
 
 /*!
@@ -437,8 +437,8 @@ auto less(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper_scalar<LE, RE, le
  * \return An expression representing the element wise less than or equals comparison of lhs and rhs
  */
 template <typename LE, typename RE>
-auto less_equal(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper_scalar<LE, RE, less_equal_binary_op> {
-    return {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
+auto less_equal(LE&& lhs, RE rhs) {
+    return detail::bool_left_binary_helper_scalar<LE, RE, less_equal_binary_op> {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
 }
 
 /*!
@@ -448,8 +448,8 @@ auto less_equal(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper_scalar<LE, 
  * \return An expression representing the element wise greater than comparison of lhs and rhs
  */
 template <typename LE, typename RE>
-auto greater(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper_scalar<LE, RE, greater_binary_op> {
-    return {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
+auto greater(LE&& lhs, RE rhs) {
+    return detail::bool_left_binary_helper_scalar<LE, RE, greater_binary_op> {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
 }
 
 /*!
@@ -459,8 +459,8 @@ auto greater(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper_scalar<LE, RE,
  * \return An expression representing the element wise greater than or equals comparison of lhs and rhs
  */
 template <typename LE, typename RE>
-auto greater_equal(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper_scalar<LE, RE, greater_equal_binary_op> {
-    return {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
+auto greater_equal(LE&& lhs, RE rhs) {
+    return detail::bool_left_binary_helper_scalar<LE, RE, greater_equal_binary_op> {detail::wrap_scalar(lhs), detail::wrap_scalar(rhs)};
 }
 
 // Logical operators
@@ -472,8 +472,8 @@ auto greater_equal(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper_scalar<L
  * \return An expression representing the element wise logical and of lhs and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
-auto logical_and(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, LE, logical_and_binary_op> {
-    return {lhs, rhs};
+auto logical_and(LE&& lhs, RE rhs) {
+    return detail::bool_left_binary_helper<LE, LE, logical_and_binary_op> {lhs, rhs};
 }
 
 /*!
@@ -483,8 +483,8 @@ auto logical_and(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, LE, lo
  * \return An expression representing the element wise logical and of lhs and rhs (scalar)
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto logical_and(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, scalar<value_t<LE>>, logical_and_binary_op> {
-    return {lhs, scalar<value_t<LE>>(rhs)};
+auto logical_and(LE&& lhs, RE rhs) {
+    return detail::bool_left_binary_helper<LE, scalar<value_t<LE>>, logical_and_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
 /*!
@@ -494,8 +494,8 @@ auto logical_and(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, scalar
  * \return An expression representing the element wise logical and of lhs (scalar) and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto logical_and(LE lhs, RE&& rhs) -> detail::bool_right_binary_helper<scalar<value_t<RE>>, RE, logical_and_binary_op> {
-    return {scalar<value_t<RE>>(lhs), rhs};
+auto logical_and(LE lhs, RE&& rhs) {
+    return detail::bool_right_binary_helper<scalar<value_t<RE>>, RE, logical_and_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
 /*!
@@ -505,8 +505,8 @@ auto logical_and(LE lhs, RE&& rhs) -> detail::bool_right_binary_helper<scalar<va
  * \return An expression representing the element wise logical xor of lhs and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
-auto logical_xor(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, LE, logical_xor_binary_op> {
-    return {lhs, rhs};
+auto logical_xor(LE&& lhs, RE rhs) {
+    return detail::bool_left_binary_helper<LE, LE, logical_xor_binary_op> {lhs, rhs};
 }
 
 /*!
@@ -516,8 +516,8 @@ auto logical_xor(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, LE, lo
  * \return An expression representing the element wise logical xor of lhs and rhs (scalar)
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto logical_xor(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, scalar<value_t<LE>>, logical_xor_binary_op> {
-    return {lhs, scalar<value_t<LE>>(rhs)};
+auto logical_xor(LE&& lhs, RE rhs) {
+    return detail::bool_left_binary_helper<LE, scalar<value_t<LE>>, logical_xor_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
 /*!
@@ -527,8 +527,8 @@ auto logical_xor(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, scalar
  * \return An expression representing the element wise logical xor of lhs (scalar) and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto logical_xor(LE lhs, RE&& rhs) -> detail::bool_right_binary_helper<scalar<value_t<RE>>, RE, logical_xor_binary_op> {
-    return {scalar<value_t<RE>>(lhs), rhs};
+auto logical_xor(LE lhs, RE&& rhs) {
+    return detail::bool_right_binary_helper<scalar<value_t<RE>>, RE, logical_xor_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
 /*!
@@ -538,8 +538,8 @@ auto logical_xor(LE lhs, RE&& rhs) -> detail::bool_right_binary_helper<scalar<va
  * \return An expression representing the element wise logical or of lhs and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(all_etl_expr<LE, RE>)>
-auto logical_or(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, LE, logical_or_binary_op> {
-    return {lhs, rhs};
+auto logical_or(LE&& lhs, RE rhs) {
+    return detail::bool_left_binary_helper<LE, LE, logical_or_binary_op> {lhs, rhs};
 }
 
 /*!
@@ -549,8 +549,8 @@ auto logical_or(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, LE, log
  * \return An expression representing the element wise logical or of lhs and rhs (scalar)
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE>)>
-auto logical_or(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, scalar<value_t<LE>>, logical_or_binary_op> {
-    return {lhs, scalar<value_t<LE>>(rhs)};
+auto logical_or(LE&& lhs, RE rhs) {
+    return detail::bool_left_binary_helper<LE, scalar<value_t<LE>>, logical_or_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
 }
 
 /*!
@@ -560,8 +560,8 @@ auto logical_or(LE&& lhs, RE rhs) -> detail::bool_left_binary_helper<LE, scalar<
  * \return An expression representing the element wise logical or of lhs (scalar) and rhs
  */
 template <typename LE, typename RE, cpp_enable_iff(std::is_convertible_v<LE, value_t<RE>> && is_etl_expr<RE>)>
-auto logical_or(LE lhs, RE&& rhs) -> detail::bool_right_binary_helper<scalar<value_t<RE>>, RE, logical_or_binary_op> {
-    return {scalar<value_t<RE>>(lhs), rhs};
+auto logical_or(LE lhs, RE&& rhs) {
+    return detail::bool_right_binary_helper<scalar<value_t<RE>>, RE, logical_or_binary_op> {scalar<value_t<RE>>(lhs), rhs};
 }
 
 } //end of namespace etl
