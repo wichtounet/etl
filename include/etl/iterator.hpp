@@ -31,7 +31,7 @@ public:
     using value_type        = value_t<Expr>;                                         ///< The value type
     using reference         = decltype(std::declval<Expr>()[i]);                     ///< The type of reference
     using pointer           = std::add_pointer_t<decltype(std::declval<Expr>()[i])>; ///< The type of pointer
-    using difference_t      = size_t;                                                ///< The type used for subtracting two iterators
+    using difference_type   = size_t;                                                ///< The type used for subtracting two iterators
 
     /*!
      * \brief Construct a new iterator
@@ -53,7 +53,7 @@ public:
      * \param n The number of forward position to advance
      * \return a reference to the element at the current position plus n
      */
-    reference operator[](difference_t n) {
+    reference operator[](difference_type n) {
         return (*expr)[i + n];
     }
 
@@ -108,7 +108,7 @@ public:
      * \param n The number of position to advance
      * \return a reference to the iterator
      */
-    iterator& operator+=(difference_t n) {
+    iterator& operator+=(difference_type n) {
         i += n;
         return *this;
     }
@@ -118,7 +118,7 @@ public:
      * \param n The number of position to back
      * \return a reference to the iterator
      */
-    iterator& operator-=(difference_t n) {
+    iterator& operator-=(difference_type n) {
         i -= n;
         return *this;
     }
@@ -128,7 +128,7 @@ public:
      * \param n The number of position to advance
      * \return the new interator
      */
-    iterator operator+(difference_t n) {
+    iterator operator+(difference_type n) {
         iterator it(*this);
         it += n;
         return it;
@@ -139,7 +139,7 @@ public:
      * \param n The number of position to back away
      * \return the new interator
      */
-    iterator operator-(difference_t n) {
+    iterator operator-(difference_type n) {
         iterator it(*this);
         it -= n;
         return it;
@@ -150,7 +150,7 @@ public:
      * \param it the other iterator
      * \return the number of positions between the two iterators
      */
-    difference_t operator-(const iterator& it) {
+    difference_type operator-(const iterator& it) {
         return i - it.i;
     }
 
