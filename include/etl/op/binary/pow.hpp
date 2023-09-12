@@ -84,7 +84,7 @@ struct pow_binary_op {
      * \return The result of applying the unary operator on x. The result must be a GPU computed expression.
      */
     template <typename X, typename Y, typename YY>
-    static auto gpu_compute_hint([[maybe_unused]] const X& x, const Y& y, YY& yy) noexcept {
+    static auto gpu_compute_hint([[maybe_unused]] const X& x, [[maybe_unused]] const Y& y, YY& yy) noexcept {
         decltype(auto) t1 = smart_gpu_compute_hint(x, yy);
 
         auto t2 = force_temporary_gpu(t1);
