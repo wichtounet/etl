@@ -378,6 +378,10 @@ $(eval $(call add_executable,benchmark_paper,workbench/src/benchmark_paper.cpp))
 
 test_asm: release/bin/test_asm_1 release/bin/test_asm_2
 
+debug_etl_test: debug_etl_test_all
+release_debug_etl_test: release_debug_etl_test_all
+release_etl_test: release_etl_test_all
+
 release: release_etl_test release/bin/benchmark
 release_debug: release_debug_etl_test release_debug/bin/benchmark
 debug: debug_etl_test debug/bin/benchmark
