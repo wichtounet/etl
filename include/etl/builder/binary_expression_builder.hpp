@@ -188,24 +188,13 @@ auto operator>>(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> 
  * \param rhs The right hand side expression
  * \return An expression representing the division of lhs and rhs (scalar)
  */
-template <typename LE,
-          typename RE,
-          cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE> && (is_div_strict || !std::is_floating_point_v<RE>))>
-auto operator/(LE&& lhs, RE rhs) {
-    return detail::left_binary_helper<LE, scalar<value_t<LE>>, div_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
-}
-
-/*!
- * \brief Builds an expression representing the division of lhs and rhs (scalar)
- * \param lhs The left hand side expression
- * \param rhs The right hand side expression
- * \return An expression representing the division of lhs and rhs (scalar)
- */
-template <typename LE,
-          typename RE,
-          cpp_enable_iff(std::is_convertible_v<RE, value_t<LE>> && is_etl_expr<LE> && !is_div_strict && std::is_floating_point_v<RE>)>
-auto operator/(LE&& lhs, RE rhs) {
-    return detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {lhs, scalar<value_t<LE>>(value_t<LE>(1.0) / rhs)};
+template <etl_expr LE, typename RE>
+auto operator/(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
+    if constexpr (is_div_strict || !std::floating_point<RE>) {
+        return detail::left_binary_helper<LE, scalar<value_t<LE>>, div_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
+    } else {
+        return detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {lhs, scalar<value_t<LE>>(value_t<LE>(1.0) / rhs)};
+    }
 }
 
 /*!
