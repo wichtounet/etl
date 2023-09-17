@@ -55,6 +55,9 @@ template <typename T>
 concept etl_4d = etl_expr<T> && decay_traits<T>::dimensions() == 4;
 
 template <typename T>
+concept deep_mat = etl_expr<T> && decay_traits<T>::dimensions() >= 3;
+
+template <typename T>
 concept mat_or_vec = etl_expr<T> && (etl_1d<T> || etl_2d<T>);
 
 template <typename T>

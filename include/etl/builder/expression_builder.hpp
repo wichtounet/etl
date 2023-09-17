@@ -62,8 +62,9 @@ auto abs(E&& value) {
  * \return an expression representing the max values from lhs and rhs
  */
 template <etl_expr L, typename R>
-auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op_scalar<L, R, max_binary_op<detail::wrap_scalar_value_t<L>, detail::wrap_scalar_value_t<L>>> {
-    return {detail::wrap_scalar(lhs), detail::smart_wrap_scalar<L>(rhs)};
+auto max(L&& lhs, R&& rhs) {
+    using return_type = detail::left_binary_helper_op_scalar<L, R, max_binary_op<detail::wrap_scalar_value_t<L>, detail::wrap_scalar_value_t<L>>>;
+    return return_type{detail::wrap_scalar(lhs), detail::smart_wrap_scalar<L>(rhs)};
 }
 
 /*!
@@ -73,8 +74,9 @@ auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op_scalar<L, R, max_bin
  * \return an expression representing the min values from lhs and rhs
  */
 template <etl_expr L, typename R>
-auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op_scalar<L, R, min_binary_op<detail::wrap_scalar_value_t<L>, detail::wrap_scalar_value_t<L>>> {
-    return {detail::wrap_scalar(lhs), detail::smart_wrap_scalar<L>(rhs)};
+auto min(L&& lhs, R&& rhs) {
+    using return_type = detail::left_binary_helper_op_scalar<L, R, min_binary_op<detail::wrap_scalar_value_t<L>, detail::wrap_scalar_value_t<L>>>;   
+    return return_type{detail::wrap_scalar(lhs), detail::smart_wrap_scalar<L>(rhs)};
 }
 
 /*!
@@ -104,10 +106,8 @@ auto ceil(E&& value) {
  * \param max The maximum
  * \return an expression representing the values of the ETL expression clipped between min and max
  */
-template <typename E, typename T>
+template <etl_expr E, arithmetic T>
 auto clip(E&& value, T min, T max) {
-    static_assert(is_etl_expr<E>, "etl::clip can only be used on ETL expressions");
-    static_assert(std::is_arithmetic_v<T>, "etl::clip can only be used with arithmetic values");
     return detail::make_stateful_unary_expr<E, clip_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(min), value_t<E>(max));
 }
 
@@ -123,11 +123,9 @@ auto clip(E&& value, T min, T max) {
  *
  * \return an expression representing the pow(x, v) of each value x of the given expression
  */
-template <typename E, typename T>
-auto pow(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, pow_binary_op<value_t<E>, value_t<E>>> {
-    static_assert(is_etl_expr<E>, "etl::pow can only be used on ETL expressions");
-    static_assert(std::is_arithmetic_v<T>, "etl::pow can only be used with arithmetic values");
-    return {value, scalar<value_t<E>>(v)};
+template <etl_expr E, arithmetic T>
+auto pow(E&& value, T v) {
+    return detail::left_binary_helper_op<E, scalar<value_t<E>>, pow_binary_op<value_t<E>, value_t<E>>>{value, scalar<value_t<E>>(v)};
 }
 
 /*!
@@ -136,10 +134,9 @@ auto pow(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>,
  * \param v The power
  * \return an expression representing the pow(x, v) of each value x of the given expression
  */
-template <typename E>
-auto pow_int(E&& value, size_t v) -> detail::left_binary_helper_op<E, scalar<size_t>, integer_pow_binary_op<value_t<E>, size_t>> {
-    static_assert(is_etl_expr<E>, "etl::pow can only be used on ETL expressions");
-    return {value, scalar<size_t>(v)};
+template <etl_expr E>
+auto pow_int(E&& value, size_t v) {
+    return detail::left_binary_helper_op<E, scalar<size_t>, integer_pow_binary_op<value_t<E>, size_t>>{value, scalar<size_t>(v)};
 }
 
 /*!
@@ -154,11 +151,9 @@ auto pow_int(E&& value, size_t v) -> detail::left_binary_helper_op<E, scalar<siz
  *
  * \return an expression representing the pow(x, v) of each value x of the given expression
  */
-template <typename E, typename T>
-auto pow_precise(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, precise_pow_binary_op<value_t<E>, value_t<E>>> {
-    static_assert(is_etl_expr<E>, "etl::pow_precise can only be used on ETL expressions");
-    static_assert(std::is_arithmetic_v<T>, "etl::pow_precise can only be used with arithmetic values");
-    return {value, scalar<value_t<E>>(v)};
+template <etl_expr E, arithmetic T>
+auto pow_precise(E&& value, T v) {
+    return detail::left_binary_helper_op<E, scalar<value_t<E>>, precise_pow_binary_op<value_t<E>, value_t<E>>>{value, scalar<value_t<E>>(v)};
 }
 
 /*!
@@ -238,7 +233,7 @@ auto uniform_noise(G& g, E&& value) {
  * \return an expression representing the input expression plus noise
  */
 template <etl_expr E>
-auto normal_noise(E&& value) -> detail::unary_helper<E, normal_noise_unary_op> {
+auto normal_noise(E&& value) {
     return detail::unary_helper<E, normal_noise_unary_op>{value};
 }
 
@@ -569,9 +564,8 @@ auto ctrans(const E& value) {
  * \param value The expression
  * \return The transpose of the given expression.
  */
-template <etl_expr E>
-auto transpose_front(const E& value) -> transpose_front_expr<detail::build_type<E>> {
-    static_assert(decay_traits<E>::dimensions() >= 3, "Transpose not defined for matrix > 2D");
+template <deep_mat E>
+auto transpose_front(const E& value) {
     return transpose_front_expr<detail::build_type<E>>{value};
 }
 
