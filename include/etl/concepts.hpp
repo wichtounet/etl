@@ -12,12 +12,42 @@
 
 namespace etl {
 
-namespace concepts_detail {
+namespace detail {
 
-} // end of namespace traits_detail
+template <typename T>
+concept fast_matrix_impl = traits_detail::is_fast_matrix_impl<std::decay_t<T>>::value;
+
+template <typename T>
+concept custom_fast_matrix_impl = traits_detail::is_custom_fast_matrix_impl<std::decay_t<T>>::value;
+
+template <typename T>
+concept dyn_matrix_impl = traits_detail::is_dyn_matrix_impl<std::decay_t<T>>::value;
+
+template <typename T>
+concept gpu_dyn_matrix_impl = traits_detail::is_gpu_dyn_matrix_impl<std::decay_t<T>>::value;
+
+template <typename T>
+concept custom_dyn_matrix_impl = traits_detail::is_custom_dyn_matrix_impl<std::decay_t<T>>::value;
+
+template <typename T>
+concept sparse_matrix_impl = traits_detail::is_sparse_matrix_impl<std::decay_t<T>>::value;
+
+} // end of namespace detail
 
 template<typename T>
 concept etl_expr = decay_traits<T>::is_etl;
+
+template<typename T>
+concept fast = decay_traits<T>::is_fast;
+
+template<typename T>
+concept dyn = !decay_traits<T>::is_fast;
+
+template<typename T>
+concept dyn_expr = etl_expr<T> && dyn<T>;
+
+template<typename T>
+concept fast_expr = etl_expr<T> && fast<T>;
 
 template <typename T>
 concept etl_complex = cpp::is_specialization_of_v<etl::complex, std::decay_t<T>>;
@@ -44,25 +74,8 @@ template <typename T>
 concept dyn_matrix_view_c = traits_detail::is_dyn_matrix_view<T>::value;
 
 template <typename T>
-concept fast_matrix_c = traits_detail::is_fast_matrix_impl<std::decay_t<T>>::value;
-
-template <typename T>
-concept custom_fast_matrix_c = traits_detail::is_custom_fast_matrix_impl<std::decay_t<T>>::value;
-
-template <typename T>
-concept dyn_matrix_c = traits_detail::is_dyn_matrix_impl<std::decay_t<T>>::value;
-
-template <typename T>
-concept gpu_dyn_matrix_c = traits_detail::is_gpu_dyn_matrix_impl<std::decay_t<T>>::value;
-
-template <typename T>
-concept custom_dyn_matrix_c = traits_detail::is_custom_dyn_matrix_impl<std::decay_t<T>>::value;
-
-template <typename T>
-concept sparse_matrix_c = traits_detail::is_sparse_matrix_impl<std::decay_t<T>>::value;
-
-template <typename T>
-concept etl_value_class = fast_matrix_c<T> || custom_fast_matrix_c<T> || dyn_matrix_c<T> || custom_dyn_matrix_c<T> || sparse_matrix_c<T> || gpu_dyn_matrix_c<T>;
+concept etl_value_class =
+        detail::fast_matrix_impl<T> || detail::custom_fast_matrix_impl<T> || detail::dyn_matrix_impl<T> || detail::custom_dyn_matrix_impl<T> || detail::sparse_matrix_impl<T> || detail::gpu_dyn_matrix_impl<T>;
 
 template <typename T>
 concept simple_lhs = etl_value_class<T> || unary_expr_c<T> || sub_view_c<T> || slice_view_c<T> || dyn_matrix_view_c<T>;
@@ -87,6 +100,12 @@ concept mat_or_vec = etl_expr<T> && (etl_1d<T> || etl_2d<T>);
 
 template <typename T>
 concept matrix = etl_expr<T> && decay_traits<T>::dimensions() > 1;
+
+template <typename T>
+concept fast_matrix_c = fast<T> && matrix<T>;
+
+template <typename T>
+concept dyn_matrix_c = dyn<T> && matrix<T>;
 
 // Complement the standard library
 

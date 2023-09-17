@@ -49,6 +49,9 @@
 // The concepts
 #include "etl/concepts.hpp"
 
+// The helpers
+#include "etl/helpers.hpp"
+
 // Opaque memory container
 #include "etl/gpu_handler.hpp"
 

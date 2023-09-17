@@ -33,7 +33,7 @@ struct build_fast_dyn_matrix_type<E, std::index_sequence<I...>> {
     /*!
      * \brief The resulting fast_dyn_matrix type
      */
-    using type = fast_matrix_impl<value_t<E>,
+    using type = etl::fast_matrix_impl<value_t<E>,
                                   etl::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
                                   decay_traits<E>::storage_order,
                                   decay_traits<E>::template dim<I>()...>;
@@ -60,7 +60,7 @@ struct build_fast_dyn_matrix_type_opp<E, std::index_sequence<I...>> {
     /*!
      * \brief The resulting fast_dyn_matrix type
      */
-    using type = fast_matrix_impl<value_t<E>,
+    using type = etl::fast_matrix_impl<value_t<E>,
                                   etl::aligned_vector<value_t<E>, default_intrinsic_traits<value_t<E>>::alignment>,
                                   reverse(decay_traits<E>::storage_order),
                                   decay_traits<E>::template dim<I>()...>;
@@ -73,7 +73,7 @@ struct build_fast_dyn_matrix_type_opp<E, std::index_sequence<I...>> {
  */
 template <typename E, size_t... I>
 decltype(auto) build_dyn_matrix_type(E&& expr, std::index_sequence<I...>) {
-    return dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()>(etl::dim<I>(expr)...);
+    return etl::dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()>(etl::dim<I>(expr)...);
 }
 
 } // end of namespace detail
