@@ -31,7 +31,7 @@ namespace etl {
  * \return an expression representing the unary minus of the given expression
  */
 template <typename E>
-auto operator-(E&& value) -> detail::unary_helper<E, minus_unary_op> {
+auto operator-(E&& value) {
     return detail::unary_helper<E, minus_unary_op>{value};
 }
 
@@ -41,7 +41,7 @@ auto operator-(E&& value) -> detail::unary_helper<E, minus_unary_op> {
  * \return an expression representing the unary plus of the given expression
  */
 template <typename E>
-auto operator+(E&& value) -> detail::unary_helper<E, plus_unary_op> {
+auto operator+(E&& value) {
     return detail::unary_helper<E, plus_unary_op>{value};
 }
 
@@ -50,9 +50,8 @@ auto operator+(E&& value) -> detail::unary_helper<E, plus_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the absolute of each value of the given expression
  */
-template <typename E>
-auto abs(E&& value) -> detail::unary_helper<E, abs_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::abs can only be used on ETL expressions");
+template <etl_expr E>
+auto abs(E&& value) {
     return detail::unary_helper<E, abs_unary_op>{value};
 }
 
@@ -62,9 +61,8 @@ auto abs(E&& value) -> detail::unary_helper<E, abs_unary_op> {
  * \param rhs The right hand side ETL expression
  * \return an expression representing the max values from lhs and rhs
  */
-template <typename L, typename R>
+template <etl_expr L, typename R>
 auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op_scalar<L, R, max_binary_op<detail::wrap_scalar_value_t<L>, detail::wrap_scalar_value_t<L>>> {
-    static_assert(is_etl_expr<L>, "etl::max can only be used on ETL expressions");
     return {detail::wrap_scalar(lhs), detail::smart_wrap_scalar<L>(rhs)};
 }
 
@@ -74,9 +72,8 @@ auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op_scalar<L, R, max_bin
  * \param rhs The right hand side ETL expression
  * \return an expression representing the min values from lhs and rhs
  */
-template <typename L, typename R>
+template <etl_expr L, typename R>
 auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op_scalar<L, R, min_binary_op<detail::wrap_scalar_value_t<L>, detail::wrap_scalar_value_t<L>>> {
-    static_assert(is_etl_expr<L>, "etl::max can only be used on ETL expressions");
     return {detail::wrap_scalar(lhs), detail::smart_wrap_scalar<L>(rhs)};
 }
 
@@ -85,9 +82,8 @@ auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op_scalar<L, R, min_bin
  * \param value The ETL expression
  * \return an expression representing the values of the ETL expression rounded down.
  */
-template <typename E>
+template <etl_expr E>
 auto floor(E&& value) {
-    static_assert(is_etl_expr<E>, "etl::floor can only be used on ETL expressions");
     return detail::unary_helper<E, floor_unary_op>{value};
 }
 
@@ -96,9 +92,8 @@ auto floor(E&& value) {
  * \param value The ETL expression
  * \return an expression representing the values of the ETL expression rounded up.
  */
-template <typename E>
+template <etl_expr E>
 auto ceil(E&& value) {
-    static_assert(is_etl_expr<E>, "etl::ceil can only be used on ETL expressions");
     return detail::unary_helper<E, ceil_unary_op>{value};
 }
 
@@ -680,10 +675,8 @@ etl::fast_vector<value_t<A>, 3> cross(const A& a, const B& b) {
  * \param values The expression to reduce
  * \return The sum of the values of the expression
  */
-template <typename E>
+template <etl_expr E>
 value_t<E> sum(E&& values) {
-    static_assert(is_etl_expr<E>, "etl::sum can only be used on ETL expressions");
-
     //Reduction force evaluation
     force(values);
 
@@ -695,10 +688,8 @@ value_t<E> sum(E&& values) {
  * \param values The expression to reduce
  * \return The sum of the absolute values of the expression
  */
-template <typename E>
+template <etl_expr E>
 value_t<E> asum(E&& values) {
-    static_assert(is_etl_expr<E>, "etl::asum can only be used on ETL expressions");
-
     //Reduction force evaluation
     force(values);
 
@@ -710,10 +701,8 @@ value_t<E> asum(E&& values) {
  * \param values The expression to reduce
  * \return The mean of the values of the expression
  */
-template <typename E>
+template <etl_expr E>
 value_t<E> mean(E&& values) {
-    static_assert(is_etl_expr<E>, "etl::mean can only be used on ETL expressions");
-
     return sum(values) / etl::size(values);
 }
 
@@ -722,10 +711,8 @@ value_t<E> mean(E&& values) {
  * \param values The expression to reduce
  * \return The mean of the absolute values of the expression
  */
-template <typename E>
+template <etl_expr E>
 value_t<E> amean(E&& values) {
-    static_assert(is_etl_expr<E>, "etl::amean can only be used on ETL expressions");
-
     return asum(values) / etl::size(values);
 }
 
@@ -734,10 +721,8 @@ value_t<E> amean(E&& values) {
  * \param values The expression to reduce
  * \return The standard deviation of the values of the expression
  */
-template <typename E>
+template <etl_expr E>
 value_t<E> stddev(E&& values) {
-    static_assert(is_etl_expr<E>, "etl::stddev can only be used on ETL expressions");
-
     auto mean = etl::mean(values);
 
     double std = 0.0;
@@ -756,10 +741,8 @@ value_t<E> stddev(E&& values) {
  *
  * \return The standard deviation of the values of the expression
  */
-template <typename E>
+template <etl_expr E>
 value_t<E> stddev(E&& values, value_t<E> mean) {
-    static_assert(is_etl_expr<E>, "etl::stddev can only be used on ETL expressions");
-
     double std = 0.0;
     for (auto value : values) {
         std += (value - mean) * (value - mean);
@@ -788,10 +771,8 @@ using value_return_t =
  * \param values The expression to search
  * \return The index of the maximum element of the expression
  */
-template <typename E>
+template <etl_expr E>
 size_t max_index(E&& values) {
-    static_assert(is_etl_expr<E>, "etl::max can only be used on ETL expressions");
-
     //Reduction force evaluation
     force(values);
 
@@ -812,10 +793,8 @@ size_t max_index(E&& values) {
  * \param values The expression to search
  * \return The maximum element of the expression
  */
-template <typename E>
+template <etl_expr E>
 detail::value_return_t<E> max(E&& values) {
-    static_assert(is_etl_expr<E>, "etl::max can only be used on ETL expressions");
-
     auto m = max_index(values);
     return values[m];
 }
@@ -825,10 +804,8 @@ detail::value_return_t<E> max(E&& values) {
  * \param values The expression to search
  * \return The index of the minimum element of the expression
  */
-template <typename E>
+template <etl_expr E>
 size_t min_index(E&& values) {
-    static_assert(is_etl_expr<E>, "etl::min can only be used on ETL expressions");
-
     //Reduction force evaluation
     force(values);
 
@@ -849,10 +826,8 @@ size_t min_index(E&& values) {
  * \param values The expression to search
  * \return The minimum element of the expression
  */
-template <typename E>
+template <etl_expr E>
 detail::value_return_t<E> min(E&& values) {
-    static_assert(is_etl_expr<E>, "etl::min can only be used on ETL expressions");
-
     auto m = min_index(values);
     return values[m];
 }
@@ -866,7 +841,7 @@ detail::value_return_t<E> min(E&& values) {
  * \return An expression generating numbers from the normal distribution
  */
 template <typename T = double>
-auto normal_generator(T mean = 0.0, T stddev = 1.0) -> generator_expr<normal_generator_op<T>> {
+auto normal_generator(T mean = 0.0, T stddev = 1.0) {
     return generator_expr<normal_generator_op<T>>{mean, stddev};
 }
 
@@ -881,7 +856,7 @@ auto normal_generator(T mean = 0.0, T stddev = 1.0) -> generator_expr<normal_gen
  * \return An expression generating numbers from the normal distribution
  */
 template <typename T = double, typename G>
-auto normal_generator(G& g, T mean = 0.0, T stddev = 1.0) -> generator_expr<normal_generator_g_op<G, T>> {
+auto normal_generator(G& g, T mean = 0.0, T stddev = 1.0) {
     return generator_expr<normal_generator_g_op<G, T>>{g, mean, stddev};
 }
 
@@ -892,7 +867,7 @@ auto normal_generator(G& g, T mean = 0.0, T stddev = 1.0) -> generator_expr<norm
  * \return An expression generating numbers from the normal distribution
  */
 template <typename T = double>
-auto truncated_normal_generator(T mean = 0.0, T stddev = 1.0) -> generator_expr<truncated_normal_generator_op<T>> {
+auto truncated_normal_generator(T mean = 0.0, T stddev = 1.0) {
     return generator_expr<truncated_normal_generator_op<T>>{mean, stddev};
 }
 
@@ -907,7 +882,7 @@ auto truncated_normal_generator(T mean = 0.0, T stddev = 1.0) -> generator_expr<
  * \return An expression generating numbers from the normal distribution
  */
 template <typename T = double, typename G>
-auto truncated_normal_generator(G& g, T mean = 0.0, T stddev = 1.0) -> generator_expr<truncated_normal_generator_g_op<G, T>> {
+auto truncated_normal_generator(G& g, T mean = 0.0, T stddev = 1.0) {
     return generator_expr<truncated_normal_generator_g_op<G, T>>{g, mean, stddev};
 }
 
@@ -918,7 +893,7 @@ auto truncated_normal_generator(G& g, T mean = 0.0, T stddev = 1.0) -> generator
  * \return An expression generating numbers from the uniform distribution
  */
 template <typename T = double>
-auto uniform_generator(T start, T end) -> generator_expr<uniform_generator_op<T>> {
+auto uniform_generator(T start, T end) {
     return generator_expr<uniform_generator_op<T>>{start, end};
 }
 
@@ -933,7 +908,7 @@ auto uniform_generator(T start, T end) -> generator_expr<uniform_generator_op<T>
  * \return An expression generating numbers from the uniform distribution
  */
 template <typename T = double, typename G>
-auto uniform_generator(G& g, T start, T end) -> generator_expr<uniform_generator_g_op<G, T>> {
+auto uniform_generator(G& g, T start, T end) {
     return generator_expr<uniform_generator_g_op<G, T>>{g, start, end};
 }
 
@@ -943,7 +918,7 @@ auto uniform_generator(G& g, T start, T end) -> generator_expr<uniform_generator
  * \return an expression generating numbers from a consecutive sequence
  */
 template <typename T = double>
-auto sequence_generator(T current = 0) -> generator_expr<sequence_generator_op<T>> {
+auto sequence_generator(T current = 0) {
     return generator_expr<sequence_generator_op<T>>{current};
 }
 
@@ -955,7 +930,7 @@ auto sequence_generator(T current = 0) -> generator_expr<sequence_generator_op<T
  * \return An expression generating numbers for a dropout mask
  */
 template <typename T = float>
-auto dropout_mask(T probability) -> generator_expr<dropout_mask_generator_op<T>> {
+auto dropout_mask(T probability) {
     return generator_expr<dropout_mask_generator_op<T>>{probability};
 }
 
@@ -969,7 +944,7 @@ auto dropout_mask(T probability) -> generator_expr<dropout_mask_generator_op<T>>
  * \return An expression generating numbers for a dropout mask
  */
 template <typename T = float, typename G>
-auto dropout_mask(G& g, T probability) -> generator_expr<dropout_mask_generator_g_op<G, T>> {
+auto dropout_mask(G& g, T probability) {
     return generator_expr<dropout_mask_generator_g_op<G, T>>{g, probability};
 }
 
@@ -981,7 +956,7 @@ auto dropout_mask(G& g, T probability) -> generator_expr<dropout_mask_generator_
  * \return An expression generating numbers for a dropout mask
  */
 template <typename T = float>
-auto state_dropout_mask(T probability) -> generator_expr<state_dropout_mask_generator_op<T>> {
+auto state_dropout_mask(T probability) {
     return generator_expr<state_dropout_mask_generator_op<T>>{probability};
 }
 
@@ -995,7 +970,7 @@ auto state_dropout_mask(T probability) -> generator_expr<state_dropout_mask_gene
  * \return An expression generating numbers for a dropout mask
  */
 template <typename T = float, typename G>
-auto state_dropout_mask(G& g, T probability) -> generator_expr<state_dropout_mask_generator_g_op<G, T>> {
+auto state_dropout_mask(G& g, T probability) {
     return generator_expr<state_dropout_mask_generator_g_op<G, T>>{g, probability};
 }
 
@@ -1007,7 +982,7 @@ auto state_dropout_mask(G& g, T probability) -> generator_expr<state_dropout_mas
  * \return An expression generating numbers for an inverted dropout mask
  */
 template <typename T = float>
-auto inverted_dropout_mask(T probability) -> generator_expr<inverted_dropout_mask_generator_op<T>> {
+auto inverted_dropout_mask(T probability) {
     return generator_expr<inverted_dropout_mask_generator_op<T>>{probability};
 }
 
@@ -1021,7 +996,7 @@ auto inverted_dropout_mask(T probability) -> generator_expr<inverted_dropout_mas
  * \return An expression generating numbers for an inverted dropout mask
  */
 template <typename T = float, typename G>
-auto state_inverted_dropout_mask(G& g, T probability) -> generator_expr<state_inverted_dropout_mask_generator_g_op<G, T>> {
+auto state_inverted_dropout_mask(G& g, T probability) {
     return generator_expr<state_inverted_dropout_mask_generator_g_op<G, T>>{g, probability};
 }
 
@@ -1033,7 +1008,7 @@ auto state_inverted_dropout_mask(G& g, T probability) -> generator_expr<state_in
  * \return An expression generating numbers for an inverted dropout mask
  */
 template <typename T = float>
-auto state_inverted_dropout_mask(T probability) -> generator_expr<state_inverted_dropout_mask_generator_op<T>> {
+auto state_inverted_dropout_mask(T probability) {
     return generator_expr<state_inverted_dropout_mask_generator_op<T>>{probability};
 }
 
@@ -1047,7 +1022,7 @@ auto state_inverted_dropout_mask(T probability) -> generator_expr<state_inverted
  * \return An expression generating numbers for an inverted dropout mask
  */
 template <typename T = float, typename G>
-auto inverted_dropout_mask(G& g, T probability) -> generator_expr<inverted_dropout_mask_generator_g_op<G, T>> {
+auto inverted_dropout_mask(G& g, T probability) {
     return generator_expr<inverted_dropout_mask_generator_g_op<G, T>>{g, probability};
 }
 
@@ -1058,7 +1033,7 @@ auto inverted_dropout_mask(G& g, T probability) -> generator_expr<inverted_dropo
  *
  * \return The expression
  */
-template <typename Expr, cpp_enable_iff(is_etl_expr<Expr>)>
+template <etl_expr Expr>
 decltype(auto) operator*(Expr&& expr) {
     force(expr);
     return std::forward<Expr>(expr);

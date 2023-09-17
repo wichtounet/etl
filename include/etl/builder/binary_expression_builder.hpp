@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include "etl/concepts.hpp"
 namespace etl {
 
 /*!
