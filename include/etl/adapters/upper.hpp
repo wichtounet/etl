@@ -152,10 +152,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
+    template <etl_expr R>
     upper_matrix& operator+=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only add ETL expression to upper triangular matrix");
-
         // Make sure the other matrix is upper triangular
         if (!is_upper_triangular(rhs)) {
             throw upper_exception();
@@ -171,10 +169,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
+    template <etl_expr R>
     upper_matrix& operator-=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only add ETL expression to upper triangular matrix");
-
         // Make sure the other matrix is upper triangular
         if (!is_upper_triangular(rhs)) {
             throw upper_exception();
@@ -200,7 +196,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R, cpp_enable_iff(is_etl_expr<R>)>
+    template <etl_expr R>
     upper_matrix& operator*=(R&& rhs) {
         // Make sure the other matrix is upper triangular
         if (!is_upper_triangular(rhs)) {
@@ -227,7 +223,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R, cpp_enable_iff(is_etl_expr<R>)>
+    template <etl_expr R>
     upper_matrix& operator>>=(R&& rhs) {
         // Make sure the other matrix is upper triangular
         if (!is_upper_triangular(rhs)) {
@@ -254,7 +250,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R, cpp_enable_iff(is_etl_expr<R>)>
+    template <etl_expr R>
     upper_matrix& operator/=(R&& rhs) {
         // Make sure the other matrix is upper triangular
         if (!is_upper_triangular(rhs)) {
@@ -281,7 +277,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R, cpp_enable_iff(is_etl_expr<R>)>
+    template <etl_expr R>
     upper_matrix& operator%=(R&& rhs) {
         // Make sure the other matrix is upper triangular
         if (!is_upper_triangular(rhs)) {
