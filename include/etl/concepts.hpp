@@ -105,6 +105,24 @@ template <typename T>
 concept fast_matrix_c = fast<T> && matrix<T>;
 
 template <typename T>
+concept fast_2d = fast<T> && etl_2d<T>;
+
+template <typename T>
+concept fast_3d = fast<T> && etl_3d<T>;
+
+template <typename T>
+concept fast_4d = fast<T> && etl_4d<T>;
+
+template <typename T>
+concept dyn_2d = dyn<T> && etl_2d<T>;
+
+template <typename T>
+concept dyn_3d = dyn<T> && etl_3d<T>;
+
+template <typename T>
+concept dyn_4d = dyn<T> && etl_4d<T>;
+
+template <typename T>
 concept dyn_matrix_c = dyn<T> && matrix<T>;
 
 // Complement the standard library
