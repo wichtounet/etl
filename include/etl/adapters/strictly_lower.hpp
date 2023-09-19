@@ -15,6 +15,7 @@
 #include "etl/adapters/adapter.hpp"                  // The adapter base class
 #include "etl/adapters/strictly_lower_exception.hpp" // The exception
 #include "etl/adapters/strictly_lower_reference.hpp" // The reference proxy
+#include "etl/concepts.hpp"
 
 namespace etl {
 
@@ -114,8 +115,8 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_iff(std::is_convertible_v<value_t<E>, value_type> && is_etl_expr<E>)>
-    strictly_lower_matrix& operator=(E&& e) noexcept(false) {
+    template <typename E>
+    strictly_lower_matrix& operator=(E&& e) noexcept(false) requires convertible_expr<E, value_type>{
         // Make sure the other matrix is strictly lower triangular
         if (!is_strictly_lower_triangular(e)) {
             throw strictly_lower_exception();
@@ -152,10 +153,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
+    template <etl_expr R>
     strictly_lower_matrix& operator+=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only add ETL expression to strictly lower triangular matrix");
-
         // Make sure the other matrix is strictly lower triangular
         if (!is_strictly_lower_triangular(rhs)) {
             throw strictly_lower_exception();
@@ -171,10 +170,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
+    template <etl_expr R>
     strictly_lower_matrix& operator-=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only add ETL expression to strictly lower triangular matrix");
-
         // Make sure the other matrix is strictly lower triangular
         if (!is_strictly_lower_triangular(rhs)) {
             throw strictly_lower_exception();
@@ -200,7 +197,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R, cpp_enable_iff(is_etl_expr<R>)>
+    template <etl_expr R>
     strictly_lower_matrix& operator*=(R&& rhs) {
         // Make sure the other matrix is strictly lower triangular
         if (!is_strictly_lower_triangular(rhs)) {
@@ -227,7 +224,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R, cpp_enable_iff(is_etl_expr<R>)>
+    template <etl_expr R>
     strictly_lower_matrix& operator>>=(R&& rhs) {
         // Make sure the other matrix is strictly lower triangular
         if (!is_strictly_lower_triangular(rhs)) {
@@ -254,7 +251,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R, cpp_enable_iff(is_etl_expr<R>)>
+    template <etl_expr R>
     strictly_lower_matrix& operator/=(R&& rhs) {
         // Make sure the other matrix is strictly lower triangular
         if (!is_strictly_lower_triangular(rhs)) {
@@ -281,7 +278,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R, cpp_enable_iff(is_etl_expr<R>)>
+    template <etl_expr R>
     strictly_lower_matrix& operator%=(R&& rhs) {
         // Make sure the other matrix is strictly lower triangular
         if (!is_strictly_lower_triangular(rhs)) {

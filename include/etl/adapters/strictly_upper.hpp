@@ -114,8 +114,8 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_iff(std::is_convertible_v<value_t<E>, value_type> && is_etl_expr<E>)>
-    strictly_upper_matrix& operator=(E&& e) noexcept(false) {
+    template<typename E>
+    strictly_upper_matrix& operator=(E&& e) noexcept(false) requires convertible_expr<E, value_type> {
         // Make sure the other matrix is strictly upper triangular
         if (!is_strictly_upper_triangular(e)) {
             throw strictly_upper_exception();
@@ -152,10 +152,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
+    template <etl_expr R>
     strictly_upper_matrix& operator+=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only add ETL expression to strictly upper triangular matrix");
-
         // Make sure the other matrix is strictly upper triangular
         if (!is_strictly_upper_triangular(rhs)) {
             throw strictly_upper_exception();
@@ -171,10 +169,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
+    template <etl_expr R>
     strictly_upper_matrix& operator-=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only add ETL expression to strictly upper triangular matrix");
-
         // Make sure the other matrix is strictly upper triangular
         if (!is_strictly_upper_triangular(rhs)) {
             throw strictly_upper_exception();
@@ -200,7 +196,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R, cpp_enable_iff(is_etl_expr<R>)>
+    template <etl_expr R>
     strictly_upper_matrix& operator*=(R&& rhs) {
         // Make sure the other matrix is strictly upper triangular
         if (!is_strictly_upper_triangular(rhs)) {
@@ -227,7 +223,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R, cpp_enable_iff(is_etl_expr<R>)>
+    template <etl_expr R>
     strictly_upper_matrix& operator>>=(R&& rhs) {
         // Make sure the other matrix is strictly upper triangular
         if (!is_strictly_upper_triangular(rhs)) {
@@ -254,7 +250,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R, cpp_enable_iff(is_etl_expr<R>)>
+    template <etl_expr R>
     strictly_upper_matrix& operator/=(R&& rhs) {
         // Make sure the other matrix is strictly upper triangular
         if (!is_strictly_upper_triangular(rhs)) {
@@ -281,7 +277,7 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R, cpp_enable_iff(is_etl_expr<R>)>
+    template <etl_expr R>
     strictly_upper_matrix& operator%=(R&& rhs) {
         // Make sure the other matrix is strictly upper triangular
         if (!is_strictly_upper_triangular(rhs)) {
