@@ -109,8 +109,8 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_iff(std::is_convertible_v<value_t<E>, value_type> && is_etl_expr<E>)>
-    uni_upper_matrix& operator=(E&& e) noexcept(false) {
+    template <typename E>
+    uni_upper_matrix& operator=(E&& e) noexcept(false) requires convertible_expr<E, value_type> {
         // Make sure the other matrix is uni upper triangular
         if (!is_uni_upper_triangular(e)) {
             throw uni_upper_exception();
@@ -147,10 +147,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
+    template <etl_expr R>
     uni_upper_matrix& operator+=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only add ETL expression to uni upper triangular matrix");
-
         // Make sure the other matrix is uni upper triangular
         if (!is_uni_upper_triangular(rhs)) {
             throw uni_upper_exception();
@@ -166,10 +164,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
+    template <etl_expr R>
     uni_upper_matrix& operator-=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only add ETL expression to uni upper triangular matrix");
-
         // Make sure the other matrix is uni upper triangular
         if (!is_uni_upper_triangular(rhs)) {
             throw uni_upper_exception();
@@ -202,10 +198,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
+    template <etl_expr R>
     uni_upper_matrix& operator>>=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only scale uni upper triangular matrix by an ETL expression");
-
         // Make sure the other matrix is uni upper triangular
         if (!is_uni_upper_triangular(rhs)) {
             throw uni_upper_exception();
@@ -221,10 +215,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
+    template <etl_expr R>
     uni_upper_matrix& operator/=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only scale uni upper triangular matrix by an ETL expression");
-
         // Make sure the other matrix is uni upper triangular
         if (!is_uni_upper_triangular(rhs)) {
             throw uni_upper_exception();

@@ -125,6 +125,9 @@ concept dyn_4d = dyn<T> && etl_4d<T>;
 template <typename T>
 concept dyn_matrix_c = dyn<T> && matrix<T>;
 
+template <typename T, typename VT>
+concept convertible_expr = etl_expr<T> && std::convertible_to<value_t<T>, VT>;
+
 // Complement the standard library
 
 template<typename T>
