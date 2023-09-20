@@ -81,9 +81,8 @@ void validate_expression_impl([[maybe_unused]] const LE& lhs, [[maybe_unused]] c
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_iff(etl_traits<RE>::is_generator)>
+template <etl_expr LE, typename RE, cpp_enable_iff(etl_traits<RE>::is_generator)>
 void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) noexcept {
-    static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     //Nothing to test, generators are of infinite size
 }
 
@@ -96,9 +95,8 @@ void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& 
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_iff(!etl_traits<RE>::is_generator && is_etl_expr<RE> && !all_fast<LE, RE> && !is_wrapper_expr<RE>)>
+template <etl_expr LE, typename RE, cpp_enable_iff(!etl_traits<RE>::is_generator && is_etl_expr<RE> && !all_fast<LE, RE> && !is_wrapper_expr<RE>)>
 void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
-    static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(etl::size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
 }
 
@@ -111,9 +109,8 @@ void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& 
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_iff(!etl_traits<RE>::is_generator && is_etl_expr<RE> && all_fast<LE, RE> && !is_wrapper_expr<RE>)>
+template <etl_expr LE, typename RE, cpp_enable_iff(!etl_traits<RE>::is_generator && is_etl_expr<RE> && all_fast<LE, RE> && !is_wrapper_expr<RE>)>
 void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
-    static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
 }
 
@@ -126,9 +123,8 @@ void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& 
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_iff(!is_etl_expr<RE> && !is_wrapper_expr<RE>)>
+template <etl_expr LE, typename RE, cpp_enable_iff(!is_etl_expr<RE> && !is_wrapper_expr<RE>)>
 void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
-    static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(etl::size(lhs) == rhs.size(), "Cannot perform element-wise operations on collections of different size");
 }
 
@@ -141,9 +137,8 @@ void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& 
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_iff(is_wrapper_expr<RE>)>
+template <etl_expr LE, wrapper_expr RE>
 void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
-    static_assert(is_etl_expr<LE>, "Assign can only work on ETL expressions");
     cpp_assert(etl::size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
 }
 

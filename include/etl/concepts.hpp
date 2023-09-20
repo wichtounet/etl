@@ -128,6 +128,24 @@ concept dyn_matrix_c = dyn<T> && matrix<T>;
 template <typename T, typename VT>
 concept convertible_expr = etl_expr<T> && std::convertible_to<value_t<T>, VT>;
 
+template <typename T>
+concept optimized_expr_c = cpp::is_specialization_of_v<etl::optimized_expr, std::decay_t<T>>;
+
+template <typename T>
+concept serial_expr_c = cpp::is_specialization_of_v<etl::serial_expr, std::decay_t<T>>;
+
+template <typename T>
+concept selected_expr_c = traits_detail::is_selected_expr_impl<std::decay_t<T>>::value;
+
+template <typename T>
+concept parallel_expr_c = cpp::is_specialization_of_v<etl::parallel_expr, std::decay_t<T>>;
+
+template <typename T>
+concept timed_expr_c = cpp::is_specialization_of_v<etl::timed_expr, std::decay_t<T>>;
+
+template <typename T>
+concept wrapper_expr = optimized_expr_c<T> || selected_expr_c<T> || serial_expr_c<T> || parallel_expr_c<T> || timed_expr_c<T>;
+
 // Complement the standard library
 
 template<typename T>
