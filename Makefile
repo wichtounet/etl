@@ -388,14 +388,9 @@ debug: debug_etl_test debug/bin/benchmark
 
 all: release release_debug debug
 
-debug_test: debug_etl_test
-	./debug/bin/etl_test
-
-release_debug_test: release_debug_etl_test
-	./release_debug/bin/etl_test
-
-release_test: release_etl_test
-	./release/bin/etl_test
+debug_test: run_debug_etl_test_all
+release_debug_test: run_release_debug_etl_test_all
+release_test: run_release_etl_test_all
 
 test: all
 	./debug/bin/etl_test
