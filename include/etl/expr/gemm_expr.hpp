@@ -430,7 +430,7 @@ struct etl_traits<etl::gemm_expr<A, B, Strassen>> {
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <etl_2d A, etl_2d B>
-gemm_expr<detail::build_type<A>, detail::build_type<B>, false> operator*(A&& a, B&& b) {
+auto operator*(A&& a, B&& b) {
     return gemm_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b};
 }
 
@@ -441,7 +441,7 @@ gemm_expr<detail::build_type<A>, detail::build_type<B>, false> operator*(A&& a, 
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <etl_2d A, etl_2d B>
-gemm_expr<detail::build_type<A>, detail::build_type<B>, false> mul(A&& a, B&& b) {
+auto mul(A&& a, B&& b) {
     return gemm_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b};
 }
 
@@ -493,7 +493,7 @@ auto mul(A&& a, B&& b, C&& c) {
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <etl_2d A, etl_2d B>
-gemm_expr<detail::build_type<A>, detail::build_type<B>, true> strassen_mul(A&& a, B&& b) {
+auto strassen_mul(A&& a, B&& b) {
     return gemm_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b};
 }
 

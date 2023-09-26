@@ -369,7 +369,7 @@ struct etl_traits<etl::gemv_expr<A, B>> {
  * \return An expression representing the matrix-vector multiplication of a and b
  */
 template <etl_2d A, etl_1d B>
-gemv_expr<detail::build_type<A>, detail::build_type<B>> operator*(A&& a, B&& b) {
+auto operator*(A&& a, B&& b) {
     return gemv_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
 
@@ -380,7 +380,7 @@ gemv_expr<detail::build_type<A>, detail::build_type<B>> operator*(A&& a, B&& b) 
  * \return An expression representing the matrix-vector multiplication of a and b
  */
 template <etl_2d A, etl_1d B>
-gemv_expr<detail::build_type<A>, detail::build_type<B>> mul(A&& a, B&& b) {
+auto mul(A&& a, B&& b) {
     return gemv_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
 
