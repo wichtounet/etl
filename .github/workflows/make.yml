@@ -1,0 +1,45 @@
+name: Linux Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    name: Compile and test on Linux
+    runs-on: ${{ matrix.os }}
+    strategy:
+        matrix:
+            os: [ubuntu-latest]
+            compiler: [g++-13,clang++-17]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Install GCC compiler
+      run: sudo apt install g++-13
+
+    - name: install LLVM compiler
+      run: |
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-17 main"
+          sudo apt update
+          sudo apt install clang-17
+
+    - name: Build binaries
+      env:
+          CXX: ${{ matrix.compiler }}
+      run: make -j5 debug
+
+    - name: Build tests
+      env:
+          CXX: ${{ matrix.compiler }}
+      run: make -j5 debug_test
+
+    - name: Run tests
+      run: make run_debug_test
