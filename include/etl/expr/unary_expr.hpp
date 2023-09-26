@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <random>
 namespace etl {
 
 /*!
@@ -513,8 +514,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (safe_dimensions<this_type>> 1), cpp_enable_iff(B)>
-    auto operator()(size_t i) {
+    auto operator()(size_t i) requires sub_capable<this_type> {
         return sub(*this, i);
     }
 
@@ -523,8 +523,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (safe_dimensions<this_type>> 1), cpp_enable_iff(B)>
-    auto operator()(size_t i) const {
+    auto operator()(size_t i) const requires sub_capable<this_type> {
         return sub(*this, i);
     }
 
@@ -628,18 +627,18 @@ public:
      * \brief Returns the DDth dimension of the matrix
      * \return The DDth dimension of the matrix
      */
-    template <size_t DD, typename TT = this_type, cpp_enable_iff(is_fast<TT>)>
-    static constexpr size_t dim() {
-        return etl_traits<TT>::template dim<DD>();
+    template <size_t DD>
+    static constexpr size_t dim() requires fast<this_type> {
+        return etl_traits<this_type>::template dim<DD>();
     }
 
     /*!
      * \brief Returns the DDth dimension of the matrix
      * \return The DDth dimension of the matrix
      */
-    template <size_t DD, typename TT = this_type, cpp_disable_iff(is_fast<TT>)>
-    size_t dim() const {
-        return etl_traits<TT>::dim(*this, DD);
+    template <size_t DD>
+    size_t dim() const requires dyn<this_type> {
+        return etl_traits<this_type>::dim(*this, DD);
     }
 
     /*!
@@ -914,8 +913,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (safe_dimensions<this_type>> 1), cpp_enable_iff(B)>
-    auto operator()(size_t i) const {
+    auto operator()(size_t i) const requires sub_capable<this_type> {
         return sub(*this, i);
     }
 

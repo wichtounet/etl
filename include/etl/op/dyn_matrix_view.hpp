@@ -388,8 +388,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given position.
      */
-    template <bool B = (D == 1), cpp_enable_iff(B)>
-    const_return_type operator()(size_t j) const {
+    const_return_type operator()(size_t j) const requires (D == 1) {
         ensure_cpu_up_to_date();
         return memory[j];
     }
@@ -399,8 +398,7 @@ public:
      * \param j The index
      * \return a reference to the element at the given position.
      */
-    template <bool B = (D == 1), cpp_enable_iff(B)>
-    return_type operator()(size_t j) {
+    return_type operator()(size_t j) requires (D == 1) {
         ensure_cpu_up_to_date();
         invalidate_gpu();
         return memory[j];
@@ -449,8 +447,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (D > 1), cpp_enable_iff(B)>
-    auto operator()(size_t i) noexcept {
+    auto operator()(size_t i) noexcept requires (D > 1) {
         return etl::sub(*this, i);
     }
 
@@ -459,8 +456,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (D > 1), cpp_enable_iff(B)>
-    auto operator()(size_t i) const noexcept {
+    auto operator()(size_t i) const noexcept requires (D > 1) {
         return etl::sub(*this, i);
     }
 
