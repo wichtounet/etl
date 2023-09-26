@@ -367,7 +367,7 @@ struct etl_traits<etl::gevm_expr<A, B>> {
  * \param b The right hand side matrix
  * \return An expression representing the vector-matrix multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_iff(is_1d<A>&& is_2d<B>)>
+template <etl_1d A, etl_2d B>
 gevm_expr<detail::build_type<A>, detail::build_type<B>> operator*(A&& a, B&& b) {
     return gevm_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
@@ -378,7 +378,7 @@ gevm_expr<detail::build_type<A>, detail::build_type<B>> operator*(A&& a, B&& b) 
  * \param b The right hand side matrix
  * \return An expression representing the vector-matrix multiplication of a and b
  */
-template <typename A, typename B, cpp_enable_iff(is_1d<A>&& is_2d<B>)>
+template <etl_1d A, etl_2d B>
 gevm_expr<detail::build_type<A>, detail::build_type<B>> mul(A&& a, B&& b) {
     return gevm_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
@@ -390,7 +390,7 @@ gevm_expr<detail::build_type<A>, detail::build_type<B>> mul(A&& a, B&& b) {
  * \param c The expression used to store the result
  * \return An expression representing the vector-matrix multiplication of a and b
  */
-template <typename A, typename B, typename C, cpp_enable_iff(is_1d<A>&& is_2d<B>)>
+template <etl_1d A, etl_2d B, etl_1d C>
 auto mul(A&& a, B&& b, C&& c) {
     c = mul(a, b);
     return c;
