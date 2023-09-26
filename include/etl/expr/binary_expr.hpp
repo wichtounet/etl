@@ -151,8 +151,7 @@ public:
      * \param i The index to use
      * \return a sub view of the expression at position i.
      */
-    template <bool B = (safe_dimensions<this_type>> 1), cpp_enable_iff(B)>
-    auto operator()(size_t i) {
+    auto operator()(size_t i) requires sub_capable<this_type> {
         return sub(*this, i);
     }
 
@@ -161,8 +160,7 @@ public:
      * \param i The index to use
      * \return a sub view of the expression at position i.
      */
-    template <bool B = (safe_dimensions<this_type>> 1), cpp_enable_iff(B)>
-    auto operator()(size_t i) const {
+    auto operator()(size_t i) const requires sub_capable<this_type> {
         return sub(*this, i);
     }
 

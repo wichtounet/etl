@@ -153,6 +153,9 @@ concept timed_expr_c = cpp::is_specialization_of_v<etl::timed_expr, std::decay_t
 template <typename T>
 concept wrapper_expr = optimized_expr_c<T> || selected_expr_c<T> || serial_expr_c<T> || parallel_expr_c<T> || timed_expr_c<T>;
 
+template <typename T>
+concept sub_capable = matrix<T> || generator<T>;
+
 // Complement the standard library
 
 template<typename T>
