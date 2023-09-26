@@ -44,6 +44,13 @@ template<typename T>
 concept dyn = !decay_traits<T>::is_fast;
 
 template<typename T>
+concept generator = etl_expr<T> && decay_traits<T>::is_generator;
+
+// TODO: Maybe rename into a generic concept (not not-something)
+template<typename T>
+concept not_generator = etl_expr<T> && !decay_traits<T>::is_generator;
+
+template<typename T>
 concept dyn_expr = etl_expr<T> && dyn<T>;
 
 template<typename T>
