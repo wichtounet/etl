@@ -39,7 +39,7 @@ jobs:
     - name: Build tests
       env:
           CXX: ${{ matrix.compiler }}
-      run: make -j5 debug_test
+      run: make -j5 debug_etl_test
 
     - name: Run tests
-      run: make run_debug_test
+      run: make debug_test
