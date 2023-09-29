@@ -161,4 +161,7 @@ concept sub_capable = matrix<T> || generator<T>;
 template<typename T>
 concept arithmetic = std::floating_point<T> || std::integral<T>;
 
-} //end of namespace etl
+template<typename T>
+concept size_c = std::convertible_to<T, size_t>;
+
+} // namespace etl

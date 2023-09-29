@@ -9,6 +9,7 @@
 
 #include <memory> //For shared_ptr
 
+#include "etl/concepts.hpp"
 #include "etl/iterator.hpp"
 
 namespace etl {
@@ -221,8 +222,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <typename DD = D, cpp_enable_iff(safe_dimensions<DD>> 1)>
-    auto operator()(size_t i) const {
+    auto operator()(size_t i) const requires sub_capable<derived_t> {
         return sub(as_derived(), i);
     }
 

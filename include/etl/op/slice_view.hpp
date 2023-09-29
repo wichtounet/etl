@@ -130,8 +130,7 @@ public:
      * \param x The index to use
      * \return a sub view of the matrix at position x.
      */
-    template <typename TT = sub_type, cpp_enable_iff(decay_traits<TT>::dimensions() > 1)>
-    auto operator()(size_t x) const {
+    auto operator()(size_t x) const requires sub_capable<sub_type> {
         return etl::sub(*this, x);
     }
 
@@ -401,8 +400,7 @@ public:
      * \param x The index to use
      * \return a sub view of the matrix at position x.
      */
-    template <typename TT = sub_type, cpp_enable_iff(decay_traits<TT>::dimensions() > 1)>
-    auto operator()(size_t x) const {
+    auto operator()(size_t x) const requires sub_capable<sub_type> {
         return etl::sub(*this, x);
     }
 

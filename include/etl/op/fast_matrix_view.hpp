@@ -95,10 +95,8 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) == sizeof...(Dims))>
-    return_type operator()(S... args) noexcept {
-        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
-
+    template <size_c... S>
+    return_type operator()(S... args) requires (sizeof...(S) == sizeof...(Dims)) {
         return sub[etl::fast_index<this_type>(static_cast<size_t>(args)...)];
     }
 
@@ -107,10 +105,8 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) == sizeof...(Dims))>
-    const_return_type operator()(S... args) const noexcept {
-        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
-
+    template <size_c... S>
+    const_return_type operator()(S... args) const noexcept requires (sizeof...(S) == sizeof...(Dims)) {
         return sub[etl::fast_index<this_type>(static_cast<size_t>(args)...)];
     }
 
@@ -119,8 +115,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
-    auto operator()(size_t i) noexcept {
+    auto operator()(size_t i) noexcept requires sub_capable<this_type> {
         return etl::sub(*this, i);
     }
 
@@ -129,8 +124,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
-    auto operator()(size_t i) const noexcept {
+    auto operator()(size_t i) const noexcept requires sub_capable<this_type> {
         return etl::sub(*this, i);
     }
 
@@ -415,8 +409,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
-    auto operator()(size_t i) noexcept {
+    auto operator()(size_t i) noexcept requires sub_capable<this_type> {
         return etl::sub(*this, i);
     }
 
@@ -425,8 +418,7 @@ public:
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
-    auto operator()(size_t i) const noexcept {
+    auto operator()(size_t i) const noexcept requires sub_capable<this_type> {
         return etl::sub(*this, i);
     }
 
