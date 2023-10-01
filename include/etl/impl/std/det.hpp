@@ -17,7 +17,7 @@ namespace etl {
 /*!
  * \copydoc etl::lu
  */
-template <typename AT, typename LT, typename UT, typename PT>
+template <etl_expr AT, etl_expr LT, etl_expr UT, etl_expr PT>
 bool lu(const AT& A, LT& L, UT& U, PT& P);
 
 namespace impl {
@@ -28,7 +28,7 @@ namespace standard {
  * \brief Compute the determinant of the given matrix
  * \return The determinant of the given matrix
  */
-template <typename AT>
+template <etl_expr AT>
 value_t<AT> det(const AT& A) {
     using T = value_t<AT>;
 
