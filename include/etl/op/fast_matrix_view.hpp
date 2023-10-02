@@ -382,9 +382,8 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) == sizeof...(Dims))>
-    return_type operator()(S... args) noexcept(assert_nothrow) {
-        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
+    template <size_c... S>
+    return_type operator()(S... args) noexcept(assert_nothrow) requires(sizeof...(S) == sizeof...(Dims)) {
         cpp_assert(memory, "Memory has not been initialized");
         ensure_cpu_up_to_date();
         invalidate_gpu();
@@ -396,9 +395,8 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) == sizeof...(Dims))>
-    const_return_type operator()(S... args) const noexcept(assert_nothrow) {
-        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
+    template <size_c... S>
+    const_return_type operator()(S... args) const noexcept(assert_nothrow) requires(sizeof...(S) == sizeof...(Dims)) {
         cpp_assert(memory, "Memory has not been initialized");
         ensure_cpu_up_to_date();
         return memory[etl::fast_index<this_type>(static_cast<size_t>(args)...)];

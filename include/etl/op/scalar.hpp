@@ -81,10 +81,8 @@ struct scalar {
      * \param args The indices
      * \return The computed value at the position (args...)
      */
-    template <typename... S>
+    template <size_c... S>
     constexpr T operator()(__attribute__((unused)) S... args) const noexcept {
-        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
-
         return value;
     }
 

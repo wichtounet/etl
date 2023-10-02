@@ -210,10 +210,8 @@ public:
      * \param args The position indices
      * \return The value at the given position (args...)
      */
-    template <typename... S>
+    template <size_c... S>
     value_type operator()(S... args) const requires(sizeof...(S) == safe_dimensions<derived_t>) {
-        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
-
         return result()(args...);
     }
 

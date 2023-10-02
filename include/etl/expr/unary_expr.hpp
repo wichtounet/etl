@@ -210,10 +210,8 @@ public:
      * \param args The indices
      * \return The computed value at the position (args...)
      */
-    template <typename... S>
+    template <size_c... S>
     value_type operator()(S... args) const {
-        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
-
         return UnaryOp::apply(value(args...));
     }
 
@@ -552,11 +550,9 @@ public:
      * \param args The indices
      * \return The computed value at the position (args...)
      */
-    template <typename... S>
+    template <size_c... S>
     ETL_STRONG_INLINE(return_type)
     operator()(S... args) noexcept(noexcept(value(args...))) requires (sizeof...(S) == safe_dimensions<this_type>) {
-        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
-
         return value(args...);
     }
 
@@ -565,11 +561,9 @@ public:
      * \param args The indices
      * \return The computed value at the position (args...)
      */
-    template <typename... S>
+    template <size_c... S>
     ETL_STRONG_INLINE(const_return_type)
     operator()(S... args) const noexcept(noexcept(value(args...))) requires(sizeof...(S) == safe_dimensions<this_type>) {
-        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
-
         return value(args...);
     }
 
@@ -922,10 +916,8 @@ public:
      * \param args The indices
      * \return The computed value at the position (args...)
      */
-    template <typename... S>
+    template <size_c... S>
     std::enable_if_t<sizeof...(S) == safe_dimensions<this_type>, value_type> operator()(S... args) const {
-        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
-
         return value(args...);
     }
 
@@ -1167,10 +1159,8 @@ public:
      * \param args The indices
      * \return The computed value at the position (args...)
      */
-    template <typename... S>
+    template <size_c... S>
     std::enable_if_t<sizeof...(S) == safe_dimensions<this_type>, value_type> operator()(S... args) const {
-        static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
-
         return op.apply(value(args...));
     }
 
