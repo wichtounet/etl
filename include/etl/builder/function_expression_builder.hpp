@@ -20,9 +20,8 @@ namespace etl {
  * \param value The ETL expression
  * \return an expression representing the square root of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto sqrt(E&& value) -> detail::unary_helper<E, sqrt_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::sqrt can only be used on ETL expressions");
     return detail::unary_helper<E, sqrt_unary_op>{value};
 }
 
@@ -31,9 +30,8 @@ auto sqrt(E&& value) -> detail::unary_helper<E, sqrt_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the inverse square root of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto invsqrt(E&& value) -> detail::unary_helper<E, invsqrt_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::invsqrt can only be used on ETL expressions");
     return detail::unary_helper<E, invsqrt_unary_op>{value};
 }
 
@@ -42,9 +40,8 @@ auto invsqrt(E&& value) -> detail::unary_helper<E, invsqrt_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the cubic root of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto cbrt(E&& value) -> detail::unary_helper<E, cbrt_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::cbrt can only be used on ETL expressions");
     return detail::unary_helper<E, cbrt_unary_op>{value};
 }
 
@@ -53,9 +50,8 @@ auto cbrt(E&& value) -> detail::unary_helper<E, cbrt_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the inverse cubic root of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto invcbrt(E&& value) -> detail::unary_helper<E, invcbrt_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::invcbrt can only be used on ETL expressions");
     return detail::unary_helper<E, invcbrt_unary_op>{value};
 }
 
@@ -64,9 +60,8 @@ auto invcbrt(E&& value) -> detail::unary_helper<E, invcbrt_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the logarithm (base e) of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto log(E&& value) -> detail::unary_helper<E, log_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::log can only be used on ETL expressions");
     return detail::unary_helper<E, log_unary_op>{value};
 }
 
@@ -75,9 +70,8 @@ auto log(E&& value) -> detail::unary_helper<E, log_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the logarithm (base 2) of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto log2(E&& value) -> detail::unary_helper<E, log2_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::log2 can only be used on ETL expressions");
     return detail::unary_helper<E, log2_unary_op>{value};
 }
 
@@ -86,9 +80,8 @@ auto log2(E&& value) -> detail::unary_helper<E, log2_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the logarithm (base 10) of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto log10(E&& value) -> detail::unary_helper<E, log10_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::log10 can only be used on ETL expressions");
     return detail::unary_helper<E, log10_unary_op>{value};
 }
 
@@ -97,9 +90,8 @@ auto log10(E&& value) -> detail::unary_helper<E, log10_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the tangent of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto tan(E&& value) -> detail::unary_helper<E, tan_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::tan can only be used on ETL expressions");
     return detail::unary_helper<E, tan_unary_op>{value};
 }
 
@@ -108,9 +100,8 @@ auto tan(E&& value) -> detail::unary_helper<E, tan_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the cosinus of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto cos(E&& value) -> detail::unary_helper<E, cos_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::cos can only be used on ETL expressions");
     return detail::unary_helper<E, cos_unary_op>{value};
 }
 
@@ -119,9 +110,8 @@ auto cos(E&& value) -> detail::unary_helper<E, cos_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the sinus of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto sin(E&& value) -> detail::unary_helper<E, sin_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::sin can only be used on ETL expressions");
     return detail::unary_helper<E, sin_unary_op>{value};
 }
 
@@ -130,9 +120,8 @@ auto sin(E&& value) -> detail::unary_helper<E, sin_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the hyperbolic tangent of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto tanh(E&& value) -> detail::unary_helper<E, tanh_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::tanh can only be used on ETL expressions");
     return detail::unary_helper<E, tanh_unary_op>{value};
 }
 
@@ -141,9 +130,8 @@ auto tanh(E&& value) -> detail::unary_helper<E, tanh_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the hyperbolic cosinus of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto cosh(E&& value) -> detail::unary_helper<E, cosh_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::cosh can only be used on ETL expressions");
     return detail::unary_helper<E, cosh_unary_op>{value};
 }
 
@@ -152,9 +140,8 @@ auto cosh(E&& value) -> detail::unary_helper<E, cosh_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the hyperbolic sinus of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto sinh(E&& value) -> detail::unary_helper<E, sinh_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::sinh can only be used on ETL expressions");
     return detail::unary_helper<E, sinh_unary_op>{value};
 }
 
@@ -163,9 +150,8 @@ auto sinh(E&& value) -> detail::unary_helper<E, sinh_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the exponential of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto exp(E&& value) -> detail::unary_helper<E, exp_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::exp can only be used on ETL expressions");
     return detail::unary_helper<E, exp_unary_op>{value};
 }
 
@@ -174,9 +160,8 @@ auto exp(E&& value) -> detail::unary_helper<E, exp_unary_op> {
  * \param value The ETL expression
  * \return an expression representing the sign of each value of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto sign(E&& value) -> detail::unary_helper<E, sign_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::sign can only be used on ETL expressions");
     return detail::unary_helper<E, sign_unary_op>{value};
 }
 
@@ -208,9 +193,8 @@ auto identity_derivative([[maybe_unused]] E&& value) {
  * \param value The ETL expression
  * \return An ETL expression representing the logistic sigmoid of the input.
  */
-template <typename E>
+template <etl_expr E>
 auto sigmoid(const E& value) -> detail::unary_helper<E, sigmoid_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::fast_sigmoid can only be used on ETL expressions");
     return detail::unary_helper<E, sigmoid_unary_op>{value};
 }
 
@@ -219,9 +203,8 @@ auto sigmoid(const E& value) -> detail::unary_helper<E, sigmoid_unary_op> {
  * \param value The ETL expression
  * \return An ETL expression representing the relu activation of the input.
  */
-template <typename E>
+template <etl_expr E>
 auto relu(const E& value) -> detail::unary_helper<E, relu_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::relu can only be used on ETL expressions");
     return detail::unary_helper<E, relu_unary_op>{value};
 }
 
@@ -230,9 +213,8 @@ auto relu(const E& value) -> detail::unary_helper<E, relu_unary_op> {
  * \param value The ETL expression
  * \return An ETL expression representing the derivative of the logistic sigmoid of the input.
  */
-template <typename E>
+template <etl_expr E>
 auto sigmoid_derivative(E&& value) -> decltype(sigmoid(value) >> (1.0 - sigmoid(value))) {
-    static_assert(is_etl_expr<E>, "etl::sigmoid_derivative can only be used on ETL expressions");
     return sigmoid(value) >> (1.0 - sigmoid(value));
 }
 
@@ -244,9 +226,8 @@ auto sigmoid_derivative(E&& value) -> decltype(sigmoid(value) >> (1.0 - sigmoid(
  * \param value The ETL expression
  * \return An ETL expression representing a fast approximation of the logistic sigmoid of the input.
  */
-template <typename E>
+template <etl_expr E>
 auto fast_sigmoid(const E& value) -> detail::unary_helper<E, fast_sigmoid_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::fast_sigmoid can only be used on ETL expressions");
     return detail::unary_helper<E, fast_sigmoid_unary_op>{value};
 }
 
@@ -258,9 +239,8 @@ auto fast_sigmoid(const E& value) -> detail::unary_helper<E, fast_sigmoid_unary_
  * \param x The ETL expression
  * \return An ETL expression representing an hard approximation of the logistic sigmoid of the input.
  */
-template <typename E>
+template <etl_expr E>
 auto hard_sigmoid(E&& x) -> decltype(etl::clip(x * 0.2 + 0.5, 0.0, 1.0)) {
-    static_assert(is_etl_expr<E>, "etl::hard_sigmoid can only be used on ETL expressions");
     return etl::clip(x * 0.2 + 0.5, 0.0, 1.0);
 }
 
@@ -269,10 +249,8 @@ auto hard_sigmoid(E&& x) -> decltype(etl::clip(x * 0.2 + 0.5, 0.0, 1.0)) {
  * \param e The ETL expression
  * \return An ETL expression representing the softmax function of the input.
  */
-template <typename E>
+template <etl_expr E>
 auto softmax(E&& e) {
-    static_assert(is_etl_expr<E>, "etl::softmax can only be used on ETL expressions");
-
     if constexpr (etl::is_1d<E>) {
         return exp(e) / sum(exp(e));
     } else {
@@ -286,10 +264,8 @@ auto softmax(E&& e) {
  * \param e The ETL expression
  * \return An ETL expression representing the softmax function of the input.
  */
-template <typename E>
+template <etl_expr E>
 auto stable_softmax(E&& e) {
-    static_assert(is_etl_expr<E>, "etl::softmax can only be used on ETL expressions");
-
     if constexpr (etl::is_1d<E>) {
         auto m = max(e);
         return exp(e - m) / sum(exp(e - m));
@@ -313,9 +289,8 @@ auto softmax_derivative([[maybe_unused]] E&& e) {
  * \param value The ETL expression
  * \return An ETL expression representing the softplus of the input.
  */
-template <typename E>
+template <etl_expr E>
 auto softplus(E&& value) -> detail::unary_helper<E, softplus_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::softplus can only be used on ETL expressions");
     return detail::unary_helper<E, softplus_unary_op>{value};
 }
 
@@ -324,9 +299,8 @@ auto softplus(E&& value) -> detail::unary_helper<E, softplus_unary_op> {
  * \param value the expression to sample
  * \return an expression representing the Bernoulli sampling of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto bernoulli(const E& value) -> detail::unary_helper<E, bernoulli_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::bernoulli can only be used on ETL expressions");
     return detail::unary_helper<E, bernoulli_unary_op>{value};
 }
 
@@ -345,9 +319,8 @@ auto bernoulli(G& g, E&& value) {
  * \param value the expression to sample
  * \return an expression representing the Bernoulli sampling of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto state_bernoulli(const E& value) {
-    static_assert(is_etl_expr<E>, "etl::bernoulli can only be used on ETL expressions");
     return detail::make_stateful_unary_expr<E, state_bernoulli_unary_op<value_t<E>>>(value);
 }
 
@@ -356,9 +329,8 @@ auto state_bernoulli(const E& value) {
  * \param value the expression to sample
  * \return an expression representing the Bernoulli sampling of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto state_bernoulli(const E& value, const std::shared_ptr<void*> & states) {
-    static_assert(is_etl_expr<E>, "etl::bernoulli can only be used on ETL expressions");
     return detail::make_stateful_unary_expr<E, state_bernoulli_unary_op<value_t<E>>>(value, states);
 }
 
@@ -367,7 +339,7 @@ auto state_bernoulli(const E& value, const std::shared_ptr<void*> & states) {
  * \param value the expression to sample
  * \return an expression representing the Bernoulli sampling of the given expression
  */
-template <typename E, typename G, cpp_enable_iff(is_etl_expr<E>)>
+template <etl_expr E, typename G>
 auto state_bernoulli(G& g, E&& value) {
     return detail::make_stateful_unary_expr<E, state_bernoulli_unary_g_op<G, value_t<E>>>(value, g);
 }
@@ -377,7 +349,7 @@ auto state_bernoulli(G& g, E&& value) {
  * \param value the expression to sample
  * \return an expression representing the Bernoulli sampling of the given expression
  */
-template <typename E, typename G, cpp_enable_iff(is_etl_expr<E>)>
+template <etl_expr E, typename G>
 auto state_bernoulli(G& g, E&& value, const std::shared_ptr<void*> & states) {
     return detail::make_stateful_unary_expr<E, state_bernoulli_unary_g_op<G, value_t<E>>>(value, g, states);
 }
@@ -387,9 +359,8 @@ auto state_bernoulli(G& g, E&& value, const std::shared_ptr<void*> & states) {
  * \param value the expression to sample
  * \return an expression representing the Reverse Bernoulli sampling of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto r_bernoulli(const E& value) -> detail::unary_helper<E, reverse_bernoulli_unary_op> {
-    static_assert(is_etl_expr<E>, "etl::r_bernoulli can only be used on ETL expressions");
     return detail::unary_helper<E, reverse_bernoulli_unary_op>{value};
 }
 
@@ -398,7 +369,7 @@ auto r_bernoulli(const E& value) -> detail::unary_helper<E, reverse_bernoulli_un
  * \param value the expression to sample
  * \return an expression representing the Reverse Bernoulli sampling of the given expression
  */
-template <typename E, typename G>
+template <etl_expr E, typename G>
 auto r_bernoulli(G& g, E&& value) {
     return detail::make_stateful_unary_expr<E, reverse_bernoulli_unary_g_op<G, value_t<E>>>(value, g);
 }
@@ -408,9 +379,8 @@ auto r_bernoulli(G& g, E&& value) {
  * \param value The ETL expression
  * \return An ETL expression representing the derivative of the tanh function of the input.
  */
-template <typename E>
+template <etl_expr E>
 auto tanh_derivative(E&& value) -> decltype(1.0 - (tanh(value) >> tanh(value))) {
-    static_assert(is_etl_expr<E>, "etl::tanh_derivative can only be used on ETL expressions");
     return 1.0 - (tanh(value) >> tanh(value));
 }
 
@@ -419,9 +389,8 @@ auto tanh_derivative(E&& value) -> decltype(1.0 - (tanh(value) >> tanh(value))) 
  * \param value The ETL expression
  * \return An ETL expression representing the derivative of the relu function of the input.
  */
-template <typename E>
+template <etl_expr E>
 auto relu_derivative(const E& value) -> detail::unary_helper<E, relu_derivative_op> {
-    static_assert(is_etl_expr<E>, "etl::relu_derivative can only be used on ETL expressions");
     return detail::unary_helper<E, relu_derivative_op>{value};
 }
 

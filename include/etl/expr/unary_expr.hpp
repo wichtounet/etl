@@ -552,9 +552,9 @@ public:
      * \param args The indices
      * \return The computed value at the position (args...)
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) == safe_dimensions<this_type>)>
+    template <typename... S>
     ETL_STRONG_INLINE(return_type)
-    operator()(S... args) noexcept(noexcept(value(args...))) {
+    operator()(S... args) noexcept(noexcept(value(args...))) requires (sizeof...(S) == safe_dimensions<this_type>) {
         static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return value(args...);
@@ -565,9 +565,9 @@ public:
      * \param args The indices
      * \return The computed value at the position (args...)
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) == safe_dimensions<this_type>)>
+    template <typename... S>
     ETL_STRONG_INLINE(const_return_type)
-    operator()(S... args) const noexcept(noexcept(value(args...))) {
+    operator()(S... args) const noexcept(noexcept(value(args...))) requires(sizeof...(S) == safe_dimensions<this_type>) {
         static_assert(cpp::all_convertible_to_v<size_t, S...>, "Invalid size types");
 
         return value(args...);
