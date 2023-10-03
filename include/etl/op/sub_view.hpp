@@ -108,9 +108,9 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) + 1 == decay_traits<sub_type>::dimensions())>
+    template <typename... S>
     ETL_STRONG_INLINE(const_return_type)
-    operator()(S... args) const {
+    operator()(S... args) const requires(sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()) {
         return sub_expr(i, static_cast<size_t>(args)...);
     }
 
@@ -119,9 +119,9 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) + 1 == decay_traits<sub_type>::dimensions())>
+    template <typename... S>
     ETL_STRONG_INLINE(return_type)
-    operator()(S... args) {
+    operator()(S... args) requires(sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()) {
         return sub_expr(i, static_cast<size_t>(args)...);
     }
 
@@ -130,8 +130,7 @@ public:
      * \param x The index to use
      * \return a sub view of the matrix at position x.
      */
-    template <typename TT = sub_type, cpp_enable_iff(decay_traits<TT>::dimensions() > 2)>
-    auto operator()(size_t x) const {
+    auto operator()(size_t x) const requires(decay_traits<sub_type>::dimensions() > 2) {
         return sub(*this, x);
     }
 
@@ -439,9 +438,9 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) == n_dimensions)>
+    template <typename... S>
     ETL_STRONG_INLINE(const_return_type)
-    operator()(S... args) const {
+    operator()(S... args) const requires (sizeof...(S) == n_dimensions) {
         ensure_cpu_up_to_date();
         return memory[dyn_index(*this, args...)];
     }
@@ -451,9 +450,9 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) == n_dimensions)>
+    template <typename... S>
     ETL_STRONG_INLINE(return_type)
-    operator()(S... args) {
+    operator()(S... args) requires (sizeof...(S) == n_dimensions) {
         ensure_cpu_up_to_date();
         return memory[dyn_index(*this, args...)];
     }
@@ -463,8 +462,7 @@ public:
      * \param x The index to use
      * \return a sub view of the matrix at position x.
      */
-    template <bool B = (n_dimensions > 1), cpp_enable_iff(B)>
-    auto operator()(size_t x) const {
+    auto operator()(size_t x) const requires(n_dimensions > 1) {
         return sub(*this, x);
     }
 

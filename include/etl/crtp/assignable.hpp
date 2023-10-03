@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <concepts>
 #include "etl/impl/transpose.hpp"
 #include "etl/impl/fft.hpp"
 
@@ -30,7 +31,7 @@ struct assignable {
      * \param e The expression to get the values from
      * \return the unary expression
      */
-    template <typename E, cpp_enable_iff(is_etl_expr<E>)>
+    template <etl_expr E>
     derived_t& operator=(E&& e) {
         validate_assign(as_derived(), e);
 
@@ -71,8 +72,8 @@ struct assignable {
      * \param vec The container to get the values from
      * \return the unary expression
      */
-    template <typename Container, cpp_enable_iff(!is_etl_expr<Container> && std::is_convertible_v<typename Container::value_type, value_type>)>
-    derived_t& operator=(const Container& vec) {
+    template <typename Container>
+    derived_t& operator=(const Container& vec) requires(!etl_expr<Container> && std::convertible_to<typename Container::value_type, value_type>) {
         validate_assign(as_derived(), vec);
 
         std::copy(vec.begin(), vec.end(), as_derived().begin());
