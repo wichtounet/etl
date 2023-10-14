@@ -335,8 +335,11 @@ public:
                 // Create a temporary to hold the result
                 this_type tmp;
 
+                // Get the proper size
+                tmp.inherit(e);
+
                 // Assign the expression to the temporary
-                tmp = e;
+                e.assign_to(tmp);
 
                 // Assign the temporary to this matrix
                 *this = tmp;
