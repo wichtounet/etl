@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <concepts>
 #include "etl/dyn_base.hpp"    //The base class and utilities
 #include "etl/direct_fill.hpp" //direct_fill with GPU support
 
@@ -178,8 +179,8 @@ public:
      * \param vec The container containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename Container, cpp_enable_iff(!is_etl_expr<Container> && std::is_convertible_v<typename Container::value_type, value_type>)>
-    custom_dyn_matrix_impl& operator=(const Container& vec) {
+    template <std_container Container>
+    custom_dyn_matrix_impl& operator=(const Container& vec) requires(std::convertible_to<typename Container::value_type, value_type>) {
         validate_assign(*this, vec);
 
         std::copy(vec.begin(), vec.end(), begin());

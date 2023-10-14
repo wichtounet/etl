@@ -170,4 +170,12 @@ concept arithmetic = std::floating_point<T> || std::integral<T>;
 template<typename T>
 concept size_c = std::convertible_to<T, size_t>;
 
+template<typename T>
+concept std_container = requires(T a) {
+    requires !etl_expr<T>;
+    typename T::value_type;
+    { a.begin() };
+    { a.end() };
+};
+
 } // namespace etl

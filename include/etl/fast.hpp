@@ -194,10 +194,8 @@ public:
      * \param container The STL container to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename Container,
-              cpp_enable_iff(!std::is_same_v<Container, value_type> && std::is_convertible_v<typename Container::value_type, value_type>
-                             && !is_etl_expr<Container>)>
-    fast_matrix_impl& operator=(const Container& container) noexcept {
+    template <std_container Container>
+    fast_matrix_impl& operator=(const Container& container) noexcept requires(std::convertible_to<typename Container::value_type, value_type>) {
         validate_assign(*this, container);
         std::copy(container.begin(), container.end(), begin());
 
