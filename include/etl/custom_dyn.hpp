@@ -94,8 +94,8 @@ public:
      * The memory won't be managed, meaning that it won't be
      * released once the matrix is destructed.
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) == D)>
-    explicit custom_dyn_matrix_impl(value_type* memory, S... sizes) noexcept : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}}) {
+    template <typename... S>
+    explicit custom_dyn_matrix_impl(value_type* memory, S... sizes) noexcept requires (sizeof...(S) == D) : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}}) {
         _memory = memory;
         //Nothing else to init
     }
@@ -145,10 +145,8 @@ public:
      * \param e The expression containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename E,
-              cpp_enable_iff(!std::is_same_v<std::decay_t<E>, custom_dyn_matrix_impl<T, SO, D>> && std::is_convertible_v<value_t<E>, value_type>
-                             && is_etl_expr<E>)>
-    custom_dyn_matrix_impl& operator=(E&& e) noexcept {
+    template <etl_expr E>
+    custom_dyn_matrix_impl& operator=(E&& e) noexcept requires(!std::same_as<std::decay_t<E>, custom_dyn_matrix_impl<T, SO, D>> && std::convertible_to<value_t<E>, value_type>) {
         validate_assign(*this, e);
 
         // Avoid aliasing issues
