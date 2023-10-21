@@ -1,0 +1,36 @@
+name: SonarCloud
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    name: Analyze code on SonarCloud
+    runs-on: ubuntu-latest
+    env:
+      BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Install GCC compiler
+        run: sudo apt install g++-13
+      - name: Install sonar-scanner and build-wrapper
+        uses: SonarSource/sonarcloud-github-c-cpp@v2
+      - name: Run build-wrapper
+        env:
+          CXX: g++-13
+        run: |
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} make -j5
+      - name: Run sonar-scanner
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          CXX: g++-13
+        run: |
+          sonar-scanner --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
