@@ -304,7 +304,7 @@ struct upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_iff(is_2d<A>)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, etl_2d A, typename M>
     static void apply(A&& in, M&& m) {
         if (S1 != C1 || S2 != C2) {
             m = 0;
@@ -324,7 +324,7 @@ struct upsample_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_iff(is_2d<A>)>
+    template <etl_2d A, typename M>
     static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         if (s1 != c1 || s2 != c2) {
             m = 0;
@@ -346,7 +346,7 @@ struct upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_iff(is_3d<A>)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, etl_3d A, typename M>
     static void apply(A&& in, M&& m) {
         if (S1 != C1 || S2 != C2) {
             m = 0;
@@ -378,7 +378,7 @@ struct upsample_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_iff(is_3d<A>)>
+    template <etl_3d A, typename M>
     static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         if (s1 != c1 || s2 != c2) {
             m = 0;
@@ -412,7 +412,7 @@ struct upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_iff(is_4d<A>)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, etl_4d A, typename M>
     static void apply(A&& in, M&& m) {
         if (S1 != C1 || S2 != C2) {
             m = 0;
@@ -446,7 +446,7 @@ struct upsample_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_iff(is_4d<A>)>
+    template <etl_4d A, typename M>
     static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         if (s1 != c1 || s2 != c2) {
             m = 0;
@@ -482,7 +482,7 @@ struct upsample_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, etl_5d_and_plus A, typename M>
     static void apply(A&& in, M& m) {
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply<C1, C2, S1, S2, P1, P2>(in(i), m(i));
@@ -496,7 +496,7 @@ struct upsample_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
+    template <etl_5d_and_plus A, typename M>
     static void apply(A&& in, M& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply(in(i), m(i), c1, c2, s1, s2, p1, p2);
@@ -614,7 +614,7 @@ struct upsample_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename M, cpp_enable_iff(is_3d<A>)>
+    template <size_t C1, size_t C2, size_t C3, etl_3d A>
     static void apply(A&& in, M&& m) {
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             for (size_t j = 0; j < etl::dim<1>(in); ++j) {
@@ -633,7 +633,7 @@ struct upsample_3d {
      * \param c2 The second dimension pooling ratio
      * \param c3 The third dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_iff(is_3d<A>)>
+    template <etl_3d A, typename M>
     static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t c3) {
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             for (size_t j = 0; j < etl::dim<1>(in); ++j) {
@@ -654,7 +654,7 @@ struct upsample_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename M, cpp_enable_iff(is_4d<A>)>
+    template <size_t C1, size_t C2, size_t C3, etl_4d A, typename M>
     static void apply(A&& in, M&& m) {
         // GPU/CPU Synchronization must not be done in parallel
         safe_ensure_cpu_up_to_date(in);
@@ -685,7 +685,7 @@ struct upsample_3d {
      * \param c2 The second dimension pooling ratio
      * \param c3 The third dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_iff(is_4d<A>)>
+    template <etl_4d A, typename M>
     static void apply(A&& in, M&& m, size_t c1, size_t c2, size_t c3) {
         // GPU/CPU Synchronization must not be done in parallel
         safe_ensure_cpu_up_to_date(in);
@@ -718,7 +718,7 @@ struct upsample_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
+    template <size_t C1, size_t C2, size_t C3, etl_5d_and_plus A, typename M>
     static void apply(A&& in, M& m) {
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply<C1, C2, C3>(in(i), m(i));
@@ -733,7 +733,7 @@ struct upsample_3d {
      * \param c2 The second dimension pooling ratio
      * \param c3 The third dimension pooling ratio
      */
-    template <typename A, typename M, cpp_enable_iff(decay_traits<A>::dimensions() > 4)>
+    template <etl_5d_and_plus A, typename M>
     static void apply(A&& in, M& m, size_t c1, size_t c2, size_t c3) {
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             apply(in(i), m(i), c1, c2, c3);
