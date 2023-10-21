@@ -614,7 +614,7 @@ struct upsample_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, etl_3d A>
+    template <size_t C1, size_t C2, size_t C3, etl_3d A, typename M>
     static void apply(A&& in, M&& m) {
         for (size_t i = 0; i < etl::dim<0>(in); ++i) {
             for (size_t j = 0; j < etl::dim<1>(in); ++j) {
