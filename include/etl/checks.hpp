@@ -81,7 +81,7 @@ void validate_expression_impl([[maybe_unused]] const LE& lhs, [[maybe_unused]] c
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <etl_expr LE, typename RE, cpp_enable_iff(etl_traits<RE>::is_generator)>
+template <etl_expr LE, generator RE>
 void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) noexcept {
     //Nothing to test, generators are of infinite size
 }

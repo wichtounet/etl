@@ -88,8 +88,8 @@ using wrap_scalar_value_t = typename wrap_scalar_value_t_impl<T>::type;
  * \param value The value to wraps
  * \return an etl::scalar or a forwarded expression
  */
-template <typename T, cpp_enable_iff(is_etl_expr<T>)>
-decltype(auto) wrap_scalar(T&& value) {
+template <typename T>
+decltype(auto) wrap_scalar(T&& value) requires (etl_expr<T>) {
     return std::forward<T>(value);
 }
 
@@ -98,8 +98,8 @@ decltype(auto) wrap_scalar(T&& value) {
  * \param value The value to wraps
  * \return an etl::scalar or a forwarded expression
  */
-template <typename T, cpp_enable_iff(!is_etl_expr<T>)>
-etl::scalar<std::decay_t<T>> wrap_scalar(T&& value) {
+template <typename T>
+etl::scalar<std::decay_t<T>> wrap_scalar(T&& value) requires(!etl_expr<T>) {
     return etl::scalar<std::decay_t<T>>{value};
 }
 
