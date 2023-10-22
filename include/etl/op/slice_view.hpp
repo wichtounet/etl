@@ -174,7 +174,7 @@ public:
      */
     template <typename L>
     void assign_to(L&& lhs) const {
-        std_assign_evaluate(*this, lhs);
+        std_assign_evaluate(*this, std::forward<L>(lhs));
     }
 
     /*!
@@ -183,7 +183,7 @@ public:
      */
     template <typename L>
     void assign_add_to(L&& lhs) const {
-        std_add_evaluate(*this, lhs);
+        std_add_evaluate(*this, std::forward<L>(lhs));
     }
 
     /*!
@@ -192,7 +192,7 @@ public:
      */
     template <typename L>
     void assign_sub_to(L&& lhs) const {
-        std_sub_evaluate(*this, lhs);
+        std_sub_evaluate(*this, std::forward<L>(lhs));
     }
 
     /*!
@@ -201,7 +201,7 @@ public:
      */
     template <typename L>
     void assign_mul_to(L&& lhs) const {
-        std_mul_evaluate(*this, lhs);
+        std_mul_evaluate(*this, std::forward<L>(lhs));
     }
 
     /*!
@@ -210,7 +210,7 @@ public:
      */
     template <typename L>
     void assign_div_to(L&& lhs) const {
-        std_div_evaluate(*this, lhs);
+        std_div_evaluate(*this, std::forward<L>(lhs));
     }
 
     /*!
@@ -219,7 +219,7 @@ public:
      */
     template <typename L>
     void assign_mod_to(L&& lhs) const {
-        std_mod_evaluate(*this, lhs);
+        std_mod_evaluate(*this, std::forward<L>(lhs));
     }
 
     // Internals
@@ -534,7 +534,7 @@ public:
      */
     template <typename L>
     void assign_to(L&& lhs) const {
-        std_assign_evaluate(*this, lhs);
+        std_assign_evaluate(*this, std::forward<L>(lhs));
     }
 
     /*!
@@ -543,7 +543,7 @@ public:
      */
     template <typename L>
     void assign_add_to(L&& lhs) const {
-        std_add_evaluate(*this, lhs);
+        std_add_evaluate(*this, std::forward<L>(lhs));
     }
 
     /*!
@@ -552,7 +552,7 @@ public:
      */
     template <typename L>
     void assign_sub_to(L&& lhs) const {
-        std_sub_evaluate(*this, lhs);
+        std_sub_evaluate(*this, std::forward<L>(lhs));
     }
 
     /*!
@@ -561,7 +561,7 @@ public:
      */
     template <typename L>
     void assign_mul_to(L&& lhs) const {
-        std_mul_evaluate(*this, lhs);
+        std_mul_evaluate(*this, std::forward<L>(lhs));
     }
 
     /*!
@@ -570,7 +570,7 @@ public:
      */
     template <typename L>
     void assign_div_to(L&& lhs) const {
-        std_div_evaluate(*this, lhs);
+        std_div_evaluate(*this, std::forward<L>(lhs));
     }
 
     /*!
@@ -579,7 +579,7 @@ public:
      */
     template <typename L>
     void assign_mod_to(L&& lhs) const {
-        std_mod_evaluate(*this, lhs);
+        std_mod_evaluate(*this, std::forward<L>(lhs));
     }
 
     // Internals

@@ -277,7 +277,7 @@ public:
      */
     template <typename L>
     void assign_to(L&& lhs) const {
-        std_assign_evaluate(value, lhs);
+        std_assign_evaluate(value, std::forward<L>(lhs));
     }
 
     /*!
@@ -286,7 +286,7 @@ public:
      */
     template <typename L>
     void assign_add_to(L&& lhs) const {
-        std_add_evaluate(value, lhs);
+        std_add_evaluate(value, std::forward<L>(lhs));
     }
 
     /*!
@@ -295,7 +295,7 @@ public:
      */
     template <typename L>
     void assign_sub_to(L&& lhs) const {
-        std_sub_evaluate(value, lhs);
+        std_sub_evaluate(value, std::forward<L>(lhs));
     }
 
     /*!
@@ -304,7 +304,7 @@ public:
      */
     template <typename L>
     void assign_mul_to(L&& lhs) const {
-        std_mul_evaluate(value, lhs);
+        std_mul_evaluate(value, std::forward<L>(lhs));
     }
 
     /*!
@@ -313,7 +313,7 @@ public:
      */
     template <typename L>
     void assign_div_to(L&& lhs) const {
-        std_div_evaluate(value, lhs);
+        std_div_evaluate(value, std::forward<L>(lhs));
     }
 
     /*!
@@ -322,7 +322,7 @@ public:
      */
     template <typename L>
     void assign_mod_to(L&& lhs) const {
-        std_mod_evaluate(value, lhs);
+        std_mod_evaluate(value, std::forward<L>(lhs));
     }
 
     // Internals
