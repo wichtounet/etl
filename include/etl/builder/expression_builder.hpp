@@ -648,7 +648,7 @@ value_t<E> asum(E&& values) {
  */
 template <etl_expr E>
 value_t<E> mean(E&& values) {
-    return sum(values) / etl::size(values);
+    return sum(values) / static_cast<value_t<E>>(etl::size(values));
 }
 
 /*!
@@ -658,7 +658,7 @@ value_t<E> mean(E&& values) {
  */
 template <etl_expr E>
 value_t<E> amean(E&& values) {
-    return asum(values) / etl::size(values);
+    return asum(values) / static_cast<value_t<E>>(etl::size(values));
 }
 
 /*!
@@ -675,7 +675,7 @@ value_t<E> stddev(E&& values) {
         std += (value - mean) * (value - mean);
     }
 
-    return std::sqrt(std / etl::size(values));
+    return std::sqrt(std / static_cast<double>(etl::size(values)));
 }
 
 /*!
@@ -693,7 +693,7 @@ value_t<E> stddev(E&& values, value_t<E> mean) {
         std += (value - mean) * (value - mean);
     }
 
-    return std::sqrt(std / etl::size(values));
+    return std::sqrt(std / static_cast<double>(etl::size(values)));
 }
 
 namespace detail {
