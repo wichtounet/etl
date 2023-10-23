@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <concepts>
 namespace etl {
 
 /*!
@@ -34,6 +35,13 @@ struct scalar {
      * \þaram v The scalar value
      */
     explicit constexpr scalar(T v) : value(v) {}
+
+    /*!
+     * \brief Builds a new scalar from a convertible type
+     * \þaram v The scalar value
+     */
+    template <typename C>
+    explicit constexpr scalar(C c) requires(std::convertible_to<C, T>) : value(static_cast<T>(c)) {}
 
     /*!
      * \brief Returns the element at the given index
