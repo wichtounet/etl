@@ -65,11 +65,11 @@ void validate_expression_impl([[maybe_unused]] const LE& lhs, [[maybe_unused]] c
 // This allows for batch_hint to works
 
 #ifdef ETL_RELAXED
-#define validate_expression(lhs, rhs) static_assert(all_etl_expr<decltype(lhs), decltype(rhs)>, "ETL functions are only made for ETL expressions ");
+#define validate_expression(lhs, rhs) static_assert(all_etl_expr<decltype(lhs), decltype(rhs)>, "ETL functions are only made for ETL expressions ")
 #else
 #define validate_expression(lhs, rhs)                                                                              \
     static_assert(all_etl_expr<decltype(lhs), decltype(rhs)>, "ETL functions are only made for ETL expressions "); \
-    validate_expression_impl(lhs, rhs);
+    validate_expression_impl(lhs, rhs)
 #endif
 
 /*!
