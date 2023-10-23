@@ -186,3 +186,30 @@ TEMPLATE_TEST_CASE_2("diagonal/9", "[diagonal][fast]", Z, float, double) {
 
     REQUIRE_THROWS(c(1,2) = 1.0);
 }
+
+TEMPLATE_TEST_CASE_2("diagonal/10", "[diagonal][fast]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> s = {1.1, 0.0, 0.0, 0.0, 1.2, 0.0, 0.0, 0.0, 1.3};
+
+    etl::diagonal_matrix<etl::dyn_matrix<Z>> a(3UL);
+    a = s;
+
+    etl::diagonal_matrix<etl::dyn_matrix<Z>> b(3UL);
+    b = s;
+
+    etl::diagonal_matrix<etl::dyn_matrix<Z>> c(3UL);
+    c = s;
+
+    c += a + b;
+
+    REQUIRE_EQUALS_APPROX(c(0, 0), Z(3.3));
+    REQUIRE_EQUALS(c(0, 1), Z(0.0));
+    REQUIRE_EQUALS(c(0, 2), Z(0.0));
+
+    REQUIRE_EQUALS(c(1, 0), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(1, 1), Z(3.6));
+    REQUIRE_EQUALS(c(1, 2), Z(0.0));
+
+    REQUIRE_EQUALS(c(2, 0), Z(0.0));
+    REQUIRE_EQUALS(c(2, 1), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(2, 2), Z(3.9));
+}
