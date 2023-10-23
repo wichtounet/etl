@@ -153,7 +153,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    diagonal_matrix& operator+=(R&& rhs) {
+    diagonal_matrix& operator+=(const R& rhs) {
         // Make sure the other matrix is diagonal
         if (!is_diagonal(rhs)) {
             throw diagonal_exception();
@@ -170,7 +170,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    diagonal_matrix& operator-=(R&& rhs) {
+    diagonal_matrix& operator-=(const R& rhs) {
         // Make sure the other matrix is diagonal
         if (!is_diagonal(rhs)) {
             throw diagonal_exception();
@@ -197,7 +197,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    diagonal_matrix& operator*=(R&& rhs) {
+    diagonal_matrix& operator*=(const R& rhs) {
         // Make sure the other matrix is diagonal
         if (!is_diagonal(rhs)) {
             throw diagonal_exception();
@@ -224,7 +224,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    diagonal_matrix& operator>>=(R&& rhs) {
+    diagonal_matrix& operator>>=(const R& rhs) {
         // Make sure the other matrix is diagonal
         if (!is_diagonal(rhs)) {
             throw diagonal_exception();
@@ -251,7 +251,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    diagonal_matrix& operator/=(R&& rhs) {
+    diagonal_matrix& operator/=(const R& rhs) {
         // Make sure the other matrix is diagonal
         if (!is_diagonal(rhs)) {
             throw diagonal_exception();
@@ -278,7 +278,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    diagonal_matrix& operator%=(R&& rhs) {
+    diagonal_matrix& operator%=(const R& rhs) {
         // Make sure the other matrix is diagonal
         if (!is_diagonal(rhs)) {
             throw diagonal_exception();
