@@ -31,7 +31,7 @@ TEMPLATE_TEST_CASE_4("integers/init_2", "[integers][fast]", Z, int8_t, int16_t, 
     }
 }
 
-TEMPLATE_TEST_CASE_4("integeres/init_3", "[integers][fast]", Z, int8_t, int16_t, int32_t, int64_t) {
+TEMPLATE_TEST_CASE_4("integers/init_3", "[integers][fast]", Z, int8_t, int16_t, int32_t, int64_t) {
     etl::fast_vector<Z, 3> test_vector = {1, 2, 3};
 
     REQUIRE_EQUALS(test_vector.size(), 3UL);
