@@ -675,7 +675,7 @@ value_t<E> stddev(E&& values) {
         std += (value - mean) * (value - mean);
     }
 
-    return std::sqrt(std / static_cast<double>(etl::size(values)));
+    return static_cast<value_t<E>>(std::sqrt(std / static_cast<double>(etl::size(values))));
 }
 
 /*!
@@ -693,7 +693,7 @@ value_t<E> stddev(E&& values, value_t<E> mean) {
         std += (value - mean) * (value - mean);
     }
 
-    return std::sqrt(std / static_cast<double>(etl::size(values)));
+    return static_cast<value_t<E>>(std::sqrt(std / static_cast<double>(etl::size(values))));
 }
 
 namespace detail {

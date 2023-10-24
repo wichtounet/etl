@@ -79,8 +79,11 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
 
         check(a, b, lhs);
 
+        using T = value_t<A>;
+
         const auto N = etl::dim<0>(a);
         const auto K = etl::dim<1>(a);
+        const auto F = static_cast<T>(etl::size(a) / etl::size(lhs));
 
         if constexpr (impl::egblas::has_sbias_batch_var4 && all_row_major<A> && all_floating<A, L>) {
             const auto W = etl::dim<2>(a);
@@ -123,7 +126,7 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
                     }
 
                     for (size_t k = first; k < last; ++k) {
-                        lhs(k) /= (etl::size(a) / etl::size(lhs));
+                        lhs(k) /= F;
                     }
                 }
             };
@@ -149,10 +152,11 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
+        using T = value_t<A>;
+
         const auto N = etl::dim<0>(a);
         const auto K = etl::dim<1>(a);
-
-        using T = value_t<A>;
+        const auto F = static_cast<T>(etl::size(a) / etl::size(lhs));
 
         check(a, b, lhs);
 
@@ -169,7 +173,7 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
                         var += sum((a(bb)(k) - b(k)) >> (a(bb)(k) - b(k)));
                     }
 
-                    lhs(k) += var / (etl::size(a) / etl::size(lhs));
+                    lhs(k) += var / F;
                 }
             }
         };
@@ -194,10 +198,11 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
+        using T = value_t<A>;
+
         const auto N = etl::dim<0>(a);
         const auto K = etl::dim<1>(a);
-
-        using T = value_t<A>;
+        const auto F = static_cast<T>(etl::size(a) / etl::size(lhs));
 
         check(a, b, lhs);
 
@@ -214,7 +219,7 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
                         var += sum((a(bb)(k) - b(k)) >> (a(bb)(k) - b(k)));
                     }
 
-                    lhs(k) -= var / (etl::size(a) / etl::size(lhs));
+                    lhs(k) -= var / F;
                 }
             }
         };
@@ -239,10 +244,11 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
+        using T = value_t<A>;
+
         const auto N = etl::dim<0>(a);
         const auto K = etl::dim<1>(a);
-
-        using T = value_t<A>;
+        const auto F = static_cast<T>(etl::size(a) / etl::size(lhs));
 
         check(a, b, lhs);
 
@@ -259,7 +265,7 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
                         var += sum((a(bb)(k) - b(k)) >> (a(bb)(k) - b(k)));
                     }
 
-                    lhs(k) *= var / (etl::size(a) / etl::size(lhs));
+                    lhs(k) *= var / F;
                 }
             }
         };
@@ -284,10 +290,11 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
+        using T = value_t<A>;
+
         const auto N = etl::dim<0>(a);
         const auto K = etl::dim<1>(a);
-
-        using T = value_t<A>;
+        const auto F = static_cast<T>(etl::size(a) / etl::size(lhs));
 
         check(a, b, lhs);
 
@@ -304,7 +311,7 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
                         var += sum((a(bb)(k) - b(k)) >> (a(bb)(k) - b(k)));
                     }
 
-                    lhs(k) /= var / (etl::size(a) / etl::size(lhs));
+                    lhs(k) /= var / F;
                 }
             }
         };
@@ -329,10 +336,11 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
         standard_evaluator::pre_assign_rhs(a);
         standard_evaluator::pre_assign_rhs(b);
 
+        using T = value_t<A>;
+
         const auto N = etl::dim<0>(a);
         const auto K = etl::dim<1>(a);
-
-        using T = value_t<A>;
+        const auto F = static_cast<T>(etl::size(a) / etl::size(lhs));
 
         check(a, b, lhs);
 
@@ -349,7 +357,7 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
                         var += sum((a(bb)(k) - b(k)) >> (a(bb)(k) - b(k)));
                     }
 
-                    lhs(k) %= var / (etl::size(a) / etl::size(lhs));
+                    lhs(k) %= var / F;
                 }
             }
         };

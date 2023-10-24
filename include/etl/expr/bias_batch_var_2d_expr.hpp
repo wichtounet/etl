@@ -149,7 +149,7 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
                     mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
                 }
 
-                lhs(k) += mean / N;
+                lhs(k) += mean / static_cast<T>(N);
             }
         };
 
@@ -185,7 +185,7 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
                     mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
                 }
 
-                lhs(k) -= mean / N;
+                lhs(k) -= mean / static_cast<T>(N);
             }
         };
 
@@ -221,7 +221,7 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
                     mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
                 }
 
-                lhs(k) *= mean / N;
+                lhs(k) *= mean / static_cast<T>(N);
             }
         };
 
@@ -257,7 +257,7 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
                     mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
                 }
 
-                lhs(k) /= mean / N;
+                lhs(k) /= mean / static_cast<T>(N);
             }
         };
 
@@ -293,7 +293,7 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
                     mean += (a(bb, k) - b(k)) * (a(bb, k) - b(k));
                 }
 
-                lhs(k) %= mean / N;
+                lhs(k) %= mean / static_cast<T>(N);
             }
         };
 

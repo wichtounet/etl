@@ -116,7 +116,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
                     }
 
                     if constexpr (Mean) {
-                        lhs(k) = mean / N;
+                        lhs(k) = mean / static_cast<T>(N);
                     } else {
                         lhs(k) = mean;
                     }
@@ -158,7 +158,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
                     }
 
                     if constexpr (Mean) {
-                        lhs(k) += mean / N;
+                        lhs(k) += mean / static_cast<T>(N);
                     } else {
                         lhs(k) += mean;
                     }
@@ -200,7 +200,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
                     }
 
                     if constexpr (Mean) {
-                        lhs(k) -= mean / N;
+                        lhs(k) -= mean / static_cast<T>(N);
                     } else {
                         lhs(k) -= mean;
                     }
@@ -242,7 +242,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
                     }
 
                     if constexpr (Mean) {
-                        lhs(k) *= mean / N;
+                        lhs(k) *= mean / static_cast<T>(N);
                     } else {
                         lhs(k) *= mean;
                     }
@@ -284,7 +284,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
                     }
 
                     if constexpr (Mean) {
-                        lhs(k) /= mean / N;
+                        lhs(k) /= mean / static_cast<T>(N);
                     } else {
                         lhs(k) /= mean;
                     }
@@ -326,7 +326,7 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
                     }
 
                     if constexpr (Mean) {
-                        lhs(k) %= mean / N;
+                        lhs(k) %= mean / static_cast<T>(N);
                     } else {
                         lhs(k) %= mean;
                     }
