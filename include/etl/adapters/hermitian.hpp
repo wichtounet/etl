@@ -185,7 +185,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    hermitian_matrix& operator+=(R&& rhs) {
+    hermitian_matrix& operator+=(const R & rhs) {
         // Make sure the other matrix is hermitian
         if (!is_hermitian(rhs)) {
             throw hermitian_exception();
@@ -212,7 +212,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    hermitian_matrix& operator-=(R&& rhs) {
+    hermitian_matrix& operator-=(const R & rhs) {
         // Make sure the other matrix is hermitian
         if (!is_hermitian(rhs)) {
             throw hermitian_exception();
@@ -239,7 +239,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    hermitian_matrix& operator*=(R&& rhs) {
+    hermitian_matrix& operator*=(const R & rhs) {
         // Make sure the other matrix is hermitian
         if (!is_hermitian(rhs)) {
             throw hermitian_exception();
@@ -266,7 +266,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    hermitian_matrix& operator>>=(R&& rhs) {
+    hermitian_matrix& operator>>=(const R & rhs) {
         // Make sure the other matrix is hermitian
         if (!is_hermitian(rhs)) {
             throw hermitian_exception();
@@ -293,7 +293,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    hermitian_matrix& operator/=(R&& rhs) {
+    hermitian_matrix& operator/=(const R & rhs) {
         // Make sure the other matrix is hermitian
         if (!is_hermitian(rhs)) {
             throw hermitian_exception();
@@ -320,7 +320,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    hermitian_matrix& operator%=(R&& rhs) {
+    hermitian_matrix& operator%=(const R & rhs) {
         // Make sure the other matrix is hermitian
         if (!is_hermitian(rhs)) {
             throw hermitian_exception();
