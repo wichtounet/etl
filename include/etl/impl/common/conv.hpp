@@ -269,7 +269,7 @@ etl::dyn_matrix<value_t<I>, 2> pad_right_flip(const I& input, size_t pad) {
  * \param pad The number of padding elements
  * \return a new matrix containing the result
  */
-template <typename I, cpp_enable_iff(is_3d<I>)>
+template <etl_3d I>
 etl::dyn_matrix<value_t<I>, 3> pad_right_multi(const I& input, size_t pad) {
     using T = value_t<I>;
 
@@ -296,7 +296,7 @@ etl::dyn_matrix<value_t<I>, 3> pad_right_multi(const I& input, size_t pad) {
  * \param pad The number of padding elements
  * \return a new matrix containing the result
  */
-template <typename I, cpp_enable_iff(is_4d<I>)>
+template <etl_4d I>
 etl::dyn_matrix<value_t<I>, 4> pad_right_multi(const I& input, size_t pad) {
     using T = value_t<I>;
 
@@ -335,7 +335,7 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_multi(const I& input, size_t pad) {
  *
  * \return a new matrix containing the result
  */
-template <typename I, cpp_enable_iff(is_4d<I>)>
+template <etl_4d I>
 etl::dyn_matrix<value_t<I>, 4> pad_right_multi_double(const I& input, size_t pad, size_t p1, size_t p2) {
     using T = value_t<I>;
 
@@ -371,7 +371,7 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_multi_double(const I& input, size_t pad
  * \param pad The number of padding elements
  * \return a new matrix containing the result
  */
-template <typename I, cpp_enable_iff(is_3d<I>)>
+template <etl_3d I>
 etl::dyn_matrix<value_t<I>, 3> pad_right_flip_multi(const I& input, size_t pad) {
     using T = value_t<I>;
 
@@ -406,7 +406,7 @@ etl::dyn_matrix<value_t<I>, 3> pad_right_flip_multi(const I& input, size_t pad) 
  * \param pad The number of padding elements
  * \return a new matrix containing the result
  */
-template <typename I, cpp_enable_iff(is_4d<I>)>
+template <etl_4d I>
 etl::dyn_matrix<value_t<I>, 4> pad_right_flip_multi(const I& input, size_t pad) {
     using T = value_t<I>;
 
@@ -456,7 +456,7 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_flip_multi(const I& input, size_t pad) 
  * \return A matrix containing the same elements as the input with some innner
  * padding.
  */
-template <typename I, cpp_enable_iff(etl::dimensions<I>() == 2)>
+template <etl_2d I>
 etl::dyn_matrix<value_t<I>, 2> inner_pad(const I& in, size_t s1, size_t s2) {
     etl::dyn_matrix<value_t<I>, 2> result((etl::dim<0>(in) - 1) * s1 + 1, (etl::dim<1>(in) - 1) * s2 + 1);
 
@@ -486,7 +486,7 @@ etl::dyn_matrix<value_t<I>, 2> inner_pad(const I& in, size_t s1, size_t s2) {
  * \return A matrix containing the same elements as the input with some innner
  * padding.
  */
-template <typename I, cpp_enable_iff(etl::dimensions<I>() == 4)>
+template <etl_4d I>
 etl::dyn_matrix<value_t<I>, 4> inner_pad(const I& in, size_t s1, size_t s2) {
     etl::dyn_matrix<value_t<I>, 4> result(etl::dim<0>(in), etl::dim<1>(in), (etl::dim<2>(in) - 1) * s1 + 1, (etl::dim<3>(in) - 1) * s2 + 1);
 
