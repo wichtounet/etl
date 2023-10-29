@@ -25,25 +25,14 @@ inline constexpr size_t matrix_subsize() {
     }
 }
 
-/*!
- * \brief Traits to compute the leading sze from index I for a matrix.
- *
- * The leading sze is used  for column-major index computation.
- *
- * \tparam M The matrix to get sub size from
- * \tparam I The index we need subsize for
- */
-template <typename M, size_t I, typename Enable = void>
-struct matrix_leadingsize : std::integral_constant<size_t, decay_traits<M>::template dim<I - 1>() * matrix_leadingsize<M, I - 1>::value> {};
-
-/*!
- * \copydoc matrix_leadingsize
- */
-template <typename M>
-struct matrix_leadingsize<M, 0> : std::integral_constant<size_t, 1> {};
-
 template <typename M, size_t I>
-inline constexpr size_t matrix_leadingsize_v = matrix_leadingsize<M, I>::value;
+inline constexpr size_t matrix_leadingsize() {
+    if constexpr (I > 0) {
+        return decay_traits<M>::template dim<I - 1>() * matrix_leadingsize<M, I - 1>();
+    } else {
+        return 1;
+    }
+}
 
 /*!
  * \brief Compute the index inside the row major matrix
@@ -69,7 +58,7 @@ constexpr size_t rm_compute_index(size_t first, size_t second, S... args) noexce
 template <typename M, size_t I>
 constexpr size_t cm_compute_index(size_t first) noexcept(assert_nothrow) {
     cpp_assert(first < M::template dim<I>(), "Out of bounds");
-    return matrix_leadingsize_v<M, I> * first;
+    return matrix_leadingsize<M, I>() * first;
 }
 
 /*!
@@ -78,7 +67,7 @@ constexpr size_t cm_compute_index(size_t first) noexcept(assert_nothrow) {
 template <typename M, size_t I, typename... S>
 constexpr size_t cm_compute_index(size_t first, size_t second, S... args) noexcept(assert_nothrow) {
     cpp_assert(first < M::template dim<I>(), "Out of bounds");
-    return matrix_leadingsize_v<M, I> * first + cm_compute_index<M, I + 1>(second, args...);
+    return matrix_leadingsize<M, I>() * first + cm_compute_index<M, I + 1>(second, args...);
 }
 
 } // end of namespace detail
