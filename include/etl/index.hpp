@@ -16,25 +16,14 @@ namespace etl {
 
 namespace detail {
 
-/*!
- * \brief Traits to compute the subsize from index I for a matrix.
- *
- * The subsize is used  for row-major index computation.
- *
- * \tparam M The matrix to get sub size from
- * \tparam I The index we need subsize for
- */
-template <typename M, size_t I, typename Enable = void>
-struct matrix_subsize : std::integral_constant<size_t, decay_traits<M>::template dim<I + 1>() * matrix_subsize<M, I + 1>::value> {};
-
-/*!
- * \copydoc matrix_subsize
- */
 template <typename M, size_t I>
-struct matrix_subsize<M, I, std::enable_if_t<I == decay_traits<M>::dimensions() - 1>> : std::integral_constant<size_t, 1> {};
-
-template <typename M, size_t I>
-inline constexpr size_t matrix_subsize_v = matrix_subsize<M, I>::value;
+inline constexpr size_t matrix_subsize() {
+    if constexpr (I < decay_traits<M>::dimensions() - 1) {
+        return decay_traits<M>::template dim<I + 1>() * matrix_subsize<M, I + 1>();
+    } else {
+        return 1;
+    }
+}
 
 /*!
  * \brief Traits to compute the leading sze from index I for a matrix.
@@ -71,7 +60,7 @@ constexpr size_t rm_compute_index(size_t first) noexcept(assert_nothrow) {
 template <typename M, size_t I, typename... S>
 constexpr size_t rm_compute_index(size_t first, size_t second, S... args) noexcept(assert_nothrow) {
     cpp_assert(first < decay_traits<M>::template dim<I>(), "Out of bounds");
-    return matrix_subsize_v<M, I> * first + rm_compute_index<M, I + 1>(second, args...);
+    return matrix_subsize<M, I>() * first + rm_compute_index<M, I + 1>(second, args...);
 }
 
 /*!
