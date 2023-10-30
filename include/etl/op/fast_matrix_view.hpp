@@ -752,7 +752,7 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
      */
     template <size_t D>
     static constexpr size_t dim() {
-        return nth_size<D, 0, Dims...>;
+        return nth_size<D, 0, Dims...>();
     }
 
     /*!

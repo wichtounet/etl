@@ -266,7 +266,7 @@ public:
      */
     template <size_t DD>
     static constexpr size_t dim() noexcept {
-        return nth_size<DD, 0, Dims...>;
+        return nth_size<DD, 0, Dims...>();
     }
 
     /*!

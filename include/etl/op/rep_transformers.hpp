@@ -428,7 +428,7 @@ struct etl_traits<rep_r_transformer<T, D...>> {
         if constexpr (D2 < sub_d) {
             return etl_traits<sub_expr_t>::template dim<D2>();
         } else {
-            return nth_size<D2 - sub_d, 0, D...>;
+            return nth_size<D2 - sub_d, 0, D...>();
         }
     }
 
@@ -523,7 +523,7 @@ struct etl_traits<rep_l_transformer<T, D...>> {
         if constexpr (D2 >= sizeof...(D)) {
             return etl_traits<sub_expr_t>::template dim<D2 - sizeof...(D)>();
         } else {
-            return nth_size<D2, 0, D...>;
+            return nth_size<D2, 0, D...>();
         }
     }
 
