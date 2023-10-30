@@ -114,7 +114,7 @@ struct pmp_h_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_iff(etl::is_2d<A>)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, etl_2d A, typename C>
     static void apply(A&& a, C&& c) {
         static_assert(S1 == C1, "pmp_h does not support strides");
         static_assert(S2 == C2, "pmp_h does not support strides");
@@ -147,7 +147,7 @@ struct pmp_h_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_iff(etl::is_3d<A>)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, etl_3d A, typename C>
     static void apply(A&& a, C&& c) {
         static_assert(S1 == C1, "pmp_h does not support strides");
         static_assert(S2 == C2, "pmp_h does not support strides");
@@ -189,7 +189,7 @@ struct pmp_h_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_iff(etl::is_4d<A>)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, etl_4d A, typename C>
     static void apply(A&& a, C&& c) {
         static_assert(S1 == C1, "pmp_h does not support strides");
         static_assert(S2 == C2, "pmp_h does not support strides");
@@ -248,7 +248,7 @@ struct dyn_pmp_h_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C, cpp_enable_iff(etl::is_2d<A>)>
+    template <etl_2d A, typename C>
     static void apply(A&& a, C&& c, size_t c1, size_t c2, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
@@ -281,7 +281,7 @@ struct dyn_pmp_h_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C, cpp_enable_iff(etl::is_3d<A>)>
+    template <etl_3d A, typename C>
     static void apply(A&& a, C&& c, size_t c1, size_t c2, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
@@ -323,7 +323,7 @@ struct dyn_pmp_h_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C, cpp_enable_iff(etl::is_4d<A>)>
+    template <etl_4d A, typename C>
     static void apply(A&& a, C&& c, size_t c1, size_t c2, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
@@ -471,7 +471,7 @@ struct pmp_p_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_iff(etl::is_2d<A>)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, etl_2d A, typename C>
     static void apply(A&& a, C&& c) {
         static_assert(S1 == C1, "pmp_p does not support strides");
         static_assert(S2 == C2, "pmp_p does not support strides");
@@ -502,7 +502,7 @@ struct pmp_p_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_iff(etl::is_3d<A>)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, etl_3d A, typename C>
     static void apply(A&& a, C&& c) {
         static_assert(S1 == C1, "pmp_p does not support strides");
         static_assert(S2 == C2, "pmp_p does not support strides");
@@ -542,7 +542,7 @@ struct pmp_p_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename C, cpp_enable_iff(etl::is_4d<A>)>
+    template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, etl_4d A, typename C>
     static void apply(A&& a, C&& c) {
         static_assert(S1 == C1, "pmp_p does not support strides");
         static_assert(S2 == C2, "pmp_p does not support strides");
@@ -599,7 +599,7 @@ struct dyn_pmp_p_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C, cpp_enable_iff(etl::is_2d<A>)>
+    template <etl_2d A, typename C>
     static void apply(A&& a, C&& c, size_t c1, size_t c2, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
@@ -630,7 +630,7 @@ struct dyn_pmp_p_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C, cpp_enable_iff(etl::is_3d<A>)>
+    template <etl_3d A, typename C>
     static void apply(A&& a, C&& c, size_t c1, size_t c2, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
@@ -670,7 +670,7 @@ struct dyn_pmp_p_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename A, typename C, cpp_enable_iff(etl::is_4d<A>)>
+    template <etl_4d A, typename C>
     static void apply(A&& a, C&& c, size_t c1, size_t c2, [[maybe_unused]] size_t s1, [[maybe_unused]] size_t s2, [[maybe_unused]] size_t p1, [[maybe_unused]] size_t p2) {
         cpp_assert(s1 == c1, "pmp_p does not support strides");
         cpp_assert(s2 == c2, "pmp_p does not support strides");
