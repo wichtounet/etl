@@ -32,7 +32,7 @@ namespace etl {
  */
 template <typename E>
 auto operator-(E&& value) {
-    return detail::unary_helper<E, minus_unary_op>{value};
+    return detail::unary_helper<E, minus_unary_op>{std::forward<E>(value)};
 }
 
 /*!
@@ -42,7 +42,7 @@ auto operator-(E&& value) {
  */
 template <typename E>
 auto operator+(E&& value) {
-    return detail::unary_helper<E, plus_unary_op>{value};
+    return detail::unary_helper<E, plus_unary_op>{std::forward<E>(value)};
 }
 
 /*!
@@ -52,7 +52,7 @@ auto operator+(E&& value) {
  */
 template <etl_expr E>
 auto abs(E&& value) {
-    return detail::unary_helper<E, abs_unary_op>{value};
+    return detail::unary_helper<E, abs_unary_op>{std::forward<E>(value)};
 }
 
 /*!
@@ -86,7 +86,7 @@ auto min(L&& lhs, R&& rhs) {
  */
 template <etl_expr E>
 auto floor(E&& value) {
-    return detail::unary_helper<E, floor_unary_op>{value};
+    return detail::unary_helper<E, floor_unary_op>{std::forward<E>(value)};
 }
 
 /*!
@@ -96,7 +96,7 @@ auto floor(E&& value) {
  */
 template <etl_expr E>
 auto ceil(E&& value) {
-    return detail::unary_helper<E, ceil_unary_op>{value};
+    return detail::unary_helper<E, ceil_unary_op>{std::forward<E>(value)};
 }
 
 /*!
@@ -108,7 +108,7 @@ auto ceil(E&& value) {
  */
 template <etl_expr E, arithmetic T>
 auto clip(E&& value, T min, T max) {
-    return detail::make_stateful_unary_expr<E, clip_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(min), value_t<E>(max));
+    return detail::make_stateful_unary_expr<E, clip_scalar_op<value_t<E>, value_t<E>>>(std::forward<E>(value), value_t<E>(min), value_t<E>(max));
 }
 
 /*!
@@ -125,7 +125,7 @@ auto clip(E&& value, T min, T max) {
  */
 template <etl_expr E, arithmetic T>
 auto pow(E&& value, T v) {
-    return detail::left_binary_helper_op<E, scalar<value_t<E>>, pow_binary_op<value_t<E>, value_t<E>>>{value, scalar<value_t<E>>(v)};
+    return detail::left_binary_helper_op<E, scalar<value_t<E>>, pow_binary_op<value_t<E>, value_t<E>>>{std::forward<E>(value), scalar<value_t<E>>(v)};
 }
 
 /*!
@@ -136,7 +136,7 @@ auto pow(E&& value, T v) {
  */
 template <etl_expr E>
 auto pow_int(E&& value, size_t v) {
-    return detail::left_binary_helper_op<E, scalar<size_t>, integer_pow_binary_op<value_t<E>, size_t>>{value, scalar<size_t>(v)};
+    return detail::left_binary_helper_op<E, scalar<size_t>, integer_pow_binary_op<value_t<E>, size_t>>{std::forward<E>(value), scalar<size_t>(v)};
 }
 
 /*!
@@ -153,7 +153,7 @@ auto pow_int(E&& value, size_t v) {
  */
 template <etl_expr E, arithmetic T>
 auto pow_precise(E&& value, T v) {
-    return detail::left_binary_helper_op<E, scalar<value_t<E>>, precise_pow_binary_op<value_t<E>, value_t<E>>>{value, scalar<value_t<E>>(v)};
+    return detail::left_binary_helper_op<E, scalar<value_t<E>>, precise_pow_binary_op<value_t<E>, value_t<E>>>{std::forward<E>(value), scalar<value_t<E>>(v)};
 }
 
 /*!
@@ -164,7 +164,7 @@ auto pow_precise(E&& value, T v) {
  */
 template <etl_expr E, arithmetic T>
 auto one_if(E&& value, T v) {
-    return detail::left_binary_helper_op<E, scalar<value_t<E>>, one_if_binary_op<value_t<E>, value_t<E>>>{value, scalar<value_t<E>>(v)};
+    return detail::left_binary_helper_op<E, scalar<value_t<E>>, one_if_binary_op<value_t<E>, value_t<E>>>{std::forward<E>(value), scalar<value_t<E>>(v)};
 }
 
 /*!
@@ -184,7 +184,7 @@ auto one_if_max(E&& value) {
  */
 template <etl_complex_expr E>
 auto real(E&& value) {
-    return unary_expr<typename value_t<E>::value_type, detail::build_type<E>, real_unary_op<value_t<E>>>{value};
+    return unary_expr<typename value_t<E>::value_type, detail::build_type<E>, real_unary_op<value_t<E>>>{std::forward<E>(value)};
 }
 
 /*!
@@ -194,7 +194,7 @@ auto real(E&& value) {
  */
 template <etl_complex_expr E>
 auto imag(E&& value) {
-    return unary_expr<typename value_t<E>::value_type, detail::build_type<E>, imag_unary_op<value_t<E>>>{value};
+    return unary_expr<typename value_t<E>::value_type, detail::build_type<E>, imag_unary_op<value_t<E>>>{std::forward<E>(value)};
 }
 
 /*!
@@ -204,7 +204,7 @@ auto imag(E&& value) {
  */
 template <etl_complex_expr E>
 auto conj(E&& value) {
-    return unary_expr<value_t<E>, detail::build_type<E>, conj_unary_op<value_t<E>>>{value};
+    return unary_expr<value_t<E>, detail::build_type<E>, conj_unary_op<value_t<E>>>{std::forward<E>(value)};
 }
 
 /*!
@@ -214,7 +214,7 @@ auto conj(E&& value) {
  */
 template <etl_expr E>
 auto uniform_noise(E&& value) {
-    return detail::unary_helper<E, uniform_noise_unary_op>{value};
+    return detail::unary_helper<E, uniform_noise_unary_op>{std::forward<E>(value)};
 }
 
 /*!
@@ -224,7 +224,7 @@ auto uniform_noise(E&& value) {
  */
 template <etl_expr E, typename G>
 auto uniform_noise(G& g, E&& value) {
-    return detail::make_stateful_unary_expr<E, uniform_noise_unary_g_op<G, value_t<E>>>(value, g);
+    return detail::make_stateful_unary_expr<E, uniform_noise_unary_g_op<G, value_t<E>>>(std::forward<E>(value), g);
 }
 
 /*!
@@ -234,7 +234,7 @@ auto uniform_noise(G& g, E&& value) {
  */
 template <etl_expr E>
 auto normal_noise(E&& value) {
-    return detail::unary_helper<E, normal_noise_unary_op>{value};
+    return detail::unary_helper<E, normal_noise_unary_op>{std::forward<E>(value)};
 }
 
 /*!
@@ -244,7 +244,7 @@ auto normal_noise(E&& value) {
  */
 template <etl_expr E, typename G>
 auto normal_noise(G& g, E&& value) {
-    return detail::make_stateful_unary_expr<E, normal_noise_unary_g_op<G, value_t<E>>>(value, g);
+    return detail::make_stateful_unary_expr<E, normal_noise_unary_g_op<G, value_t<E>>>(std::forward<E>(value), g);
 }
 
 /*!
@@ -254,7 +254,7 @@ auto normal_noise(G& g, E&& value) {
  */
 template <etl_expr E>
 auto logistic_noise(E&& value) {
-    return detail::unary_helper<E, logistic_noise_unary_op>{value};
+    return detail::unary_helper<E, logistic_noise_unary_op>{std::forward<E>(value)};
 }
 
 /*!
@@ -264,7 +264,7 @@ auto logistic_noise(E&& value) {
  */
 template <etl_expr E, typename G>
 auto logistic_noise(G& g, E&& value) {
-    return detail::make_stateful_unary_expr<E, logistic_noise_unary_g_op<G, value_t<E>>>(value, g);
+    return detail::make_stateful_unary_expr<E, logistic_noise_unary_g_op<G, value_t<E>>>(std::forward<E>(value), g);
 }
 
 /*!
@@ -274,7 +274,7 @@ auto logistic_noise(G& g, E&& value) {
  */
 template <etl_expr E>
 auto state_logistic_noise(E&& value) {
-    return detail::make_stateful_unary_expr<E, state_logistic_noise_unary_op<value_t<E>>>(value);
+    return detail::make_stateful_unary_expr<E, state_logistic_noise_unary_op<value_t<E>>>(std::forward<E>(value));
 }
 
 /*!
@@ -284,7 +284,7 @@ auto state_logistic_noise(E&& value) {
  */
 template <etl_expr E>
 auto state_logistic_noise(E&& value, const std::shared_ptr<void*> & states) {
-    return detail::make_stateful_unary_expr<E, state_logistic_noise_unary_op<value_t<E>>>(value, states);
+    return detail::make_stateful_unary_expr<E, state_logistic_noise_unary_op<value_t<E>>>(std::forward<E>(value), states);
 }
 
 /*!
@@ -294,7 +294,7 @@ auto state_logistic_noise(E&& value, const std::shared_ptr<void*> & states) {
  */
 template <typename G, etl_expr E>
 auto state_logistic_noise(G& g, E&& value) {
-    return detail::make_stateful_unary_expr<E, state_logistic_noise_unary_g_op<G, value_t<E>>>(value, g);
+    return detail::make_stateful_unary_expr<E, state_logistic_noise_unary_g_op<G, value_t<E>>>(std::forward<E>(value), g);
 }
 
 /*!
@@ -304,7 +304,7 @@ auto state_logistic_noise(G& g, E&& value) {
  */
 template <etl_expr E, typename G>
 auto state_logistic_noise(G& g, E&& value, const std::shared_ptr<void*> & states) {
-    return detail::make_stateful_unary_expr<E, state_logistic_noise_unary_g_op<G, value_t<E>>>(value, g, states);
+    return detail::make_stateful_unary_expr<E, state_logistic_noise_unary_g_op<G, value_t<E>>>(std::forward<E>(value), g, states);
 }
 
 /*!
@@ -316,7 +316,7 @@ auto state_logistic_noise(G& g, E&& value, const std::shared_ptr<void*> & states
  */
 template <etl_expr E, arithmetic T>
 auto ranged_noise(E&& value, T v) {
-    return detail::left_binary_helper_op<E, scalar<value_t<E>>, ranged_noise_binary_op<value_t<E>, value_t<E>>>{value, scalar<value_t<E>>(v)};
+    return detail::left_binary_helper_op<E, scalar<value_t<E>>, ranged_noise_binary_op<value_t<E>, value_t<E>>>{std::forward<E>(value), scalar<value_t<E>>(v)};
 }
 
 // Apply a stable transformation
@@ -330,7 +330,7 @@ auto ranged_noise(E&& value, T v) {
  */
 template <size_t D1, size_t... D, etl_expr E>
 auto rep(E&& value) {
-    return unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_r_transformer<detail::build_type<E>, D1, D...>(value)};
+    return unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_r_transformer<detail::build_type<E>, D1, D...>(std::forward<E>(value))};
 }
 
 /*!
@@ -342,7 +342,7 @@ auto rep(E&& value) {
  */
 template <size_t D1, size_t... D, etl_expr E>
 auto rep_r(E&& value) {
-    return unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_r_transformer<detail::build_type<E>, D1, D...>(value)};
+    return unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_r_transformer<detail::build_type<E>, D1, D...>(std::forward<E>(value))};
 }
 
 /*!
@@ -354,7 +354,7 @@ auto rep_r(E&& value) {
  */
 template <size_t D1, size_t... D, etl_expr E>
 auto rep_l(E&& value) {
-    return unary_expr<value_t<E>, rep_l_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_l_transformer<detail::build_type<E>, D1, D...>(value)};
+    return unary_expr<value_t<E>, rep_l_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_l_transformer<detail::build_type<E>, D1, D...>(std::forward<E>(value))};
 }
 
 /*!
@@ -367,7 +367,7 @@ auto rep_l(E&& value) {
 template <typename... D, etl_expr E>
 auto rep(E&& value, size_t d1, D... d) {
     return unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
-        dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<size_t>(d)...}})};
+        dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(std::forward<E>(value), {{d1, static_cast<size_t>(d)...}})};
 }
 
 /*!
@@ -380,7 +380,7 @@ auto rep(E&& value, size_t d1, D... d) {
 template <typename... D, etl_expr E>
 auto rep_r(E&& value, size_t d1, D... d) {
     return unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
-        dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<size_t>(d)...}})};
+        dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(std::forward<E>(value), {{d1, static_cast<size_t>(d)...}})};
 }
 
 /*!
@@ -393,7 +393,7 @@ auto rep_r(E&& value, size_t d1, D... d) {
 template <typename... D, etl_expr E>
 auto rep_l(E&& value, size_t d1, D... d) {
     return unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
-        dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<size_t>(d)...}})};
+        dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>(std::forward<E>(value), {{d1, static_cast<size_t>(d)...}})};
 }
 
 /*!
@@ -407,9 +407,9 @@ auto rep_l(E&& value, size_t d1, D... d) {
 template <etl_expr E>
 auto argmax(E&& value) {
     if constexpr (decay_traits<E>::dimensions() > 1) {
-        return detail::make_transform_expr<E, argmax_transformer>(value);
+        return detail::make_transform_expr<E, argmax_transformer>(std::forward<E>(value));
     } else {
-        return max_index(value);
+        return max_index(std::forward<E>(value));
     }
 }
 
@@ -424,9 +424,9 @@ auto argmax(E&& value) {
 template <etl_expr E>
 auto argmin(E&& value) {
     if constexpr (decay_traits<E>::dimensions() > 1) {
-        return detail::make_transform_expr<E, argmin_transformer>(value);
+        return detail::make_transform_expr<E, argmin_transformer>(std::forward<E>(value));
     } else {
-        return min_index(value);
+        return min_index(std::forward<E>(value));
     }
 }
 
@@ -439,7 +439,7 @@ auto argmin(E&& value) {
  */
 template <matrix E>
 auto sum_r(E&& value) {
-    return detail::make_transform_expr<E, sum_r_transformer>(value);
+    return detail::make_transform_expr<E, sum_r_transformer>(std::forward<E>(value));
 }
 
 /*!
@@ -450,7 +450,7 @@ auto sum_r(E&& value) {
  */
 template <matrix E>
 auto sum_l(E&& value) {
-    return detail::make_transform_expr<E, sum_l_transformer>(value);
+    return detail::make_transform_expr<E, sum_l_transformer>(std::forward<E>(value));
 }
 
 /*!
@@ -461,7 +461,7 @@ auto sum_l(E&& value) {
  */
 template <matrix E>
 auto mean_r(E&& value) {
-    return detail::make_transform_expr<E, mean_r_transformer>(value);
+    return detail::make_transform_expr<E, mean_r_transformer>(std::forward<E>(value));
 }
 
 /*!
@@ -472,7 +472,7 @@ auto mean_r(E&& value) {
  */
 template <matrix E>
 auto mean_l(E&& value) {
-    return detail::make_transform_expr<E, mean_l_transformer>(value);
+    return detail::make_transform_expr<E, mean_l_transformer>(std::forward<E>(value));
 }
 
 /*!
