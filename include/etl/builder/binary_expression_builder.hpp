@@ -233,8 +233,6 @@ auto operator%(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
 
 // Compound operators
 
-// TODO: Generalize the change to std::forward and decltype(auto)
-
 /*!
  * \brief Compound addition of the right hand side to the left hand side
  * \param lhs The left hand side, will be changed
@@ -254,7 +252,7 @@ decltype(auto) operator+=(LE&& lhs, RE rhs) {
  * \return the left hand side
  */
 template <simple_lhs LE, etl_expr RE>
-decltype(auto) operator+=(LE&& lhs, RE&& rhs) {
+decltype(auto) operator+=(LE&& lhs, const RE & rhs) {
     validate_expression(lhs, rhs);
     rhs.assign_add_to(lhs);
     return std::forward<LE>(lhs);
@@ -267,9 +265,9 @@ decltype(auto) operator+=(LE&& lhs, RE&& rhs) {
  * \return the left hand side
  */
 template <simple_lhs LE, arithmetic RE>
-LE& operator-=(LE&& lhs, RE rhs) {
+decltype(auto) operator-=(LE&& lhs, RE rhs) {
     etl::scalar<RE>(rhs).assign_sub_to(lhs);
-    return lhs;
+    return std::forward<LE>(lhs);
 }
 
 /*!
@@ -279,10 +277,10 @@ LE& operator-=(LE&& lhs, RE rhs) {
  * \return the left hand side
  */
 template <simple_lhs LE, etl_expr RE>
-LE& operator-=(LE&& lhs, RE&& rhs) {
+decltype(auto) operator-=(LE&& lhs, const RE & rhs) {
     validate_expression(lhs, rhs);
     rhs.assign_sub_to(lhs);
-    return lhs;
+    return std::forward<LE>(lhs);
 }
 
 /*!
@@ -292,9 +290,9 @@ LE& operator-=(LE&& lhs, RE&& rhs) {
  * \return the left hand side
  */
 template <simple_lhs LE, arithmetic RE>
-LE& operator*=(LE&& lhs, RE rhs) {
+decltype(auto) operator*=(LE&& lhs, RE rhs) {
     etl::scalar<RE>(rhs).assign_mul_to(lhs);
-    return lhs;
+    return std::forward<LE>(lhs);
 }
 
 /*!
@@ -304,10 +302,10 @@ LE& operator*=(LE&& lhs, RE rhs) {
  * \return the left hand side
  */
 template <simple_lhs LE, etl_expr RE>
-LE& operator*=(LE&& lhs, RE&& rhs) {
+decltype(auto) operator*=(LE&& lhs, const RE & rhs) {
     validate_expression(lhs, rhs);
     rhs.assign_mul_to(lhs);
-    return lhs;
+    return std::forward<LE>(lhs);
 }
 
 /*!
@@ -317,9 +315,9 @@ LE& operator*=(LE&& lhs, RE&& rhs) {
  * \return the left hand side
  */
 template <simple_lhs LE, arithmetic RE>
-LE& operator>>=(LE&& lhs, RE rhs) {
+decltype(auto) operator>>=(LE&& lhs, RE rhs) {
     etl::scalar<RE>(rhs).assign_mul_to(lhs);
-    return lhs;
+    return std::forward<LE>(lhs);
 }
 
 /*!
@@ -329,10 +327,10 @@ LE& operator>>=(LE&& lhs, RE rhs) {
  * \return the left hand side
  */
 template <simple_lhs LE, etl_expr RE>
-LE& operator>>=(LE&& lhs, RE&& rhs) {
+decltype(auto) operator>>=(LE&& lhs, const RE & rhs) {
     validate_expression(lhs, rhs);
     rhs.assign_mul_to(lhs);
-    return lhs;
+    return std::forward<LE>(lhs);
 }
 
 /*!
@@ -342,9 +340,9 @@ LE& operator>>=(LE&& lhs, RE&& rhs) {
  * \return the left hand side
  */
 template <simple_lhs LE, arithmetic RE>
-LE& operator/=(LE&& lhs, RE rhs) {
+decltype(auto) operator/=(LE&& lhs, RE rhs) {
     etl::scalar<RE>(rhs).assign_div_to(lhs);
-    return lhs;
+    return std::forward<LE>(lhs);
 }
 
 /*!
@@ -354,10 +352,10 @@ LE& operator/=(LE&& lhs, RE rhs) {
  * \return the left hand side
  */
 template <simple_lhs LE, etl_expr RE>
-LE& operator/=(LE&& lhs, RE&& rhs) {
+decltype(auto) operator/=(LE&& lhs, const RE & rhs) {
     validate_expression(lhs, rhs);
     rhs.assign_div_to(lhs);
-    return lhs;
+    return std::forward<LE>(lhs);
 }
 
 /*!
@@ -367,9 +365,9 @@ LE& operator/=(LE&& lhs, RE&& rhs) {
  * \return the left hand side
  */
 template <simple_lhs LE, arithmetic RE>
-LE& operator%=(LE&& lhs, RE rhs) {
+decltype(auto) operator%=(LE&& lhs, RE rhs) {
     etl::scalar<RE>(rhs).assign_mod_to(lhs);
-    return lhs;
+    return std::forward<LE>(lhs);
 }
 
 /*!
@@ -379,10 +377,10 @@ LE& operator%=(LE&& lhs, RE rhs) {
  * \return the left hand side
  */
 template <simple_lhs LE, etl_expr RE>
-LE& operator%=(LE&& lhs, RE&& rhs) {
+decltype(auto) operator%=(LE&& lhs, const RE & rhs) {
     validate_expression(lhs, rhs);
     rhs.assign_mod_to(lhs);
-    return lhs;
+    return std::forward<LE>(lhs);
 }
 
 // Comparison
