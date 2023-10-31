@@ -37,9 +37,9 @@ struct avg_pool_upsample_2d {
                     for (size_t jj = 0; jj < C2; ++jj) {
                         if (base_i + ii < etl::dim<0>(m) && base_j + jj < etl::dim<1>(m)) {
                             if constexpr (S1 == C1 && S2 == C2) {
-                                m(base_i + ii, base_j + jj) = error / (C1 * C2);
+                                m(base_i + ii, base_j + jj) = error / value_t<M>(C1 * C2);
                             } else {
-                                m(base_i + ii, base_j + jj) += error / (C1 * C2);
+                                m(base_i + ii, base_j + jj) += error / value_t<M>(C1 * C2);
                             }
                         }
                     }
@@ -52,13 +52,13 @@ struct avg_pool_upsample_2d {
         if constexpr (S1 == C1 && S2 == C2) {
             for (size_t ii = 0; ii < C1; ++ii) {
                 for (size_t jj = 0; jj < C2; ++jj) {
-                    m(i * S1 - P1 + ii, j * S2 - P2 + jj) = error / (C1 * C2);
+                    m(i * S1 - P1 + ii, j * S2 - P2 + jj) = error / value_t<M>(C1 * C2);
                 }
             }
         } else {
             for (size_t ii = 0; ii < C1; ++ii) {
                 for (size_t jj = 0; jj < C2; ++jj) {
-                    m(i * S1 - P1 + ii, j * S2 - P2 + jj) += error / (C1 * C2);
+                    m(i * S1 - P1 + ii, j * S2 - P2 + jj) += error / value_t<M>(C1 * C2);
                 }
             }
         }
@@ -87,9 +87,9 @@ struct avg_pool_upsample_2d {
                     for (size_t jj = 0; jj < C2; ++jj) {
                         if (base_i + ii < etl::dim<1>(m) && base_j + jj < etl::dim<2>(m)) {
                             if constexpr (S1 == C1 && S2 == C2) {
-                                m(q, base_i + ii, base_j + jj) = error / (C1 * C2);
+                                m(q, base_i + ii, base_j + jj) = error / value_t<M>(C1 * C2);
                             } else {
-                                m(q, base_i + ii, base_j + jj) += error / (C1 * C2);
+                                m(q, base_i + ii, base_j + jj) += error / value_t<M>(C1 * C2);
                             }
                         }
                     }
@@ -102,7 +102,7 @@ struct avg_pool_upsample_2d {
         if constexpr (S1 == C1 && S2 == C2) {
             for (size_t ii = 0; ii < C1; ++ii) {
                 for (size_t jj = 0; jj < C2; ++jj) {
-                    m(q, i * S1 - P1 + ii, j * S2 - P2 + jj) = error / (C1 * C2);
+                    m(q, i * S1 - P1 + ii, j * S2 - P2 + jj) = error / value_t<M>(C1 * C2);
                 }
             }
         } else {
@@ -137,9 +137,9 @@ struct avg_pool_upsample_2d {
                     for (size_t jj = 0; jj < C2; ++jj) {
                         if (base_i + ii < etl::dim<2>(m) && base_j + jj < etl::dim<3>(m)) {
                             if constexpr (S1 == C1 && S2 == C2) {
-                                m(p, q, base_i + ii, base_j + jj) = error / (C1 * C2);
+                                m(p, q, base_i + ii, base_j + jj) = error / value_t<M>(C1 * C2);
                             } else {
-                                m(p, q, base_i + ii, base_j + jj) += error / (C1 * C2);
+                                m(p, q, base_i + ii, base_j + jj) += error / value_t<M>(C1 * C2);
                             }
                         }
                     }
@@ -152,13 +152,13 @@ struct avg_pool_upsample_2d {
         if constexpr (S1 == C1 && S2 == C2) {
             for (size_t ii = 0; ii < C1; ++ii) {
                 for (size_t jj = 0; jj < C2; ++jj) {
-                    m(p, q, i * S1 - P1 + ii, j * S2 - P2 + jj) = error / (C1 * C2);
+                    m(p, q, i * S1 - P1 + ii, j * S2 - P2 + jj) = error / value_t<M>(C1 * C2);
                 }
             }
         } else {
             for (size_t ii = 0; ii < C1; ++ii) {
                 for (size_t jj = 0; jj < C2; ++jj) {
-                    m(p, q, i * S1 - P1 + ii, j * S2 - P2 + jj) += error / (C1 * C2);
+                    m(p, q, i * S1 - P1 + ii, j * S2 - P2 + jj) += error / value_t<M>(C1 * C2);
                 }
             }
         }
@@ -187,9 +187,9 @@ struct avg_pool_upsample_2d {
                     for (size_t jj = 0; jj < c2; ++jj) {
                         if (base_i + ii < etl::dim<0>(m) && base_j + jj < etl::dim<1>(m)) {
                             if (s1 == c1 && s2 == c2) {
-                                m(base_i + ii, base_j + jj) = error / (c1 * c2);
+                                m(base_i + ii, base_j + jj) = error / value_t<M>(c1 * c2);
                             } else {
-                                m(base_i + ii, base_j + jj) += error / (c1 * c2);
+                                m(base_i + ii, base_j + jj) += error / value_t<M>(c1 * c2);
                             }
                         }
                     }
@@ -202,13 +202,13 @@ struct avg_pool_upsample_2d {
         if (s1 == c1 && s2 == c2) {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
-                    m(i * s1 - p1 + ii, j * s2 - p2 + jj) = error / (c1 * c2);
+                    m(i * s1 - p1 + ii, j * s2 - p2 + jj) = error / value_t<M>(c1 * c2);
                 }
             }
         } else {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
-                    m(i * s1 - p1 + ii, j * s2 - p2 + jj) += error / (c1 * c2);
+                    m(i * s1 - p1 + ii, j * s2 - p2 + jj) += error / value_t<M>(c1 * c2);
                 }
             }
         }
@@ -237,9 +237,9 @@ struct avg_pool_upsample_2d {
                     for (size_t jj = 0; jj < c2; ++jj) {
                         if (base_i + ii < etl::dim<1>(m) && base_j + jj < etl::dim<2>(m)) {
                             if (s1 == c1 && s2 == c2) {
-                                m(q, base_i + ii, base_j + jj) = error / (c1 * c2);
+                                m(q, base_i + ii, base_j + jj) = error / value_t<M>(c1 * c2);
                             } else {
-                                m(q, base_i + ii, base_j + jj) += error / (c1 * c2);
+                                m(q, base_i + ii, base_j + jj) += error / value_t<M>(c1 * c2);
                             }
                         }
                     }
@@ -252,13 +252,13 @@ struct avg_pool_upsample_2d {
         if (s1 == c1 && s2 == c2) {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
-                    m(q, i * s1 - p1 + ii, j * s2 - p2 + jj) = error / (c1 * c2);
+                    m(q, i * s1 - p1 + ii, j * s2 - p2 + jj) = error / value_t<M>(c1 * c2);
                 }
             }
         } else {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
-                    m(q, i * s1 - p1 + ii, j * s2 - p2 + jj) += error / (c1 * c2);
+                    m(q, i * s1 - p1 + ii, j * s2 - p2 + jj) += error / value_t<M>(c1 * c2);
                 }
             }
         }
@@ -287,9 +287,9 @@ struct avg_pool_upsample_2d {
                     for (size_t jj = 0; jj < c2; ++jj) {
                         if (base_i + ii < etl::dim<2>(m) && base_j + jj < etl::dim<3>(m)) {
                             if (s1 == c1 && s2 == c2) {
-                                m(p, q, base_i + ii, base_j + jj) = error / (c1 * c2);
+                                m(p, q, base_i + ii, base_j + jj) = error / value_t<M>(c1 * c2);
                             } else {
-                                m(p, q, base_i + ii, base_j + jj) += error / (c1 * c2);
+                                m(p, q, base_i + ii, base_j + jj) += error / value_t<M>(c1 * c2);
                             }
                         }
                     }
@@ -302,13 +302,13 @@ struct avg_pool_upsample_2d {
         if (s1 == c1 && s2 == c2) {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
-                    m(p, q, i * s1 - p1 + ii, j * s2 - p2 + jj) = error / (c1 * c2);
+                    m(p, q, i * s1 - p1 + ii, j * s2 - p2 + jj) = error / value_t<M>(c1 * c2);
                 }
             }
         } else {
             for (size_t ii = 0; ii < c1; ++ii) {
                 for (size_t jj = 0; jj < c2; ++jj) {
-                    m(p, q, i * s1 - p1 + ii, j * s2 - p2 + jj) += error / (c1 * c2);
+                    m(p, q, i * s1 - p1 + ii, j * s2 - p2 + jj) += error / value_t<M>(c1 * c2);
                 }
             }
         }
@@ -529,7 +529,7 @@ struct avg_pool_upsample_3d {
         for (size_t ii = 0; ii < C1; ++ii) {
             for (size_t jj = 0; jj < C2; ++jj) {
                 for (size_t kk = 0; kk < C3; ++kk) {
-                    m(i * C1 + ii, j * C2 + jj, k * C3 + kk) = error / (C1 * C2 * C3);
+                    m(i * C1 + ii, j * C2 + jj, k * C3 + kk) = error / value_t<M>(C1 * C2 * C3);
                 }
             }
         }
@@ -553,7 +553,7 @@ struct avg_pool_upsample_3d {
         for (size_t ii = 0; ii < C1; ++ii) {
             for (size_t jj = 0; jj < C2; ++jj) {
                 for (size_t kk = 0; kk < C3; ++kk) {
-                    m(n, i * C1 + ii, j * C2 + jj, k * C3 + kk) = error / (C1 * C2 * C3);
+                    m(n, i * C1 + ii, j * C2 + jj, k * C3 + kk) = error / value_t<M>(C1 * C2 * C3);
                 }
             }
         }
@@ -577,7 +577,7 @@ struct avg_pool_upsample_3d {
         for (size_t ii = 0; ii < c1; ++ii) {
             for (size_t jj = 0; jj < c2; ++jj) {
                 for (size_t kk = 0; kk < c3; ++kk) {
-                    m(i * c1 + ii, j * c2 + jj, k * c3 + kk) = error / (c1 * c2 * c3);
+                    m(i * c1 + ii, j * c2 + jj, k * c3 + kk) = error / value_t<M>(c1 * c2 * c3);
                 }
             }
         }
@@ -601,7 +601,7 @@ struct avg_pool_upsample_3d {
         for (size_t ii = 0; ii < c1; ++ii) {
             for (size_t jj = 0; jj < c2; ++jj) {
                 for (size_t kk = 0; kk < c3; ++kk) {
-                    m(n, i * c1 + ii, j * c2 + jj, k * c3 + kk) = error / (c1 * c2 * c3);
+                    m(n, i * c1 + ii, j * c2 + jj, k * c3 + kk) = error / value_t<M>(c1 * c2 * c3);
                 }
             }
         }
