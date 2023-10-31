@@ -41,7 +41,7 @@ struct avg_pool_2d {
             }
         }
 
-        return avg / (c1 * c2);
+        return avg / static_cast<value_t<A>>(c1 * c2);
     }
 
     /*!
@@ -65,7 +65,7 @@ struct avg_pool_2d {
             }
         }
 
-        return avg / (C1 * C2);
+        return avg / static_cast<value_t<A>>(C1 * C2);
     }
 
     /*!
@@ -89,7 +89,7 @@ struct avg_pool_2d {
             }
         }
 
-        return avg / (C1 * C2);
+        return avg / static_cast<value_t<A>>(C1 * C2);
     }
 
     /*!
@@ -113,7 +113,7 @@ struct avg_pool_2d {
             }
         }
 
-        return avg / (C1 * C2);
+        return avg / static_cast<value_t<A>>(C1 * C2);
     }
 
     /*!
@@ -182,7 +182,7 @@ struct avg_pool_2d {
             }
         }
 
-        return avg / (c1 * c2);
+        return avg / static_cast<value_t<A>>(c1 * c2);
     }
 
     /*!
@@ -206,7 +206,7 @@ struct avg_pool_2d {
             }
         }
 
-        return avg / (c1 * c2);
+        return avg / static_cast<value_t<A>>(c1 * c2);
     }
 
     /*!
@@ -230,7 +230,7 @@ struct avg_pool_2d {
             }
         }
 
-        return avg / (c1 * c2);
+        return avg / static_cast<value_t<A>>(c1 * c2);
     }
 
     /*!
@@ -504,7 +504,7 @@ struct avg_pool_3d {
             }
         }
 
-        return avg / (c1 * c2 * c3);
+        return avg / static_cast<value_t<A>>(c1 * c2 * c3);
     }
 
     /*!
@@ -533,7 +533,7 @@ struct avg_pool_3d {
             }
         }
 
-        return avg / (C1 * C2 * C3);
+        return avg / static_cast<value_t<A>>(C1 * C2 * C3);
     }
 
     /*!
@@ -562,7 +562,7 @@ struct avg_pool_3d {
             }
         }
 
-        return avg / (C1 * C2 * C3);
+        return avg / static_cast<value_t<A>>(C1 * C2 * C3);
     }
 
     /*!
@@ -675,7 +675,7 @@ struct avg_pool_3d {
             }
         }
 
-        return avg / (c1 * c2 * c3);
+        return avg / static_cast<value_t<A>>(c1 * c2 * c3);
     }
 
     /*!
@@ -704,7 +704,7 @@ struct avg_pool_3d {
             }
         }
 
-        return avg / (c1 * c2 * c3);
+        return avg / static_cast<value_t<A>>(c1 * c2 * c3);
     }
 
     /*!
