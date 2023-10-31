@@ -5,10 +5,10 @@ Code use C++17 extensively.
 
 For now code is made to be compiled with:
 
- * >=g++-9.3.0
+ * >=g++-13
+ * >=g++-16
 
-Normally, everything should work fine with recent versions of clang. Due to
-modern features that are being used, it is unlikely that everything works on
+Due to modern features that are being used, it is unlikely that everything works on
 Windows and icc.
 
 Compile-Time
@@ -28,7 +28,7 @@ There are several possible solutions
 However, some things are harder than expected. For instance, it is
 not possible to remove SFINAE on the operator+ funtion because
 otherwise it would match etl::complex or iterators from dyn matrix.
-This because forwarding is "too perfect" and because ADL is used.
+This is because forwarding is "too perfect" and because ADL is used.
 
 Coverage
 --------
