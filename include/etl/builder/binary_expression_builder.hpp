@@ -25,7 +25,7 @@ template <etl_expr LE, etl_expr RE>
 auto operator-(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
-    return detail::left_binary_helper<LE, RE, minus_binary_op>{lhs, rhs};
+    return detail::left_binary_helper<LE, RE, minus_binary_op>{std::forward<LE>(lhs), std::forward<RE>(rhs)};
 }
 
 /*!
@@ -38,7 +38,7 @@ template <etl_expr LE, etl_expr RE>
 auto operator+(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
-    return detail::left_binary_helper<LE, RE, plus_binary_op>{lhs, rhs};
+    return detail::left_binary_helper<LE, RE, plus_binary_op>{std::forward<LE>(lhs), std::forward<RE>(rhs)};
 }
 
 /*!
@@ -51,7 +51,7 @@ template <etl_expr LE, etl_expr RE>
 auto operator>>(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
-    return detail::left_binary_helper<LE, RE, mul_binary_op>{lhs, rhs};
+    return detail::left_binary_helper<LE, RE, mul_binary_op>{std::forward<LE>(lhs), std::forward<RE>(rhs)};
 }
 
 /*!
@@ -64,7 +64,7 @@ template <typename LE, typename RE>
 auto scale(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
-    return detail::left_binary_helper<LE, RE, mul_binary_op>{lhs, rhs};
+    return detail::left_binary_helper<LE, RE, mul_binary_op>{std::forward<LE>(lhs), std::forward<RE>(rhs)};
 }
 
 /*!
@@ -77,7 +77,7 @@ template <etl_expr LE, etl_expr RE>
 auto operator/(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
-    return detail::left_binary_helper<LE, RE, div_binary_op>{lhs, rhs};
+    return detail::left_binary_helper<LE, RE, div_binary_op>{std::forward<LE>(lhs), std::forward<RE>(rhs)};
 }
 
 /*!
@@ -90,7 +90,7 @@ template <etl_expr LE, etl_expr RE>
 auto operator%(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
 
-    return detail::left_binary_helper<LE, RE, mod_binary_op>{lhs, rhs};
+    return detail::left_binary_helper<LE, RE, mod_binary_op>{std::forward<LE>(lhs), std::forward<RE>(rhs)};
 }
 
 // Mix scalars and ETL expressions (vector,matrix,binary,unary)
@@ -103,7 +103,7 @@ auto operator%(LE&& lhs, RE&& rhs) {
  */
 template <etl_expr LE, typename RE>
 auto operator-(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
-    return detail::left_binary_helper<LE, scalar<value_t<LE>>, minus_binary_op>{lhs, scalar<value_t<LE>>(rhs)};
+    return detail::left_binary_helper<LE, scalar<value_t<LE>>, minus_binary_op>{std::forward<LE>(lhs), scalar<value_t<LE>>(rhs)};
 }
 
 /*!
@@ -114,7 +114,7 @@ auto operator-(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
  */
 template <typename LE, etl_expr RE>
 auto operator-(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
-    return detail::right_binary_helper<scalar<value_t<RE>>, RE, minus_binary_op>{scalar<value_t<RE>>(lhs), rhs};
+    return detail::right_binary_helper<scalar<value_t<RE>>, RE, minus_binary_op>{scalar<value_t<RE>>(lhs), std::forward<RE>(rhs)};
 }
 
 /*!
@@ -125,7 +125,7 @@ auto operator-(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
  */
 template <etl_expr LE, typename RE>
 auto operator+(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
-    return detail::left_binary_helper<LE, scalar<value_t<LE>>, plus_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
+    return detail::left_binary_helper<LE, scalar<value_t<LE>>, plus_binary_op> {std::forward<LE>(lhs), scalar<value_t<LE>>(rhs)};
 }
 
 /*!
@@ -136,7 +136,7 @@ auto operator+(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
  */
 template <typename LE, etl_expr RE>
 auto operator+(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
-    return detail::right_binary_helper<scalar<value_t<RE>>, RE, plus_binary_op> {scalar<value_t<RE>>(lhs), rhs};
+    return detail::right_binary_helper<scalar<value_t<RE>>, RE, plus_binary_op> {scalar<value_t<RE>>(lhs), std::forward<RE>(rhs)};
 }
 
 /*!
@@ -147,7 +147,7 @@ auto operator+(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
  */
 template <etl_expr LE, typename RE>
 auto operator*(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
-    return detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
+    return detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {std::forward<LE>(lhs), scalar<value_t<LE>>(rhs)};
 }
 
 /*!
@@ -158,7 +158,7 @@ auto operator*(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
  */
 template <typename LE, etl_expr RE>
 auto operator*(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
-    return detail::right_binary_helper<scalar<value_t<RE>>, RE, mul_binary_op> {scalar<value_t<RE>>(lhs), rhs};
+    return detail::right_binary_helper<scalar<value_t<RE>>, RE, mul_binary_op> {scalar<value_t<RE>>(lhs), std::forward<RE>(rhs)};
 }
 
 /*!
@@ -169,7 +169,7 @@ auto operator*(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
  */
 template <etl_expr LE, typename RE>
 auto operator>>(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
-    return detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
+    return detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {std::forward<LE>(lhs), scalar<value_t<LE>>(rhs)};
 }
 
 /*!
@@ -180,7 +180,7 @@ auto operator>>(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> 
  */
 template <typename LE, etl_expr RE>
 auto operator>>(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
-    return detail::right_binary_helper<scalar<value_t<RE>>, RE, mul_binary_op> {scalar<value_t<RE>>(lhs), rhs};
+    return detail::right_binary_helper<scalar<value_t<RE>>, RE, mul_binary_op> {scalar<value_t<RE>>(lhs), std::forward<RE>(rhs)};
 }
 
 /*!
@@ -192,9 +192,9 @@ auto operator>>(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> 
 template <etl_expr LE, typename RE>
 auto operator/(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
     if constexpr (is_div_strict || !std::floating_point<RE>) {
-        return detail::left_binary_helper<LE, scalar<value_t<LE>>, div_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
+        return detail::left_binary_helper<LE, scalar<value_t<LE>>, div_binary_op> {std::forward<LE>(lhs), scalar<value_t<LE>>(rhs)};
     } else {
-        return detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {lhs, scalar<value_t<LE>>(value_t<LE>(1.0) / rhs)};
+        return detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {std::forward<LE>(lhs), scalar<value_t<LE>>(value_t<LE>(1.0) / rhs)};
     }
 }
 
@@ -206,7 +206,7 @@ auto operator/(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
  */
 template <typename LE, etl_expr RE>
 auto operator/(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>>{
-    return detail::right_binary_helper<scalar<value_t<RE>>, RE, div_binary_op> {scalar<value_t<RE>>(lhs), rhs};
+    return detail::right_binary_helper<scalar<value_t<RE>>, RE, div_binary_op> {scalar<value_t<RE>>(lhs), std::forward<RE>(rhs)};
 }
 
 /*!
@@ -217,7 +217,7 @@ auto operator/(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>>{
  */
 template <etl_expr LE, typename RE>
 auto operator%(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
-    return detail::left_binary_helper<LE, scalar<value_t<LE>>, mod_binary_op> {lhs, scalar<value_t<LE>>(rhs)};
+    return detail::left_binary_helper<LE, scalar<value_t<LE>>, mod_binary_op> {std::forward<LE>(lhs), scalar<value_t<LE>>(rhs)};
 }
 
 /*!
@@ -228,7 +228,7 @@ auto operator%(LE&& lhs, RE rhs) requires std::convertible_to<RE, value_t<LE>> {
  */
 template <typename LE, etl_expr RE>
 auto operator%(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>> {
-    return detail::right_binary_helper<scalar<value_t<RE>>, RE, mod_binary_op> {scalar<value_t<RE>>(lhs), rhs};
+    return detail::right_binary_helper<scalar<value_t<RE>>, RE, mod_binary_op> {scalar<value_t<RE>>(lhs), std::forward<RE>(rhs)};
 }
 
 // Compound operators
@@ -463,7 +463,7 @@ auto greater_equal(LE&& lhs, RE rhs) {
  */
 template <etl_expr LE, etl_expr RE>
 auto logical_and(LE&& lhs, RE rhs) {
-    return detail::bool_left_binary_helper<LE, LE, logical_and_binary_op> {lhs, rhs};
+    return detail::bool_left_binary_helper<LE, LE, logical_and_binary_op> {std::forward<LE>(lhs), std::forward<RE>(rhs)};
 }
 
 /*!
@@ -496,7 +496,7 @@ auto logical_and(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>>
  */
 template <etl_expr LE, etl_expr RE>
 auto logical_xor(LE&& lhs, RE rhs) {
-    return detail::bool_left_binary_helper<LE, LE, logical_xor_binary_op> {lhs, rhs};
+    return detail::bool_left_binary_helper<LE, LE, logical_xor_binary_op> {std::forward<LE>(lhs), std::forward<RE>(rhs)};
 }
 
 /*!
@@ -529,7 +529,7 @@ auto logical_xor(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>>
  */
 template <etl_expr LE, etl_expr RE>
 auto logical_or(LE&& lhs, RE rhs) {
-    return detail::bool_left_binary_helper<LE, LE, logical_or_binary_op> {lhs, rhs};
+    return detail::bool_left_binary_helper<LE, LE, logical_or_binary_op> {std::forward<LE>(lhs), std::forward<RE>(rhs)};
 }
 
 /*!
