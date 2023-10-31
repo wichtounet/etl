@@ -221,8 +221,8 @@ protected:
      * \brief Move construct a dyn_base
      * \param rhs The dyn_base to move from
      */
-    template <typename E, cpp_enable_iff(!std::is_same_v<std::decay_t<E>, derived_t>)>
-    explicit dyn_base(E&& rhs) : _size(etl::size(rhs)) {
+    template <etl_expr E>
+    explicit dyn_base(E&& rhs) requires(!std::same_as<std::decay<E>, derived_t>) : _size(etl::size(rhs)) {
         for (size_t d = 0; d < etl::dimensions(rhs); ++d) {
             _dimensions[d] = etl::dim(rhs, d);
         }
@@ -374,8 +374,8 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \brief Move construct a dense_dyn_base
      * \param rhs The dense_dyn_base to move from
      */
-    template <typename E, cpp_enable_iff(!std::is_same_v<std::decay_t<E>, derived_t>)>
-    explicit dense_dyn_base(E&& rhs) : base_type(std::move(rhs)) {
+    template <etl_expr E>
+    explicit dense_dyn_base(E&& rhs) requires(!std::same_as<std::decay_t<E>, derived_t>) : base_type(std::move(rhs)) {
         //Nothing else to init
     }
 
@@ -433,8 +433,8 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param sizes The indices
      * \return The value at the position (sizes...)
      */
-    template <typename... S, cpp_enable_iff((n_dimensions > 1) && (sizeof...(S) == n_dimensions) && cpp::all_convertible_to_v<size_t, S...>)>
-    const value_type& operator()(S... sizes) const noexcept(assert_nothrow) {
+    template <size_c... S>
+    const value_type& operator()(S... sizes) const noexcept(assert_nothrow) requires(sizeof...(S) > 1 && sizeof...(S) == n_dimensions) {
         ensure_cpu_up_to_date();
         return _memory[etl::dyn_index(as_derived(), sizes...)];
     }
@@ -444,8 +444,8 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param sizes The indices
      * \return The value at the position (sizes...)
      */
-    template <typename... S, cpp_enable_iff((n_dimensions > 1) && (sizeof...(S) == n_dimensions) && cpp::all_convertible_to_v<size_t, S...>)>
-    value_type& operator()(S... sizes) noexcept(assert_nothrow) {
+    template <size_c... S>
+    value_type& operator()(S... sizes) noexcept(assert_nothrow) requires(sizeof...(S) > 1 && sizeof...(S) == n_dimensions){
         ensure_cpu_up_to_date();
         invalidate_gpu();
         return _memory[etl::dyn_index(as_derived(), sizes...)];
