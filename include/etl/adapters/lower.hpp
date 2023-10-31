@@ -153,7 +153,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    lower_matrix& operator+=(R&& rhs) {
+    lower_matrix& operator+=(const R & rhs) {
         // Make sure the other matrix is lower triangular
         if (!is_lower_triangular(rhs)) {
             throw lower_exception();
@@ -170,7 +170,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    lower_matrix& operator-=(R&& rhs) {
+    lower_matrix& operator-=(const R & rhs) {
         // Make sure the other matrix is lower triangular
         if (!is_lower_triangular(rhs)) {
             throw lower_exception();
@@ -197,7 +197,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    lower_matrix& operator*=(R&& rhs) {
+    lower_matrix& operator*=(const R & rhs) {
         // Make sure the other matrix is lower triangular
         if (!is_lower_triangular(rhs)) {
             throw lower_exception();
@@ -224,7 +224,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    lower_matrix& operator>>=(R&& rhs) {
+    lower_matrix& operator>>=(const R & rhs) {
         // Make sure the other matrix is lower triangular
         if (!is_lower_triangular(rhs)) {
             throw lower_exception();
@@ -251,7 +251,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    lower_matrix& operator/=(R&& rhs) {
+    lower_matrix& operator/=(const R & rhs) {
         // Make sure the other matrix is lower triangular
         if (!is_lower_triangular(rhs)) {
             throw lower_exception();
@@ -278,7 +278,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    lower_matrix& operator%=(R&& rhs) {
+    lower_matrix& operator%=(const R & rhs) {
         // Make sure the other matrix is lower triangular
         if (!is_lower_triangular(rhs)) {
             throw lower_exception();

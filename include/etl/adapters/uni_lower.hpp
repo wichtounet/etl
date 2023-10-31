@@ -147,10 +147,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
-    uni_lower_matrix& operator+=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only add ETL expression to uni lower triangular matrix");
-
+    template <etl_expr R>
+    uni_lower_matrix& operator+=(const R & rhs) {
         // Make sure the other matrix is uni lower triangular
         if (!is_uni_lower_triangular(rhs)) {
             throw uni_lower_exception();
@@ -166,10 +164,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
-    uni_lower_matrix& operator-=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only add ETL expression to uni lower triangular matrix");
-
+    template <etl_expr R>
+    uni_lower_matrix& operator-=(const R & rhs) {
         // Make sure the other matrix is uni lower triangular
         if (!is_uni_lower_triangular(rhs)) {
             throw uni_lower_exception();
@@ -185,10 +181,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
-    uni_lower_matrix& operator*=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only scale uni lower triangular matrix by an ETL expression");
-
+    template <etl_expr R>
+    uni_lower_matrix& operator*=(const R & rhs) {
         // Make sure the other matrix is uni lower triangular
         if (!is_uni_lower_triangular(rhs)) {
             throw uni_lower_exception();
@@ -204,10 +198,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
-    uni_lower_matrix& operator>>=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only scale uni lower triangular matrix by an ETL expression");
-
+    template <etl_expr R>
+    uni_lower_matrix& operator>>=(const R & rhs) {
         // Make sure the other matrix is uni lower triangular
         if (!is_uni_lower_triangular(rhs)) {
             throw uni_lower_exception();
@@ -223,10 +215,8 @@ public:
      * \param rhs The right hand side
      * \return a reference to the matrix
      */
-    template <typename R>
-    uni_lower_matrix& operator/=(R&& rhs) {
-        static_assert(is_etl_expr<R>, "Can only scale uni lower triangular matrix by an ETL expression");
-
+    template <etl_expr R>
+    uni_lower_matrix& operator/=(const R & rhs) {
         // Make sure the other matrix is uni lower triangular
         if (!is_uni_lower_triangular(rhs)) {
             throw uni_lower_exception();

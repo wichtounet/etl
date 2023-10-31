@@ -148,7 +148,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    uni_upper_matrix& operator+=(R&& rhs) {
+    uni_upper_matrix& operator+=(const R & rhs) {
         // Make sure the other matrix is uni upper triangular
         if (!is_uni_upper_triangular(rhs)) {
             throw uni_upper_exception();
@@ -165,7 +165,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    uni_upper_matrix& operator-=(R&& rhs) {
+    uni_upper_matrix& operator-=(const R & rhs) {
         // Make sure the other matrix is uni upper triangular
         if (!is_uni_upper_triangular(rhs)) {
             throw uni_upper_exception();
@@ -182,7 +182,7 @@ public:
      * \return a reference to the matrix
      */
     template <typename R>
-    uni_upper_matrix& operator*=(R&& rhs) {
+    uni_upper_matrix& operator*=(const R & rhs) {
         // Make sure the other matrix is uni upper triangular
         if (!is_uni_upper_triangular(rhs)) {
             throw uni_upper_exception();
@@ -199,7 +199,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    uni_upper_matrix& operator>>=(R&& rhs) {
+    uni_upper_matrix& operator>>=(const R & rhs) {
         // Make sure the other matrix is uni upper triangular
         if (!is_uni_upper_triangular(rhs)) {
             throw uni_upper_exception();
@@ -216,7 +216,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    uni_upper_matrix& operator/=(R&& rhs) {
+    uni_upper_matrix& operator/=(const R & rhs) {
         // Make sure the other matrix is uni upper triangular
         if (!is_uni_upper_triangular(rhs)) {
             throw uni_upper_exception();

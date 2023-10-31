@@ -154,7 +154,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    strictly_lower_matrix& operator+=(R&& rhs) {
+    strictly_lower_matrix& operator+=(const R & rhs) {
         // Make sure the other matrix is strictly lower triangular
         if (!is_strictly_lower_triangular(rhs)) {
             throw strictly_lower_exception();
@@ -171,7 +171,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    strictly_lower_matrix& operator-=(R&& rhs) {
+    strictly_lower_matrix& operator-=(const R & rhs) {
         // Make sure the other matrix is strictly lower triangular
         if (!is_strictly_lower_triangular(rhs)) {
             throw strictly_lower_exception();
@@ -198,7 +198,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    strictly_lower_matrix& operator*=(R&& rhs) {
+    strictly_lower_matrix& operator*=(const R & rhs) {
         // Make sure the other matrix is strictly lower triangular
         if (!is_strictly_lower_triangular(rhs)) {
             throw strictly_lower_exception();
@@ -225,7 +225,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    strictly_lower_matrix& operator>>=(R&& rhs) {
+    strictly_lower_matrix& operator>>=(const R & rhs) {
         // Make sure the other matrix is strictly lower triangular
         if (!is_strictly_lower_triangular(rhs)) {
             throw strictly_lower_exception();
@@ -252,7 +252,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    strictly_lower_matrix& operator/=(R&& rhs) {
+    strictly_lower_matrix& operator/=(const R & rhs) {
         // Make sure the other matrix is strictly lower triangular
         if (!is_strictly_lower_triangular(rhs)) {
             throw strictly_lower_exception();
@@ -279,7 +279,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    strictly_lower_matrix& operator%=(R&& rhs) {
+    strictly_lower_matrix& operator%=(const R & rhs) {
         // Make sure the other matrix is strictly lower triangular
         if (!is_strictly_lower_triangular(rhs)) {
             throw strictly_lower_exception();

@@ -187,7 +187,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    symmetric_matrix& operator+=(R&& rhs) {
+    symmetric_matrix& operator+=(const R & rhs) {
         // Make sure the other matrix is symmetric
         if (!is_symmetric(rhs)) {
             throw symmetric_exception();
@@ -214,7 +214,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    symmetric_matrix& operator-=(R&& rhs) {
+    symmetric_matrix& operator-=(const R & rhs) {
         // Make sure the other matrix is symmetric
         if (!is_symmetric(rhs)) {
             throw symmetric_exception();
@@ -241,7 +241,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    symmetric_matrix& operator*=(R&& rhs) {
+    symmetric_matrix& operator*=(const R & rhs) {
         // Make sure the other matrix is symmetric
         if (!is_symmetric(rhs)) {
             throw symmetric_exception();
@@ -268,7 +268,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    symmetric_matrix& operator>>=(R&& rhs) {
+    symmetric_matrix& operator>>=(const R & rhs) {
         // Make sure the other matrix is symmetric
         if (!is_symmetric(rhs)) {
             throw symmetric_exception();
@@ -295,7 +295,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    symmetric_matrix& operator/=(R&& rhs) {
+    symmetric_matrix& operator/=(const R & rhs) {
         // Make sure the other matrix is symmetric
         if (!is_symmetric(rhs)) {
             throw symmetric_exception();
@@ -322,7 +322,7 @@ public:
      * \return a reference to the matrix
      */
     template <etl_expr R>
-    symmetric_matrix& operator%=(R&& rhs) {
+    symmetric_matrix& operator%=(const R & rhs) {
         // Make sure the other matrix is symmetric
         if (!is_symmetric(rhs)) {
             throw symmetric_exception();
