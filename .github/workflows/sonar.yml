@@ -27,6 +27,16 @@ jobs:
           CXX: g++-13
         run: |
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} make -j5 debug
+      - name: Run the tests
+        run: make -j1 debug_test
+      - name: Generate coverage reports
+        run: |
+          mkdir gcov-reports
+          pushd gcov-reports
+          for f in $(find ../debug -iname '*.o'); do
+            gcov-13 --preserve-paths  -o $f x
+          done
+          popd
       - name: Run sonar-scanner
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
