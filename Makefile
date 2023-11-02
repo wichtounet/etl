@@ -10,6 +10,9 @@ include make-utils/cpp-utils.mk
 # Use C++23
 $(eval $(call use_cpp23))
 
+# Enable coverage
+$(eval $(call enable_coverage))
+
 ifeq (,$(ETL_GPU))
 # Use ASAN in debug mode
 $(eval $(call enable_asan_debug))
