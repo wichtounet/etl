@@ -375,7 +375,7 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
      * \param rhs The dense_dyn_base to move from
      */
     template <etl_expr E>
-    explicit dense_dyn_base(E&& rhs) requires(!std::same_as<std::decay_t<E>, derived_t>) : base_type(std::move(rhs)) {
+    explicit dense_dyn_base(E&& rhs) requires(!std::same_as<std::decay_t<E>, derived_t>) : base_type(std::forward(rhs)) {
         //Nothing else to init
     }
 

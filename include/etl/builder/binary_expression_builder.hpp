@@ -460,7 +460,7 @@ auto greater_equal(LE&& lhs, RE rhs) {
  * \return An expression representing the element wise logical and of lhs and rhs
  */
 template <etl_expr LE, etl_expr RE>
-auto logical_and(LE&& lhs, RE rhs) {
+auto logical_and(LE&& lhs, RE&& rhs) {
     return detail::bool_left_binary_helper<LE, LE, logical_and_binary_op> {std::forward<LE>(lhs), std::forward<RE>(rhs)};
 }
 
@@ -493,7 +493,7 @@ auto logical_and(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>>
  * \return An expression representing the element wise logical xor of lhs and rhs
  */
 template <etl_expr LE, etl_expr RE>
-auto logical_xor(LE&& lhs, RE rhs) {
+auto logical_xor(LE&& lhs, RE&& rhs) {
     return detail::bool_left_binary_helper<LE, LE, logical_xor_binary_op> {std::forward<LE>(lhs), std::forward<RE>(rhs)};
 }
 
@@ -526,7 +526,7 @@ auto logical_xor(LE lhs, RE&& rhs) requires std::convertible_to<LE, value_t<RE>>
  * \return An expression representing the element wise logical or of lhs and rhs
  */
 template <etl_expr LE, etl_expr RE>
-auto logical_or(LE&& lhs, RE rhs) {
+auto logical_or(LE&& lhs, RE&& rhs) {
     return detail::bool_left_binary_helper<LE, LE, logical_or_binary_op> {std::forward<LE>(lhs), std::forward<RE>(rhs)};
 }
 
