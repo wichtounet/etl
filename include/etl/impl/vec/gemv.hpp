@@ -10,6 +10,7 @@
 // The idea of the GEMM kernels is largely inspired by the kernels in Blaze by
 // Klaus Igleberg
 
+#include "etl/vectorization.hpp"
 namespace etl::impl::vec {
 
 /*!
@@ -29,7 +30,7 @@ void gemv_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
     static constexpr bool remainder = !advanced_padding || !Padded;
-    const size_t last               = remainder ? (n & size_t(-vec_size)) : n;
+    const size_t last               = remainder ? (prev_multiple(n, vec_size)) : n;
 
     size_t i = 0;
 
@@ -156,7 +157,7 @@ void gemv_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
     static constexpr bool remainder = !advanced_padding || !Padded;
-    const size_t last               = remainder ? (n & size_t(-vec_size)) : n;
+    const size_t last               = remainder ? (prev_multiple(n, vec_size)) : n;
 
     size_t i = 0;
 
@@ -390,7 +391,7 @@ void gemv_small_kernel_cc(const T* aa, size_t m, size_t n, const T* bb, T* cc) {
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
     static constexpr bool remainder = !advanced_padding || !Padded;
-    const size_t last               = remainder ? (m & size_t(-vec_size)) : m;
+    const size_t last               = remainder ? prev_multiple(m, vec_size) : m;
 
     size_t i = 0;
 

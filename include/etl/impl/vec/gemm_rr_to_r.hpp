@@ -37,7 +37,7 @@ void gemm_small_kernel_rr_to_r(const T* a, const T* b, T* ETL_RESTRICT c, size_t
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-    const auto j_end = N & (size_t(-vec_size));
+    const auto j_end = prev_multiple(N, vec_size);
 
     size_t j = 0;
 

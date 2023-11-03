@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include "etl/vectorization.hpp"
 namespace etl::impl::vec {
 
 /*!
@@ -31,7 +32,7 @@ void gemm_small_kernel_rc_to_r(const T* a, const T* b, T* c, size_t M, size_t N,
 
     size_t i = 0;
 
-    const auto k_end = K & (size_t(-vec_size));
+    const auto k_end = prev_multiple(K, vec_size);
 
     for (; i + 1 < M; i += 2) {
         size_t j = 0;
@@ -308,7 +309,7 @@ void gemm_large_kernel_rc_to_r(const T* a, const T* b, T* c, size_t M, size_t N,
 
             for (size_t kk = 0; kk < K; kk += k_block_size) {
                 const size_t k_end_a = std::min(kk + k_block_size, K);
-                const size_t k_end   = k_end_a & size_t(-vec_size);
+                const size_t k_end   = prev_multiple(k_end_a, vec_size);
 
                 size_t i = ii;
 

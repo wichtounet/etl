@@ -24,7 +24,7 @@ void gevm_small_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, C&& c) {
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-    const size_t j_end = n & size_t(-vec_size);
+    const size_t j_end = prev_multiple(n, vec_size);
 
     size_t j = 0;
 
@@ -170,7 +170,7 @@ void gevm_large_kernel_rr(const T* aa, size_t m, size_t n, const T* bb, C&& cc) 
     cc = 0;
 
     for (size_t block_j = 0; block_j < n; block_j += n_block) {
-        const size_t n_end = std::min(block_j + n_block, n) & size_t(-vec_size);
+        const size_t n_end = prev_multiple(std::min(block_j + n_block, n), vec_size);
 
         for (size_t block_k = 0; block_k < m; block_k += m_block) {
             const size_t m_end = std::min(block_k + m_block, m);

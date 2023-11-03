@@ -29,7 +29,7 @@ void gemm_small_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
-    const size_t k_pos = K & size_t(-vec_size);
+    const size_t k_pos = prev_multiple(K, vec_size);
 
     size_t i = 0;
 
@@ -300,7 +300,7 @@ void gemm_large_kernel_rc_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
 
             for (size_t kk = 0; kk < K; kk += k_block_size) {
                 const size_t k_end = std::min(kk + k_block_size, K);
-                const size_t k_pos = k_end & size_t(-vec_size);
+                const size_t k_pos = prev_multiple(k_end, vec_size);
 
                 size_t i = ii;
 

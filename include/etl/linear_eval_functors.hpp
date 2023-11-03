@@ -34,7 +34,7 @@ struct Assign {
         size_t i = 0;
 
         if constexpr (unroll_normal_loops) {
-            const size_t iend = N & size_t(-4);
+            const size_t iend = prev_multiple(N, 4);
 
             for (; i < iend; i += 4) {
                 lhs_mem[i]     = rhs.read_flat(i);
@@ -66,7 +66,7 @@ struct AssignAdd {
         size_t i = 0;
 
         if constexpr (unroll_normal_loops) {
-            const size_t iend = (N & size_t(-4));
+            const size_t iend = prev_multiple(N, 4);
 
             for (; i < iend; i += 4) {
                 lhs_mem[i] += rhs[i];
@@ -98,7 +98,7 @@ struct AssignSub {
         size_t i = 0;
 
         if constexpr (unroll_normal_loops) {
-            const size_t iend = (N & size_t(-4));
+            const size_t iend = prev_multiple(N, 4);
 
             for (; i < iend; i += 4) {
                 lhs_mem[i] -= rhs[i];
@@ -130,7 +130,7 @@ struct AssignMul {
         size_t i = 0;
 
         if constexpr (unroll_normal_loops) {
-            const size_t iend = (N & size_t(-4));
+            const size_t iend = prev_multiple(N, 4);
 
             for (; i < iend; i += 4) {
                 lhs_mem[i] *= rhs[i];
@@ -162,7 +162,7 @@ struct AssignDiv {
         size_t i = 0;
 
         if constexpr (unroll_normal_loops) {
-            const size_t iend = (N & size_t(-4));
+            const size_t iend = prev_multiple(N, 4);
 
             for (; i < iend; i += 4) {
                 lhs_mem[i] /= rhs[i];

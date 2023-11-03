@@ -31,7 +31,7 @@ void gemm_small_kernel_cr_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
 
     auto alpha_vec = vec_type::set(alpha);
 
-    const auto i_end = M & (size_t(-vec_size));
+    const auto i_end = prev_multiple(M, vec_size);
 
     size_t i = 0;
 
@@ -243,7 +243,7 @@ void gemm_large_kernel_cr_to_c(const T* a, const T* b, T* c, size_t M, size_t N,
 
     for (size_t ii = 0; ii < M; ii += m_block_size) {
         const size_t i_end = std::min(ii + m_block_size, M);
-        const size_t i_pos = i_end & size_t(-vec_size);
+        const size_t i_pos = prev_multiple(i_end, vec_size);
 
         for (size_t jj = 0; jj < N; jj += n_block_size) {
             const size_t j_end = std::min(jj + n_block_size, N);

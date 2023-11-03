@@ -58,7 +58,7 @@ struct VectorizedAssign : vectorized_base<V> {
 
         constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>;
 
-        const size_t last = remainder ? (N & size_t(-IT::size)) : N;
+        const size_t last = remainder ? prev_multiple(N, IT::size) : N;
 
         size_t i = 0;
 
@@ -119,7 +119,7 @@ struct VectorizedAssignAdd : vectorized_base<V> {
 
         constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>;
 
-        const size_t last = remainder ? (N & size_t(-IT::size)) : N;
+        const size_t last = remainder ? prev_multiple(N, IT::size) : N;
 
         size_t i = 0;
 
@@ -162,7 +162,7 @@ struct VectorizedAssignSub : vectorized_base<V> {
 
         constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>;
 
-        const size_t last = remainder ? (N & size_t(-IT::size)) : N;
+        const size_t last = remainder ? prev_multiple(N, IT::size) : N;
 
         size_t i = 0;
 
@@ -205,7 +205,7 @@ struct VectorizedAssignMul : vectorized_base<V> {
 
         constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>;
 
-        const size_t last = remainder ? (N & size_t(-IT::size)) : N;
+        const size_t last = remainder ? prev_multiple(N, IT::size) : N;
 
         size_t i = 0;
 
@@ -248,7 +248,7 @@ struct VectorizedAssignDiv : vectorized_base<V> {
 
         constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>;
 
-        const size_t last = remainder ? (N & size_t(-IT::size)) : N;
+        const size_t last = remainder ? prev_multiple(N, IT::size) : N;
 
         size_t i = 0;
 

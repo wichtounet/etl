@@ -25,6 +25,10 @@
 
 namespace etl {
 
+constexpr ETL_STRONG_INLINE(size_t) prev_multiple(size_t N, size_t size) {
+    return N & (size_t(-size));
+}
+
 /*!
  * \brief SIMD pack of some type, using a vector implementation type
  * \tparam V The vector implementation
