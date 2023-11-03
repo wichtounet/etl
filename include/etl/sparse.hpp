@@ -420,8 +420,7 @@ private:
     /*!
      * \brief Get the value at index (i,j) and position n
      */
-    template <bool B = n_dimensions == 2, cpp_enable_iff(B)>
-    value_type get_hint(size_t i, size_t j, size_t n) const noexcept {
+    value_type get_hint(size_t i, size_t j, size_t n) const noexcept requires(n_dimensions == 2) {
         if (n < nnz && _row_index[n] == i && _col_index[n] == j) {
             return _memory[n];
         }
@@ -683,8 +682,7 @@ public:
      * \param n The index
      * \return the value at the given index.
      */
-    template <bool B = n_dimensions == 2, cpp_enable_iff(B)>
-    value_type read_flat(size_t n) const noexcept {
+    value_type read_flat(size_t n) const noexcept requires(n_dimensions == 2) {
         return get(n / columns(), n % columns());
     }
 

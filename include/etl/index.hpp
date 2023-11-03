@@ -174,8 +174,8 @@ constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexcept(ass
  * \param sizes The indices to access
  * \return The flat position of (sizes...)
  */
-template <typename T, typename... S, cpp_enable_iff(sizeof...(S) > 4)>
-constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) {
+template <typename T, typename... S>
+constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) requires(sizeof...(S) > 4) {
     static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for fast_index");
 
     if constexpr (decay_traits<T>::storage_order == order::RowMajor) {
@@ -291,8 +291,8 @@ size_t dyn_index(const T& expression, size_t i, size_t j, size_t k, size_t l) no
  * \param sizes The indices to access
  * \return The flat position of (sizes...)
  */
-template <typename T, typename... S, cpp_enable_iff(sizeof...(S) > 4)>
-size_t dyn_index(const T& expression, S... sizes) noexcept(assert_nothrow) {
+template <typename T, typename... S>
+size_t dyn_index(const T& expression, S... sizes) noexcept(assert_nothrow) requires(sizeof...(S) > 4) {
     static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for dyn_index");
 
     if constexpr (decay_traits<T>::storage_order == order::RowMajor) {

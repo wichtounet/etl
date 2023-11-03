@@ -112,18 +112,14 @@ constexpr size_t nth_size() {
  * \tparam D The list of dimensions
  * \param d The index of the dimension to get
  */
-template <size_t... D, cpp_enable_iff(sizeof...(D) == 0)>
-size_t dyn_nth_size([[maybe_unused]] size_t d) {
-    cpp_unreachable("Should never be called");
-    return 0;
-}
-
-/*!
- * \copydoc dyn_nth_size
- */
 template <size_t D1, size_t... D>
 size_t dyn_nth_size(size_t i) {
-    return i == 0 ? D1 : dyn_nth_size<D...>(i - 1);
+    if constexpr (sizeof...(D)) {
+        return i == 0 ? D1 : dyn_nth_size<D...>(i - 1);
+    } else {
+        cpp_assert(i == 0, "Invalid recursion");
+        return D1;
+    }
 }
 
 /*!
