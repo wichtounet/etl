@@ -20,17 +20,10 @@ namespace etl {
  * \brief View to represent a dyn matrix in top of an expression
  * \tparam T The type of expression on which the view is made
  */
-template <typename T, size_t D, typename Enable>
-struct dyn_matrix_view;
-
-/*!
- * \brief View to represent a dyn matrix in top of an expression
- * \tparam T The type of expression on which the view is made
- */
 template <typename T, size_t D>
-struct dyn_matrix_view<T, D, std::enable_if_t<!is_dma<T>>> final : iterable<dyn_matrix_view<T, D>, false>,
-                                                                   value_testable<dyn_matrix_view<T, D>>,
-                                                                   assignable<dyn_matrix_view<T, D>, value_t<T>> {
+requires(!is_dma<T>) struct dyn_matrix_view<T, D> final : iterable<dyn_matrix_view<T, D>, false>,
+                                                          value_testable<dyn_matrix_view<T, D>>,
+                                                          assignable<dyn_matrix_view<T, D>, value_t<T>> {
     static_assert(is_etl_expr<T>, "dyn_matrix_view only works with ETL expressions");
 
     using this_type            = dyn_matrix_view<T, D>;                                                ///< The type of this expression
@@ -307,9 +300,9 @@ public:
  * \tparam T The type of expression on which the view is made
  */
 template <typename T, size_t D>
-struct dyn_matrix_view<T, D, std::enable_if_t<is_dma<T>>> final : iterable<dyn_matrix_view<T, D>, true>,
-                                                                  value_testable<dyn_matrix_view<T, D>>,
-                                                                  assignable<dyn_matrix_view<T, D>, value_t<T>> {
+requires(is_dma<T>) struct dyn_matrix_view<T, D> final : iterable<dyn_matrix_view<T, D>, true>,
+                                                         value_testable<dyn_matrix_view<T, D>>,
+                                                         assignable<dyn_matrix_view<T, D>, value_t<T>> {
     static_assert(is_etl_expr<T>, "dyn_matrix_view only works with ETL expressions");
 
     using this_type            = dyn_matrix_view<T, D>;                                                ///< The type of this expression

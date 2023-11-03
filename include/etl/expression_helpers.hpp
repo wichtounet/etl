@@ -49,17 +49,15 @@ using wrap_scalar_t = std::conditional_t<etl::is_etl_expr<T>, T, etl::scalar<std
 template <typename H, typename T>
 using smart_wrap_scalar_t = std::conditional_t<etl::is_etl_expr<T>, T, etl::scalar<etl::value_t<H>>>;
 
-/*!
- * \brief Extract the value type of the given type taking scalar into account
- */
-template <typename T, typename Enable = void>
+template <typename T>
 struct wrap_scalar_value_t_impl;
 
 /*!
  * \brief Extract the value type of the given type taking scalar into account
  */
 template <typename T>
-struct wrap_scalar_value_t_impl<T, std::enable_if_t<etl::is_etl_expr<T>>> {
+requires(etl_expr<T>)
+struct wrap_scalar_value_t_impl<T> {
     /*!
      * \brief The resulting type of the traits.
      */
@@ -70,7 +68,8 @@ struct wrap_scalar_value_t_impl<T, std::enable_if_t<etl::is_etl_expr<T>>> {
  * \brief Extract the value type of the given type taking scalar into account
  */
 template <typename T>
-struct wrap_scalar_value_t_impl<T, std::enable_if_t<!etl::is_etl_expr<T>>> {
+requires(!etl_expr<T>)
+struct wrap_scalar_value_t_impl<T> {
     /*!
      * \brief The resulting type of the traits.
      */

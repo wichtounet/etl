@@ -99,8 +99,8 @@ struct is_dyn_matrix_view : std::false_type {};
 /*!
  * \copydoc is_dyn_matrix_view
  */
-template <typename E, size_t D, typename Enable>
-struct is_dyn_matrix_view<dyn_matrix_view<E, D, Enable>> : std::true_type {};
+template <typename E, size_t D>
+struct is_dyn_matrix_view<dyn_matrix_view<E, D>> : std::true_type {};
 
 /*!
  * \brief Special traits helper to detect if type is a sub_view

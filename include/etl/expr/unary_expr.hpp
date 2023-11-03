@@ -917,7 +917,7 @@ public:
      * \return The computed value at the position (args...)
      */
     template <size_c... S>
-    std::enable_if_t<sizeof...(S) == safe_dimensions<this_type>, value_type> operator()(S... args) const {
+    value_type operator()(S... args) const requires(sizeof...(S) == safe_dimensions<this_type>) {
         return value(args...);
     }
 
@@ -1160,7 +1160,7 @@ public:
      * \return The computed value at the position (args...)
      */
     template <size_c... S>
-    std::enable_if_t<sizeof...(S) == safe_dimensions<this_type>, value_type> operator()(S... args) const {
+    value_type operator()(S... args) const requires(sizeof...(S) == safe_dimensions<this_type>) {
         return op.apply(value(args...));
     }
 

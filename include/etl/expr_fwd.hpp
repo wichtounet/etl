@@ -76,7 +76,7 @@ struct memory_slice_view;
 template <typename T, bool DMA, size_t... Dims>
 struct fast_matrix_view;
 
-template <typename T, size_t D, typename Enable = void>
+template <typename T, size_t D>
 struct dyn_matrix_view;
 
 template <typename A>
