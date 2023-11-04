@@ -44,8 +44,8 @@ void conv1_full(const I& input, const K& kernel, C&& conv, size_t first, size_t 
 template <typename I, typename K, typename C>
 void conv1_same(const I& input, const K& kernel, C&& conv, size_t first, size_t last) {
     for (size_t j = first; j < last; ++j) {
-        size_t l_lo = std::max<int>(0, j - (etl::size(kernel) - 1) / 2);
-        size_t l_hi = std::min<int>(etl::size(input) - 1, j + etl::size(kernel) / 2) + 1;
+        size_t l_lo(std::max<int>(0, j - (etl::size(kernel) - 1) / 2));
+        size_t l_hi(std::min<int>(etl::size(input) - 1, j + etl::size(kernel) / 2) + 1);
 
         value_t<I> temp = 0.0;
 
