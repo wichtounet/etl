@@ -33,6 +33,48 @@
 namespace etl {
 
 /*!
+ * \brief AVX-512 SIMD float type
+ */
+using avx_512_simd_float = simd_pack<vector_mode_t::AVX512, float, __m512>;
+
+/*!
+ * \brief AVX-512 SIMD double type
+ */
+using avx_512_simd_double = simd_pack<vector_mode_t::AVX512, double, __m512d>;
+
+/*!
+ * \brief AVX-512 SIMD complex float type
+ */
+template <typename T>
+using avx_512_simd_complex_float = simd_pack<vector_mode_t::AVX512, T, __m512>;
+
+/*!
+ * \brief AVX-512 SIMD complex double type
+ */
+template <typename T>
+using avx_512_simd_complex_double = simd_pack<vector_mode_t::AVX512, T, __m512d>;
+
+/*!
+ * \brief AVX-512 SIMD byte type
+ */
+using avx_512_simd_byte = simd_pack<vector_mode_t::AVX512, int8_t, __m512i>;
+
+/*!
+ * \brief AVX-512 SIMD short type
+ */
+using avx_512_simd_short = simd_pack<vector_mode_t::AVX512, int16_t, __m512i>;
+
+/*!
+ * \brief AVX-512 SIMD int type
+ */
+using avx_512_simd_int = simd_pack<vector_mode_t::AVX512, int32_t, __m512i>;
+
+/*!
+ * \brief AVX-512 SIMD long type
+ */
+using avx_512_simd_long = simd_pack<vector_mode_t::AVX512, int64_t, __m512i>;
+
+/*!
  * \brief Define traits to get vectorization information for types in AVX512 vector mode.
  */
 template <typename T>
@@ -53,7 +95,7 @@ struct avx512_intrinsic_traits<float> {
     static constexpr size_t size       = 16;   ///< Numbers of elements in a vector
     static constexpr size_t alignment  = 64;   ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m512; ///< The vector type
+    using intrinsic_type = avx_512_simd_float; ///< The vector type
 };
 
 /*!
@@ -65,7 +107,7 @@ struct avx512_intrinsic_traits<double> {
     static constexpr size_t size       = 8;    ///< Numbers of elements in a vector
     static constexpr size_t alignment  = 64;   ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m512d; ///< The vector type
+    using intrinsic_type = avx_512_simd_double; ///< The vector type
 };
 
 /*!
@@ -77,7 +119,7 @@ struct avx512_intrinsic_traits<std::complex<float>> {
     static constexpr size_t size       = 8;    ///< Numbers of elements in a vector
     static constexpr size_t alignment  = 64;   ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m512; ///< The vector type
+    using intrinsic_type = avx_512_simd_complex_float<std::complex<float>>; ///< The vector type
 };
 
 /*!
@@ -89,7 +131,7 @@ struct avx512_intrinsic_traits<std::complex<double>> {
     static constexpr size_t size       = 4;    ///< Numbers of elements in a vector
     static constexpr size_t alignment  = 64;   ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m512d; ///< The vector type
+    using intrinsic_type = avx_512_simd_complex_double<std::complex<double>>; ///< The vector type
 };
 
 /*!
@@ -101,7 +143,7 @@ struct avx512_intrinsic_traits<etl::complex<float>> {
     static constexpr size_t size       = 8;    ///< Numbers of elements in a vector
     static constexpr size_t alignment  = 64;   ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m512; ///< The vector type
+    using intrinsic_type = avx_512_complex_float<etl::complex<float>>; ///< The vector type
 };
 
 /*!
@@ -113,7 +155,7 @@ struct avx512_intrinsic_traits<etl::complex<double>> {
     static constexpr size_t size       = 4;    ///< Numbers of elements in a vector
     static constexpr size_t alignment  = 64;   ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m512d; ///< The vector type
+    using intrinsic_type = avx_512_complex_double<etl::complex<double>>; ///< The vector type
 };
 
 /*!
@@ -335,333 +377,203 @@ struct avx512_vec {
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_INLINE_VEC_512 load(const float* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_float) load(const float* memory) {
         return _mm512_load_ps(memory);
     }
 
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_INLINE_VEC_512D load(const double* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_double) load(const double* memory) {
         return _mm512_load_pd(memory);
     }
 
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_INLINE_VEC_512 load(const std::complex<float>* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_complex_float<std::complex<float>>) load(const std::complex<float>* memory) {
         return _mm512_load_ps(reinterpret_cast<const float*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_INLINE_VEC_512D load(const std::complex<double>* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_complex_float<std::complex<double>>) load(const std::complex<double>* memory) {
         return _mm512_load_pd(reinterpret_cast<const double*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_INLINE_VEC_512 load(const etl::complex<float>* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_complex_float<etl::complex<float>>) load(const etl::complex<float>* memory) {
         return _mm512_load_ps(reinterpret_cast<const float*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_INLINE_VEC_512D load(const etl::complex<double>* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_complex_float<etl::complex<double>>) load(const etl::complex<double>* memory) {
         return _mm512_load_pd(reinterpret_cast<const double*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_INLINE_VEC_512 loadu(const float* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_float) loadu(const float* memory) {
         return _mm512_loadu_ps(memory);
     }
 
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_INLINE_VEC_512D loadu(const double* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_double) loadu(const double* memory) {
         return _mm512_loadu_pd(memory);
     }
 
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_INLINE_VEC_512 loadu(const std::complex<float>* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_complex_float<std::complex<float>>) loadu(const std::complex<float>* memory) {
         return _mm512_loadu_ps(reinterpret_cast<const float*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_INLINE_VEC_512D loadu(const std::complex<double>* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_complex_float<std::complex<double>>) loadu(const std::complex<double>* memory) {
         return _mm512_loadu_pd(reinterpret_cast<const double*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_INLINE_VEC_512 loadu(const etl::complex<float>* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_complex_float<etl::complex<float>>) loadu(const etl::complex<float>* memory) {
         return _mm512_loadu_ps(reinterpret_cast<const float*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_INLINE_VEC_512D loadu(const etl::complex<double>* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_complex_float<etl::complex<double>>) loadu(const etl::complex<double>* memory) {
         return _mm512_loadu_pd(reinterpret_cast<const double*>(memory));
     }
 
     /*!
      * \brief Fill a packed vector  by replicating a value
      */
-    ETL_INLINE_VEC_512D set(double value) {
+    ETL_STATIC_INLINE(avx_512_simd_double) set(double value) {
         return _mm512_set1_pd(value);
     }
 
     /*!
      * \brief Fill a packed vector  by replicating a value
      */
-    ETL_INLINE_VEC_512 set(float value) {
+    ETL_STATIC_INLINE(avx_512_simd_float) set(float value) {
         return _mm512_set1_ps(value);
     }
 
     /*!
      * \brief Add the two given values and return the result.
      */
-    ETL_INLINE_VEC_512D add(__m512d lhs, __m512d rhs) {
-        return _mm512_add_pd(lhs, rhs);
-    }
-
-    /*!
-     * \brief Subtract the two given values and return the result.
-     */
-    ETL_INLINE_VEC_512D sub(__m512d lhs, __m512d rhs) {
-        return _mm512_sub_pd(lhs, rhs);
-    }
-
-    /*!
-     * \brief Compute the square root of each element in the given vector
-     * \return a vector containing the square root of each input element
-     */
-    ETL_INLINE_VEC_512D sqrt(__m512d x) {
-        return _mm512_sqrt_pd(x);
-    }
-
-    /*!
-     * \brief Compute the negative of each element in the given vector
-     * \return a vector containing the negative of each input element
-     */
-    ETL_INLINE_VEC_512D minus(__m512d x) {
-        return _mm512_xor_pd(x, _mm512_set1_pd(-0.f));
+    ETL_STATIC_INLINE(avx_512_simd_float) add(avx_512_simd_float lhs, avx_512_simd_float rhs) {
+        return _mm512_add_ps(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Add the two given values and return the result.
      */
-    ETL_INLINE_VEC_512 add(__m512 lhs, __m512 rhs) {
-        return _mm512_add_ps(lhs, rhs);
+    ETL_STATIC_INLINE(avx_512_simd_double) add(avx_512_simd_double lhs, avx_512_simd_double rhs) {
+        return _mm512_add_pd(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Subtract the two given values and return the result.
      */
-    ETL_INLINE_VEC_512 sub(__m512 lhs, __m512 rhs) {
-        return _mm512_sub_ps(lhs, rhs);
+    ETL_STATIC_INLINE(avx_512_simd_float) sub(avx_512_simd_float lhs, avx_512_simd_float rhs) {
+        return _mm512_sub_ps(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    ETL_STATIC_INLINE(avx_512_simd_double) sub(avx_512_simd_double lhs, avx_512_simd_double rhs) {
+        return _mm512_sub_pd(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Compute the square root of each element in the given vector
      * \return a vector containing the square root of each input element
      */
-    ETL_INLINE_VEC_512 sqrt(__m512 lhs) {
-        return _mm512_sqrt_ps(lhs);
+    ETL_STATIC_INLINE(avx_512_simd_float) sqrt(avx_512_simd_float x) {
+        return _mm512_sqrt_ps(x.value);
+    }
+
+    /*!
+     * \brief Compute the square root of each element in the given vector
+     * \return a vector containing the square root of each input element
+     */
+    ETL_STATIC_INLINE(avx_512_simd_double) sqrt(avx_512_simd_double x) {
+        return _mm512_sqrt_pd(x.value);
     }
 
     /*!
      * \brief Compute the negative of each element in the given vector
      * \return a vector containing the negative of each input element
      */
-    ETL_INLINE_VEC_512 minus(__m512 x) {
-        return _mm512_xor_ps(x, _mm512_set1_ps(-0.f));
+    ETL_STATIC_INLINE(avx_512_simd_float) minus(avx_512_simd_float x) {
+        return _mm512_xor_ps(x.value, _mm512_set1_ps(-0.f));
+    }
+
+    /*!
+     * \brief Compute the negative of each element in the given vector
+     * \return a vector containing the negative of each input element
+     */
+    ETL_STATIC_INLINE(avx_512_simd_double) minus(avx_512_simd_double x) {
+        return _mm512_xor_pd(x.value, _mm512_set1_pd(-0.));
     }
 
     /*!
      * \brief Multiply the two given vectors
      */
-    template <bool Complex = false>
-    ETL_INLINE_VEC_512 mul(__m512 lhs, __m512 rhs) {
-        return _mm512_mul_ps(lhs, rhs);
+    ETL_STATIC_INLINE(avx_512_simd_float) mul(avx_512_simd_float lhs, avx_512_simd_float rhs) {
+        return _mm512_mul_ps(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Multiply the two given vectors
      */
-    template <>
-    ETL_INLINE_VEC_512 mul<true>(__m512 lhs, __m512 rhs) {
-        cpp_unreachable("Not yet implemented");
-        return lhs;
+    ETL_STATIC_INLINE(avx_512_simd_double) mul(avx_512_simd_double lhs, avx_512_simd_double rhs) {
+        return _mm512_mul_pd(lhs.value, rhs.value);
     }
 
     /*!
-     * \brief Multiply the two given complex vectors
+     * \brief Fused-Multiply Add of the three given vector of float
      */
-    template <bool Complex = false>
-    ETL_INLINE_VEC_512D mul(__m512d lhs, __m512d rhs) {
-        return _mm512_mul_pd(lhs, rhs);
+    ETL_STATIC_INLINE(avx_512_simd_float) fmadd(avx_512_simd_float a, avx_512_simd_float b, avx_512_simd_float c) {
+        return _mm512_fmadd_ps(a.value, b.value, c.value);
     }
 
     /*!
-     * \brief Multiply the two given complex vectors
+     * \brief Fused-Multiply Add of the three given vector of double
      */
-    template <>
-    ETL_INLINE_VEC_512D mul<true>(__m512d lhs, __m512d rhs) {
-        cpp_unreachable("Not yet implemented");
-        return lhs;
+    ETL_STATIC_INLINE(avx_512_simd_double) fmadd(avx_512_simd_double a, avx_512_simd_double b, avx_512_simd_double c) {
+        return _mm512_fmadd_pd(a.value, b.value, c.value);
     }
 
     /*!
      * \brief Divide the two given vectors
      */
-    template <bool Complex = false>
-    ETL_INLINE_VEC_512 div(__m512 lhs, __m512 rhs) {
-        return _mm512_div_ps(lhs, rhs);
+    ETL_STATIC_INLINE(avx_512_simd_float) div(avx_512_simd_float lhs, avx_512_simd_float rhs) {
+        return _mm512_div_ps(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Divide the two given vectors
      */
-    template <>
-    ETL_INLINE_VEC_512 div<true>(__m512 lhs, __m512 rhs) {
-        cpp_unreachable("Not yet implemented");
-        return lhs;
+    ETL_STATIC_INLINE(avx_512_simd_double) div(avx_512_simd_double lhs, avx_512_simd_double rhs) {
+        return _mm512_div_pd(lhs.value, rhs.value);
     }
-
-    /*!
-     * \brief Divide the two given vectors
-     */
-    template <bool Complex = false>
-    ETL_INLINE_VEC_512D div(__m512d lhs, __m512d rhs) {
-        return _mm512_div_pd(lhs, rhs);
-    }
-
-    /*!
-     * \brief Divide the two given vectors
-     */
-    template <>
-    ETL_INLINE_VEC_512D div<true>(__m512d lhs, __m512d rhs) {
-        cpp_unreachable("Not yet implemented");
-        return lhs;
-    }
-
-#ifdef __INTEL_COMPILER
-
-    //Exponential
-
-    /*!
-     * \brief Compute the exponentials of each element of the given vector
-     */
-    ETL_INLINE_VEC_512D exp(__m512d x) {
-        return _mm512_exp_pd(x);
-    }
-
-    /*!
-     * \brief Compute the exponentials of each element of the given vector
-     */
-    ETL_INLINE_VEC_512 exp(__m512 x) {
-        return _mm512_exp_ps(x);
-    }
-
-    //Logarithm
-
-    /*!
-     * \brief Compute the logarithm of each element of the given vector
-     */
-    ETL_INLINE_VEC_512D log(__m512d x) {
-        return _mm512_log_pd(x);
-    }
-
-    /*!
-     * \brief Compute the logarithm of each element of the given vector
-     */
-    ETL_INLINE_VEC_512 log(__m512 x) {
-        return _mm512_log_ps(x);
-    }
-
-    //Min
-
-    /*!
-     * \brief Compute the minimum between each pair element of the given vectors
-     */
-    ETL_INLINE_VEC_512D min(__m512d lhs, __m512d rhs) {
-        return _mm512_min_pd(lhs, rhs);
-    }
-
-    /*!
-     * \brief Compute the minimum between each pair element of the given vectors
-     */
-    ETL_INLINE_VEC_512 min(__m512 lhs, __m512 rhs) {
-        return _mm512_min_ps(lhs, rhs);
-    }
-
-    //Max
-
-    /*!
-     * \brief Compute the maximum between each pair element of the given vectors
-     */
-    ETL_INLINE_VEC_512D max(__m512d lhs, __m512d rhs) {
-        return _mm512_max_pd(lhs, rhs);
-    }
-
-    /*!
-     * \brief Compute the maximum between each pair element of the given vectors
-     */
-    ETL_INLINE_VEC_512 max(__m512 lhs, __m512 rhs) {
-        return _mm512_max_ps(lhs, rhs);
-    }
-
-#endif //__INTEL_COMPILER
 };
-
-/*!
- * \copydoc sse_vec::mul
- */
-template <>
-ETL_OUT_VEC_512 avx512_vec::mul<true>(__m512 lhs, __m512 rhs) {
-    cpp_unreachable("Not yet implemented");
-    return lhs;
-}
-
-/*!
- * \copydoc sse_vec::mul
- */
-template <>
-ETL_OUT_VEC_512D avx512_vec::mul<true>(__m512d lhs, __m512d rhs) {
-    cpp_unreachable("Not yet implemented");
-    return lhs;
-}
-
-/*!
- * \copydoc sse_vec::div
- */
-template <>
-ETL_OUT_VEC_512 avx512_vec::div<true>(__m512 lhs, __m512 rhs) {
-    cpp_unreachable("Not yet implemented");
-    return lhs;
-}
-
-/*!
- * \copydoc sse_vec::div
- */
-template <>
-ETL_OUT_VEC_512D avx512_vec::div<true>(__m512d lhs, __m512d rhs) {
-    cpp_unreachable("Not yet implemented");
-    return lhs;
-}
 
 } //end of namespace etl
 
