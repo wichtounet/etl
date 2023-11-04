@@ -163,7 +163,7 @@ struct normal_noise_unary_op {
      */
     static T apply(const T& x) {
         static random_engine rand_engine(std::time(nullptr));
-        static std::normal_distribution<double> normal_distribution(0.0, 1.0);
+        static std::normal_distribution<T> normal_distribution(0.0, 1.0);
 
         return x + normal_distribution(rand_engine);
     }
@@ -225,7 +225,7 @@ public:
      * \return The result of applying the unary operator on x
      */
     T apply(const T& x) const {
-        std::normal_distribution<double> normal_distribution(0.0, 1.0);
+        std::normal_distribution<T> normal_distribution(0.0, 1.0);
 
         return x + normal_distribution(rand_engine);
     }
@@ -279,7 +279,7 @@ struct logistic_noise_unary_op {
     static T apply(const T& x) {
         static random_engine rand_engine(std::time(nullptr));
 
-        std::normal_distribution<double> noise_distribution(0.0, math::logistic_sigmoid(x));
+        std::normal_distribution<T> noise_distribution(0.0, math::logistic_sigmoid(x));
 
         return x + noise_distribution(rand_engine);
     }
@@ -387,7 +387,7 @@ public:
      * \return The result of applying the unary operator on x
      */
     T apply(const T& x) const {
-        std::normal_distribution<double> noise_distribution(0.0, math::logistic_sigmoid(x));
+        std::normal_distribution<T> noise_distribution(0.0, math::logistic_sigmoid(x));
 
         return x + noise_distribution(rand_engine);
     }
