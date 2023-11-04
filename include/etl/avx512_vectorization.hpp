@@ -573,6 +573,38 @@ struct avx512_vec {
     ETL_STATIC_INLINE(avx_512_simd_double) div(avx_512_simd_double lhs, avx_512_simd_double rhs) {
         return _mm512_div_pd(lhs.value, rhs.value);
     }
+
+    //Min
+
+    /*!
+     * \brief Compute the minimum between each pair element of the given vectors
+     */
+    ETL_STATIC_INLINE(avx_512_simd_double) min(avx_512_simd_double lhs, avx_512_simd_double rhs) {
+        return _mm512_min_pd(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Compute the minimum between each pair element of the given vectors
+     */
+    ETL_STATIC_INLINE(avx_512_simd_float) min(avx_512_simd_float lhs, avx_512_simd_float rhs) {
+        return _mm512_min_ps(lhs.value, rhs.value);
+    }
+
+    //Max
+
+    /*!
+     * \brief Compute the maximum between each pair element of the given vectors
+     */
+    ETL_STATIC_INLINE(avx_512_simd_double) max(avx_512_simd_double lhs, avx_512_simd_double rhs) {
+        return _mm512_max_pd(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Compute the maximum between each pair element of the given vectors
+     */
+    ETL_STATIC_INLINE(avx_512_simd_float) max(avx_512_simd_float lhs, avx_512_simd_float rhs) {
+        return _mm512_max_ps(lhs.value, rhs.value);
+    }
 };
 
 } //end of namespace etl
