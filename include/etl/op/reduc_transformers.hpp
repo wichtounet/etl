@@ -39,7 +39,7 @@ public:
      * \return the value at the given index.
      */
     value_type operator[](size_t i) const {
-        return max_index(sub(i));
+        return value_t(max_index(sub(i)));
     }
 
     /*!
@@ -49,7 +49,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(size_t i) const {
-        return max_index(sub(i));
+        return value_t(max_index(sub(i)));
     }
 
     /*!
@@ -57,7 +57,7 @@ public:
      */
     template <typename... Sizes>
     value_type operator()(size_t i, Sizes... /*sizes*/) const {
-        return max_index(sub(i));
+        return value_t(max_index(sub(i)));
     }
 
     /*!
