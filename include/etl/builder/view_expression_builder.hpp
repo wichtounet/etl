@@ -21,9 +21,8 @@ namespace etl {
  * \tparam D The dimension to consider
  * \return a view representing the ith Dth dimension.
  */
-template <size_t D, typename E>
+template <size_t D, etl_expr E>
 auto dim(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, D>> {
-    static_assert(is_etl_expr<E>, "etl::dim can only be used on ETL expressions");
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, D>>{{value, i}};
 }
 
@@ -33,9 +32,8 @@ auto dim(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::bui
  * \param i The row index
  * \return a view expression representing the ith row of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto row(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 1>> {
-    static_assert(is_etl_expr<E>, "etl::row can only be used on ETL expressions");
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 1>>{{value, i}};
 }
 
@@ -45,9 +43,8 @@ auto row(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::bui
  * \param i The column index
  * \return a view expression representing the ith column of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto col(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 2>> {
-    static_assert(is_etl_expr<E>, "etl::col can only be used on ETL expressions");
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 2>>{{value, i}};
 }
 
@@ -57,9 +54,8 @@ auto col(E&& value, size_t i) -> detail::identity_helper<E, dim_view<detail::bui
  * \param i The first index
  * \return a view expression representing a sub dimensional view of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto sub(E&& value, size_t i) -> sub_view<detail::build_identity_type<E>, false> {
-    static_assert(is_etl_expr<E>, "etl::sub can only be used on ETL expressions");
     static_assert(decay_traits<E>::dimensions() > 1, "Cannot use sub on vector");
     return {value, i};
 }
@@ -73,9 +69,8 @@ auto sub(E&& value, size_t i) -> sub_view<detail::build_identity_type<E>, false>
  * \param n The second dimension
  * \return a view expression representing a sub matrix view of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto sub(E&& value, size_t i, size_t j, size_t m, size_t n) -> sub_matrix_2d<detail::build_identity_type<E>, false> {
-    static_assert(is_etl_expr<E>, "etl::sub can only be used on ETL expressions");
     static_assert(is_2d<E>, "Cannot use sub on vector");
     return {value, i, j, m, n};
 }
@@ -89,9 +84,8 @@ auto sub(E&& value, size_t i, size_t j, size_t m, size_t n) -> sub_matrix_2d<det
  * \param n The second dimension
  * \return a view expression representing a sub matrix view of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto sub(E&& value, size_t i, size_t j, size_t k, size_t m, size_t n, size_t o) -> sub_matrix_3d<detail::build_identity_type<E>, false> {
-    static_assert(is_etl_expr<E>, "etl::sub can only be used on ETL expressions");
     static_assert(is_3d<E>, "Cannot use sub on vector");
     return {value, i, j, k, m, n, o};
 }
@@ -105,9 +99,8 @@ auto sub(E&& value, size_t i, size_t j, size_t k, size_t m, size_t n, size_t o) 
  * \param n The second dimension
  * \return a view expression representing a sub matrix view of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto sub(E&& value, size_t i, size_t j, size_t k, size_t l, size_t m, size_t n, size_t o, size_t p) -> sub_matrix_4d<detail::build_identity_type<E>, false> {
-    static_assert(is_etl_expr<E>, "etl::sub can only be used on ETL expressions");
     static_assert(is_4d<E>, "Cannot use sub on vector");
     return {value, i, j, k, l, m, n, o, p};
 }
@@ -119,9 +112,8 @@ auto sub(E&& value, size_t i, size_t j, size_t k, size_t l, size_t m, size_t n, 
  * \param last The last index
  * \return a view expression representing a sub dimensional view of the given expression
  */
-template <typename E>
+template <etl_expr E>
 auto slice(E&& value, size_t first, size_t last) -> slice_view<detail::build_identity_type<E>> {
-    static_assert(is_etl_expr<E>, "etl::slice can only be used on ETL expressions");
     return {value, first, last};
 }
 
@@ -131,9 +123,8 @@ auto slice(E&& value, size_t first, size_t last) -> slice_view<detail::build_ide
  * \tparam Dims the reshape dimensions
  * \return a view expression representing the same expression with a different shape
  */
-template <size_t... Dims, typename E>
+template <size_t... Dims, etl_expr E>
 auto reshape(E&& value) -> fast_matrix_view<detail::build_identity_type<E>, is_dma<E>, Dims...> {
-    static_assert(is_etl_expr<E>, "etl::reshape can only be used on ETL expressions");
     cpp_assert(decay_traits<E>::is_generator || etl::size(value) == (Dims * ...), "Invalid size for reshape");
 
     return fast_matrix_view<detail::build_identity_type<E>, is_dma<E>, Dims...>{value};
@@ -145,10 +136,8 @@ auto reshape(E&& value) -> fast_matrix_view<detail::build_identity_type<E>, is_d
  * \param sizes The dimensions of the reshaped expression
  * \return a view expression representing the same expression with a different shape
  */
-template <typename E, typename... S>
+template <etl_expr E, typename... S>
 auto reshape(E&& value, S... sizes) -> dyn_matrix_view<detail::build_identity_type<E>, sizeof...(sizes)> {
-    static_assert(is_etl_expr<E>, "etl::reshape can only be used on ETL expressions");
-
     using ret_type = dyn_matrix_view<detail::build_identity_type<E>, sizeof...(sizes)>;
 
     cpp_assert(decay_traits<E>::is_generator || etl::size(value) == util::size(sizes...), "Invalid size for reshape");
