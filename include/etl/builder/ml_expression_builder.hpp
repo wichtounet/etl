@@ -47,7 +47,7 @@ template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A
 conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true> convolution_forward(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
-    return conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{a, b};
+    return conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{std::forward<A>(a), std::forward<B>(b)};
 }
 
 /*!
@@ -75,7 +75,7 @@ dyn_conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, true> convo
     A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
     static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
-    return dyn_conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
+    return dyn_conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, true>{std::forward<A>(a), std::forward<B>(b), s1, s2, p1, p2};
 }
 
 /*!
@@ -102,7 +102,7 @@ template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A
 conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true> convolution_backward(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
-    return conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{a, b};
+    return conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{std::forward<A>(a), std::forward<B>(b)};
 }
 
 /*!
@@ -130,7 +130,7 @@ dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true> co
     A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
     static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
-    return dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
+    return dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true>{std::forward<A>(a), std::forward<B>(b), s1, s2, p1, p2};
 }
 
 /*!
@@ -157,7 +157,7 @@ template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A
 conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true> convolution_backward_filter(A&& a, B&& b) {
     static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
-    return conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{a, b};
+    return conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{std::forward<A>(a), std::forward<B>(b)};
 }
 
 /*!
@@ -185,7 +185,7 @@ dyn_conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, t
     A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
     static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
 
-    return dyn_conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
+    return dyn_conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, true>{std::forward<A>(a), std::forward<B>(b), s1, s2, p1, p2};
 }
 
 // Pooling Wrappers
@@ -581,7 +581,7 @@ template <typename O, typename L>
 value_t<O> cce_loss(O&& output, L&& labels, value_t<O> scale) {
     static_assert(all_etl_expr<O, L>, "etl::cce_loss can only be used on ETL expressions");
 
-    return detail::cce_loss_impl::apply(output, labels, scale);
+    return detail::cce_loss_impl::apply(std::forward<O>(output), std::forward<L>(labels), scale);
 }
 
 /*!
@@ -594,7 +594,7 @@ template <typename O, typename L>
 value_t<O> cce_error(O&& output, L&& labels, value_t<O> scale) {
     static_assert(all_etl_expr<O, L>, "etl::cce_error can only be used on ETL expressions");
 
-    return detail::cce_error_impl::apply(output, labels, scale);
+    return detail::cce_error_impl::apply(std::forward<O>(output), std::forward<L>(labels), scale);
 }
 
 /*!
@@ -607,7 +607,7 @@ template <typename O, typename L>
 value_t<O> bce_loss(O&& output, L&& labels, value_t<O> scale) {
     static_assert(all_etl_expr<O, L>, "etl::bce_loss can only be used on ETL expressions");
 
-    return detail::bce_loss_impl::apply(output, labels, scale);
+    return detail::bce_loss_impl::apply(std::forward<O>(output), std::forward<L>(labels), scale);
 }
 
 /*!
@@ -620,7 +620,7 @@ template <typename O, typename L>
 value_t<O> bce_error(O&& output, L&& labels, value_t<O> scale) {
     static_assert(all_etl_expr<O, L>, "etl::bce_error can only be used on ETL expressions");
 
-    return detail::bce_error_impl::apply(output, labels, scale);
+    return detail::bce_error_impl::apply(std::forward<O>(output), std::forward<L>(labels), scale);
 }
 
 /*!
@@ -633,7 +633,7 @@ template <typename O, typename L>
 std::pair<value_t<O>, value_t<O>> bce(O&& output, L&& labels, value_t<O> alpha, value_t<O> beta) {
     static_assert(all_etl_expr<O, L>, "etl::bce can only be used on ETL expressions");
 
-    return detail::bce_impl::apply(output, labels, alpha, beta);
+    return detail::bce_impl::apply(std::forward<O>(output), std::forward<L>(labels), alpha, beta);
 }
 
 /*!
@@ -646,7 +646,7 @@ template <typename O, typename L>
 std::pair<value_t<O>, value_t<O>> cce(O&& output, L&& labels, value_t<O> alpha, value_t<O> beta) {
     static_assert(all_etl_expr<O, L>, "etl::cce can only be used on ETL expressions");
 
-    return detail::cce_impl::apply(output, labels, alpha, beta);
+    return detail::cce_impl::apply(std::forward<O>(output), std::forward<L>(labels), alpha, beta);
 }
 
 /*!
@@ -659,7 +659,7 @@ std::pair<value_t<O>, value_t<O>> cce(O&& output, L&& labels, value_t<O> alpha, 
     value_t<O> mse_loss(O&& output, L&& labels, value_t<O> scale) {
         static_assert(all_etl_expr<O, L>, "etl::mse_loss can only be used on ETL expressions");
 
-        return detail::mse_loss_impl::apply(output, labels, scale);
+        return detail::mse_loss_impl::apply(std::forward<O>(output), std::forward<L>(labels), scale);
     }
 
 /*!
@@ -672,7 +672,7 @@ std::pair<value_t<O>, value_t<O>> cce(O&& output, L&& labels, value_t<O> alpha, 
     value_t<O> mse_error(O&& output, L&& labels, value_t<O> scale) {
         static_assert(all_etl_expr<O, L>, "etl::mse_error can only be used on ETL expressions");
 
-        return detail::mse_error_impl::apply(output, labels, scale);
+        return detail::mse_error_impl::apply(std::forward<O>(output), std::forward<L>(labels), scale);
     }
 
 /*!
@@ -685,7 +685,7 @@ std::pair<value_t<O>, value_t<O>> cce(O&& output, L&& labels, value_t<O> alpha, 
     std::pair<value_t<O>, value_t<O>> mse(O&& output, L&& labels, value_t<O> alpha, value_t<O> beta) {
         static_assert(all_etl_expr<O, L>, "etl::mse can only be used on ETL expressions");
 
-        return detail::mse_impl::apply(output, labels, alpha, beta);
+        return detail::mse_impl::apply(std::forward<O>(output), std::forward<L>(labels), alpha, beta);
     }
 
 } //end of namespace etl::ml
