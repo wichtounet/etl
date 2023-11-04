@@ -39,7 +39,7 @@ public:
      * \return the value at the given index.
      */
     value_type operator[](size_t i) const {
-        return value_t(max_index(sub(i)));
+        return value_type(max_index(sub(i)));
     }
 
     /*!
@@ -49,7 +49,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(size_t i) const {
-        return value_t(max_index(sub(i)));
+        return value_type(max_index(sub(i)));
     }
 
     /*!
@@ -57,7 +57,7 @@ public:
      */
     template <typename... Sizes>
     value_type operator()(size_t i, Sizes... /*sizes*/) const {
-        return value_t(max_index(sub(i)));
+        return value_type(max_index(sub(i)));
     }
 
     /*!
@@ -140,7 +140,7 @@ public:
      * \return the value at the given index.
      */
     value_type operator[](size_t i) const {
-        return min_index(sub(i));
+        return value_type(min_index(sub(i)));
     }
 
     /*!
@@ -150,7 +150,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(size_t i) const {
-        return min_index(sub(i));
+        return value_type(min_index(sub(i)));
     }
 
     /*!
@@ -158,7 +158,7 @@ public:
      */
     template <typename... Sizes>
     value_type operator()(size_t i, Sizes... /*sizes*/) const {
-        return min_index(sub(i));
+        return value_type(min_index(sub(i)));
     }
 
     /*!
@@ -567,7 +567,7 @@ public:
             m += sub[j + i * (etl::size(sub) / dim<0>(sub))];
         }
 
-        return m / dim<0>(sub);
+        return m / value_type(dim<0>(sub));
     }
 
     /*!
@@ -583,7 +583,7 @@ public:
             m += sub.read_flat(j + i * (etl::size(sub) / dim<0>(sub)));
         }
 
-        return m / dim<0>(sub);
+        return m / value_type(dim<0>(sub));
     }
 
     /*!
@@ -600,7 +600,7 @@ public:
             m += sub(i, j, sizes...);
         }
 
-        return m / dim<0>(sub);
+        return m / value_type(dim<0>(sub));
     }
 
     /*!
