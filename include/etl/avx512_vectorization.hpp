@@ -605,6 +605,27 @@ struct avx512_vec {
     ETL_STATIC_INLINE(avx_512_simd_float) max(avx_512_simd_float lhs, avx_512_simd_float rhs) {
         return _mm512_max_ps(lhs.value, rhs.value);
     }
+
+    // Horizontal sum reductions
+    // TODO "Vectorize" these reductions
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    ETL_STATIC_INLINE(float) hadd(avx_512_simd_float in) {
+        return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7] + in[8] + in[9] + in[10] + in[11] + in[12] + in[13] + in[14] + in[15];
+    }
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    ETL_STATIC_INLINE(double) hadd(avx_512_simd_double in) {
+        return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7];
+    }
 };
 
 } //end of namespace etl
