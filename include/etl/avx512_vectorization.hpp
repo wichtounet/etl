@@ -258,7 +258,7 @@ struct avx512_vec {
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID storeu(std::complex<double>* memory, avx_512_simd_complex_float<std::complex<double>> value) {
+    ETL_INLINE_VEC_VOID storeu(std::complex<double>* memory, avx_512_simd_complex_double<std::complex<double>> value) {
         _mm512_storeu_pd(reinterpret_cast<double*>(memory), value.value);
     }
 
@@ -274,7 +274,7 @@ struct avx512_vec {
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID storeu(etl::complex<double>* memory, avx_512_simd_complex_float<etl::complex<double>> value) {
+    ETL_INLINE_VEC_VOID storeu(etl::complex<double>* memory, avx_512_simd_complex_double<etl::complex<double>> value) {
         _mm512_storeu_pd(reinterpret_cast<double*>(memory), value.value);
     }
 
@@ -306,7 +306,7 @@ struct avx512_vec {
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID store(std::complex<double>* memory, avx_512_simd_complex_float<std::complex<double>> value) {
+    ETL_INLINE_VEC_VOID store(std::complex<double>* memory, avx_512_simd_complex_double<std::complex<double>> value) {
         _mm512_store_pd(reinterpret_cast<double*>(memory), value.value);
     }
 
@@ -322,7 +322,7 @@ struct avx512_vec {
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID store(etl::complex<double>* memory, avx_512_simd_complex_float<etl::complex<double>> value) {
+    ETL_INLINE_VEC_VOID store(etl::complex<double>* memory, avx_512_simd_complex_double<etl::complex<double>> value) {
         _mm512_store_pd(reinterpret_cast<double*>(memory), value.value);
     }
 
@@ -354,7 +354,7 @@ struct avx512_vec {
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID stream(std::complex<double>* memory, avx_512_simd_complex_float<std::complex<double>> value) {
+    ETL_INLINE_VEC_VOID stream(std::complex<double>* memory, avx_512_simd_complex_double<std::complex<double>> value) {
         _mm512_stream_pd(reinterpret_cast<double*>(memory), value.value);
     }
 
@@ -370,7 +370,7 @@ struct avx512_vec {
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID stream(etl::complex<double>* memory, avx_512_simd_complex_float<etl::complex<double>> value) {
+    ETL_INLINE_VEC_VOID stream(etl::complex<double>* memory, avx_512_simd_complex_double<etl::complex<double>> value) {
         _mm512_stream_pd(reinterpret_cast<double*>(memory), value.value);
     }
 
@@ -398,7 +398,7 @@ struct avx512_vec {
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_STATIC_INLINE(avx_512_simd_complex_float<std::complex<double>>) load(const std::complex<double>* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_complex_double<std::complex<double>>) load(const std::complex<double>* memory) {
         return _mm512_load_pd(reinterpret_cast<const double*>(memory));
     }
 
@@ -412,7 +412,7 @@ struct avx512_vec {
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_STATIC_INLINE(avx_512_simd_complex_float<etl::complex<double>>) load(const etl::complex<double>* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_complex_double<etl::complex<double>>) load(const etl::complex<double>* memory) {
         return _mm512_load_pd(reinterpret_cast<const double*>(memory));
     }
 
@@ -440,7 +440,7 @@ struct avx512_vec {
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_STATIC_INLINE(avx_512_simd_complex_float<std::complex<double>>) loadu(const std::complex<double>* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_complex_double<std::complex<double>>) loadu(const std::complex<double>* memory) {
         return _mm512_loadu_pd(reinterpret_cast<const double*>(memory));
     }
 
@@ -454,7 +454,7 @@ struct avx512_vec {
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_STATIC_INLINE(avx_512_simd_complex_float<etl::complex<double>>) loadu(const etl::complex<double>* memory) {
+    ETL_STATIC_INLINE(avx_512_simd_complex_double<etl::complex<double>>) loadu(const etl::complex<double>* memory) {
         return _mm512_loadu_pd(reinterpret_cast<const double*>(memory));
     }
 
