@@ -521,6 +521,13 @@ struct avx512_vec {
     }
 
     /*!
+     * \brief Return a packed vector of zeroes of the given type
+     */
+    template <typename T>
+    ETL_TMP_INLINE(typename avx512_intrinsic_traits<T>::intrinsic_type)
+    zero();
+
+    /*!
      * \brief Add the two given values and return the result.
      */
     ETL_STATIC_INLINE(avx_512_simd_float) add(avx_512_simd_float lhs, avx_512_simd_float rhs) {
@@ -675,6 +682,96 @@ struct avx512_vec {
         return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7];
     }
 };
+
+/*!
+ * \copydoc avx512_vec::zero
+ */
+template <>
+ETL_OUT_INLINE(avx_512_simd_byte)
+avx512_vec::zero<int8_t>() {
+    return _mm512_setzero_si512();
+}
+
+/*!
+ * \copydoc avx512_vec::zero
+ */
+template <>
+ETL_OUT_INLINE(avx_512_simd_short)
+avx512_vec::zero<int16_t>() {
+    return _mm512_setzero_si512();
+}
+
+/*!
+ * \copydoc avx512_vec::zero
+ */
+template <>
+ETL_OUT_INLINE(avx_512_simd_int)
+avx512_vec::zero<int32_t>() {
+    return _mm512_setzero_si512();
+}
+
+/*!
+ * \copydoc avx512_vec::zero
+ */
+template <>
+ETL_OUT_INLINE(avx_512_simd_long)
+avx512_vec::zero<int64_t>() {
+    return _mm512_setzero_si512();
+}
+
+/*!
+ * \copydoc avx512_vec::zero
+ */
+template <>
+ETL_OUT_INLINE(avx_512_simd_float)
+avx512_vec::zero<float>() {
+    return _mm512_setzero_ps();
+}
+
+/*!
+ * \copydoc avx512_vec::zero
+ */
+template <>
+ETL_OUT_INLINE(avx_512_simd_double)
+avx512_vec::zero<double>() {
+    return _mm512_setzero_pd();
+}
+
+/*!
+ * \copydoc avx512_vec::zero
+ */
+template <>
+ETL_OUT_INLINE(avx_512_simd_complex_float<etl::complex<float>>)
+avx512_vec::zero<etl::complex<float>>() {
+    return _mm512_setzero_ps();
+}
+
+/*!
+ * \copydoc avx512_vec::zero
+ */
+template <>
+ETL_OUT_INLINE(avx_512_simd_complex_double<etl::complex<double>>)
+avx512_vec::zero<etl::complex<double>>() {
+    return _mm512_setzero_pd();
+}
+
+/*!
+ * \copydoc avx512_vec::zero
+ */
+template <>
+ETL_OUT_INLINE(avx_512_simd_complex_float<std::complex<float>>)
+avx512_vec::zero<std::complex<float>>() {
+    return _mm512_setzero_ps();
+}
+
+/*!
+ * \copydoc avx512_vec::zero
+ */
+template <>
+ETL_OUT_INLINE(avx_512_simd_complex_double<std::complex<double>>)
+avx512_vec::zero<std::complex<double>>() {
+    return _mm512_setzero_pd();
+}
 
 } //end of namespace etl
 
