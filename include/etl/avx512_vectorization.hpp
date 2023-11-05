@@ -159,6 +159,54 @@ struct avx512_intrinsic_traits<etl::complex<double>> {
 };
 
 /*!
+ * \copydoc avx512_intrinsic_traits
+ */
+template <>
+struct avx512_intrinsic_traits<int8_t> {
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 64;           ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 64;           ///< Necessary alignment, in bytes, for this type
+
+    using intrinsic_type = avx_512_simd_byte; ///< The vector type
+};
+
+/*!
+ * \copydoc avx512_intrinsic_traits
+ */
+template <>
+struct avx512_intrinsic_traits<int16_t> {
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 32;           ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 64;           ///< Necessary alignment, in bytes, for this type
+
+    using intrinsic_type = avx_512_simd_short; ///< The vector type
+};
+
+/*!
+ * \copydoc avx512_intrinsic_traits
+ */
+template <>
+struct avx512_intrinsic_traits<int32_t> {
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 16;            ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 64;           ///< Necessary alignment, in bytes, for this type
+
+    using intrinsic_type = avx_512_simd_int; ///< The vector type
+};
+
+/*!
+ * \copydoc avx512_intrinsic_traits
+ */
+template <>
+struct avx512_intrinsic_traits<int64_t> {
+    static constexpr bool vectorizable = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr size_t size       = 8;            ///< Numbers of elements in a vector
+    static constexpr size_t alignment  = 64;           ///< Necessary alignment, in bytes, for this type
+
+    using intrinsic_type = avx_512_simd_long; ///< The vector type
+};
+
+/*!
  * \brief Advanced Vector eXtensions 512 (AVX-512) operations implementation.
  */
 struct avx512_vec {
