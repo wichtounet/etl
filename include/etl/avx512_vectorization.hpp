@@ -701,24 +701,11 @@ struct avx512_vec {
     template <typename T>
     ETL_STATIC_INLINE(avx_512_simd_complex_double<T>)
     mul(avx_512_simd_complex_double<T> lhs, avx_512_simd_complex_double<T> rhs) {
-        //lhs = [x1.real, x1.img, x2.real, x2.img]
-        //rhs = [y1.real, y1.img, y2.real, y2.img]
-
-        //ymm1 = [y1.real, y1.real, y2.real, y2.real]
-        __m512d ymm1 = _mm512_movedup_pd(rhs.value);
-
-        //ymm2 = [x1.img, x1.real, x2.img, x2.real]
-        __m512d ymm2 = _mm512_permute_pd(lhs.value, 0b0101);
-
-        //ymm3 = [y1.imag, y1.imag, y2.imag, y2.imag]
-        __m512d ymm3 = _mm512_permute_pd(rhs.value, 0b1111);
-
-        //ymm4 = ymm2 * ymm3
-        __m512d ymm4 = _mm512_mul_pd(ymm2, ymm3);
-
-        //result = [(lhs * ymm1) -+ ymm4];
-
-        return _mm512_fmaddsub_pd(lhs.value, ymm1, ymm4);
+        __m512d ymm1 = _mm512_shuffle_pd(rhs.value, rhs.value, 0x55);
+        __m512d ymm2 = _mm512_shuffle_pd(lhs.value, lhs.value, 0xFF);
+        __m512d ymm3 = _mm512_shuffle_pd(lhs.value, lhs.value, 0);
+        __m512d ymm4 = _mm512_mul_pd(ymm2, ymm1);
+        return _mm512_fmaddsub_pd(ymm3, rhs.value, ymm4);
     }
 
     /*!
