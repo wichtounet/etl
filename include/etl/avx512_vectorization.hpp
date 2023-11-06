@@ -574,6 +574,24 @@ struct avx512_vec {
     }
 
     /*!
+     * \brief Add the two given values and return the result.
+     */
+    template <typename T>
+    ETL_STATIC_INLINE(avx_512_simd_complex_float<T>)
+    add(avx_512_simd_complex_float<T> lhs, avx_512_simd_complex_float<T> rhs) {
+        return _mm512_add_ps(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Add the two given values and return the result.
+     */
+    template <typename T>
+    ETL_STATIC_INLINE(avx_512_simd_complex_double<T>)
+    add(avx_512_simd_complex_double<T> lhs, avx_512_simd_complex_double<T> rhs) {
+        return _mm512_add_pd(lhs.value, rhs.value);
+    }
+
+    /*!
      * \brief Subtract the two given values and return the result.
      */
     ETL_STATIC_INLINE(avx_512_simd_float) sub(avx_512_simd_float lhs, avx_512_simd_float rhs) {
@@ -584,6 +602,24 @@ struct avx512_vec {
      * \brief Subtract the two given values and return the result.
      */
     ETL_STATIC_INLINE(avx_512_simd_double) sub(avx_512_simd_double lhs, avx_512_simd_double rhs) {
+        return _mm512_sub_pd(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    template <typename T>
+    ETL_STATIC_INLINE(avx_512_simd_complex_float<T>)
+    sub(avx_512_simd_complex_float<T> lhs, avx_512_simd_complex_float<T> rhs) {
+        return _mm512_sub_ps(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    template <typename T>
+    ETL_STATIC_INLINE(avx_512_simd_complex_double<T>)
+    sub(avx_512_simd_complex_double<T> lhs, avx_512_simd_complex_double<T> rhs) {
         return _mm512_sub_pd(lhs.value, rhs.value);
     }
 
@@ -631,6 +667,58 @@ struct avx512_vec {
      */
     ETL_STATIC_INLINE(avx_512_simd_double) mul(avx_512_simd_double lhs, avx_512_simd_double rhs) {
         return _mm512_mul_pd(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \copydoc avx_512_vec::mul
+     */
+    template <typename T>
+    ETL_STATIC_INLINE(avx_512_simd_complex_float<T>)
+    mul(avx_512_simd_complex_float<T> lhs, avx_512_simd_complex_float<T> rhs) {
+        //lhs = [x1.real, x1.img, x2.real, x2.img, ...]
+        //rhs = [y1.real, y1.img, y2.real, y2.img, ...]
+
+        //ymm1 = [y1.real, y1.real, y2.real, y2.real, ...]
+        __m512 ymm1 = _mm512_moveldup_ps(rhs.value);
+
+        //ymm2 = [x1.img, x1.real, x2.img, x2.real]
+        __m512 ymm2 = _mm512_permute_ps(lhs.value, 0b10110001);
+
+        //ymm3 = [y1.imag, y1.imag, y2.imag, y2.imag]
+        __m512 ymm3 = _mm512_movehdup_ps(rhs.value);
+
+        //ymm4 = ymm2 * ymm3
+        __m512 ymm4 = _mm512_mul_ps(ymm2, ymm3);
+
+        //result = [(lhs * ymm1) -+ ymm4];
+
+        return _mm512_fmaddsub_ps(lhs.value, ymm1, ymm4);
+    }
+
+    /*!
+     * \copydoc avx_512_vec::mul
+     */
+    template <typename T>
+    ETL_STATIC_INLINE(avx_512_simd_complex_double<T>)
+    mul(avx_512_simd_complex_double<T> lhs, avx_512_simd_complex_double<T> rhs) {
+        //lhs = [x1.real, x1.img, x2.real, x2.img]
+        //rhs = [y1.real, y1.img, y2.real, y2.img]
+
+        //ymm1 = [y1.real, y1.real, y2.real, y2.real]
+        __m512d ymm1 = _mm512_movedup_pd(rhs.value);
+
+        //ymm2 = [x1.img, x1.real, x2.img, x2.real]
+        __m512d ymm2 = _mm512_permute_pd(lhs.value, 0b0101);
+
+        //ymm3 = [y1.imag, y1.imag, y2.imag, y2.imag]
+        __m512d ymm3 = _mm512_permute_pd(rhs.value, 0b1111);
+
+        //ymm4 = ymm2 * ymm3
+        __m512d ymm4 = _mm512_mul_pd(ymm2, ymm3);
+
+        //result = [(lhs * ymm1) -+ ymm4];
+
+        return _mm512_fmaddsub_pd(lhs.value, ymm1, ymm4);
     }
 
     /*!
@@ -730,6 +818,28 @@ struct avx512_vec {
      */
     ETL_STATIC_INLINE(double) hadd(avx_512_simd_double in) {
         return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7];
+    }
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    template <typename T>
+    ETL_STATIC_INLINE(T)
+    hadd(avx_512_simd_complex_float<T> in) {
+        return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7];
+    }
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    template <typename T>
+    ETL_STATIC_INLINE(T)
+    hadd(avx_512_simd_complex_double<T> in) {
+        return in[0] + in[1] + in[2] + in[3];
     }
 };
 
