@@ -648,6 +648,24 @@ struct avx512_vec {
     }
 
     /*!
+     * \copydoc avx_512_vec::fmadd
+     */
+    template <typename T>
+    ETL_STATIC_INLINE(avx_512_simd_complex_float<T>)
+    fmadd(avx_512_simd_complex_float<T> a, avx_512_simd_complex_float<T> b, avx_512_simd_complex_float<T> c) {
+        return add(mul(a, b), c);
+    }
+
+    /*!
+     * \copydoc avx_512_vec::fmadd
+     */
+    template <typename T>
+    ETL_STATIC_INLINE(avx_512_simd_complex_double<T>)
+    fmadd(avx_512_simd_complex_double<T> a, avx_512_simd_complex_double<T> b, avx_512_simd_complex_double<T> c) {
+        return add(mul(a, b), c);
+    }
+
+    /*!
      * \brief Divide the two given vectors
      */
     ETL_STATIC_INLINE(avx_512_simd_float) div(avx_512_simd_float lhs, avx_512_simd_float rhs) {
