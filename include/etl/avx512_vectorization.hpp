@@ -521,6 +521,38 @@ struct avx512_vec {
     }
 
     /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
+    ETL_STATIC_INLINE(avx_512_simd_complex_float<std::complex<float>>) set(std::complex<float> value) {
+        std::complex<float> tmp[]{value, value, value, value, value, value, value, value};
+        return loadu(tmp);
+    }
+
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
+    ETL_STATIC_INLINE(avx_512_simd_complex_double<std::complex<double>>) set(std::complex<double> value) {
+        std::complex<double> tmp[]{value, value, value, value};
+        return loadu(tmp);
+    }
+
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
+    ETL_STATIC_INLINE(avx_512_simd_complex_float<etl::complex<float>>) set(etl::complex<float> value) {
+        etl::complex<float> tmp[]{value, value, value, value, value, value, value, value};
+        return loadu(tmp);
+    }
+
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
+    ETL_STATIC_INLINE(avx_512_simd_complex_double<etl::complex<double>>) set(etl::complex<double> value) {
+        etl::complex<double> tmp[]{value, value, value, value};
+        return loadu(tmp);
+    }
+
+    /*!
      * \brief Return a packed vector of zeroes of the given type
      */
     template <typename T>
