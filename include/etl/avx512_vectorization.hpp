@@ -378,6 +378,38 @@ struct avx512_vec {
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
+    ETL_STATIC_INLINE(void) stream(int8_t* memory, avx_512_simd_byte value) {
+        _mm512_stream_si512(reinterpret_cast<__m512i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
+    ETL_STATIC_INLINE(void) stream(int16_t* memory, avx_512_simd_short value) {
+        _mm512_stream_si512(reinterpret_cast<__m512i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
+    ETL_STATIC_INLINE(void) stream(int32_t* memory, avx_512_simd_int value) {
+        _mm512_stream_si512(reinterpret_cast<__m512i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
+    ETL_STATIC_INLINE(void) stream(int64_t* memory, avx_512_simd_long value) {
+        _mm512_stream_si512(reinterpret_cast<__m512i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID stream(float* memory, avx_512_simd_float value) {
         _mm512_stream_ps(memory, value.value);
     }
@@ -576,6 +608,34 @@ struct avx512_vec {
     /*!
      * \brief Add the two given values and return the result.
      */
+    ETL_STATIC_INLINE(avx_512_simd_byte) add(avx_512_simd_byte lhs, avx_512_simd_byte rhs) {
+        return _mm512_add_epi8(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Add the two given values and return the result.
+     */
+    ETL_STATIC_INLINE(avx_512_simd_short) add(avx_512_simd_short lhs, avx_512_simd_short rhs) {
+        return _mm512_add_epi16(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Add the two given values and return the result.
+     */
+    ETL_STATIC_INLINE(avx_512_simd_int) add(avx_512_simd_int lhs, avx_512_simd_int rhs) {
+        return _mm512_add_epi32(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Add the two given values and return the result.
+     */
+    ETL_STATIC_INLINE(avx_512_simd_long) add(avx_512_simd_long lhs, avx_512_simd_long rhs) {
+        return _mm512_add_epi64(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Add the two given values and return the result.
+     */
     ETL_STATIC_INLINE(avx_512_simd_float) add(avx_512_simd_float lhs, avx_512_simd_float rhs) {
         return _mm512_add_ps(lhs.value, rhs.value);
     }
@@ -603,6 +663,34 @@ struct avx512_vec {
     ETL_STATIC_INLINE(avx_512_simd_complex_double<T>)
     add(avx_512_simd_complex_double<T> lhs, avx_512_simd_complex_double<T> rhs) {
         return _mm512_add_pd(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    ETL_STATIC_INLINE(avx_512_simd_byte) sub(avx_512_simd_byte lhs, avx_512_simd_byte rhs) {
+        return _mm512_sub_epi8(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    ETL_STATIC_INLINE(avx_512_simd_short) sub(avx_512_simd_short lhs, avx_512_simd_short rhs) {
+        return _mm512_sub_epi16(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    ETL_STATIC_INLINE(avx_512_simd_int) sub(avx_512_simd_int lhs, avx_512_simd_int rhs) {
+        return _mm512_sub_epi32(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    ETL_STATIC_INLINE(avx_512_simd_long) sub(avx_512_simd_long lhs, avx_512_simd_long rhs) {
+        return _mm512_sub_epi64(lhs.value, rhs.value);
     }
 
     /*!
