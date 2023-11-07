@@ -560,6 +560,20 @@ struct avx512_vec {
     zero();
 
     /*!
+     * \brief Round up each values of the vector and return them
+     */
+    ETL_STATIC_INLINE(avx_512_simd_float) round_up(avx_512_simd_float x) {
+        return _mm512_roundscale_ps(x.value, (_MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC));
+    }
+
+    /*!
+     * \brief Round up each values of the vector and return them
+     */
+    ETL_STATIC_INLINE(avx_512_simd_double) round_up(avx_512_simd_double x) {
+        return _mm512_roundscale_pd(x.value, (_MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC));
+    }
+
+    /*!
      * \brief Add the two given values and return the result.
      */
     ETL_STATIC_INLINE(avx_512_simd_float) add(avx_512_simd_float lhs, avx_512_simd_float rhs) {
