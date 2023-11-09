@@ -758,6 +758,41 @@ struct avx512_vec {
     }
 
     /*!
+     * \brief Multiply the two given vectors of byte
+     */
+    ETL_STATIC_INLINE(avx_512_simd_byte) mul(avx_512_simd_byte lhs, avx_512_simd_byte rhs) {
+        // Split in multiple vectors (odd and even)
+        __m512i lhs_odd = _mm512_srli_epi16(lhs.value, 8);
+        __m512i rhs_odd = _mm512_srli_epi16(rhs.value, 8);
+        // Do the multiplication on each side
+        __m512i mul_even = _mm512_mullo_epi16(lhs.value, rhs.value);
+        __m512i mul_odd  = _mm512_mullo_epi16(lhs_odd, rhs_odd);
+        // Combine again
+        return _mm512_mask_mov_epi8(mul_even, 0xAAAAAAAAAAAAAAAA, mul_odd);
+    }
+
+    /*!
+     * \brief Multiply the two given vectors of short
+     */
+    ETL_STATIC_INLINE(avx_512_simd_short) mul(avx_512_simd_short lhs, avx_512_simd_short rhs) {
+        return _mm512_mullo_epi16(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Multiply the two given vectors of int
+     */
+    ETL_STATIC_INLINE(avx_512_simd_int) mul(avx_512_simd_int lhs, avx_512_simd_int rhs) {
+        return _mm512_mullo_epi32(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Multiply the two given vectors of long
+     */
+    ETL_STATIC_INLINE(avx_512_simd_long) mul(avx_512_simd_long lhs, avx_512_simd_long rhs) {
+        return _mm512_mullo_epi64(lhs.value, rhs.value);
+    }
+
+    /*!
      * \brief Multiply the two given vectors
      */
     ETL_STATIC_INLINE(avx_512_simd_float) mul(avx_512_simd_float lhs, avx_512_simd_float rhs) {
