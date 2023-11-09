@@ -330,6 +330,38 @@ struct avx512_vec {
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
+    ETL_STATIC_INLINE(void) store(int8_t* memory, avx_512_simd_byte value) {
+        _mm512_store_si512(reinterpret_cast<__m512i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
+    ETL_STATIC_INLINE(void) store(int16_t* memory, avx_512_simd_short value) {
+        _mm512_store_si512(reinterpret_cast<__m512i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
+    ETL_STATIC_INLINE(void) store(int32_t* memory, avx_512_simd_int value) {
+        _mm512_store_si512(reinterpret_cast<__m512i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
+    ETL_STATIC_INLINE(void) store(int64_t* memory, avx_512_simd_long value) {
+        _mm512_store_si512(reinterpret_cast<__m512i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID store(float* memory, avx_512_simd_float value) {
         _mm512_store_ps(memory, value.value);
     }
@@ -457,6 +489,34 @@ struct avx512_vec {
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
+    ETL_STATIC_INLINE(avx_512_simd_byte) load(const int8_t* memory) {
+        return _mm512_load_si512(reinterpret_cast<const __m512i*>(memory));
+    }
+
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
+    ETL_STATIC_INLINE(avx_512_simd_short) load(const int16_t* memory) {
+        return _mm512_load_si512(reinterpret_cast<const __m512i*>(memory));
+    }
+
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
+    ETL_STATIC_INLINE(avx_512_simd_int) load(const int32_t* memory) {
+        return _mm512_load_si512(reinterpret_cast<const __m512i*>(memory));
+    }
+
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
+    ETL_STATIC_INLINE(avx_512_simd_long) load(const int64_t* memory) {
+        return _mm512_load_si512(reinterpret_cast<const __m512i*>(memory));
+    }
+
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_STATIC_INLINE(avx_512_simd_float) load(const float* memory) {
         return _mm512_load_ps(memory);
     }
@@ -536,6 +596,34 @@ struct avx512_vec {
      */
     ETL_STATIC_INLINE(avx_512_simd_complex_double<etl::complex<double>>) loadu(const etl::complex<double>* memory) {
         return _mm512_loadu_pd(reinterpret_cast<const double*>(memory));
+    }
+
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
+    ETL_STATIC_INLINE(avx_512_simd_byte) set(int8_t value) {
+        return _mm512_set1_epi8(value);
+    }
+
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
+    ETL_STATIC_INLINE(avx_512_simd_short) set(int16_t value) {
+        return _mm512_set1_epi16(value);
+    }
+
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
+    ETL_STATIC_INLINE(avx_512_simd_int) set(int32_t value) {
+        return _mm512_set1_epi32(value);
+    }
+
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
+    ETL_STATIC_INLINE(avx_512_simd_long) set(int64_t value) {
+        return _mm512_set1_epi64(value);
     }
 
     /*!
