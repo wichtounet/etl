@@ -1020,6 +1020,58 @@ struct avx512_vec {
      * \param in The input vector type
      * \return the horizontal sum of the vector
      */
+    ETL_STATIC_INLINE(int8_t) hadd(avx_512_simd_byte in) {
+        int8_t acc = 0;
+        for (size_t i = 0; i < 64; ++i) {
+            acc += in[i];
+        }
+        return acc;
+    }
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    ETL_STATIC_INLINE(int16_t) hadd(avx_512_simd_short in) {
+        int16_t acc = 0;
+        for (size_t i = 0; i < 32; ++i) {
+            acc += in[i];
+        }
+        return acc;
+    }
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    ETL_STATIC_INLINE(int32_t) hadd(avx_512_simd_int in) {
+        int32_t acc = 0;
+        for (size_t i = 0; i < 16; ++i) {
+            acc += in[i];
+        }
+        return acc;
+    }
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    ETL_STATIC_INLINE(int64_t) hadd(avx_512_simd_long in) {
+        int64_t acc = 0;
+        for (size_t i = 0; i < 8; ++i) {
+            acc += in[i];
+        }
+        return acc;
+    }
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
     ETL_STATIC_INLINE(float) hadd(avx_512_simd_float in) {
         return in[0] + in[1] + in[2] + in[3] + in[4] + in[5] + in[6] + in[7] + in[8] + in[9] + in[10] + in[11] + in[12] + in[13] + in[14] + in[15];
     }
