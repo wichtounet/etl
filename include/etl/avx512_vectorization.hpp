@@ -856,7 +856,8 @@ struct avx512_vec {
         __m512i mul_even = _mm512_mullo_epi16(lhs.value, rhs.value);
         __m512i mul_odd  = _mm512_mullo_epi16(lhs_odd, rhs_odd);
         // Combine again
-        return _mm512_mask_mov_epi8(mul_even, 0xAAAAAAAAAAAAAAAA, mul_odd);
+        __m512i temp = _mm512_slli_epi16(mul_odd, 8);
+        return _mm512_mask_mov_epi8(mul_even, 0xAAAAAAAAAAAAAAAA, temp);
     }
 
     /*!
