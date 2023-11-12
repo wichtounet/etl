@@ -51,7 +51,7 @@ struct relu_unary_op {
      * \return The result of applying the unary operator on x
      */
     static T apply(const T& x) {
-        return std::max(x, T(0.0));
+        return std::max(x, T(0));
     }
 
     /*!
@@ -62,7 +62,7 @@ struct relu_unary_op {
      */
     template <typename V = default_vec>
     static vec_type<V> load(const vec_type<V>& x) noexcept {
-        return V::max(x, V::set(T(0.0)));
+        return V::max(x, V::set(T(0)));
     }
 
     /*!
