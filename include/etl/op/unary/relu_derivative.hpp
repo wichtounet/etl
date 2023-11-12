@@ -54,7 +54,7 @@ struct relu_derivative_op {
      * \return The result of applying the unary operator on x
      */
     static T apply(const T& x) {
-        return x > 0.0 ? 1.0 : 0.0;
+        return x > T(0) ? T(1) : T(0);
     }
 
     /*!
@@ -65,7 +65,7 @@ struct relu_derivative_op {
      */
     template <typename V = default_vec>
     static vec_type<V> load(const vec_type<V>& x) noexcept {
-        return V::round_up(V::min(V::set(T(1.0)), x));
+        return V::round_up(V::min(V::set(T(1)), x));
     }
 
     /*!
