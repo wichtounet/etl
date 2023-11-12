@@ -39,7 +39,7 @@ static constexpr bool has_saxpy = false;
  */
 inline void axpy([[maybe_unused]] size_t n,
                  [[maybe_unused]] float alpha,
-                 [[maybe_unused]] float* A,
+                 [[maybe_unused]] const float* A,
                  [[maybe_unused]] size_t lda,
                  [[maybe_unused]] float* B,
                  [[maybe_unused]] size_t ldb) {
@@ -68,7 +68,7 @@ static constexpr bool has_daxpy = false;
  */
 inline void axpy([[maybe_unused]] size_t n,
                  [[maybe_unused]] double alpha,
-                 [[maybe_unused]] double* A,
+                 [[maybe_unused]] const double* A,
                  [[maybe_unused]] size_t lda,
                  [[maybe_unused]] double* B,
                  [[maybe_unused]] size_t ldb) {
@@ -97,7 +97,7 @@ static constexpr bool has_caxpy = false;
  */
 inline void axpy([[maybe_unused]] size_t n,
                  [[maybe_unused]] std::complex<float> alpha,
-                 [[maybe_unused]] std::complex<float>* A,
+                 [[maybe_unused]] const std::complex<float>* A,
                  [[maybe_unused]] size_t lda,
                  [[maybe_unused]] std::complex<float>* B,
                  [[maybe_unused]] size_t ldb) {
@@ -120,7 +120,7 @@ inline void axpy([[maybe_unused]] size_t n,
  */
 inline void axpy([[maybe_unused]] size_t n,
                  [[maybe_unused]] etl::complex<float> alpha,
-                 [[maybe_unused]] etl::complex<float>* A,
+                 [[maybe_unused]] const etl::complex<float>* A,
                  [[maybe_unused]] size_t lda,
                  [[maybe_unused]] etl::complex<float>* B,
                  [[maybe_unused]] size_t ldb) {
@@ -149,7 +149,7 @@ static constexpr bool has_zaxpy = false;
  */
 inline void axpy([[maybe_unused]] size_t n,
                  [[maybe_unused]] std::complex<double> alpha,
-                 [[maybe_unused]] std::complex<double>* A,
+                 [[maybe_unused]] const std::complex<double>* A,
                  [[maybe_unused]] size_t lda,
                  [[maybe_unused]] std::complex<double>* B,
                  [[maybe_unused]] size_t ldb) {
@@ -172,7 +172,7 @@ inline void axpy([[maybe_unused]] size_t n,
  */
 inline void axpy([[maybe_unused]] size_t n,
                  [[maybe_unused]] etl::complex<double> alpha,
-                 [[maybe_unused]] etl::complex<double>* A,
+                 [[maybe_unused]] const etl::complex<double>* A,
                  [[maybe_unused]] size_t lda,
                  [[maybe_unused]] etl::complex<double>* B,
                  [[maybe_unused]] size_t ldb) {
