@@ -71,7 +71,7 @@ void fft_3_point(
     const size_t offset = product / factor;
     const size_t inc    = (factor - 1) * offset;
 
-    static const T tau = std::sqrt(3.0) / 2.0;
+    static const T tau = std::sqrt(T(3)) / T(2);
 
     for (size_t k = 0, i = 0, j = 0; k < n / product; k++, j += inc) {
         etl::complex<T> w1(1.0, 0.0);
@@ -178,8 +178,8 @@ void fft_5_point(const etl::complex<T>* in,
     const size_t offset = product / factor;
     const size_t inc    = (factor - 1) * offset;
 
-    static const T theta_1 = -1.0 * std::sin(2.0 * M_PI / 5.0);
-    static const T theta_2 = -1.0 * std::sin(2.0 * M_PI / 10.0);
+    static const T theta_1 = T(-1) * std::sin(T(2) * T(M_PI) / T(5));
+    static const T theta_2 = T(-1) * std::sin(T(2) * T(M_PI) / T(10));
 
     for (size_t k = 0, i = 0, j = 0; k < n / product; ++k, j += inc) {
         etl::complex<T> w1(1.0, 0.0);
@@ -206,7 +206,7 @@ void fft_5_point(const etl::complex<T>* in,
             etl::complex<T> t3  = z1 - z4;
             etl::complex<T> t4  = z2 - z3;
             etl::complex<T> t5  = t1 + t2;
-            etl::complex<T> t6  = T(std::sqrt(5.0) / 4.0) * (t1 - t2);
+            etl::complex<T> t6  = T(std::sqrt(T(5)) / T(4)) * (t1 - t2);
             etl::complex<T> t7  = z0 - (t5 / T(4));
             etl::complex<T> t8  = t7 + t6;
             etl::complex<T> t9  = t7 - t6;
@@ -252,17 +252,17 @@ void fft_7_point(const etl::complex<T>* in,
     const size_t offset = product / factor;
     const size_t inc    = (factor - 1) * offset;
 
-    static constexpr T theta_0 = 2.0 * M_PI / 7.0;
+    static constexpr T theta_0 = T(2) * M_PI / T(7);
 
-    static const T theta_1 = (std::cos(theta_0) + std::cos(2.0 * theta_0) + std::cos(3.0 * theta_0)) / 3.0 - 1.0;
-    static const T theta_2 = (2.0 * std::cos(theta_0) - std::cos(2.0 * theta_0) - std::cos(3.0 * theta_0)) / 3.0;
-    static const T theta_3 = (std::cos(theta_0) - 2.0 * std::cos(2.0 * theta_0) + std::cos(3.0 * theta_0)) / 3.0;
-    static const T theta_4 = (std::cos(theta_0) + std::cos(2.0 * theta_0) - 2.0 * std::cos(3.0 * theta_0)) / 3.0;
+    static const T theta_1 = (std::cos(theta_0) + std::cos(T(2) * theta_0) + std::cos(T(3) * theta_0)) / T(3) - 1.0;
+    static const T theta_2 = (T(2) * std::cos(theta_0) - std::cos(T(2) * theta_0) - std::cos(T(3) * theta_0)) / T(3);
+    static const T theta_3 = (std::cos(theta_0) - T(2) * std::cos(T(2) * theta_0) + std::cos(T(3) * theta_0)) / T(3);
+    static const T theta_4 = (std::cos(theta_0) + std::cos(T(2) * theta_0) - T(2) * std::cos(T(3) * theta_0)) / T(3);
 
-    static const T theta_5 = (std::sin(theta_0) + std::sin(2.0 * theta_0) - std::sin(3.0 * theta_0)) / 3.0;
-    static const T theta_6 = (2.0 * std::sin(theta_0) - std::sin(2.0 * theta_0) + std::sin(3.0 * theta_0)) / 3.0;
-    static const T theta_7 = (std::sin(theta_0) - 2.0 * std::sin(2.0 * theta_0) - std::sin(3.0 * theta_0)) / 3.0;
-    static const T theta_8 = (std::sin(theta_0) + std::sin(2.0 * theta_0) + 2.0 * std::sin(3.0 * theta_0)) / 3.0;
+    static const T theta_5 = (std::sin(theta_0) + std::sin(T(2) * theta_0) - std::sin(T(3) * theta_0)) / T(3);
+    static const T theta_6 = (T(2) * std::sin(theta_0) - std::sin(T(2) * theta_0) + std::sin(T(3) * theta_0)) / T(3);
+    static const T theta_7 = (std::sin(theta_0) - T(2) * std::sin(T(2) * theta_0) - std::sin(T(3) * theta_0)) / T(3);
+    static const T theta_8 = (std::sin(theta_0) + std::sin(T(2) * theta_0) + T(2) * std::sin(T(3) * theta_0)) / T(3);
 
     for (size_t k = 0, i = 0, j = 0; k < n / product; ++k, j += inc) {
         etl::complex<T> w1(1.0, 0.0);
@@ -828,7 +828,7 @@ void conv2_full_kernel(const T1* a, size_t m1, size_t m2, const T2* b, size_t n1
 
         // c = real(conj(a) / n)
         // Note: Since the conjugate does not change the real part, it is not necessary
-        if (beta == T3(0.0)) {
+        if (beta == T3(0)) {
             for (size_t i = 0; i < n; ++i) {
                 c[i] = a_padded[i].real / T3(n);
             }
