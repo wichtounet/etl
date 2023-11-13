@@ -46,14 +46,14 @@ inline bool engine_select_parallel(bool select) {
  * \param threshold The threshold for parallelization
  */
 template <typename Functor>
-inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, size_t threshold, size_t threads = etl::threads) {
+inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, size_t threshold, size_t n_threads = etl::threads) {
     cpp_assert(last >= first, "Range must be valid");
 
     const size_t n = last - first;
 
     if (n) {
         if (engine_select_parallel(n, threshold)) {
-            const size_t T     = std::min(n, threads / 2);
+            const size_t T     = std::min(n, n_threads / 2);
             const size_t batch = n / T;
 
             ETL_PARALLEL_SESSION {
@@ -90,14 +90,14 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, siz
  * \param threshold The threshold for parallelization
  */
 template <typename Functor>
-inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t last, size_t threshold, size_t threads = etl::threads) {
+inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t last, size_t threshold, size_t n_threads = etl::threads) {
     auto serial_functor = [&functor](size_t first, size_t last) {
         SERIAL_SECTION {
             functor(first, last);
         }
     };
 
-    engine_dispatch_1d(serial_functor, first, last, threshold, threads);
+    engine_dispatch_1d(serial_functor, first, last, threshold, n_threads);
 }
 
 /*!
@@ -117,14 +117,14 @@ inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t la
  * \param threshold The threshold for parallelization
  */
 template <typename Functor>
-inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last, size_t threshold, size_t threads = etl::threads) {
+inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last, size_t threshold, size_t n_threads = etl::threads) {
     auto cpu_functor = [&functor](size_t first, size_t last) {
         CPU_SECTION {
             functor(first, last);
         }
     };
 
-    engine_dispatch_1d(cpu_functor, first, last, threshold, threads);
+    engine_dispatch_1d(cpu_functor, first, last, threshold, n_threads);
 }
 
 /*!
@@ -145,7 +145,7 @@ inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last,
  * \param threshold The threshold for parallelization
  */
 template <typename Functor>
-inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_t last, size_t threshold, size_t threads = etl::threads) {
+inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_t last, size_t threshold, size_t n_threads = etl::threads) {
     auto serial_cpu_functor = [&functor](size_t first, size_t last) {
         SERIAL_SECTION {
             CPU_SECTION {
@@ -154,7 +154,7 @@ inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_
         }
     };
 
-    engine_dispatch_1d(serial_cpu_functor, first, last, threshold, threads);
+    engine_dispatch_1d(serial_cpu_functor, first, last, threshold, n_threads);
 }
 
 /*!
@@ -261,14 +261,14 @@ inline void engine_dispatch_2d(Functor&& functor, size_t last1, size_t last2, si
  * \param select The selector for parallelization
  */
 template <typename Functor>
-inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, bool select, size_t threads = etl::threads) {
+inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, bool select, size_t n_threads = etl::threads) {
     cpp_assert(last >= first, "Range must be valid");
 
     const size_t n = last - first;
 
     if (n) {
         if (engine_select_parallel(select)) {
-            const size_t T     = std::min(n, threads);
+            const size_t T     = std::min(n, n_threads);
             const size_t batch = n / T;
 
             ETL_PARALLEL_SESSION {
@@ -289,14 +289,14 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, boo
 }
 
 template <typename Functor>
-inline void engine_dispatch_1d_block(Functor&& functor, size_t first, size_t last, size_t block, size_t threads = etl::threads) {
+inline void engine_dispatch_1d_block(Functor&& functor, size_t first, size_t last, size_t block, size_t n_threads = etl::threads) {
     cpp_assert(last >= first, "Range must be valid");
 
     const size_t n = last - first;
 
     if (n) {
         if (engine_select_parallel(n >= 2 * block)) {
-            const size_t T     = std::min(n / block, threads);
+            const size_t T     = std::min(n / block, n_threads);
             const size_t batch = n / (T * block);
 
             ETL_PARALLEL_SESSION {
@@ -334,14 +334,14 @@ inline void engine_dispatch_1d_block(Functor&& functor, size_t first, size_t las
  * \param select The selector for parallelization
  */
 template <typename Functor>
-inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t last, bool select, size_t threads = etl::threads) {
+inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t last, bool select, size_t n_threads = etl::threads) {
     auto serial_functor = [&functor](size_t first, size_t last) {
         SERIAL_SECTION {
             functor(first, last);
         }
     };
 
-    engine_dispatch_1d(serial_functor, first, last, select, threads);
+    engine_dispatch_1d(serial_functor, first, last, select, n_threads);
 }
 
 /*!
@@ -362,7 +362,7 @@ inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t la
  * \param select The selector for parallelization
  */
 template <typename Functor>
-inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_t last, bool select, size_t threads = etl::threads) {
+inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_t last, bool select, size_t n_threads = etl::threads) {
     auto serial_cpu_functor = [&functor](size_t first, size_t last) {
         SERIAL_SECTION {
             CPU_SECTION {
@@ -371,7 +371,7 @@ inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_
         }
     };
 
-    engine_dispatch_1d(serial_cpu_functor, first, last, select, threads);
+    engine_dispatch_1d(serial_cpu_functor, first, last, select, n_threads);
 }
 
 /*!
@@ -392,14 +392,14 @@ inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_
  * \param select The selector for parallelization
  */
 template <typename Functor>
-inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last, bool select, size_t threads = etl::threads) {
+inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last, bool select, size_t n_threads = etl::threads) {
     auto cpu_functor = [&functor](size_t first, size_t last) {
         CPU_SECTION {
             functor(first, last);
         }
     };
 
-    engine_dispatch_1d(cpu_functor, first, last, select, threads);
+    engine_dispatch_1d(cpu_functor, first, last, select, n_threads);
 }
 
 /*!
@@ -412,12 +412,12 @@ inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last,
  * \param threshold The threshold for parallelization
  */
 template <typename TT, typename Functor, typename AccFunctor>
-inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, size_t first, size_t last, size_t threshold, size_t threads = etl::threads) {
+inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, size_t first, size_t last, size_t threshold, size_t n_threads = etl::threads) {
     const size_t n = last - first;
 
     if (n) {
         if (engine_select_parallel(n, threshold)) {
-            const size_t T     = std::min(n, threads);
+            const size_t T     = std::min(n, n_threads);
             const size_t batch = n / T;
 
             std::vector<TT> futures(T);
@@ -456,7 +456,7 @@ inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, 
  * \param threshold The threshold for paralellization
  */
 template <typename E, typename Functor>
-inline void engine_dispatch_1d_slice(E&& expr, Functor&& functor, size_t threshold, size_t threads = etl::threads) {
+inline void engine_dispatch_1d_slice(E&& expr, Functor&& functor, size_t threshold, size_t n_threads = etl::threads) {
     using TT = value_t<E>;
 
     static constexpr size_t S = default_intrinsic_traits<TT>::size;
@@ -465,7 +465,7 @@ inline void engine_dispatch_1d_slice(E&& expr, Functor&& functor, size_t thresho
 
     if (n) {
         if (engine_select_parallel(n, threshold)) {
-            const size_t T = std::min(n, threads);
+            const size_t T = std::min(n, n_threads);
 
             ETL_PARALLEL_SESSION {
                 thread_engine::acquire();
@@ -526,7 +526,7 @@ inline void engine_dispatch_1d_slice(E&& expr, Functor&& functor, size_t thresho
  * \param threshold The threshold for paralellization
  */
 template <typename E1, typename E2, typename Functor>
-inline void engine_dispatch_1d_slice_binary(E1&& expr1, E2&& expr2, Functor&& functor, size_t threshold, size_t threads = etl::threads) {
+inline void engine_dispatch_1d_slice_binary(E1&& expr1, E2&& expr2, Functor&& functor, size_t threshold, size_t n_threads = etl::threads) {
     using TT = value_t<E1>;
 
     static constexpr size_t S = default_intrinsic_traits<TT>::size;
@@ -535,7 +535,7 @@ inline void engine_dispatch_1d_slice_binary(E1&& expr1, E2&& expr2, Functor&& fu
 
     if (n) {
         if (engine_select_parallel(n, threshold)) {
-            const size_t T = std::min(n, threads);
+            const size_t T = std::min(n, n_threads);
 
             ETL_PARALLEL_SESSION {
                 thread_engine::acquire();
@@ -600,7 +600,7 @@ inline void engine_dispatch_1d_slice_binary(E1&& expr1, E2&& expr2, Functor&& fu
  * \param threshold The threshold for paralellization
  */
 template <typename E, typename Functor, typename AccFunctor>
-inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor&& acc_functor, size_t threshold, size_t threads = etl::threads) {
+inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor&& acc_functor, size_t threshold, size_t n_threads = etl::threads) {
     using TT = value_t<E>;
 
     static constexpr size_t S = default_intrinsic_traits<TT>::size;
@@ -609,7 +609,7 @@ inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor
 
     if (n) {
         if (engine_select_parallel(n, threshold)) {
-            const size_t T = std::min(n, threads);
+            const size_t T = std::min(n, n_threads);
 
             std::vector<TT> futures(T);
 
@@ -705,7 +705,7 @@ inline bool engine_select_parallel([[maybe_unused]] bool select) {
  * \param threshold The threshold for parallelization
  */
 template <typename Functor>
-inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, [[maybe_unused]] size_t threshold, [[maybe_unused]] size_t threads = etl::threads) {
+inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, [[maybe_unused]] size_t threshold, [[maybe_unused]] size_t n_threads = etl::threads) {
     cpp_assert(last >= first, "Range must be valid");
 
     const size_t n = last - first;
@@ -731,7 +731,7 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, [[m
  * \param threshold The threshold for parallelization
  */
 template <typename Functor>
-inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t last, size_t threshold, [[maybe_unused]] size_t threads = etl::threads) {
+inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t last, size_t threshold, [[maybe_unused]] size_t n_threads = etl::threads) {
     engine_dispatch_1d(functor, first, last, threshold);
 }
 
@@ -751,7 +751,7 @@ inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t la
  * \param threshold The threshold for parallelization
  */
 template <typename Functor>
-inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_t last, size_t threshold, [[maybe_unused]] size_t threads = etl::threads) {
+inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_t last, size_t threshold, [[maybe_unused]] size_t n_threads = etl::threads) {
     engine_dispatch_1d(functor, first, last, threshold);
 }
 
@@ -771,7 +771,7 @@ inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_
  * \param threshold The threshold for parallelization
  */
 template <typename Functor>
-inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last, size_t threshold, [[maybe_unused]] size_t threads = etl::threads) {
+inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last, size_t threshold, [[maybe_unused]] size_t n_threads = etl::threads) {
     engine_dispatch_1d(functor, first, last, threshold);
 }
 
@@ -790,7 +790,7 @@ inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last,
  * \param last The end of the range. Must be bigger or equal to first.
  */
 template <typename Functor>
-inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, [[maybe_unused]] bool select, [[maybe_unused]] size_t threads = etl::threads) {
+inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, [[maybe_unused]] bool select, [[maybe_unused]] size_t n_threads = etl::threads) {
     cpp_assert(last >= first, "Range must be valid");
 
     const size_t n = last - first;
@@ -815,7 +815,7 @@ inline void engine_dispatch_1d(Functor&& functor, size_t first, size_t last, [[m
  * \param last The end of the range. Must be bigger or equal to first.
  */
 template <typename Functor>
-inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t last, bool select, [[maybe_unused]] size_t threads = etl::threads) {
+inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t last, bool select, [[maybe_unused]] size_t n_threads = etl::threads) {
     engine_dispatch_1d(functor, first, last, select);
 }
 
@@ -834,7 +834,7 @@ inline void engine_dispatch_1d_serial(Functor&& functor, size_t first, size_t la
  * \param last The end of the range. Must be bigger or equal to first.
  */
 template <typename Functor>
-inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_t last, bool select, [[maybe_unused]] size_t threads = etl::threads) {
+inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_t last, bool select, [[maybe_unused]] size_t n_threads = etl::threads) {
     engine_dispatch_1d(functor, first, last, select);
 }
 
@@ -853,7 +853,7 @@ inline void engine_dispatch_1d_serial_cpu(Functor&& functor, size_t first, size_
  * \param last The end of the range. Must be bigger or equal to first.
  */
 template <typename Functor>
-inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last, bool select, [[maybe_unused]] size_t threads = etl::threads) {
+inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last, bool select, [[maybe_unused]] size_t n_threads = etl::threads) {
     engine_dispatch_1d(functor, first, last, select);
 }
 
@@ -866,7 +866,7 @@ inline void engine_dispatch_1d_cpu(Functor&& functor, size_t first, size_t last,
  * \param threshold The threshold for paralellization
  */
 template <typename T, typename Functor, typename AccFunctor>
-inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, size_t first, size_t last, [[maybe_unused]] size_t threshold, [[maybe_unused]] size_t threads = etl::threads) {
+inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, size_t first, size_t last, [[maybe_unused]] size_t threshold, [[maybe_unused]] size_t n_threads = etl::threads) {
     cpp_assert(last >= first, "Range must be valid");
 
     const size_t n = last - first;
@@ -887,7 +887,7 @@ inline void engine_dispatch_1d_acc(Functor&& functor, AccFunctor&& acc_functor, 
  * \param threshold The threshold for paralellization
  */
 template <typename E, typename Functor, typename AccFunctor>
-inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor&& acc_functor, [[maybe_unused]] size_t threshold, [[maybe_unused]] size_t threads = etl::threads) {
+inline void engine_dispatch_1d_acc_slice(E&& expr, Functor&& functor, AccFunctor&& acc_functor, [[maybe_unused]] size_t threshold, [[maybe_unused]] size_t n_threads = etl::threads) {
     acc_functor(functor(expr));
 }
 
