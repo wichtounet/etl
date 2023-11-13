@@ -204,56 +204,56 @@ public:
 
     /*!
      * \brief Assign to the given left-hand-side expression
-     * \param lhs The expression to which assign
+     * \param result The expression to which assign
      */
     template <typename L>
-    void assign_to(L&& lhs) const {
-        std_assign_evaluate(*this, std::forward<L>(lhs));
+    void assign_to(L&& result) const {
+        std_assign_evaluate(*this, std::forward<L>(result));
     }
 
     /*!
      * \brief Add to the given left-hand-side expression
-     * \param lhs The expression to which assign
+     * \param result The expression to which assign
      */
     template <typename L>
-    void assign_add_to(L&& lhs) const {
-        std_add_evaluate(*this, std::forward<L>(lhs));
+    void assign_add_to(L&& result) const {
+        std_add_evaluate(*this, std::forward<L>(result));
     }
 
     /*!
      * \brief Sub from the given left-hand-side expression
-     * \param lhs The expression to which assign
+     * \param result The expression to which assign
      */
     template <typename L>
-    void assign_sub_to(L&& lhs) const {
-        std_sub_evaluate(*this, std::forward<L>(lhs));
+    void assign_sub_to(L&& result) const {
+        std_sub_evaluate(*this, std::forward<L>(result));
     }
 
     /*!
      * \brief Multiply the given left-hand-side expression
-     * \param lhs The expression to which assign
+     * \param result The expression to which assign
      */
     template <typename L>
-    void assign_mul_to(L&& lhs) const {
-        std_mul_evaluate(*this, std::forward<L>(lhs));
+    void assign_mul_to(L&& result) const {
+        std_mul_evaluate(*this, std::forward<L>(result));
     }
 
     /*!
      * \brief Divide the given left-hand-side expression
-     * \param lhs The expression to which assign
+     * \param result The expression to which assign
      */
     template <typename L>
-    void assign_div_to(L&& lhs) const {
-        std_div_evaluate(*this, std::forward<L>(lhs));
+    void assign_div_to(L&& result) const {
+        std_div_evaluate(*this, std::forward<L>(result));
     }
 
     /*!
      * \brief Modulo the given left-hand-side expression
-     * \param lhs The expression to which assign
+     * \param result The expression to which assign
      */
     template <typename L>
-    void assign_mod_to(L&& lhs) const {
-        std_mod_evaluate(*this, std::forward<L>(lhs));
+    void assign_mod_to(L&& result) const {
+        std_mod_evaluate(*this, std::forward<L>(result));
     }
 
     // Internals
