@@ -92,19 +92,19 @@ endif
 ifneq (,$(ETL_GPU))
 CXX_FLAGS += -DETL_GPU
 
-CXX_FLAGS += $(shell pkg-config --cflags cublas-12.3)
-CXX_FLAGS += $(shell pkg-config --cflags cufft-12.3)
+CXX_FLAGS += $(shell pkg-config --cflags cublas-12.2)
+CXX_FLAGS += $(shell pkg-config --cflags cufft-12.2)
 CXX_FLAGS += $(shell pkg-config --cflags cudnn)
-CXX_FLAGS += $(shell pkg-config --cflags curand-12.3)
-CXX_FLAGS += $(shell pkg-config --cflags cuda-12.3)
-CXX_FLAGS += $(shell pkg-config --cflags cudart-12.3)
+CXX_FLAGS += $(shell pkg-config --cflags curand-12.2)
+CXX_FLAGS += $(shell pkg-config --cflags cuda-12.2)
+CXX_FLAGS += $(shell pkg-config --cflags cudart-12.2)
 
-LD_FLAGS += $(shell pkg-config --libs cublas-12.3)
-LD_FLAGS += $(shell pkg-config --libs cufft-12.3)
+LD_FLAGS += $(shell pkg-config --libs cublas-12.2)
+LD_FLAGS += $(shell pkg-config --libs cufft-12.2)
 LD_FLAGS += $(shell pkg-config --libs cudnn)
-LD_FLAGS += $(shell pkg-config --libs curand-12.3)
-LD_FLAGS += $(shell pkg-config --libs cuda-12.3)
-LD_FLAGS += $(shell pkg-config --libs cudart-12.3)
+LD_FLAGS += $(shell pkg-config --libs curand-12.2)
+LD_FLAGS += $(shell pkg-config --libs cuda-12.2)
+LD_FLAGS += $(shell pkg-config --libs cudart-12.2)
 
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-documentation
@@ -113,10 +113,10 @@ else
 
 # On demand activation of cublas support
 ifneq (,$(ETL_CUBLAS))
-CXX_FLAGS += -DETL_CUBLAS_MODE $(shell pkg-config --cflags cublas-12.3)
-LD_FLAGS += $(shell pkg-config --libs cublas-12.3)
-LD_FLAGS += $(shell pkg-config --libs cuda-12.3)
-LD_FLAGS += $(shell pkg-config --libs cudart-12.3)
+CXX_FLAGS += -DETL_CUBLAS_MODE $(shell pkg-config --cflags cublas-12.2)
+LD_FLAGS += $(shell pkg-config --libs cublas-12.2)
+LD_FLAGS += $(shell pkg-config --libs cuda-12.2)
+LD_FLAGS += $(shell pkg-config --libs cudart-12.2)
 
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-documentation
@@ -125,10 +125,10 @@ endif
 
 # On demand activation of cufft support
 ifneq (,$(ETL_CUFFT))
-CXX_FLAGS += -DETL_CUFFT_MODE $(shell pkg-config --cflags cufft-12.3)
-LD_FLAGS += $(shell pkg-config --libs cufft-12.3)
-LD_FLAGS += $(shell pkg-config --libs cuda-12.3)
-LD_FLAGS += $(shell pkg-config --libs cudart-12.3)
+CXX_FLAGS += -DETL_CUFFT_MODE $(shell pkg-config --cflags cufft-12.2)
+LD_FLAGS += $(shell pkg-config --libs cufft-12.2)
+LD_FLAGS += $(shell pkg-config --libs cuda-12.2)
+LD_FLAGS += $(shell pkg-config --libs cudart-12.2)
 
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-documentation
@@ -137,10 +137,10 @@ endif
 
 # On demand activation of curand support
 ifneq (,$(ETL_CURAND))
-CXX_FLAGS += -DETL_CURAND_MODE $(shell pkg-config --cflags curand-12.3)
-LD_FLAGS += $(shell pkg-config --libs curand-12.3)
-LD_FLAGS += $(shell pkg-config --libs cuda-12.3)
-LD_FLAGS += $(shell pkg-config --libs cudart-12.3)
+CXX_FLAGS += -DETL_CURAND_MODE $(shell pkg-config --cflags curand-12.2)
+LD_FLAGS += $(shell pkg-config --libs curand-12.2)
+LD_FLAGS += $(shell pkg-config --libs cuda-12.2)
+LD_FLAGS += $(shell pkg-config --libs cudart-12.2)
 
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-documentation
@@ -151,8 +151,8 @@ endif
 ifneq (,$(ETL_CUDNN))
 CXX_FLAGS += -DETL_CUDNN_MODE $(shell pkg-config --cflags cudnn)
 LD_FLAGS += $(shell pkg-config --libs cudnn)
-LD_FLAGS += $(shell pkg-config --libs cuda-12.3)
-LD_FLAGS += $(shell pkg-config --libs cudart-12.3)
+LD_FLAGS += $(shell pkg-config --libs cuda-12.2)
+LD_FLAGS += $(shell pkg-config --libs cudart-12.2)
 
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-documentation
