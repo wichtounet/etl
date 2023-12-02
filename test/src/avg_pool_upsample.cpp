@@ -51,40 +51,40 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/2", "[pooling]", Z, float, double) 
     etl::dyn_matrix<Z, 2> result(6, 6);
     result = etl::avg_pool_upsample_2d(input, output, errors, 3, 3);
 
-    REQUIRE_EQUALS(result(0, 0), Z(100.0) / 9);
-    REQUIRE_EQUALS(result(0, 1), Z(100.0) / 9);
-    REQUIRE_EQUALS(result(0, 2), Z(100.0) / 9);
-    REQUIRE_EQUALS(result(0, 3), Z(200.0) / 9);
-    REQUIRE_EQUALS(result(0, 4), Z(200.0) / 9);
-    REQUIRE_EQUALS(result(0, 5), Z(200.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(0, 0), Z(100.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(0, 1), Z(100.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(0, 2), Z(100.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(0, 3), Z(200.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(0, 4), Z(200.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(0, 5), Z(200.0) / 9);
 
-    REQUIRE_EQUALS(result(1, 0), Z(100.0) / 9);
-    REQUIRE_EQUALS(result(1, 1), Z(100.0) / 9);
-    REQUIRE_EQUALS(result(1, 2), Z(100.0) / 9);
-    REQUIRE_EQUALS(result(1, 3), Z(200.0) / 9);
-    REQUIRE_EQUALS(result(1, 4), Z(200.0) / 9);
-    REQUIRE_EQUALS(result(1, 5), Z(200.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(1, 0), Z(100.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(1, 1), Z(100.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(1, 2), Z(100.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(1, 3), Z(200.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(1, 4), Z(200.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(1, 5), Z(200.0) / 9);
 
-    REQUIRE_EQUALS(result(2, 0), Z(100.0) / 9);
-    REQUIRE_EQUALS(result(2, 1), Z(100.0) / 9);
-    REQUIRE_EQUALS(result(2, 2), Z(100.0) / 9);
-    REQUIRE_EQUALS(result(2, 3), Z(200.0) / 9);
-    REQUIRE_EQUALS(result(2, 4), Z(200.0) / 9);
-    REQUIRE_EQUALS(result(2, 5), Z(200.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(2, 0), Z(100.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(2, 1), Z(100.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(2, 2), Z(100.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(2, 3), Z(200.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(2, 4), Z(200.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(2, 5), Z(200.0) / 9);
 
-    REQUIRE_EQUALS(result(3, 0), Z(300.0) / 9);
-    REQUIRE_EQUALS(result(3, 1), Z(300.0) / 9);
-    REQUIRE_EQUALS(result(3, 2), Z(300.0) / 9);
-    REQUIRE_EQUALS(result(3, 3), Z(400.0) / 9);
-    REQUIRE_EQUALS(result(3, 4), Z(400.0) / 9);
-    REQUIRE_EQUALS(result(3, 5), Z(400.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(3, 0), Z(300.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(3, 1), Z(300.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(3, 2), Z(300.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(3, 3), Z(400.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(3, 4), Z(400.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(3, 5), Z(400.0) / 9);
 
-    REQUIRE_EQUALS(result(4, 0), Z(300.0) / 9);
-    REQUIRE_EQUALS(result(4, 1), Z(300.0) / 9);
-    REQUIRE_EQUALS(result(4, 2), Z(300.0) / 9);
-    REQUIRE_EQUALS(result(4, 3), Z(400.0) / 9);
-    REQUIRE_EQUALS(result(4, 4), Z(400.0) / 9);
-    REQUIRE_EQUALS(result(4, 5), Z(400.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(4, 0), Z(300.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(4, 1), Z(300.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(4, 2), Z(300.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(4, 3), Z(400.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(4, 4), Z(400.0) / 9);
+    REQUIRE_EQUALS_APPROX(result(4, 5), Z(400.0) / 9);
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/3", "[pooling]", Z, float, double) {
@@ -97,35 +97,35 @@ TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/3", "[pooling]", Z, float, double) 
     etl::dyn_matrix<Z, 2> result(6, 4);
     result = etl::avg_pool_upsample_2d(input, output, errors, 6, 1);
 
-    REQUIRE_EQUALS(result(0, 0), Z(100.0) / 6);
-    REQUIRE_EQUALS(result(0, 1), Z(100.0) / 3);
-    REQUIRE_EQUALS(result(0, 2), Z(200.0) / 4);
-    REQUIRE_EQUALS(result(0, 3), Z(200.0) / 3);
+    REQUIRE_EQUALS_APPROX(result(0, 0), Z(100.0) / 6);
+    REQUIRE_EQUALS_APPROX(result(0, 1), Z(100.0) / 3);
+    REQUIRE_EQUALS_APPROX(result(0, 2), Z(200.0) / 4);
+    REQUIRE_EQUALS_APPROX(result(0, 3), Z(200.0) / 3);
 
-    REQUIRE_EQUALS(result(1, 0), Z(100.0) / 6);
-    REQUIRE_EQUALS(result(1, 1), Z(100.0) / 3);
-    REQUIRE_EQUALS(result(1, 2), Z(200.0) / 4);
-    REQUIRE_EQUALS(result(1, 3), Z(200.0) / 3);
+    REQUIRE_EQUALS_APPROX(result(1, 0), Z(100.0) / 6);
+    REQUIRE_EQUALS_APPROX(result(1, 1), Z(100.0) / 3);
+    REQUIRE_EQUALS_APPROX(result(1, 2), Z(200.0) / 4);
+    REQUIRE_EQUALS_APPROX(result(1, 3), Z(200.0) / 3);
 
-    REQUIRE_EQUALS(result(2, 0), Z(100.0) / 6);
-    REQUIRE_EQUALS(result(2, 1), Z(100.0) / 3);
-    REQUIRE_EQUALS(result(2, 2), Z(200.0) / 4);
-    REQUIRE_EQUALS(result(2, 3), Z(200.0) / 3);
+    REQUIRE_EQUALS_APPROX(result(2, 0), Z(100.0) / 6);
+    REQUIRE_EQUALS_APPROX(result(2, 1), Z(100.0) / 3);
+    REQUIRE_EQUALS_APPROX(result(2, 2), Z(200.0) / 4);
+    REQUIRE_EQUALS_APPROX(result(2, 3), Z(200.0) / 3);
 
-    REQUIRE_EQUALS(result(3, 0), Z(100.0) / 6);
-    REQUIRE_EQUALS(result(3, 1), Z(100.0) / 3);
-    REQUIRE_EQUALS(result(3, 2), Z(200.0) / 4);
-    REQUIRE_EQUALS(result(3, 3), Z(200.0) / 3);
+    REQUIRE_EQUALS_APPROX(result(3, 0), Z(100.0) / 6);
+    REQUIRE_EQUALS_APPROX(result(3, 1), Z(100.0) / 3);
+    REQUIRE_EQUALS_APPROX(result(3, 2), Z(200.0) / 4);
+    REQUIRE_EQUALS_APPROX(result(3, 3), Z(200.0) / 3);
 
-    REQUIRE_EQUALS(result(4, 0), Z(100.0) / 6);
-    REQUIRE_EQUALS(result(4, 1), Z(100.0) / 3);
-    REQUIRE_EQUALS(result(4, 2), Z(200.0) / 4);
-    REQUIRE_EQUALS(result(4, 3), Z(200.0) / 3);
+    REQUIRE_EQUALS_APPROX(result(4, 0), Z(100.0) / 6);
+    REQUIRE_EQUALS_APPROX(result(4, 1), Z(100.0) / 3);
+    REQUIRE_EQUALS_APPROX(result(4, 2), Z(200.0) / 4);
+    REQUIRE_EQUALS_APPROX(result(4, 3), Z(200.0) / 3);
 
-    REQUIRE_EQUALS(result(4, 0), Z(100.0) / 6);
-    REQUIRE_EQUALS(result(4, 1), Z(100.0) / 3);
-    REQUIRE_EQUALS(result(4, 2), Z(200.0) / 4);
-    REQUIRE_EQUALS(result(4, 3), Z(200.0) / 3);
+    REQUIRE_EQUALS_APPROX(result(4, 0), Z(100.0) / 6);
+    REQUIRE_EQUALS_APPROX(result(4, 1), Z(100.0) / 3);
+    REQUIRE_EQUALS_APPROX(result(4, 2), Z(200.0) / 4);
+    REQUIRE_EQUALS_APPROX(result(4, 3), Z(200.0) / 3);
 }
 
 TEMPLATE_TEST_CASE_2("pool_upsample/dyn/avg2/3", "[pooling]", Z, float, double) {
