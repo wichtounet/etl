@@ -81,18 +81,15 @@ void conv2_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
 #endif
 
     // Find the algorithm to use
-    cudnnConvolutionFwdAlgo_t conv_algo;
-    cudnn_check(cudnnGetConvolutionForwardAlgorithm(handle.get(), *input_tensor, *filter, convolution, *output_tensor,
-                                                    CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+    cudnnConvolutionFwdAlgoPerf_t algo;
+    int algos = 0;
+    cudnn_check(cudnnGetConvolutionForwardAlgorithm_v7(handle.get(), *input_tensor, *filter, convolution, *output_tensor,
+                                                    1, &algos, &algo));
 
     // Prepare the workspace
-    size_t workspace_size = 0;
-    cudnn_check(cudnnGetConvolutionForwardWorkspaceSize(handle.get(), *input_tensor, *filter, convolution, *output_tensor, conv_algo, &workspace_size));
-
     impl::cuda::cuda_memory<type> workspace;
-
-    if (workspace_size) {
-        workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
+    if (algo.memory) {
+        workspace = impl::cuda::cuda_allocate_only<type>(algo.memory);
     }
 
     // Allocate GPU memory, if necessary
@@ -103,8 +100,8 @@ void conv2_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
 
     // Perform the convolution
 
-    cudnn_check(cudnnConvolutionForward(handle.get(), alpha, *input_tensor, input.gpu_memory(), *filter, kernel.gpu_memory(), convolution, conv_algo,
-                                        workspace.get(), workspace_size, beta, *output_tensor, conv.gpu_memory()));
+    cudnn_check(cudnnConvolutionForward(handle.get(), alpha, *input_tensor, input.gpu_memory(), *filter, kernel.gpu_memory(), convolution, algo.algo,
+                                        workspace.get(), algo.memory, beta, *output_tensor, conv.gpu_memory()));
 
     conv.validate_gpu();
     conv.invalidate_cpu();
@@ -195,18 +192,15 @@ void conv4_forward_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
 #endif
 
     // Find the algorithm to use
-    cudnnConvolutionFwdAlgo_t conv_algo;
-    cudnn_check(cudnnGetConvolutionForwardAlgorithm(handle.get(), *input_tensor, *filter, convolution, *output_tensor,
-                                                    CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+    cudnnConvolutionFwdAlgoPerf_t algo;
+    int algos = 0;
+    cudnn_check(cudnnGetConvolutionForwardAlgorithm_v7(handle.get(), *input_tensor, *filter, convolution, *output_tensor,
+                                                    1, &algos, &algo));
 
     // Prepare the workspace
-    size_t workspace_size = 0;
-    cudnn_check(cudnnGetConvolutionForwardWorkspaceSize(handle.get(), *input_tensor, *filter, convolution, *output_tensor, conv_algo, &workspace_size));
-
     impl::cuda::cuda_memory<type> workspace;
-
-    if (workspace_size) {
-        workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
+    if (algo.memory) {
+        workspace = impl::cuda::cuda_allocate_only<type>(algo.memory);
     }
 
     // Allocate GPU memory, if necessary
@@ -217,8 +211,8 @@ void conv4_forward_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, si
 
     // Perform the convolution
 
-    cudnn_check(cudnnConvolutionForward(handle.get(), alpha, *input_tensor, input.gpu_memory(), *filter, kernel.gpu_memory(), convolution, conv_algo,
-                                        workspace.get(), workspace_size, beta, *output_tensor, conv.gpu_memory()));
+    cudnn_check(cudnnConvolutionForward(handle.get(), alpha, *input_tensor, input.gpu_memory(), *filter, kernel.gpu_memory(), convolution, algo.algo,
+                                        workspace.get(), algo.memory, beta, *output_tensor, conv.gpu_memory()));
 
     conv.validate_gpu();
     conv.invalidate_cpu();
@@ -302,18 +296,15 @@ void conv4_backward_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_
 #endif
 
     // Find the algorithm to use
-    cudnnConvolutionBwdFilterAlgo_t conv_algo;
-    cudnn_check(cudnnGetConvolutionBackwardFilterAlgorithm(handle.get(), *input_tensor, *output_tensor, convolution, *filter,
-                                                           CUDNN_CONVOLUTION_BWD_FILTER_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+    cudnnConvolutionBwdFilterAlgoPerf_t algo;
+    int algos = 0;
+    cudnn_check(cudnnGetConvolutionBackwardFilterAlgorithm_v7(handle.get(), *input_tensor, *output_tensor, convolution, *filter,
+                                                           1, &algos, &algo));
 
     // Prepare the workspace
-    size_t workspace_size = 0;
-    cudnn_check(cudnnGetConvolutionBackwardFilterWorkspaceSize(handle.get(), *input_tensor, *output_tensor, convolution, *filter, conv_algo, &workspace_size));
-
     impl::cuda::cuda_memory<type> workspace;
-
-    if (workspace_size) {
-        workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
+    if (algo.memory) {
+        workspace = impl::cuda::cuda_allocate_only<type>(algo.memory);
     }
 
     // Allocate GPU memory, if necessary
@@ -325,7 +316,7 @@ void conv4_backward_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionBackwardFilter(handle.get(), alpha, *input_tensor, input.gpu_memory(), *output_tensor, kernel.gpu_memory(), convolution,
-                                               conv_algo, workspace.get(), workspace_size, beta, *filter, conv.gpu_memory()));
+                                               algo.algo, workspace.get(), algo.memory, beta, *filter, conv.gpu_memory()));
 
     conv.validate_gpu();
     conv.invalidate_cpu();
@@ -411,18 +402,15 @@ void conv2_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
 #endif
 
     // Find the algorithm to use
-    cudnnConvolutionBwdDataAlgo_t conv_algo;
-    cudnn_check(cudnnGetConvolutionBackwardDataAlgorithm(handle.get(), *filter, *input_tensor, convolution, *output_tensor,
-                                                         CUDNN_CONVOLUTION_BWD_DATA_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+    cudnnConvolutionBwdDataAlgoPerf_t algo;
+    int algos = 0;
+    cudnn_check(cudnnGetConvolutionBackwardDataAlgorithm_v7(handle.get(), *filter, *input_tensor, convolution, *output_tensor,
+                                                         1, &algos, &algo));
 
     // Prepare the workspace
-    size_t workspace_size = 0;
-    cudnn_check(cudnnGetConvolutionBackwardDataWorkspaceSize(handle.get(), *filter, *input_tensor, convolution, *output_tensor, conv_algo, &workspace_size));
-
     impl::cuda::cuda_memory<type> workspace;
-
-    if (workspace_size) {
-        workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
+    if (algo.memory) {
+        workspace = impl::cuda::cuda_allocate_only<type>(algo.memory);
     }
 
     // Allocate GPU memory, if necessary
@@ -433,8 +421,8 @@ void conv2_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
 
     // Perform the convolution
 
-    cudnn_check(cudnnConvolutionBackwardData(handle.get(), alpha, *filter, kernel.gpu_memory(), *input_tensor, input.gpu_memory(), convolution, conv_algo,
-                                             workspace.get(), workspace_size, beta, *output_tensor, conv.gpu_memory()));
+    cudnn_check(cudnnConvolutionBackwardData(handle.get(), alpha, *filter, kernel.gpu_memory(), *input_tensor, input.gpu_memory(), convolution, algo.algo,
+                                             workspace.get(), algo.memory, beta, *output_tensor, conv.gpu_memory()));
 
     conv.validate_gpu();
     conv.invalidate_cpu();
@@ -514,18 +502,15 @@ void conv2_valid_multi_set(I& input, K&& kernel, C&& conv, size_t s1, size_t s2,
 #endif
 
     // Find the algorithm to use
-    cudnnConvolutionFwdAlgo_t conv_algo;
-    cudnn_check(cudnnGetConvolutionForwardAlgorithm(handle.get(), input_tensor, filter, convolution, output_tensor,
-                                                    CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+    cudnnConvolutionFwdAlgoPerf_t algo;
+    int algos = 0;
+    cudnn_check(cudnnGetConvolutionForwardAlgorithm_v7(handle.get(), input_tensor, filter, convolution, output_tensor,
+                                                    1, &algos, &algo));
 
     // Prepare the workspace
-    size_t workspace_size = 0;
-    cudnn_check(cudnnGetConvolutionForwardWorkspaceSize(handle.get(), input_tensor, filter, convolution, output_tensor, conv_algo, &workspace_size));
-
     impl::cuda::cuda_memory<type> workspace;
-
-    if (workspace_size) {
-        workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
+    if (algo.memory) {
+        workspace = impl::cuda::cuda_allocate_only<type>(algo.memory);
     }
 
     // Allocate GPU memory, if necessary
@@ -536,8 +521,8 @@ void conv2_valid_multi_set(I& input, K&& kernel, C&& conv, size_t s1, size_t s2,
 
     // Perform the convolution
 
-    cudnn_check(cudnnConvolutionForward(handle.get(), alpha, input_tensor, input.gpu_memory(), filter, kernel.gpu_memory(), convolution, conv_algo,
-                                        workspace.get(), workspace_size, beta, output_tensor, conv.gpu_memory()));
+    cudnn_check(cudnnConvolutionForward(handle.get(), alpha, input_tensor, input.gpu_memory(), filter, kernel.gpu_memory(), convolution, algo.algo,
+                                        workspace.get(), algo.memory, beta, output_tensor, conv.gpu_memory()));
 
     conv.validate_gpu();
     conv.invalidate_cpu();
@@ -622,18 +607,15 @@ void conv4_backward_data_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMo
 #endif
 
     // Find the algorithm to use
-    cudnnConvolutionBwdDataAlgo_t conv_algo;
-    cudnn_check(cudnnGetConvolutionBackwardDataAlgorithm(handle.get(), *filter, *input_tensor, convolution, *output_tensor,
-                                                         CUDNN_CONVOLUTION_BWD_DATA_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+    cudnnConvolutionBwdDataAlgoPerf_t algo;
+    int algos = 0;
+    cudnn_check(cudnnGetConvolutionBackwardDataAlgorithm_v7(handle.get(), *filter, *input_tensor, convolution, *output_tensor,
+                                                         1, &algos, &algo));
 
     // Prepare the workspace
-    size_t workspace_size = 0;
-    cudnn_check(cudnnGetConvolutionBackwardDataWorkspaceSize(handle.get(), *filter, *input_tensor, convolution, *output_tensor, conv_algo, &workspace_size));
-
     impl::cuda::cuda_memory<type> workspace;
-
-    if (workspace_size) {
-        workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
+    if (algo.memory) {
+        workspace = impl::cuda::cuda_allocate_only<type>(algo.memory);
     }
 
     // Allocate GPU memory, if necessary
@@ -644,8 +626,8 @@ void conv4_backward_data_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMo
 
     // Perform the convolution
 
-    cudnn_check(cudnnConvolutionBackwardData(handle.get(), alpha, *filter, kernel.gpu_memory(), *input_tensor, input.gpu_memory(), convolution, conv_algo,
-                                             workspace.get(), workspace_size, beta, *output_tensor, conv.gpu_memory()));
+    cudnn_check(cudnnConvolutionBackwardData(handle.get(), alpha, *filter, kernel.gpu_memory(), *input_tensor, input.gpu_memory(), convolution, algo.algo,
+                                             workspace.get(), algo.memory, beta, *output_tensor, conv.gpu_memory()));
 
     conv.validate_gpu();
     conv.invalidate_cpu();
