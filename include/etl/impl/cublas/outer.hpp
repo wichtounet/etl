@@ -29,7 +29,7 @@ namespace etl::impl::cublas {
  * \param b The rhs expression
  * \param c The output expression
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_single_precision<A, B, C>)>
+template <etl_single_precision A, etl_single_precision B, etl_single_precision C>
 void batch_outer(const A& a, const B& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
@@ -55,7 +55,7 @@ void batch_outer(const A& a, const B& b, C&& c) {
 /*!
  * \copydoc batch_outer
  */
-template <typename A, typename B, typename C, cpp_enable_iff(all_double_precision<A, B, C>)>
+template <etl_double_precision A, etl_double_precision B, etl_double_precision C>
 void batch_outer(const A& a, const B& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
