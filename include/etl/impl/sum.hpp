@@ -142,7 +142,12 @@ struct sum_impl {
         else if
             constexpr_select(impl == etl::sum_impl::CUBLAS) {
                 inc_counter("impl:cublas");
-                return impl::cublas::sum(e);
+                if constexpr (gpu_computable<E>) {
+                    return impl::cublas::sum(e);
+                } else {
+                    cpp_unreachable("CUBLAS called on invalid types");
+                    return value_t<E>(0);
+                }
             }
         else {
             inc_counter("impl:std");

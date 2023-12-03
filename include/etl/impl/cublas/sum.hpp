@@ -36,7 +36,7 @@ namespace etl::impl::cublas {
  * \brief Compute the sum of a
  * \param a The lhs expression
  */
-template <typename A, cpp_enable_iff(is_gpu_computable<A>&& is_single_precision<A>)>
+template <gpu_computable_single_precision A>
 float sum(const A& a) {
     decltype(auto) t1 = smart_forward_gpu(a);
 
@@ -68,7 +68,7 @@ float sum(const A& a) {
 /*!
  * \copydoc sum
  */
-template <typename A, cpp_enable_iff(is_gpu_computable<A>&& is_double_precision<A>)>
+template <gpu_computable_double_precision A>
 double sum(const A& a) {
     decltype(auto) t1 = smart_forward_gpu(a);
 
@@ -90,19 +90,10 @@ double sum(const A& a) {
 }
 
 /*!
- * \copydoc sum
- */
-template <typename A, cpp_enable_iff(!is_gpu_computable<A> || !is_floating<A>)>
-value_t<A> sum(const A& /*a*/) {
-    cpp_unreachable("CUBLAS not enabled/available");
-    return 0.0;
-}
-
-/*!
  * \brief Compute the sum of a
  * \param a The lhs expression
  */
-template <typename A, cpp_enable_iff(is_gpu_computable<A>&& is_single_precision<A>)>
+template <gpu_computable_single_precision A>
 float asum(const A& a) {
     decltype(auto) handle = start_cublas();
 
@@ -118,7 +109,7 @@ float asum(const A& a) {
 /*!
  * \copydoc sum
  */
-template <typename A, cpp_enable_iff(is_gpu_computable<A>&& is_double_precision<A>)>
+template <gpu_computable_double_precision A>
 double asum(const A& a) {
     decltype(auto) handle = start_cublas();
 
@@ -129,15 +120,6 @@ double asum(const A& a) {
     double prod = 0.0;
     cublas_check(cublasDasum(handle.get(), etl::size(a), t1.gpu_memory(), 1, &prod));
     return prod;
-}
-
-/*!
- * \copydoc asum
- */
-template <typename A, cpp_enable_iff(!is_gpu_computable<A> || !is_floating<A>)>
-value_t<A> asum(const A& /*a*/) {
-    cpp_unreachable("CUBLAS not enabled/available");
-    return 0.0;
 }
 
 #else
