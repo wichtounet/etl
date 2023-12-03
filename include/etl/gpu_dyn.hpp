@@ -142,10 +142,8 @@ public:
      * \param e The expression containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename E,
-              cpp_enable_iff(!std::is_same_v<std::decay_t<E>, gpu_dyn_matrix_impl<T, SO, D>> && std::is_convertible_v<value_t<E>, value_type>
-                             && is_etl_expr<E>)>
-    gpu_dyn_matrix_impl& operator=(E&& e) noexcept {
+    template <etl_expr E>
+    gpu_dyn_matrix_impl& operator=(E&& e) noexcept requires(!std::same_as<std::decay_t<E>, gpu_dyn_matrix_impl<T, SO, D>> && std::convertible_to<value_t<E>, value_type>) {
         // It is possible that the matrix was not initialized before
         // In the case, get the the dimensions from the expression and
         // initialize the matrix

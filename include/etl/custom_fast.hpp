@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <type_traits>
 #include "etl/fast_base.hpp"
 #include "etl/direct_fill.hpp" //direct_fill with GPU support
 
@@ -133,8 +134,8 @@ public:
      * \param container The STL container to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename C, cpp_enable_iff(!std::is_same_v<C, value_type> && std::is_convertible_v<value_t<C>, value_type>)>
-    custom_fast_matrix_impl& operator=(const C& container) noexcept {
+    template <typename C>
+    custom_fast_matrix_impl& operator=(const C& container) noexcept requires(!std::same_as<C, value_type> && std::convertible_to<value_t<C>, value_type>) {
         validate_assign(*this, container);
         std::copy(container.begin(), container.end(), begin());
 
@@ -149,8 +150,8 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_iff(std::is_convertible_v<value_t<E>, value_type> && is_etl_expr<E>)>
-    custom_fast_matrix_impl& operator=(E&& e) {
+    template <etl_expr E>
+    custom_fast_matrix_impl& operator=(E&& e) requires(std::convertible_to<value_t<E>, value_type>) {
         validate_assign(*this, e);
 
         // Avoid aliasing issues
@@ -180,8 +181,8 @@ public:
      * \param value The value to assign to each element
      * \return a reference to the fast matrix
      */
-    template <typename VT, cpp_enable_iff(std::is_convertible_v<VT, value_type> || std::is_assignable_v<T&, VT>)>
-    custom_fast_matrix_impl& operator=(const VT& value) noexcept {
+    template <typename VT>
+    custom_fast_matrix_impl& operator=(const VT& value) noexcept requires(std::convertible_to<VT, value_type> || std::is_assignable_v<T&, VT>) {
         direct_fill(*this, value);
 
         return *this;
