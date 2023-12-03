@@ -29,7 +29,7 @@ namespace etl::impl::cublas {
  * \param b The rhs expression
  * \param c The output expression
  */
-template <typename A, typename B, cpp_enable_iff(all_dma<A, B>&& all_single_precision<A, B>)>
+template <etl_dma_single_precision A, etl_dma_single_precision B>
 float dot(const A& a, const B& b) {
     decltype(auto) handle = start_cublas();
 
@@ -44,7 +44,7 @@ float dot(const A& a, const B& b) {
 /*!
  * \copydoc batch_outer
  */
-template <typename A, typename B, cpp_enable_iff(all_dma<A, B>&& all_double_precision<A, B>)>
+template <etl_dma_double_precision A, etl_dma_double_precision B>
 double dot(const A& a, const B& b) {
     decltype(auto) handle = start_cublas();
 
@@ -54,15 +54,6 @@ double dot(const A& a, const B& b) {
     double prod = 0.0;
     cublas_check(cublasDdot(handle.get(), etl::size(a), a.gpu_memory(), 1, b.gpu_memory(), 1, &prod));
     return prod;
-}
-
-/*!
- * \copydoc dot
- */
-template <typename A, typename B, cpp_enable_iff(!is_dma<A>)>
-value_t<A> dot(const A& /*a*/, const B& /*b*/) {
-    cpp_unreachable("BLAS not enabled/available");
-    return 0.0;
 }
 
 #else
