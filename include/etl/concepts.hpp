@@ -186,6 +186,15 @@ concept etl_dma_single_precision = etl_dma<T> && etl_single_precision<T>;
 template <typename T>
 concept etl_dma_double_precision = etl_dma<T> && etl_double_precision<T>;
 
+template <typename T>
+concept gpu_computable = etl_expr<T> && decay_traits<T>::gpu_computable;
+
+template <typename T>
+concept gpu_computable_single_precision = gpu_computable<T> && etl_single_precision<T>;
+
+template <typename T>
+concept gpu_computable_double_precision = gpu_computable<T> && etl_double_precision<T>;
+
 // Complement the standard library
 
 template<typename T>
