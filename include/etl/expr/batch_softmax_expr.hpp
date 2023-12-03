@@ -95,22 +95,20 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <typename C, cpp_enable_iff(decay_traits<C>::storage_order == storage_order)>
+    template <etl_expr C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, C>, "Function expression only supported for ETL expressions");
+        if constexpr (decay_traits<C>::storage_order == storage_order) {
+            inc_counter("temp:assign");
 
-        inc_counter("temp:assign");
+            auto& a = this->a();
 
-        auto& a = this->a();
+            standard_evaluator::pre_assign_rhs(a);
 
-        standard_evaluator::pre_assign_rhs(a);
+            check(a, c);
 
-        check(a, c);
+            constexpr_select auto impl = select_impl<C>();
 
-        constexpr_select auto impl = select_impl<C>();
-
-        if
-            constexpr_select(impl == batch_softmax_impl::CUDNN) {
+            if constexpr_select (impl == batch_softmax_impl::CUDNN) {
                 inc_counter("impl:cudnn");
 
                 decltype(auto) a_gpu = smart_forward_gpu(a);
@@ -120,9 +118,7 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
                 } else {
                     impl::cudnn::softmax(a_gpu, c);
                 }
-            }
-        else if
-            constexpr_select(impl == batch_softmax_impl::STD) {
+            } else if constexpr_select (impl == batch_softmax_impl::STD) {
                 inc_counter("impl:std");
 
                 if constexpr (Stable) {
@@ -135,19 +131,12 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
                         c(i)   = exp(a(i) - m) / sum(exp(a(i) - m));
                     }
                 }
+            } else {
+                cpp_unreachable("Invalid selection for batch_softmax");
             }
-        else {
-            cpp_unreachable("Invalid selection for batch_softmax");
+        } else {
+            std_assign_evaluate(*this, c);
         }
-    }
-
-    /*!
-     * \brief Assign to a matrix of a different storage order
-     * \param c The expression to which assign
-     */
-    template <typename C, cpp_enable_iff(decay_traits<C>::storage_order != storage_order)>
-    void assign_to(C&& c) const {
-        std_assign_evaluate(*this, c);
     }
 
     /*!
