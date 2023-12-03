@@ -30,7 +30,7 @@ namespace etl::impl::cudnn {
 /*!
  * \brief Compare the dimensions of the two given matrices
  */
-template <typename M, cpp_enable_iff(is_1d<M>)>
+template <etl_1d M>
 bool fast_compare(M& lhs, M& rhs) {
     return etl::dim<0>(lhs) == etl::dim<0>(rhs);
 }
@@ -38,7 +38,7 @@ bool fast_compare(M& lhs, M& rhs) {
 /*!
  * \brief Compare the dimensions of the two given matrices
  */
-template <typename M, cpp_enable_iff(is_2d<M>)>
+template <etl_2d M>
 bool fast_compare(M& lhs, M& rhs) {
     return etl::dim<0>(lhs) == etl::dim<0>(rhs) && etl::dim<1>(lhs) == etl::dim<1>(rhs);
 }
@@ -46,7 +46,7 @@ bool fast_compare(M& lhs, M& rhs) {
 /*!
  * \brief Compare the dimensions of the two given matrices
  */
-template <typename M, cpp_enable_iff(is_3d<M>)>
+template <etl_3d M>
 bool fast_compare(M& lhs, M& rhs) {
     return etl::dim<0>(lhs) == etl::dim<0>(rhs) && etl::dim<1>(lhs) == etl::dim<1>(rhs) && etl::dim<2>(lhs) == etl::dim<2>(rhs);
 }
@@ -54,7 +54,7 @@ bool fast_compare(M& lhs, M& rhs) {
 /*!
  * \brief Compare the dimensions of the two given matrices
  */
-template <typename M, cpp_enable_iff(is_4d<M>)>
+template <etl_4d M>
 bool fast_compare(M& lhs, M& rhs) {
     return etl::dim<0>(lhs) == etl::dim<0>(rhs) && etl::dim<1>(lhs) == etl::dim<1>(rhs) && etl::dim<2>(lhs) == etl::dim<2>(rhs)
            && etl::dim<3>(lhs) == etl::dim<3>(rhs);

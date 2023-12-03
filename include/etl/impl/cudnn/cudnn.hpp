@@ -169,7 +169,7 @@ inline cudnn_wrapper<cudnnPoolingDescriptor_t>::~cudnn_wrapper() {
  * \param input The input matrix
  * \return the created CUDNN tensor
  */
-template <typename I, cpp_enable_iff(is_1d<I>)>
+template <etl_1d I>
 cudnnTensorDescriptor_t create_tensor(I&& input) {
     using T = value_t<I>;
 
@@ -187,7 +187,7 @@ cudnnTensorDescriptor_t create_tensor(I&& input) {
  * \param input The input matrix
  * \return the created CUDNN tensor
  */
-template <typename I, cpp_enable_iff(is_2d<I>)>
+template <etl_2d I>
 cudnnTensorDescriptor_t create_tensor(I&& input) {
     using T = value_t<I>;
 
@@ -205,7 +205,7 @@ cudnnTensorDescriptor_t create_tensor(I&& input) {
  * \param input The input matrix
  * \return the created CUDNN tensor
  */
-template <typename I, cpp_enable_iff(is_3d<I>)>
+template <etl_3d I>
 cudnnTensorDescriptor_t create_tensor(I&& input) {
     using T = value_t<I>;
 
@@ -223,7 +223,7 @@ cudnnTensorDescriptor_t create_tensor(I&& input) {
  * \param input The input matrix
  * \return the created CUDNN tensor
  */
-template <typename I, cpp_enable_iff(is_4d<I>)>
+template <etl_4d I>
 cudnnTensorDescriptor_t create_tensor(I&& input) {
     using T = value_t<I>;
 
@@ -252,7 +252,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_wrapper(I&& input) {
  * \param input The input matrix
  * \return the created CUDNN tensor
  */
-template <typename I, cpp_enable_iff(is_3d<I>)>
+template <etl_3d I>
 cudnnTensorDescriptor_t create_tensor_5d(I&& input) {
     using T = value_t<I>;
 
@@ -277,7 +277,7 @@ cudnnTensorDescriptor_t create_tensor_5d(I&& input) {
  * \param input The input matrix
  * \return the created CUDNN tensor
  */
-template <typename I, cpp_enable_iff(is_4d<I>)>
+template <etl_4d I>
 cudnnTensorDescriptor_t create_tensor_5d(I&& input) {
     using T = value_t<I>;
 
@@ -346,7 +346,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_flat_wrapper(I&& input) {
  * \param input The input matrix
  * \return the created CUDNN tensor
  */
-template <typename I, cpp_enable_iff(is_1d<I>)>
+template <etl_1d I>
 cudnnTensorDescriptor_t create_tensor_front(I&& input) {
     using T = value_t<I>;
 
@@ -364,7 +364,7 @@ cudnnTensorDescriptor_t create_tensor_front(I&& input) {
  * \param input The input matrix
  * \return the created CUDNN tensor
  */
-template <typename I, cpp_enable_iff(is_2d<I>)>
+template <etl_2d I>
 cudnnTensorDescriptor_t create_tensor_front(I&& input) {
     using T = value_t<I>;
 
@@ -382,7 +382,7 @@ cudnnTensorDescriptor_t create_tensor_front(I&& input) {
  * \param input The input matrix
  * \return the created CUDNN tensor
  */
-template <typename I, cpp_enable_iff(is_4d<I>)>
+template <etl_4d I>
 cudnnTensorDescriptor_t create_tensor_front(I&& input) {
     using T = value_t<I>;
 
@@ -411,7 +411,7 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor_front_wrapper(I&& input) {
  * \param input The input matrix
  * \return the created CUDNN filter tensor
  */
-template <typename I, cpp_enable_iff(is_2d<I>)>
+template <etl_2d I>
 cudnnFilterDescriptor_t create_filter(I&& kernel) {
     using T = value_t<I>;
 
@@ -429,7 +429,7 @@ cudnnFilterDescriptor_t create_filter(I&& kernel) {
  * \param input The input matrix
  * \return the created CUDNN filter tensor
  */
-template <typename I, cpp_enable_iff(is_4d<I>)>
+template <etl_4d I>
 cudnnFilterDescriptor_t create_filter(I&& kernel) {
     using T = value_t<I>;
 
