@@ -177,6 +177,15 @@ concept double_precision = std::is_same_v<T, double>;
 template <typename T>
 concept etl_double_precision = etl_expr<T> && double_precision<value_t<T>>;
 
+template <typename T>
+concept etl_dma = etl_expr<T> && decay_traits<T>::is_direct;
+
+template <typename T>
+concept etl_dma_single_precision = etl_dma<T> && etl_single_precision<T>;
+
+template <typename T>
+concept etl_dma_double_precision = etl_dma<T> && etl_double_precision<T>;
+
 // Complement the standard library
 
 template<typename T>
