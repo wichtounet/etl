@@ -141,8 +141,8 @@ struct sum_impl {
             }
         else if
             constexpr_select(impl == etl::sum_impl::CUBLAS) {
-                inc_counter("impl:cublas");
-                if constexpr (gpu_computable<E>) {
+                if constexpr (gpu_computable_single_precision<E> || gpu_computable_double_precision<E>) {
+                    inc_counter("impl:cublas");
                     return impl::cublas::sum(e);
                 } else {
                     cpp_unreachable("CUBLAS called on invalid types");
@@ -179,8 +179,13 @@ struct asum_impl {
             }
         else if
             constexpr_select(impl == etl::sum_impl::CUBLAS) {
-                inc_counter("impl:cublas");
-                return impl::cublas::asum(e);
+                if constexpr (gpu_computable_single_precision<E> || gpu_computable_double_precision<E>) {
+                    inc_counter("impl:cublas");
+                    return impl::cublas::asum(e);
+                } else {
+                    cpp_unreachable("CUBLAS called on invalid types");
+                    return value_t<E>(0);
+                }
             }
         else {
             inc_counter("impl:std");
