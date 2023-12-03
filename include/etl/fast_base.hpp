@@ -321,8 +321,8 @@ public:
      * \param args The position indices
      * \return The value of the element at (args...)
      */
-    template <size_c... S, cpp_enable_iff(sizeof...(S) == sizeof...(Dims))>
-    value_type& operator()(S... args) noexcept(assert_nothrow) {
+    template <size_c... S>
+    value_type& operator()(S... args) noexcept(assert_nothrow) requires (sizeof...(S) == sizeof...(Dims)) {
         return access(static_cast<size_t>(args)...);
     }
 
@@ -331,8 +331,8 @@ public:
      * \param args The position indices
      * \return The value of the element at (args...)
      */
-    template <size_c... S, cpp_enable_iff(sizeof...(S) == sizeof...(Dims))>
-    const value_type& operator()(S... args) const noexcept(assert_nothrow) {
+    template <size_c... S>
+    const value_type& operator()(S... args) const noexcept(assert_nothrow) requires (sizeof...(S) == sizeof...(Dims)) {
         return access(static_cast<size_t>(args)...);
     }
 
