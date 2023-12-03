@@ -110,8 +110,8 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) + 1 == decay_traits<sub_type>::dimensions())>
-    const_return_type operator()(size_t i, S... args) const {
+    template <typename... S>
+    const_return_type operator()(size_t i, S... args) const requires(sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()) {
         return sub(i + first, static_cast<size_t>(args)...);
     }
 
@@ -120,8 +120,8 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) + 1 == decay_traits<sub_type>::dimensions())>
-    return_type operator()(size_t i, S... args) {
+    template <typename... S>
+    return_type operator()(size_t i, S... args)  requires(sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()){
         return sub(i + first, static_cast<size_t>(args)...);
     }
 
@@ -377,8 +377,8 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) + 1 == decay_traits<sub_type>::dimensions())>
-    const_return_type operator()(size_t i, S... args) const {
+    template <typename... S>
+    const_return_type operator()(size_t i, S... args) const requires(sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()) {
         ensure_cpu_up_to_date();
         return memory[dyn_index(*this, i, args...)];
     }
@@ -388,8 +388,8 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) + 1 == decay_traits<sub_type>::dimensions())>
-    return_type operator()(size_t i, S... args) {
+    template <typename... S>
+    return_type operator()(size_t i, S... args) requires(sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()) {
         ensure_cpu_up_to_date();
         invalidate_gpu();
         return memory[dyn_index(*this, i, args...)];
