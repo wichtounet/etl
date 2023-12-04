@@ -120,9 +120,10 @@ public:
      * \brief Construct a fast matrix from the given STL container
      * \param container The container to get values from
      */
-    template <typename Container,
-              cpp_enable_iff(!is_complex_t<Container> && std::is_convertible_v<typename Container::value_type, value_type> && !is_etl_expr<Container>)>
-    explicit fast_matrix_impl(const Container& container) : base_type() {
+    template <std_container Container>
+    explicit fast_matrix_impl(const Container& container) requires(
+            !is_complex_t<Container> && std::is_convertible_v<typename Container::value_type, value_type>) :
+            base_type() {
         validate_assign(*this, container);
         std::copy(container.begin(), container.end(), begin());
     }
@@ -210,9 +211,8 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E,
-              cpp_enable_iff(is_etl_expr<E> && std::is_convertible_v<value_t<E>, value_type> && !std::is_same_v<std::decay_t<E>, this_type>)>
-    fast_matrix_impl& operator=(E&& e) {
+    template <etl_expr E>
+    fast_matrix_impl& operator=(E&& e) requires(std::convertible_to<value_t<E>, value_type> && !std::same_as<std::decay_t<E>, this_type>) {
         validate_assign(*this, e);
 
         // Avoid aliasing issues
@@ -242,8 +242,8 @@ public:
      * \param value The value to assign to each element
      * \return a reference to the fast matrix
      */
-    template <typename VT, cpp_enable_iff(std::is_convertible_v<VT, value_type> || std::is_assignable_v<T&, VT>)>
-    fast_matrix_impl& operator=(const VT& value) noexcept {
+    template <typename VT>
+    fast_matrix_impl& operator=(const VT& value) noexcept requires(std::convertible_to<VT, value_type> || std::is_assignable_v<T&, VT>) {
         direct_fill(*this, value);
 
         return *this;
