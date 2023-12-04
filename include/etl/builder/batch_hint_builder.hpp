@@ -44,7 +44,7 @@ auto batch_hint(Expr&& expr) {
         constexpr size_t left_dimensions  = decay_traits<left_type>::dimensions();
         constexpr size_t right_dimensions = decay_traits<right_type>::dimensions();
 
-        if constexpr (std::is_same_v<operator_type, mul_binary_op<value_type>>) {
+        if constexpr (std::same_as<operator_type, mul_binary_op<value_type>>) {
             if constexpr (is_binary_expr<right_type>) {
                 auto& right_expr = expr.get_rhs();
 
@@ -54,7 +54,7 @@ auto batch_hint(Expr&& expr) {
                 using right_left_type  = typename right_type::left_type;
                 using right_right_type = typename right_type::right_type;
 
-                if constexpr (std::is_same_v<right_operator_type, minus_binary_op<right_value_type>>) {
+                if constexpr (std::same_as<right_operator_type, minus_binary_op<right_value_type>>) {
                     constexpr size_t right_left_dimensions  = decay_traits<right_left_type>::dimensions();
                     constexpr size_t right_right_dimensions = decay_traits<right_right_type>::dimensions();
 
@@ -86,7 +86,7 @@ auto batch_hint(Expr&& expr) {
                     return std::forward<Expr>(expr);
                 }
             }
-        } else if constexpr (std::is_same_v<operator_type, plus_binary_op<value_type>>) {
+        } else if constexpr (std::same_as<operator_type, plus_binary_op<value_type>>) {
             if constexpr (is_binary_expr<left_type>) {
                 auto& left_expr = expr.get_lhs();
 
@@ -96,7 +96,7 @@ auto batch_hint(Expr&& expr) {
                 using left_left_type  = typename left_type::left_type;
                 using left_right_type = typename left_type::right_type;
 
-                if constexpr (std::is_same_v<left_operator_type, mul_binary_op<left_value_type>>) {
+                if constexpr (std::same_as<left_operator_type, mul_binary_op<left_value_type>>) {
                     constexpr size_t left_left_dimensions  = decay_traits<left_left_type>::dimensions();
                     constexpr size_t left_right_dimensions = decay_traits<left_right_type>::dimensions();
 

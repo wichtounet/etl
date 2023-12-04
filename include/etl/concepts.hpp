@@ -166,13 +166,13 @@ template <typename T>
 concept sub_capable = matrix<T> || generator<T>;
 
 template <typename T>
-concept single_precision = std::is_same_v<T, float>;
+concept single_precision = std::same_as<T, float>;
 
 template <typename T>
 concept etl_single_precision = etl_expr<T> && single_precision<value_t<T>>;
 
 template <typename T>
-concept double_precision = std::is_same_v<T, double>;
+concept double_precision = std::same_as<T, double>;
 
 template <typename T>
 concept etl_double_precision = etl_expr<T> && double_precision<value_t<T>>;

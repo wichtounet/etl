@@ -35,7 +35,7 @@ constexpr etl::dot_impl select_default_dot_impl() {
         return etl::dot_impl::BLAS;
     }
 
-    if (vec_enabled && all_vectorizable<vector_mode, A, B> && std::is_same_v<default_intrinsic_type<value_t<A>>, default_intrinsic_type<value_t<B>>>) {
+    if (vec_enabled && all_vectorizable<vector_mode, A, B> && std::same_as<default_intrinsic_type<value_t<A>>, default_intrinsic_type<value_t<B>>>) {
         return etl::dot_impl::VEC;
     }
 

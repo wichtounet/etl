@@ -23,13 +23,13 @@ using clock_resolution = nanoseconds;               ///< The clock resolution us
  */
 template <typename Resolution>
 std::string resolution_to_string() {
-    if (std::is_same_v<Resolution, seconds>) {
+    if constexpr (std::same_as<Resolution, seconds>) {
         return "s";
-    } else if (std::is_same_v<Resolution, milliseconds>) {
+    } else if constexpr (std::same_as<Resolution, milliseconds>) {
         return "ms";
-    } else if (std::is_same_v<Resolution, microseconds>) {
+    } else if constexpr (std::same_as<Resolution, microseconds>) {
         return "us";
-    } else if (std::is_same_v<Resolution, nanoseconds>) {
+    } else if constexpr (std::same_as<Resolution, nanoseconds>) {
         return "ns";
     } else {
         return "?";
