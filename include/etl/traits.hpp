@@ -181,7 +181,7 @@ struct is_gpu_temporary_impl<E, std::enable_if_t<is_base_of_template_tb<std::dec
  *
  * \tparam T the type to introspect
  */
-template <typename T, typename Enable>
+template <typename T>
 struct etl_traits {
     static constexpr bool is_etl         = false; ///< Indicates if T is an ETL type
     static constexpr bool is_transformer = false; ///< Indicates if T is a transformer
@@ -1039,7 +1039,8 @@ using const_return_helper = std::conditional_t<std::is_lvalue_reference_v<S>, co
  * \brief Specialization for value structures
  */
 template <typename T>
-struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>>> {
+requires(is_etl_value_class<T>)
+struct etl_traits<T> {
     using value_type = typename T::value_type; ///< The value type of the expression
 
     static constexpr bool is_etl         = true;                                          ///< Indicates if the type is an ETL expression

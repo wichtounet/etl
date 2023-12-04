@@ -234,7 +234,7 @@ struct scalar {
  * \brief Specialization scalar
  */
 template <typename T>
-struct etl_traits<etl::scalar<T>, void> {
+struct etl_traits<etl::scalar<T>> {
     using value_type = T; ///< The value type of the expression
 
     static constexpr bool is_etl         = true;                                 ///< Indicates if the type is an ETL expression

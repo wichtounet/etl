@@ -64,7 +64,7 @@ struct is_var_2<TT, TT<V1, V2, R...>> : std::true_type {};
  *
  * \tparam T the type to introspect
  */
-template <typename T, typename Enable = void>
+template <typename T>
 struct etl_traits;
 
 /*!

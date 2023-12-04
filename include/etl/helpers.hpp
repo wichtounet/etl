@@ -181,13 +181,15 @@ struct safe_dimensions_impl;
  * \brief Utility to get the dimensions of an expressions, with support for generator
  */
 template <typename E>
-struct safe_dimensions_impl<E> requires(generator<E>) : std::integral_constant<size_t, std::numeric_limits<size_t>::max()> {};
+requires(generator<E>)
+struct safe_dimensions_impl<E>  : std::integral_constant<size_t, std::numeric_limits<size_t>::max()> {};
 
 /*!
  * \brief Utility to get the dimensions of an expressions, with support for generator
  */
 template <typename E>
-struct safe_dimensions_impl<E> requires(!generator<E>) : std::integral_constant<size_t, etl_traits<E>::dimensions()> {};
+requires(!generator<E>)
+struct safe_dimensions_impl<E>  : std::integral_constant<size_t, etl_traits<E>::dimensions()> {};
 
 /*!
  * \brief Utility to get the dimensions of an expressions, with support for generator
