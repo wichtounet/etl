@@ -22,15 +22,9 @@ namespace etl {
  * \brief View that shows a sub matrix of an expression
  * \tparam T The type of expression on which the view is made
  */
-template <typename T, bool Aligned, typename Enable>
-struct sub_view;
-
-/*!
- * \brief View that shows a sub matrix of an expression
- * \tparam T The type of expression on which the view is made
- */
 template <typename T, bool Aligned>
-struct sub_view<T, Aligned, std::enable_if_t<!fast_sub_view_able<T>>> final : iterable<sub_view<T, Aligned>, false>,
+requires(!fast_sub_view_able<T>)
+struct sub_view<T, Aligned> final : iterable<sub_view<T, Aligned>, false>,
                                                                               assignable<sub_view<T, Aligned>, value_t<T>>,
                                                                               value_testable<sub_view<T, Aligned>>,
                                                                               inplace_assignable<sub_view<T, Aligned>> {
@@ -312,7 +306,8 @@ public:
  * \tparam T The type of expression on which the view is made
  */
 template <typename T, bool Aligned>
-struct sub_view<T, Aligned, std::enable_if_t<fast_sub_view_able<T>>> : iterable<sub_view<T, Aligned>, true>,
+requires(fast_sub_view_able<T>)
+struct sub_view<T, Aligned> : iterable<sub_view<T, Aligned>, true>,
                                                                        assignable<sub_view<T, Aligned>, value_t<T>>,
                                                                        value_testable<sub_view<T, Aligned>>,
                                                                        inplace_assignable<sub_view<T, Aligned>> {

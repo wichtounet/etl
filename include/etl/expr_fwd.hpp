@@ -55,7 +55,7 @@ struct temporary_expr_bin;
 template <typename T, size_t D>
 struct dim_view;
 
-template <typename T, bool Aligned, typename Enable = void>
+template <typename T, bool Aligned>
 struct sub_view;
 
 template <typename T, bool Aligned>
@@ -67,7 +67,7 @@ struct sub_matrix_3d;
 template <typename T, bool Aligned>
 struct sub_matrix_4d;
 
-template <typename T, typename Enable = void>
+template <typename T>
 struct slice_view;
 
 template <typename T, bool Aligned>

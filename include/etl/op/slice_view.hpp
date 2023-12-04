@@ -15,17 +15,11 @@
 namespace etl {
 
 /*!
- * \brief View that shows a slice of an expression
- * \tparam T The type of expression on which the view is made
- */
-template <typename T, typename Enable>
-struct slice_view;
-
-/*!
  * \brief Specialization of slice_view for non-DMA types
  */
 template <typename T>
-struct slice_view<T, std::enable_if_t<!fast_slice_view_able<T>>>
+requires (!fast_slice_view_able<T>)
+struct slice_view<T>
         : assignable<slice_view<T>, value_t<T>>, value_testable<slice_view<T>>, iterable<slice_view<T>, fast_slice_view_able<T>> {
     using this_type            = slice_view<T>;                                                        ///< The type of this expression
     using iterable_base_type   = iterable<this_type, fast_slice_view_able<T>>;                         ///< The iterable base type
@@ -255,7 +249,8 @@ public:
  * \brief Specialization of slice_view for DMA types
  */
 template <typename T>
-struct slice_view<T, std::enable_if_t<fast_slice_view_able<T>>>
+requires (fast_slice_view_able<T>)
+struct slice_view<T>
         : assignable<slice_view<T>, value_t<T>>, value_testable<slice_view<T>>, iterable<slice_view<T>, true> {
     using this_type            = slice_view<T>;                                                        ///< The type of this expression
     using iterable_base_type   = iterable<this_type, true>;                                            ///< The iterable base type
