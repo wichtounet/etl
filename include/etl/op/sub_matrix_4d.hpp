@@ -22,18 +22,11 @@ namespace etl {
  * \brief View that shows a 4d sub matrix of an expression
  * \tparam T The type of expression on which the view is made
  */
-template <typename T, bool Aligned, typename Enable>
-struct sub_matrix_4d;
-
-/*!
- * \brief View that shows a 4d sub matrix of an expression
- * \tparam T The type of expression on which the view is made
- */
 template <typename T, bool Aligned>
-struct sub_matrix_4d<T, Aligned, std::enable_if_t<true>> final : iterable<sub_matrix_4d<T, Aligned>, false>,
-                                                                 assignable<sub_matrix_4d<T, Aligned>, value_t<T>>,
-                                                                 value_testable<sub_matrix_4d<T, Aligned>>,
-                                                                 inplace_assignable<sub_matrix_4d<T, Aligned>> {
+struct sub_matrix_4d final : iterable<sub_matrix_4d<T, Aligned>, false>,
+                             assignable<sub_matrix_4d<T, Aligned>, value_t<T>>,
+                             value_testable<sub_matrix_4d<T, Aligned>>,
+                             inplace_assignable<sub_matrix_4d<T, Aligned>> {
     static_assert(is_etl_expr<T>, "sub_matrix_4d<T> only works with ETL expressions");
 
     using this_type            = sub_matrix_4d<T, Aligned>;                                            ///< The type of this expression

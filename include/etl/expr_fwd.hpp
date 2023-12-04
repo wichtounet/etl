@@ -58,13 +58,13 @@ struct dim_view;
 template <typename T, bool Aligned, typename Enable = void>
 struct sub_view;
 
-template <typename T, bool Aligned, typename Enable = void>
+template <typename T, bool Aligned>
 struct sub_matrix_2d;
 
-template <typename T, bool Aligned, typename Enable = void>
+template <typename T, bool Aligned>
 struct sub_matrix_3d;
 
-template <typename T, bool Aligned, typename Enable = void>
+template <typename T, bool Aligned>
 struct sub_matrix_4d;
 
 template <typename T, typename Enable = void>
