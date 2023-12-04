@@ -507,8 +507,8 @@ public:
      * \brief Construct a new sparse matrix of the given dimensions,
      * filled with zeroes
      */
-    template <typename... S, cpp_enable_iff(sizeof...(S) == D && cpp::all_convertible_to_v<size_t, S...>)>
-    explicit sparse_matrix_impl(S... sizes) noexcept
+    template <size_c... S>
+    explicit sparse_matrix_impl(S... sizes) noexcept requires(sizeof...(S) == D) 
             : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}}), _memory(nullptr), _row_index(nullptr), _col_index(nullptr), nnz(0) {
         //Nothing else to init
     }
@@ -517,8 +517,8 @@ public:
      * \brief Construct a new sparse matrix of the given dimensions
      * and use the initializer list to fill the matrix
      */
-    template <typename... S, cpp_enable_iff(dyn_detail::is_initializer_list_constructor<S...>::value)>
-    explicit sparse_matrix_impl(S... sizes) noexcept
+    template <typename... S>
+    explicit sparse_matrix_impl(S... sizes) noexcept requires(dyn_detail::is_initializer_list_constructor<S...>::value)
             : base_type(util::size(std::make_index_sequence<(sizeof...(S) - 1)>(), sizes...),
                         dyn_detail::sizes(std::make_index_sequence<(sizeof...(S) - 1)>(), sizes...)) {
         static_assert(sizeof...(S) == D + 1, "Invalid number of dimensions");
@@ -531,8 +531,8 @@ public:
      * \brief Construct a new sparse matrix of the given dimensions
      * and use the list of values list to fill the matrix
      */
-    template <typename S1, typename... S, cpp_enable_iff((sizeof...(S) == D) && cpp::is_specialization_of_v<values_t, typename cpp::last_type<S1, S...>::type>)>
-    explicit sparse_matrix_impl(S1 s1, S... sizes) noexcept
+    template <typename S1, typename... S>
+    explicit sparse_matrix_impl(S1 s1, S... sizes) noexcept requires((sizeof...(S) == D) && cpp::is_specialization_of_v<values_t, typename cpp::last_type<S1, S...>::type>)
             : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                         dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         auto list = cpp::last_value(sizes...).template list<value_type>();

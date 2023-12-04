@@ -26,39 +26,15 @@ namespace etl {
  * \param lhs The left hand side expression
  * \param rhs The right hand side expression
  */
-template <typename LE, typename RE, cpp_enable_iff(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator)>
+template <typename LE, typename RE>
 void validate_expression_impl([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) noexcept {
-    //Nothing to test, generators are of infinite size
-}
-
-/*!
- * \brief Make sure the two expressions have the same size
- *
- * This function uses assertion to validate the condition. If possible, the
- * assertion is done at compile time.
- *
- * \param lhs The left hand side expression
- * \param rhs The right hand side expression
- */
-template <typename LE,
-          typename RE,
-          cpp_enable_iff(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator) && all_etl_expr<LE, RE> && !all_fast<LE, RE>)>
-void validate_expression_impl([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
-    cpp_assert(etl::size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
-}
-
-/*!
- * \brief Make sure the two expressions have the same size
- *
- * This function uses assertion to validate the condition. If possible, the
- * assertion is done at compile time.
- *
- * \param lhs The left hand side expression
- * \param rhs The right hand side expression
- */
-template <typename LE, typename RE, cpp_enable_iff(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator) && all_etl_expr<LE, RE> && all_fast<LE, RE>)>
-void validate_expression_impl([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
-    static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
+    if constexpr (etl_traits<LE>::is_generator || etl_traits<RE>::is_generator) {
+        // Nothing to test, generators are of infinite size
+    } else if constexpr (all_etl_expr<LE, RE> && !all_fast<LE, RE>) {
+        cpp_assert(etl::size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
+    } else {
+        static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
+    }
 }
 
 // In relaxed mode, the expressions are only validated when assigned
@@ -72,74 +48,17 @@ void validate_expression_impl([[maybe_unused]] const LE& lhs, [[maybe_unused]] c
     validate_expression_impl(lhs, rhs)
 #endif
 
-/*!
- * \brief Make sure that rhs can assigned to lhs.
- *
- * This function uses assertion to validate the condition. If possible, the
- * assertion is done at compile time.
- *
- * \param lhs The left hand side expression
- * \param rhs The right hand side expression
- */
-template <etl_expr LE, generator RE>
-void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) noexcept {
-    //Nothing to test, generators are of infinite size
-}
-
-/*!
- * \brief Make sure that rhs can assigned to lhs.
- *
- * This function uses assertion to validate the condition. If possible, the
- * assertion is done at compile time.
- *
- * \param lhs The left hand side expression
- * \param rhs The right hand side expression
- */
-template <etl_expr LE, typename RE, cpp_enable_iff(!etl_traits<RE>::is_generator && is_etl_expr<RE> && !all_fast<LE, RE> && !is_wrapper_expr<RE>)>
+template <etl_expr LE, typename RE>
 void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
-    cpp_assert(etl::size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
-}
-
-/*!
- * \brief Make sure that rhs can assigned to lhs.
- *
- * This function uses assertion to validate the condition. If possible, the
- * assertion is done at compile time.
- *
- * \param lhs The left hand side expression
- * \param rhs The right hand side expression
- */
-template <etl_expr LE, typename RE, cpp_enable_iff(!etl_traits<RE>::is_generator && is_etl_expr<RE> && all_fast<LE, RE> && !is_wrapper_expr<RE>)>
-void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
-    static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
-}
-
-/*!
- * \brief Make sure that rhs can assigned to lhs.
- *
- * This function uses assertion to validate the condition. If possible, the
- * assertion is done at compile time.
- *
- * \param lhs The left hand side expression
- * \param rhs The right hand side expression
- */
-template <etl_expr LE, typename RE, cpp_enable_iff(!is_etl_expr<RE> && !is_wrapper_expr<RE>)>
-void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
-    cpp_assert(etl::size(lhs) == rhs.size(), "Cannot perform element-wise operations on collections of different size");
-}
-
-/*!
- * \brief Make sure that rhs can assigned to lhs.
- *
- * This function uses assertion to validate the condition. If possible, the
- * assertion is done at compile time.
- *
- * \param lhs The left hand side expression
- * \param rhs The right hand side expression
- */
-template <etl_expr LE, wrapper_expr RE>
-void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& rhs) {
-    cpp_assert(etl::size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
+    if constexpr (etl_traits<RE>::is_generator) {
+        // Nothing to test, generators are of infinite size
+    } else if constexpr (is_etl_expr<RE> && all_fast<LE, RE> && !is_wrapper_expr<RE>) {
+        static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
+    } else if constexpr (!is_etl_expr<RE> && !is_wrapper_expr<RE>) {
+        cpp_assert(etl::size(lhs) == rhs.size(), "Cannot perform element-wise operations on collections of different size");
+    } else {
+        cpp_assert(etl::size(lhs) == etl::size(rhs), "Cannot perform element-wise operations on collections of different size");
+    }
 }
 
 /*!

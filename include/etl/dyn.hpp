@@ -127,8 +127,8 @@ public:
      * The number of dimesnions must be the same as the D template
      * parameter of the matrix.
      */
-    template <typename... S, cpp_enable_iff((sizeof...(S) == D) && cpp::all_convertible_to_v<size_t, S...>)>
-    explicit dyn_matrix_impl(S... sizes) noexcept : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}}) {
+    template <size_c... S>
+    explicit dyn_matrix_impl(S... sizes) noexcept requires(sizeof...(S) == D) : base_type(util::size(sizes...), {{static_cast<size_t>(sizes)...}}) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
     }
 
@@ -136,8 +136,8 @@ public:
      * \brief Construct a matrix with the given dimensions and initializer_list
      * \param sizes The dimensions of the matrix followed by an initializer_list
      */
-    template <typename... S, cpp_enable_iff(dyn_detail::is_initializer_list_constructor<S...>::value)>
-    explicit dyn_matrix_impl(S... sizes) noexcept
+    template <typename... S>
+    explicit dyn_matrix_impl(S... sizes) noexcept requires(dyn_detail::is_initializer_list_constructor<S...>::value)
             : base_type(util::size(std::make_index_sequence<(sizeof...(S) - 1)>(), sizes...),
                         dyn_detail::sizes(std::make_index_sequence<(sizeof...(S) - 1)>(), sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
@@ -152,8 +152,8 @@ public:
      * \brief Construct a matrix with the given dimensions and values
      * \param sizes The dimensions of the matrix followed by a values_t
      */
-    template <typename... S, cpp_enable_iff((sizeof...(S) == D) && cpp::is_specialization_of_v<values_t, typename cpp::last_type<size_t, S...>::type>)>
-    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept
+    template <typename... S>
+    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept requires((sizeof...(S) == D) && cpp::is_specialization_of_v<values_t, typename cpp::last_type<size_t, S...>::type>)
             : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                         dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
@@ -168,8 +168,8 @@ public:
      *
      * Every element of the matrix will be set to this value.
      */
-    template <typename... S, cpp_enable_iff((sizeof...(S) == D) && !cpp::is_specialization_of_v<values_t, typename cpp::last_type<size_t, S...>::type>)>
-    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept
+    template <typename... S>
+    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept requires((sizeof...(S) == D) && !cpp::is_specialization_of_v<values_t, typename cpp::last_type<size_t, S...>::type>)
             : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                         dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
@@ -184,8 +184,9 @@ public:
      *
      * Only possible for 1D matrices
      */
-    template <typename Container, cpp_enable_iff(std::convertible_to<typename Container::value_type, value_type>)>
-    explicit dyn_matrix_impl(const Container& container) : base_type(container.size(), {{container.size()}}) {
+    template <std_container Container>
+    explicit dyn_matrix_impl(const Container& container) requires(std::convertible_to<typename Container::value_type, value_type>) :
+            base_type(container.size(), {{container.size()}}) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         static_assert(D == 1, "Only 1D matrix can be constructed from containers");
@@ -316,10 +317,8 @@ public:
      * \param e The expression containing the values to assign to the matrix
      * \return A reference to the matrix
      */
-    template <typename E,
-              cpp_enable_iff(!std::is_same_v<std::decay_t<E>, dyn_matrix_impl<T, SO, D>> && std::convertible_to<value_t<E>, value_type>
-                             && is_etl_expr<E>)>
-    dyn_matrix_impl& operator=(E&& e) noexcept {
+    template <etl_expr E>
+    dyn_matrix_impl& operator=(E&& e) noexcept requires(!std::is_same_v<std::decay_t<E>, dyn_matrix_impl<T, SO, D>> && std::convertible_to<value_t<E>, value_type>) {
         // It is possible that the matrix was not initialized before
         // In the case, get the the dimensions from the expression and
         // initialize the matrix

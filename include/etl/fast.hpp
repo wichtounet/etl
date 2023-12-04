@@ -76,8 +76,8 @@ public:
      * \brief Construct a fast matrix filled with the same value
      * \param value the value to fill the matrix with
      */
-    template <typename VT, cpp_enable_iff(std::convertible_to<VT, value_type> || std::assignable_from<T&, VT>)>
-    explicit fast_matrix_impl(const VT& value) noexcept : base_type() {
+    template <typename VT>
+    explicit fast_matrix_impl(const VT& value) noexcept requires(std::convertible_to<VT, value_type> || std::assignable_from<T&, VT>) : base_type() {
         // Fill the matrix
         std::fill(begin(), end(), value);
     }
