@@ -43,10 +43,8 @@ namespace etl::ml {
  *
  * \return an expression representing the result of the forward convolution
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_expr A, etl_expr B>
 conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true> convolution_forward(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{std::forward<A>(a), std::forward<B>(b)};
 }
 
@@ -70,11 +68,9 @@ conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2,
  *
  * \return an expression representing the result of the forward convolution
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 dyn_conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, true> convolution_forward(
     A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return dyn_conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, true>{std::forward<A>(a), std::forward<B>(b), s1, s2, p1, p2};
 }
 
@@ -98,10 +94,8 @@ dyn_conv_4d_valid_expr<detail::build_type<A>, detail::build_type<B>, true> convo
  *
  * \return an expression representing the result of the forward convolution
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_expr A, etl_expr B>
 conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true> convolution_backward(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{std::forward<A>(a), std::forward<B>(b)};
 }
 
@@ -125,11 +119,9 @@ conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, 
  *
  * \return an expression representing the result of the forward convolution
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true> convolution_backward(
     A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true>{std::forward<A>(a), std::forward<B>(b), s1, s2, p1, p2};
 }
 
@@ -153,10 +145,8 @@ dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true> co
  *
  * \return an expression representing the result of the forward convolution
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_expr A, etl_expr B>
 conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true> convolution_backward_filter(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{std::forward<A>(a), std::forward<B>(b)};
 }
 
@@ -180,11 +170,9 @@ conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S
  *
  * \return an expression representing the result of the forward convolution
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 dyn_conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, true> convolution_backward_filter(
     A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return dyn_conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, true>{std::forward<A>(a), std::forward<B>(b), s1, s2, p1, p2};
 }
 
@@ -322,7 +310,7 @@ auto avg_pool_3d_forward(E&& value, size_t c1, size_t c2, size_t c3) {
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename B, typename C>
+template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, etl_expr A, etl_expr B, typename C>
 pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, S1, S2, P1, P2, true> max_pool_backward(A&& input, B&& output, C&& errors) {
     return {input, output, errors};
 }
@@ -335,7 +323,7 @@ pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::buil
  * \param c2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, typename C>
 dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, true> max_pool_backward(
         A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
     return {input, output, errors, c1, c2, c1, c2, 0, 0};
@@ -349,7 +337,7 @@ dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::
  * \param c2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, typename C>
 dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, true> max_pool_backward(
         A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
     return {input, output, errors, c1, c2, s1, s2, p1, p2};
@@ -363,7 +351,7 @@ dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C>
+template <size_t C1, size_t C2, size_t C3, etl_expr A, etl_expr B, typename C>
 pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3, true> max_pool_3d_backward(A&& input,
                                                                                                                                   B&& output,
                                                                                                                                   C&& errors) {
@@ -378,7 +366,7 @@ pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::buil
  * \param c2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, typename C>
 dyn_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, true> max_pool_3d_backward(
     A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t c3) {
     return {input, output, errors, c1, c2, c3};
@@ -392,7 +380,7 @@ dyn_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename B, typename C>
+template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, etl_expr A, etl_expr B, typename C>
 pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, S1, S2, P1, P2, false> avg_pool_backward(A&& input, B&& output, C&& errors) {
     return {input, output, errors};
 }
@@ -405,7 +393,7 @@ pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::buil
  * \param c2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Average Pooling of the input expression.
  */
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, typename C>
 dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, false> avg_pool_backward(
     A&& input, B&& output, C&& errors, size_t c1, size_t c2) {
     return {input, output, errors, c1, c2, c1, c2, 0, 0};
@@ -419,7 +407,7 @@ dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::
  * \param c2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Average Pooling of the input expression.
  */
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, typename C>
 dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, false> avg_pool_backward(
     A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
     return {input, output, errors, c1, c2, s1, s2, p1, p2};
@@ -433,7 +421,7 @@ dyn_pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename C>
+template <size_t C1, size_t C2, size_t C3, etl_expr A, etl_expr B, typename C>
 pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, C3, false> avg_pool_3d_backward(A&& input,
                                                                                                                                    B&& output,
                                                                                                                                    C&& errors) {
@@ -448,7 +436,7 @@ pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::buil
  * \param c2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Average Pooling of the input expression.
  */
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, typename C>
 dyn_pool_upsample_3d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, false> avg_pool_3d_backward(
     A&& input, B&& output, C&& errors, size_t c1, size_t c2, size_t c3) {
     return {input, output, errors, c1, c2, c3};
@@ -472,9 +460,8 @@ auto identity_derivative_out([[maybe_unused]] E&& value) {
  * \param value The ETL expression
  * \return An ETL expression representing the derivative of the logistic sigmoid of the input.
  */
-template <typename E>
+template <etl_expr E>
 auto sigmoid_derivative_out(E&& value) -> decltype(value >> (1.0 - value)) {
-    static_assert(is_etl_expr<E>, "etl::sigmoid_derivative can only be used on ETL expressions");
     return value >> (1.0 - value);
 }
 
@@ -495,9 +482,8 @@ auto softmax_derivative_out([[maybe_unused]] E&& e) {
  * \param value The ETL expression
  * \return An ETL expression representing the derivative of the tanh function of the input.
  */
-template <typename E>
+template <etl_expr E>
 auto tanh_derivative_out(E&& value) -> decltype(1.0 - (value >> value)) {
-    static_assert(is_etl_expr<E>, "etl::tanh_derivative can only be used on ETL expressions");
     return 1.0 - (value >> value);
 }
 
@@ -507,9 +493,8 @@ auto tanh_derivative_out(E&& value) -> decltype(1.0 - (value >> value)) {
  * \param value The ETL expression
  * \return An ETL expression representing the derivative of the relu function of the input.
  */
-template <typename E>
+template <etl_expr E>
 auto relu_derivative_out(const E& value) -> detail::unary_helper<E, relu_derivative_op> {
-    static_assert(is_etl_expr<E>, "etl::relu_derivative can only be used on ETL expressions");
     return detail::unary_helper<E, relu_derivative_op>{value};
 }
 
@@ -565,9 +550,8 @@ decltype(auto) softmax_backward([[maybe_unused]] O&& output, E&& errors) {
  * \param errors The errors at output of this activation function
  * \return the backward activation of the activation function
  */
-template <typename O, typename E>
+template <typename O, etl_expr E>
 auto tanh_backward(O&& output, E&& errors) {
-    static_assert(is_etl_expr<E>, "etl::tanh_derivative can only be used on ETL expressions");
     return (1.0 - (output >> output)) >> errors;
 }
 
@@ -577,10 +561,8 @@ auto tanh_backward(O&& output, E&& errors) {
  * \param labels The labels
  * \return The CCE Loss of the output and labels
  */
-template <typename O, typename L>
+template <etl_expr O, etl_expr L>
 value_t<O> cce_loss(O&& output, L&& labels, value_t<O> scale) {
-    static_assert(all_etl_expr<O, L>, "etl::cce_loss can only be used on ETL expressions");
-
     return detail::cce_loss_impl::apply(std::forward<O>(output), std::forward<L>(labels), scale);
 }
 
@@ -590,10 +572,8 @@ value_t<O> cce_loss(O&& output, L&& labels, value_t<O> scale) {
  * \param labels The labels
  * \return The CCE Error of the output and labels
  */
-template <typename O, typename L>
+template <etl_expr O, etl_expr L>
 value_t<O> cce_error(O&& output, L&& labels, value_t<O> scale) {
-    static_assert(all_etl_expr<O, L>, "etl::cce_error can only be used on ETL expressions");
-
     return detail::cce_error_impl::apply(std::forward<O>(output), std::forward<L>(labels), scale);
 }
 
@@ -603,10 +583,8 @@ value_t<O> cce_error(O&& output, L&& labels, value_t<O> scale) {
  * \param labels The labels
  * \return The BCE Loss of the output and labels
  */
-template <typename O, typename L>
+template <etl_expr O, etl_expr L>
 value_t<O> bce_loss(O&& output, L&& labels, value_t<O> scale) {
-    static_assert(all_etl_expr<O, L>, "etl::bce_loss can only be used on ETL expressions");
-
     return detail::bce_loss_impl::apply(std::forward<O>(output), std::forward<L>(labels), scale);
 }
 
@@ -616,10 +594,8 @@ value_t<O> bce_loss(O&& output, L&& labels, value_t<O> scale) {
  * \param labels The labels
  * \return The BCE Error of the output and labels
  */
-template <typename O, typename L>
+template <etl_expr O, etl_expr L>
 value_t<O> bce_error(O&& output, L&& labels, value_t<O> scale) {
-    static_assert(all_etl_expr<O, L>, "etl::bce_error can only be used on ETL expressions");
-
     return detail::bce_error_impl::apply(std::forward<O>(output), std::forward<L>(labels), scale);
 }
 
@@ -629,10 +605,8 @@ value_t<O> bce_error(O&& output, L&& labels, value_t<O> scale) {
  * \param labels The labels
  * \return The BCE Loss and Error of the output and labels
  */
-template <typename O, typename L>
+template <etl_expr O, etl_expr L>
 std::pair<value_t<O>, value_t<O>> bce(O&& output, L&& labels, value_t<O> alpha, value_t<O> beta) {
-    static_assert(all_etl_expr<O, L>, "etl::bce can only be used on ETL expressions");
-
     return detail::bce_impl::apply(std::forward<O>(output), std::forward<L>(labels), alpha, beta);
 }
 
@@ -642,10 +616,8 @@ std::pair<value_t<O>, value_t<O>> bce(O&& output, L&& labels, value_t<O> alpha, 
  * \param labels The labels
  * \return The BCE Loss and Error of the output and labels
  */
-template <typename O, typename L>
+template <etl_expr O, etl_expr L>
 std::pair<value_t<O>, value_t<O>> cce(O&& output, L&& labels, value_t<O> alpha, value_t<O> beta) {
-    static_assert(all_etl_expr<O, L>, "etl::cce can only be used on ETL expressions");
-
     return detail::cce_impl::apply(std::forward<O>(output), std::forward<L>(labels), alpha, beta);
 }
 
@@ -655,12 +627,10 @@ std::pair<value_t<O>, value_t<O>> cce(O&& output, L&& labels, value_t<O> alpha, 
  * \param labels The labels
  * \return The MSE Loss of the output and labels
  */
-    template <typename O, typename L>
-    value_t<O> mse_loss(O&& output, L&& labels, value_t<O> scale) {
-        static_assert(all_etl_expr<O, L>, "etl::mse_loss can only be used on ETL expressions");
-
-        return detail::mse_loss_impl::apply(std::forward<O>(output), std::forward<L>(labels), scale);
-    }
+template <etl_expr O, etl_expr L>
+value_t<O> mse_loss(O&& output, L&& labels, value_t<O> scale) {
+    return detail::mse_loss_impl::apply(std::forward<O>(output), std::forward<L>(labels), scale);
+}
 
 /*!
  * \brief Returns the Binary Cross Entropy Error
@@ -668,12 +638,10 @@ std::pair<value_t<O>, value_t<O>> cce(O&& output, L&& labels, value_t<O> alpha, 
  * \param labels The labels
  * \return The MSE Error of the output and labels
  */
-    template <typename O, typename L>
-    value_t<O> mse_error(O&& output, L&& labels, value_t<O> scale) {
-        static_assert(all_etl_expr<O, L>, "etl::mse_error can only be used on ETL expressions");
-
-        return detail::mse_error_impl::apply(std::forward<O>(output), std::forward<L>(labels), scale);
-    }
+template <etl_expr O, etl_expr L>
+value_t<O> mse_error(O&& output, L&& labels, value_t<O> scale) {
+    return detail::mse_error_impl::apply(std::forward<O>(output), std::forward<L>(labels), scale);
+}
 
 /*!
  * \brief Returns the Binary Cross Entropy Loss and Error
@@ -681,11 +649,9 @@ std::pair<value_t<O>, value_t<O>> cce(O&& output, L&& labels, value_t<O> alpha, 
  * \param labels The labels
  * \return The MSE Loss and Error of the output and labels
  */
-    template <typename O, typename L>
-    std::pair<value_t<O>, value_t<O>> mse(O&& output, L&& labels, value_t<O> alpha, value_t<O> beta) {
-        static_assert(all_etl_expr<O, L>, "etl::mse can only be used on ETL expressions");
-
-        return detail::mse_impl::apply(std::forward<O>(output), std::forward<L>(labels), alpha, beta);
-    }
+template <etl_expr O, etl_expr L>
+std::pair<value_t<O>, value_t<O>> mse(O&& output, L&& labels, value_t<O> alpha, value_t<O> beta) {
+    return detail::mse_impl::apply(std::forward<O>(output), std::forward<L>(labels), alpha, beta);
+}
 
 } //end of namespace etl::ml

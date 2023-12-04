@@ -17,7 +17,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = batch_k_scale_expr<A, B>;                 ///< The type of this expression
@@ -95,10 +95,8 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, B, L>, "batch_k_scale only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -346,10 +344,8 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_add_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, B, L>, "batch_k_scale only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -595,10 +591,8 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_sub_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, B, L>, "batch_k_scale only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -844,10 +838,8 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mul_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, B, L>, "batch_k_scale only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -1093,10 +1085,8 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_div_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, B, L>, "batch_k_scale only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -1342,10 +1332,8 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mod_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, B, L>, "batch_k_scale only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -1511,10 +1499,8 @@ struct etl_traits<etl::batch_k_scale_expr<A, B>> {
  * \param value The expression
  * \return The transpose of the given expression.
  */
-template <typename A, typename B>
+template <etl_1d A, etl_expr B>
 batch_k_scale_expr<detail::build_type<A>, detail::build_type<B>> batch_k_scale(const A& a, const B& b) {
-    static_assert(all_etl_expr<A, B>, "etl::batch_k_scale can only be used on ETL expressions");
-    static_assert(is_1d<A>, "etl::batch_k_scale is only defined for 1D LHS");
     static_assert(is_2d<B> || is_4d<B>, "etl::batch_k_scale is only defined for 2D/4D RHS");
 
     return {a, b};
