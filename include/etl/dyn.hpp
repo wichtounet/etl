@@ -184,7 +184,7 @@ public:
      *
      * Only possible for 1D matrices
      */
-    template <typename Container, cpp_enable_iff(std::is_convertible_v<typename Container::value_type, value_type>)>
+    template <typename Container, cpp_enable_iff(std::convertible_to<typename Container::value_type, value_type>)>
     explicit dyn_matrix_impl(const Container& container) : base_type(container.size(), {{container.size()}}) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
@@ -317,7 +317,7 @@ public:
      * \return A reference to the matrix
      */
     template <typename E,
-              cpp_enable_iff(!std::is_same_v<std::decay_t<E>, dyn_matrix_impl<T, SO, D>> && std::is_convertible_v<value_t<E>, value_type>
+              cpp_enable_iff(!std::is_same_v<std::decay_t<E>, dyn_matrix_impl<T, SO, D>> && std::convertible_to<value_t<E>, value_type>
                              && is_etl_expr<E>)>
     dyn_matrix_impl& operator=(E&& e) noexcept {
         // It is possible that the matrix was not initialized before

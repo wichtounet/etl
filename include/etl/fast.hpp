@@ -76,7 +76,7 @@ public:
      * \brief Construct a fast matrix filled with the same value
      * \param value the value to fill the matrix with
      */
-    template <typename VT, cpp_enable_iff(std::is_convertible_v<VT, value_type> || std::is_assignable_v<T&, VT>)>
+    template <typename VT, cpp_enable_iff(std::convertible_to<VT, value_type> || std::assignable_from<T&, VT>)>
     explicit fast_matrix_impl(const VT& value) noexcept : base_type() {
         // Fill the matrix
         std::fill(begin(), end(), value);
@@ -122,7 +122,7 @@ public:
      */
     template <std_container Container>
     explicit fast_matrix_impl(const Container& container) requires(
-            !is_complex_t<Container> && std::is_convertible_v<typename Container::value_type, value_type>) :
+            !is_complex_t<Container> && std::convertible_to<typename Container::value_type, value_type>) :
             base_type() {
         validate_assign(*this, container);
         std::copy(container.begin(), container.end(), begin());
@@ -243,7 +243,7 @@ public:
      * \return a reference to the fast matrix
      */
     template <typename VT>
-    fast_matrix_impl& operator=(const VT& value) noexcept requires(std::convertible_to<VT, value_type> || std::is_assignable_v<T&, VT>) {
+    fast_matrix_impl& operator=(const VT& value) noexcept requires(std::convertible_to<VT, value_type> || std::assignable_from<T&, VT>) {
         direct_fill(*this, value);
 
         return *this;
