@@ -153,7 +153,7 @@ public:
      * \param sizes The dimensions of the matrix followed by a values_t
      */
     template <typename... S>
-    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept requires((sizeof...(S) == D) && cpp::is_specialization_of_v<values_t, typename cpp::last_type<size_t, S...>::type>)
+    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept requires((sizeof...(S) == D) && cpp::specialization_of<values_t, typename cpp::last_type<size_t, S...>::type>)
             : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                         dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
@@ -169,7 +169,7 @@ public:
      * Every element of the matrix will be set to this value.
      */
     template <typename... S>
-    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept requires((sizeof...(S) == D) && !cpp::is_specialization_of_v<values_t, typename cpp::last_type<size_t, S...>::type>)
+    explicit dyn_matrix_impl(size_t s1, S... sizes) noexcept requires((sizeof...(S) == D) && !cpp::specialization_of<values_t, typename cpp::last_type<size_t, S...>::type>)
             : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                         dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));

@@ -532,7 +532,7 @@ public:
      * and use the list of values list to fill the matrix
      */
     template <typename S1, typename... S>
-    explicit sparse_matrix_impl(S1 s1, S... sizes) noexcept requires((sizeof...(S) == D) && cpp::is_specialization_of_v<values_t, typename cpp::last_type<S1, S...>::type>)
+    explicit sparse_matrix_impl(S1 s1, S... sizes) noexcept requires((sizeof...(S) == D) && cpp::specialization_of<values_t, typename cpp::last_type<S1, S...>::type>)
             : base_type(util::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                         dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         auto list = cpp::last_value(sizes...).template list<value_type>();

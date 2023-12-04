@@ -658,10 +658,10 @@ public:
  */
 template <typename T>
 requires(
-           cpp::is_specialization_of_v<etl::argmax_transformer, std::decay_t<T>> 
-        || cpp::is_specialization_of_v<etl::argmin_transformer, std::decay_t<T>>
-        || cpp::is_specialization_of_v<etl::sum_r_transformer, std::decay_t<T>>
-        || cpp::is_specialization_of_v<etl::mean_r_transformer, std::decay_t<T>>)
+           cpp::specialization_of<etl::argmax_transformer, T> 
+        || cpp::specialization_of<etl::argmin_transformer, T>
+        || cpp::specialization_of<etl::sum_r_transformer, T>
+        || cpp::specialization_of<etl::mean_r_transformer, T>)
 struct etl_traits<T> {
     using expr_t     = T;                                                ///< The expression type
     using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>; ///< The sub expression type
@@ -749,7 +749,7 @@ struct etl_traits<T> {
  * \brief Specialization for (sum-mean)_r_transformer
  */
 template <typename T>
-requires(cpp::is_specialization_of_v<etl::sum_l_transformer, std::decay_t<T>> || cpp::is_specialization_of_v<etl::mean_l_transformer, std::decay_t<T>>)
+requires(cpp::specialization_of<etl::sum_l_transformer, T> || cpp::specialization_of<etl::mean_l_transformer, T>)
 struct etl_traits<T> {
     using expr_t     = T;                                                ///< The expression type
     using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>; ///< The sub expression type

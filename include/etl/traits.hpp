@@ -245,98 +245,98 @@ constexpr bool is_sparse_matrix = traits_detail::is_sparse_matrix_impl<std::deca
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_symmetric_matrix = cpp::is_specialization_of_v<etl::symmetric_matrix, std::decay_t<T>>;
+constexpr bool is_symmetric_matrix = cpp::specialization_of<etl::symmetric_matrix, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a hermitian matrix
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_hermitian_matrix = cpp::is_specialization_of_v<etl::hermitian_matrix, std::decay_t<T>>;
+constexpr bool is_hermitian_matrix = cpp::specialization_of<etl::hermitian_matrix, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a diagonal matrix
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_diagonal_matrix = cpp::is_specialization_of_v<etl::diagonal_matrix, std::decay_t<T>>;
+constexpr bool is_diagonal_matrix = cpp::specialization_of<etl::diagonal_matrix, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is an upper triangular matrix
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_upper_matrix = cpp::is_specialization_of_v<etl::upper_matrix, std::decay_t<T>>;
+constexpr bool is_upper_matrix = cpp::specialization_of<etl::upper_matrix, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a lower triangular matrix
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_lower_matrix = cpp::is_specialization_of_v<etl::lower_matrix, std::decay_t<T>>;
+constexpr bool is_lower_matrix = cpp::specialization_of<etl::lower_matrix, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a strictly lower triangular matrix
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_strictly_lower_matrix = cpp::is_specialization_of_v<etl::strictly_lower_matrix, std::decay_t<T>>;
+constexpr bool is_strictly_lower_matrix = cpp::specialization_of<etl::strictly_lower_matrix, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a strictly upper triangular matrix
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_strictly_upper_matrix = cpp::is_specialization_of_v<etl::strictly_upper_matrix, std::decay_t<T>>;
+constexpr bool is_strictly_upper_matrix = cpp::specialization_of<etl::strictly_upper_matrix, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a uni lower triangular matrix
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_uni_lower_matrix = cpp::is_specialization_of_v<etl::uni_lower_matrix, std::decay_t<T>>;
+constexpr bool is_uni_lower_matrix = cpp::specialization_of<etl::uni_lower_matrix, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a uni upper triangular matrix
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_uni_upper_matrix = cpp::is_specialization_of_v<etl::uni_upper_matrix, std::decay_t<T>>;
+constexpr bool is_uni_upper_matrix = cpp::specialization_of<etl::uni_upper_matrix, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a unary expression.
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_unary_expr = cpp::is_specialization_of_v<etl::unary_expr, std::decay_t<T>>;
+constexpr bool is_unary_expr = cpp::specialization_of<etl::unary_expr, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a binary expression.
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_binary_expr = cpp::is_specialization_of_v<etl::binary_expr, std::decay_t<T>>;
+constexpr bool is_binary_expr = cpp::specialization_of<etl::binary_expr, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a generator expression.
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_generator_expr = cpp::is_specialization_of_v<etl::generator_expr, std::decay_t<T>>;
+constexpr bool is_generator_expr = cpp::specialization_of<etl::generator_expr, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is an optimized expression.
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_optimized_expr = cpp::is_specialization_of_v<etl::optimized_expr, std::decay_t<T>>;
+constexpr bool is_optimized_expr = cpp::specialization_of<etl::optimized_expr, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a serial expression.
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_serial_expr = cpp::is_specialization_of_v<etl::serial_expr, std::decay_t<T>>;
+constexpr bool is_serial_expr = cpp::specialization_of<etl::serial_expr, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a selector expression.
@@ -350,14 +350,14 @@ constexpr bool is_selected_expr = traits_detail::is_selected_expr_impl<std::deca
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_parallel_expr = cpp::is_specialization_of_v<etl::parallel_expr, std::decay_t<T>>;
+constexpr bool is_parallel_expr = cpp::specialization_of<etl::parallel_expr, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a timed expression.
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_timed_expr = cpp::is_specialization_of_v<etl::timed_expr, std::decay_t<T>>;
+constexpr bool is_timed_expr = cpp::specialization_of<etl::timed_expr, T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a wrapper expression (optimized, serial, ...).
@@ -376,7 +376,7 @@ constexpr bool is_sub_view = traits_detail::is_sub_view<std::decay_t<T>>::value;
  * \brief Traits to test if the given expression is a slice_view
  */
 template <typename T>
-constexpr bool is_slice_view = cpp::is_specialization_of_v<etl::slice_view, std::decay_t<T>>;
+constexpr bool is_slice_view = cpp::specialization_of<etl::slice_view, T>;
 
 /*!
  * \brief Traits to test if the given expression is a dyn_matrix_view
@@ -417,7 +417,7 @@ constexpr bool is_etl_expr = decay_traits<T>::is_etl;
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool is_transpose_expr = cpp::is_specialization_of_v<etl::transpose_expr, std::decay_t<T>>;
+constexpr bool is_transpose_expr = cpp::specialization_of<etl::transpose_expr, T>;
 
 /*!
  * \brief Traits indicating if the given type is a temporary expression.
@@ -461,7 +461,7 @@ constexpr bool is_simple_lhs = is_etl_value_class<T> || is_unary_expr<T> || is_s
  * \tparam T The type to test.
  */
 template <typename T>
-constexpr bool is_scalar = cpp::is_specialization_of_v<etl::scalar, std::decay_t<T>>;
+constexpr bool is_scalar = cpp::specialization_of<etl::scalar, T>;
 
 /*!
  * \brief Traits to test if the given type is single precision type.
@@ -545,7 +545,7 @@ constexpr bool all_floating_t = (is_floating_t<E> && ...);
  * \tparam T The type to test.
  */
 template <typename T>
-constexpr bool is_complex_t = cpp::is_specialization_of_v<std::complex, std::decay_t<T>> || cpp::is_specialization_of_v<etl::complex, std::decay_t<T>>;
+constexpr bool is_complex_t = cpp::specialization_of<std::complex, T> || cpp::specialization_of<etl::complex, T>;
 
 /*!
  * \brief Traits to test if a type is a single precision complex number type

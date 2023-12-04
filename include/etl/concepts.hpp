@@ -57,10 +57,10 @@ template<typename T>
 concept fast_expr = etl_expr<T> && fast<T>;
 
 template <typename T>
-concept etl_complex = cpp::is_specialization_of_v<etl::complex, std::decay_t<T>>;
+concept etl_complex = cpp::specialization_of<etl::complex, T>;
 
 template <typename T>
-concept std_complex = cpp::is_specialization_of_v<std::complex, std::decay_t<T>>;
+concept std_complex = cpp::specialization_of<std::complex, T>;
 
 template <typename T>
 concept complex_c = etl_complex<T> || std_complex<T>;
@@ -69,13 +69,13 @@ template<typename T>
 concept etl_complex_expr = etl_expr<T> && complex_c<value_t<T>>;
 
 template <typename T>
-concept unary_expr_c = cpp::is_specialization_of_v<etl::unary_expr, std::decay_t<T>>;
+concept unary_expr_c = cpp::specialization_of<etl::unary_expr, T>;
 
 template <typename T>
 concept sub_view_c = traits_detail::is_sub_view<std::decay_t<T>>::value;
 
 template <typename T>
-concept slice_view_c = cpp::is_specialization_of_v<etl::slice_view, std::decay_t<T>>;
+concept slice_view_c = cpp::specialization_of<etl::slice_view, T>;
 
 template <typename T>
 concept dyn_matrix_view_c = traits_detail::is_dyn_matrix_view<T>::value;
@@ -145,19 +145,19 @@ template <typename T, typename VT>
 concept convertible_expr = etl_expr<T> && std::convertible_to<value_t<T>, VT>;
 
 template <typename T>
-concept optimized_expr_c = cpp::is_specialization_of_v<etl::optimized_expr, std::decay_t<T>>;
+concept optimized_expr_c = cpp::specialization_of<etl::optimized_expr, T>;
 
 template <typename T>
-concept serial_expr_c = cpp::is_specialization_of_v<etl::serial_expr, std::decay_t<T>>;
+concept serial_expr_c = cpp::specialization_of<etl::serial_expr, T>;
 
 template <typename T>
 concept selected_expr_c = traits_detail::is_selected_expr_impl<std::decay_t<T>>::value;
 
 template <typename T>
-concept parallel_expr_c = cpp::is_specialization_of_v<etl::parallel_expr, std::decay_t<T>>;
+concept parallel_expr_c = cpp::specialization_of<etl::parallel_expr, T>;
 
 template <typename T>
-concept timed_expr_c = cpp::is_specialization_of_v<etl::timed_expr, std::decay_t<T>>;
+concept timed_expr_c = cpp::specialization_of<etl::timed_expr, T>;
 
 template <typename T>
 concept wrapper_expr = optimized_expr_c<T> || selected_expr_c<T> || serial_expr_c<T> || parallel_expr_c<T> || timed_expr_c<T>;

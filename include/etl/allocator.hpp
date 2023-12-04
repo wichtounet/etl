@@ -32,7 +32,7 @@ struct mangling_faker {};
  */
 template <typename T>
 constexpr bool is_mangle_able = std::is_same_v<std::decay_t<T>, float> || std::is_same_v<std::decay_t<T>, double>
-                                || cpp::is_specialization_of_v<std::complex, std::decay_t<T>> || cpp::is_specialization_of_v<etl::complex, std::decay_t<T>>;
+                                || cpp::specialization_of<std::complex, T> || cpp::specialization_of<etl::complex, T>;
 
 /*!
  * \brief Allocated for aligned memory

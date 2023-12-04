@@ -537,10 +537,10 @@ public:
  * \brief Specialization for forwarding everything to the sub expression
  */
 template <typename T>
-requires(  cpp::is_specialization_of_v<etl::hflip_transformer, std::decay_t<T>>
-            || cpp::is_specialization_of_v<etl::vflip_transformer, std::decay_t<T>>
-            || cpp::is_specialization_of_v<etl::fflip_transformer, std::decay_t<T>>
-            || cpp::is_specialization_of_v<etl::one_if_max_sub_transformer, std::decay_t<T>>)
+requires(  cpp::specialization_of<etl::hflip_transformer, T>
+            || cpp::specialization_of<etl::vflip_transformer, T>
+            || cpp::specialization_of<etl::fflip_transformer, T>
+            || cpp::specialization_of<etl::one_if_max_sub_transformer, T>)
 struct etl_traits<T> {
     using expr_t     = T;                                  ///< The expression type
     using sub_expr_t = std::decay_t<typename T::sub_type>; ///< The sub expression type
