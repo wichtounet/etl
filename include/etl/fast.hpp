@@ -243,7 +243,7 @@ public:
      * \return a reference to the fast matrix
      */
     template <typename VT>
-    fast_matrix_impl& operator=(const VT& value) noexcept requires(std::convertible_to<VT, value_type> || std::assignable_from<T&, VT>) {
+    fast_matrix_impl& operator=(const VT& value) noexcept requires requires (T& lhs, VT rhs) {lhs = rhs; } {
         direct_fill(*this, value);
 
         return *this;
