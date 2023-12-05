@@ -39,6 +39,10 @@
 #include "etl/restrict.hpp"
 #include "etl/eval_visitors.hpp" //Evaluation visitors
 
+// The base traits
+#include "etl/traits_base.hpp"
+#include "etl/concepts_base.hpp"
+
 //Forward declarations
 #include "etl/value_fwd.hpp"
 #include "etl/expr_fwd.hpp"

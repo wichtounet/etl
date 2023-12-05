@@ -35,9 +35,6 @@ concept sparse_matrix_impl = traits_detail::is_sparse_matrix_impl<std::decay_t<T
 } // end of namespace detail
 
 template<typename T>
-concept etl_expr = decay_traits<T>::is_etl;
-
-template<typename T>
 concept fast = decay_traits<T>::is_fast;
 
 template<typename T>
