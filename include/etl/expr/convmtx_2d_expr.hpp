@@ -18,7 +18,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, size_t K1, size_t K2>
+template <etl_expr A, size_t K1, size_t K2>
 struct convmtx_2d_expr : base_temporary_expr_un<convmtx_2d_expr<A, K1, K2>, A> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
     using this_type  = convmtx_2d_expr<A, K1, K2>;           ///< The type of this expression
@@ -47,9 +47,8 @@ struct convmtx_2d_expr : base_temporary_expr_un<convmtx_2d_expr<A, K1, K2>, A> {
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_expr C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, C>, "max_pool_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
 
         inc_counter("temp:assign");

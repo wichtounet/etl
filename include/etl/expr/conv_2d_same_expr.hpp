@@ -18,7 +18,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B, bool Flipped>
+template <etl_expr A, etl_expr B, bool Flipped>
 struct conv_2d_same_expr : base_temporary_expr_bin<conv_2d_same_expr<A, B, Flipped>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = conv_2d_same_expr<A, B, Flipped>;         ///< The type of this expression
@@ -65,10 +65,8 @@ struct conv_2d_same_expr : base_temporary_expr_bin<conv_2d_same_expr<A, B, Flipp
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_expr C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, B, C>, "conv2_same only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -240,10 +238,8 @@ struct etl_traits<etl::conv_2d_same_expr<A, B, Flipped>> {
  *
  * \return an expression representing the 'same' 1D convolution of a and b
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 conv_2d_same_expr<detail::build_type<A>, detail::build_type<B>, false> conv_2d_same(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_2d_same_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b};
 }
 
@@ -259,10 +255,8 @@ conv_2d_same_expr<detail::build_type<A>, detail::build_type<B>, false> conv_2d_s
  *
  * \return an expression representing the 'same' 1D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, etl_expr C>
 auto conv_2d_same(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_2d_same(a, b);
 
     return c;
@@ -279,10 +273,8 @@ auto conv_2d_same(A&& a, B&& b, C&& c) {
  *
  * \return an expression representing the 'same' 1D convolution of a and b
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 conv_2d_same_expr<detail::build_type<A>, detail::build_type<B>, true> conv_2d_same_flipped(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_2d_same_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b};
 }
 
@@ -298,10 +290,8 @@ conv_2d_same_expr<detail::build_type<A>, detail::build_type<B>, true> conv_2d_sa
  *
  * \return an expression representing the 'same' 1D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, etl_expr C>
 auto conv_2d_same_flipped(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_2d_same_flipped(a, b);
 
     return c;

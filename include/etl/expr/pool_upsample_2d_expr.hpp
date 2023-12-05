@@ -22,7 +22,7 @@ namespace etl {
  * \tparam B The output type
  * \tparam C The errors type
  */
-template <typename A, typename B, typename C, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, bool Max>
+template <etl_expr A, etl_expr B, etl_expr C, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, bool Max>
 struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A, B, C, C1, C2, S1, S2, P1, P2, Max>, A, B, C> {
     using value_type = value_t<A>;                                                  ///< The type of value of the expression
     using sub_traits = etl::decay_traits<A>;                                        ///< The traits of the first sub type
@@ -143,10 +143,8 @@ struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A,
      * \brief Assign to a matrix of the same storage order
      * \param result The expression to which assign
      */
-    template <typename R>
+    template <etl_expr R>
     void assign_to(R&& result) const {
-        static_assert(all_etl_expr<A, B, C, R>, "Max Pool Derivative only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -340,7 +338,7 @@ struct etl_traits<etl::pool_upsample_2d_expr<A, B, C, C1, C2, S1, S2, P1, P2, Ma
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, etl_expr A, etl_expr B, etl_expr C>
 pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, S1, S2, P1, P2, true> max_pool_upsample_2d(A&& input,
                                                                                                                                               B&& output,
                                                                                                                                               C&& errors) {
@@ -355,7 +353,7 @@ pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::buil
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, etl_expr A, etl_expr B, etl_expr C>
 pool_upsample_2d_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>, C1, C2, S1, S2, P1, P2, false> avg_pool_upsample_2d(A&& input,
                                                                                                                                                B&& output,
                                                                                                                                                C&& errors) {

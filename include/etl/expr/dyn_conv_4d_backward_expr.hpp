@@ -36,7 +36,7 @@ namespace etl {
  * \tparam B The kernel type
  * \tparam Flipped Indicates if Flipped already or not or not
  */
-template <typename A, typename B, bool Flipped>
+template <etl_expr A, etl_expr B, bool Flipped>
 struct dyn_conv_4d_backward_expr : base_temporary_expr_bin<dyn_conv_4d_backward_expr<A, B, Flipped>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = dyn_conv_4d_backward_expr<A, B, Flipped>; ///< The type of this expression
@@ -87,10 +87,8 @@ struct dyn_conv_4d_backward_expr : base_temporary_expr_bin<dyn_conv_4d_backward_
      * \brief Assign to a matrix
      * \param conv The expression to which assign
      */
-    template <typename C>
+    template <etl_expr C>
     void assign_to(C&& conv) const {
-        static_assert(all_etl_expr<A, B, C>, "conv4_backward only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& input  = this->a();
@@ -316,10 +314,8 @@ struct etl_traits<etl::dyn_conv_4d_backward_expr<A, B, Flipped>> {
  *
  * \return an expression representing the transposed convolution convolution of a and b
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, false> conv_4d_backward(A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b, s1, s2, p1, p2};
 }
 
@@ -336,10 +332,8 @@ dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, false> c
  *
  * \return an expression representing the transposed 2D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, etl_expr C>
 auto conv_4d_backward(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_4d_backward(a, b, s1, s2, p1, p2);
 
     return c;
@@ -356,11 +350,9 @@ auto conv_4d_backward(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size
  *
  * \return an expression representing the transposed 2D convolution of a and b
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true> conv_4d_backward_flipped(
     A&& a, B&& b, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
 }
 
@@ -377,10 +369,8 @@ dyn_conv_4d_backward_expr<detail::build_type<A>, detail::build_type<B>, true> co
  *
  * \return an expression representing the transposed 2D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, etl_expr C>
 auto conv_4d_backward_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_4d_backward_flipped(a, b, s1, s2, p1, p2);
 
     return c;

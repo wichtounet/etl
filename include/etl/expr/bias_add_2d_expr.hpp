@@ -21,7 +21,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> {
     using value_type = value_t<A>;                               ///< The type of value of the expression
     using this_type  = bias_add_2d_expr<A, B>;                   ///< The type of this expression
@@ -74,10 +74,8 @@ struct bias_add_2d_expr : base_temporary_expr_bin<bias_add_2d_expr<A, B>, A, B> 
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_add_2d only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -380,12 +378,8 @@ struct etl_traits<etl::bias_add_2d_expr<A, B>> {
  * \param biases The vector of biases
  * \return The transpose of the given expression.
  */
-template <typename E, typename B>
+template <etl_2d E, etl_1d B>
 bias_add_2d_expr<detail::build_type<E>, detail::build_type<B>> bias_add_2d(const E& x, const B& biases) {
-    static_assert(all_etl_expr<E, B>, "etl::bias_add_2d can only be used on ETL expressions");
-    static_assert(is_2d<E>, "etl::bias_add_2d is only defined for 2D input");
-    static_assert(is_1d<B>, "etl::bias_add_2d is only defined for 1D bias vector");
-
     return bias_add_2d_expr<detail::build_type<E>, detail::build_type<B>>{x, biases};
 }
 
