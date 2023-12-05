@@ -146,31 +146,23 @@ std::false_type is_base_of_template_tb_impl(...);
 template <typename T, template <typename, bool> typename C>
 constexpr bool is_base_of_template_tb = decltype(is_base_of_template_tb_impl<C>(std::declval<T*>()))::value;
 
-/*!
- * \brief Helper traits to test if E is a non-GPU temporary expression.
- */
-template <typename E, typename Enable = void>
-struct is_nongpu_temporary_impl : std::false_type {};
-
-/*!
- * \brief Helper traits to test if E is a non-GPU temporary expression.
- */
 template <typename E>
-struct is_nongpu_temporary_impl<E, std::enable_if_t<is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr> && !std::decay_t<E>::gpu_computable>>
-        : std::true_type {};
+constexpr bool is_nongpu_temporary_impl() {
+    if constexpr (is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr>) {
+        return !std::decay_t<E>::gpu_computable;
+    } else {
+        return false;
+    }
+}
 
-/*!
- * \brief Helper traits to test if E is a GPU temporary expression.
- */
-template <typename E, typename Enable = void>
-struct is_gpu_temporary_impl : std::false_type {};
-
-/*!
- * \brief Helper traits to test if E is a GPU temporary expression.
- */
 template <typename E>
-struct is_gpu_temporary_impl<E, std::enable_if_t<is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr> && std::decay_t<E>::gpu_computable>>
-        : std::true_type {};
+constexpr bool is_gpu_temporary_impl() {
+    if constexpr (is_base_of_template_tb<std::decay_t<E>, etl::base_temporary_expr>) {
+        return std::decay_t<E>::gpu_computable;
+    } else {
+        return false;
+    }
+}
 
 } // end of namespace traits_detail
 
@@ -865,114 +857,45 @@ namespace traits_detail {
  *
  * \tparam T The type to test
  */
-template <typename T, typename Enable = void>
-struct inplace_sub_transpose_able_impl;
-
-/*!
- * \copydoc inplace_sub_transpose_able_impl
- */
 template <typename T>
-struct inplace_sub_transpose_able_impl<T, std::enable_if_t<is_fast<T> && is_3d<T>>> {
-    /*!
-     * \brief Indicates if T is inplace sub-transpose-able
-     */
-    static constexpr bool value = decay_traits<T>::template dim<1>() == decay_traits<T>::template dim<2>();
-};
-
-/*!
- * \copydoc inplace_sub_transpose_able_impl
- */
-template <typename T>
-struct inplace_sub_transpose_able_impl<T, std::enable_if_t<!is_fast<T> && is_3d<T>>> {
-    /*!
-     * \brief Indicates if T is inplace sub-transpose-able
-     */
-    static constexpr bool value = true;
-};
-
-/*!
- * \copydoc inplace_sub_transpose_able_impl
- */
-template <typename T>
-struct inplace_sub_transpose_able_impl<T, std::enable_if_t<!is_3d<T>>> {
-    /*!
-     * \brief Indicates if T is inplace sub-transpose-able
-     */
-    static constexpr bool value = false;
-};
+constexpr bool inplace_sub_transpose_able_impl() {
+    if constexpr (is_fast<T> && is_3d<T>) {
+        return decay_traits<T>::template dim<1>() == decay_traits<T>::template dim<2>();
+    } else if constexpr (!is_fast<T> && is_3d<T>) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 /*!
  * \brief Traits to test if an expression is inplace transpose-able
  * \tparam T The type to test
  */
-template <typename T, typename Enable = void>
-struct inplace_transpose_able_impl;
-
-/*!
- * \copydoc inplace_transpose_able_impl
- */
 template <typename T>
-struct inplace_transpose_able_impl<T, std::enable_if_t<is_fast<T> && is_2d<T>>> {
-    /*!
-     * \brief Indicates if T is inplace transpose-able
-     */
-    static constexpr bool value = decay_traits<T>::template dim<0>() == decay_traits<T>::template dim<1>();
-};
-
-/*!
- * \copydoc inplace_transpose_able_impl
- */
-template <typename T>
-struct inplace_transpose_able_impl<T, std::enable_if_t<!is_fast<T> && is_2d<T>>> {
-    /*!
-     * \brief Indicates if T is inplace transpose-able
-     */
-    static constexpr bool value = true;
-};
-
-/*!
- * \copydoc inplace_transpose_able_impl
- */
-template <typename T>
-struct inplace_transpose_able_impl<T, std::enable_if_t<!is_2d<T>>> {
-    /*!
-     * \brief Indicates if T is inplace transpose-able
-     */
-    static constexpr bool value = false;
-};
+constexpr bool inplace_transpose_able_impl() {
+    if constexpr (is_fast<T> && is_2d<T>) {
+        return decay_traits<T>::template dim<0>() == decay_traits<T>::template dim<1>();
+    } else if constexpr (!is_fast<T> && is_2d<T>) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 /*!
  * \brief Traits to test if a matrix is a square matrix, if this can be defined.
  */
-template <typename Matrix, typename Enable = void>
-struct is_square_matrix_impl {
-    /*!
-     * \brief The value of the traits. True if the matrix is square, false otherwise
-     */
-    static constexpr bool value = false;
-};
-
-/*!
- * \copydoc is_square_matrix_impl
- */
 template <typename Matrix>
-struct is_square_matrix_impl<Matrix, std::enable_if_t<is_fast<Matrix> && is_2d<Matrix>>> {
-    /*!
-     * \brief The value of the traits. True if the matrix is square, false otherwise
-     */
-    static constexpr bool value = etl_traits<Matrix>::template dim<0>() == etl_traits<Matrix>::template dim<1>();
-};
-
-/*!
- * \copydoc is_square_matrix_impl
- */
-template <typename Matrix>
-struct is_square_matrix_impl<Matrix, std::enable_if_t<!is_fast<Matrix> && is_2d<Matrix>>> {
-    /*!
-     * \brief The value of the traits. True if the matrix is square, false otherwise
-     */
-    static constexpr bool value = true;
-};
+constexpr bool is_square_matrix_impl() {
+    if constexpr (is_fast<Matrix> && is_2d<Matrix>) {
+        return etl_traits<Matrix>::template dim<0>() == etl_traits<Matrix>::template dim<1>();
+    } else if constexpr (!is_fast<Matrix> && is_2d<Matrix>) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 } //end of namespace traits_detail
 
@@ -981,7 +904,7 @@ struct is_square_matrix_impl<Matrix, std::enable_if_t<!is_fast<Matrix> && is_2d<
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool inplace_transpose_able = traits_detail::inplace_transpose_able_impl<T>::value;
+constexpr bool inplace_transpose_able = traits_detail::inplace_transpose_able_impl<T>();
 
 /*!
  * \brief Traits to test if an expression is inplace sub transpose-able.
@@ -991,27 +914,27 @@ constexpr bool inplace_transpose_able = traits_detail::inplace_transpose_able_im
  * \tparam T The type to test
  */
 template <typename T>
-constexpr bool inplace_sub_transpose_able = traits_detail::inplace_sub_transpose_able_impl<T>::value;
+constexpr bool inplace_sub_transpose_able = traits_detail::inplace_sub_transpose_able_impl<T>();
 
 /*!
  * \brief Traits to test if a matrix is a square matrix, if this can be defined.
  */
 template <typename Matrix>
-constexpr bool is_square_matrix = traits_detail::is_square_matrix_impl<Matrix>::value;
+constexpr bool is_square_matrix = traits_detail::is_square_matrix_impl<Matrix>();
 
 /*!
  * \brief Traits to test if an expression is a temporary expression with non-GPU
  * capabilities
  */
 template <typename E>
-constexpr bool is_nongpu_temporary = traits_detail::is_nongpu_temporary_impl<E>::value;
+constexpr bool is_nongpu_temporary = traits_detail::is_nongpu_temporary_impl<E>();
 
 /*!
  * \brief Traits to test if an expression is a temporary expression with GPU
  * capabilities
  */
 template <typename E>
-constexpr bool is_gpu_temporary = traits_detail::is_gpu_temporary_impl<E>::value;
+constexpr bool is_gpu_temporary = traits_detail::is_gpu_temporary_impl<E>();
 
 /*!
  * \brief Traits indicating if it's more efficient to use smart_gpu_compute(x)
