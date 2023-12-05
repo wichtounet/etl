@@ -22,7 +22,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = gemv_expr<A, B>;                          ///< The type of this expression
@@ -205,10 +205,8 @@ struct gemv_expr : base_temporary_expr_bin<gemv_expr<A, B>, A, B> {
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_expr C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, B, C>, "gemm only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         check(this->a(), this->b(), c);

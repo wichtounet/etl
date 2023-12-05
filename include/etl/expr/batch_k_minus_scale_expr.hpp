@@ -11,7 +11,7 @@
 
 namespace etl {
 
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, etl_expr C>
 struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_expr<A, B, C>, A, B, C> {
     using value_type  = value_t<A>;                                  ///< The type of value of the expression
     using this_type   = batch_k_minus_scale_expr<A, B, C>;            ///< The type of this expression
@@ -96,10 +96,8 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, B, L>, "batch_k_minus_scale only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -366,10 +364,8 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_add_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, B, L>, "batch_k_minus_scale only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
         auto& c = this->c();
@@ -630,10 +626,8 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_sub_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, B, L>, "batch_k_minus_scale only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
         auto& c = this->c();
@@ -894,10 +888,8 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mul_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, B, L>, "batch_k_minus_scale only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
         auto& c = this->c();
@@ -1158,10 +1150,8 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_div_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, B, L>, "batch_k_minus_scale only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
         auto& c = this->c();
@@ -1422,10 +1412,8 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mod_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, B, L>, "batch_k_minus_scale only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
         auto& c = this->c();
@@ -1593,12 +1581,9 @@ struct etl_traits<etl::batch_k_minus_scale_expr<A, B, C>> {
  * \param value The expression
  * \return The transpose of the given expression.
  */
-template <typename A, typename B, typename C>
+template <etl_1d A, etl_expr B, etl_1d C>
 batch_k_minus_scale_expr<detail::build_type<A>, detail::build_type<B>, detail::build_type<C>> batch_k_minus_scale(const A& a, const B& b, const C& c) {
-    static_assert(all_etl_expr<A, B, C>, "etl::batch_k_minus_scale can only be used on ETL expressions");
-    static_assert(is_1d<A>, "etl::batch_k_minus_scale is only defined for 1D LHS");
     static_assert(is_4d<B> || is_2d<B>, "etl::batch_k_minus_scale is only defined for 2D/4D RHS");
-    static_assert(is_1d<C>, "etl::batch_k_minus_scale is only defined for 1D LHS");
 
     return {a, b, c};
 }
