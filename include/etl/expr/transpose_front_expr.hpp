@@ -18,7 +18,7 @@ namespace etl {
  * \brief A transposition expression for the first layers.
  * \tparam A The transposed type
  */
-template <typename A>
+template <etl_expr A>
 struct transpose_front_expr : base_temporary_expr_un<transpose_front_expr<A>, A> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
     using this_type  = transpose_front_expr<A>;                    ///< The type of this expression
@@ -46,7 +46,7 @@ struct transpose_front_expr : base_temporary_expr_un<transpose_front_expr<A>, A>
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C>
+    template <etl_expr C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const C& c) {
         if constexpr (all_fast<A, C>) {
             static_assert(etl::dim<0, A>() == etl::dim<1, C>(), "Invalid dimensions for front transposition");
@@ -65,10 +65,8 @@ struct transpose_front_expr : base_temporary_expr_un<transpose_front_expr<A>, A>
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_expr C>
     void assign_to(C&& lhs) const {
-        static_assert(all_etl_expr<A, C>, "Front Transpose only supported for ETL expressions");
-
         auto& a = this->a();
 
         check(a, lhs);
@@ -110,7 +108,7 @@ struct transpose_front_expr : base_temporary_expr_un<transpose_front_expr<A>, A>
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -119,7 +117,7 @@ struct transpose_front_expr : base_temporary_expr_un<transpose_front_expr<A>, A>
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -128,7 +126,7 @@ struct transpose_front_expr : base_temporary_expr_un<transpose_front_expr<A>, A>
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -137,7 +135,7 @@ struct transpose_front_expr : base_temporary_expr_un<transpose_front_expr<A>, A>
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -146,7 +144,7 @@ struct transpose_front_expr : base_temporary_expr_un<transpose_front_expr<A>, A>
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }

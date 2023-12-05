@@ -21,7 +21,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = outer_product_expr<A, B>;                 ///< The type of this expression
@@ -54,7 +54,7 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
      * \tparam C The type of c expression
      * \return The implementation to use
      */
-    template <typename C>
+    template <etl_expr C>
     static constexpr etl::outer_impl select_default_outer_impl() {
         if (cblas_enabled) {
             return etl::outer_impl::BLAS;
@@ -70,7 +70,7 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
      * \tparam C The type of c expression
      * \return The implementation to use
      */
-    template <typename C>
+    template <etl_expr C>
     static etl::outer_impl select_outer_impl() {
         if (local_context().outer_selector.forced) {
             auto forced = local_context().outer_selector.impl;
@@ -102,7 +102,7 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
      * \tparam C The type of c expression
      * \return The implementation to use
      */
-    template <typename C>
+    template <etl_expr C>
     static constexpr etl::outer_impl select_outer_impl() {
         return select_default_outer_impl<C>();
     }
@@ -113,10 +113,8 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_expr C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, B, C>, "batch_outer_product only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -139,7 +137,7 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -148,7 +146,7 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -157,7 +155,7 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -166,7 +164,7 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -175,7 +173,7 @@ struct outer_product_expr : base_temporary_expr_bin<outer_product_expr<A, B>, A,
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
@@ -291,7 +289,7 @@ struct etl_traits<etl::outer_product_expr<A, B>> {
  * \param b The right hand side matrix
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 outer_product_expr<detail::build_type<A>, detail::build_type<B>> outer(A&& a, B&& b) {
     return outer_product_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
@@ -303,7 +301,7 @@ outer_product_expr<detail::build_type<A>, detail::build_type<B>> outer(A&& a, B&
  * \param c The expression used to store the result
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, etl_expr C>
 auto outer(A&& a, B&& b, C&& c) {
     c = outer(a, b);
     return c;

@@ -17,7 +17,7 @@ namespace etl {
  * \brief An upsample expression.
  * \tparam A The type of the expression to upsample
  */
-template <typename A, size_t C1, size_t C2, size_t C3>
+template <etl_expr A, size_t C1, size_t C2, size_t C3>
 struct upsample_3d_expr : base_temporary_expr_un<upsample_3d_expr<A, C1, C2, C3>, A> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
     using this_type  = upsample_3d_expr<A, C1, C2, C3>;      ///< The type of this expression
@@ -46,9 +46,8 @@ struct upsample_3d_expr : base_temporary_expr_un<upsample_3d_expr<A, C1, C2, C3>
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "upsample_3d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<L>(), "upsample_3d must be applied on matrices of same dimensionality");
 
         inc_counter("temp:assign");
@@ -62,7 +61,7 @@ struct upsample_3d_expr : base_temporary_expr_un<upsample_3d_expr<A, C1, C2, C3>
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -71,7 +70,7 @@ struct upsample_3d_expr : base_temporary_expr_un<upsample_3d_expr<A, C1, C2, C3>
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -80,7 +79,7 @@ struct upsample_3d_expr : base_temporary_expr_un<upsample_3d_expr<A, C1, C2, C3>
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -89,7 +88,7 @@ struct upsample_3d_expr : base_temporary_expr_un<upsample_3d_expr<A, C1, C2, C3>
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -98,7 +97,7 @@ struct upsample_3d_expr : base_temporary_expr_un<upsample_3d_expr<A, C1, C2, C3>
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
@@ -235,7 +234,7 @@ struct etl_traits<etl::upsample_3d_expr<A, C1, C2, C3>> {
  * \tparam C3 The third pooling ratio
  * \return A expression representing the Upsampling of the given expression
  */
-template <size_t C1, size_t C2, size_t C3, typename E>
+template <size_t C1, size_t C2, size_t C3, etl_expr E>
 upsample_3d_expr<detail::build_type<E>, C1, C2, C3> upsample_3d(E&& value) {
     return upsample_3d_expr<detail::build_type<E>, C1, C2, C3>{value};
 }
