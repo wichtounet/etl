@@ -230,8 +230,6 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
      */
     template <etl_expr L>
     void assign_mul_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_var_4d only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -276,8 +274,6 @@ struct bias_batch_var_4d_expr : base_temporary_expr_bin<bias_batch_var_4d_expr<A
      */
     template <etl_expr L>
     void assign_div_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_var_4d only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
