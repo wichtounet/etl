@@ -240,7 +240,7 @@ struct etl_traits<etl::embedding_gradients_expr<A, B, C>> {
  * \param vocab The embedding vocabulary
  * \return The embeeddings of the given sequence.
  */
-template <etl_1d I, etl_2d E, etlexpr W>
+template <etl_1d I, etl_2d E, etl_expr W>
 embedding_gradients_expr<detail::build_type<I>, detail::build_type<E>, detail::build_type<W>> embedding_gradients(const I& value,
                                                                                                                   const E& errors,
                                                                                                                   const W& vocab) {

@@ -390,12 +390,8 @@ struct etl_traits<etl::bias_add_4d_expr<A, B>> {
  * \param biases The vector of biases
  * \return The transpose of the given expression.
  */
-template <typename E, typename B>
+template <etl_4d E, etl_1d B>
 bias_add_4d_expr<detail::build_type<E>, detail::build_type<B>> bias_add_4d(const E& x, const B& biases) {
-    static_assert(all_etl_expr<E, B>, "etl::bias_add can only be used on ETL expressions");
-    static_assert(is_4d<E>, "etl::bias_add is only defined for 4D input");
-    static_assert(is_1d<B>, "etl::bias_add is only defined for 1D bias vector");
-
     return bias_add_4d_expr<detail::build_type<E>, detail::build_type<B>>{x, biases};
 }
 

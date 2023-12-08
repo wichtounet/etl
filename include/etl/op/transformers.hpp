@@ -158,14 +158,12 @@ private:
  * \brief Transform that applies a convmtx transformation on a matrix.
  * \tparam T The type on which the transformer is applied
  */
-template <typename T>
+template <etl_1d T>
 struct dyn_convmtx_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
 
     static constexpr bool gpu_computable = false;
-
-    static_assert(is_1d<T>, "convmtx can only be applied on vectors");
 
     sub_type sub; ///< The subexpression
     size_t h;     ///< The convmtx transformation size

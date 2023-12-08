@@ -341,12 +341,8 @@ struct etl_traits<etl::batch_embedding_lookup_expr<A, B>> {
  * \param vocab The embedding vocabulary
  * \return The embeeddings of the given sequence.
  */
-template <typename I, typename V>
+template <etl_2d I, etl_2d V>
 batch_embedding_lookup_expr<detail::build_type<I>, detail::build_type<V>> batch_embedding_lookup(const I& value, const V& vocab) {
-    static_assert(all_etl_expr<I, V>, "etl::batch_embedding_lookup can only be used on ETL expressions");
-    static_assert(is_2d<I>, "etl::batch_embedding_lookup is only defined for 2d input");
-    static_assert(is_2d<V>, "etl::batch_embedding_lookup is only defined for 2d vocabulary");
-
     return batch_embedding_lookup_expr<detail::build_type<I>, detail::build_type<V>>{value, vocab};
 }
 
