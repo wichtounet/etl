@@ -22,7 +22,7 @@ namespace etl {
  * \tparam B The output type
  * \tparam C The errors type
  */
-template <typename A, typename B, typename C, size_t C1, size_t C2, size_t C3, bool Max>
+template <etl_expr A, etl_expr B, etl_expr C, size_t C1, size_t C2, size_t C3, bool Max>
 struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A, B, C, C1, C2, C3, Max>, A, B, C> {
     using value_type = value_t<A>;                                      ///< The type of value of the expression
     using sub_traits = etl::decay_traits<A>;                            ///< The traits of the first sub type
@@ -52,7 +52,7 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename R>
+    template <etl_expr R>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c, [[maybe_unused]] const R& result) {
         static constexpr size_t D = etl::decay_traits<A>::dimensions();
 
@@ -146,10 +146,8 @@ struct pool_upsample_3d_expr : base_temporary_expr_tern<pool_upsample_3d_expr<A,
      * \brief Assign to a matrix of the same storage order
      * \param result The expression to which assign
      */
-    template <typename R>
+    template <etl_expr R>
     void assign_to(R&& result) const {
-        static_assert(all_etl_expr<A, B, C, R>, "Max Pool Derivative only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();

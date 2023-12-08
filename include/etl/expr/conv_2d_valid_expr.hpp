@@ -73,10 +73,8 @@ struct conv_2d_valid_expr : base_temporary_expr_bin<conv_2d_valid_expr<A, B, S1,
      * \brief Assign to a matrix
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_expr C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, B, C>, "conv2_valid only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -249,10 +247,8 @@ struct etl_traits<etl::conv_2d_valid_expr<A, B, S1, S2, P1, P2, Flipped>> {
  *
  * \return an expression representing the 'valid' 1D convolution of a and b
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_expr A, etl_expr B>
 conv_2d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, false> conv_2d_valid(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_2d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, false>{a, b};
 }
 
@@ -265,10 +261,8 @@ conv_2d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2,
  *
  * \return an expression representing the 'valid' 1D convolution of a and b
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_expr A, etl_expr B, etl_expr C>
 auto conv_2d_valid(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_2d_valid<S1, S2, P1, P2>(a, b);
 
     return c;
@@ -282,10 +276,8 @@ auto conv_2d_valid(A&& a, B&& b, C&& c) {
  *
  * \return an expression representing the 'valid' 1D convolution of a and b
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_expr A, etl_expr B>
 conv_2d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true> conv_2d_valid_flipped(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_2d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{a, b};
 }
 
@@ -298,10 +290,8 @@ conv_2d_valid_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2,
  *
  * \return an expression representing the 'valid' 1D convolution of a and b
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_expr A, etl_expr B, etl_expr C>
 auto conv_2d_valid_flipped(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_2d_valid_flipped<S1, S2, P1, P2>(a, b);
 
     return c;

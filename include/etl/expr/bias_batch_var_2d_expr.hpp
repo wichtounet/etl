@@ -17,7 +17,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B>
+template <etl_2d A, etl_1d B>
 struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A, B>, A, B> {
     using value_type = value_t<A>;                               ///< The type of value of the expression
     using this_type  = bias_batch_var_2d_expr<A, B>;             ///< The type of this expression
@@ -47,7 +47,7 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C>
+    template <etl_expr C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c) {
         static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_var_2d is a vector");
         static_assert(etl::dimensions<A>() == 2, "The input of bias_batch_var_2d is a 2d matrix");
@@ -68,10 +68,8 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_var_2d only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -124,10 +122,8 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_add_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_var_2d only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -160,10 +156,8 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_sub_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_var_2d only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -196,10 +190,8 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mul_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_var_2d only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -232,10 +224,8 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_div_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_var_2d only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -268,10 +258,8 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mod_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_var_2d only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -315,7 +303,7 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, typename B>
+template <etl_2d A, etl_1d B>
 struct etl_traits<etl::bias_batch_var_2d_expr<A, B>> {
     using expr_t     = etl::bias_batch_var_2d_expr<A, B>; ///< The expression type
     using sub_expr_t = std::decay_t<A>;                   ///< The sub expression type
@@ -406,13 +394,8 @@ struct etl_traits<etl::bias_batch_var_2d_expr<A, B>> {
  * \param value The expression
  * \return The transpose of the given expression.
  */
-template <typename A, typename B>
+template <etl_2d A, etl_1d B>
 bias_batch_var_2d_expr<detail::build_type<A>, detail::build_type<B>> bias_batch_var_2d(const A& a, const B& b) {
-    static_assert(is_etl_expr<A>, "etl::bias_batch_var_2d can only be used on ETL expressions");
-    static_assert(is_etl_expr<B>, "etl::bias_batch_var_2d can only be used on ETL expressions");
-    static_assert(is_2d<A>, "etl::bias_batch_var_2d is only defined for 2d input");
-    static_assert(is_1d<B>, "etl::bias_batch_var_2d is only defined for 1d mean");
-
     return bias_batch_var_2d_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
 

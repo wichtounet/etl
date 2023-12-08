@@ -240,14 +240,10 @@ struct etl_traits<etl::embedding_gradients_expr<A, B, C>> {
  * \param vocab The embedding vocabulary
  * \return The embeeddings of the given sequence.
  */
-template <typename I, typename E, typename W>
+template <etl_1d I, etl_2d E, etlexpr W>
 embedding_gradients_expr<detail::build_type<I>, detail::build_type<E>, detail::build_type<W>> embedding_gradients(const I& value,
                                                                                                                   const E& errors,
                                                                                                                   const W& vocab) {
-    static_assert(all_etl_expr<I, E, W>, "etl::embedding_gradients can only be used on ETL expressions");
-    static_assert(is_1d<I>, "etl::embedding_gradients is only defined for 1d input");
-    static_assert(is_2d<E>, "etl::embedding_gradients is only defined for 2d vocabulary");
-
     return embedding_gradients_expr<detail::build_type<I>, detail::build_type<E>, detail::build_type<W>>{value, errors, vocab};
 }
 

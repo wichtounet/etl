@@ -18,7 +18,7 @@ namespace etl {
  * \brief An upsample expression.
  * \tparam A The type of the expression to upsample
  */
-template <typename A, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2>
+template <etl_expr A, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2>
 struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2, S1, S2, P1, P2>, A> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
     using this_type  = upsample_2d_expr<A, C1, C2, S1, S2, P1, P2>;  ///< The type of this expression
@@ -47,9 +47,8 @@ struct upsample_2d_expr : base_temporary_expr_un<upsample_2d_expr<A, C1, C2, S1,
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_expr C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, C>, "upsample_2d only supported for ETL expressions");
         static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "upsample_2d must be applied on matrices of same dimensionality");
 
         inc_counter("temp:assign");

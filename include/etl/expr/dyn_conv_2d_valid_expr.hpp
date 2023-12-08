@@ -18,7 +18,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B, bool Flipped>
+template <etl_expr A, etl_expr B, bool Flipped>
 struct dyn_conv_2d_valid_expr : base_temporary_expr_bin<dyn_conv_2d_valid_expr<A, B, Flipped>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = dyn_conv_2d_valid_expr<A, B, Flipped>;    ///< The type of this expression
@@ -65,10 +65,8 @@ struct dyn_conv_2d_valid_expr : base_temporary_expr_bin<dyn_conv_2d_valid_expr<A
      * \brief Assign to a matrix of the full storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_expr C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, B, C>, "conv2_full only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -226,10 +224,8 @@ struct etl_traits<etl::dyn_conv_2d_valid_expr<A, B, Flipped>> {
  * \param p2 The second dimension padding (top and bottom)
  * \return an expression representing the valid 2D convolution of a and b
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 dyn_conv_2d_valid_expr<detail::build_type<A>, detail::build_type<B>, false> conv_2d_valid(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return dyn_conv_2d_valid_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b, s1, s2, p1, p2};
 }
 
@@ -244,10 +240,8 @@ dyn_conv_2d_valid_expr<detail::build_type<A>, detail::build_type<B>, false> conv
  * \param p2 The second dimension padding (top and bottom)
  * \return an expression representing the valid 2D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, etl_expr C>
 auto conv_2d_valid(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_2d_valid(a, b, s1, s2, p1, p2);
 
     return c;
@@ -263,11 +257,9 @@ auto conv_2d_valid(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t 
  * \param p2 The second dimension padding (top and bottom)
  * \return an expression representing the valid 2D convolution of a and b
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 dyn_conv_2d_valid_expr<detail::build_type<A>, detail::build_type<B>, true> conv_2d_valid_flipped(
     A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return dyn_conv_2d_valid_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
 }
 
@@ -282,10 +274,8 @@ dyn_conv_2d_valid_expr<detail::build_type<A>, detail::build_type<B>, true> conv_
  * \param p2 The second dimension padding (top and bottom)
  * \return an expression representing the valid 2D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, etl_expr C>
 auto conv_2d_valid_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_2d_valid_flipped(a, b, s1, s2, p1, p2);
 
     return c;

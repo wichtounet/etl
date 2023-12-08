@@ -18,7 +18,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B, typename Impl>
+template <etl_expr A, etl_expr B, typename Impl>
 struct dyn_pool_derivative_expr : base_temporary_expr_bin<dyn_pool_derivative_expr<A, B, Impl>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = dyn_pool_derivative_expr<A, B, Impl>;     ///< The type of this expression
@@ -60,10 +60,8 @@ struct dyn_pool_derivative_expr : base_temporary_expr_bin<dyn_pool_derivative_ex
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_expr C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, B, C>, "pool_derivative only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();

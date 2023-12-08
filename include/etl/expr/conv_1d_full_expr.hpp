@@ -66,10 +66,8 @@ struct conv_1d_full_expr : base_temporary_expr_bin<conv_1d_full_expr<A, B>, A, B
      * \brief Assign to a matrix of the same storage order
      * \param conv The expression to which assign
      */
-    template <typename C>
+    template <etl_expr C>
     void assign_to(C&& conv) const {
-        static_assert(all_etl_expr<A, B, C>, "conv1_full only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& input_raw  = this->a();
@@ -303,10 +301,8 @@ struct etl_traits<etl::conv_1d_full_expr<A, B>> {
  * \param b The kernel expression
  * \return an expression representing the valid 1D convolution of a and b
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 conv_1d_full_expr<detail::build_type<A>, detail::build_type<B>> conv_1d_full(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_1d_full_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
 
@@ -317,10 +313,8 @@ conv_1d_full_expr<detail::build_type<A>, detail::build_type<B>> conv_1d_full(A&&
  * \param c The result
  * \return an expression representing the valid 1D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_expr A, etl_expr B, etl_expr C>
 auto conv_1d_full(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_1d_full(a, b);
     return c;
 }
