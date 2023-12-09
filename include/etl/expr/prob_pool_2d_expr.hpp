@@ -48,11 +48,8 @@ struct prob_pool_2d_expr : base_temporary_expr_un<prob_pool_2d_expr<A, C1, C2>, 
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <same_dimensions<A> C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, C>, "max_pool_2d only supported for ETL expressions");
-        static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
