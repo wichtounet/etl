@@ -18,7 +18,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, bool Mean>
+template <etl_4d A, bool Mean>
 struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<A, Mean>, A> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
     using this_type  = bias_batch_mean_4d_expr<A, Mean>;     ///< The type of this expression
@@ -48,11 +48,8 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C>
+    template <etl_1d C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const C& c) {
-        static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_mean_4d is a vector");
-        static_assert(etl::dimensions<A>() == 4, "The input of bias_batch_mean_4d is a 4D matrix");
-
         if constexpr (all_fast<A, C>) {
             static_assert(etl::dim<1, A>() == etl::dim<0, C>(), "Invalid dimensions for bias_batch_mean_4d");
         } else {
@@ -66,10 +63,8 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_1d L>
     void assign_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_mean_4d only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -147,10 +142,8 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_1d L>
     void assign_add_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_mean_4d only supported for ETL expressions");
-
         if constexpr (all_floating<A, L> && ((!Mean && cudnn_enabled) || (all_row_major<A, L> && impl::egblas::has_sbias_batch_sum4))) {
             std_add_evaluate(*this, lhs);
         } else {
@@ -199,10 +192,8 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_1d L>
     void assign_sub_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_mean_4d only supported for ETL expressions");
-
         if constexpr (all_floating<A, L> && ((!Mean && cudnn_enabled) || (all_row_major<A, L> && impl::egblas::has_sbias_batch_sum4))) {
             std_sub_evaluate(*this, lhs);
         } else {
@@ -251,10 +242,8 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_1d L>
     void assign_mul_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_mean_4d only supported for ETL expressions");
-
         if constexpr (all_floating<A, L> && ((!Mean && cudnn_enabled) || (all_row_major<A, L> && impl::egblas::has_sbias_batch_sum4))) {
             std_mul_evaluate(*this, lhs);
         } else {
@@ -303,10 +292,8 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_1d L>
     void assign_div_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_mean_4d only supported for ETL expressions");
-
         if constexpr (all_floating<A, L> && ((!Mean && cudnn_enabled) || (all_row_major<A, L> && impl::egblas::has_sbias_batch_sum4))) {
             std_div_evaluate(*this, lhs);
         } else {
@@ -355,10 +342,8 @@ struct bias_batch_mean_4d_expr : base_temporary_expr_un<bias_batch_mean_4d_expr<
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_1d L>
     void assign_mod_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_mean_4d only supported for ETL expressions");
-
         if constexpr (all_floating<A, L> && ((!Mean && cudnn_enabled) || (all_row_major<A, L> && impl::egblas::has_sbias_batch_sum4))) {
             std_mod_evaluate(*this, lhs);
         } else {
@@ -514,11 +499,8 @@ struct etl_traits<etl::bias_batch_mean_4d_expr<A, Mean>> {
  * \param value The expression
  * \return The transpose of the given expression.
  */
-template <typename E>
+template <etl_4d E>
 bias_batch_mean_4d_expr<detail::build_type<E>, true> bias_batch_mean_4d(const E& value) {
-    static_assert(is_etl_expr<E>, "etl::bias_batch_mean_4d can only be used on ETL expressions");
-    static_assert(is_4d<E>, "etl::bias_batch_mean_4d is only defined for 4D input");
-
     return bias_batch_mean_4d_expr<detail::build_type<E>, true>{value};
 }
 
@@ -527,11 +509,8 @@ bias_batch_mean_4d_expr<detail::build_type<E>, true> bias_batch_mean_4d(const E&
  * \param value The expression
  * \return The transpose of the given expression.
  */
-template <typename E>
+template <etl_4d E>
 bias_batch_mean_4d_expr<detail::build_type<E>, false> bias_batch_sum_4d(const E& value) {
-    static_assert(is_etl_expr<E>, "etl::bias_batch_sum_4d can only be used on ETL expressions");
-    static_assert(is_4d<E>, "etl::bias_batch_sum_4d is only defined for 4D input");
-
     return bias_batch_mean_4d_expr<detail::build_type<E>, false>{value};
 }
 
