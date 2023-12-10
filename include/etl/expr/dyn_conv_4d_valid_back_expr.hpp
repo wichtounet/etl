@@ -18,7 +18,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B, bool Flipped>
+template <etl_4d A, etl_4d B, bool Flipped>
 struct dyn_conv_4d_valid_back_expr : base_temporary_expr_bin<dyn_conv_4d_valid_back_expr<A, B, Flipped>, A, B> {
     using value_type  = value_t<A>;                                 ///< The type of value of the expression
     using this_type   = dyn_conv_4d_valid_back_expr<A, B, Flipped>; ///< The type of this expression
@@ -51,12 +51,8 @@ struct dyn_conv_4d_valid_back_expr : base_temporary_expr_bin<dyn_conv_4d_valid_b
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C>
+    template <etl_4d I, etl_4d K, etl_4d C>
     void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) const {
-        static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_valid_back");
-        static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_valid_back");
-        static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_valid_back");
-
         cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0), "Invalid dimensions for conv4_valid_back");
         cpp_assert(etl::dim(conv, 1) == etl::dim(kernel, 1), "Invalid dimensions for conv4_valid_back");
         cpp_assert(etl::dim(input, 1) == etl::dim(kernel, 0), "Invalid dimensions for conv4_valid_back");
@@ -69,10 +65,8 @@ struct dyn_conv_4d_valid_back_expr : base_temporary_expr_bin<dyn_conv_4d_valid_b
      * \brief Assign to a matrix of the full storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_4d C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, B, C>, "conv4_valid_back only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -91,7 +85,7 @@ struct dyn_conv_4d_valid_back_expr : base_temporary_expr_bin<dyn_conv_4d_valid_b
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -100,7 +94,7 @@ struct dyn_conv_4d_valid_back_expr : base_temporary_expr_bin<dyn_conv_4d_valid_b
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -109,7 +103,7 @@ struct dyn_conv_4d_valid_back_expr : base_temporary_expr_bin<dyn_conv_4d_valid_b
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -118,7 +112,7 @@ struct dyn_conv_4d_valid_back_expr : base_temporary_expr_bin<dyn_conv_4d_valid_b
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -127,7 +121,7 @@ struct dyn_conv_4d_valid_back_expr : base_temporary_expr_bin<dyn_conv_4d_valid_b
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
@@ -147,7 +141,7 @@ struct dyn_conv_4d_valid_back_expr : base_temporary_expr_bin<dyn_conv_4d_valid_b
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, typename B, bool Flipped>
+template <etl_4d A, etl_4d B, bool Flipped>
 struct etl_traits<etl::dyn_conv_4d_valid_back_expr<A, B, Flipped>> {
     using expr_t       = etl::dyn_conv_4d_valid_back_expr<A, B, Flipped>; ///< The expression type
     using left_expr_t  = std::decay_t<A>;                                 ///< The left sub expression type
@@ -235,11 +229,9 @@ struct etl_traits<etl::dyn_conv_4d_valid_back_expr<A, B, Flipped>> {
  * \param p2 The second dimension padding (top and bottom)
  * \return an expression representing the valid 4d convolution of a and b
  */
-template <typename A, typename B>
+template <etl_4d A, etl_4d B>
 dyn_conv_4d_valid_back_expr<detail::build_type<A>, detail::build_type<B>, false> conv_4d_valid_back(
     A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return dyn_conv_4d_valid_back_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b, s1, s2, p1, p2};
 }
 
@@ -254,10 +246,8 @@ dyn_conv_4d_valid_back_expr<detail::build_type<A>, detail::build_type<B>, false>
  * \param p2 The second dimension padding (top and bottom)
  * \return an expression representing the valid 4d convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_4d A, etl_4d B, etl_4d C>
 auto conv_4d_valid_back(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_4d_valid_back(a, b, s1, s2, p1, p2);
 
     return c;
@@ -273,11 +263,9 @@ auto conv_4d_valid_back(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, si
  * \param p2 The second dimension padding (top and bottom)
  * \return an expression representing the valid 4d convolution of a and b
  */
-template <typename A, typename B>
+template <etl_4d A, etl_4d B>
 dyn_conv_4d_valid_back_expr<detail::build_type<A>, detail::build_type<B>, true> conv_4d_valid_back_flipped(
     A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return dyn_conv_4d_valid_back_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b, s1, s2, p1, p2};
 }
 
@@ -292,10 +280,8 @@ dyn_conv_4d_valid_back_expr<detail::build_type<A>, detail::build_type<B>, true> 
  * \param p2 The second dimension padding (top and bottom)
  * \return an expression representing the valid 4d convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_4d A, etl_4d B, etl_4d C>
 auto conv_4d_valid_back_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1, size_t p2) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_4d_valid_back_flipped(a, b, s1, s2, p1, p2);
 
     return c;

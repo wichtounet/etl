@@ -23,7 +23,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B, bool Strassen>
+template <etl_expr A, etl_expr B, bool Strassen>
 struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = gemm_expr<A, B, Strassen>;                ///< The type of this expression
@@ -62,7 +62,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \param b The right side matrix
      * \param c The result matrix
      */
-    template <typename C>
+    template <etl_expr C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c) {
         if constexpr (all_fast<A, B, C>) {
             static_assert(dim<1, A>() == dim<0, B>()         //interior dimensions
@@ -253,7 +253,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_expr C>
     void assign_to(C&& c) const {
         static_assert(all_etl_expr<A, B, C>, "gemm only supported for ETL expressions");
 
@@ -275,7 +275,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -284,7 +284,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -293,7 +293,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -302,7 +302,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -311,7 +311,7 @@ struct gemm_expr : base_temporary_expr_bin<gemm_expr<A, B, Strassen>, A, B> {
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }

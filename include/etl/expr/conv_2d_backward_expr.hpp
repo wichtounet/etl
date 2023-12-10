@@ -40,7 +40,7 @@ namespace etl {
  * \tparam P2 The padding of the second dimension
  * \tparam Flipped Indicates if Flipped already or not or not
  */
-template <typename A, typename B, size_t S1, size_t S2, size_t P1, size_t P2, bool Flipped>
+template <etl_2d A, etl_2d B, size_t S1, size_t S2, size_t P1, size_t P2, bool Flipped>
 struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, B, S1, S2, P1, P2, Flipped>, A, B> {
     using value_type  = value_t<A>;                                           ///< The type of value of the expression
     using this_type   = conv_2d_backward_expr<A, B, S1, S2, P1, P2, Flipped>; ///< The type of this expression
@@ -68,7 +68,7 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C>
+    template <etl_2d I, etl_2d K, etl_2d C>
     static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) {
         static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_backward");
         static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_backward");
@@ -87,10 +87,8 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
      * \brief Assign to a matrix
      * \param conv The expression to which assign
      */
-    template <typename C>
+    template <etl_2d C>
     void assign_to(C&& conv) const {
-        static_assert(all_etl_expr<A, B, C>, "conv2_backward only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& input  = this->a();
@@ -157,7 +155,7 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_2d L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -166,7 +164,7 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_2d L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -175,7 +173,7 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_2d L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -184,7 +182,7 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_2d L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -193,7 +191,7 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_2d L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
@@ -213,7 +211,7 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
  * \brief Traits for a backward convolution expression
  * \tparam A The transposed sub type
  */
-template <typename A, typename B, size_t S1, size_t S2, size_t P1, size_t P2, bool Flipped>
+template <etl_2d A, etl_2d B, size_t S1, size_t S2, size_t P1, size_t P2, bool Flipped>
 struct etl_traits<etl::conv_2d_backward_expr<A, B, S1, S2, P1, P2, Flipped>> {
     using expr_t       = etl::conv_2d_backward_expr<A, B, S1, S2, P1, P2, Flipped>; ///< The expression type
     using left_expr_t  = std::decay_t<A>;                                           ///< The left sub expression type
@@ -319,10 +317,8 @@ struct etl_traits<etl::conv_2d_backward_expr<A, B, S1, S2, P1, P2, Flipped>> {
  *
  * \return an expression representing the transposed 2D convolution of a and b.
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_2d A, etl_2d B>
 conv_2d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, false> conv_2d_backward(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_2d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, false>{a, b};
 }
 
@@ -344,10 +340,8 @@ conv_2d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, 
  *
  * \return c
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_2d A, etl_2d B, etl_2d C>
 auto conv_2d_backward(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_2d_backward<S1, S2, P1, P2>(a, b);
 
     return c;
@@ -369,10 +363,8 @@ auto conv_2d_backward(A&& a, B&& b, C&& c) {
  *
  * \return an expression representing the transposed 2D convolution of a and b.
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_2d A, etl_2d B>
 conv_2d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true> conv_2d_backward_flipped(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_2d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{a, b};
 }
 
@@ -394,10 +386,8 @@ conv_2d_backward_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, 
  *
  * \return c
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_2d A, etl_2d B, etl_2d C>
 auto conv_2d_backward_flipped(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_2d_backward_flipped<S1, S2, P1, P2>(a, b);
 
     return c;

@@ -18,7 +18,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B, bool Flipped>
+template <etl_4d A, etl_4d B, bool Flipped>
 struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipped>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = conv_4d_full_expr<A, B, Flipped>;         ///< The type of this expression
@@ -46,12 +46,8 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C>
+    template <etl_4d I, etl_4d K, etl_4d C>
     static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) {
-        static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_full");
-        static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_full");
-        static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_full");
-
         if constexpr (all_fast<A, B, C>) {
             static_assert(etl::dim<0, C>() == etl::dim<0, I>(), "Invalid dimensions for conv4_full");
             static_assert(etl::dim<1, C>() == etl::dim<1, K>(), "Invalid dimensions for conv4_full");
@@ -73,10 +69,8 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
      * \brief Assign to a matrix of the full storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_4d C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, B, C>, "conv4_full only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -95,7 +89,7 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -104,7 +98,7 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -113,7 +107,7 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -122,7 +116,7 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -131,7 +125,7 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
@@ -151,7 +145,7 @@ struct conv_4d_full_expr : base_temporary_expr_bin<conv_4d_full_expr<A, B, Flipp
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, typename B, bool Flipped>
+template <etl_4d A, etl_4d B, bool Flipped>
 struct etl_traits<etl::conv_4d_full_expr<A, B, Flipped>> {
     using expr_t       = etl::conv_4d_full_expr<A, B, Flipped>; ///< The expression type
     using left_expr_t  = std::decay_t<A>;                       ///< The left sub expression type
@@ -254,10 +248,8 @@ struct etl_traits<etl::conv_4d_full_expr<A, B, Flipped>> {
  *
  * \return an expression representing the 'full' 1D convolution of a and b
  */
-template <typename A, typename B>
+template <etl_4d A, etl_4d B>
 conv_4d_full_expr<detail::build_type<A>, detail::build_type<B>, false> conv_4d_full(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_4d_full_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b};
 }
 
@@ -273,10 +265,8 @@ conv_4d_full_expr<detail::build_type<A>, detail::build_type<B>, false> conv_4d_f
  *
  * \return an expression representing the 'full' 1D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_4d A, etl_4d B, etl_4d C>
 auto conv_4d_full(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_4d_full(a, b);
 
     return c;
@@ -293,10 +283,8 @@ auto conv_4d_full(A&& a, B&& b, C&& c) {
  *
  * \return an expression representing the 'full' 1D convolution of a and b
  */
-template <typename A, typename B>
+template <etl_4d A, etl_4d B>
 conv_4d_full_expr<detail::build_type<A>, detail::build_type<B>, true> conv_4d_full_flipped(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_4d_full_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b};
 }
 
@@ -312,10 +300,8 @@ conv_4d_full_expr<detail::build_type<A>, detail::build_type<B>, true> conv_4d_fu
  *
  * \return an expression representing the 'full' 1D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_4d A, etl_4d B, etl_4d C>
 auto conv_4d_full_flipped(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_4d_full_flipped(a, b);
 
     return c;

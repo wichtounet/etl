@@ -18,7 +18,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B, bool Flipped>
+template <etl_2d A, etl_2d B, bool Flipped>
 struct conv_2d_full_expr : base_temporary_expr_bin<conv_2d_full_expr<A, B, Flipped>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = conv_2d_full_expr<A, B, Flipped>;         ///< The type of this expression
@@ -46,12 +46,8 @@ struct conv_2d_full_expr : base_temporary_expr_bin<conv_2d_full_expr<A, B, Flipp
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C>
+    template <etl_2d I, etl_2d K, etl_2d C>
     static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) {
-        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_full");
-        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_full");
-        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_full");
-
         if constexpr (all_fast<A, B, C>) {
             static_assert(etl::dim<0, C>() == etl::dim<0, I>() + etl::dim<0, K>() - 1, "Invalid dimensions for conv2_full");
             static_assert(etl::dim<1, C>() == etl::dim<1, I>() + etl::dim<1, K>() - 1, "Invalid dimensions for conv2_full");
@@ -65,10 +61,8 @@ struct conv_2d_full_expr : base_temporary_expr_bin<conv_2d_full_expr<A, B, Flipp
      * \brief Assign to a matrix of the full storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_2d C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, B, C>, "conv2_full only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -87,7 +81,7 @@ struct conv_2d_full_expr : base_temporary_expr_bin<conv_2d_full_expr<A, B, Flipp
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_2d L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -96,7 +90,7 @@ struct conv_2d_full_expr : base_temporary_expr_bin<conv_2d_full_expr<A, B, Flipp
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_2d L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -105,7 +99,7 @@ struct conv_2d_full_expr : base_temporary_expr_bin<conv_2d_full_expr<A, B, Flipp
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_2d L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -114,7 +108,7 @@ struct conv_2d_full_expr : base_temporary_expr_bin<conv_2d_full_expr<A, B, Flipp
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_2d L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -123,7 +117,7 @@ struct conv_2d_full_expr : base_temporary_expr_bin<conv_2d_full_expr<A, B, Flipp
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_2d L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
@@ -143,7 +137,7 @@ struct conv_2d_full_expr : base_temporary_expr_bin<conv_2d_full_expr<A, B, Flipp
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, typename B, bool Flipped>
+template <etl_2d A, etl_2d B, bool Flipped>
 struct etl_traits<etl::conv_2d_full_expr<A, B, Flipped>> {
     using expr_t       = etl::conv_2d_full_expr<A, B, Flipped>; ///< The expression type
     using left_expr_t  = std::decay_t<A>;                       ///< The left sub expression type
@@ -240,10 +234,8 @@ struct etl_traits<etl::conv_2d_full_expr<A, B, Flipped>> {
  *
  * \return an expression representing the 'full' 1D convolution of a and b
  */
-template <typename A, typename B>
+template <etl_2d A, etl_2d B>
 conv_2d_full_expr<detail::build_type<A>, detail::build_type<B>, false> conv_2d_full(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_2d_full_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b};
 }
 
@@ -259,10 +251,8 @@ conv_2d_full_expr<detail::build_type<A>, detail::build_type<B>, false> conv_2d_f
  *
  * \return an expression representing the 'full' 1D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_2d A, etl_2d B, etl_2d C>
 auto conv_2d_full(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_2d_full(a, b);
 
     return c;
@@ -279,10 +269,8 @@ auto conv_2d_full(A&& a, B&& b, C&& c) {
  *
  * \return an expression representing the 'full' 1D convolution of a and b
  */
-template <typename A, typename B>
+template <etl_2d A, etl_2d B>
 conv_2d_full_expr<detail::build_type<A>, detail::build_type<B>, true> conv_2d_full_flipped(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_2d_full_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b};
 }
 
@@ -298,10 +286,8 @@ conv_2d_full_expr<detail::build_type<A>, detail::build_type<B>, true> conv_2d_fu
  *
  * \return an expression representing the 'full' 1D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_2d A, etl_2d B, etl_2d C>
 auto conv_2d_full_flipped(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_2d_full_flipped(a, b);
 
     return c;

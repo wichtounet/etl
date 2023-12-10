@@ -18,7 +18,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B, size_t S1, size_t S2, size_t P1, size_t P2, bool Flipped>
+template <etl_4d A, etl_4d B, size_t S1, size_t S2, size_t P1, size_t P2, bool Flipped>
 struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_filter_expr<A, B, S1, S2, P1, P2, Flipped>, A, B> {
     using value_type  = value_t<A>;                                                  ///< The type of value of the expression
     using this_type   = conv_4d_backward_filter_expr<A, B, S1, S2, P1, P2, Flipped>; ///< The type of this expression
@@ -46,12 +46,8 @@ struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_f
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C>
+    template <etl_4d I, etl_4d K, etl_4d C>
     static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) {
-        static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_backward_filter");
-        static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_backward_filter");
-        static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_backward_filter");
-
         if constexpr (all_fast<A, B, C>) {
             static_assert(etl::dim<0, C>() == etl::dim<1, K>(), "Invalid dimensions for conv4_backward_filter");
             static_assert(etl::dim<1, C>() == etl::dim<1, I>(), "Invalid dimensions for conv4_backward_filter");
@@ -73,10 +69,8 @@ struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_f
      * \brief Assign to a matrix
      * \param conv The expression to which assign
      */
-    template <typename C>
+    template <etl_4d C>
     void assign_to(C&& conv) const {
-        static_assert(all_etl_expr<A, B, C>, "conv4_backward_filter only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& input  = this->a();
@@ -133,7 +127,7 @@ struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_f
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -142,7 +136,7 @@ struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_f
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -151,7 +145,7 @@ struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_f
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -160,7 +154,7 @@ struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_f
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -169,7 +163,7 @@ struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_f
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
@@ -189,7 +183,7 @@ struct conv_4d_backward_filter_expr : base_temporary_expr_bin<conv_4d_backward_f
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, typename B, size_t S1, size_t S2, size_t P1, size_t P2, bool Flipped>
+template <etl_4d A, etl_4d B, size_t S1, size_t S2, size_t P1, size_t P2, bool Flipped>
 struct etl_traits<etl::conv_4d_backward_filter_expr<A, B, S1, S2, P1, P2, Flipped>> {
     using expr_t       = etl::conv_4d_backward_filter_expr<A, B, S1, S2, P1, P2, Flipped>; ///< The expression type
     using left_expr_t  = std::decay_t<A>;                                                  ///< The left sub expression type
@@ -299,10 +293,8 @@ struct etl_traits<etl::conv_4d_backward_filter_expr<A, B, S1, S2, P1, P2, Flippe
  *
  * \return an expression representing the 'backward' 1D convolution of a and b
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_4d A, etl_4d B>
 conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, false> conv_4d_backward_filter(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, false>{a, b};
 }
 
@@ -319,10 +311,8 @@ conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S
  *
  * \return an expression representing the 'backward' 1D convolution of a and b
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_4d A, etl_4d B, etl_4d C>
 auto conv_4d_backward_filter(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_4d_backward_filter<S1, S2, P1, P2>(a, b);
 
     return c;
@@ -339,10 +329,8 @@ auto conv_4d_backward_filter(A&& a, B&& b, C&& c) {
  *
  * \return an expression representing the 'backward' 1D convolution of a and b
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_4d A, etl_4d B>
 conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true> conv_4d_backward_filter_flipped(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S2, P1, P2, true>{a, b};
 }
 
@@ -359,10 +347,8 @@ conv_4d_backward_filter_expr<detail::build_type<A>, detail::build_type<B>, S1, S
  *
  * \return an expression representing the 'backward' 1D convolution of a and b
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, etl_4d A, etl_4d B, etl_4d C>
 auto conv_4d_backward_filter_flipped(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_4d_backward_filter_flipped<S1, S2, P1, P2>(a, b);
 
     return c;
