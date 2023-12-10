@@ -114,8 +114,8 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E>
-    lower_matrix& operator=(E&& e) noexcept(false) requires convertible_expr<E, value_type> {
+    template <convertible_expr<value_type> E>
+    lower_matrix& operator=(E&& e) noexcept(false) {
         // Make sure the other matrix is lower triangular
         if (!is_lower_triangular(e)) {
             throw lower_exception();

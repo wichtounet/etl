@@ -117,7 +117,7 @@ concept matrix = etl_expr<T> && decay_traits<T>::dimensions() > 1;
 template <typename T>
 concept fast_matrix_c = fast<T> && matrix<T>;
 
-template <typename E, typename T>
+template <typename T, typename E>
 concept same_dimensions = etl_expr<T> && decay_traits<T>::dimensions() == decay_traits<E>::dimensions();
 
 template <typename T>

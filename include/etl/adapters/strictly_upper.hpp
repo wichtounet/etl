@@ -114,8 +114,8 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template<typename E>
-    strictly_upper_matrix& operator=(E&& e) noexcept(false) requires convertible_expr<E, value_type> {
+    template<convertible_expr<value_type> E>
+    strictly_upper_matrix& operator=(E&& e) noexcept(false) {
         // Make sure the other matrix is strictly upper triangular
         if (!is_strictly_upper_triangular(e)) {
             throw strictly_upper_exception();

@@ -138,8 +138,8 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E>
-    symmetric_matrix& operator=(E&& e) noexcept(false) requires convertible_expr<E, value_type> {
+    template <convertible_expr<value_type> E>
+    symmetric_matrix& operator=(E&& e) noexcept(false) {
         // Make sure the other matrix is symmetric
         if (!is_symmetric(e)) {
             throw symmetric_exception();

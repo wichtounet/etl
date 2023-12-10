@@ -114,8 +114,8 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E>
-    diagonal_matrix& operator=(E&& e) noexcept(false) requires convertible_expr<E, value_type> {
+    template <convertible_expr<value_type> E>
+    diagonal_matrix& operator=(E&& e) noexcept(false) {
         // Make sure the other matrix is diagonal
         if (!is_diagonal(e)) {
             throw diagonal_exception();
