@@ -109,8 +109,8 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <etl_expr E>
-    uni_lower_matrix& operator=(E&& e) noexcept(false) requires(std::convertible_to<value_t<E>, value_type>) {
+    template <convertible_expr<value_type> E>
+    uni_lower_matrix& operator=(E&& e) noexcept(false) {
         // Make sure the other matrix is uni lower triangular
         if (!is_uni_lower_triangular(e)) {
             throw uni_lower_exception();

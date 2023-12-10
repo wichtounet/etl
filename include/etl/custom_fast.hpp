@@ -150,8 +150,8 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <etl_expr E>
-    custom_fast_matrix_impl& operator=(E&& e) requires(std::convertible_to<value_t<E>, value_type>) {
+    template <convertible_expr<value_type> E>
+    custom_fast_matrix_impl& operator=(E&& e) {
         validate_assign(*this, e);
 
         // Avoid aliasing issues

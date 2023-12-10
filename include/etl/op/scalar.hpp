@@ -40,8 +40,8 @@ struct scalar {
      * \brief Builds a new scalar from a convertible type
      * \þaram v The scalar value
      */
-    template <typename C>
-    explicit constexpr scalar(C c) requires(std::convertible_to<C, T>) : value(static_cast<T>(c)) {}
+    template <std::convertible_to<T> C>
+    explicit constexpr scalar(C c) : value(static_cast<T>(c)) {}
 
     /*!
      * \brief Returns the element at the given index
