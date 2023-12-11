@@ -25,10 +25,10 @@ struct transform_op;
 template <typename Sub>
 struct stateful_op;
 
-template <typename T, typename Expr, typename UnaryOp>
+template <typename T, expr_or_scalar<T> Expr, typename UnaryOp>
 struct unary_expr;
 
-template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
+template <typename T, expr_or_scalar<T> LeftExpr, typename BinaryOp, expr_or_scalar<T> RightExpr>
 struct binary_expr;
 
 template <typename Generator>

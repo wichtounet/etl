@@ -121,11 +121,9 @@ struct stateful_op {
  *
  * This expression applies an unary operator on each element of a sub expression
  */
-template <typename T, typename Expr, typename UnaryOp>
+template <typename T, expr_or_scalar<T> Expr, typename UnaryOp>
 struct unary_expr final : value_testable<unary_expr<T, Expr, UnaryOp>>, dim_testable<unary_expr<T, Expr, UnaryOp>>, iterable<unary_expr<T, Expr, UnaryOp>> {
 private:
-    static_assert(is_etl_expr<Expr> || std::is_same_v<Expr, etl::scalar<T>>, "Only ETL expressions can be used in unary_expr");
-
     using this_type = unary_expr<T, Expr, UnaryOp>; ///< The type of this expression
 
     Expr value; ///< The sub expression

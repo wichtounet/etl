@@ -14,16 +14,11 @@ namespace etl {
  *
  * A binary expression has a left hand side expression and a right hand side expression and for each element applies a binary opeartor to both expressions.
  */
-template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
+template <typename T, expr_or_scalar<T> LeftExpr, typename BinaryOp, expr_or_scalar<T> RightExpr>
 struct binary_expr final : dim_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>,
                            value_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>,
                            iterable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
 private:
-    static_assert((std::is_same_v<LeftExpr, scalar<T>> && std::is_same_v<RightExpr, scalar<T>>)
-                      || (is_etl_expr<LeftExpr> && std::is_same_v<RightExpr, scalar<T>>)
-                      || (is_etl_expr<RightExpr> && std::is_same_v<LeftExpr, scalar<T>>) || (all_etl_expr<LeftExpr, RightExpr>),
-                  "One argument must be an ETL expression and the other one convertible to T");
-
     using this_type = binary_expr<T, LeftExpr, BinaryOp, RightExpr>; ///< This type
 
     LeftExpr lhs;  ///< The Left hand side expression

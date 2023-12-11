@@ -15,4 +15,10 @@ namespace etl {
 template<typename T>
 concept etl_expr = decay_traits<T>::is_etl;
 
+template<typename T>
+struct scalar;
+
+template <typename T, typename VT>
+concept expr_or_scalar = etl_expr<T> || std::same_as<T, scalar<VT>>;
+
 } // namespace etl
