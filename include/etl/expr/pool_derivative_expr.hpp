@@ -18,7 +18,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename Impl>
+template <etl_expr A, etl_expr B, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename Impl>
 struct pool_derivative_expr : base_temporary_expr_bin<pool_derivative_expr<A, B, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>, A, B> {
     using value_type  = value_t<A>;                                                           ///< The type of value of the expression
     using this_type   = pool_derivative_expr<A, B, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>; ///< The type of this expression
@@ -47,10 +47,8 @@ struct pool_derivative_expr : base_temporary_expr_bin<pool_derivative_expr<A, B,
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_expr C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, B, C>, "gemm only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -63,7 +61,7 @@ struct pool_derivative_expr : base_temporary_expr_bin<pool_derivative_expr<A, B,
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -72,7 +70,7 @@ struct pool_derivative_expr : base_temporary_expr_bin<pool_derivative_expr<A, B,
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -81,7 +79,7 @@ struct pool_derivative_expr : base_temporary_expr_bin<pool_derivative_expr<A, B,
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -90,7 +88,7 @@ struct pool_derivative_expr : base_temporary_expr_bin<pool_derivative_expr<A, B,
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -99,7 +97,7 @@ struct pool_derivative_expr : base_temporary_expr_bin<pool_derivative_expr<A, B,
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
@@ -119,7 +117,7 @@ struct pool_derivative_expr : base_temporary_expr_bin<pool_derivative_expr<A, B,
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, typename B, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename Impl>
+template <etl_expr A, etl_expr B, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename Impl>
 struct etl_traits<etl::pool_derivative_expr<A, B, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>> {
     using expr_t       = etl::pool_derivative_expr<A, B, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>; ///< The expression type
     using left_expr_t  = std::decay_t<A>;                                                           ///< The left sub expression type
@@ -213,7 +211,7 @@ struct etl_traits<etl::pool_derivative_expr<A, B, C1, C2, C3, S1, S2, S3, P1, P2
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Derivative of 2D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, typename E, typename F>
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, etl_expr E, etl_expr F>
 pool_derivative_expr<detail::build_type<E>, F, C1, C2, 0, S1, S2, 0, P1, P2, 0, impl::max_pool_derivative_2d> max_pool_derivative_2d(E&& input, F&& output) {
     return pool_derivative_expr<detail::build_type<E>, F, C1, C2, 0, S1, S2, 0, P1, P2, 0, impl::max_pool_derivative_2d>{input, output};
 }
@@ -227,7 +225,7 @@ pool_derivative_expr<detail::build_type<E>, F, C1, C2, 0, S1, S2, 0, P1, P2, 0, 
  * \tparam C3 The third pooling ratio
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t C3, typename E, typename F>
+template <size_t C1, size_t C2, size_t C3, etl_expr E, etl_expr F>
 pool_derivative_expr<detail::build_type<E>, F, C1, C2, C3, C1, C2, C3, 0, 0, 0, impl::max_pool_derivative_3d> max_pool_derivative_3d(E&& input, F&& output) {
     return pool_derivative_expr<detail::build_type<E>, F, C1, C2, C3, C1, C2, C3, 0, 0, 0, impl::max_pool_derivative_3d>{input, output};
 }
@@ -240,7 +238,7 @@ pool_derivative_expr<detail::build_type<E>, F, C1, C2, C3, C1, C2, C3, 0, 0, 0, 
  * \tparam C2 The second pooling ratio
  * \return A expression representing the Derivative of 2D Avg Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, typename E, typename F>
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, etl_expr E, etl_expr F>
 pool_derivative_expr<detail::build_type<E>, F, C1, C2, 0, S1, S2, 0, P1, P2, 0, impl::avg_pool_derivative_2d> avg_pool_derivative_2d(E&& input, F&& output) {
     return pool_derivative_expr<detail::build_type<E>, F, C1, C2, 0, S1, S2, 0, P1, P2, 0, impl::avg_pool_derivative_2d>{input, output};
 }
@@ -254,7 +252,7 @@ pool_derivative_expr<detail::build_type<E>, F, C1, C2, 0, S1, S2, 0, P1, P2, 0, 
  * \tparam C3 The third pooling ratio
  * \return A expression representing the Derivative of 3D Avg Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t C3, typename E, typename F>
+template <size_t C1, size_t C2, size_t C3, etl_expr E, etl_expr F>
 pool_derivative_expr<detail::build_type<E>, F, C1, C2, C3, C1, C2, C3, 0, 0, 0, impl::avg_pool_derivative_3d> avg_pool_derivative_3d(E&& input, F&& output) {
     return pool_derivative_expr<detail::build_type<E>, F, C1, C2, C3, C1, C2, C3, 0, 0, 0, impl::avg_pool_derivative_3d>{input, output};
 }

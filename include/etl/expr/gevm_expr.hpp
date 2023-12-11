@@ -22,7 +22,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = gevm_expr<A, B>;                          ///< The type of this expression
@@ -51,7 +51,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \param b The right side matrix
      * \param c The result matrix
      */
-    template <typename C>
+    template <etl_expr C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c) {
         if constexpr (all_fast<A, B, C>) {
             static_assert(dim<0, A>() == dim<0, B>()         //exterior dimension 1
@@ -70,7 +70,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \brief Select an implementation of GEVM, not considering local context
      * \return The implementation to use
      */
-    template <typename C>
+    template <etl_expr C>
     static constexpr gemm_impl select_default_gevm_impl(bool no_gpu) {
         constexpr bool vec_possible = vectorize_impl && all_vectorizable_t<vector_mode, A, B, C> && vec_enabled;
         constexpr bool homo         = all_homogeneous<A, B, C>;
@@ -96,7 +96,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \brief Select an implementation of GEVM
      * \return The implementation to use
      */
-    template <typename C>
+    template <etl_expr C>
     static inline gemm_impl select_gevm_impl() {
         if (local_context().gemm_selector.forced) {
             auto forced = local_context().gemm_selector.impl;
@@ -146,7 +146,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      *
      * \return The implementation to use
      */
-    template <typename C>
+    template <etl_expr C>
     static constexpr gemm_impl select_gevm_impl() {
         return select_default_gevm_impl<C>(false);
     }
@@ -159,7 +159,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \param b The B matrix
      * \param c The C matrix (output)
      */
-    template <typename AA, typename BB, typename C>
+    template <etl_expr AA, etl_expr BB, etl_expr C>
     static void apply_raw(AA&& a, BB&& b, C&& c) {
         constexpr_select auto impl = select_gevm_impl<C>();
 
@@ -204,10 +204,8 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <etl_expr C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, B, C>, "gemm only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         check(this->a(), this->b(), c);
@@ -219,7 +217,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -228,7 +226,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -237,7 +235,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -246,7 +244,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -255,7 +253,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
@@ -275,7 +273,7 @@ struct gevm_expr : base_temporary_expr_bin<gevm_expr<A, B>, A, B> {
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 struct etl_traits<etl::gevm_expr<A, B>> {
     using expr_t       = etl::gevm_expr<A, B>;     ///< The expression type
     using left_expr_t  = std::decay_t<A>;          ///< The left sub expression type

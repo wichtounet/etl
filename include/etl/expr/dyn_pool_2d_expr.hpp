@@ -15,7 +15,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename Impl>
+template <etl_expr A, typename Impl>
 struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, false> {
     using value_type = value_t<A>;                                  ///< The type of value of the expression
     using this_type  = dyn_pool_2d_expr<A, Impl>;                   ///< The type of this expression
@@ -52,11 +52,8 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <same_dimensions<A> C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, C>, "max_pool_2d only supported for ETL expressions");
-        static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -68,7 +65,7 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -77,7 +74,7 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -86,7 +83,7 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -95,7 +92,7 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -104,7 +101,7 @@ struct dyn_pool_2d_expr : base_temporary_expr_un<dyn_pool_2d_expr<A, Impl>, A, f
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
@@ -210,7 +207,7 @@ struct etl_traits<etl::dyn_pool_2d_expr<A, Impl>> {
  * \param c2 The second pooling ratio
  * \return A expression representing the 2D Max Pooling of the input expression.
  */
-template <typename E>
+template <etl_expr E>
 dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d> max_pool_2d(E&& value, size_t c1, size_t c2) {
     return dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d>{value, c1, c2, c1, c2, 0, 0};
 }
@@ -222,7 +219,7 @@ dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d> max_pool_2d(E&& value
  * \param c2 The second pooling ratio
  * \return A expression representing the 2D Max Pooling of the input expression.
  */
-template <typename E>
+template <etl_expr E>
 dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d> max_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
     return dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d>{value, c1, c2, s1, s2, p1, p2};
 }
@@ -234,7 +231,7 @@ dyn_pool_2d_expr<detail::build_type<E>, impl::max_pool_2d> max_pool_2d(E&& value
  * \param c2 The second pooling ratio
  * \return A expression representing the 2D Average Pooling of the input expression.
  */
-template <typename E>
+template <etl_expr E>
 dyn_pool_2d_expr<detail::build_type<E>, impl::avg_pool_2d> avg_pool_2d(E&& value, size_t c1, size_t c2) {
     return dyn_pool_2d_expr<detail::build_type<E>, impl::avg_pool_2d>{value, c1, c2, c1, c2, 0, 0};
 }
@@ -246,7 +243,7 @@ dyn_pool_2d_expr<detail::build_type<E>, impl::avg_pool_2d> avg_pool_2d(E&& value
  * \param c2 The second pooling ratio
  * \return A expression representing the 2D Average Pooling of the input expression.
  */
-template <typename E>
+template <etl_expr E>
 dyn_pool_2d_expr<detail::build_type<E>, impl::avg_pool_2d> avg_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
     return dyn_pool_2d_expr<detail::build_type<E>, impl::avg_pool_2d>{value, c1, c2, s1, s2, p1, p2};
 }
@@ -258,7 +255,7 @@ dyn_pool_2d_expr<detail::build_type<E>, impl::avg_pool_2d> avg_pool_2d(E&& value
  * \param c2 The second pooling ratio
  * \return A expression representing the Probabilistic Max Pooling of pooling units
  */
-template <typename E>
+template <etl_expr E>
 dyn_pool_2d_expr<detail::build_type<E>, impl::standard::dyn_pmp_p_impl> p_max_pool_p(E&& value, size_t c1, size_t c2) {
     validate_pmax_pooling(value, c1, c2);
     return dyn_pool_2d_expr<detail::build_type<E>, impl::standard::dyn_pmp_p_impl>{value, c1, c2, c1, c2, 0, 0};

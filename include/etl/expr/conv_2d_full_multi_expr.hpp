@@ -18,7 +18,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B, bool Flipped>
+template <etl_2d A, etl_3d B, bool Flipped>
 struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr<A, B, Flipped>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = conv_2d_full_multi_expr<A, B, Flipped>;   ///< The type of this expression
@@ -46,12 +46,8 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C>
+    template <etl_2d I, etl_3d K, etl_3d C>
     static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) {
-        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_full_multi");
-        static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_full_multi");
-        static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_full_multi");
-
         if constexpr (all_fast<A, B, C>) {
             static_assert(etl::dim<0, C>() == etl::dim<0, K>(), "Invalid dimensions for conv2_full_multi");
             static_assert(etl::dim<1, C>() == etl::dim<0, I>() + etl::dim<1, K>() - 1, "Invalid dimensions for conv2_full_multi");
@@ -71,7 +67,7 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
      * \tparam C The conv type
      * \return the implementation to be used
      */
-    template <typename C>
+    template <etl_3d C>
     static constexpr etl::conv_multi_impl select_default_impl() {
         constexpr order input_order  = decay_traits<A>::storage_order;
         constexpr order kernel_order = decay_traits<B>::storage_order;
@@ -96,7 +92,7 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
      * \tparam C The conv type
      * \return the implementation to be used
      */
-    template <typename C>
+    template <etl_3d C>
     static etl::conv_multi_impl select_impl() {
         if (local_context().conv_multi_selector.forced) {
             auto forced = local_context().conv_multi_selector.impl;
@@ -138,7 +134,7 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
      * \tparam C The conv type
      * \return the implementation to be used
      */
-    template <typename C>
+    template <etl_3d C>
     static constexpr etl::conv_multi_impl select_impl() {
         return select_default_impl<C>();
     }
@@ -149,10 +145,8 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
      * \brief Assign to a matrix of the full storage order
      * \param conv The expression to which assign
      */
-    template <typename C>
+    template <etl_3d C>
     void assign_to(C&& conv) const {
-        static_assert(all_etl_expr<A, B, C>, "conv2_full_multi only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& input  = this->a();
@@ -283,7 +277,7 @@ struct conv_2d_full_multi_expr : base_temporary_expr_bin<conv_2d_full_multi_expr
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, typename B, bool Flipped>
+template <etl_2d A, etl_3d B, bool Flipped>
 struct etl_traits<etl::conv_2d_full_multi_expr<A, B, Flipped>> {
     using expr_t       = etl::conv_2d_full_multi_expr<A, B, Flipped>; ///< The expression type
     using left_expr_t  = std::decay_t<A>;                             ///< The left sub expression type
@@ -388,10 +382,8 @@ struct etl_traits<etl::conv_2d_full_multi_expr<A, B, Flipped>> {
  *
  * \return an expression representing the 'full' 1D convolution of a and b
  */
-template <typename A, typename B>
+template <etl_2d A, etl_3d B>
 conv_2d_full_multi_expr<detail::build_type<A>, detail::build_type<B>, false> conv_2d_full_multi(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_2d_full_multi_expr<detail::build_type<A>, detail::build_type<B>, false>{a, b};
 }
 
@@ -407,10 +399,8 @@ conv_2d_full_multi_expr<detail::build_type<A>, detail::build_type<B>, false> con
  *
  * \return an expression representing the 'full' 1D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_2d A, etl_3d B, etl_3d C>
 auto conv_2d_full_multi(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_2d_full_multi(a, b);
 
     return c;
@@ -427,10 +417,8 @@ auto conv_2d_full_multi(A&& a, B&& b, C&& c) {
  *
  * \return an expression representing the 'full' 1D convolution of a and b
  */
-template <typename A, typename B>
+template <etl_2d A, etl_3d B>
 conv_2d_full_multi_expr<detail::build_type<A>, detail::build_type<B>, true> conv_2d_full_multi_flipped(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_2d_full_multi_expr<detail::build_type<A>, detail::build_type<B>, true>{a, b};
 }
 
@@ -446,10 +434,8 @@ conv_2d_full_multi_expr<detail::build_type<A>, detail::build_type<B>, true> conv
  *
  * \return an expression representing the 'full' 1D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_2d A, etl_3d B, etl_3d C>
 auto conv_2d_full_multi_flipped(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_2d_full_multi_flipped(a, b);
 
     return c;

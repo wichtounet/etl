@@ -15,7 +15,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename Impl>
+template <etl_expr A, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename Impl>
 struct pool_3d_expr : base_temporary_expr_un<pool_3d_expr<A, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>, A> {
     using value_type = value_t<A>;                                                ///< The type of value of the expression
     using this_type  = pool_3d_expr<A, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>; ///< The type of this expression
@@ -44,11 +44,8 @@ struct pool_3d_expr : base_temporary_expr_un<pool_3d_expr<A, C1, C2, C3, S1, S2,
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <typename C>
+    template <same_dimensions<A> C>
     void assign_to(C&& c) const {
-        static_assert(all_etl_expr<A, C>, "pool_2d only supported for ETL expressions");
-        static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "pool_2d must be applied on matrices of same dimensionality");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -60,7 +57,7 @@ struct pool_3d_expr : base_temporary_expr_un<pool_3d_expr<A, C1, C2, C3, S1, S2,
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -69,7 +66,7 @@ struct pool_3d_expr : base_temporary_expr_un<pool_3d_expr<A, C1, C2, C3, S1, S2,
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -78,7 +75,7 @@ struct pool_3d_expr : base_temporary_expr_un<pool_3d_expr<A, C1, C2, C3, S1, S2,
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -87,7 +84,7 @@ struct pool_3d_expr : base_temporary_expr_un<pool_3d_expr<A, C1, C2, C3, S1, S2,
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -96,7 +93,7 @@ struct pool_3d_expr : base_temporary_expr_un<pool_3d_expr<A, C1, C2, C3, S1, S2,
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
@@ -116,7 +113,7 @@ struct pool_3d_expr : base_temporary_expr_un<pool_3d_expr<A, C1, C2, C3, S1, S2,
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename Impl>
+template <etl_expr A, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename Impl>
 struct etl_traits<etl::pool_3d_expr<A, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>> {
     using expr_t     = etl::pool_3d_expr<A, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>; ///< The expression type
     using sub_expr_t = std::decay_t<A>;                                                ///< The sub expression type
@@ -233,7 +230,7 @@ struct etl_traits<etl::pool_3d_expr<A, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>
  * \tparam C3 The third pooling ratio
  * \return A expression representing the 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, typename E>
+template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, etl_expr E>
 pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::max_pool_3d> max_pool_3d(E&& value) {
     return pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::max_pool_3d>{value};
 }
@@ -246,7 +243,7 @@ pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::ma
  * \tparam C3 The third pooling ratio
  * \return A expression representing the 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, typename E>
+template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, etl_expr E>
 pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::avg_pool_3d> avg_pool_3d(E&& value) {
     return pool_3d_expr<detail::build_type<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::avg_pool_3d>{value};
 }

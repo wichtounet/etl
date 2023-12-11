@@ -15,7 +15,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B>
+template <etl_2d A, etl_2d B>
 struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_lookup_expr<A, B>, A, B> {
     using value_type = value_t<A>;                               ///< The type of value of the expression
     using this_type  = batch_embedding_lookup_expr<A, B>;        ///< The type of this expression
@@ -43,12 +43,8 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C>
+    template <etl_3d C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c) {
-        static_assert(etl::dimensions<A>() == 2, "The input of batch_embedding_lookup is a 2d matrix");
-        static_assert(etl::dimensions<B>() == 2, "The vocabulary input of batch_embedding_lookup is a 2d matrix");
-        static_assert(etl::dimensions<C>() == 3, "The output of batch_embedding_lookup is 3d matrix");
-
         if constexpr (all_fast<A, B, C>) {
             static_assert(etl::dim<0, A>() == etl::dim<0, C>(), "Invalid dimensions for batch_embedding_lookup");
             static_assert(etl::dim<1, A>() == etl::dim<1, C>(), "Invalid dimensions for batch_embedding_lookup");
@@ -66,10 +62,8 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_3d L>
     void assign_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, B, L>, "batch_embedding_lookup only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -94,10 +88,8 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_3d L>
     void assign_add_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -120,10 +112,8 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_3d L>
     void assign_sub_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -146,10 +136,8 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_3d L>
     void assign_mul_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -172,10 +160,8 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_3d L>
     void assign_div_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -198,10 +184,8 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_3d L>
     void assign_mod_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_batch_mean_2d only supported for ETL expressions");
-
         auto& a = this->a();
         auto& b = this->b();
 
@@ -235,7 +219,7 @@ struct batch_embedding_lookup_expr : base_temporary_expr_bin<batch_embedding_loo
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, typename B>
+template <etl_expr A, etl_expr B>
 struct etl_traits<etl::batch_embedding_lookup_expr<A, B>> {
     using expr_t     = etl::batch_embedding_lookup_expr<A, B>; ///< The expression type
     using sub_expr_t = std::decay_t<A>;                        ///< The sub expression type

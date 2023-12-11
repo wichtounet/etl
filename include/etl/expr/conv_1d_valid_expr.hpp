@@ -19,7 +19,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B>
+template <etl_1d A, etl_1d B>
 struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = conv_1d_valid_expr<A, B>;                 ///< The type of this expression
@@ -47,7 +47,7 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C>
+    template <etl_1d I, etl_1d K, etl_1d C>
     static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) {
         static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_valid");
         static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_valid");
@@ -66,10 +66,8 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
      * \brief Assign to a matrix of the same storage order
      * \param conv The expression to which assign
      */
-    template <typename C>
+    template <etl_1d C>
     void assign_to(C&& conv) const {
-        static_assert(all_etl_expr<A, B, C>, "conv1_valid only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& input_raw  = this->a();
@@ -150,7 +148,7 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_1d L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -159,7 +157,7 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_1d L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -168,7 +166,7 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_1d L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -177,7 +175,7 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_1d L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -186,7 +184,7 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_1d L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
@@ -206,7 +204,7 @@ struct conv_1d_valid_expr : base_temporary_expr_bin<conv_1d_valid_expr<A, B>, A,
  * \brief Traits for a transpose expression
  * \tparam A The transposed sub type
  */
-template <typename A, typename B>
+template <etl_1d A, etl_1d B>
 struct etl_traits<etl::conv_1d_valid_expr<A, B>> {
     using expr_t       = etl::conv_1d_valid_expr<A, B>; ///< The expression type
     using left_expr_t  = std::decay_t<A>;               ///< The left sub expression type
@@ -298,10 +296,8 @@ struct etl_traits<etl::conv_1d_valid_expr<A, B>> {
  * \param b The kernel expression
  * \return an expression representing the valid 1D convolution of a and b
  */
-template <typename A, typename B>
+template <etl_1d A, etl_1d B>
 conv_1d_valid_expr<detail::build_type<A>, detail::build_type<B>> conv_1d_valid(A&& a, B&& b) {
-    static_assert(all_etl_expr<A, B>, "Convolution only supported for ETL expressions");
-
     return conv_1d_valid_expr<detail::build_type<A>, detail::build_type<B>>{a, b};
 }
 
@@ -312,10 +308,8 @@ conv_1d_valid_expr<detail::build_type<A>, detail::build_type<B>> conv_1d_valid(A
  * \param c The result
  * \return an expression representing the valid 1D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <etl_1d A, etl_1d B, etl_1d C>
 auto conv_1d_valid(A&& a, B&& b, C&& c) {
-    static_assert(all_etl_expr<A, B, C>, "Convolution only supported for ETL expressions");
-
     c = conv_1d_valid(a, b);
 
     return c;

@@ -21,7 +21,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B>
+template <etl_4d A, etl_1d B>
 struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> {
     using value_type = value_t<A>;                               ///< The type of value of the expression
     using this_type  = bias_add_4d_expr<A, B>;                   ///< The type of this expression
@@ -49,12 +49,8 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C>
+    template <etl_4d C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c) {
-        static_assert(etl::dimensions<A>() == 4, "The input of bias_add is a 4D matrix");
-        static_assert(etl::dimensions<B>() == 1, "The input of bias_add is a vector of biases");
-        static_assert(etl::dimensions<C>() == 4, "The output of bias_add is a 4D matrix");
-
         if constexpr (all_fast<A, B, C>) {
             static_assert(etl::dim<1, A>() == etl::dim<0, B>(), "Invalid dimensions for bias_add");
 
@@ -78,10 +74,8 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_to(L&& lhs) const {
-        static_assert(all_etl_expr<A, L>, "bias_add only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         if (this->is_evaluated()) {
@@ -138,7 +132,7 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -147,7 +141,7 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -156,7 +150,7 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -165,7 +159,7 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -174,7 +168,7 @@ struct bias_add_4d_expr : base_temporary_expr_bin<bias_add_4d_expr<A, B>, A, B> 
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_4d L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
