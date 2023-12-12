@@ -93,10 +93,8 @@ constexpr size_t fast_index(size_t i) noexcept(assert_nothrow) {
  * \param j The index of the second dimension to access
  * \return The flat position of (i,j)
  */
-template <typename T>
+template <etl_2d T>
 constexpr size_t fast_index(size_t i, size_t j) noexcept(assert_nothrow) {
-    static_assert(is_2d<T>, "Invalid number of dimensions for fast_index");
-
     if constexpr (decay_traits<T>::storage_order == order::RowMajor) {
         cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
         cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");
@@ -117,10 +115,8 @@ constexpr size_t fast_index(size_t i, size_t j) noexcept(assert_nothrow) {
  * \param k The index of the third dimension to access
  * \return The flat position of (i,j,k)
  */
-template <typename T>
+template <etl_3d T>
 constexpr size_t fast_index(size_t i, size_t j, size_t k) noexcept(assert_nothrow) {
-    static_assert(is_3d<T>, "Invalid number of dimensions for fast_index");
-
     if constexpr (decay_traits<T>::storage_order == order::RowMajor) {
         cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
         cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");
@@ -144,10 +140,8 @@ constexpr size_t fast_index(size_t i, size_t j, size_t k) noexcept(assert_nothro
  * \param l The index of the fourth dimension to access
  * \return The flat position of (i,j,k,l)
  */
-template <typename T>
+template <etl_4d T>
 constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexcept(assert_nothrow) {
-    static_assert(is_4d<T>, "Invalid number of dimensions for fast_index");
-
     if constexpr (decay_traits<T>::storage_order == order::RowMajor) {
         cpp_assert(i < decay_traits<T>::template dim<0>(), "Out of bounds");
         cpp_assert(j < decay_traits<T>::template dim<1>(), "Out of bounds");

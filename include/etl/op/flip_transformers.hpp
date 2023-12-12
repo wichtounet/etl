@@ -16,14 +16,12 @@ namespace etl {
  *
  * \tparam T The type on which the transformer is applied
  */
-template <typename T>
+template <etl_2d T>
 struct one_if_max_sub_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
 
     friend etl_traits<one_if_max_sub_transformer>;
-
-    static_assert(is_2d<sub_type>, "one_if_max_sub is only defined for 2D Matrix");
 
     static constexpr bool gpu_computable = impl::egblas::has_sone_if_max_sub && all_row_major<T> && all_floating<T>;
 
