@@ -64,10 +64,8 @@ struct embedding_gradients_expr : base_temporary_expr_tern<embedding_gradients_e
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_to(L&& lhs) const {
-        static_assert(is_etl_expr<L>, "embedding_gradients only supported for ETL expressions");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -92,7 +90,7 @@ struct embedding_gradients_expr : base_temporary_expr_tern<embedding_gradients_e
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -101,7 +99,7 @@ struct embedding_gradients_expr : base_temporary_expr_tern<embedding_gradients_e
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -110,7 +108,7 @@ struct embedding_gradients_expr : base_temporary_expr_tern<embedding_gradients_e
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -119,7 +117,7 @@ struct embedding_gradients_expr : base_temporary_expr_tern<embedding_gradients_e
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -128,7 +126,7 @@ struct embedding_gradients_expr : base_temporary_expr_tern<embedding_gradients_e
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <etl_expr L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }

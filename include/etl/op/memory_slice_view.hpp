@@ -347,9 +347,8 @@ struct etl_traits<etl::memory_slice_view<T, Aligned>> {
  * \param last The last index
  * \return a view expression representing a sub dimensional view of the given expression
  */
-template <bool Aligned = false, typename E>
+template <bool Aligned = false, etl_expr E>
 auto memory_slice(E&& value, size_t first, size_t last) -> detail::identity_helper<E, memory_slice_view<detail::build_identity_type<E>, Aligned>> {
-    static_assert(is_etl_expr<E>, "etl::memory_slice can only be used on ETL expressions");
     return detail::identity_helper<E, memory_slice_view<detail::build_identity_type<E>, Aligned>>{{value, first, last}};
 }
 

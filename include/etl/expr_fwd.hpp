@@ -55,16 +55,16 @@ struct temporary_expr_bin;
 template <typename T, size_t D>
 struct dim_view;
 
-template <typename T, bool Aligned>
+template <etl_expr T, bool Aligned>
 struct sub_view;
 
-template <typename T, bool Aligned>
+template <etl_expr T, bool Aligned>
 struct sub_matrix_2d;
 
-template <typename T, bool Aligned>
+template <etl_expr T, bool Aligned>
 struct sub_matrix_3d;
 
-template <typename T, bool Aligned>
+template <etl_expr T, bool Aligned>
 struct sub_matrix_4d;
 
 template <typename T>
@@ -76,7 +76,7 @@ struct memory_slice_view;
 template <typename T, bool DMA, size_t... Dims>
 struct fast_matrix_view;
 
-template <typename T, size_t D>
+template <etl_expr T, size_t D>
 struct dyn_matrix_view;
 
 template <typename A>

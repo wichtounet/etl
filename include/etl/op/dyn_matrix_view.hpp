@@ -20,12 +20,10 @@ namespace etl {
  * \brief View to represent a dyn matrix in top of an expression
  * \tparam T The type of expression on which the view is made
  */
-template <typename T, size_t D>
+template <etl_expr T, size_t D>
 requires(!is_dma<T>) struct dyn_matrix_view<T, D> final : iterable<dyn_matrix_view<T, D>, false>,
                                                           value_testable<dyn_matrix_view<T, D>>,
                                                           assignable<dyn_matrix_view<T, D>, value_t<T>> {
-    static_assert(is_etl_expr<T>, "dyn_matrix_view only works with ETL expressions");
-
     using this_type            = dyn_matrix_view<T, D>;                                                ///< The type of this expression
     using iterable_base_type   = iterable<this_type, false>;                                           ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The assignable base type
@@ -299,12 +297,10 @@ public:
  * \brief View to represent a dyn matrix in top of an expression
  * \tparam T The type of expression on which the view is made
  */
-template <typename T, size_t D>
+template <etl_expr T, size_t D>
 requires(is_dma<T>) struct dyn_matrix_view<T, D> final : iterable<dyn_matrix_view<T, D>, true>,
                                                          value_testable<dyn_matrix_view<T, D>>,
                                                          assignable<dyn_matrix_view<T, D>, value_t<T>> {
-    static_assert(is_etl_expr<T>, "dyn_matrix_view only works with ETL expressions");
-
     using this_type            = dyn_matrix_view<T, D>;                                                ///< The type of this expression
     using iterable_base_type   = iterable<this_type, true>;                                            ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The assignable base type

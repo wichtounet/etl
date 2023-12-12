@@ -13,6 +13,7 @@
 #pragma once
 
 #include <random>
+#include "etl/concepts_base.hpp"
 namespace etl {
 
 /*!
@@ -341,15 +342,13 @@ public:
  *
  * This unary expression keeps access to data (can be edited)
  */
-template <typename T, typename Expr>
+template <typename T, expr_or_scalar<T> Expr>
 struct unary_expr<T, Expr, identity_op> : inplace_assignable<unary_expr<T, Expr, identity_op>>,
                                           assignable<unary_expr<T, Expr, identity_op>, T>,
                                           value_testable<unary_expr<T, Expr, identity_op>>,
                                           dim_testable<unary_expr<T, Expr, identity_op>>,
                                           iterable<unary_expr<T, Expr, identity_op>, is_dma<Expr>> {
 private:
-    static_assert(is_etl_expr<Expr>, "Only ETL expressions can be used in unary_expr");
-
     Expr value;                 ///< The sub expression
     gpu_memory_handler<T> _gpu; ///< The GPU memory handler
 

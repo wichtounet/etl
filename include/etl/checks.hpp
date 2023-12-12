@@ -180,9 +180,8 @@ void validate_pmax_pooling_impl([[maybe_unused]] const E& e, [[maybe_unused]] si
  * \tparam C2 The pooling ratio of the second dimension
  * \param expr The expression to assert
  */
-template <size_t C1, size_t C2, typename E>
+template <size_t C1, size_t C2, etl_expr E>
 void validate_pmax_pooling(const E& expr) {
-    static_assert(is_etl_expr<E>, "Prob. Max Pooling only defined for ETL expressions");
     static_assert(etl_traits<E>::dimensions() >= 2 && etl_traits<E>::dimensions() <= 4, "Prob. Max Pooling only defined for 2D and 3D");
 
     detail::validate_pmax_pooling_impl<C1, C2>(expr);
@@ -198,9 +197,8 @@ void validate_pmax_pooling(const E& expr) {
  * \param c2 The pooling ratio of the second dimension
  * \param expr The expression to assert
  */
-template <typename E>
+template <etl_expr E>
 void validate_pmax_pooling(const E& expr, size_t c1, size_t c2) {
-    static_assert(is_etl_expr<E>, "Prob. Max Pooling only defined for ETL expressions");
     static_assert(etl_traits<E>::dimensions() >= 2 && etl_traits<E>::dimensions() <= 4, "Prob. Max Pooling only defined for 2D and 3D");
 
     detail::validate_pmax_pooling_impl(expr, c1, c2);

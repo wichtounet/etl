@@ -47,10 +47,8 @@ struct inv_expr : base_temporary_expr_un<inv_expr<A>, A> {
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <etl_expr C>
+    template <same_dimensions<A> C>
     void assign_to(C&& c) const {
-        static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();
@@ -209,10 +207,8 @@ struct etl_traits<etl::inv_expr<A>> {
  * \param a The input expression
  * \return an expression representing the 1D FFT of a
  */
-template <typename A>
+template <etl_expr A>
 inv_expr<A> inv(A&& a) {
-    static_assert(is_etl_expr<A>, "Inverse only supported for ETL expressions");
-
     return inv_expr<A>{a};
 }
 

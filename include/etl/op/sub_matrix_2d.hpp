@@ -22,13 +22,11 @@ namespace etl {
  * \brief View that shows a 2D sub matrix of an expression
  * \tparam T The type of expression on which the view is made
  */
-template <typename T, bool Aligned>
+template <etl_expr T, bool Aligned>
 struct sub_matrix_2d final : iterable<sub_matrix_2d<T, Aligned>, false>,
                              assignable<sub_matrix_2d<T, Aligned>, value_t<T>>,
                              value_testable<sub_matrix_2d<T, Aligned>>,
                              inplace_assignable<sub_matrix_2d<T, Aligned>> {
-    static_assert(is_etl_expr<T>, "sub_matrix_2d<T> only works with ETL expressions");
-
     using this_type            = sub_matrix_2d<T, Aligned>;                                            ///< The type of this expression
     using iterable_base_type   = iterable<this_type, false>;                                           ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The iterable base type

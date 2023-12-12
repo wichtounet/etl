@@ -439,10 +439,8 @@ protected:
  * \tparam D The derived type
  * \tparam A The sub type
  */
-template <typename D, typename A, bool Fast = true>
+template <typename D, etl_expr A, bool Fast = true>
 struct base_temporary_expr_un : base_temporary_expr<D, Fast> {
-    static_assert(is_etl_expr<A>, "The argument must be an ETL expr");
-
     using this_type = base_temporary_expr_un<D, A>; ///< This type
     using base_type = base_temporary_expr<D, Fast>; ///< The base type
 
@@ -527,11 +525,8 @@ struct base_temporary_expr_un : base_temporary_expr<D, Fast> {
  * \tparam A The left sub expression type
  * \tparam B The right sub expression type
  */
-template <typename D, typename A, typename B, bool Fast = true>
+template <typename D, etl_expr A, etl_expr B, bool Fast = true>
 struct base_temporary_expr_bin : base_temporary_expr<D, Fast> {
-    static_assert(is_etl_expr<A>, "The argument must be an ETL expr");
-    static_assert(is_etl_expr<B>, "The argument must be an ETL expr");
-
     using this_type = base_temporary_expr_bin<D, A, B>; ///< This type
     using base_type = base_temporary_expr<D, Fast>;     ///< The base type
 
@@ -635,12 +630,8 @@ struct base_temporary_expr_bin : base_temporary_expr<D, Fast> {
  * \tparam A The left sub expression type
  * \tparam B The right sub expression type
  */
-template <typename D, typename A, typename B, typename C, bool Fast = true>
+template <typename D, etl_expr A, etl_expr B, etl_expr C, bool Fast = true>
 struct base_temporary_expr_tern : base_temporary_expr<D, Fast> {
-    static_assert(is_etl_expr<A>, "The argument must be an ETL expr");
-    static_assert(is_etl_expr<B>, "The argument must be an ETL expr");
-    static_assert(is_etl_expr<C>, "The argument must be an ETL expr");
-
     using this_type = base_temporary_expr_tern<D, A, B, C>; ///< This type
     using base_type = base_temporary_expr<D, Fast>;         ///< The base type
 
