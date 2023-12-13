@@ -46,12 +46,8 @@ struct conv_2d_same_multi_expr : base_temporary_expr_bin<conv_2d_same_multi_expr
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C>
+    template <etl_2d I, etl_3d K, etl_3d C>
     static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) {
-        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_same_multi");
-        static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_same_multi");
-        static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_same_multi");
-
         if constexpr (all_fast<A, B, C>) {
             static_assert(etl::dim<0, C>() == etl::dim<0, K>(), "Invalid dimensions for conv2_same_multi");
             static_assert(etl::dim<1, C>() == etl::dim<0, I>(), "Invalid dimensions for conv2_same_multi");

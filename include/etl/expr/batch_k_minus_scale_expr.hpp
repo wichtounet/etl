@@ -11,7 +11,7 @@
 
 namespace etl {
 
-template <etl_expr A, etl_expr B, etl_expr C>
+template <etl_1d A, etl_2d_or_4d B, etl_1d C>
 struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_expr<A, B, C>, A, B, C> {
     using value_type  = value_t<A>;                                  ///< The type of value of the expression
     using this_type   = batch_k_minus_scale_expr<A, B, C>;            ///< The type of this expression
@@ -43,14 +43,9 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename L>
+    template <same_dimensions<B> L>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c, [[maybe_unused]] L& lhs) {
         if constexpr (D4) {
-            static_assert(etl::dimensions<L>() == 4, "The output of batch_k_minus_scale is a 4D matrix");
-            static_assert(etl::dimensions<A>() == 1, "The lhs of batch_k_minus_scale is a 1D matrix");
-            static_assert(etl::dimensions<B>() == 4, "The rhs of batch_k_minus_scale is a 4D matrix");
-            static_assert(etl::dimensions<C>() == 1, "The beta of batch_k_minus_scale is a 1D matrix");
-
             if constexpr (all_fast<A, B, C, L>) {
                 static_assert(etl::dim<0, B>() == etl::dim<0, L>(), "Invalid dimensions for batch_k_minus_scale");
                 static_assert(etl::dim<1, B>() == etl::dim<1, L>(), "Invalid dimensions for batch_k_minus_scale");
@@ -69,11 +64,6 @@ struct batch_k_minus_scale_expr : base_temporary_expr_tern<batch_k_minus_scale_e
                 cpp_assert(etl::dim<0>(a) == etl::dim<0>(c), "Invalid dimensions for batch_k_minus_scale");
             }
         } else {
-            static_assert(etl::dimensions<L>() == 2, "The output of batch_k_minus_scale is a 2D matrix");
-            static_assert(etl::dimensions<A>() == 1, "The lhs of batch_k_minus_scale is a 1D matrix");
-            static_assert(etl::dimensions<B>() == 2, "The rhs of batch_k_minus_scale is a 2D matrix");
-            static_assert(etl::dimensions<C>() == 1, "The beta of batch_k_minus_scale is a 1D matrix");
-
             if constexpr (all_fast<A, B, C, L>) {
                 static_assert(etl::dim<0, B>() == etl::dim<0, L>(), "Invalid dimensions for batch_k_minus_scale");
                 static_assert(etl::dim<1, B>() == etl::dim<1, L>(), "Invalid dimensions for batch_k_minus_scale");

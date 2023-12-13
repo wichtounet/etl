@@ -44,10 +44,8 @@ struct fft_expr : base_temporary_expr_un<fft_expr<A, T, Impl>, A> {
      * \brief Assign to a matrix of the same storage order
      * \param c The expression to which assign
      */
-    template <etl_expr C>
+    template <same_dimensions<A> C>
     void assign_to(C&& c) const {
-        static_assert(etl::dimensions<A>() == etl::dimensions<C>(), "max_pool_2d must be applied on matrices of same dimensionality");
-
         inc_counter("temp:assign");
 
         Impl::apply(this->a(), c);
@@ -57,7 +55,7 @@ struct fft_expr : base_temporary_expr_un<fft_expr<A, T, Impl>, A> {
      * \brief Add to the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_add_to(L&& lhs) const {
         std_add_evaluate(*this, lhs);
     }
@@ -66,7 +64,7 @@ struct fft_expr : base_temporary_expr_un<fft_expr<A, T, Impl>, A> {
      * \brief Sub from the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_sub_to(L&& lhs) const {
         std_sub_evaluate(*this, lhs);
     }
@@ -75,7 +73,7 @@ struct fft_expr : base_temporary_expr_un<fft_expr<A, T, Impl>, A> {
      * \brief Multiply the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_mul_to(L&& lhs) const {
         std_mul_evaluate(*this, lhs);
     }
@@ -84,7 +82,7 @@ struct fft_expr : base_temporary_expr_un<fft_expr<A, T, Impl>, A> {
      * \brief Divide the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_div_to(L&& lhs) const {
         std_div_evaluate(*this, lhs);
     }
@@ -93,7 +91,7 @@ struct fft_expr : base_temporary_expr_un<fft_expr<A, T, Impl>, A> {
      * \brief Modulo the given left-hand-side expression
      * \param lhs The expression to which assign
      */
-    template <typename L>
+    template <same_dimensions<A> L>
     void assign_mod_to(L&& lhs) const {
         std_mod_evaluate(*this, lhs);
     }
@@ -373,10 +371,8 @@ auto ifft_2d_real(A&& a, C&& c) {
  * \param a The input expression
  * \return an expression representing several 1D FFT of a
  */
-template <etl_expr A>
+template <matrix A>
 fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft1_many_impl> fft_1d_many(A&& a) {
-    static_assert(decay_traits<A>::dimensions() >= 2, "fft_many requires at least 2D matrices");
-
     return fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft1_many_impl>{a};
 }
 
@@ -389,9 +385,8 @@ fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft1_many_imp
  * \param c The result
  * \return an expression representing several 1D FFT of a
  */
-template <etl_expr A, etl_expr C>
+template <matrix A, matrix C>
 auto fft_1d_many(A&& a, C&& c) {
-    static_assert(decay_traits<A>::dimensions() >= 2 && decay_traits<C>::dimensions() >= 2, "fft_many requires at least 2D matrices");
     validate_assign(c, a);
 
     c = fft_1d_many(a);
@@ -406,10 +401,8 @@ auto fft_1d_many(A&& a, C&& c) {
  * \param a The input expression
  * \return an expression representing several 1D FFT of a
  */
-template <etl_expr A>
+template <matrix A>
 fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft1_many_impl> ifft_1d_many(A&& a) {
-    static_assert(decay_traits<A>::dimensions() >= 2, "ifft_many requires at least 2D matrices");
-
     return fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft1_many_impl>{a};
 }
 
@@ -422,9 +415,8 @@ fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft1_many_i
  * \param c The result
  * \return an expression representing several 1D FFT of a
  */
-template <etl_expr A, etl_expr C>
+template <matrix A, matrix C>
 auto ifft_1d_many(A&& a, C&& c) {
-    static_assert(decay_traits<A>::dimensions() >= 2 && decay_traits<C>::dimensions() >= 2, "ifft_many requires at least 2D matrices");
     validate_assign(c, a);
 
     c = ifft_1d_many(a);
@@ -439,10 +431,8 @@ auto ifft_1d_many(A&& a, C&& c) {
  * \param a The input expression
  * \return an expression representing several 2D FFT of a
  */
-template <etl_expr A>
+template <deep_mat A>
 fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft2_many_impl> fft_2d_many(A&& a) {
-    static_assert(decay_traits<A>::dimensions() >= 3, "fft_many requires at least 3D matrices");
-
     return fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft2_many_impl>{a};
 }
 
@@ -455,9 +445,8 @@ fft_expr<detail::build_type<A>, detail::fft_value_type<A>, detail::fft2_many_imp
  * \param c The result
  * \return an expression representing several 2D FFT of a
  */
-template <etl_expr A, etl_expr C>
+template <deep_mat A, deep_mat C>
 auto fft_2d_many(A&& a, C&& c) {
-    static_assert(decay_traits<A>::dimensions() >= 3 && decay_traits<C>::dimensions() >= 3, "fft_many requires at least 3D matrices");
     validate_assign(c, a);
 
     c = fft_2d_many(a);
@@ -472,10 +461,8 @@ auto fft_2d_many(A&& a, C&& c) {
  * \param a The input expression
  * \return an expression representing several 2D FFT of a
  */
-template <etl_expr A>
+template <deep_mat A>
 fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft2_many_impl> ifft_2d_many(A&& a) {
-    static_assert(decay_traits<A>::dimensions() >= 3, "ifft_many requires at least 3D matrices");
-
     return fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft2_many_impl>{a};
 }
 
@@ -488,9 +475,8 @@ fft_expr<detail::build_type<A>, detail::ifft_value_type<A>, detail::ifft2_many_i
  * \param c The result
  * \return an expression representing several 2D FFT of a
  */
-template <etl_expr A, etl_expr C>
+template <deep_mat A, deep_mat C>
 auto ifft_2d_many(A&& a, C&& c) {
-    static_assert(decay_traits<A>::dimensions() >= 3 && decay_traits<C>::dimensions() >= 3, "ifft_many requires at least 3D matrices");
     validate_assign(c, a);
 
     c = ifft_2d_many(a);

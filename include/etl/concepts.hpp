@@ -97,6 +97,9 @@ template <typename T>
 concept etl_4d = etl_expr<T> && decay_traits<T>::dimensions() == 4;
 
 template <typename T>
+concept etl_2d_or_4d = etl_expr<T> && (decay_traits<T>::dimensions() == 2 || decay_traits<T>::dimensions() == 4);
+
+template <typename T>
 concept etl_4d_and_plus = etl_expr<T> && decay_traits<T>::dimensions() >= 4;
 
 template <typename T>

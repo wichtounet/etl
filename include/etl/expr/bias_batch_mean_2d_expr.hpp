@@ -18,7 +18,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <etl_expr A, bool Mean>
+template <etl_2d A, bool Mean>
 struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<A, Mean>, A> {
     using value_type = value_t<A>;                           ///< The type of value of the expression
     using this_type  = bias_batch_mean_2d_expr<A, Mean>;     ///< The type of this expression
@@ -48,11 +48,8 @@ struct bias_batch_mean_2d_expr : base_temporary_expr_un<bias_batch_mean_2d_expr<
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C>
+    template <etl_1d C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const C& c) {
-        static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_mean_2d is a vector");
-        static_assert(etl::dimensions<A>() == 2, "The input of bias_batch_mean_2d is a 2d matrix");
-
         if constexpr (all_fast<A, C>) {
             static_assert(etl::dim<1, A>() == etl::dim<0, C>(), "Invalid dimensions for bias_batch_mean_2d");
         } else {

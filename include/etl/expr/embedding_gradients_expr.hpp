@@ -15,7 +15,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <typename A, typename B, typename C>
+template <etl_1d A, etl_2d B, typename C>
 struct embedding_gradients_expr : base_temporary_expr_tern<embedding_gradients_expr<A, B, C>, A, B, C> {
     using value_type = value_t<A>;                                   ///< The type of value of the expression
     using this_type  = embedding_gradients_expr<A, B, C>;            ///< The type of this expression
@@ -43,12 +43,8 @@ struct embedding_gradients_expr : base_temporary_expr_tern<embedding_gradients_e
      * \param a The input matrix
      * \þaram lhs The output matrix
      */
-    template <typename L>
+    template <etl_2d L>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c, [[maybe_unused]] const L& lhs) {
-        static_assert(etl::dimensions<A>() == 1, "The input of embedding_gradients is a 1d matrix");
-        static_assert(etl::dimensions<B>() == 2, "The vocabulary input of embedding_gradients is a 2d matrix");
-        static_assert(etl::dimensions<L>() == 2, "The output of embedding_gradients is 2d matrix");
-
         if constexpr (all_fast<A, B, C, L>) {
             static_assert(etl::dim<0, A>() == etl::dim<0, B>(), "Invalid dimensions for embedding_gradients");
             static_assert(etl::dim<1, B>() == etl::dim<1, L>(), "Invalid dimensions for embedding_gradients");

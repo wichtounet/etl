@@ -22,7 +22,7 @@ namespace etl {
  * \tparam B The output type
  * \tparam C The errors type
  */
-template <etl_expr A, etl_expr B, etl_expr C, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, bool Max>
+template <etl_expr A, same_dimensions<A> B, same_dimensions<A> C, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, bool Max>
 struct pool_upsample_2d_expr : base_temporary_expr_tern<pool_upsample_2d_expr<A, B, C, C1, C2, S1, S2, P1, P2, Max>, A, B, C> {
     using value_type = value_t<A>;                                                  ///< The type of value of the expression
     using sub_traits = etl::decay_traits<A>;                                        ///< The traits of the first sub type
