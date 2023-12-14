@@ -48,10 +48,6 @@ struct conv_2d_same_expr : base_temporary_expr_bin<conv_2d_same_expr<A, B, Flipp
      */
     template <etl_2d I, etl_2d K, etl_2d C>
     static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) {
-        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_same");
-        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_same");
-        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_same");
-
         if constexpr (all_fast<A, B, C>) {
             static_assert(etl::dim<0, C>() == etl::dim<0, I>(), "Invalid dimensions for conv2_same");
             static_assert(etl::dim<1, C>() == etl::dim<1, I>(), "Invalid dimensions for conv2_same");

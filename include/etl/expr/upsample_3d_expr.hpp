@@ -46,10 +46,8 @@ struct upsample_3d_expr : base_temporary_expr_un<upsample_3d_expr<A, C1, C2, C3>
      * \brief Assign to a matrix of the same storage order
      * \param lhs The expression to which assign
      */
-    template <etl_expr L>
+    template <same_dimensions<A> L>
     void assign_to(L&& lhs) const {
-        static_assert(etl::dimensions<A>() == etl::dimensions<L>(), "upsample_3d must be applied on matrices of same dimensionality");
-
         inc_counter("temp:assign");
 
         auto& a = this->a();

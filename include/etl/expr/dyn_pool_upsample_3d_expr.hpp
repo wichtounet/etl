@@ -22,7 +22,7 @@ namespace etl {
  * \tparam B The output type
  * \tparam C The errors type
  */
-template <etl_expr A, etl_expr B, etl_expr C, bool Max>
+template <etl_expr A, same_dimensions<A> B, same_dimensions<A> C, bool Max>
 struct dyn_pool_upsample_3d_expr : base_temporary_expr_tern<dyn_pool_upsample_3d_expr<A, B, C, Max>, A, B, C> {
     using value_type = value_t<A>;                                   ///< The type of value of the expression
     using sub_traits = etl::decay_traits<A>;                         ///< The traits of the first sub type
@@ -58,13 +58,9 @@ public:
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <etl_expr R>
+    template <same_dimensions<A> R>
     void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c, [[maybe_unused]] const R& result) const {
         static constexpr size_t D = etl::decay_traits<A>::dimensions();
-
-        static_assert(etl::decay_traits<B>::dimensions() == D, "Invalid dimensions in max_pool_upsampl_3d");
-        static_assert(etl::decay_traits<C>::dimensions() == D, "Invalid dimensions in max_pool_upsampl_3d");
-        static_assert(etl::decay_traits<R>::dimensions() == D, "Invalid dimensions in max_pool_upsampl_3d");
 
         cpp_assert(etl::size(result) == etl::size(a), "max_pool_upsample_3d:A and R must have the same size");
         cpp_assert(etl::size(b) == etl::size(c), "max_pool_upsample_3d:B and C must have the same size");

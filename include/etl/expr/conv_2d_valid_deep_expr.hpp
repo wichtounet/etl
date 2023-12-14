@@ -47,12 +47,8 @@ struct conv_2d_valid_deep_expr : base_temporary_expr_bin<conv_2d_valid_deep_expr
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <typename I, typename K, typename C>
+    template <same_dimensions<A> I, same_dimensions<A> K, same_dimensions<A> C>
     static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) {
-        static_assert(etl::dimensions<I>() == D, "Invalid number of dimensions for input of conv2_valid_deep");
-        static_assert(etl::dimensions<K>() == D, "Invalid number of dimensions for kernel of conv2_valid_deep");
-        static_assert(etl::dimensions<C>() == D, "Invalid number of dimensions for conv of conv2_valid_deep");
-
         if constexpr (all_fast<A, B, C>) {
             static_assert(etl::dim<D - 2, C>() == (etl::dim<D - 2, I>() + etl::dim<D - 2, K>() + 2 * P1) / S1 - 1, "Invalid dimensions for conv2_valid_deep");
             static_assert(etl::dim<D - 1, C>() == (etl::dim<D - 1, I>() + etl::dim<D - 1, K>() + 2 * P2) / S2 - 1, "Invalid dimensions for conv2_valid_deep");
