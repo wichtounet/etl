@@ -38,13 +38,12 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C>
+    template <same_dimensions<A> C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const C& c) {
         static constexpr etl::order order_lhs = decay_traits<C>::storage_order;
         static constexpr etl::order order_rhs = decay_traits<A>::storage_order;
 
         static_assert(order_lhs == order_rhs, "Cannot change storage order");
-        static_assert(decay_traits<A>::dimensions() == decay_traits<C>::dimensions(), "Invalid dimensions");
 
         if constexpr (all_fast<A, C>) {
             static_assert(decay_traits<A>::size() == decay_traits<C>::size(), "Invalid size");

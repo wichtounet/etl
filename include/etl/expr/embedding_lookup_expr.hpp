@@ -43,10 +43,8 @@ struct embedding_lookup_expr : base_temporary_expr_bin<embedding_lookup_expr<A, 
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <etl_expr C>
+    template <etl_2d C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c) {
-        static_assert(etl::dimensions<C>() == 2, "The output of embedding_lookup is 2d matrix");
-
         if constexpr (all_fast<A, B, C>) {
             static_assert(etl::dim<0, A>() == etl::dim<0, C>(), "Invalid dimensions for embedding_lookup");
             static_assert(etl::dim<1, B>() == etl::dim<1, C>(), "Invalid dimensions for embedding_lookup");

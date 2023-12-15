@@ -123,6 +123,12 @@ concept fast_matrix_c = fast<T> && matrix<T>;
 template <typename T, typename E>
 concept same_dimensions = etl_expr<T> && decay_traits<T>::dimensions() == decay_traits<E>::dimensions();
 
+template <typename T, size_t D>
+concept exact_dimensions = etl_expr<T> && decay_traits<T>::dimensions() == D;
+
+template <typename T, size_t D1, size_t D2>
+concept dimensions_between = etl_expr<T> && decay_traits<T>::dimensions() >= D1 && decay_traits<T>::dimensions() <= D2;
+
 template <typename T>
 concept fast_2d = fast<T> && etl_2d<T>;
 

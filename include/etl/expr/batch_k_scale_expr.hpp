@@ -17,7 +17,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <etl_expr A, etl_expr B>
+template <etl_1d A, etl_2d_or_4d B>
 struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = batch_k_scale_expr<A, B>;                 ///< The type of this expression
@@ -48,13 +48,9 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename C>
+    template <same_dimensions<B> C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c) {
         if constexpr (D4) {
-            static_assert(etl::dimensions<C>() == 4, "The output of batch_k_scale is a 4D matrix");
-            static_assert(etl::dimensions<A>() == 1, "The lhs of batch_k_scale is a 1D matrix");
-            static_assert(etl::dimensions<B>() == 4, "The rhs of batch_k_scale is a 4D matrix");
-
             if constexpr (all_fast<A, C>) {
                 static_assert(etl::dim<0, B>() == etl::dim<0, C>(), "Invalid dimensions for batch_k_scale");
                 static_assert(etl::dim<1, B>() == etl::dim<1, C>(), "Invalid dimensions for batch_k_scale");
@@ -71,10 +67,6 @@ struct batch_k_scale_expr : base_temporary_expr_bin<batch_k_scale_expr<A, B>, A,
                 cpp_assert(etl::dim<0>(a) == etl::dim<1>(b), "Invalid dimensions for batch_k_scale");
             }
         } else {
-            static_assert(etl::dimensions<C>() == 2, "The output of batch_k_scale is a 2D matrix");
-            static_assert(etl::dimensions<A>() == 1, "The lhs of batch_k_scale is a 1D matrix");
-            static_assert(etl::dimensions<B>() == 2, "The rhs of batch_k_scale is a 2D matrix");
-
             if constexpr (all_fast<A, C>) {
                 static_assert(etl::dim<0, B>() == etl::dim<0, C>(), "Invalid dimensions for batch_k_scale");
                 static_assert(etl::dim<1, B>() == etl::dim<1, C>(), "Invalid dimensions for batch_k_scale");

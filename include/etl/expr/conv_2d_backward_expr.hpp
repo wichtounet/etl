@@ -70,10 +70,6 @@ struct conv_2d_backward_expr : base_temporary_expr_bin<conv_2d_backward_expr<A, 
      */
     template <etl_2d I, etl_2d K, etl_2d C>
     static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) {
-        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_backward");
-        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_backward");
-        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_backward");
-
         if constexpr (all_fast<A, B, C>) {
             static_assert(etl::dim<0, C>() == S1 * (etl::dim<0, I>() - 1) + etl::dim<0, K>() - 2 * P1, "Invalid dimensions for conv2_backward");
             static_assert(etl::dim<1, C>() == S2 * (etl::dim<1, I>() - 1) + etl::dim<1, K>() - 2 * P2, "Invalid dimensions for conv2_backward");

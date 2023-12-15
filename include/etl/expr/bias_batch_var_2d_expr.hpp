@@ -47,12 +47,8 @@ struct bias_batch_var_2d_expr : base_temporary_expr_bin<bias_batch_var_2d_expr<A
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <etl_expr C>
+    template <etl_1d C>
     static void check([[maybe_unused]] const A& a, [[maybe_unused]] const B& b, [[maybe_unused]] const C& c) {
-        static_assert(etl::dimensions<C>() == 1, "The output of bias_batch_var_2d is a vector");
-        static_assert(etl::dimensions<A>() == 2, "The input of bias_batch_var_2d is a 2d matrix");
-        static_assert(etl::dimensions<B>() == 1, "The input of bias_batch_var_2d is a vector");
-
         if constexpr (all_fast<A, B, C>) {
             static_assert(etl::dim<1, A>() == etl::dim<0, C>(), "Invalid dimensions for bias_batch_var_2d");
             static_assert(etl::dim<0, B>() == etl::dim<0, C>(), "Invalid dimensions for bias_batch_var_2d");

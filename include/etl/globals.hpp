@@ -801,10 +801,8 @@ void shuffle(T& vector, G&& g) {
  * \param v1 The first vector to shuffle
  * \param v2 The second vector to shuffle
  */
-template <etl_expr T1, etl_expr T2, typename G>
+template <etl_expr T1, same_dimensions<T1> T2, typename G>
 void parallel_shuffle_flat(T1& v1, T2& v2, G&& g) {
-    static_assert(decay_traits<T1>::dimensions() == decay_traits<T2>::dimensions(), "Impossible to shuffle vector of different dimensions");
-
     cpp_assert(etl::size(v1) == etl::size(v2), "Impossible to shuffle vector of different dimensions");
 
     const auto n = etl::size(v1);

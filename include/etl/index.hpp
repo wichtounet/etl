@@ -167,9 +167,7 @@ constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexcept(ass
  * \return The flat position of (sizes...)
  */
 template <typename T, typename... S>
-constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) requires(sizeof...(S) > 4) {
-    static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for fast_index");
-
+constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) requires(sizeof...(S) > 4 && decay_traits<T>::dimensions() == sizeof...(S)) {
     if constexpr (decay_traits<T>::storage_order == order::RowMajor) {
         return detail::rm_compute_index<T, 0>(sizes...);
     } else {
@@ -276,9 +274,7 @@ size_t dyn_index(const T& expression, size_t i, size_t j, size_t k, size_t l) no
  * \return The flat position of (sizes...)
  */
 template <typename T, typename... S>
-size_t dyn_index(const T& expression, S... sizes) noexcept(assert_nothrow) requires(sizeof...(S) > 4) {
-    static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for dyn_index");
-
+size_t dyn_index(const T& expression, S... sizes) noexcept(assert_nothrow) requires(sizeof...(S) > 4 && decay_traits<T>::dimensions() == sizeof...(S)) {
     if constexpr (decay_traits<T>::storage_order == order::RowMajor) {
         size_t index   = 0;
         size_t subsize = decay_traits<T>::size(expression);

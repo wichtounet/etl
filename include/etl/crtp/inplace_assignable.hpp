@@ -49,9 +49,7 @@ struct inplace_assignable {
     /*!
      * \brief Flip the matrix horizontally and vertically, in place.
      */
-    derived_t& fflip_inplace() {
-        static_assert(etl_traits<derived_t>::dimensions() <= 2, "Impossible to fflip a matrix of D > 2");
-
+    derived_t& fflip_inplace() requires(mat_or_vec<derived_t>) {
         if constexpr (is_2d<derived_t>) {
             as_derived().ensure_cpu_up_to_date();
 
@@ -140,9 +138,7 @@ struct inplace_assignable {
      *
      * Only square fast matrix can be transpose in place, dyn matrix don't have any limitation.
      */
-    derived_t& transpose_inplace() {
-        static_assert(is_2d<derived_t>, "Only 2D matrix can be transposed");
-
+    derived_t& transpose_inplace() requires(etl_2d<derived_t>) {
         decltype(auto) mat = as_derived();
 
         if constexpr (is_dyn_matrix<derived_t>) {
@@ -168,9 +164,7 @@ struct inplace_assignable {
      *
      * Only square fast matrix can be transpose in place, dyn matrix don't have any limitation.
      */
-    derived_t& direct_transpose_inplace() {
-        static_assert(is_2d<derived_t>, "Only 2D matrix can be transposed");
-
+    derived_t& direct_transpose_inplace() requires(etl_2d<derived_t>) {
         decltype(auto) mat = as_derived();
 
         if (etl::dim<0>(mat) == etl::dim<1>(mat)) {
@@ -185,9 +179,8 @@ struct inplace_assignable {
     /*!
      * \brief Perform inplace 1D FFT of the vector.
      */
-    derived_t& fft_inplace() {
+    derived_t& fft_inplace() requires(etl_1d<derived_t>) {
         static_assert(is_complex<derived_t>, "Only complex vector can use inplace FFT");
-        static_assert(is_1d<derived_t>, "Only vector can use fft_inplace, use fft2_inplace for matrices");
 
         decltype(auto) mat = as_derived();
 
@@ -201,9 +194,8 @@ struct inplace_assignable {
      *
      * This function considers the first dimension as being batches of 1D FFT.
      */
-    derived_t& fft_many_inplace() {
+    derived_t& fft_many_inplace() requires(matrix<derived_t>) {
         static_assert(is_complex<derived_t>, "Only complex vector can use inplace FFT");
-        static_assert(etl_traits<derived_t>::dimensions() > 1, "Only matrix of dimensions > 1 can use fft_many_inplace");
 
         decltype(auto) mat = as_derived();
 
@@ -215,9 +207,8 @@ struct inplace_assignable {
     /*!
      * \brief Perform inplace 1D Inverse FFT of the vector.
      */
-    derived_t& ifft_inplace() {
+    derived_t& ifft_inplace() requires(etl_1d<derived_t>) {
         static_assert(is_complex<derived_t>, "Only complex vector can use inplace IFFT");
-        static_assert(is_1d<derived_t>, "Only vector can use ifft_inplace, use ifft2_inplace for matrices");
 
         decltype(auto) mat = as_derived();
 
@@ -229,9 +220,8 @@ struct inplace_assignable {
     /*!
      * \brief Perform many inplace 1D Inverse FFT of the vector.
      */
-    derived_t& ifft_many_inplace() {
+    derived_t& ifft_many_inplace() requires(matrix<derived_t>) {
         static_assert(is_complex<derived_t>, "Only complex vector can use inplace IFFT");
-        static_assert(etl_traits<derived_t>::dimensions() > 1, "Only matrices can use ifft_many_inplace");
 
         decltype(auto) mat = as_derived();
 
@@ -243,9 +233,8 @@ struct inplace_assignable {
     /*!
      * \brief Perform inplace 2D FFT of the matrix.
      */
-    derived_t& fft2_inplace() {
+    derived_t& fft2_inplace() requires(etl_2d<derived_t>) {
         static_assert(is_complex<derived_t>, "Only complex vector can use inplace FFT");
-        static_assert(is_2d<derived_t>, "Only matrix can use fft2_inplace, use fft_inplace for vectors");
 
         decltype(auto) mat = as_derived();
 
@@ -259,9 +248,8 @@ struct inplace_assignable {
      *
      * This function considers the first dimension as being batches of 2D FFT.
      */
-    derived_t& fft2_many_inplace() {
+    derived_t& fft2_many_inplace() requires(deep_mat<derived_t>) {
         static_assert(is_complex<derived_t>, "Only complex vector can use inplace FFT");
-        static_assert(etl_traits<derived_t>::dimensions() > 2, "Only matrix of dimensions > 2 can use fft2_many_inplace");
 
         decltype(auto) mat = as_derived();
 
@@ -273,9 +261,8 @@ struct inplace_assignable {
     /*!
      * \brief Perform inplace 2D Inverse FFT of the matrix.
      */
-    derived_t& ifft2_inplace() {
+    derived_t& ifft2_inplace() requires(etl_2d<derived_t>) {
         static_assert(is_complex<derived_t>, "Only complex matrix can use inplace IFFT");
-        static_assert(is_2d<derived_t>, "Only vector can use ifft_inplace, use ifft2_inplace for matrices");
 
         decltype(auto) mat = as_derived();
 
@@ -287,9 +274,8 @@ struct inplace_assignable {
     /*!
      * \brief Perform many inplace 2D Inverse FFT of the matrix.
      */
-    derived_t& ifft2_many_inplace() {
+    derived_t& ifft2_many_inplace() requires(deep_mat<derived_t>) {
         static_assert(is_complex<derived_t>, "Only complex matrix can use inplace IFFT");
-        static_assert(etl_traits<derived_t>::dimensions() > 2, "Only matrix > 2D can use ifft2_many_inplace");
 
         decltype(auto) mat = as_derived();
 

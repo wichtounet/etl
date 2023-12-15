@@ -22,7 +22,7 @@ namespace etl {
  * \brief View that shows a sub matrix of an expression
  * \tparam T The type of expression on which the view is made
  */
-template <etl_expr T, bool Aligned>
+template <matrix T, bool Aligned>
 requires(!fast_sub_view_able<T>)
 struct sub_view<T, Aligned> final : iterable<sub_view<T, Aligned>, false>,
                                                                               assignable<sub_view<T, Aligned>, value_t<T>>,
@@ -303,13 +303,12 @@ public:
  * \brief View that shows a sub matrix of an expression
  * \tparam T The type of expression on which the view is made
  */
-template <etl_expr T, bool Aligned>
+template <matrix T, bool Aligned>
 requires(fast_sub_view_able<T>)
 struct sub_view<T, Aligned> : iterable<sub_view<T, Aligned>, true>,
                                                                        assignable<sub_view<T, Aligned>, value_t<T>>,
                                                                        value_testable<sub_view<T, Aligned>>,
                                                                        inplace_assignable<sub_view<T, Aligned>> {
-    static_assert(decay_traits<T>::dimensions() > 1, "sub_view<T, true> should only be done with Matrices >1D");
     static_assert(decay_traits<T>::storage_order == order::RowMajor, "sub_view<T, true> should only be done with RowMajor");
 
     using this_type            = sub_view<T, Aligned>;                                                 ///< The type of this expression

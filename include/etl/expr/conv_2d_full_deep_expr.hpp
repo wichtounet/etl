@@ -18,7 +18,7 @@ namespace etl {
  * \brief A transposition expression.
  * \tparam A The transposed type
  */
-template <etl_expr A, etl_expr B, bool Flipped>
+template <etl_expr A, same_dimensions<A> B, bool Flipped>
 struct conv_2d_full_deep_expr : base_temporary_expr_bin<conv_2d_full_deep_expr<A, B, Flipped>, A, B> {
     using value_type  = value_t<A>;                               ///< The type of value of the expression
     using this_type   = conv_2d_full_deep_expr<A, B, Flipped>;    ///< The type of this expression
@@ -47,12 +47,8 @@ struct conv_2d_full_deep_expr : base_temporary_expr_bin<conv_2d_full_deep_expr<A
     /*!
      * \brief Assert that the convolution is done on correct dimensions
      */
-    template <etl_expr I, etl_expr K, etl_expr C>
+    template <same_dimensions<A> I, same_dimensions<A> K, same_dimensions<A> C>
     static void check([[maybe_unused]] const I& input, [[maybe_unused]] const K& kernel, [[maybe_unused]] const C& conv) {
-        static_assert(etl::dimensions<I>() == D, "Invalid number of dimensions for input of conv2_full_deep");
-        static_assert(etl::dimensions<K>() == D, "Invalid number of dimensions for kernel of conv2_full_deep");
-        static_assert(etl::dimensions<C>() == D, "Invalid number of dimensions for conv of conv2_full_deep");
-
         if constexpr (all_fast<A, B, C>) {
             static_assert(etl::dim<D - 2, C>() == etl::dim<D - 2, I>() + etl::dim<D - 2, K>() - 1, "Invalid dimensions for conv2_full_deep");
             static_assert(etl::dim<D - 1, C>() == etl::dim<D - 1, I>() + etl::dim<D - 1, K>() - 1, "Invalid dimensions for conv2_full_deep");
