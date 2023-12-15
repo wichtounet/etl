@@ -582,8 +582,7 @@ public:
      * \brief Returns a pointer to the first element in memory.
      * \return a pointer tot the first element in memory.
      */
-    memory_type memory_start() noexcept {
-        static_assert(is_dma<Expr>, "This expression does not have direct memory access");
+    memory_type memory_start() noexcept requires(etl_dma<Expr>) {
         return value.memory_start();
     }
 
@@ -591,8 +590,7 @@ public:
      * \brief Returns a pointer to the first element in memory.
      * \return a pointer tot the first element in memory.
      */
-    const_memory_type memory_start() const noexcept {
-        static_assert(is_dma<Expr>, "This expression does not have direct memory access");
+    const_memory_type memory_start() const noexcept requires(etl_dma<Expr>) {
         return value.memory_start();
     }
 
@@ -600,8 +598,7 @@ public:
      * \brief Returns a pointer to the past-the-end element in memory.
      * \return a pointer tot the past-the-end element in memory.
      */
-    memory_type memory_end() noexcept {
-        static_assert(is_dma<Expr>, "This expression does not have direct memory access");
+    memory_type memory_end() noexcept requires(etl_dma<Expr>) {
         return value.memory_end();
     }
 
@@ -609,8 +606,7 @@ public:
      * \brief Returns a pointer to the past-the-end element in memory.
      * \return a pointer tot the past-the-end element in memory.
      */
-    const_memory_type memory_end() const noexcept {
-        static_assert(is_dma<Expr>, "This expression does not have direct memory access");
+    const_memory_type memory_end() const noexcept requires(etl_dma<Expr>) {
         return value.memory_end();
     }
 
@@ -711,48 +707,42 @@ public:
      * \brief Return GPU memory of this expression, if any.
      * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
      */
-    T* gpu_memory() const noexcept {
-        static_assert(is_dma<Expr>, "This expression does not have direct memory access");
+    T* gpu_memory() const noexcept requires(etl_dma<Expr>) {
         return _gpu.gpu_memory();
     }
 
     /*!
      * \brief Evict the expression from GPU.
      */
-    void gpu_evict() const noexcept {
-        static_assert(is_dma<Expr>, "This expression does not have direct memory access");
+    void gpu_evict() const noexcept requires(etl_dma<Expr>) {
         _gpu.gpu_evict();
     }
 
     /*!
      * \brief Invalidates the CPU memory
      */
-    void invalidate_cpu() const noexcept {
-        static_assert(is_dma<Expr>, "This expression does not have direct memory access");
+    void invalidate_cpu() const noexcept requires(etl_dma<Expr>) {
         _gpu.invalidate_cpu();
     }
 
     /*!
      * \brief Invalidates the GPU memory
      */
-    void invalidate_gpu() const noexcept {
-        static_assert(is_dma<Expr>, "This expression does not have direct memory access");
+    void invalidate_gpu() const noexcept requires(etl_dma<Expr>) {
         _gpu.invalidate_gpu();
     }
 
     /*!
      * \brief Validates the CPU memory
      */
-    void validate_cpu() const noexcept {
-        static_assert(is_dma<Expr>, "This expression does not have direct memory access");
+    void validate_cpu() const noexcept requires(etl_dma<Expr>) {
         _gpu.validate_cpu();
     }
 
     /*!
      * \brief Validates the GPU memory
      */
-    void validate_gpu() const noexcept {
-        static_assert(is_dma<Expr>, "This expression does not have direct memory access");
+    void validate_gpu() const noexcept requires(etl_dma<Expr>) {
         _gpu.validate_gpu();
     }
 
@@ -760,8 +750,7 @@ public:
      * \brief Ensures that the GPU memory is allocated and that the GPU memory
      * is up to date (to undefined value).
      */
-    void ensure_gpu_allocated() const {
-        static_assert(is_dma<Expr>, "This expression does not have direct memory access");
+    void ensure_gpu_allocated() const requires(etl_dma<Expr>) {
         _gpu.ensure_gpu_allocated(etl::size(value));
     }
 
@@ -792,8 +781,7 @@ public:
      * \brief Copy from GPU to GPU
      * \param gpu_memory Pointer to CPU memory
      */
-    void gpu_copy_from(const T* gpu_memory) const {
-        static_assert(is_dma<Expr>, "This expression does not have direct memory access");
+    void gpu_copy_from(const T* gpu_memory) const requires(etl_dma<Expr>) {
         _gpu.gpu_copy_from(gpu_memory, etl::size(value));
     }
 
@@ -801,8 +789,7 @@ public:
      * \brief Indicates if the CPU memory is up to date.
      * \return true if the CPU memory is up to date, false otherwise.
      */
-    bool is_cpu_up_to_date() const noexcept {
-        static_assert(is_dma<Expr>, "This expression does not have direct memory access");
+    bool is_cpu_up_to_date() const noexcept requires(etl_dma<Expr>) {
         return _gpu.is_cpu_up_to_date();
     }
 
@@ -810,8 +797,7 @@ public:
      * \brief Indicates if the GPU memory is up to date.
      * \return true if the GPU memory is up to date, false otherwise.
      */
-    bool is_gpu_up_to_date() const noexcept {
-        static_assert(is_dma<Expr>, "This expression does not have direct memory access");
+    bool is_gpu_up_to_date() const noexcept requires(etl_dma<Expr>) {
         return _gpu.is_gpu_up_to_date();
     }
 
