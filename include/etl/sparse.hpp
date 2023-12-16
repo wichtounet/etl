@@ -517,7 +517,7 @@ public:
      * and use the initializer list to fill the matrix
      */
     template <typename... S>
-    explicit sparse_matrix_impl(S... sizes) noexcept requires(dyn_detail::is_initializer_list_constructor<S...>::value)
+    explicit sparse_matrix_impl(S... sizes) noexcept requires(dyn_detail::is_initializer_list_constructor<S...>::value && sizeof...(S) == D + 1)
             : base_type(util::size(std::make_index_sequence<(sizeof...(S) - 1)>(), sizes...),
                         dyn_detail::sizes(std::make_index_sequence<(sizeof...(S) - 1)>(), sizes...)) {
         static_assert(sizeof...(S) == D + 1, "Invalid number of dimensions");

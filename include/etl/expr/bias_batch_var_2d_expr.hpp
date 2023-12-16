@@ -335,8 +335,7 @@ struct etl_traits<etl::bias_batch_var_2d_expr<A, B>> {
      * \return the DDth dimension of the expression
      */
     template <size_t DD>
-    static constexpr size_t dim() {
-        static_assert(DD == 0, "Invalid dimensions access");
+    static constexpr size_t dim() requires(DD == 0) {
         return decay_traits<A>::template dim<1>();
     }
 

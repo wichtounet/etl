@@ -69,10 +69,8 @@ void validate_assign([[maybe_unused]] const LE& lhs, [[maybe_unused]] const RE& 
  *
  * \param expr The expression to assert
  */
-template <typename E>
+template <etl_2d E>
 void assert_square([[maybe_unused]] E&& expr) {
-    static_assert(is_2d<E>, "Function undefined for non-square matrix");
-
     if constexpr (is_fast<E>) {
         static_assert(decay_traits<E>::template dim<0>() == decay_traits<E>::template dim<1>(), "Function undefined for non-square matrix");
     } else {

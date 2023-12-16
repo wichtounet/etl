@@ -112,10 +112,8 @@ public:
      * \brief Construct a vector with the given values
      * \param list Initializer list containing all the values of the vector
      */
-    dyn_matrix_impl(std::initializer_list<value_type> list) noexcept : base_type(list.size(), {{list.size()}}) {
+    dyn_matrix_impl(std::initializer_list<value_type> list) noexcept requires(n_dimensions == 1) : base_type(list.size(), {{list.size()}}) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
-
-        static_assert(n_dimensions == 1, "This constructor can only be used for 1D matrix");
 
         std::copy(list.begin(), list.end(), begin());
     }
@@ -137,7 +135,7 @@ public:
      * \param sizes The dimensions of the matrix followed by an initializer_list
      */
     template <typename... S>
-    explicit dyn_matrix_impl(S... sizes) noexcept requires(dyn_detail::is_initializer_list_constructor<S...>::value)
+    explicit dyn_matrix_impl(S... sizes) noexcept requires(dyn_detail::is_initializer_list_constructor<S...>::value && sizeof...(S) == D + 1)
             : base_type(util::size(std::make_index_sequence<(sizeof...(S) - 1)>(), sizes...),
                         dyn_detail::sizes(std::make_index_sequence<(sizeof...(S) - 1)>(), sizes...)) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
@@ -185,11 +183,9 @@ public:
      * Only possible for 1D matrices
      */
     template <std_container Container>
-    explicit dyn_matrix_impl(const Container& container) requires(std::convertible_to<typename Container::value_type, value_type>) :
+    explicit dyn_matrix_impl(const Container& container) requires(D == 1 && std::convertible_to<typename Container::value_type, value_type>) :
             base_type(container.size(), {{container.size()}}) {
         _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
-
-        static_assert(D == 1, "Only 1D matrix can be constructed from containers");
 
         // Copy the container directly inside the allocated memory
         std::copy_n(container.begin(), _size, _memory);
@@ -289,7 +285,7 @@ public:
      * \param sizes The new dimensions
      */
     template <typename... Sizes>
-    void resize(Sizes... sizes) {
+    void resize(Sizes... sizes) requires(sizeof...(Sizes) == n_dimensions) {
         static_assert(sizeof...(Sizes), "Cannot change number of dimensions");
 
         auto new_size = util::size(sizes...);
