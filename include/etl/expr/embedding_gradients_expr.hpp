@@ -178,8 +178,7 @@ struct etl_traits<etl::embedding_gradients_expr<A, B, C>> {
      * \return the DDth dimension of the expression
      */
     template <size_t DD>
-    static constexpr size_t dim() {
-        static_assert(DD < 2, "Invalid dimensions access");
+    static constexpr size_t dim() requires(DD < 2) {
         return DD == 0 ? decay_traits<C>::template dim<0>() : decay_traits<B>::template dim<1>();
     }
 

@@ -30,10 +30,8 @@ namespace etl::impl {
  *
  * \return The implementation to use
  */
-template <typename X, typename Y>
+template <etl_dma X, etl_dma Y>
 constexpr etl::pool_impl select_default_pool_impl(bool no_gpu) {
-    static_assert(all_dma<X, Y>, "DMA should be ensured at this point");
-
     if (cudnn_enabled && all_floating<X, Y> && !no_gpu) {
         return etl::pool_impl::CUDNN;
     }

@@ -126,6 +126,9 @@ concept same_dimensions = etl_expr<T> && decay_traits<T>::dimensions() == decay_
 template <typename T, typename E>
 concept same_order = etl_expr<T> && decay_traits<T>::storage_order == decay_traits<E>::storage_order;
 
+template <typename T, typename E>
+concept same_dimensions_and_order = same_dimensions<T, E> && same_order<T, E>;
+
 template <typename T, size_t D>
 concept exact_dimensions = etl_expr<T> && decay_traits<T>::dimensions() == D;
 

@@ -235,8 +235,7 @@ struct etl_traits<etl::embedding_lookup_expr<A, B>> {
      * \return the DDth dimension of the expression
      */
     template <size_t DD>
-    static constexpr size_t dim() {
-        static_assert(DD < 2, "Invalid dimensions access");
+    static constexpr size_t dim() requires(DD < 2) {
         return DD == 0 ? decay_traits<A>::template dim<0>() : decay_traits<B>::template dim<1>();
     }
 

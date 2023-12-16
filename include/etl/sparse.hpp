@@ -216,6 +216,7 @@ struct sparse_matrix_impl;
  * \tparam D The number of dimensions
  */
 template <typename T, size_t D>
+requires(D == 2)
 struct sparse_matrix_impl<T, sparse_storage::COO, D> final : dyn_base<sparse_matrix_impl<T, sparse_storage::COO, D>, T, D> {
     static constexpr size_t n_dimensions           = D;                                      ///< The number of dimensions
     static constexpr sparse_storage storage_format = sparse_storage::COO;                    ///< The sparse storage scheme
@@ -235,8 +236,6 @@ struct sparse_matrix_impl<T, sparse_storage::COO, D> final : dyn_base<sparse_mat
 
     friend struct sparse_detail::sparse_reference<this_type>;
     friend struct sparse_detail::sparse_reference<const this_type>;
-
-    static_assert(n_dimensions == 2, "Only 2D sparse matrix are supported");
 
 private:
     using base_type::_dimensions;

@@ -124,8 +124,7 @@ public:
      * \brief Returns a pointer to the first element in memory.
      * \return a pointer tot the first element in memory.
      */
-    memory_type memory_start() noexcept {
-        static_assert(is_dma<T> && D == 1, "This expression does not have direct memory access");
+    memory_type memory_start() noexcept requires(etl_dma<T> && D == 1) {
         return sub.memory_start() + i * subsize(sub);
     }
 
@@ -133,8 +132,7 @@ public:
      * \brief Returns a pointer to the first element in memory.
      * \return a pointer tot the first element in memory.
      */
-    const_memory_type memory_start() const noexcept {
-        static_assert(is_dma<T> && D == 1, "This expression does not have direct memory access");
+    const_memory_type memory_start() const noexcept requires(etl_dma<T> && D == 1){
         return sub.memory_start() + i * subsize(sub);
     }
 
@@ -142,8 +140,7 @@ public:
      * \brief Returns a pointer to the past-the-end element in memory.
      * \return a pointer tot the past-the-end element in memory.
      */
-    memory_type memory_end() noexcept {
-        static_assert(is_dma<T> && D == 1, "This expression does not have direct memory access");
+    memory_type memory_end() noexcept requires(etl_dma<T> && D == 1){
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
 
@@ -151,8 +148,7 @@ public:
      * \brief Returns a pointer to the past-the-end element in memory.
      * \return a pointer tot the past-the-end element in memory.
      */
-    const_memory_type memory_end() const noexcept {
-        static_assert(is_dma<T> && D == 1, "This expression does not have direct memory access");
+    const_memory_type memory_end() const noexcept requires(etl_dma<T> && D == 1){
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
 
@@ -323,9 +319,7 @@ struct etl_traits<etl::dim_view<T, D>> {
      * \return the D2th dimension of an expression of this type
      */
     template <size_t D2>
-    static constexpr size_t dim() {
-        static_assert(D2 == 0, "Invalid dimension");
-
+    static constexpr size_t dim() requires(D2 == 0) {
         return size();
     }
 

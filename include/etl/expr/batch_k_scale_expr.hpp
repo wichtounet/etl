@@ -1491,10 +1491,8 @@ struct etl_traits<etl::batch_k_scale_expr<A, B>> {
  * \param value The expression
  * \return The transpose of the given expression.
  */
-template <etl_1d A, etl_expr B>
+template <etl_1d A, etl_2d_or_4d B>
 batch_k_scale_expr<detail::build_type<A>, detail::build_type<B>> batch_k_scale(const A& a, const B& b) {
-    static_assert(is_2d<B> || is_4d<B>, "etl::batch_k_scale is only defined for 2D/4D RHS");
-
     return {a, b};
 }
 
