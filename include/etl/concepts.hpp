@@ -123,6 +123,9 @@ concept fast_matrix_c = fast<T> && matrix<T>;
 template <typename T, typename E>
 concept same_dimensions = etl_expr<T> && decay_traits<T>::dimensions() == decay_traits<E>::dimensions();
 
+template <typename T, typename E>
+concept same_order = etl_expr<T> && decay_traits<T>::storage_order == decay_traits<E>::storage_order;
+
 template <typename T, size_t D>
 concept exact_dimensions = etl_expr<T> && decay_traits<T>::dimensions() == D;
 
@@ -149,6 +152,15 @@ concept dyn_4d = dyn<T> && etl_4d<T>;
 
 template <typename T>
 concept dyn_matrix_c = dyn<T> && matrix<T>;
+
+template <typename T>
+concept square_matrix = is_square_matrix<T>;
+
+template <typename T>
+concept value_class = etl_expr<T> && etl_traits<T>::is_value;
+
+template <typename T>
+concept adaptable = etl_2d<T> && square_matrix<T> && value_class<T>;
 
 template <typename T, typename VT>
 concept convertible_expr = etl_expr<T> && std::convertible_to<value_t<T>, VT>;

@@ -435,14 +435,12 @@ void gemm([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, typename T>
+template <etl_expr A, same_order<A> B, etl_expr C, typename T>
 void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
     if constexpr (all_homogeneous<A, B, C>) {
         decltype(auto) handle = start_cublas();
 
         constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
-
-        static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
         using VT = value_t<A>;
         using CT  = cublas_type<VT>;
@@ -501,14 +499,12 @@ void gemm_nt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, typename T>
+template <etl_expr A, same_order<A> B, etl_expr C, typename T>
 void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
     if constexpr (all_homogeneous<A, B, C>) {
         decltype(auto) handle = start_cublas();
 
         constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
-
-        static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
         using VT = value_t<A>;
         using CT  = cublas_type<VT>;
@@ -567,14 +563,12 @@ void gemm_tn([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, typename T>
+template <etl_expr A, same_order<A> B, etl_expr C, typename T>
 void gemm_tt([[maybe_unused]] A&& a, [[maybe_unused]] B&& b, [[maybe_unused]] C&& c, [[maybe_unused]] T alpha) {
     if constexpr (all_homogeneous<A, B, C>) {
         decltype(auto) handle = start_cublas();
 
         constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
-
-        static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
         using VT = value_t<A>;
         using CT  = cublas_type<VT>;

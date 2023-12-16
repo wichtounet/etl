@@ -926,9 +926,7 @@ struct etl_traits<T> {
      * \brief Return the size of an expression of the given type
      * \return the size of an expression of the given type
      */
-    static constexpr size_t size() {
-        static_assert(is_fast, "Only fast_matrix have compile-time access to the dimensions");
-
+    static constexpr size_t size() requires(is_fast) {
         return T::size();
     }
 
@@ -938,9 +936,7 @@ struct etl_traits<T> {
      * \return the Dth dimension of the given expressio
      */
     template <size_t D>
-    static constexpr size_t dim() {
-        static_assert(is_fast, "Only fast_matrix have compile-time access to the dimensions");
-
+    static constexpr size_t dim() requires(is_fast) {
         return T::template dim<D>();
     }
 

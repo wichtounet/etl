@@ -246,9 +246,7 @@ public:
      * \brief Returns the number of columns of the matrix (the second dimension), in O(1)
      * \return The number of columns of the matrix
      */
-    static constexpr size_t columns() noexcept {
-        static_assert(n_dimensions > 1, "columns() can only be used on 2D+ matrices");
-
+    static constexpr size_t columns() noexcept requires(n_dimensions > 1) {
         return dim<1>();
     }
 

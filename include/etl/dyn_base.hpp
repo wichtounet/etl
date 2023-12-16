@@ -109,9 +109,7 @@ inline std::array<size_t, sizeof...(I)> sizes(const std::index_sequence<I...>& /
  * The matrix support an arbitrary number of dimensions.
  */
 template <typename Derived, typename T, size_t D>
-struct dyn_base {
-    static_assert(D > 0, "A matrix must have a least 1 dimension");
-
+requires(D > 0) struct dyn_base {
 protected:
     static constexpr size_t n_dimensions = D;                                      ///< The number of dimensions
     static constexpr size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
@@ -259,8 +257,7 @@ public:
      * \brief Returns the number of columns of the matrix (the first dimension)
      * \return The number of columns of the matrix
      */
-    size_t columns() const noexcept {
-        static_assert(n_dimensions > 1, "columns() only valid for 2D+ matrices");
+    size_t columns() const noexcept requires(n_dimensions > 1) {
         return _dimensions[1];
     }
 

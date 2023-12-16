@@ -260,12 +260,10 @@ struct dyn_convmtx_transformer {
  * \brief Transform that applies a convmtx2 transformation on a matrix.
  * \tparam T The type on which the transformer is applied
  */
-template <typename T>
+template <etl_2d T>
 struct dyn_convmtx2_transformer {
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
-
-    static_assert(is_2d<T>, "convmtx2 can only be applied on matrices");
 
     static constexpr bool gpu_computable = false;
 
@@ -477,10 +475,8 @@ void im2col_direct(M& m, A&& sub, size_t k1, size_t k2) {
  * \param k1 The first dimension of ther kernel
  * \param k2 The second dimension of ther kernel
  */
-template <typename A, typename M>
+template <etl_dma A, etl_dma M>
 void im2col_direct_tr(M& m, A&& sub, size_t k1, size_t k2) {
-    static_assert(all_dma<A, M>, "im2col_direct_tr has only been implemented for direct memory access");
-
     const size_t i1 = etl::dim<0>(sub);
     const size_t i2 = etl::dim<1>(sub);
 
@@ -514,10 +510,8 @@ void im2col_direct_tr(M& m, A&& sub, size_t k1, size_t k2) {
  * \param k1 The first dimension of ther kernel
  * \param k2 The second dimension of ther kernel
  */
-template <typename A, typename M>
+template <etl_dma A, etl_dma M>
 void im2col_direct_tr_multi(M& m, A&& sub, size_t k1, size_t k2) {
-    static_assert(all_dma<A, M>, "im2col_direct_tr has only been implemented for direct memory access");
-
     const auto N  = etl::dim<0>(sub);
     const auto i1 = etl::dim<1>(sub);
     const auto i2 = etl::dim<2>(sub);
@@ -619,9 +613,7 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
      * \return the Dth dimension of an expression of this type
      */
     template <size_t D>
-    static constexpr size_t dim() {
-        static_assert(D < 2, "Only 2D mmul are supported");
-
+    static constexpr size_t dim() requires(D < 2) {
         return D == 0 ? etl_traits<left_expr_t>::template dim<0>() : etl_traits<right_expr_t>::template dim<1>();
     }
 

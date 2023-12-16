@@ -464,10 +464,8 @@ void fft1(A&& a, C&& c) {
  * \brief Perform the 1D FFT on a and store the result in c
  * \param c The output expression
  */
-template <typename C>
+template <etl_complex_expr C>
 void inplace_fft1(C&& c) {
-    static_assert(is_complex<C>);
-
     detail::inplace_fft1_kernel(c, etl::size(c));
 }
 
@@ -505,10 +503,8 @@ void fft1_many(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename C>
+template <etl_complex_expr C>
 void inplace_fft1_many(C&& c) {
-    static_assert(is_complex<C>);
-
     static constexpr size_t N = decay_traits<C>::dimensions();
 
     size_t n     = etl::dim<N - 1>(c); //Size of the transform
@@ -677,10 +673,8 @@ void fft2(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename C>
+template <etl_complex_expr C>
 void inplace_fft2(C&& c) {
-    static_assert(is_complex<C>);
-
     c.ensure_gpu_up_to_date();
 
     detail::inplace_fft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
