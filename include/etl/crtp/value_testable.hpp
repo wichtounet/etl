@@ -14,6 +14,9 @@
 
 namespace etl {
 
+template <typename E>
+bool is_diagonal(E&& expr);
+
 /*!
  * \brief CRTP class to inject functions testing values of the expressions.
  *

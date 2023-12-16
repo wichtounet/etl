@@ -209,69 +209,6 @@ template <typename T>
 constexpr bool is_sparse_matrix = traits_detail::is_sparse_matrix_impl<std::decay_t<T>>::value;
 
 /*!
- * \brief Traits indicating if the given ETL type is a symmetric matrix
- * \tparam T The type to test
- */
-template <typename T>
-constexpr bool is_symmetric_matrix = cpp::specialization_of<etl::symmetric_matrix, T>;
-
-/*!
- * \brief Traits indicating if the given ETL type is a hermitian matrix
- * \tparam T The type to test
- */
-template <typename T>
-constexpr bool is_hermitian_matrix = cpp::specialization_of<etl::hermitian_matrix, T>;
-
-/*!
- * \brief Traits indicating if the given ETL type is a diagonal matrix
- * \tparam T The type to test
- */
-template <typename T>
-constexpr bool is_diagonal_matrix = cpp::specialization_of<etl::diagonal_matrix, T>;
-
-/*!
- * \brief Traits indicating if the given ETL type is an upper triangular matrix
- * \tparam T The type to test
- */
-template <typename T>
-constexpr bool is_upper_matrix = cpp::specialization_of<etl::upper_matrix, T>;
-
-/*!
- * \brief Traits indicating if the given ETL type is a lower triangular matrix
- * \tparam T The type to test
- */
-template <typename T>
-constexpr bool is_lower_matrix = cpp::specialization_of<etl::lower_matrix, T>;
-
-/*!
- * \brief Traits indicating if the given ETL type is a strictly lower triangular matrix
- * \tparam T The type to test
- */
-template <typename T>
-constexpr bool is_strictly_lower_matrix = cpp::specialization_of<etl::strictly_lower_matrix, T>;
-
-/*!
- * \brief Traits indicating if the given ETL type is a strictly upper triangular matrix
- * \tparam T The type to test
- */
-template <typename T>
-constexpr bool is_strictly_upper_matrix = cpp::specialization_of<etl::strictly_upper_matrix, T>;
-
-/*!
- * \brief Traits indicating if the given ETL type is a uni lower triangular matrix
- * \tparam T The type to test
- */
-template <typename T>
-constexpr bool is_uni_lower_matrix = cpp::specialization_of<etl::uni_lower_matrix, T>;
-
-/*!
- * \brief Traits indicating if the given ETL type is a uni upper triangular matrix
- * \tparam T The type to test
- */
-template <typename T>
-constexpr bool is_uni_upper_matrix = cpp::specialization_of<etl::uni_upper_matrix, T>;
-
-/*!
  * \brief Traits indicating if the given ETL type is a unary expression.
  * \tparam T The type to test
  */

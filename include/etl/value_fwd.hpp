@@ -113,69 +113,6 @@ struct serializer;
 template <typename Stream>
 struct deserializer;
 
-/*!
- * \brief Symmetric matrix adapter
- * \tparam Matrix The adapted matrix
- */
-template <typename Matrix>
-struct symmetric_matrix;
-
-/*!
- * \brief Hermitian matrix adapter
- * \tparam Matrix The adapted matrix
- */
-template <typename Matrix>
-struct hermitian_matrix;
-
-/*!
- * \brief Diagonal matrix adapter
- * \tparam Matrix The adapted matrix
- */
-template <typename Matrix>
-struct diagonal_matrix;
-
-/*!
- * \brief Upper triangular matrix adapter
- * \tparam Matrix The adapted matrix
- */
-template <typename Matrix>
-struct upper_matrix;
-
-/*!
- * \brief Strictly upper triangular matrix adapter
- * \tparam Matrix The adapted matrix
- */
-template <typename Matrix>
-struct strictly_upper_matrix;
-
-/*!
- * \brief Uni upper triangular matrix adapter
- * \tparam Matrix The adapted matrix
- */
-template <typename Matrix>
-struct uni_upper_matrix;
-
-/*!
- * \brief Lower triangular matrix adapter
- * \tparam Matrix The adapted matrix
- */
-template <typename Matrix>
-struct lower_matrix;
-
-/*!
- * \brief Strictly lower triangular matrix adapter
- * \tparam Matrix The adapted matrix
- */
-template <typename Matrix>
-struct strictly_lower_matrix;
-
-/*!
- * \brief Uni lower triangular matrix adapter
- * \tparam Matrix The adapted matrix
- */
-template <typename Matrix>
-struct uni_lower_matrix;
-
 /*
  * In C++17, aligned dynamic allocation of over-aligned type is now supported,
  * so we use the soft_aligned_array.

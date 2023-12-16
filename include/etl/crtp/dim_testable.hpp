@@ -14,6 +14,30 @@
 
 namespace etl {
 
+template <typename E>
+bool is_symmetric(E&& expr);
+
+template <typename E>
+bool is_triangular(E&& expr);
+
+template <typename E>
+bool is_lower_triangular(E&& expr);
+
+template <typename E>
+bool is_upper_triangular(E&& expr);
+
+template <typename E>
+bool is_strictly_lower_triangular(E&& expr);
+
+template <typename E>
+bool is_strictly_upper_triangular(E&& expr);
+
+template <typename E>
+bool is_uni_lower_triangular(E&& expr);
+
+template <typename E>
+bool is_uni_upper_triangular(E&& expr);
+
 /*!
  * \brief CRTP class to inject functions testing the dimensions.
  */
