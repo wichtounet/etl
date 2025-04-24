@@ -85,6 +85,8 @@ TRANSPOSE_TEST_CASE("transpose/dyn_matrix_3", "transpose") {
     etl::dyn_matrix<T> b;
     etl::dyn_matrix<T> c(33, 99);
 
+    a = T(0.01) * etl::sequence_generator<T>(1.0);
+
     Impl::apply(a, b);
 
     for (size_t j = 0; j < 99; ++j) {
@@ -103,6 +105,29 @@ TRANSPOSE_TEST_CASE("transpose/dyn_matrix_4", "transpose") {
     etl::dyn_matrix<T> a(N, M);
     etl::dyn_matrix<T> b;
     etl::dyn_matrix<T> c(M, N);
+
+    a = T(0.01) * etl::sequence_generator<T>(1.0);
+
+    Impl::apply(a, b);
+
+    for (size_t j = 0; j < N; ++j) {
+        for (size_t i = 0; i < M; ++i) {
+            c(i, j) = a(j, i);
+        }
+    }
+
+    REQUIRE(b == c);
+}
+
+TRANSPOSE_TEST_CASE("transpose/dyn_matrix_5", "transpose") {
+    const size_t N = 5;
+    const size_t M = 250;
+
+    etl::dyn_matrix<T> a(N, M);
+    etl::dyn_matrix<T> b;
+    etl::dyn_matrix<T> c(M, N);
+
+    a = T(0.01) * etl::sequence_generator<T>(1.0);
 
     Impl::apply(a, b);
 
