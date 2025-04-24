@@ -114,7 +114,7 @@ void transpose_impl(const A& a, C&& c) {
                 // Compute the leftovers
                 for (; j < M; ++j) {
                     for (size_t i2 = i; i2 < i + kernel_block_size; ++i2) {
-                        C2[j * N + i] = A2[i2 * M + j];
+                        C2[j * N + i2] = A2[i2 * M + j];
                     }
                 }
             }
