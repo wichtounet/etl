@@ -117,12 +117,12 @@ struct batch_softmax_expr : base_temporary_expr_un<batch_softmax_expr<A, Stable>
 
                 if constexpr (Stable) {
                     for (size_t i = 0; i < etl::dim<0>(c); ++i) {
-                        c(i) = exp(a(i)) / sum(exp(a(i)));
+                        auto m = max(a(i));
+                        c(i)   = exp(a(i) - m) / sum(exp(a(i) - m));
                     }
                 } else {
                     for (size_t i = 0; i < etl::dim<0>(c); ++i) {
-                        auto m = max(a(i));
-                        c(i)   = exp(a(i) - m) / sum(exp(a(i) - m));
+                        c(i) = exp(a(i)) / sum(exp(a(i)));
                     }
                 }
             } else {
