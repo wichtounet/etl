@@ -112,7 +112,6 @@ TEMPLATE_TEST_CASE_2("batch_outer/2", "[outer]", Z, float, double) {
     for (size_t bb = 0; bb < 32; ++bb) {
         for (size_t i = 0; i < 31; ++i) {
             for (size_t j = 0; j < 23; ++j) {
-
                 c_ref(i, j) += a(bb, i) * b(bb, j);
             }
         }
@@ -174,5 +173,32 @@ TEMPLATE_TEST_CASE_2("batch_outer/4", "[outer]", Z, float, double) {
 
     for(size_t i = 0; i < c_ref.size(); ++i){
         REQUIRE_EQUALS_APPROX(c[i], 1.0 - c_ref[i]);
+    }
+}
+
+TEMPLATE_TEST_CASE_2("batch_outer/5", "[outer]", Z, float, double) {
+    etl::dyn_matrix<Z, 2> a(5, 250);
+    etl::dyn_matrix<Z, 2> b(5, 10);
+
+    a = Z(0.01) * etl::sequence_generator<Z>(1.0);
+    b = Z(-0.032) * etl::sequence_generator<Z>(1.0);
+
+    etl::dyn_matrix<Z, 2> c(250, 10);
+    etl::dyn_matrix<Z, 2> c_ref(250, 10);
+
+    c = batch_outer(a, b);
+
+    c_ref = 0;
+
+    for (size_t bb = 0; bb < 5; ++bb) {
+        for (size_t i = 0; i < 250; ++i) {
+            for (size_t j = 0; j < 10; ++j) {
+                c_ref(i, j) += a(bb, i) * b(bb, j);
+            }
+        }
+    }
+
+    for(size_t i = 0; i < c_ref.size(); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
     }
 }
