@@ -7,8 +7,8 @@ default: release
 include make-utils/flags.mk
 include make-utils/cpp-utils.mk
 
-# Use C++23
-$(eval $(call use_cpp23))
+# Use C++26
+$(eval $(call use_cpp26))
 
 # Enable coverage
 $(eval $(call enable_coverage))
