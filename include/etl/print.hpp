@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <format>
 
 namespace etl {
 
@@ -66,7 +67,11 @@ std::string to_octave(T&& m) {
     } else {
         std::string comma;
         for (size_t j = 0; j < etl::dim<0>(m); ++j) {
-            v += comma + std::to_string(m(j));
+            if constexpr (is_floating<T>) {
+                v += std::format("{}{:.6f}", comma, m(j));
+            } else {
+                v += std::to_string(m(j));
+            }
             comma = ",";
         }
 
