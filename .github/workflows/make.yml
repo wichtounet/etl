@@ -12,8 +12,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
         matrix:
-            os: [ubuntu-latest]
-            compiler: [g++-13,clang++-17]
+            os: [ubuntu-24.04]
+            compiler: [g++-14, clang++-18]
 
     steps:
     - name: Checkout code
@@ -22,14 +22,14 @@ jobs:
         submodules: recursive
 
     - name: Install GCC compiler
-      run: sudo apt install g++-13
+      run: sudo apt install g++-14
 
     - name: install LLVM compiler
       run: |
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-          sudo apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-17 main"
+          sudo apt-add-repository "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-18 main"
           sudo apt update
-          sudo apt install clang-17
+          sudo apt install clang-18
 
     - name: Build binaries
       env:
