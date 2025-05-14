@@ -74,6 +74,8 @@ void transpose_impl(const A& a, C&& c) {
 
 
         auto batch_fun_i = [&](const size_t ifirst, const size_t ilast) {
+            cpp_assert(ilast < N, "Invalid dispatch");
+
             size_t i = ifirst;
 
             for (; i + block_size - 1 < ilast; i += block_size) {
@@ -120,9 +122,7 @@ void transpose_impl(const A& a, C&& c) {
             }
 
             for (; i < ilast; ++i) {
-                size_t j = 0;
-
-                for (; j < M; ++j) {
+                for (size_t j = 0; j < M; ++j) {
                     C2[j * N + i] = A2[i * M + j];
                 }
             }
