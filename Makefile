@@ -47,7 +47,7 @@ CXX_FLAGS += $(EXTRA_CXX_FLAGS)
 CXX_FLAGS += -ftemplate-backtrace-limit=0
 
 # Tune clang warnings
-ifneq (,$(findstring clang,$(CXX)))
+ifeq (clang, $(compiler))
 CXX_FLAGS += -Wpessimizing-move
 
 # False positives for all variable templates with \tparam documentation
@@ -55,17 +55,15 @@ CXX_FLAGS += -Wno-documentation
 endif
 
 # Tune GCC warnings
-ifeq (,$(findstring clang,$(CXX)))
-ifneq (,$(findstring g++,$(CXX)))
+ifeq (gcc, $(compiler))
 CXX_FLAGS += -Wno-ignored-attributes -Wno-misleading-indentation
-endif
 endif
 
 ifneq (,$(ETL_MKL))
 CXX_FLAGS += -DETL_MKL_MODE $(shell pkg-config --cflags $(BLAS_PKG))
 LD_FLAGS += $(shell pkg-config --libs $(BLAS_PKG))
 
-ifneq (,$(findstring clang,$(CXX)))
+ifeq (clang, $(compiler))
 CXX_FLAGS += -Wno-tautological-compare
 endif
 
@@ -105,10 +103,6 @@ LD_FLAGS += $(shell pkg-config --libs cudnn)
 LD_FLAGS += $(shell pkg-config --libs curand-12.2)
 LD_FLAGS += $(shell pkg-config --libs cuda-12.2)
 LD_FLAGS += $(shell pkg-config --libs cudart-12.2)
-
-ifneq (,$(findstring clang,$(CXX)))
-CXX_FLAGS += -Wno-documentation
-endif
 else
 
 # On demand activation of cublas support
@@ -117,10 +111,6 @@ CXX_FLAGS += -DETL_CUBLAS_MODE $(shell pkg-config --cflags cublas-12.2)
 LD_FLAGS += $(shell pkg-config --libs cublas-12.2)
 LD_FLAGS += $(shell pkg-config --libs cuda-12.2)
 LD_FLAGS += $(shell pkg-config --libs cudart-12.2)
-
-ifneq (,$(findstring clang,$(CXX)))
-CXX_FLAGS += -Wno-documentation
-endif
 endif
 
 # On demand activation of cufft support
@@ -129,10 +119,6 @@ CXX_FLAGS += -DETL_CUFFT_MODE $(shell pkg-config --cflags cufft-12.2)
 LD_FLAGS += $(shell pkg-config --libs cufft-12.2)
 LD_FLAGS += $(shell pkg-config --libs cuda-12.2)
 LD_FLAGS += $(shell pkg-config --libs cudart-12.2)
-
-ifneq (,$(findstring clang,$(CXX)))
-CXX_FLAGS += -Wno-documentation
-endif
 endif
 
 # On demand activation of curand support
@@ -141,10 +127,6 @@ CXX_FLAGS += -DETL_CURAND_MODE $(shell pkg-config --cflags curand-12.2)
 LD_FLAGS += $(shell pkg-config --libs curand-12.2)
 LD_FLAGS += $(shell pkg-config --libs cuda-12.2)
 LD_FLAGS += $(shell pkg-config --libs cudart-12.2)
-
-ifneq (,$(findstring clang,$(CXX)))
-CXX_FLAGS += -Wno-documentation
-endif
 endif
 
 # On demand activation of cudnn support
@@ -153,10 +135,6 @@ CXX_FLAGS += -DETL_CUDNN_MODE $(shell pkg-config --cflags cudnn)
 LD_FLAGS += $(shell pkg-config --libs cudnn)
 LD_FLAGS += $(shell pkg-config --libs cuda-12.2)
 LD_FLAGS += $(shell pkg-config --libs cudart-12.2)
-
-ifneq (,$(findstring clang,$(CXX)))
-CXX_FLAGS += -Wno-documentation
-endif
 endif
 
 endif
@@ -181,7 +159,7 @@ endif
 
 # Enable Clang sanitizers in debug mode
 ifneq (,$(ETL_SANITIZE))
-ifneq (,$(findstring clang,$(CXX)))
+ifeq (clang, $(compiler))
 ifeq (,$(ETL_CUBLAS))
 DEBUG_FLAGS += -fsanitize=address,undefined
 endif
