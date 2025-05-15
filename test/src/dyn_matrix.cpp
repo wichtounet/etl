@@ -92,6 +92,7 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/init_7", "dyn_matrix::dyn_matrix(T)", Z, double
     REQUIRE_EQUALS(b.rows(), 2UL);
     REQUIRE_EQUALS(b.columns(), 2UL);
     REQUIRE_EQUALS(b.size(), 16UL);
+
     REQUIRE_EQUALS(b(0, 0, 0, 0), 1);
     REQUIRE_EQUALS(b(0, 0, 0, 1), 2);
     REQUIRE_EQUALS(b(0, 0, 1, 0), 3);
@@ -100,6 +101,7 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/init_7", "dyn_matrix::dyn_matrix(T)", Z, double
     REQUIRE_EQUALS(b(0, 1, 0, 1), 6);
     REQUIRE_EQUALS(b(0, 1, 1, 0), 7);
     REQUIRE_EQUALS(b(0, 1, 1, 1), 8);
+
     REQUIRE_EQUALS(b(1, 0, 0, 0), 9);
     REQUIRE_EQUALS(b(1, 0, 0, 1), 10);
     REQUIRE_EQUALS(b(1, 0, 1, 0), 11);
@@ -108,6 +110,24 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/init_7", "dyn_matrix::dyn_matrix(T)", Z, double
     REQUIRE_EQUALS(b(1, 1, 0, 1), 14);
     REQUIRE_EQUALS(b(1, 1, 1, 0), 15);
     REQUIRE_EQUALS(b(1, 1, 1, 1), 16);
+
+    REQUIRE_EQUALS((b[0, 0, 0, 0]), 1);
+    REQUIRE_EQUALS((b[0, 0, 0, 1]), 2);
+    REQUIRE_EQUALS((b[0, 0, 1, 0]), 3);
+    REQUIRE_EQUALS((b[0, 0, 1, 1]), 4);
+    REQUIRE_EQUALS((b[0, 1, 0, 0]), 5);
+    REQUIRE_EQUALS((b[0, 1, 0, 1]), 6);
+    REQUIRE_EQUALS((b[0, 1, 1, 0]), 7);
+    REQUIRE_EQUALS((b[0, 1, 1, 1]), 8);
+
+    REQUIRE_EQUALS((b[1, 0, 0, 0]), 9);
+    REQUIRE_EQUALS((b[1, 0, 0, 1]), 10);
+    REQUIRE_EQUALS((b[1, 0, 1, 0]), 11);
+    REQUIRE_EQUALS((b[1, 0, 1, 1]), 12);
+    REQUIRE_EQUALS((b[1, 1, 0, 0]), 13);
+    REQUIRE_EQUALS((b[1, 1, 0, 1]), 14);
+    REQUIRE_EQUALS((b[1, 1, 1, 0]), 15);
+    REQUIRE_EQUALS((b[1, 1, 1, 1]), 16);
 }
 
 TEMPLATE_TEST_CASE_2("dyn_matrix/init_8", "dyn_matrix::dyn_matrix(T)", Z, double, float) {

@@ -450,6 +450,29 @@ struct dense_dyn_base : dyn_base<Derived, T, D> {
     }
 
     /*!
+     * \brief Returns the value at the position (sizes...)
+     * \param sizes The indices
+     * \return The value at the position (sizes...)
+     */
+    template <size_c... S>
+    const value_type& operator[](size_t first, S... sizes) const noexcept(assert_nothrow) requires(sizeof...(S) >= 1 && (1 + sizeof...(S)) == n_dimensions) {
+        ensure_cpu_up_to_date();
+        return _memory[etl::dyn_index(as_derived(), first, sizes...)];
+    }
+
+    /*!
+     * \brief Returns the value at the position (sizes...)
+     * \param sizes The indices
+     * \return The value at the position (sizes...)
+     */
+    template <size_c... S>
+    value_type& operator[](size_t first, S... sizes) noexcept(assert_nothrow) requires(sizeof...(S) >= 1 && (1 + sizeof...(S)) == n_dimensions){
+        ensure_cpu_up_to_date();
+        invalidate_gpu();
+        return _memory[etl::dyn_index(as_derived(), first, sizes...)];
+    }
+
+    /*!
      * \brief Returns the element at the given index
      * \param i The index
      * \return a reference to the element at the given index.
