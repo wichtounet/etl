@@ -114,6 +114,20 @@ TEMPLATE_TEST_CASE_2("fast_matrix/access", "fast_matrix::operator()", Z, float, 
     REQUIRE_EQUALS(test_matrix(1, 1, 1), 0.5);
     REQUIRE_EQUALS(test_matrix(1, 2, 0), 0.0);
     REQUIRE_EQUALS(test_matrix(1, 2, 1), -1);
+
+    REQUIRE_EQUALS((test_matrix[0, 0, 0]), 1.0);
+    REQUIRE_EQUALS((test_matrix[0, 0, 1]), -2.0);
+    REQUIRE_EQUALS((test_matrix[0, 1, 0]), 3.0);
+    REQUIRE_EQUALS((test_matrix[0, 1, 1]), 0.5);
+    REQUIRE_EQUALS((test_matrix[0, 2, 0]), 0.0);
+    REQUIRE_EQUALS((test_matrix[0, 2, 1]), -1);
+
+    REQUIRE_EQUALS((test_matrix[1, 0, 0]), 1.0);
+    REQUIRE_EQUALS((test_matrix[1, 0, 1]), -2.0);
+    REQUIRE_EQUALS((test_matrix[1, 1, 0]), 3.0);
+    REQUIRE_EQUALS((test_matrix[1, 1, 1]), 0.5);
+    REQUIRE_EQUALS((test_matrix[1, 2, 0]), 0.0);
+    REQUIRE_EQUALS((test_matrix[1, 2, 1]), -1);
 }
 
 // Binary operators test

@@ -335,6 +335,26 @@ public:
     }
 
     /*!
+     * \brief Returns the value of the element at the position (args...)
+     * \param args The position indices
+     * \return The value of the element at (args...)
+     */
+    template <size_c... S>
+    value_type& operator[](size_t first, S... args) noexcept(assert_nothrow) requires (sizeof...(S) > 1 && 1 + sizeof...(S) == sizeof...(Dims)) {
+        return access(first, static_cast<size_t>(args)...);
+    }
+
+    /*!
+     * \brief Returns the value of the element at the position (args...)
+     * \param args The position indices
+     * \return The value of the element at (args...)
+     */
+    template <size_c... S>
+    const value_type& operator[](size_t first, S... args) const noexcept(assert_nothrow) requires (sizeof...(S) > 1 && 1 + sizeof...(S) == sizeof...(Dims)) {
+        return access(first, static_cast<size_t>(args)...);
+    }
+
+    /*!
      * \brief Returns the element at the given index
      * \param i The index
      * \return a reference to the element at the given index.
