@@ -84,6 +84,14 @@ struct simple_vector {
         return _data[i];
     }
 
+    T* data() {
+        return _data;
+    }
+
+    const T* data() const {
+        return _data;
+    }
+
 private:
     void release() {
         if (_data) {
