@@ -62,7 +62,7 @@ struct dyn_upsample_2d_expr : base_temporary_expr_un<dyn_upsample_2d_expr<A>, A,
 
         auto& a = this->a();
 
-        impl::standard::upsample_2d::template apply(smart_forward(a), lhs, c1, c2, s1, s2, p1, p2);
+        impl::standard::upsample_2d::apply(smart_forward(a), lhs, c1, c2, s1, s2, p1, p2);
     }
 
     /*!

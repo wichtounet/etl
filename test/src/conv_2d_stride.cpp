@@ -129,7 +129,7 @@ DYN_CONV2_VALID_TEST_CASE("conv/2/dyn_stride/valid/1", "[conv][stride]") {
     etl::fast_matrix<T, 2, 2> b = {1.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<T, 2, 2> c;
 
-    Impl::template apply(a, b, c, 2, 2);
+    Impl::apply(a, b, c, 2, 2);
 
     REQUIRE_EQUALS_APPROX(c(0, 0), T(7.5));
     REQUIRE_EQUALS_APPROX(c(0, 1), T(11.5));
@@ -483,7 +483,7 @@ DYN_CONV2_VALID_MULTI_TEST_CASE("conv/2/dyn_stride/valid/multi/1", "[conv][strid
 
     auto expr = etl::conv_2d_valid_multi(a, b, 2, 2, 0, 0);
 
-    Impl::template apply(a, b, c, 2, 2);
+    Impl::apply(a, b, c, 2, 2);
 
     REQUIRE_EQUALS_APPROX(c(0, 0, 0), T(7.5));
     REQUIRE_EQUALS_APPROX(c(0, 0, 1), T(11.5));
@@ -506,7 +506,7 @@ DYN_CONV2_VALID_MULTI_TEST_CASE("conv/2/dyn_stride/valid/multi/2", "[conv][strid
     etl::fast_matrix<T, 3, 2, 2> b = {1.0, 0.0, 0.5, 0.5, 2.0, 0.0, 1.0, 1.0, 3.0, 0.0, 1.5, 1.5};
     etl::fast_matrix<T, 3, 4, 4> c;
 
-    Impl::template apply(a, b, c, 1, 1, 1, 1);
+    Impl::apply(a, b, c, 1, 1, 1, 1);
 
     REQUIRE_EQUALS_APPROX(c(0, 0, 0), T(1.0));
     REQUIRE_EQUALS_APPROX(c(0, 0, 1), T(2.0));
@@ -574,7 +574,7 @@ DYN_CONV2_VALID_MULTI_TEST_CASE("conv/2/dyn_stride/valid/multi/3", "[conv][strid
     etl::fast_matrix<T, 3, 2, 2> b = {1.0, 0.0, 0.5, 0.5, 2.0, 0.0, 1.0, 1.0, 3.0, 0.0, 1.5, 1.5};
     etl::fast_matrix<T, 3, 2, 2> c;
 
-    Impl::template apply(a, b, c, 2, 2, 1, 1);
+    Impl::apply(a, b, c, 2, 2, 1, 1);
 
     REQUIRE_EQUALS_APPROX(c(0, 0, 0), T(1.0));
     REQUIRE_EQUALS_APPROX(c(0, 0, 1), T(0.0));
@@ -602,7 +602,7 @@ DYN_CONV2_VALID_MULTI_FLIPPED_TEST_CASE("conv/2/dyn_stride/valid/flipped/multi/1
     etl::fast_matrix<T, 3, 2, 2> b = {0.5, 0.5, 0.0, 1.0,  1.0, 1.0, 0.0, 2.0,  1.5, 1.5, 0.0, 3.0};
     etl::fast_matrix<T, 3, 2, 2> c;
 
-    Impl::template apply(a, b, c, 2, 2);
+    Impl::apply(a, b, c, 2, 2);
 
     REQUIRE_EQUALS_APPROX(c(0, 0, 0), T(7.5));
     REQUIRE_EQUALS_APPROX(c(0, 0, 1), T(11.5));
@@ -625,7 +625,7 @@ DYN_CONV2_VALID_MULTI_FLIPPED_TEST_CASE("conv/2/dyn_stride/valid/flipped/multi/2
     etl::fast_matrix<T, 3, 2, 2> b = {0.5, 0.5, 0.0, 1.0,  1.0, 1.0, 0.0, 2.0,  1.5, 1.5, 0.0, 3.0};
     etl::fast_matrix<T, 3, 4, 4> c;
 
-    Impl::template apply(a, b, c, 1, 1, 1, 1);
+    Impl::apply(a, b, c, 1, 1, 1, 1);
 
     REQUIRE_EQUALS_APPROX(c(0, 0, 0), T(1.0));
     REQUIRE_EQUALS_APPROX(c(0, 0, 1), T(2.0));
@@ -693,7 +693,7 @@ DYN_CONV2_VALID_MULTI_FLIPPED_TEST_CASE("conv/2/dyn_stride/valid/flipped/multi/3
     etl::fast_matrix<T, 3, 2, 2> b = {0.5, 0.5, 0.0, 1.0,  1.0, 1.0, 0.0, 2.0,  1.5, 1.5, 0.0, 3.0};
     etl::fast_matrix<T, 3, 2, 2> c;
 
-    Impl::template apply(a, b, c, 2, 2, 1, 1);
+    Impl::apply(a, b, c, 2, 2, 1, 1);
 
     REQUIRE_EQUALS_APPROX(c(0, 0, 0), T(1.0));
     REQUIRE_EQUALS_APPROX(c(0, 0, 1), T(0.0));

@@ -143,7 +143,7 @@ DYN_CONV4_VALID_TEST_CASE("conv/4d/stride/valid/5", "[conv][conv4][valid]") {
         }
     }
 
-    Impl::template apply(I, K, c, 2, 2, 0, 0);
+    Impl::apply(I, K, c, 2, 2, 0, 0);
 
     for (size_t i = 0; i < ref.size(); ++i) {
         REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.1);
