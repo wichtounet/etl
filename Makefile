@@ -391,15 +391,15 @@ $(eval $(call add_executable,counters,workbench/src/counters.cpp))
 $(eval $(call add_executable,verify_cpm,workbench/src/verify_cpm.cpp))
 $(eval $(call add_executable,benchmark_paper,workbench/src/benchmark_paper.cpp))
 
-test_asm: release/bin/test_asm_1 release/bin/test_asm_2
+test_asm: $(release)/bin/test_asm_1 $(release)/bin/test_asm_2
 
 debug_etl_test: debug_etl_test_all
 release_debug_etl_test: release_debug_etl_test_all
 release_etl_test: release_etl_test_all
 
-release: release_etl_test release/bin/benchmark
-release_debug: release_debug_etl_test release_debug/bin/benchmark
-debug: debug_etl_test debug/bin/benchmark
+release: release_etl_test $(release)/bin/benchmark
+release_debug: release_debug_etl_test $(release_debug)/bin/benchmark
+debug: debug_etl_test $(debug)/bin/benchmark
 
 all: release release_debug debug
 
@@ -408,15 +408,15 @@ release_debug_test: run_release_debug_etl_test_all
 release_test: run_release_etl_test_all
 
 test: all
-	./debug/bin/etl_test
-	./release_debug/bin/etl_test
-	./release/bin/etl_test
+	./$(debug)/bin/etl_test
+	./$(release_debug)/bin/etl_test
+	./$(release)/bin/etl_test
 
 valgrind_test: debug
-	valgrind --leak-check=full ./debug/bin/etl_test
+	valgrind --leak-check=full ./$(debug)/bin/etl_test
 
-benchmark: release/bin/benchmark
-	./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD`
+benchmark: $(release)/bin/benchmark
+	./$(release)/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD`
 
 full_bench:
 	bash scripts/bench_runner.sh
@@ -425,9 +425,9 @@ cppcheck:
 	cppcheck -I include/ --platform=unix64 --suppress=missingIncludeSystem --enable=all --std=c++11 benchmark/*.cpp workbench/*.cpp include/etl/*.hpp
 
 coverage: debug_test
-	lcov -b . --directory debug/test --capture --output-file debug/bin/app.info
+	lcov -b . --directory $(debug)/test --capture --output-file $(debug)/bin/app.info
 	@ mkdir -p reports/coverage
-	genhtml --output-directory reports/coverage debug/bin/app.info
+	genhtml --output-directory reports/coverage $(debug)/bin/app.info
 
 coverage_view: coverage
 	firefox reports/coverage/index.html
