@@ -9,11 +9,12 @@ on:
 jobs:
   build:
     name: Compile and test on Linux
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    container:
+      image: wichtounet/cpp:latest
     strategy:
         matrix:
-            os: [ubuntu-24.04]
-            compiler: [g++-14, clang++-18]
+            compiler: [gcc, clang]
 
     steps:
     - name: Checkout code
@@ -21,25 +22,11 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Install GCC compiler
-      run: sudo apt install g++-14
-
-    - name: install LLVM compiler
-      run: |
-          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-          sudo apt-add-repository "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-18 main"
-          sudo apt update
-          sudo apt install clang-18
-
     - name: Build binaries
-      env:
-          CXX: ${{ matrix.compiler }}
-      run: make -j5 debug
+      run: make -j5 debug compiler=${{ matrix.compiler }}
 
     - name: Build tests
-      env:
-          CXX: ${{ matrix.compiler }}
-      run: make -j5 debug_etl_test
+      run: make -j5 debug_etl_test compiler=${{ matrix.compiler }}
 
     - name: Run tests
-      run: make debug_test
+      run: make debug_test compiler=${{ matrix.compiler }}
