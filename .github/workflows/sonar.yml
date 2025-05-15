@@ -19,28 +19,23 @@ jobs:
           fetch-depth: 0
           submodules: recursive
       - name: Install GCC compiler
-        run: sudo apt install g++-13
+        run: sudo apt install g++-14
       - name: Install sonar-scanner and build-wrapper
         uses: SonarSource/sonarcloud-github-c-cpp@v2
       - name: Run build-wrapper
-        env:
-          CXX: g++-13
-        run: |
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} make -j5 debug
+        run: build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} make -j5 debug compiler=gcc version=14
       - name: Run the tests
-        run: make -j1 debug_test
+        run: make -j1 debug_test compiler=gcc version=14
       - name: Generate coverage reports
         run: |
           mkdir gcov-reports
           pushd gcov-reports
           for f in $(find ../debug -iname '*.o'); do
-            gcov-13 --preserve-paths  -o $f x
+            gcov-14 --preserve-paths  -o $f x
           done
           popd
       - name: Run sonar-scanner
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          CXX: g++-13
-        run: |
-          sonar-scanner --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
+        run: sonar-scanner --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
