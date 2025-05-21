@@ -74,7 +74,7 @@ void transpose_impl(const A& a, C&& c) {
 
 
         auto batch_fun_i = [&](const size_t ifirst, const size_t ilast) {
-            cpp_assert(ilast < N, "Invalid dispatch");
+            cpp_assert(ilast <= N, "Invalid dispatch");
 
             size_t i = ifirst;
 
