@@ -140,6 +140,27 @@ TRANSPOSE_TEST_CASE("transpose/dyn_matrix_5", "transpose") {
     REQUIRE(b == c);
 }
 
+TRANSPOSE_TEST_CASE("transpose/dyn_matrix_6", "transpose") {
+    const size_t N = 32 * 2 * 16 + 7;
+    const size_t M = 32 * 2 * 16 + 11;
+
+    etl::dyn_matrix<T> a(N, M);
+    etl::dyn_matrix<T> b;
+    etl::dyn_matrix<T> c(M, N);
+
+    a = T(0.01) * etl::sequence_generator<T>(1.0);
+
+    Impl::apply(a, b);
+
+    for (size_t j = 0; j < N; ++j) {
+        for (size_t i = 0; i < M; ++i) {
+            c(i, j) = a(j, i);
+        }
+    }
+
+    REQUIRE(b == c);
+}
+
 INPLACE_TRANSPOSE_TEST_CASE("transpose/inplace/2", "[transpose]") {
     etl::dyn_matrix<T> a(3, 3, std::initializer_list<T>({1, 2, 3, 4, 5, 6, 7, 8, 9}));
 
