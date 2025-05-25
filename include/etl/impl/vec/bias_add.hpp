@@ -54,7 +54,7 @@ void bias_add_4d_impl(const L& x, const R& b, C&& y) {
                     auto x4 = vec_type::loadu(x_s + m + 3 * vec_size);
                     auto x5 = vec_type::loadu(x_s + m + 4 * vec_size);
                     auto x6 = vec_type::loadu(x_s + m + 5 * vec_size);
-                    auto x7 = vec_type::loadu(x_s + m + 8 * vec_size);
+                    auto x7 = vec_type::loadu(x_s + m + 6 * vec_size);
                     auto x8 = vec_type::loadu(x_s + m + 7 * vec_size);
 
                     auto r1 = vec_type::add(x1, b1);
